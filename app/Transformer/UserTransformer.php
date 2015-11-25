@@ -22,7 +22,8 @@ class UserTransformer extends TransformerAbstract
         'friendrequests',
         'organizations',
         'games',
-        'flips'
+        'flips',
+        'images'
     ];
 
     /**
@@ -149,7 +150,8 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeImages(User $user)
     {
-        $image = $user->image;
+        $image = $user->images;
+       
         return $this->item($image, new ImageTransformer());
     }
 
