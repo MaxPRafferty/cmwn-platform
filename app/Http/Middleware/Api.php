@@ -18,7 +18,11 @@ class Api
     {
         $origin = $request->header('origin');
 
-        if ($this->endsWith($origin, 'changemyworldnow.com') || $this->endsWith($origin, 'front.cmwn.localhost') || $this->endsWith($origin, 'api.cmwn.localhost')) {
+        //if ($this->endsWith($origin, 'changemyworldnow.com') || $this->endsWith($origin,
+        if (
+            preg_match("`^https?://[0-9a-zA-Z-_]+\.changemyworldnow.com(:[0-9]+)?/?$`i", $origin) ||
+            preg_match("`^https?://[0-9a-zA-Z-_]+\.cmwn.localhost(:[0-9]+)?/?$`i", $origin)
+        ) {
             return $next($request)->header('Access-Control-Allow-Origin', $origin)
                 ->header('Access-Control-Allow-Credentials', 'true')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
