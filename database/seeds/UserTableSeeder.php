@@ -12,15 +12,22 @@ class UserTableSeeder extends Seeder
     {
         $faker = Faker\Factory::create();
 
-        DB::table('users')->delete();
+
         DB::table('district_organization')->delete();
         DB::table('districts')->delete();
-        DB::table('organizations')->delete();
-        DB::table('groups')->delete();
-        DB::table('child_guardian')->delete();
-        DB::table('roleables')->delete();
-        DB::table('games')->delete();
+        DB::table('organizations')->truncate();
+
+        DB::table('groups')->truncate();
+        DB::table('child_guardian')->truncate();
+        DB::table('roleables')->truncate();
+        DB::table('game_flip')->truncate();
+        DB::table('flip_user')->truncate();
         DB::table('flips')->delete();
+        DB::table('games')->delete();
+        DB::table('users')->delete();
+
+
+
 
         for ($i = 1; $i <= 5; ++$i) {
             $districts[$i] = District::create(array(
@@ -46,7 +53,7 @@ class UserTableSeeder extends Seeder
 
         for ($i = 1; $i <= 100; ++$i) {
             $groups[$i] = Group::create(array(
-                    'organization_id' => $organizations[rand(1, 19)]->id,
+                    'organization_id' => $organizations[rand(1, 19)]->uuid,
                     'title' => $group_array[array_rand($group_array)] . ' ' . rand(1, 3) . '0' . rand(1, 9),
                     'description' => 'Class Description: ' . $faker->paragraph(1),
                 ));
@@ -55,7 +62,7 @@ class UserTableSeeder extends Seeder
         }
 
         // Create Users
-
+        $this->command->info('Site Admins!');
         $users[] = User::create(array(
                 'first_name' => 'Jon',
                 'last_name' => 'Toshmatov',
