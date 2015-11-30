@@ -53,7 +53,7 @@ class UserTableSeeder extends Seeder
 
         for ($i = 1; $i <= 100; ++$i) {
             $groups[$i] = Group::create(array(
-                    'organization_id' => $organizations[rand(1, 19)]->uuid,
+                    'organization_id' => $organizations[rand(1, 19)]->uuid.$i,
                     'title' => $group_array[array_rand($group_array)] . ' ' . rand(1, 3) . '0' . rand(1, 9),
                     'description' => 'Class Description: ' . $faker->paragraph(1),
                 ));

@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
         Schema::dropIfExists('guardians');
         Schema::dropIfExists('roleables');
         Schema::dropIfExists('users');
+        
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->unique();
