@@ -151,8 +151,7 @@ class UserTransformer extends TransformerAbstract
     public function includeImages(User $user)
     {
         $image = $user->images;
-       
-        return $this->item($image, new ImageTransformer());
+        return $this->collection($image, new ImageTransformer());
     }
 
     /**
