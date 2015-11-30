@@ -16,6 +16,26 @@ class AppServiceProvider extends ServiceProvider
             $user->uuid = Uuid::uuid1();
         });
 
+        \app\District::creating(function ($district) {
+            $district->uuid = Uuid::uuid1();
+        });
+
+        \app\Organization::creating(function ($organization) {
+            $organization->uuid = Uuid::uuid1();
+        });
+
+        \app\Group::creating(function ($group) {
+            $group->uuid = Uuid::uuid1();
+        });
+
+        \app\Game::creating(function ($game) {
+            $game->uuid = Uuid::uuid1();
+        });
+
+        \app\Flip::creating(function ($flip) {
+            $flip->uuid = Uuid::uuid1();
+        });
+
         // Attach event handler, on deleting of the user
         \app\User::deleting(function ($user) {
             echo('deleting from AppServiceProvider ');
