@@ -25,7 +25,7 @@ class OrganizationTransformer extends TransformerAbstract
     public function transform(Organization $organization)
     {
         return [
-            'id'            => (int) $organization->id,
+            'uuid'            => $organization->uuid,
             'code'          => $organization->code,
             'title'         => $organization->title,
             'description'   => $organization->description,

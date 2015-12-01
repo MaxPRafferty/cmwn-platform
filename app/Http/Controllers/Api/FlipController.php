@@ -15,7 +15,7 @@ class FlipController extends ApiController
     }
 
     public function show($id){
-        $flip = Flip::limitToUser($this->currentUser)->where('id',$id);
+        $flip = Flip::limitToUser($this->currentUser)->where('uuid',$id);
         if (!$flip) {
             return $this->errorNotFound('Flip not found');
         }

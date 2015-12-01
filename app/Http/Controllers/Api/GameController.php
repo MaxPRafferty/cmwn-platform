@@ -19,7 +19,7 @@ class GameController extends ApiController
     }
 
     public function show($id){
-        $game = Game::limitToUser($this->currentUser)->where('id',$id);
+        $game = Game::limitToUser($this->currentUser)->where('uuid',$id);
         if (!$game) {
             return $this->errorNotFound('Game not found');
         }

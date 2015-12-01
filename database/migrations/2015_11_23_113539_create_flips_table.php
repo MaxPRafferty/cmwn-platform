@@ -12,6 +12,7 @@ class CreateFlipsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('flips');
         Schema::create('flips', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->unique();

@@ -10,6 +10,8 @@ class CreateGroupsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('groups');
+
         Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->unique();

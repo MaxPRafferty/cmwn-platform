@@ -13,6 +13,13 @@ class Game extends Model
     use SoftDeletes;
     protected $table = 'games';
 
+    /**
+     * The primaryKey is set to id by default
+     * Changed to uuid
+     * @var string
+     */
+    protected $primaryKey = 'uuid';
+
     public static $gameUpdateRules = array(
         'title' => 'required | string',
         //'role[]'=>'required',

@@ -12,6 +12,7 @@ class CreateOrganizationsTables extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('organizations');
         Schema::create('organizations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->unique();

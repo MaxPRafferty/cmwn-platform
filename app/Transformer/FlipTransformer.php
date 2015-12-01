@@ -20,7 +20,7 @@ class FlipTransformer extends TransformerAbstract
     public function transform(Flip $flip)
     {
         return [
-            'id'              => (int) $flip->id,
+            'uuid'              => $flip->uuid,
             'title'           => $flip->title,
             'description'     => $flip->description,
             'created_at'      => (string) $flip->created_at,

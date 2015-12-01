@@ -34,6 +34,14 @@ class User extends Model implements
     protected $table = 'users';
 
     /**
+     * The primaryKey is set to id by default
+     * Changed to uuid
+     * @var string
+     */
+
+    protected $primaryKey = 'uuid';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
