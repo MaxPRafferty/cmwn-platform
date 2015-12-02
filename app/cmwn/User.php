@@ -99,6 +99,27 @@ class User extends Model implements
         return $this->morphedByMany('app\Role', 'roleable')->withPivot('role_id');
     }
 
+    public function roles(User $user){
+        $roles = array();
+        $user_id = $user->uuid;
+
+        $districts =  $user->districts()->where(function ($query) use ($user_id){
+            $query = $query->where('user_id', $user_id);
+        });
+        $organizations =  $user->organizations()->where(function ($query) use ($user_id){
+            $query = $query->where('user_id', $user_id);
+        });
+
+        $groups =  $user->groups()->where(function ($query)  use ($user_id){
+            $query = $query->where('user_id', $user_id);
+        });
+
+        $roles['districts'] = $districts->get()->toArray();
+        $roles['organizations'] = $organizations->get()->toArray();
+        $roles['groups'] = $groups->get()->toArray();
+        return $roles;
+    }
+
     public function districts()
     {
         return $this->morphedByMany('app\District', 'roleable')->withPivot('role_id');
