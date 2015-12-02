@@ -43,6 +43,7 @@ class UserTransformer extends TransformerAbstract
             'joined'     => (string) $user->created_at,
         ];
     }
+
     /**
      * Embed Friends.
      *
@@ -105,8 +106,8 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeRoles(User $user)
     {
-        $roles = $user->role;
-        return $this->collection($roles, new RoleTransformer());
+        $roles = array('data' => $user->roles($user));
+        return $this->collection($roles, new RolesTransformer());
     }
 
     /**
