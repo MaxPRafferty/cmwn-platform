@@ -190,7 +190,7 @@ class User extends Model implements
      */
     public function canUpdate(User $user)
     {
-         return ($this->id == $user->id || $user->isSiteAdmin() ||
+         return ($this->uuid == $user->uuid || $user->isSiteAdmin() ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'districts') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'organizations') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'groups'));
@@ -234,10 +234,31 @@ class User extends Model implements
         $groups = $this->groups->lists('id');
         $roles = $this->role->lists('id');
         $suggested = self::whereHas('groups', function ($query) use ($groups) {
-            $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3)); //@TODO: revisit this and come up with a better solution for getting user roles in array (3) - JT 11/12
+            $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
         })->where('id', '!=', $this->id)->get();
 
         return $suggested;
+    }
+
+    public function canUserUpdateObject(User $user, $entity, $uuid)
+    {
+
+        //check to see if district is admin
+        $districtSuperAdmin = self::whereHas('districts', function ($query) use ($user, $uuid) {
+            $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+        })->count();
+
+        //check the use if is admin in entity
+        $entitySuperAdmin = self::whereHas($entity, function ($query) use ($user, $uuid) {
+            $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+        })->count();
+
+        //if any of them is admin or super admin then can update the entity.
+        if ($this->isSiteAdmin() || $entitySuperAdmin || $districtSuperAdmin){
+            return true;
+        }
+        return false;
+
     }
 
     public function siblings()

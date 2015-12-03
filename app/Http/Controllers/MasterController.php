@@ -66,7 +66,7 @@ class MasterController extends Controller
 
 	protected function addFriend($friend_id){
         $user = User::find($this->myid);
-		if ($friend_id == $user->id){
+		if ($friend_id == $user->uuid){
 			return false;
 		}
 		$ids=array($friend_id);
@@ -82,7 +82,7 @@ class MasterController extends Controller
 	protected function deleteFriend($friend_id){
 		$fid = $friend_id;
 		$user = User::find($this->myid);
-		if ($friend_id == $user->id){
+		if ($friend_id == $user->uuid){
 			return false;
 		}
 		$ids=array($friend_id);
@@ -97,7 +97,7 @@ class MasterController extends Controller
 	protected function acceptFriend($friend_id){
 		$fid = $friend_id;
 		$user = User::find($this->myid);
-		if ($friend_id == $user->id){
+		if ($friend_id == $user->uuid){
 			return false;
 		}
 		$ids=array($friend_id);

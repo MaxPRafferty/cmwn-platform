@@ -3,7 +3,9 @@
 namespace app\Transformer;
 
 use app\District;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\TransformerAbstract;
+use app\User;
 
 class DistrictTransformer extends TransformerAbstract
 {
@@ -22,11 +24,13 @@ class DistrictTransformer extends TransformerAbstract
      */
     public function transform(District $district)
     {
+        $user = new User();
         return [
             'uuid' => $district->uuid,
             'system_id' => (int) $district->system_id,
             'code' => $district->code,
             'title' => $district->title,
+            'canupdate' => $user->canUserUpdateObject(Auth::user(), 'districts', $district->uuid),
             'description' => $district->description,
             'created_at' => (string) $district->created_at,
         ];
