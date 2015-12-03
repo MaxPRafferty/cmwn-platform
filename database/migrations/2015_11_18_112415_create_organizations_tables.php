@@ -27,7 +27,7 @@ class CreateOrganizationsTables extends Migration
             $table->increments('id');
             $table->string('district_id');
             $table->string('organization_id');
-            $table->foreign('district_id')->references('uuid')->on('districts');
+            //$table->foreign('district_id')->references('uuid')->on('districts');
             $table->timestamps();
         });
     }
