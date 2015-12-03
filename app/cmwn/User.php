@@ -248,6 +248,13 @@ class User extends Model implements
             $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
         })->count();
 
+        //check to see if organization is admin
+        $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($user, $uuid) {
+            $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+        })->count();
+
+        dd($organizationSuperAdmin);
+
         //check the use if is admin in entity
         $entitySuperAdmin = self::whereHas($entity, function ($query) use ($user, $uuid) {
             $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
