@@ -25,9 +25,9 @@ class CreateOrganizationsTables extends Migration
 
         Schema::create('district_organization', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('district_id')->unsigned();
-            $table->unsignedInteger('organization_id')->unsigned();
-            $table->foreign('district_id')->references('id')->on('districts');
+            $table->string('district_id');
+            $table->string('organization_id');
+            $table->foreign('district_id')->references('uuid')->on('districts');
             $table->timestamps();
         });
     }
