@@ -29,7 +29,7 @@ class GroupTransformer extends TransformerAbstract
             'uuid'            => $group->uuid,
             'organization_id' => $group->organization_id,
             'title'           => $group->title,
-            'canupdate'       => $user->canUserUpdateObject(Auth::user(), 'groups', $group->uuid),
+            'canupdate'       => $user->canUserUpdateObject('groups', $group->uuid),
             'description'     => $group->description,
             'created_at'      => (string) $group->created_at,
         ];
