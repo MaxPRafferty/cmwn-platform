@@ -11,7 +11,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use app\cmwn\Image;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 use app\cmwn\Traits\RoleTrait;
 
@@ -180,7 +180,7 @@ class User extends Model implements
      */
     public function isSiteAdmin()
     {
-        return ($this->type == 1);
+        return (Auth::user()->type == 1);
     }
 
     /**
@@ -242,19 +242,57 @@ class User extends Model implements
 
     public function canUserUpdateObject($entity, $uuid)
     {
-        /*
-         * 1) get district
-         * 2) get organizaton
-         * 3) get group
-         * 4) get user
-         */
+        //All default vars
+        $districtSuperAdmin = 0;
 
-       //organizations|organization-one
+        //Districts
+        if ($entity=='districts') {
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
+                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1, 2));
+            })->count();
 
-        $district = District::whereHas('organizations', function ($query) use ($uuid) {
-            $query->where('organization_id', 'organization-one');
-        })->get();
-        return  $district;
+            if ($this->isSiteAdmin() || $districtSuperAdmin){
+                return true;
+            }
+            return false;
+        }
+
+        //Organizations
+        if ($entity=='organizations') {
+            //Get District uuid for this organization
+            $districtID = District::whereHas('organizations', function ($query) use ($uuid) {
+                $query->where('organization_id', $uuid);
+            })->lists('uuid')->toArray();
+            $districtID = $districtID[0]; //district-one
+
+            //Check if user is a superadmin or admin in District
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid, $districtID) {
+                $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
+            })->count();
+
+            //check to see if organization is admin
+            $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($uuid) {
+                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+            })->count();
+
+            if ($this->isSiteAdmin() || $districtSuperAdmin || $organizationSuperAdmin ){
+                return true;
+            }
+            return false;
+        }
+
+        return $districtSuperAdmin;
+
+
+
+        //if any of them is admin or super admin then can update the entity.
+        if ($this->type || $entitySuperAdmin || $districtSuperAdmin){
+            return true;
+        }
+        return false;
+
+
+
     }
 
     public function siblings()
