@@ -244,6 +244,10 @@ class User extends Model implements
     {
         //All default vars
         $districtSuperAdmin = 0;
+        
+        if ($this->isSiteAdmin()){
+            return true;
+        }
 
         //Districts
         if ($entity=='districts') {
@@ -251,10 +255,7 @@ class User extends Model implements
                 $query->where('roleable_id', $uuid)->whereIn('role_id', array(1, 2));
             })->count();
 
-            if ($this->isSiteAdmin() || $districtSuperAdmin){
-                return true;
-            }
-            return false;
+            return ((bool) $districtSuperAdmin);
         }
 
         //Organizations
@@ -263,19 +264,22 @@ class User extends Model implements
             $districtID = District::whereHas('organizations', function ($query) use ($uuid) {
                 $query->where('organization_id', $uuid);
             })->lists('uuid')->toArray();
-            $districtID = $districtID[0]; //district-one
+            if (count($districtID) != 0) {
+                $districtID = $districtID[0]; //district-one
 
-            //Check if user is a superadmin or admin in District
-            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid, $districtID) {
-                $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
-            })->count();
+                //Check if user is a superadmin or admin in District
+                $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid, $districtID) {
+                    $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
+                })->count();
+            }
+            
 
             //check to see if organization is admin
             $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($uuid) {
                 $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
             })->count();
 
-            if ($this->isSiteAdmin() || $districtSuperAdmin || $organizationSuperAdmin ){
+            if ($districtSuperAdmin || $organizationSuperAdmin ){
                 return true;
             }
             return false;
@@ -306,7 +310,7 @@ class User extends Model implements
                 $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
             })->count();
 
-            if ($this->isSiteAdmin() || $groupSuperAdmin || $groupOrgAdmin){
+            if ($groupSuperAdmin || $groupOrgAdmin){
                 return true;
             }
             return false;
