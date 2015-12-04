@@ -242,27 +242,19 @@ class User extends Model implements
 
     public function canUserUpdateObject($entity, $uuid)
     {
-        //check to see if district is admin
-        $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
-            $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
-        })->count();
+        /*
+         * 1) get district
+         * 2) get organizaton
+         * 3) get group
+         * 4) get user
+         */
 
-        //check to see if organization is admin
-        $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($uuid) {
-            $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
-        })->count();
+       //organizations|organization-one
 
-        //check the use if is admin in entity
-        $entitySuperAdmin = self::whereHas($entity, function ($query) use ($uuid) {
-            $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
-        })->count();
-
-        //if any of them is admin or super admin then can update the entity.
-        if ($this->type || $entitySuperAdmin || $districtSuperAdmin){
-            return true;
-        }
-        return false;
-
+        $district = District::whereHas('organizations', function ($query) use ($uuid) {
+            $query->where('organization_id', 'organization-one');
+        })->get();
+        return  $district;
     }
 
     public function siblings()
