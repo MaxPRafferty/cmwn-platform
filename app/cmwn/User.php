@@ -281,18 +281,42 @@ class User extends Model implements
             return false;
         }
 
-        return $districtSuperAdmin;
+        //Organizations
+        if ($entity=='groups') {
+            //Check if user is superadmin or admin in organization of the group
+            $gdID = Group::where('uuid', $uuid)->lists('organization_id')->toArray();
+            $gdID = $gdID[0];
+
+
+            $districtID = District::whereHas('organizations', function ($query) use ($gdID) {
+                $query->where('organization_id', 'org-one');
+            })->lists('uuid')->toArray();
+
+            //District needs work
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
+                $query->where('roleable_id', 'district-one')->whereIn('role_id', array(1, 2));
+            })->count();
+
+            return $districtSuperAdmin;
 
 
 
-        //if any of them is admin or super admin then can update the entity.
-        if ($this->type || $entitySuperAdmin || $districtSuperAdmin){
-            return true;
+            $groupOrgAdmin = self::whereHas('organizations', function ($query) use ($gdID) {
+                $query->where('roleable_id', $gdID)->whereIn('role_id', array(1,2));
+            })->count();
+
+            //Check if user is superadmin or admin in the group
+            $groupSuperAdmin = self::whereHas('groups', function ($query) use ($uuid) {
+                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+            })->count();
+
+            if ($this->isSiteAdmin() || $groupSuperAdmin || $groupOrgAdmin){
+                return true;
+            }
+            return false;
         }
+
         return false;
-
-
-
     }
 
     public function siblings()
