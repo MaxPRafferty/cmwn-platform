@@ -297,10 +297,6 @@ class User extends Model implements
                 $query->where('roleable_id', 'district-one')->whereIn('role_id', array(1, 2));
             })->count();
 
-            return $districtSuperAdmin;
-
-
-
             $groupOrgAdmin = self::whereHas('organizations', function ($query) use ($gdID) {
                 $query->where('roleable_id', $gdID)->whereIn('role_id', array(1,2));
             })->count();
