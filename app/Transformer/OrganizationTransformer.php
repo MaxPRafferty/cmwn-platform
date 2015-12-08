@@ -4,6 +4,8 @@ namespace app\Transformer;
 
 use app\Organization;
 use League\Fractal\TransformerAbstract;
+use app\User;
+use Illuminate\Support\Facades\Auth;
 
 class OrganizationTransformer extends TransformerAbstract
 {
@@ -24,11 +26,13 @@ class OrganizationTransformer extends TransformerAbstract
      */
     public function transform(Organization $organization)
     {
+        $user = new User();
         return [
-            'id'            => (int) $organization->id,
+            'uuid'          => $organization->uuid,
             'code'          => $organization->code,
             'title'         => $organization->title,
             'description'   => $organization->description,
+            'canupdate'     => $user->canUserUpdateObject('organizations', $organization->uuid),
             'created_at'    => (string) $organization->created_at,
         ];
     }

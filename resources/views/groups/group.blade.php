@@ -33,7 +33,7 @@
 
 							@foreach($data->teachers as $user)
 								<tr>
-									<td><a href="/admin/user/{{$user->id}}/view">{{$user->name}}</a> </td>
+									<td><a href="/admin/user/{{$user->uuid}}/view">{{$user->name}}</a> </td>
 									<td>{{$user->uuid}}</td>
 								</tr>
 							@endforeach

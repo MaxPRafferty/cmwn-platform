@@ -21,7 +21,7 @@ class GameTransformer extends TransformerAbstract
     public function transform(Game $game)
     {
         return [
-            'id'              => (int) $game->id,
+            'uuid'              => $game->uuid,
             'title'           => $game->title,
             'description'     => $game->description,
             'created_at'      => (string) $game->created_at,

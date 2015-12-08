@@ -10,8 +10,11 @@ class CreateImagesTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('images');
+
         Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('uuid')->unique();
             $table->unsignedInteger('imageable_id')->unsigned();
             $table->string('imageable_type');
             $table->string('url');

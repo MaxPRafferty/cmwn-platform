@@ -10,13 +10,20 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('game_user');
+        Schema::dropIfExists('flip_user');
+        Schema::dropIfExists('friends');
+        Schema::dropIfExists('child_guardian');
+        Schema::dropIfExists('guardians');
+        Schema::dropIfExists('roleables');
         Schema::dropIfExists('users');
+        
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->unique();
             $table->string('student_id')->unique();
             $table->string('username')->unique();
-            $table->string('type')->default(0);
+            $table->integer('type')->default(0);
             $table->string('first_name');
             $table->string('middle_name');
             $table->string('last_name');

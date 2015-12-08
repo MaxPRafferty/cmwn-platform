@@ -4,6 +4,8 @@ namespace app\Transformer;
 
 use app\Group;
 use League\Fractal\TransformerAbstract;
+use app\User;
+use Illuminate\Support\Facades\Auth;
 
 class GroupTransformer extends TransformerAbstract
 {
@@ -22,10 +24,12 @@ class GroupTransformer extends TransformerAbstract
      */
     public function transform(Group $group)
     {
+        $user = new User();
         return [
-            'id'              => (int) $group->id,
+            'uuid'            => $group->uuid,
             'organization_id' => $group->organization_id,
             'title'           => $group->title,
+            'canupdate'       => $user->canUserUpdateObject('groups', $group->uuid),
             'description'     => $group->description,
             'created_at'      => (string) $group->created_at,
         ];

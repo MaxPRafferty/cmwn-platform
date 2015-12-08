@@ -12,8 +12,12 @@ class CreateGamesTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('game_flip');
+        Schema::dropIfExists('games');
+
         Schema::create('games', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('uuid')->unique();
             $table->string('title');
             $table->string('description');
             $table->string('image');

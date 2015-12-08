@@ -10,11 +10,14 @@ class CreateGroupsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('groups');
+
         Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('organization_id')->unsigned();
+            $table->string('uuid')->unique();
+            $table->string('organization_id');
             $table->string('title');
-            $table->unique(array('organization_id', 'title'));
+            $table->unique(array('organization_id', 'uuid'));
             $table->string('description');
             $table->timestamps();
             $table->softDeletes();

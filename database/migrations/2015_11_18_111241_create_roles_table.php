@@ -12,6 +12,9 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('roleables');
+        Schema::dropIfExists('roles');
+
         Schema::create('roles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
@@ -21,11 +24,12 @@ class CreateRolesTable extends Migration
 
         Schema::create('roleables', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id')->unsigned();
-            $table->unsignedInteger('roleable_id')->unsigned();
+            $table->string('user_id');
+            $table->string('roleable_id');
             $table->string('roleable_type');
             $table->unsignedInteger('role_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(array('user_id', 'roleable_id','roleable_type'));
+            //$table->foreign('user_id')->references('uuid')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -21,8 +21,10 @@ class UserTransformer extends TransformerAbstract
         'pendingfriends',
         'friendrequests',
         'organizations',
+        'districts',
         'games',
-        'flips'
+        'flips',
+        'images'
     ];
 
     /**
@@ -33,7 +35,6 @@ class UserTransformer extends TransformerAbstract
     public function transform(User $user)
     {
         return [
-            'id'         => (int) $user->id,
             'uuid'       => $user->uuid,
             'first_name' => $user->first_name,
             'last_name'  => $user->last_name,
@@ -43,6 +44,7 @@ class UserTransformer extends TransformerAbstract
             'joined'     => (string) $user->created_at,
         ];
     }
+
     /**
      * Embed Friends.
      *
@@ -105,8 +107,8 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeRoles(User $user)
     {
-        $roles = $user->role;
-        return $this->collection($roles, new RoleTransformer());
+        $roles = array('data' => $user->roles($user));
+        return $this->collection($roles, new RolesTransformer());
     }
 
     /**
@@ -132,6 +134,17 @@ class UserTransformer extends TransformerAbstract
     }
 
     /**
+     * Embed Districts.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeDistricts(User $user)
+    {
+        $districts = $user->districts;
+        return $this->collection($districts, new DistrictTransformer());
+    }
+
+    /**
      * Embed Organizations.
      *
      * @return League\Fractal\Resource\Collection
@@ -149,8 +162,8 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeImages(User $user)
     {
-        $image = $user->image;
-        return $this->item($image, new ImageTransformer());
+        $image = $user->images;
+        return $this->collection($image, new ImageTransformer());
     }
 
     /**

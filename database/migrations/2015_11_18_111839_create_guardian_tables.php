@@ -12,8 +12,13 @@ class CreateGuardianTables extends Migration
      */
     public function up()
     {
+
+        Schema::dropIfExists('child_guardian');
+        Schema::dropIfExists('guardians');
+
         Schema::create('guardians', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('uuid');
             $table->string('student_id');
             $table->string('first_name');
             $table->string('middle_name');

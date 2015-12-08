@@ -12,8 +12,12 @@ class CreateDistrictsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('district_organization');
+        Schema::dropIfExists('districts');
+
         Schema::create('districts', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('uuid')->unique();
             $table->integer('system_id');
             $table->string('code');
             $table->string('title');
