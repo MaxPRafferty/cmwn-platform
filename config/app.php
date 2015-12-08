@@ -27,7 +27,7 @@ return [
     */
 
 
-    'url' => 'http://api.cmwn.localhost',
+    'url' => 'http://api.changemyworldnow.com',
 
 
     /*
