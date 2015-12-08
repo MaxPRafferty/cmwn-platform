@@ -120,7 +120,7 @@ class BulkImporter
                 $user->gender = $data['sex'];
                 $user->birthdate = $data['birth_dt'];
                 $user->save();
-                $child_id = $user->id;
+                $child_id = $user->uuid;
 
                 $guardian = \DB::table('guardian_reference')
                     ->where('student_id', '=', $data['student_id'])
