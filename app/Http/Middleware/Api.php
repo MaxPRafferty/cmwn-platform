@@ -25,11 +25,14 @@ class Api
                 ->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization, X-Auth-Token, X-CSRF-TOKEN')
                 ->header('Access-Control-Max-Age', '28800');
         } else {
-            if (env('APP_ENV') == 'local') {
-                return $next($request);
-            } else {
-                return response('You are not supposed to be here!', 401);
-            }
+
+            return $next($request);
+
+            // if (env('APP_ENV') == 'local') {
+            //     return $next($request);
+            // } else {
+            //     return response('You are not supposed to be here!', 401);
+            // }
         }
     }
 
