@@ -39,7 +39,7 @@ class User extends Model implements
      * @var string
      */
 
-    protected $primaryKey = 'uuid';
+//    protected $primaryKey = 'uuid';
 
     /**
      * The attributes that are mass assignable.
