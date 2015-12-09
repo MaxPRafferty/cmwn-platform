@@ -8,7 +8,7 @@ global:
     - DB_USERNAME: 'MAP:DATABASE1_USER'
     - DB_PASSWORD: 'MAP:DATABASE1_PASS'
     - CACHE_DRIVER: file
-    - SESSION_DRIVER: redis
+    - SESSION_DRIVER: file
     - QUEUE_DRIVER: redis
     - MAIL_DRIVER: smtp
     - MAIL_HOST: mailtrap.io
