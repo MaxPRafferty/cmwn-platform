@@ -23,68 +23,47 @@ class SideBarItems
         }
     }
 
-	public function getAll()
-    {
-	    $tags['site_admin'] = array(
-			    'Members' => '/users/members',
-			    'Roles' => '/users/members',
-			    'Ditricts' => '/districts',
-			    'Organizations' => '/organizations',
-			    'Groups' => '/groups',
-			    'Upload CSV' => '/admin/importfiles',
-			    'Cloudinary Image' => '/admin/playground',
-	    );
 
-	    $tags['super_admin'] = array(
-		    'Members' => '/users/members',
-		    'Roles' => '/users/members',
-		    'Ditricts' => '/districts',
-		    'Organizations' => '/organizations',
-		    'Groups' => '/groups',
-	    );
+	public function getAll(){
+        $tags = array();
+        if (!Auth::check()){
+            $tags[ "home" ] = "/";
+            $tags[ "login" ] = "/auth/login";
+            $tags[ "register" ] = "/auth/register";
+            $tags = array(
+                'Home' => '/',
+                'Login' => '/auth/login',
+                'Register' => '/auth/register'
+            );
+            return $tags;
+        }
 
-	    $tags['admin'] = array(
-		    'Members' => '/users/members',
-		    'Roles' => '/users/members',
-		    'Ditricts' => '/districts',
-		    'Organizations' => '/organizations',
-		    'Groups' => '/groups',
-		    'Upload CSV' => '/admin/importfiles',
-		    'Cloudinary Image' => '/admin/playground',
-        );
+		$user = Auth::user();
+        if ($user->type==1){
+            $tags = array(
+                'Members' => '/users/members',
+                'Roles' => '/users/members',
+                'Ditricts' => '/districts',
+                'Organizations' => '/organizations',
+                'Groups' => '/groups',
+                'Games' => '/games',
+                'Edit Profile' => '/users/'.$user->uuid,
+                'Upload CSV' => '/admin/importfiles',
+                'Cloudinary Image' => '/admin/playground',
+            );
+            return $tags;
+        }
 
-	    $tags['principal'] = array(
-		    'Principal' => '/users/principal',
-		    'Organizations' => '/organizations',
-		    'Groups' => '/groups',
-	    );
+		if ($user->districts->count()){
+            $tags = array_add($tags, 'Districts', '/districts');
+        }
 
-	    $tags['teacher'] = array(
-		    'Teacher' => '/users/teachers',
-	    );
-
-	    $tags['guardian'] = array(
-		    'guardian' => '/guardian',
-	    );
-
-	    $tags['student'] = array(
-		    'Student' => '/student',
-	    );
-
-		$combinedTags = array();
-
-	    if ($this->role) {
-		    foreach ($this->role as $role) {
-			    foreach ($tags[ $role ] as $title => $link) {
-				    $combinedTags[ $title ] = $link;
-			    }
-		    }
-	    }else{
-		    $combinedTags[ "home" ] = "/";
-		    $combinedTags[ "login" ] = "/auth/login";
-		    $combinedTags[ "register" ] = "/auth/register";
-	    }
-	    return $combinedTags;
-	}
-
+        if ($user->organizations->count()){
+            $tags = array_add($tags, 'Organizations', '/organizations');
+        }
+        if ($user->groups->count()){
+            $tags = array_add($tags, 'Groups', '/groups');
+        }
+        return $tags;
+    }
 }
