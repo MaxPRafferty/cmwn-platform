@@ -40,6 +40,7 @@ class BulkImporter
                                 $output = self::updateTeachers($row);
                             }
                         }
+                        echo "Teachers ended";
                         dd($output);
                     }
                     //Saving the Students into users
@@ -165,16 +166,33 @@ class BulkImporter
 
     protected static function updateTeachers($data)
     {
+
+        $techers = User::firstOrNew(['student_id' => 1, 'username'=>'jontoshmatovusername']);
+        $techers->student_id = 'TOSHMATOV44';
+        $techers->username = 'username4';
+        $techers->first_name = 'first';
+        $techers->last_name = 'changed';
+        $techers->gender = 'M';
+        $saved = $techers->save();
+        dd($saved);
+
         foreach ($data as $title => $val) {
+
+            return false;
+
+
             $uuid = $data['person_type'].' '.$data['first_name'].' '.$data['last_name'].' '.rand(0,10000);
+
             $uuid = str_slug($uuid);
-            $techers = User::firstOrCreate(['student_id' => $uuid],['username' => $uuid],['uuid' => $uuid]);
+            $techers = User::firstOrNew(['student_id' => $uuid],['username' => $uuid]);
             $techers->student_id = $uuid;
+            $techers->username = 'username'.$uuid;
             $techers->first_name = $data['first_name'];
             $techers->last_name = $data['last_name'];
             $techers->gender = $data['gender'];
             $saved = $techers->save();
             $teacher_id = $techers->uuid;
+
             $role_id = 0;
             switch ($data['person_type']) {
                 case 'Principal':
@@ -184,7 +202,7 @@ class BulkImporter
                     $role_id = 2;
                     break;
                 case 'Teacher':
-                    $role_id = 3;
+                    $role_id = 2;
                     break;
                 default:
                     $role_id = 3;
