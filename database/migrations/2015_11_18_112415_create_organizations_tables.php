@@ -31,6 +31,7 @@ class CreateOrganizationsTables extends Migration
             //$table->foreign('district_id')->references('uuid')->on('districts'); //@TODO: add the user table first before generating this table
             $table->unique(array('organization_id'));
             $table->unique(array('district_id', 'organization_id'));
+
             $table->timestamps();
         });
     }
