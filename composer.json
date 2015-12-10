@@ -8,7 +8,9 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
         "league/fractal": "^0.13.0",
-        "ramsey/uuid": "^3.0"
+        "videlalvaro/php-amqplib": "2.5.*",
+        "ramsey/uuid": "^3.0",
+        "predis/predis": "~1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -17,7 +19,6 @@
         "phpspec/phpspec": "~2.1",
 	    "laravelcollective/html": "~5.0",
 	    "guzzlehttp/guzzle": "~5.0",
-        "predis/predis": "~1.1@dev",
         "cloudinary/cloudinary_php": "dev-master",
         "cartalyst/sentry": "dev-feature/laravel-5",
         "maatwebsite/excel": "~2.0"
