@@ -8,8 +8,10 @@ global:
     - DB_USERNAME: 'MAP:DATABASE1_USER'
     - DB_PASSWORD: 'MAP:DATABASE1_PASS'
     - CACHE_DRIVER: file
-    - SESSION_DRIVER: redis
-    - QUEUE_DRIVER: redis
+    - SESSION_DRIVER: file
+    - QUEUE_DRIVER: file
+#    - SESSION_DRIVER: redis
+#    - QUEUE_DRIVER: redis
     - MAIL_DRIVER: smtp
     - MAIL_HOST: mailtrap.io
     - MAIL_PORT: 2525
@@ -47,6 +49,10 @@ web1:
     - storage/framework
     - storage/app
   nonpersistent_writable_dirs:
+    - storage/framework
+    - storage/framework/sessions
+    - storage/framework/cache
+    - storage/framework/views
     - bootstrap/cache
     - storage/cache
   log_watch:
