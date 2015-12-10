@@ -21,6 +21,7 @@ class UserTransformer extends TransformerAbstract
         'pendingfriends',
         'friendrequests',
         'organizations',
+        'districts',
         'games',
         'flips',
         'images'
@@ -130,6 +131,17 @@ class UserTransformer extends TransformerAbstract
     {
         $children = $user->children;
         return $this->collection($children, new UserTransformer());
+    }
+
+    /**
+     * Embed Districts.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeDistricts(User $user)
+    {
+        $districts = $user->districts;
+        return $this->collection($districts, new DistrictTransformer());
     }
 
     /**

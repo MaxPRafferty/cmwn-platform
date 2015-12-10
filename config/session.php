@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('database', 'file'),
+    'driver' => env('SESSION_DRIVER') ? env('SESSION_DRIVER') : 'redis',
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'cookie' => 'laravel_session',
+    'cookie' => 'cmwn_session',
 
     /*
     |--------------------------------------------------------------------------

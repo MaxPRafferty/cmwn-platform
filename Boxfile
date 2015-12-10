@@ -8,6 +8,8 @@ global:
     - DB_USERNAME: 'MAP:DATABASE1_USER'
     - DB_PASSWORD: 'MAP:DATABASE1_PASS'
     - CACHE_DRIVER: file
+#   - SESSION_DRIVER: file
+#   - QUEUE_DRIVER: file
     - SESSION_DRIVER: redis
     - QUEUE_DRIVER: redis
     - MAIL_DRIVER: smtp
@@ -43,6 +45,8 @@ web1:
     - xcache
     - redis
   httpd_document_root: public
+  php_session_save_handler: redis
+  php_session_save_path: "tcp://${CACHE1_HOST}:${CACHE1_PORT}"
   network_dirs:
     - storage/framework
     - storage/app
@@ -60,8 +64,8 @@ database1:
   type: mysql
   version: 5.6
 
-# cache1:
-#  type: redis
+cache1:
+  type: redis
 
 storage1:
   type: nfs

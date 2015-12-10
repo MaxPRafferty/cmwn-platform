@@ -52,43 +52,43 @@ class SideBarItems
         }
 
         //Districts Menu
-        $districtSuperAdmins = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->uuid)->wherePivot('role_id', 1)->orWherePivot('role_id', 2);
-        $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->uuid)->wherePivot('role_id', 3);
-        if ($districtSuperAdmins->count()){
-            $tags = array_add($tags, 'Districts', '/districts');
-        }
-
+        $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->uuid);
         if ($districtMembers->count()){
-         foreach($districtMembers->get() as $district){
-            $tags[$district->pivot->roleable_id] = '/districts/'.$district->pivot->roleable_id;
+            if($districtMembers->count()>1) {
+                $tags = array_add($tags, 'Districts', '/districts');
+            }
+            foreach($districtMembers->get() as $district){
+            $tags[$district->title] = '/districts/'.$district->pivot->roleable_id;
          }
         }
 
         //Organizations menu
-        $organizationSuperAdmins = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->uuid)->wherePivot('role_id', 1)->orWherePivot('role_id', 2);
-        $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->uuid)->wherePivot('role_id', 3);
-        if ($organizationSuperAdmins->count()){
-            $tags = array_add($tags, 'Organizations', '/organizations');
-        }
+        $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->uuid);
         if ($organizationMembers->count()){
+            if($organizationMembers->count()>1) {
+                $tags = array_add($tags, 'Organizations', '/organizations');
+            }
             foreach($organizationMembers->get() as $organization){
-                $tags[$organization->pivot->roleable_id] = '/organizations/'.$organization->pivot->roleable_id;
+                $tags[$organization->title] = '/organizations/'.$organization->pivot->roleable_id;
             }
         }
 
         //Groups menu
-        $groupSuperAdmins = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->uuid)->wherePivot('role_id', 1)->orWherePivot('role_id', 2);
-        $groupMembers = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->uuid)->wherePivot('role_id', 3);
-        if ($groupSuperAdmins->count()){
-            $tags = array_add($tags, 'Groups', '/groups');
-        }
+        $groupMembers = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->uuid);
+
         if ($groupMembers->count()){
-            foreach($groupMembers->get() as $group){
-                $tags[$group->pivot->roleable_id] = '/groups/'.$group->pivot->roleable_id;
+            if($groupMembers->count()>1) {
+                $tags = array_add($tags, 'Groups', '/groups');
             }
+            foreach($groupMembers->get() as $group){
+                $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
+            }
+
             $tags['Friends'] = '/friends';
             $tags['Suggested Friends'] = '/suggestedfriends';
         }
+
+
 
         $tags['Games'] = '/games';
         $tags['Edit Profile'] = '/users/'.$user->uuid;

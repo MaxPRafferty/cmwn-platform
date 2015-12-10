@@ -15,9 +15,9 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('uuid')->unique();
-            $table->unsignedInteger('organization_id')->unsigned();
+            $table->string('organization_id');
             $table->string('title');
-            $table->unique(array('organization_id', 'title'));
+            $table->unique(array('organization_id', 'uuid'));
             $table->string('description');
             $table->timestamps();
             $table->softDeletes();

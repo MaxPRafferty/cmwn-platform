@@ -11,7 +11,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use app\cmwn\Image;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 use app\cmwn\Traits\RoleTrait;
 
@@ -185,7 +185,7 @@ class User extends Model implements
      */
     public function isSiteAdmin()
     {
-        return ($this->type == 1);
+        return (Auth::user()->type == 1);
     }
 
     /**
@@ -195,7 +195,7 @@ class User extends Model implements
      */
     public function canUpdate(User $user)
     {
-         return ($this->id == $user->id || $user->isSiteAdmin() ||
+         return ($this->uuid == $user->uuid || $user->isSiteAdmin() ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'districts') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'organizations') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'groups'));
@@ -239,10 +239,89 @@ class User extends Model implements
         $groups = $this->groups->lists('id');
         $roles = $this->role->lists('id');
         $suggested = self::whereHas('groups', function ($query) use ($groups) {
-            $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3)); //@TODO: revisit this and come up with a better solution for getting user roles in array (3) - JT 11/12
+            $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
         })->where('id', '!=', $this->id)->get();
 
         return $suggested;
+    }
+
+    public function canUserUpdateObject($entity, $uuid)
+    {
+        //All default vars
+        $districtSuperAdmin = 0;
+        
+        if ($this->isSiteAdmin()){
+            return true;
+        }
+
+        //Districts
+        if ($entity=='districts') {
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
+                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1, 2));
+            })->count();
+
+            return ((bool) $districtSuperAdmin);
+        }
+
+        //Organizations
+        if ($entity=='organizations') {
+            //Get District uuid for this organization
+            $districtID = District::whereHas('organizations', function ($query) use ($uuid) {
+                $query->where('organization_id', $uuid);
+            })->lists('uuid')->toArray();
+            if (count($districtID) != 0) {
+                $districtID = $districtID[0]; //district-one
+
+                //Check if user is a superadmin or admin in District
+                $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid, $districtID) {
+                    $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
+                })->count();
+            }
+            
+
+            //check to see if organization is admin
+            $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($uuid) {
+                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+            })->count();
+
+            if ($districtSuperAdmin || $organizationSuperAdmin ){
+                return true;
+            }
+            return false;
+        }
+
+        //Organizations
+        if ($entity=='groups') {
+            //Check if user is superadmin or admin in organization of the group
+            $gdID = Group::where('uuid', $uuid)->lists('organization_id')->toArray();
+            $gdID = $gdID[0];
+
+
+            $districtID = District::whereHas('organizations', function ($query) use ($gdID) {
+                $query->where('organization_id', 'org-one');
+            })->lists('uuid')->toArray();
+
+            //District needs work
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
+                $query->where('roleable_id', 'district-one')->whereIn('role_id', array(1, 2));
+            })->count();
+
+            $groupOrgAdmin = self::whereHas('organizations', function ($query) use ($gdID) {
+                $query->where('roleable_id', $gdID)->whereIn('role_id', array(1,2));
+            })->count();
+
+            //Check if user is superadmin or admin in the group
+            $groupSuperAdmin = self::whereHas('groups', function ($query) use ($uuid) {
+                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+            })->count();
+
+            if ($groupSuperAdmin || $groupOrgAdmin){
+                return true;
+            }
+            return false;
+        }
+
+        return false;
     }
 
     public function siblings()

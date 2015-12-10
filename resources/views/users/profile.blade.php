@@ -17,26 +17,26 @@
 
 
 			<img src="http://placehold.it/50x50" alt="50x50" class="img-thumbnail">
-			<a href="#"><h4>ID: {{ $user->id }} {{$user->name}}</h4></a>
+			<a href="#"><h4>ID: {{ $user->uuid }} {{$user->name}}</h4></a>
 
 <table>
 				<tbody>
 
 					<tr>
 						<td>
-							@if($user->id!=Auth::user()->id)
+							@if($user->id!=Auth::user()->uuid)
 								@if(!$isFriend)
 									@if($isFriendRequested)
 										Friend request sent |
 									@else
-										<a href="/admin/users/friendship/{{ $user->id }}/add">Add Friend</a> |
+										<a href="/admin/users/friendship/{{ $user->uuid }}/add">Add Friend</a> |
 									@endif
 								@endif
 
-								<a href="/admin/users/friendship/{{ $user->id }}/delete">Delete Friend</a>  |
-								<a href="/admin/users/friendship/{{ $user->id }}/block">Block Friend</a>  |
-								<a href="/admin/users/friendship/{{ $user->id }}/message">Send Message</a>   |
-								<a href="/admin/users/friendship/{{ $user->id }}/poke">Poke</a> </td>
+								<a href="/admin/users/friendship/{{ $user->uuid }}/delete">Delete Friend</a>  |
+								<a href="/admin/users/friendship/{{ $user->uuid }}/block">Block Friend</a>  |
+								<a href="/admin/users/friendship/{{ $user->uuid }}/message">Send Message</a>   |
+								<a href="/admin/users/friendship/{{ $user->uuid }}/poke">Poke</a> </td>
 						@endif
 					</tr>
 
