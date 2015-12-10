@@ -48,11 +48,8 @@ web1:
   php_session_save_handler: redis
   php_session_save_path: "tcp://${CACHE1_HOST}:${CACHE1_PORT}"
   network_dirs:
-    storage1:
-        - storage/framework/sessions
-        - storage/framework/cache
-        - storage/framework/views
-        - storage/app
+    - storage/framework
+    - storage/app
   nonpersistent_writable_dirs:
     - bootstrap/cache
     - storage/cache
