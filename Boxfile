@@ -64,7 +64,7 @@ database1:
   type: mysql
   version: 5.6
 
- cache1:
+cache1:
   type: redis
 
 storage1:
