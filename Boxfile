@@ -46,13 +46,12 @@ web1:
     - redis
   httpd_document_root: public
   network_dirs:
-    - storage/framework
-    - storage/app
+    storage1:
+        - storage/framework/sessions
+        - storage/framework/cache
+        - storage/framework/views
+        - storage/app
   nonpersistent_writable_dirs:
-    - storage/framework
-    - storage/framework/sessions
-    - storage/framework/cache
-    - storage/framework/views
     - bootstrap/cache
     - storage/cache
   log_watch:
