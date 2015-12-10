@@ -23,9 +23,11 @@
 				{{--*/  $org = array() /*--}}
 				@foreach($organizations as $organization)
 					@for($i=0; $i<$organization->organizations->count(); $i++)
-					{{--*/  $org[$organization->organizations[$i]->id] = $organization->organizations[$i]->title /*--}}
+					{{--*/  $org[$organization->organizations[$i]->uuid] = $organization->organizations[$i]->title /*--}}
 					@endfor
 				@endforeach
+
+
 
 				{{--*/  $dist = array() /*--}}
 				{{--*/  $dist[0] = 'Select District' /*--}}
@@ -46,6 +48,7 @@
 					<td>Select the orgnization:  </td>
 					<td>
 						<div class="input-group" style="margin-bottom: 25px">
+							{{--*/  $org = array('org-one') /*--}}
 							{!! Form::select('organizations', $org)!!}
 						</div>
 					</td>

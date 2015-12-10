@@ -29,24 +29,30 @@ class BulkImporter
                     //Saving the Classes into groups
                     if (self::$sheetname[$sheet] == 'Classes') {
                         foreach ($data[$sheet] as $row) {
-                            self::updateClasses($row);
+                            //self::updateClasses($row);
                         }
                     }
                     //Saving the teachers into users
                     if (self::$sheetname[$sheet] == 'Teachers') {
                         foreach ($data[$sheet] as $row) {
-                            self::updateTeachers($row);
+
+                            if (!empty($row['person_type'])) {
+                                $output = self::updateTeachers($row);
+                            }
                         }
+                        dd($output);
                     }
                     //Saving the Students into users
                     if (self::$sheetname[$sheet] == 'Students') {
                         foreach ($data[$sheet] as $row) {
-                            self::updateDB($row);
+                            //self::updateDB($row);
                         }
                     }
                 }
 
             });
+
+            dd("exiting");
         } catch (\Exception $e) {
             dd('Houston, we have a problem: '.$e->getMessage());
         }
@@ -92,7 +98,7 @@ class BulkImporter
                 //Adding Organizations
                 $organization = Organization::where(['code' => $DDBNNN[1]])
                                 ->with(array('districts' => function ($query) use ($district) {
-                                                                $query->where('district_id', $district->id);
+                                                                $query->where('district_id', $district->uuid);
                                                             }))->first();
 
                 if (is_null($organization)) {
@@ -103,12 +109,12 @@ class BulkImporter
                 $organization->title = $DDBNNN[1];
                 $organization->save();
 
-                if (!$organization->districts->contains($district->id)) {
-                    $organization->districts()->attach($district->id);
+                if (!$organization->districts->contains($district->uuid)) {
+                    $organization->districts()->attach($district->uuid);
                 }
 
                 //Adding groups
-                $group = Group::firstOrCreate(['organization_id' => $organization->id]);
+                $group = Group::firstOrCreate(['organization_id' => $organization->uuid]);
                 $group->title = $data['off_cls'];
                 $group->save();
 
@@ -128,8 +134,8 @@ class BulkImporter
                     ->where('last_name', '=', $data['adult_last_1'])
                     ->get();
 
-                if (isset($guardian[0]->id)) {
-                    $output = \DB::table('guardian_reference')->where('id', $guardian[0]->id)
+                if (isset($guardian[0]->uuid)) {
+                    $output = \DB::table('guardian_reference')->where('id', $guardian[0]->uuid)
                        ->update(array(
                            'student_id' => $data['student_id'],
                            'first_name' => $data['adult_first_1'],
@@ -160,15 +166,15 @@ class BulkImporter
     protected static function updateTeachers($data)
     {
         foreach ($data as $title => $val) {
-            $id = $data['person_type'].' '.$data['first_name'].' '.$data['last_name'];
-            $id = str_slug($id);
-            $techers = User::firstOrCreate(['student_id' => $id]);
-            $techers->student_id = $id;
+            $uuid = $data['person_type'].' '.$data['first_name'].' '.$data['last_name'].' '.rand(0,10000);
+            $uuid = str_slug($uuid);
+            $techers = User::firstOrCreate(['student_id' => $uuid],['username' => $uuid],['uuid' => $uuid]);
+            $techers->student_id = $uuid;
             $techers->first_name = $data['first_name'];
             $techers->last_name = $data['last_name'];
             $techers->gender = $data['gender'];
             $saved = $techers->save();
-            $teacher_id = $techers->id;
+            $teacher_id = $techers->uuid;
             $role_id = 0;
             switch ($data['person_type']) {
                 case 'Principal':
