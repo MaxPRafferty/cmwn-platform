@@ -54,6 +54,7 @@ web1:
   before_deploy:
     # - 'mkdir storage/framework/views'
     # - 'mkdir storage/framework/sessions'
+    - 'mkdir -m 770 cookies'
     - 'php artisan migrate --no-interaction'
 
 database1:
