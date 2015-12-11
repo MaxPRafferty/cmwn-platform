@@ -91,7 +91,7 @@ class SideBarItems
 
 
         $tags['Games'] = '/games';
-        $tags['Edit Profile'] = '/users/'.$user->uuid;
+        $tags['Edit Profile'] = '/profile/edit';
         $tags['Logout'] = '/auth/logout';
 
 
