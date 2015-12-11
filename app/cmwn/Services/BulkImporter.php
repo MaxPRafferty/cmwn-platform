@@ -166,54 +166,39 @@ class BulkImporter
 
     protected static function updateTeachers($data)
     {
-
-        $techers = User::firstOrNew(['student_id' => 1, 'username'=>'jontoshmatovusername']);
-        $techers->student_id = 'TOSHMATOV44';
-        $techers->username = 'username4';
-        $techers->first_name = 'first';
-        $techers->last_name = 'changed';
-        $techers->gender = 'M';
-        $saved = $techers->save();
-        dd($saved);
-
         foreach ($data as $title => $val) {
+            $student_id = $data['person_type'].' '.$data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
+            $student_id = str_slug($student_id);
 
-            return false;
-
-
-            $uuid = $data['person_type'].' '.$data['first_name'].' '.$data['last_name'].' '.rand(0,10000);
-
-            $uuid = str_slug($uuid);
-            $techers = User::firstOrNew(['student_id' => $uuid],['username' => $uuid]);
-            $techers->student_id = $uuid;
-            $techers->username = 'username'.$uuid;
-            $techers->first_name = $data['first_name'];
-            $techers->last_name = $data['last_name'];
-            $techers->gender = $data['gender'];
-            $saved = $techers->save();
-            $teacher_id = $techers->uuid;
-
-            $role_id = 0;
-            switch ($data['person_type']) {
-                case 'Principal':
-                    $role_id = 1;
-                    break;
-                case 'Assistant Principal':
-                    $role_id = 2;
-                    break;
-                case 'Teacher':
-                    $role_id = 2;
-                    break;
-                default:
-                    $role_id = 3;
-                    break;
+            $teachers = User::where('student_id','staff-'.$student_id)->where('username',$student_id.'@changemyworld.com');
+            if (!$teachers->count()){
+                $teachers = new User();
+                $teachers->student_id = 'staff-'.$student_id;
+                $teachers->username = $student_id.'@changemyworld.com';
+                $teachers->first_name = $data['first_name'];
+                $teachers->middle_name = $data['middle_name'];
+                $teachers->last_name = $data['last_name'];
+                $teachers->gender = $data['gender'];
+                $teachers->email = $data['email_address'];
+                $output = $teachers->save();
+                $LastInsertId[] = $teachers->first()->id;
+            }else {
+                $output = $teachers->update([
+                    'student_id' => 'staff-'.$student_id,
+                    'username' => $student_id.'@changemyworld.com',
+                    'first_name' => $data['first_name'],
+                    'middle_name' => $data['middle_name'],
+                    'last_name' => $data['last_name'],
+                    'email' => $data['email_address'],
+                    'gender' => $data['gender']
+                ]);
+                $LastInsertId[] = $teachers->first()->id;
             }
 
-            $techers->assignRoles()->attach(array(
-                $teacher_id => $role_id,
-            ));
-        }
+            $teachers->groups()->attach(array(1,2,3,4,5,6,7,8,9));
 
+            return true;
+        }
         return true;
     }
 
