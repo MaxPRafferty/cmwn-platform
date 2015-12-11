@@ -166,13 +166,17 @@ class BulkImporter
 
     protected static function updateTeachers($data)
     {
+        $role_id = 3;
+
+        //adding teachers to users table
         foreach ($data as $title => $val) {
             $student_id = $data['person_type'].' '.$data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
             $student_id = str_slug($student_id);
-
             $teachers = User::where('student_id','staff-'.$student_id)->where('username',$student_id.'@changemyworld.com');
+            //Adding a new teacher
             if (!$teachers->count()){
                 $teachers = new User();
+                $teachers->uuid = rand(1,100);
                 $teachers->student_id = 'staff-'.$student_id;
                 $teachers->username = $student_id.'@changemyworld.com';
                 $teachers->first_name = $data['first_name'];
@@ -181,8 +185,9 @@ class BulkImporter
                 $teachers->gender = $data['gender'];
                 $teachers->email = $data['email_address'];
                 $output = $teachers->save();
-                $LastInsertId[] = $teachers->first()->id;
+                $uuid = User::where('id',$teachers->uuid)->lists('uuid')->toArray();
             }else {
+                //updating the teacher
                 $output = $teachers->update([
                     'student_id' => 'staff-'.$student_id,
                     'username' => $student_id.'@changemyworld.com',
@@ -192,11 +197,23 @@ class BulkImporter
                     'email' => $data['email_address'],
                     'gender' => $data['gender']
                 ]);
-                $LastInsertId[] = $teachers->first()->id;
+                $uuid = $teachers->uuid->toArray();
+            }
+
+            //Assigning the teacher to class
+            if ($data['person_type']=='Principal'){
+                $role_id = 1;
+            }
+            if ($data['person_type']=='Assistant Principal'){
+                $role_id = 2;
+            }
+
+            if ($data['person_type']=='Teacher'){
+                $role_id = 2;
             }
 
             $teachers->groups()->attach(array(
-                $teachers->first()->id=>array('roleable_id'=>$data['class_number'], 'role_id'=>2)
+                $uuid[0]=>array('user_id'=>$uuid[0],'roleable_id'=>$data['class_number'], 'role_id'=>$role_id)
             ));
 
             return true;
