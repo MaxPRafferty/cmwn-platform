@@ -84,6 +84,83 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('business'),
                 'student_id' => 'arron.kallenberg@gmail.com',
             ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Cathy',
+                'last_name' => 'Sinoradzki',
+                'type' => 0,
+                'username' => 'c.sinoradzki',
+                'gender' => 'female',
+                'email' => 'cathy@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'cathy@ginasink.com',
+            ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Emily',
+                'last_name' => 'McLean',
+                'type' => 0,
+                'username' => 'e.mclean',
+                'gender' => 'female',
+                'email' => 'emily@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'emily@ginasink.com',
+            ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Gina',
+                'last_name' => 'Otto',
+                'type' => 0,
+                'username' => 'g.otto',
+                'gender' => 'female',
+                'email' => 'gina@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'gina@ginasink.com',
+            ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Janette',
+                'last_name' => 'Barber',
+                'type' => 0,
+                'username' => 'j.barber',
+                'gender' => 'female',
+                'email' => 'janette@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'janette@ginasink.com',
+            ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Joni',
+                'last_name' => 'Albers',
+                'type' => 0,
+                'username' => 'j.albers',
+                'gender' => 'female',
+                'email' => 'joni@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'joni@ginasink.com',
+            ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Max',
+                'last_name' => 'Rafferty',
+                'type' => 0,
+                'username' => 'tonyhamburger@hashtagxtreme92',
+                'gender' => 'male',
+                'email' => 'max@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'max@ginasink.com',
+            ));
+        
+        $users[] = User::create(array(
+                'first_name' => 'Micah',
+                'last_name' => 'Rolon',
+                'type' => 0,
+                'username' => 'm.rolon',
+                'gender' => 'male',
+                'email' => 'micah@ginasink.com',
+                'password' => Hash::make('Cmwn2015'),
+                'student_id' => 'micah@ginasink.com',
+            ));
 
         $this->command->info('Creating superintendents!');
         $superintendents = $this->createUsers(20, $faker);
