@@ -195,7 +195,9 @@ class BulkImporter
                 $LastInsertId[] = $teachers->first()->id;
             }
 
-            $teachers->groups()->attach(array(1,2,3,4,5,6,7,8,9));
+            $teachers->groups()->attach(array(
+                $teachers->first()->id=>array('roleable_id'=>$data['class_number'], 'role_id'=>2)
+            ));
 
             return true;
         }
