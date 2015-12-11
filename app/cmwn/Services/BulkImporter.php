@@ -187,7 +187,8 @@ class BulkImporter
                 $output = $teachers->save();
                 $uuid = User::where('id',$teachers->uuid)->lists('uuid')->toArray();
             }else {
-                //updating the teacher
+                echo "updating the existing teachers";
+                $teachers2 = User::where('uuid','1a75e928-a054-11e5-85f6-08002777c33d');
                 $output = $teachers->update([
                     'student_id' => 'staff-'.$student_id,
                     'username' => $student_id.'@changemyworld.com',
@@ -197,7 +198,7 @@ class BulkImporter
                     'email' => $data['email_address'],
                     'gender' => $data['gender']
                 ]);
-                $uuid = $teachers->uuid->toArray();
+                dd($output);
             }
 
             //Assigning the teacher to class
