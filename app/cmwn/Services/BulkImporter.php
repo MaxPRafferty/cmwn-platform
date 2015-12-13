@@ -176,7 +176,6 @@ class BulkImporter
             //Adding a new teacher
             if (!$teachers->count()){
                 $teachers = new User();
-                $teachers->uuid = rand(1,100);
                 $teachers->student_id = 'staff-'.$student_id;
                 $teachers->username = $student_id.'@changemyworld.com';
                 $teachers->first_name = $data['first_name'];
@@ -186,21 +185,22 @@ class BulkImporter
                 $teachers->email = $data['email_address'];
                 $output = $teachers->save();
                 $uuid = User::where('id',$teachers->uuid)->lists('uuid')->toArray();
+                $uuid = $uuid[0];
             }else {
-                echo "updating the existing teachers";
                 $teachers = User::where('student_id','staff-'.$student_id)->where('username',$student_id.'@changemyworld.com')->first();
                 $output = $teachers->update([
                     'student_id' => 'staff-'.$student_id,
                     'username' => $student_id.'@changemyworld.com',
                     'first_name' => $data['first_name'],
-                    'middle_name' => $data['middle_name'],
-                    'last_name' => $data['last_name'],
+                    'middle_name' => $data['middle_name'].'-updated2',
+                    'last_name' => $data['last_name'].'-updated2',
                     'email' => $data['email_address'],
                     'gender' => $data['gender']
                 ]);
                 $teachers->save();
                 $uuid = $teachers->uuid;
             }
+
 
             //Assigning the teacher to class
             if ($data['person_type']=='Principal'){
@@ -214,8 +214,8 @@ class BulkImporter
                 $role_id = 2;
             }
 
-            $teachers->groups()->attach(array(
-                $uuid[0]=>array('user_id'=>$uuid[0],'roleable_id'=>$data['class_number'], 'role_id'=>$role_id)
+            $teachers->groups()->sync(array(
+                $uuid=>array('user_id'=>$uuid,'roleable_id'=>$data['class_number'], 'role_id'=>$role_id)
             ));
 
             return true;
