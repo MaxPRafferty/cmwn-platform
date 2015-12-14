@@ -92,7 +92,7 @@ class SideBarItems
             
 
             $tags['Friends'] = '/friends';
-            $tags['Suggested Friends'] = '/suggestedfriends';
+            $tags['Suggested Friends'] = '/friends/suggested';
         }
 
 
