@@ -44,7 +44,7 @@ class SideBarItems
                 'Organizations' => '/organizations',
                 'Groups' => '/groups',
                 'Games' => '/games',
-                'Edit Profile' => '/users/'.$user->uuid,
+                'Edit Profile' => '/profile/edit',
                 'Upload CSV' => '/admin/importfiles',
                 'Cloudinary Image' => '/admin/playground',
             );
