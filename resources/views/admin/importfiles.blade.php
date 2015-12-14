@@ -32,7 +32,7 @@
 				{{--*/  $dist = array() /*--}}
 				{{--*/  $dist[0] = 'Select District' /*--}}
 				@foreach($districts as $district)
-					{{--*/  $dist[$district->id] = $district->title /*--}}
+					{{--*/  $dist[$district->uuid] = $district->title /*--}}
 				@endforeach
 				<tr>
 					<td>Select the district:  </td>
@@ -42,14 +42,19 @@
 						</div>
 					</td>
 				</tr>
+<?php
+					var_dump($org);
+				?>
 
 				@if($org)
 				<tr>
 					<td>Select the orgnization:  </td>
 					<td>
 						<div class="input-group" style="margin-bottom: 25px">
-							{{--*/  $org = array('org-one') /*--}}
-							{!! Form::select('organizations', $org)!!}
+							{{--*/  $org = array('one-a1c8-11e5-99e2-08002777c33d') /*--}}
+							{!! Form::select('organizations', array(
+							'one-a1c8-11e5-99e2-08002777c33d' => 'one-a1c8-11e5-99e2-08002777c33d'
+							))!!}
 						</div>
 					</td>
 				</tr>

@@ -54,7 +54,7 @@ class AdminToolsController extends Controller
             $validator = Validator::make(Input::all(), AdminTool::$uploadCsvRules);
             if ($validator->passes()) {
                 $file = \Request::file('yourcsv');
-                $organization_id = (int) \Request::get('organizations');
+                $organization_id = \Request::get('organizations');
 
                 if ($file==''){
                     return Redirect::to('admin/importfiles')->with('message', 'The following errors occurred')->withErrors
@@ -62,7 +62,7 @@ class AdminToolsController extends Controller
                 }
 
                 //the files are stored in storage/app/*files*
-                $user_id = Auth::user()->id;
+                $user_id = Auth::user()->uuid;
                 $file_name = $file->getFilename()."_userid".$user_id."_time".time();
                 $extension = $file->getClientOriginalExtension();
                 $full_file_name = $file_name.".".$extension;
@@ -91,13 +91,13 @@ class AdminToolsController extends Controller
 
 
 
-        $district_id = (int) Request::query('district');
+        $district_id = Request::query('district');
         $districts = District::All();
         $selected_district = 0;
         $organizations = array();
         if ($district_id) {
-            $selected_district = District::where('id', '=', $district_id)->get(array('id'));
-            $organizations = District::with('organizations')->where('id', '=', $district_id)->get();
+            $selected_district = District::where('uuid', '=', $district_id)->get(array('uuid'));
+            $organizations = District::with('organizations')->where('uuid', '=', $district_id)->get();
         }
         return view('admin/importfiles',compact('districts','selected_district','organizations'));
     }

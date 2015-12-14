@@ -19,6 +19,8 @@ class BulkImporter
     public static function migratecsv()
     {
         self::$file = base_path('storage/app/'.self::$data['file']);
+        $output = array();
+
         try {
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
 
@@ -29,7 +31,7 @@ class BulkImporter
                     //Saving the Classes into groups
                     if (self::$sheetname[$sheet] == 'Classes') {
                         foreach ($data[$sheet] as $row) {
-                            //self::updateClasses($row);
+                            //$output['Classes'] = self::updateClasses($row);
                         }
                     }
                     //Saving the teachers into users
@@ -37,23 +39,21 @@ class BulkImporter
                         foreach ($data[$sheet] as $row) {
 
                             if (!empty($row['person_type'])) {
-                                $output = self::updateTeachers($row);
+                                //$output['Teachers'] = self::updateTeachers($row);
                             }
                         }
-                        echo "Teachers ended";
-                        dd($output);
                     }
                     //Saving the Students into users
                     if (self::$sheetname[$sheet] == 'Students') {
                         foreach ($data[$sheet] as $row) {
-                            //self::updateDB($row);
+                            $output['Students'] = self::updateDB($row);
                         }
                     }
                 }
 
             });
 
-            dd("exiting");
+            dd($output);
         } catch (\Exception $e) {
             dd('Houston, we have a problem: '.$e->getMessage());
         }
@@ -90,16 +90,20 @@ class BulkImporter
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
 
                 //Adding Districts
-                $district = District::firstOrCreate(['code' => $DDBNNN[0], 'system_id' => 1]);
+                $district = District::firstOrCreate(['title' => $DDBNNN[0], 'system_id' => 1]);
                 $district->code = $DDBNNN[0];
                 $district->system_id = 1;
-                $district->title = 'District '.$DDBNNN[0];
-                $district->save();
+                $district->title = $DDBNNN[0];
+                $output = $district->save();
+                
+                $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
+                $district_uuid = $uuid[0];
+                dd($district_uuid);
 
                 //Adding Organizations
                 $organization = Organization::where(['code' => $DDBNNN[1]])
-                                ->with(array('districts' => function ($query) use ($district) {
-                                                                $query->where('district_id', $district->uuid);
+                                ->with(array('districts' => function ($query) use ($district_uuid) {
+                                                                $query->where('district_id', $district_uuid);
                                                             }))->first();
 
                 if (is_null($organization)) {
@@ -109,13 +113,15 @@ class BulkImporter
                 $organization->code = $DDBNNN[1];
                 $organization->title = $DDBNNN[1];
                 $organization->save();
+                $uuid = Organization::where('id',$organization->uuid)->lists('uuid')->toArray();
+                $organization_uuid = $uuid[0];
 
-                if (!$organization->districts->contains($district->uuid)) {
-                    $organization->districts()->attach($district->uuid);
+                if (!$organization->districts->contains($district_uuid)) {
+                    $organization->districts()->attach($district_uuid);
                 }
 
                 //Adding groups
-                $group = Group::firstOrCreate(['organization_id' => $organization->uuid]);
+                $group = Group::firstOrCreate(['organization_id' => $organization_uuid]);
                 $group->title = $data['off_cls'];
                 $group->save();
 
@@ -192,8 +198,8 @@ class BulkImporter
                     'student_id' => 'staff-'.$student_id,
                     'username' => $student_id.'@changemyworld.com',
                     'first_name' => $data['first_name'],
-                    'middle_name' => $data['middle_name'].'-updated2',
-                    'last_name' => $data['last_name'].'-updated2',
+                    'middle_name' => $data['middle_name'],
+                    'last_name' => $data['last_name'],
                     'email' => $data['email_address'],
                     'gender' => $data['gender']
                 ]);
