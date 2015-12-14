@@ -31,7 +31,10 @@ class BulkImporter
                     //Saving the Classes into groups
                     if (self::$sheetname[$sheet] == 'Classes') {
                         foreach ($data[$sheet] as $row) {
-                            $output['Classes'] = self::updateClasses($row);
+
+                            if (!empty($row['offical_class'])) {
+                                //$output['Classes'] = self::updateClasses($row);
+                            }
                         }
                     }
                     //Saving the teachers into users
@@ -39,14 +42,17 @@ class BulkImporter
                         foreach ($data[$sheet] as $row) {
 
                             if (!empty($row['person_type'])) {
-                                $output['Teachers'] = self::updateTeachers($row);
+                                //$output['Teachers'] = self::updateTeachers($row);
                             }
                         }
                     }
                     //Saving the Students into users
                     if (self::$sheetname[$sheet] == 'Students') {
-                        foreach ($data[$sheet] as $row) {
-                            $output['Students'] = self::updateDB($row);
+                        foreach ($data[$sheet] as $i=>$row) {
+                            if (!empty($row['ddbnnn'])) {
+                               $output['Students'] = self::updateDB($row);
+                                var_dump($output['Students']);
+                            }
                         }
                     }
                 }
@@ -83,12 +89,10 @@ class BulkImporter
 
     protected static function updateDB($data)
     {
-        foreach ($data as $title => $val) {
-            if ($data['student_id'] != '') {
 
                 //creating or updating districts
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-
+                $output['ddbnnn'] = $data['ddbnnn'];
                 //Adding Districts
                 $district = District::where('title',$DDBNNN[0])->where('system_id',1);
                 if (!$district->count()){
@@ -128,6 +132,8 @@ class BulkImporter
 
                 }
 
+
+            $output['distr_org'] = array();
                 if (!$organization->districts->contains($district_uuid)) {
                     $output['distr_org'] = $organization->districts()->attach($district_uuid);
                 }
@@ -149,7 +155,6 @@ class BulkImporter
                     $output['Group'] = $group->save();
                     $group_uuid = $group->uuid;
                 }
-
 
                 //Adding students
 
@@ -179,7 +184,9 @@ class BulkImporter
                     $child_uuid = $user->uuid;
                 }
 
-                $output['guardianReference'] = $user->guardianReference()->sync(array(
+
+                $output['guardianReference'] = array();
+                $output['guardianReference'] = $user->guardianReference()->attach(array(
                     $uuid=>array(
                         'user_id'=>$child_uuid,
                         'first_name'=>$data['adult_first_1'],
@@ -188,9 +195,8 @@ class BulkImporter
                 )));
 
 
-            }
+                return $output;
 
-        }
 
         //@TODO email notification has been temporarily disabled. JT 10/11
         return false;
@@ -264,14 +270,25 @@ class BulkImporter
     protected static function updateClasses($data)
     {
         $organization_id = self::$data['parms']['organization_id'];
-        foreach ($data as $title => $val) {
-            $group = Group::firstOrCreate(['organization_id' => $organization_id, 'title' => $data['offical_class']]);
-            $group->organization_id = $organization_id;
-            $group->title = $data['offical_class'];
-            $group->description = $data['class_number'];
-            $group->save();
-        }
+        $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
+             $output['offical_class'] = $data['offical_class'];
+             if(!$group->count()){
+                 $group = new Group();
+                 $group->organization_id = $organization_id;
+                 $group->title = $data['offical_class'];
+                 $group->cluster_class = $data['class_number'];
+                 $output['Group'][] = $group->save();
+                 $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
+                 $group_uuid = $uuid[0];
+             }else{
+                 $group = $group->first();
+                 $group->organization_id = $organization_id;
+                 $group->title = $data['offical_class'];
+                 $group->cluster_class = $data['class_number'];
+                 $output['Group'][] = $group->save();
+                 $group_uuid = $group->uuid;
+             }
 
-        return true;
+        return $output;
     }
 }
