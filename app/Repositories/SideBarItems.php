@@ -85,7 +85,9 @@ class SideBarItems
                     $tags[' - '.$group->title] = '/groups/'.$group->pivot->roleable_id;
                 }
             } elseif ($groupMembers->count() === 1) {
-                $tags[$groupMembers[0]->title] = '/groups/'.$groupMembers[0]->pivot->roleable_id;
+                foreach($groupMembers->get() as $group){
+                    $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
+                }
             }
             
 
