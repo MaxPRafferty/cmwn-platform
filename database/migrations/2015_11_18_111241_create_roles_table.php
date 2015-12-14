@@ -29,7 +29,7 @@ class CreateRolesTable extends Migration
             $table->string('roleable_type');
             $table->unsignedInteger('role_id')->unsigned();
             $table->unique(array('user_id', 'roleable_id','roleable_type'));
-            $table->foreign('user_id')->references('uuid')->on('users')->onDelete('cascade');
+            //$table->foreign('user_id')->references('uuid')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

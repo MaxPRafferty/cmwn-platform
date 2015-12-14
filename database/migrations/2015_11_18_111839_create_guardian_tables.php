@@ -32,12 +32,11 @@ class CreateGuardianTables extends Migration
 
         Schema::create('child_guardian', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('guardian_id')->unsigned();
-            $table->unsignedInteger('child_id')->unsigned();
-            $table->foreign('child_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('guardian_id')->references('id')->on('users')->onDelete('cascade');
-
-            //$table->unique(array('guardian_id', 'child_id'));
+            $table->string('guardian_id');
+            $table->string('child_id');
+            $table->foreign('child_id')->references('uuid')->on('users')->onDelete('cascade');
+            $table->foreign('guardian_id')->references('uuid')->on('users')->onDelete('cascade');
+            $table->unique(array('guardian_id', 'child_id'));
             $table->timestamps();
         });
     }

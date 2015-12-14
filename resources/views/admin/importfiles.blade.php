@@ -51,10 +51,8 @@
 					<td>Select the orgnization:  </td>
 					<td>
 						<div class="input-group" style="margin-bottom: 25px">
-							{{--*/  $org = array('one-a1c8-11e5-99e2-08002777c33d') /*--}}
-							{!! Form::select('organizations', array(
-							'one-a1c8-11e5-99e2-08002777c33d' => 'one-a1c8-11e5-99e2-08002777c33d'
-							))!!}
+							 
+							{!! Form::select('organizations', $org)!!}
 						</div>
 					</td>
 				</tr>

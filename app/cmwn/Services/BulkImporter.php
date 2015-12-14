@@ -31,7 +31,7 @@ class BulkImporter
                     //Saving the Classes into groups
                     if (self::$sheetname[$sheet] == 'Classes') {
                         foreach ($data[$sheet] as $row) {
-                            //$output['Classes'] = self::updateClasses($row);
+                            $output['Classes'] = self::updateClasses($row);
                         }
                     }
                     //Saving the teachers into users
@@ -39,7 +39,7 @@ class BulkImporter
                         foreach ($data[$sheet] as $row) {
 
                             if (!empty($row['person_type'])) {
-                                //$output['Teachers'] = self::updateTeachers($row);
+                                $output['Teachers'] = self::updateTeachers($row);
                             }
                         }
                     }
@@ -90,74 +90,106 @@ class BulkImporter
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
 
                 //Adding Districts
-                $district = District::firstOrCreate(['title' => $DDBNNN[0], 'system_id' => 1]);
-                $district->code = $DDBNNN[0];
-                $district->system_id = 1;
-                $district->title = $DDBNNN[0];
-                $output = $district->save();
-                
-                $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
-                $district_uuid = $uuid[0];
-                dd($district_uuid);
+                $district = District::where('title',$DDBNNN[0])->where('system_id',1);
+                if (!$district->count()){
+                    $district = new District();
+                    $district->title = $DDBNNN[0];
+                    $district->system_id = 1;
+                    $output['Districts'] = $district->save();
+                    $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
+                    $district_uuid = $uuid[0];
+                }else{
+                    $district = District::where('title',$DDBNNN[0])->where('system_id',1)->first();
+                    $district->description = 'updated';
+                    $output['Districts'] = $district->save();
+                    $district_uuid = $district->uuid;
+                }
 
                 //Adding Organizations
                 $organization = Organization::where(['code' => $DDBNNN[1]])
                                 ->with(array('districts' => function ($query) use ($district_uuid) {
                                                                 $query->where('district_id', $district_uuid);
-                                                            }))->first();
+                                                            }));
 
-                if (is_null($organization)) {
+                if(!$organization->count()){
                     $organization = new Organization();
+                    $organization->code = $DDBNNN[1];
+                    $organization->title = $DDBNNN[1];
+                    $output['Organization'] = $organization->save();
+                    $uuid = $organization->uuid;
+                    $uuid = Organization::where('id',$organization->uuid)->lists('uuid')->toArray();
+                    $organization_uuid = $uuid[0];
+                }else{
+                    $organization = $organization->first();
+                    $organization->description = 'updated';
+                    $output['Organization'] = $organization->save();
+                    $uuid = $organization->uuid;
+                    $organization_uuid = $uuid;
+
                 }
 
-                $organization->code = $DDBNNN[1];
-                $organization->title = $DDBNNN[1];
-                $organization->save();
-                $uuid = Organization::where('id',$organization->uuid)->lists('uuid')->toArray();
-                $organization_uuid = $uuid[0];
-
                 if (!$organization->districts->contains($district_uuid)) {
-                    $organization->districts()->attach($district_uuid);
+                    $output['distr_org'] = $organization->districts()->attach($district_uuid);
                 }
 
                 //Adding groups
-                $group = Group::firstOrCreate(['organization_id' => $organization_uuid]);
-                $group->title = $data['off_cls'];
-                $group->save();
+                $group = Group::where('organization_id', '=', $organization_uuid);
+
+                if(!$group->count()){
+                    $group = new Group();
+                    $group->organization_id = $organization_uuid;
+                    $group->title = $data['off_cls'];
+                    $output['Group'] = $group->save();
+                    $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
+                    $group_uuid = $uuid[0];
+                }else{
+                    $group = $group->first();
+                    $group->organization_id = $organization_uuid;
+                    $group->title = $data['off_cls'];
+                    $output['Group'] = $group->save();
+                    $group_uuid = $group->uuid;
+                }
+
 
                 //Adding students
-                $user = User::firstOrCreate(['student_id' => $data['student_id']]);
-                $user->student_id = $data['student_id'];
-                $user->first_name = $data['first_name'];
-                $user->last_name = $data['last_name'];
-                $user->gender = $data['sex'];
-                $user->birthdate = $data['birth_dt'];
-                $user->save();
-                $child_id = $user->uuid;
 
-                $guardian = \DB::table('guardian_reference')
-                    ->where('student_id', '=', $data['student_id'])
-                    ->where('first_name', '=', $data['adult_first_1'])
-                    ->where('last_name', '=', $data['adult_last_1'])
-                    ->get();
+                $user = User::where('student_id', '=', $data['student_id']);
+                $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
 
-                if (isset($guardian[0]->uuid)) {
-                    $output = \DB::table('guardian_reference')->where('id', $guardian[0]->uuid)
-                       ->update(array(
-                           'student_id' => $data['student_id'],
-                           'first_name' => $data['adult_first_1'],
-                           'last_name' => $data['adult_last_1'],
-                           'phone' => $data['adult_phone_1'],
-                       ));
-                } else {
-                    $output = \DB::table('guardian_reference')->insert(array(
-                        'student_id' => $data['student_id'],
-                        'first_name' => $data['adult_first_1'],
-                        'last_name' => $data['adult_last_1'],
-                        'phone' => $data['adult_phone_1'],
-                   ));
+                if(!$user->count()){
+                    $user = new User();
+                    $user->username = $username;
+                    $user->student_id = $data['student_id'];
+                    $user->first_name = $data['first_name'];
+                    $user->last_name = $data['last_name'];
+                    $user->gender = $data['sex'];
+                    $user->birthdate = $data['birth_dt'];
+                    $output['Students'] = $user->save();
+                    $uuid = User::where('id',$user->uuid)->lists('uuid')->toArray();
+                    $child_uuid = $uuid[0];
+                }else{
+                    $user = $user->first();
+                    $user->username = $username;
+                    $user->student_id = $data['student_id'];
+                    $user->first_name = $data['first_name'];
+                    $user->last_name = $data['last_name'];
+                    $user->gender = $data['sex'];
+                    $user->birthdate = $data['birth_dt'];
+                    $output['Students'] = $user->save();
+                    $child_uuid = $user->uuid;
                 }
+
+                $output['guardianReference'] = $user->guardianReference()->sync(array(
+                    $uuid=>array(
+                        'user_id'=>$child_uuid,
+                        'first_name'=>$data['adult_first_1'],
+                        'last_name'=>$data['adult_last_1'],
+                        'phone'=>$data['adult_phone_1']
+                )));
+
+
             }
+
         }
 
         //@TODO email notification has been temporarily disabled. JT 10/11
