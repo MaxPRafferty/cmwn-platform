@@ -50,6 +50,8 @@ class SideBarItems
             );
             return $tags;
         }
+        
+        $tags['Games'] = '/profile';
 
         //Districts Menu
         $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->uuid);
@@ -78,19 +80,22 @@ class SideBarItems
 
         if ($groupMembers->count()){
             if($groupMembers->count()>1) {
-                $tags = array_add($tags, 'Groups', '/groups');
+                $tags = array_add($tags, 'My Classes', '/groups');
+                foreach($groupMembers->get() as $group){
+                    $tags[' - '.$group->title] = '/groups/'.$group->pivot->roleable_id;
+                }
+            } elseif ($groupMembers->count() === 1) {
+                foreach($groupMembers->get() as $group){
+                    $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
+                }
             }
-            foreach($groupMembers->get() as $group){
-                $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
-            }
+            
 
             $tags['Friends'] = '/friends';
-            $tags['Suggested Friends'] = '/suggestedfriends';
+            $tags['Suggested Friends'] = '/friends/suggested';
         }
 
 
-
-        $tags['Games'] = '/games';
         $tags['Edit Profile'] = '/profile/edit';
         $tags['Logout'] = '/auth/logout';
 
