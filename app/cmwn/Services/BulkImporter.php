@@ -33,7 +33,7 @@ class BulkImporter
                         foreach ($data[$sheet] as $row) {
 
                             if (!empty($row['offical_class'])) {
-                                //$output['Classes'] = self::updateClasses($row);
+                                $output['Classes'] = self::updateClasses($row);
                             }
                         }
                     }
@@ -42,7 +42,7 @@ class BulkImporter
                         foreach ($data[$sheet] as $row) {
 
                             if (!empty($row['person_type'])) {
-                                //$output['Teachers'] = self::updateTeachers($row);
+                                $output['Teachers'] = self::updateTeachers($row);
                             }
                         }
                     }
@@ -51,7 +51,7 @@ class BulkImporter
                         foreach ($data[$sheet] as $i=>$row) {
                             if (!empty($row['ddbnnn'])) {
                                $output['Students'] = self::updateDB($row);
-                                var_dump($output['Students']);
+                                //var_dump($output['Students']);
                             }
                         }
                     }
