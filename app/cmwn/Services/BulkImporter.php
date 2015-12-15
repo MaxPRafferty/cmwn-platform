@@ -131,8 +131,6 @@ class BulkImporter
                     $organization_uuid = $uuid;
 
                 }
-
-
             $output['distr_org'] = array();
                 if (!$organization->districts->contains($district_uuid)) {
                     $output['distr_org'] = $organization->districts()->attach($district_uuid);
@@ -161,7 +159,7 @@ class BulkImporter
                 $user = User::where('student_id', '=', $data['student_id']);
                 $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
 
-                if(!$user->count()){
+                if($user->get()->count()==0){
                     $user = new User();
                     $user->username = $username;
                     $user->student_id = $data['student_id'];
@@ -172,6 +170,7 @@ class BulkImporter
                     $output['Students'] = $user->save();
                     $uuid = User::where('id',$user->uuid)->lists('uuid')->toArray();
                     $child_uuid = $uuid[0];
+
                 }else{
                     $user = $user->first();
                     $user->username = $username;
@@ -184,8 +183,11 @@ class BulkImporter
                     $child_uuid = $user->uuid;
                 }
 
-
                 $output['guardianReference'] = array();
+                $test = $user->guardianReference->contains($child_uuid);
+                if (!$test){
+                    return false;
+                }
                 $output['guardianReference'] = $user->guardianReference()->attach(array(
                     $uuid=>array(
                         'user_id'=>$child_uuid,
@@ -193,8 +195,6 @@ class BulkImporter
                         'last_name'=>$data['adult_last_1'],
                         'phone'=>$data['adult_phone_1']
                 )));
-
-
                 return $output;
 
 
@@ -258,9 +258,25 @@ class BulkImporter
                 $role_id = 2;
             }
 
+            //Assigning teachers to main class
             $teachers->groups()->sync(array(
                 $uuid=>array('user_id'=>$uuid,'roleable_id'=>$data['class_number'], 'role_id'=>$role_id)
             ));
+
+            //Assigning teachers to cluster classes
+            if($data['class_number']){
+                $cluster_class = Group::where('class_number', $data['class_number'])->lists('cluster_class')->toArray();
+               foreach($cluster_class as $class){
+                   $classes = explode(';',$class);
+                   foreach($classes as $cls){
+                       $teachers->groups()->attach(array(
+                           $uuid=>array('user_id'=>$uuid,'roleable_id'=>$cls, 'role_id'=>$role_id)
+                       ));
+                   }
+                   break;
+               }
+
+            }
 
             return true;
         }
@@ -271,20 +287,23 @@ class BulkImporter
     {
         $organization_id = self::$data['parms']['organization_id'];
         $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
-             $output['offical_class'] = $data['offical_class'];
-             if(!$group->count()){
+
+             if(!$group->get()->count()){
                  $group = new Group();
                  $group->organization_id = $organization_id;
                  $group->title = $data['offical_class'];
-                 $group->cluster_class = $data['class_number'];
+                 $group->class_number = $data['class_number'];
+                 $group->cluster_class = $data['sub_class_number'];
                  $output['Group'][] = $group->save();
                  $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
+
                  $group_uuid = $uuid[0];
              }else{
                  $group = $group->first();
                  $group->organization_id = $organization_id;
                  $group->title = $data['offical_class'];
-                 $group->cluster_class = $data['class_number'];
+                 $group->class_number = $data['class_number'];
+                 $group->cluster_class = $data['sub_class_number'];
                  $output['Group'][] = $group->save();
                  $group_uuid = $group->uuid;
              }
