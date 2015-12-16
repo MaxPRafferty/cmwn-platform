@@ -65,10 +65,10 @@ class BulkImporter
 
     protected static function updateClasses($data)
     {
+
         $organization_id = self::$data['parms']['organization_id'];
         $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
-        //$group = Group::firstOrNew(['organization_id'=>$organization_id], $data['offical_class']);
-
+        //$group = Group::updateOrCreate(['organization_id'=>$organization_id], ['title'=>$data['offical_class']]);
         if(!$group->get()->count()){
             $group = new Group();
             $group->organization_id = $organization_id;
@@ -87,8 +87,6 @@ class BulkImporter
             $output['Group'][] = $group->save();
             $group_uuid = $group->uuid;
         }
-
-        return $output;
     }
 
     protected static function updateTeachers($data)
@@ -262,6 +260,8 @@ class BulkImporter
             $student_uuid = $uuid[0];
         }
 
+        var_dump($student_uuid);
+
         //Add parents
         if ($data['adult_first_1'] && $data['adult_last_1']){
             $username = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
@@ -279,8 +279,15 @@ class BulkImporter
                 $parent_uuid = $uuid[0];
             }
         }
-        $user->guardians()->sync([$parent_uuid],[$student_uuid]);
-        $user->guardianReference()->sync([$student_uuid]);
+
+        //if (!$user->guardians->contains($student_uuid)){
+            $user->guardians()->sync([$parent_uuid],[$student_uuid]);
+        //}
+
+        //if (!$user->guardianReference->contains($student_uuid)){
+            $user->guardianReference()->sync([$student_uuid]);
+        //}
+
 
         $user->guardiansall()->sync(array(
             $student_uuid=>array(
@@ -290,6 +297,8 @@ class BulkImporter
                 'last_name'=>$data['adult_last_1'],
                 'phone'=>$data['adult_phone_1']
             )));
+
+
     }
 
     protected static function mailNotification($data){

@@ -52,6 +52,9 @@ class AdminToolsController extends ApiController
 
     public function importfiles(Request $request){
         if (Request::isMethod('post')) {
+            if (!Auth::check()){
+                return $this->errorUnauthorized('Sorry you must be logged on.');
+            }
             $validator = Validator::make(Input::all(), AdminTool::$uploadCsvRules);
             if ($validator->passes()) {
                 $file = \Request::file('yourcsv');
@@ -63,6 +66,7 @@ class AdminToolsController extends ApiController
 
                 //the files are stored in storage/app/*files*
                 $user_id = Auth::user()->uuid;
+
                 $file_name = $file->getFilename()."_userid".$user_id."_time".time();
                 $extension = $file->getClientOriginalExtension();
                 $full_file_name = $file_name.".".$extension;
