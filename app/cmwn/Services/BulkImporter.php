@@ -178,15 +178,15 @@ class BulkImporter
     }
 
 
-
     protected static function updateStudentsDistricts($data){
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-        $district = District::firstOrCreate(array('title'=>$DDBNNN[0], 'system_id' => 1));
+        $district = District::firstOrNew(['title'=>$DDBNNN[0]], ['system_id' => 1]);
         $district->title = $DDBNNN[0];
+        $district->description = $DDBNNN[0];
         $district->system_id = 1;
         $district->save();
         $district_uuid = $district->uuid;
-        if (gettype($district->uuid=='integer')){
+        if (is_int($district->uuid)){
             $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
             $district_uuid = $uuid[0];
         }
@@ -249,41 +249,31 @@ class BulkImporter
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
         //Adding students
 
-        $user = User::where('student_id', '=', $data['student_id']);
+        $user = User::firstOrNew(['student_id'=>$data['student_id']]);
+
         $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
+        $user->username = $username;
+        $user->student_id = $data['student_id'];
+        $user->first_name = $data['first_name'];
+        $user->last_name = $data['last_name'];
+        $user->gender = $data['sex'];
+        $user->birthdate = $data['birth_dt'];
+        $user->save();
+        $student_uuid = $user->uuid;
 
-        if($user->get()->count()==0){
-            $user = new User();
-            $user->username = $username;
-            $user->student_id = $data['student_id'];
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
-            $user->gender = $data['sex'];
-            $user->birthdate = $data['birth_dt'];
-            $output['Students'] = $user->save();
-            $uuid = User::where('id',$user->uuid)->lists('uuid')->toArray();
-            $child_uuid = $uuid[0];
-
-        }else{
-            $user = $user->first();
-            $user->username = $username;
-            $user->student_id = $data['student_id'];
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
-            $user->gender = $data['sex'];
-            $user->birthdate = $data['birth_dt'];
-            $output['Students'] = $user->save();
-            $child_uuid = $user->uuid;
+        if (is_int($student_uuid)) {
+            $uuid = User::where('id', $user->uuid)->lists('uuid')->toArray();
+            $student_uuid = $uuid[0];
         }
 
-        $output['guardianReference'] = array();
-        $test = $user->guardianReference->contains($child_uuid);
-        if (!$test){
+        $checkGuardian = $user->guardianReference->contains($student_uuid);
+        if (!$checkGuardian){
             return false;
         }
-        $output['guardianReference'] = $user->guardianReference()->attach(array(
+
+        $user->guardianReference()->sync(array(
             $uuid=>array(
-                'user_id'=>$child_uuid,
+                'user_id'=>$student_uuid,
                 'first_name'=>$data['adult_first_1'],
                 'last_name'=>$data['adult_last_1'],
                 'phone'=>$data['adult_phone_1']
