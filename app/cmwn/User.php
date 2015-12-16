@@ -88,6 +88,11 @@ class User extends Model implements
         'password_confirmation' => 'required',
     );
 
+    public function guardiansall()
+    {
+        return $this->belongsToMany('app\User', 'guardians');
+    }
+
     public function guardianReference()
     {
         return $this->belongsToMany('app\User', 'guardian_reference', 'student_id');

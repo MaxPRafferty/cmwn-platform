@@ -288,13 +288,14 @@ class BulkImporter
        $user->guardians()->sync([$parent_uuid],[$student_uuid]);
        $user->guardianReference()->sync([$student_uuid]);
 
-  /*      $user->guardians()->sync(array(
-            $student_uuid=>array(
-                'user_id'=>$student_uuid,
+        $user->guardiansall()->sync(array(
+            $parent_uuid=>array(
+                'user_id'=>$parent_uuid,
+                'student_id' => $student_uuid,
                 'first_name'=>$data['adult_first_1'],
                 'last_name'=>$data['adult_last_1'],
                 'phone'=>$data['adult_phone_1']
-            )));*/
+            )));
     }
 
     protected static function mailNotification($data){
