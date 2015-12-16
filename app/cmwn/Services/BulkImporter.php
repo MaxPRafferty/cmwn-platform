@@ -213,9 +213,8 @@ class BulkImporter
             $organization_uuid = $uuid;
 
         }
-        if (!$organization->districts->contains($district_uuid)) {
             $output['distr_org'] = $organization->districts()->sync(array($district_uuid));
-        }
+
         return $organization_uuid;
     }
 
@@ -260,8 +259,6 @@ class BulkImporter
             $student_uuid = $uuid[0];
         }
 
-        var_dump($student_uuid);
-
         //Add parents
         if ($data['adult_first_1'] && $data['adult_last_1']){
             $username = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
@@ -280,14 +277,8 @@ class BulkImporter
             }
         }
 
-        //if (!$user->guardians->contains($student_uuid)){
             $user->guardians()->sync([$parent_uuid],[$student_uuid]);
-        //}
-
-        //if (!$user->guardianReference->contains($student_uuid)){
             $user->guardianReference()->sync([$student_uuid]);
-        //}
-
 
         $user->guardiansall()->sync(array(
             $student_uuid=>array(
