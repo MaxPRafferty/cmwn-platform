@@ -295,3 +295,11 @@ restart the frontend
 sudo gulp
 
 http://frontend or localhost
+
+
+#Git
+Git stash list
+git stash pop -> pull down the last stash
+git stash apply 23fcd72 -> pull down the specific stash
+
+

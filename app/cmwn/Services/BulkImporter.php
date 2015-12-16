@@ -23,7 +23,6 @@ class BulkImporter
 
         try {
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
-
             \Excel::load(self::$file, function ($reader) {
                 $sheet = '';
                 foreach ($reader->toArray() as $sheet => $row) {
@@ -50,8 +49,7 @@ class BulkImporter
                     if (self::$sheetname[$sheet] == 'Students') {
                         foreach ($data[$sheet] as $i=>$row) {
                             if (!empty($row['ddbnnn'])) {
-                               $output['Students'] = self::updateDB($row);
-                                //var_dump($output['Students']);
+                               $output['Students'] = self::updateStudents($row);
                             }
                         }
                     }
@@ -65,147 +63,32 @@ class BulkImporter
         }
     }
 
-    public static function csvToArray($filename = '', $delimiter = ',')
+    protected static function updateClasses($data)
     {
-        if (!file_exists($filename) || !is_readable($filename)) {
-            return false;
+        $organization_id = self::$data['parms']['organization_id'];
+        $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
+
+        if(!$group->get()->count()){
+            $group = new Group();
+            $group->organization_id = $organization_id;
+            $group->title = $data['offical_class'];
+            $group->class_number = $data['class_number'];
+            $group->cluster_class = $data['sub_class_number'];
+            $output['Group'][] = $group->save();
+            $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
+
+            $group_uuid = $uuid[0];
+        }else{
+            $group = $group->first();
+            $group->organization_id = $organization_id;
+            $group->title = $data['offical_class'];
+            $group->class_number = $data['class_number'];
+            $group->cluster_class = $data['sub_class_number'];
+            $output['Group'][] = $group->save();
+            $group_uuid = $group->uuid;
         }
 
-        $header = null;
-        $data = array();
-        if (($handle = fopen($filename, 'r')) !== false) {
-            while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
-                if (!$header) {
-                    $header = $row;
-                } else {
-                    $data[] = array_combine($header, $row);
-                }
-            }
-            fclose($handle);
-        }
-
-        return $data;
-    }
-
-    protected static function updateDB($data)
-    {
-
-                //creating or updating districts
-                $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-                $output['ddbnnn'] = $data['ddbnnn'];
-                //Adding Districts
-                $district = District::where('title',$DDBNNN[0])->where('system_id',1);
-                if (!$district->count()){
-                    $district = new District();
-                    $district->title = $DDBNNN[0];
-                    $district->system_id = 1;
-                    $output['Districts'] = $district->save();
-                    $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
-                    $district_uuid = $uuid[0];
-                }else{
-                    $district = District::where('title',$DDBNNN[0])->where('system_id',1)->first();
-                    $district->description = 'updated';
-                    $output['Districts'] = $district->save();
-                    $district_uuid = $district->uuid;
-                }
-
-                //Adding Organizations
-                $organization = Organization::where(['code' => $DDBNNN[1]])
-                                ->with(array('districts' => function ($query) use ($district_uuid) {
-                                                                $query->where('district_id', $district_uuid);
-                                                            }));
-
-                if(!$organization->count()){
-                    $organization = new Organization();
-                    $organization->code = $DDBNNN[1];
-                    $organization->title = $DDBNNN[1];
-                    $output['Organization'] = $organization->save();
-                    $uuid = $organization->uuid;
-                    $uuid = Organization::where('id',$organization->uuid)->lists('uuid')->toArray();
-                    $organization_uuid = $uuid[0];
-                }else{
-                    $organization = $organization->first();
-                    $organization->description = 'updated';
-                    $output['Organization'] = $organization->save();
-                    $uuid = $organization->uuid;
-                    $organization_uuid = $uuid;
-
-                }
-            $output['distr_org'] = array();
-                if (!$organization->districts->contains($district_uuid)) {
-                    $output['distr_org'] = $organization->districts()->attach($district_uuid);
-                }
-
-                //Adding groups
-                $group = Group::where('organization_id', '=', $organization_uuid);
-
-                if(!$group->count()){
-                    $group = new Group();
-                    $group->organization_id = $organization_uuid;
-                    $group->title = $data['off_cls'];
-                    $output['Group'] = $group->save();
-                    $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
-                    $group_uuid = $uuid[0];
-                }else{
-                    $group = $group->first();
-                    $group->organization_id = $organization_uuid;
-                    $group->title = $data['off_cls'];
-                    $output['Group'] = $group->save();
-                    $group_uuid = $group->uuid;
-                }
-
-                //Adding students
-
-                $user = User::where('student_id', '=', $data['student_id']);
-                $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
-
-                if($user->get()->count()==0){
-                    $user = new User();
-                    $user->username = $username;
-                    $user->student_id = $data['student_id'];
-                    $user->first_name = $data['first_name'];
-                    $user->last_name = $data['last_name'];
-                    $user->gender = $data['sex'];
-                    $user->birthdate = $data['birth_dt'];
-                    $output['Students'] = $user->save();
-                    $uuid = User::where('id',$user->uuid)->lists('uuid')->toArray();
-                    $child_uuid = $uuid[0];
-
-                }else{
-                    $user = $user->first();
-                    $user->username = $username;
-                    $user->student_id = $data['student_id'];
-                    $user->first_name = $data['first_name'];
-                    $user->last_name = $data['last_name'];
-                    $user->gender = $data['sex'];
-                    $user->birthdate = $data['birth_dt'];
-                    $output['Students'] = $user->save();
-                    $child_uuid = $user->uuid;
-                }
-
-                $output['guardianReference'] = array();
-                $test = $user->guardianReference->contains($child_uuid);
-                if (!$test){
-                    return false;
-                }
-                $output['guardianReference'] = $user->guardianReference()->attach(array(
-                    $uuid=>array(
-                        'user_id'=>$child_uuid,
-                        'first_name'=>$data['adult_first_1'],
-                        'last_name'=>$data['adult_last_1'],
-                        'phone'=>$data['adult_phone_1']
-                )));
-                return $output;
-
-
-        //@TODO email notification has been temporarily disabled. JT 10/11
-        return false;
-        $notifier = new Notifier();
-        $notifier->to = Auth::user()->email;
-        $notifier->subject = 'Your import is completed at '.date('m-d-Y h:i:s A');
-        $notifier->template = 'emails.import';
-        $notifier->attachData(['user' => Auth::user()]);
-        $notifier->send();
+        return $output;
     }
 
     protected static function updateTeachers($data)
@@ -266,15 +149,15 @@ class BulkImporter
             //Assigning teachers to cluster classes
             if($data['class_number']){
                 $cluster_class = Group::where('class_number', $data['class_number'])->lists('cluster_class')->toArray();
-               foreach($cluster_class as $class){
-                   $classes = explode(';',$class);
-                   foreach($classes as $cls){
-                       $teachers->groups()->attach(array(
-                           $uuid=>array('user_id'=>$uuid,'roleable_id'=>$cls, 'role_id'=>$role_id)
-                       ));
-                   }
-                   break;
-               }
+                foreach($cluster_class as $class){
+                    $classes = explode(';',$class);
+                    foreach($classes as $cls){
+                        $teachers->groups()->attach(array(
+                            $uuid=>array('user_id'=>$uuid,'roleable_id'=>$cls, 'role_id'=>$role_id)
+                        ));
+                    }
+                    break;
+                }
 
             }
 
@@ -283,31 +166,138 @@ class BulkImporter
         return true;
     }
 
-    protected static function updateClasses($data)
+    protected static function updateStudents($data)
     {
-        $organization_id = self::$data['parms']['organization_id'];
-        $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
+                //creating or updating districts
+                $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+                $district_uuid = self::updateStudentsDistricts($data);
+                $organization_uuid = self::updateStudentsOrganizations($data, $district_uuid);
+                $group_uuid = self::updateStudentsGroups($data, $organization_uuid);
+                $student = self::updateStudentsData($data);
+                return 'Success';
+    }
 
-             if(!$group->get()->count()){
-                 $group = new Group();
-                 $group->organization_id = $organization_id;
-                 $group->title = $data['offical_class'];
-                 $group->class_number = $data['class_number'];
-                 $group->cluster_class = $data['sub_class_number'];
-                 $output['Group'][] = $group->save();
-                 $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
 
-                 $group_uuid = $uuid[0];
-             }else{
-                 $group = $group->first();
-                 $group->organization_id = $organization_id;
-                 $group->title = $data['offical_class'];
-                 $group->class_number = $data['class_number'];
-                 $group->cluster_class = $data['sub_class_number'];
-                 $output['Group'][] = $group->save();
-                 $group_uuid = $group->uuid;
-             }
 
-        return $output;
+    protected static function updateStudentsDistricts($data){
+        $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+        $district = District::firstOrCreate(array('title'=>$DDBNNN[0], 'system_id' => 1));
+        $district->title = $DDBNNN[0];
+        $district->system_id = 1;
+        $district->save();
+        $district_uuid = $district->uuid;
+        if (gettype($district->uuid=='integer')){
+            $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
+            $district_uuid = $uuid[0];
+        }
+        return $district_uuid;
+    }
+
+    protected static function updateStudentsOrganizations($data, $district_uuid){
+        $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+        //Adding Organizations
+        $organization = Organization::where(['code' => $DDBNNN[1]])
+            ->with(array('districts' => function ($query) use ($district_uuid) {
+                $query->where('district_id', $district_uuid);
+            }));
+
+        if(!$organization->count()){
+            $organization = new Organization();
+            $organization->code = $DDBNNN[1];
+            $organization->title = $DDBNNN[1];
+            $output['Organization'] = $organization->save();
+            $uuid = $organization->uuid;
+            $uuid = Organization::where('id',$organization->uuid)->lists('uuid')->toArray();
+            $organization_uuid = $uuid[0];
+        }else{
+            $organization = $organization->first();
+            $organization->description = 'updated';
+            $output['Organization'] = $organization->save();
+            $uuid = $organization->uuid;
+            $organization_uuid = $uuid;
+
+        }
+        if (!$organization->districts->contains($district_uuid)) {
+            $output['distr_org'] = $organization->districts()->sync(array($district_uuid));
+        }
+        return $organization_uuid;
+    }
+
+    protected static function updateStudentsGroups($data, $organization_uuid){
+        $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+        //Adding groups
+        $group = Group::where('organization_id', '=', $organization_uuid);
+
+        if(!$group->count()){
+            $group = new Group();
+            $group->organization_id = $organization_uuid;
+            $group->title = $data['off_cls'];
+            $output['Group'] = $group->save();
+            $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
+            $group_uuid = $uuid[0];
+        }else{
+            $group = $group->first();
+            $group->organization_id = $organization_uuid;
+            $group->title = $data['off_cls'];
+            $output['Group'] = $group->save();
+            $group_uuid = $group->uuid;
+        }
+        return $group_uuid;
+    }
+
+    protected static function updateStudentsData($data){
+        $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+        //Adding students
+
+        $user = User::where('student_id', '=', $data['student_id']);
+        $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
+
+        if($user->get()->count()==0){
+            $user = new User();
+            $user->username = $username;
+            $user->student_id = $data['student_id'];
+            $user->first_name = $data['first_name'];
+            $user->last_name = $data['last_name'];
+            $user->gender = $data['sex'];
+            $user->birthdate = $data['birth_dt'];
+            $output['Students'] = $user->save();
+            $uuid = User::where('id',$user->uuid)->lists('uuid')->toArray();
+            $child_uuid = $uuid[0];
+
+        }else{
+            $user = $user->first();
+            $user->username = $username;
+            $user->student_id = $data['student_id'];
+            $user->first_name = $data['first_name'];
+            $user->last_name = $data['last_name'];
+            $user->gender = $data['sex'];
+            $user->birthdate = $data['birth_dt'];
+            $output['Students'] = $user->save();
+            $child_uuid = $user->uuid;
+        }
+
+        $output['guardianReference'] = array();
+        $test = $user->guardianReference->contains($child_uuid);
+        if (!$test){
+            return false;
+        }
+        $output['guardianReference'] = $user->guardianReference()->attach(array(
+            $uuid=>array(
+                'user_id'=>$child_uuid,
+                'first_name'=>$data['adult_first_1'],
+                'last_name'=>$data['adult_last_1'],
+                'phone'=>$data['adult_phone_1']
+            )));
+    }
+
+    protected static function mailNotification($data){
+        //@TODO email notification has been temporarily disabled. JT 10/11
+        return false;
+        $notifier = new Notifier();
+        $notifier->to = Auth::user()->email;
+        $notifier->subject = 'Your import is completed at '.date('m-d-Y h:i:s A');
+        $notifier->template = 'emails.import';
+        $notifier->attachData(['user' => Auth::user()]);
+        $notifier->send();
     }
 }
