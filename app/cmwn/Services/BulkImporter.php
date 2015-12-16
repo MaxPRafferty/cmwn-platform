@@ -21,7 +21,7 @@ class BulkImporter
         self::$file = base_path('storage/app/'.self::$data['file']);
         $output = array();
 
-        try {
+        //try {
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
             \Excel::load(self::$file, function ($reader) {
                 $sheet = '';
@@ -57,16 +57,17 @@ class BulkImporter
 
             });
 
-            dd($output);
-        } catch (\Exception $e) {
-            dd('Houston, we have a problem: '.$e->getMessage());
-        }
+            return true;
+        //} catch (\Exception $e) {
+            //dd('Houston, we have a problem: '.$e->getMessage());
+        //}
     }
 
     protected static function updateClasses($data)
     {
         $organization_id = self::$data['parms']['organization_id'];
         $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
+        //$group = Group::firstOrNew(['organization_id'=>$organization_id], $data['offical_class']);
 
         if(!$group->get()->count()){
             $group = new Group();
@@ -76,7 +77,6 @@ class BulkImporter
             $group->cluster_class = $data['sub_class_number'];
             $output['Group'][] = $group->save();
             $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
-
             $group_uuid = $uuid[0];
         }else{
             $group = $group->first();
@@ -168,7 +168,6 @@ class BulkImporter
 
     protected static function updateStudents($data)
     {
-                //creating or updating districts
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
                 $district_uuid = self::updateStudentsDistricts($data);
                 $organization_uuid = self::updateStudentsOrganizations($data, $district_uuid);
@@ -176,7 +175,6 @@ class BulkImporter
                 $student = self::updateStudentsData($data);
                 return 'Success';
     }
-
 
     protected static function updateStudentsDistricts($data){
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
@@ -264,7 +262,6 @@ class BulkImporter
             $student_uuid = $uuid[0];
         }
 
-
         //Add parents
         if ($data['adult_first_1'] && $data['adult_last_1']){
             $username = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
@@ -282,14 +279,11 @@ class BulkImporter
                 $parent_uuid = $uuid[0];
             }
         }
-
-
-
-       $user->guardians()->sync([$parent_uuid],[$student_uuid]);
-       $user->guardianReference()->sync([$student_uuid]);
+        $user->guardians()->sync([$parent_uuid],[$student_uuid]);
+        $user->guardianReference()->sync([$student_uuid]);
 
         $user->guardiansall()->sync(array(
-            $parent_uuid=>array(
+            $student_uuid=>array(
                 'user_id'=>$parent_uuid,
                 'student_id' => $student_uuid,
                 'first_name'=>$data['adult_first_1'],
