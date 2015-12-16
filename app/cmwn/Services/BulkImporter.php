@@ -248,9 +248,7 @@ class BulkImporter
     protected static function updateStudentsData($data){
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
         //Adding students
-
         $user = User::firstOrNew(['student_id'=>$data['student_id']]);
-
         $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
         $user->username = $username;
         $user->student_id = $data['student_id'];
@@ -266,18 +264,37 @@ class BulkImporter
             $student_uuid = $uuid[0];
         }
 
-        $checkGuardian = $user->guardianReference->contains($student_uuid);
-        if (!$checkGuardian){
-            return false;
+
+        //Add parents
+        if ($data['adult_first_1'] && $data['adult_last_1']){
+            $username = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
+            $parent_id = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
+
+            $parent = User::firstOrNew(['student_id'=>$parent_id, 'username'=>$username]);
+            $parent->username = $username;
+            $parent->student_id = $parent_id;
+            $parent->first_name = $data['adult_first_1'];
+            $parent->last_name = $data['adult_last_1'];
+            $parent->save();
+            $parent_uuid = $parent->uuid;
+            if (is_int($parent_uuid)) {
+                $uuid = User::where('id', $parent->uuid)->lists('uuid')->toArray();
+                $parent_uuid = $uuid[0];
+            }
         }
 
-        $user->guardianReference()->sync(array(
-            $uuid=>array(
+
+
+       $user->guardians()->sync([$parent_uuid],[$student_uuid]);
+       $user->guardianReference()->sync([$student_uuid]);
+
+  /*      $user->guardians()->sync(array(
+            $student_uuid=>array(
                 'user_id'=>$student_uuid,
                 'first_name'=>$data['adult_first_1'],
                 'last_name'=>$data['adult_last_1'],
                 'phone'=>$data['adult_phone_1']
-            )));
+            )));*/
     }
 
     protected static function mailNotification($data){
