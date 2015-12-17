@@ -40,7 +40,7 @@ class MasterController extends ApiController
             $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
             if ($validator->passes()) {
                 $file = \Request::file('yourcsv');
-                $organization_id = (int) \Request::get('organization_id');
+                $organization_id = \Request::get('organization_id');
 
                 if(!$organization_id){
                     return $this->errorInternalError('User input error: Organization id is missing.');

@@ -53,6 +53,10 @@ class User extends Model implements
         'email',
         'uuid',
         'password',
+        'username',
+        'student_id',
+        'uuid',
+        'gender'
     ];
 
     /**
@@ -83,6 +87,11 @@ class User extends Model implements
         'password' => 'required|confirmed',
         'password_confirmation' => 'required',
     );
+
+    public function guardiansall()
+    {
+        return $this->belongsToMany('app\User', 'guardians');
+    }
 
     public function guardianReference()
     {
@@ -205,7 +214,7 @@ class User extends Model implements
         return (UsersRelationshipHandler::areMembersOfSameEntity($user, $this, 'groups') || UsersRelationshipHandler::areAdminOfSameEntity($user, $this, 'groups'));
     }
 
-    public function entities($entity, $role_ids) //@TODO fix this bug
+    public function entities($entity, $role_ids)
     {
         $result = $this->$entity();
         $result = $result->where(function ($query) use ($role_ids) {

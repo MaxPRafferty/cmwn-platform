@@ -5,6 +5,10 @@
                           ########################## README NOTES #####################
 
 
+attach multiple values to model
+$users->groups()->attach(array(
+    $users->uuid=>array('roleable_id'=>$data['class_number'], 'role_id'=>$role_id)
+));
 
 #All custom routes are located in config/myroutes.php  - 10/02 JT
 #Routes are in app/Http/routes.php
@@ -291,3 +295,11 @@ restart the frontend
 sudo gulp
 
 http://frontend or localhost
+
+
+#Git
+Git stash list
+git stash pop -> pull down the last stash
+git stash apply 23fcd72 -> pull down the specific stash
+
+

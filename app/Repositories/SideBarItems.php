@@ -23,8 +23,7 @@ class SideBarItems
         }
     }
 
-
-	public function getAll(){
+    public function getAll(){
         $tags = array();
         if (!Auth::check()){
             $tags = array(

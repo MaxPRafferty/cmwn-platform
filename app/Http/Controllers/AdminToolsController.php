@@ -2,6 +2,7 @@
 
 namespace app\Http\Controllers;
 use app\District;
+use app\Http\Controllers\Api\ApiController;
 use app\Organization;
 use Illuminate\Support\Facades\Request;
 use app\AdminTool;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 
-class AdminToolsController extends Controller
+class AdminToolsController extends ApiController
 {
     public function uploadCsv(Request $request)
     {
@@ -51,18 +52,21 @@ class AdminToolsController extends Controller
 
     public function importfiles(Request $request){
         if (Request::isMethod('post')) {
+            if (!Auth::check()){
+                return $this->errorUnauthorized('Sorry you must be logged on.');
+            }
             $validator = Validator::make(Input::all(), AdminTool::$uploadCsvRules);
             if ($validator->passes()) {
                 $file = \Request::file('yourcsv');
-                $organization_id = (int) \Request::get('organizations');
+                $organization_id = \Request::get('organizations');
 
                 if ($file==''){
-                    return Redirect::to('admin/importfiles')->with('message', 'The following errors occurred')->withErrors
-                    ('Please upload your csv file.');
+                    return $this->errorInternalError('The import has failed: Please upload your csv file. ');
                 }
 
                 //the files are stored in storage/app/*files*
-                $user_id = Auth::user()->id;
+                $user_id = Auth::user()->uuid;
+
                 $file_name = $file->getFilename()."_userid".$user_id."_time".time();
                 $extension = $file->getClientOriginalExtension();
                 $full_file_name = $file_name.".".$extension;
@@ -74,31 +78,16 @@ class AdminToolsController extends Controller
                         'parms' => array('organization_id' => $organization_id)
                     );
                     $this->dispatch(new ImportCSV($data));
-                    return Redirect::to('admin/importfiles')->with('message', 'The following errors occurred')->withErrors
-                    ('Your file has been successfully uploaded. You will receive an email notification once the import is completed.');
+                    return $this->respondWithArray(array('message' => 'Your file has been successfully uploaded. You will receive an email notification once the import is completed.'));
                 } else {
-                    return Redirect::to('admin/importfiles')->with('message', 'The following errors occurred')->withErrors
-                    ('Something went wrong with your upload. Please try again.');
+                    return $this->errorInternalError('The import has failed. Please try again.');
                 }
             }else{
-                return Redirect::to('admin/importfiles')->with('message', 'The following errors occurred')->withErrors
-                ($validator)->withInput();
+                $messages = print_r($validator->errors()->getMessages(), true);
+                return $this->errorInternalError('The import has failed. ' . $messages);
             }
 
         }
 
-
-
-
-
-        $district_id = (int) Request::query('district');
-        $districts = District::All();
-        $selected_district = 0;
-        $organizations = array();
-        if ($district_id) {
-            $selected_district = District::where('id', '=', $district_id)->get(array('id'));
-            $organizations = District::with('organizations')->where('id', '=', $district_id)->get();
-        }
-        return view('admin/importfiles',compact('districts','selected_district','organizations'));
     }
 }

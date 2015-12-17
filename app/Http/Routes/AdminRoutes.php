@@ -18,13 +18,19 @@ Route::get('/home', function () {
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
 Route::post('admin/auth/login', 'AuthController@getLogin');
+
+    Route::any('admin/importfiles', 'AdminToolsController@importfiles');
+
 // Admin Routes
 Route::group(['prefix' => 'admin'], function ($router) {
     Route::post('auth/login', 'Auth\AuthController@postLogin');
+
+
     // Authenticated Users Only
     Route::group(['middleware' => 'auth'], function ($router) {
         Route::group(['middleware' => 'role:admin'], function ($router) {
             Route::any('admin/uploadcsv', 'AdminToolsController@uploadcsv');
+
             Route::any('admin/playground', 'AdminTestController@uploadImage');
         });
 
@@ -41,6 +47,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::any('groups', 'GroupsController@index');
         Route::get('group/{id}/view', 'GroupsController@group');
         Route::any('guardians', 'UsersController@guardian');
+
 
         //Composer for sidebars and user specific contents
         View::composer('partials.sidebar', 'app\cmwn\Users\UserSpecificRepository');
