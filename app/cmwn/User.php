@@ -134,6 +134,11 @@ class User extends Model implements
         return $this->morphedByMany('app\District', 'roleable')->withPivot('role_id');
     }
 
+    public function getUserInRoleable($entity)
+    {
+        return $this->morphedByMany($entity, 'roleable');
+    }
+
     public function organizations()
     {
         return $this->morphedByMany('app\Organization', 'roleable')->withPivot('role_id');

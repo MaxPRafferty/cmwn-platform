@@ -23,69 +23,77 @@ class SideBarItems
         }
     }
 
-	public function getAll()
-    {
-	    $tags['site_admin'] = array(
-			    'Members' => '/users/members',
-			    'Roles' => '/users/members',
-			    'Ditricts' => '/districts',
-			    'Organizations' => '/organizations',
-			    'Groups' => '/groups',
-			    'Upload CSV' => '/admin/importfiles',
-                //'Upload Excel' => '/admin/importexcel',
-			    'Cloudinary Image' => '/admin/playground',
-	    );
+    public function getAll(){
+        $tags = array();
+        if (!Auth::check()){
+            $tags = array(
+                'Home' => '/',
+                'Login' => '/auth/login',
+                'Register' => '/auth/register'
+            );
+            return $tags;
+        }
 
-	    $tags['super_admin'] = array(
-		    'Members' => '/users/members',
-		    'Roles' => '/users/members',
-		    'Ditricts' => '/districts',
-		    'Organizations' => '/organizations',
-		    'Groups' => '/groups',
-	    );
+		$user = Auth::user();
+        if ($user->type==1){
+            $tags = array(
+                'Members' => '/users/members',
+                'Roles' => '/users/members',
+                'Ditricts' => '/districts',
+                'Organizations' => '/organizations',
+                'Groups' => '/groups',
+                'Games' => '/games',
+                'Edit Profile' => '/users/'.$user->uuid,
+                'Upload CSV' => '/admin/importfiles',
+                'Cloudinary Image' => '/admin/playground',
+            );
+            return $tags;
+        }
 
-	    $tags['admin'] = array(
-		    'Members' => '/users/members',
-		    'Roles' => '/users/members',
-		    'Ditricts' => '/districts',
-		    'Organizations' => '/organizations',
-		    'Groups' => '/groups',
-		    'Upload CSV' => '/admin/importfiles',
-		    'Cloudinary Image' => '/admin/playground',
-        );
+        //Districts Menu
+        $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->uuid);
+        if ($districtMembers->count()){
+            if($districtMembers->count()>1) {
+                $tags = array_add($tags, 'Districts', '/districts');
+            }
+            foreach($districtMembers->get() as $district){
+            $tags[$district->title] = '/districts/'.$district->pivot->roleable_id;
+         }
+        }
 
-	    $tags['principal'] = array(
-		    'Principal' => '/users/principal',
-		    'Organizations' => '/organizations',
-		    'Groups' => '/groups',
-	    );
+        //Organizations menu
+        $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->uuid);
+        if ($organizationMembers->count()){
+            if($organizationMembers->count()>1) {
+                $tags = array_add($tags, 'Organizations', '/organizations');
+            }
+            foreach($organizationMembers->get() as $organization){
+                $tags[$organization->title] = '/organizations/'.$organization->pivot->roleable_id;
+            }
+        }
 
-	    $tags['teacher'] = array(
-		    'Teacher' => '/users/teachers',
-	    );
+        //Groups menu
+        $groupMembers = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->uuid);
 
-	    $tags['guardian'] = array(
-		    'guardian' => '/guardian',
-	    );
+        if ($groupMembers->count()){
+            if($groupMembers->count()>1) {
+                $tags = array_add($tags, 'Groups', '/groups');
+            }
+            foreach($groupMembers->get() as $group){
+                $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
+            }
 
-	    $tags['student'] = array(
-		    'Student' => '/student',
-	    );
+            $tags['Friends'] = '/friends';
+            $tags['Suggested Friends'] = '/suggestedfriends';
+        }
 
-		$combinedTags = array();
 
-	    if ($this->role) {
-		    foreach ($this->role as $role) {
-			    foreach ($tags[ $role ] as $title => $link) {
-				    $combinedTags[ $title ] = $link;
-			    }
-		    }
-	    }else{
-		    $combinedTags[ "home" ] = "/";
-		    $combinedTags[ "login" ] = "/auth/login";
-		    $combinedTags[ "register" ] = "/auth/register";
-	    }
-	    return $combinedTags;
-	}
 
+        $tags['Games'] = '/games';
+        $tags['Edit Profile'] = '/profile/edit';
+        $tags['Logout'] = '/auth/logout';
+
+
+        return $tags;
+    }
 }
