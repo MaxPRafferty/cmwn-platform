@@ -82,7 +82,7 @@ class User extends Model implements
     );
 
     public static $passwordUpdateRules = array(
-        'user_id' => 'required|int',
+        'user_id' => 'required|string',
         'current_password' => 'required',
         'password' => 'required|confirmed',
         'password_confirmation' => 'required',
