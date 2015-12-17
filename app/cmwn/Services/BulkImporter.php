@@ -95,14 +95,14 @@ class BulkImporter
 
         //adding teachers to users table
         foreach ($data as $title => $val) {
-            $student_id = $data['person_type'].' '.$data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
-            $student_id = str_slug($student_id);
-            $teachers = User::where('student_id','staff-'.$student_id)->where('username',$student_id.'@changemyworld.com');
+            $teacher_id = $data['person_type'].' '.$data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
+            $teacher_id = str_slug($teacher_id);
+            $teachers = User::where('student_id','staff-'.$teacher_id)->where('username',$teacher_id.'@changemyworld.com');
             //Adding a new teacher
             if (!$teachers->count()){
                 $teachers = new User();
-                $teachers->student_id = 'staff-'.$student_id;
-                $teachers->username = $student_id.'@changemyworld.com';
+                $teachers->student_id = 'staff-'.$teacher_id;
+                $teachers->username = $teacher_id.'@changemyworld.com';
                 $teachers->first_name = $data['first_name'];
                 $teachers->middle_name = $data['middle_name'];
                 $teachers->last_name = $data['last_name'];
@@ -112,10 +112,10 @@ class BulkImporter
                 $uuid = User::where('id',$teachers->uuid)->lists('uuid')->toArray();
                 $uuid = $uuid[0];
             }else {
-                $teachers = User::where('student_id','staff-'.$student_id)->where('username',$student_id.'@changemyworld.com')->first();
+                $teachers = User::where('student_id','staff-'.$teacher_id)->where('username',$teacher_id.'@changemyworld.com')->first();
                 $output = $teachers->update([
-                    'student_id' => 'staff-'.$student_id,
-                    'username' => $student_id.'@changemyworld.com',
+                    'student_id' => 'staff-'.$teacher_id,
+                    'username' => $teacher_id.'@changemyworld.com',
                     'first_name' => $data['first_name'],
                     'middle_name' => $data['middle_name'],
                     'last_name' => $data['last_name'],
@@ -244,7 +244,8 @@ class BulkImporter
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
         //Adding students
         $user = User::firstOrNew(['student_id'=>$data['student_id']]);
-        $username = $data['first_name']."-".$data['student_id']."-".$data['last_name']."@changemyworldnow.com";
+        $username = $data['first_name']."-".$data['student_id']."-".$data['last_name'];
+        $username = str_slug($username)."@changemyworldnow.com";
         $user->username = $username;
         $user->student_id = $data['student_id'];
         $user->first_name = $data['first_name'];
@@ -253,17 +254,18 @@ class BulkImporter
         $user->birthdate = $data['birth_dt'];
         $user->save();
         $student_uuid = $user->uuid;
-
         if (is_int($student_uuid)) {
             $uuid = User::where('id', $user->uuid)->lists('uuid')->toArray();
             $student_uuid = $uuid[0];
         }
 
+
         //Add parents
         if ($data['adult_first_1'] && $data['adult_last_1']){
-            $username = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
-            $parent_id = $data['adult_first_1']."-".$data['adult_last_1']."@changemyworldnow.com";
-
+            $username = $data['adult_first_1']." ".$data['adult_last_1'];
+            $username = str_slug($username)."@changemyworldnow.com";
+            $parent_id = $data['adult_first_1']." ".$data['adult_last_1'];
+            $parent_id = str_slug($parent_id)."@changemyworldnow.com";
             $parent = User::firstOrNew(['student_id'=>$parent_id, 'username'=>$username]);
             $parent->username = $username;
             $parent->student_id = $parent_id;
@@ -280,14 +282,17 @@ class BulkImporter
             $user->guardians()->sync([$parent_uuid],[$student_uuid]);
             $user->guardianReference()->sync([$student_uuid]);
 
-        $user->guardiansall()->sync(array(
-            $student_uuid=>array(
-                'user_id'=>$parent_uuid,
-                'student_id' => $student_uuid,
-                'first_name'=>$data['adult_first_1'],
-                'last_name'=>$data['adult_last_1'],
-                'phone'=>$data['adult_phone_1']
-            )));
+        if(!$user->guardiansall->contains($parent_uuid)) {
+            $user->guardiansall()->sync(array(
+                $student_uuid => array(
+                    'user_id' => $parent_uuid,
+                    'student_id' => $student_uuid,
+                    'first_name' => $data['adult_first_1'],
+                    'last_name' => $data['adult_last_1'],
+                    'phone' => $data['adult_phone_1']
+                )
+            ));
+        }
 
 
     }
