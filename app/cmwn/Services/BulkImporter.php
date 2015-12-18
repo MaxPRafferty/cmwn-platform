@@ -72,13 +72,13 @@ class BulkImporter
 
             foreach(self::$DATA['Classes'] as $data){
                 if ($data['offical_class']) {
-                   // var_dump(self::updateClasses($data));//Fixed and tested by JT
+                   var_dump(self::updateClasses($data));//Fixed and tested by JT
                 }
             }
 
             foreach(self::$DATA['Teachers'] as $data){
                 if($data['person_type']) {
-                    //var_dump(self::updateTeachers($data));
+                    var_dump(self::updateTeachers($data));
                 }
             }
 
@@ -200,10 +200,9 @@ class BulkImporter
     {
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
                 $district_id = self::updateStudentsDistricts($data); //Fixed and tested by JT 12/18
-                $organization_id = self::updateStudentsOrganizations($data, $district_id);
-                dd($organization_id);
-                //$group_id = self::updateStudentsGroups($data);
-                //$student = self::updateStudentsData($data);
+                $organization_id = self::updateStudentsOrganizations($data, $district_id); //Fixed and tested by JT 12/18
+                $group_id = self::updateStudentsGroups($data);
+                $student = self::updateStudentsData($data);
                 return true;
     }
 
@@ -263,7 +262,9 @@ class BulkImporter
         $user->last_name = $data['last_name'];
         $user->gender = $data['sex'];
         $user->birthdate = $data['birth_dt'];
+        $user->uuid = $user->id;
         $user->save();
+
         $student_id = $user->id;
 
         //Add parents
@@ -282,7 +283,7 @@ class BulkImporter
         }
 
             $user->guardians()->sync([$parent_id],[$student_id]);
-            $user->guardianReference()->sync([$student_id]);
+            //$user->guardianReference()->sync([$student_id]);
 
 //        if(!$user->guardiansall->contains($parent_id)) {
 //            $user->guardiansall()->sync(array(
