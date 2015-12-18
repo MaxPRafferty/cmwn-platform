@@ -26,9 +26,9 @@ class UserSpecificRepository extends ApiController
 		$pendingfriends = array();
 		$friendrequests = array();
 		if (Auth::check()) {
-			$acceptedfriends = User::find($this->currentUser->uuid)->acceptedfriends;
-			$pendingfriends = User::find($this->currentUser->uuid)->pendingfriends;
-			$friendrequests = User::find($this->currentUser->uuid)->friendrequests;
+			$acceptedfriends = User::find($this->currentUser->id)->acceptedfriends;
+			$pendingfriends = User::find($this->currentUser->id)->pendingfriends;
+			$friendrequests = User::find($this->currentUser->id)->friendrequests;
 		}
 
 
@@ -39,9 +39,9 @@ class UserSpecificRepository extends ApiController
     public function friendsForApi(){
         $friends = array();
         if (Auth::check()) {
-            $friends['acceptedfriends'] = User::find($this->currentUser->uuid)->acceptedfriends;
-            $friends['pendingfriends'] = User::find($this->currentUser->uuid)->pendingfriends;
-            $friends['friendrequests'] = User::find($this->currentUser->uuid)->friendrequests;
+            $friends['acceptedfriends'] = User::find($this->currentUser->id)->acceptedfriends;
+            $friends['pendingfriends'] = User::find($this->currentUser->id)->pendingfriends;
+            $friends['friendrequests'] = User::find($this->currentUser->id)->friendrequests;
         }
 
         return $friends;

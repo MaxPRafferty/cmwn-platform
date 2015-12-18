@@ -65,7 +65,7 @@ class AdminToolsController extends ApiController
                 }
 
                 //the files are stored in storage/app/*files*
-                $user_id = Auth::user()->uuid;
+                $user_id = Auth::user()->id;
 
                 $file_name = $file->getFilename()."_userid".$user_id."_time".time();
                 $extension = $file->getClientOriginalExtension();

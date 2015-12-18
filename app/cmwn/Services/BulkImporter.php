@@ -76,8 +76,6 @@ class BulkImporter
             $group->class_number = $data['class_number'];
             $group->cluster_class = $data['sub_class_number'];
             $output['Group'][] = $group->save();
-            $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
-            $group_uuid = $uuid[0];
         }else{
             $group = $group->first();
             $group->organization_id = $organization_id;
@@ -85,8 +83,8 @@ class BulkImporter
             $group->class_number = $data['class_number'];
             $group->cluster_class = $data['sub_class_number'];
             $output['Group'][] = $group->save();
-            $group_uuid = $group->uuid;
         }
+        $group_id = $group->id;
     }
 
     protected static function updateTeachers($data)
@@ -109,8 +107,6 @@ class BulkImporter
                 $teachers->gender = $data['gender'];
                 $teachers->email = $data['email_address'];
                 $output = $teachers->save();
-                $uuid = User::where('id',$teachers->uuid)->lists('uuid')->toArray();
-                $uuid = $uuid[0];
             }else {
                 $teachers = User::where('student_id','staff-'.$teacher_id)->where('username',$teacher_id.'@changemyworld.com')->first();
                 $output = $teachers->update([
@@ -123,9 +119,8 @@ class BulkImporter
                     'gender' => $data['gender']
                 ]);
                 $teachers->save();
-                $uuid = $teachers->uuid;
             }
-
+            $uuid = $teachers->id;
 
             //Assigning the teacher to class
             if ($data['person_type']=='Principal'){
@@ -167,9 +162,9 @@ class BulkImporter
     protected static function updateStudents($data)
     {
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-                $district_uuid = self::updateStudentsDistricts($data);
-                $organization_uuid = self::updateStudentsOrganizations($data, $district_uuid);
-                $group_uuid = self::updateStudentsGroups($data, $organization_uuid);
+                $district_id = self::updateStudentsDistricts($data);
+                $organization_id = self::updateStudentsOrganizations($data, $district_id);
+                $group_id = self::updateStudentsGroups($data, $organization_id);
                 $student = self::updateStudentsData($data);
                 return 'Success';
     }
@@ -181,20 +176,17 @@ class BulkImporter
         $district->description = $DDBNNN[0];
         $district->system_id = 1;
         $district->save();
-        $district_uuid = $district->uuid;
-        if (is_int($district->uuid)){
-            $uuid = District::where('id',$district->uuid)->lists('uuid')->toArray();
-            $district_uuid = $uuid[0];
-        }
-        return $district_uuid;
+        $district_id = $district->id;
+
+        return $district_id;
     }
 
-    protected static function updateStudentsOrganizations($data, $district_uuid){
+    protected static function updateStudentsOrganizations($data, $district_id){
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
         //Adding Organizations
         $organization = Organization::where(['code' => $DDBNNN[1]])
-            ->with(array('districts' => function ($query) use ($district_uuid) {
-                $query->where('district_id', $district_uuid);
+            ->with(array('districts' => function ($query) use ($district_id) {
+                $query->where('district_id', $district_id);
             }));
 
         if(!$organization->count()){
@@ -202,42 +194,36 @@ class BulkImporter
             $organization->code = $DDBNNN[1];
             $organization->title = $DDBNNN[1];
             $output['Organization'] = $organization->save();
-            $uuid = $organization->uuid;
-            $uuid = Organization::where('id',$organization->uuid)->lists('uuid')->toArray();
-            $organization_uuid = $uuid[0];
         }else{
             $organization = $organization->first();
             $organization->description = 'updated';
             $output['Organization'] = $organization->save();
-            $uuid = $organization->uuid;
-            $organization_uuid = $uuid;
-
         }
-            $output['distr_org'] = $organization->districts()->sync(array($district_uuid));
+        $organization_uuid = $organization->id;
+
+            $output['distr_org'] = $organization->districts()->sync(array($district_id));
 
         return $organization_uuid;
     }
 
-    protected static function updateStudentsGroups($data, $organization_uuid){
+    protected static function updateStudentsGroups($data, $organization_id){
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
         //Adding groups
-        $group = Group::where('organization_id', '=', $organization_uuid);
+        $group = Group::where('organization_id', '=', $organization_id);
 
         if(!$group->count()){
             $group = new Group();
-            $group->organization_id = $organization_uuid;
+            $group->organization_id = $organization_id;
             $group->title = $data['off_cls'];
             $output['Group'] = $group->save();
-            $uuid = Group::where('id',$group->uuid)->lists('uuid')->toArray();
-            $group_uuid = $uuid[0];
         }else{
             $group = $group->first();
-            $group->organization_id = $organization_uuid;
+            $group->organization_id = $organization_id;
             $group->title = $data['off_cls'];
             $output['Group'] = $group->save();
-            $group_uuid = $group->uuid;
         }
-        return $group_uuid;
+        $group_id = $group->id;
+        return $group_id;
     }
 
     protected static function updateStudentsData($data){
@@ -253,11 +239,8 @@ class BulkImporter
         $user->gender = $data['sex'];
         $user->birthdate = $data['birth_dt'];
         $user->save();
-        $student_uuid = $user->uuid;
-        if (is_int($student_uuid)) {
-            $uuid = User::where('id', $user->uuid)->lists('uuid')->toArray();
-            $student_uuid = $uuid[0];
-        }
+        $student_id = $user->id;
+
 
 
         //Add parents
@@ -272,21 +255,18 @@ class BulkImporter
             $parent->first_name = $data['adult_first_1'];
             $parent->last_name = $data['adult_last_1'];
             $parent->save();
-            $parent_uuid = $parent->uuid;
-            if (is_int($parent_uuid)) {
-                $uuid = User::where('id', $parent->uuid)->lists('uuid')->toArray();
-                $parent_uuid = $uuid[0];
-            }
+            $parent_id = $parent->id;
+
         }
 
-            $user->guardians()->sync([$parent_uuid],[$student_uuid]);
-            $user->guardianReference()->sync([$student_uuid]);
+            $user->guardians()->sync([$parent_id],[$student_id]);
+            $user->guardianReference()->sync([$student_id]);
 
-        if(!$user->guardiansall->contains($parent_uuid)) {
+        if(!$user->guardiansall->contains($parent_id)) {
             $user->guardiansall()->sync(array(
-                $student_uuid => array(
-                    'user_id' => $parent_uuid,
-                    'student_id' => $student_uuid,
+                $student_id => array(
+                    'user_id' => $parent_id,
+                    'student_id' => $student_id,
                     'first_name' => $data['adult_first_1'],
                     'last_name' => $data['adult_last_1'],
                     'phone' => $data['adult_phone_1']
