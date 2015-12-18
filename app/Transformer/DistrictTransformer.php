@@ -30,7 +30,7 @@ class DistrictTransformer extends TransformerAbstract
             'system_id' => (int) $district->system_id,
             'code' => $district->code,
             'title' => $district->title,
-            'canupdate' => $user->canUserUpdateObject('districts', $district->uuid),
+            'canupdate' => $user->canUserUpdateObject('districts', $district->id),
             'description' => $district->description,
             'created_at' => (string) $district->created_at,
         ];

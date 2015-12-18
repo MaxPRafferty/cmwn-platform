@@ -35,7 +35,6 @@ class User extends Model implements
 
     /**
      * The primaryKey is set to id by default
-     * Changed to uuid
      * @var string
      */
 
@@ -51,11 +50,9 @@ class User extends Model implements
         'middle_name',
         'last_name',
         'email',
-        'uuid',
         'password',
         'username',
         'student_id',
-        'uuid',
         'gender'
     ];
 
@@ -74,7 +71,6 @@ class User extends Model implements
         'middle_name' => 'string|min:2',
         'last_name' => 'string|min:2',
         'email' => 'email|min:2',
-        'uuid' => 'string|unique:users|min:2',
     );
 
     public static $memberDeleteRules = array(
@@ -110,7 +106,7 @@ class User extends Model implements
 
     public function roles(User $user){
         $roles = array();
-        $user_id = $user->uuid;
+        $user_id = $user->id;
 
         $districts =  $user->districts()->where(function ($query) use ($user_id){
             $query = $query->where('user_id', $user_id);
@@ -204,7 +200,7 @@ class User extends Model implements
      */
     public function canUpdate(User $user)
     {
-         return ($this->uuid == $user->uuid || $user->isSiteAdmin() ||
+         return ($this->id == $user->id || $user->isSiteAdmin() ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'districts') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'organizations') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'groups'));
@@ -254,7 +250,7 @@ class User extends Model implements
         return $suggested;
     }
 
-    public function canUserUpdateObject($entity, $uuid)
+    public function canUserUpdateObject($entity, $id)
     {
         //All default vars
         $districtSuperAdmin = 0;
@@ -265,8 +261,8 @@ class User extends Model implements
 
         //Districts
         if ($entity=='districts') {
-            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
-                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1, 2));
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id) {
+                $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
             })->count();
 
             return ((bool) $districtSuperAdmin);
@@ -274,23 +270,22 @@ class User extends Model implements
 
         //Organizations
         if ($entity=='organizations') {
-            //Get District uuid for this organization
-            $districtID = District::whereHas('organizations', function ($query) use ($uuid) {
-                $query->where('organization_id', $uuid);
-            })->lists('uuid')->toArray();
+            $districtID = District::whereHas('organizations', function ($query) use ($id) {
+                $query->where('organization_id', $id);
+            })->lists('id')->toArray();
             if (count($districtID) != 0) {
                 $districtID = $districtID[0]; //district-one
 
                 //Check if user is a superadmin or admin in District
-                $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid, $districtID) {
+                $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id, $districtID) {
                     $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
                 })->count();
             }
             
 
             //check to see if organization is admin
-            $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($uuid) {
-                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+            $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($id) {
+                $query->where('roleable_id', $id)->whereIn('role_id', array(1,2));
             })->count();
 
             if ($districtSuperAdmin || $organizationSuperAdmin ){
@@ -302,16 +297,16 @@ class User extends Model implements
         //Organizations
         if ($entity=='groups') {
             //Check if user is superadmin or admin in organization of the group
-            $gdID = Group::where('uuid', $uuid)->lists('organization_id')->toArray();
+            $gdID = Group::where('id', $id)->lists('organization_id')->toArray();
             $gdID = $gdID[0];
 
 
             $districtID = District::whereHas('organizations', function ($query) use ($gdID) {
                 $query->where('organization_id', 'org-one');
-            })->lists('uuid')->toArray();
+            })->lists('id')->toArray();
 
             //District needs work
-            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($uuid) {
+            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id) {
                 $query->where('roleable_id', 'district-one')->whereIn('role_id', array(1, 2));
             })->count();
 
@@ -320,8 +315,8 @@ class User extends Model implements
             })->count();
 
             //Check if user is superadmin or admin in the group
-            $groupSuperAdmin = self::whereHas('groups', function ($query) use ($uuid) {
-                $query->where('roleable_id', $uuid)->whereIn('role_id', array(1,2));
+            $groupSuperAdmin = self::whereHas('groups', function ($query) use ($id) {
+                $query->where('roleable_id', $id)->whereIn('role_id', array(1,2));
             })->count();
 
             if ($groupSuperAdmin || $groupOrgAdmin){
