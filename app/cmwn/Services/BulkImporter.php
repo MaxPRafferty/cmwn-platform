@@ -15,6 +15,9 @@ class BulkImporter
     public static $data;
     protected static $sheetname;
     protected static $file;
+    protected static $district_id;
+    protected static $organization_id;
+    protected static $DATA;
 
     public static function migratecsv()
     {
@@ -25,37 +28,62 @@ class BulkImporter
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
             \Excel::load(self::$file, function ($reader) {
                 $sheet = '';
+
                 foreach ($reader->toArray() as $sheet => $row) {
-                    $data[$sheet] = $row;
-                    //Saving the Classes into groups
-                    if (self::$sheetname[$sheet] == 'Classes') {
-                        foreach ($data[$sheet] as $row) {
 
-                            if (!empty($row['offical_class'])) {
-                                $output['Classes'] = self::updateClasses($row);
-                            }
-                        }
-                    }
-                    //Saving the teachers into users
-                    if (self::$sheetname[$sheet] == 'Teachers') {
-                        foreach ($data[$sheet] as $row) {
-
-                            if (!empty($row['person_type'])) {
-                                $output['Teachers'] = self::updateTeachers($row);
-                            }
-                        }
-                    }
-                    //Saving the Students into users
                     if (self::$sheetname[$sheet] == 'Students') {
-                        foreach ($data[$sheet] as $i=>$row) {
-                            if (!empty($row['ddbnnn'])) {
-                               $output['Students'] = self::updateStudents($row);
-                            }
-                        }
+                        self::$DATA['Students'] = $row;
+                    }
+                    if (self::$sheetname[$sheet] == 'Classes') {
+                        self::$DATA['Classes'] = $row;
+                    }
+                    if (self::$sheetname[$sheet] == 'Teachers') {
+                        self::$DATA['Teachers'] = $row;
                     }
                 }
 
+
+                foreach(self::$DATA['Students'] as $row=>$data){
+                    $org_id = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+                    if ($org_id[1]) {
+                        $organization = Organization::where('code', $org_id[1])->lists('uuid')->toArray();
+                        if(empty($organization)){
+                            dd("Organization not found"); //@TODO: error out here
+                            break;
+                        }
+                        $organization_uuid = $organization[0];
+                        if (self::$data['parms']['organization_id'] != $organization_uuid) {
+                            dd("wrong organization"); //@TODO: error out here
+                        }
+                        self::$organization_id = $organization_uuid;
+                        break;
+                    }
+                    break;
+                }
             });
+
+
+            foreach(self::$DATA['Students'] as $data){
+               echo "Students ";
+               if($data['ddbnnn']){
+                   var_dump(self::updateStudents($data));
+               }
+            }
+
+            foreach(self::$DATA['Classes'] as $data){
+                echo "Classes";
+                if ($data['offical_class']) {
+                    var_dump(self::updateClasses($data));
+                }
+            }
+
+            foreach(self::$DATA['Teachers'] as $data){
+                echo "Teachers";
+                if($data['person_type']) {
+                    var_dump(self::updateStudents($data));
+                }
+            }
+
 
             return true;
         //} catch (\Exception $e) {
@@ -65,9 +93,8 @@ class BulkImporter
 
     protected static function updateClasses($data)
     {
-
-        $organization_id = self::$data['parms']['organization_id'];
-        $group = Group::where('organization_id', '=',  $organization_id)->where('title', '=', $data['offical_class']);
+        $organization_id = self::$organization_id;
+        $group = Group::where('organization_id', '=',  $organization_id)->where('class_number', '=', $data['class_number']);
         //$group = Group::updateOrCreate(['organization_id'=>$organization_id], ['title'=>$data['offical_class']]);
         if(!$group->get()->count()){
             $group = new Group();
@@ -92,6 +119,7 @@ class BulkImporter
     protected static function updateTeachers($data)
     {
         $role_id = 3;
+        $error = array();
 
         //adding teachers to users table
         foreach ($data as $title => $val) {
@@ -132,20 +160,29 @@ class BulkImporter
                 $role_id = 1;
             }
             if ($data['person_type']=='Assistant Principal'){
-                $role_id = 2;
+                $role_id = 1;
             }
 
             if ($data['person_type']=='Teacher'){
                 $role_id = 2;
             }
 
-            //Assigning teachers to main class
-            $teachers->groups()->sync(array(
-                $uuid=>array('user_id'=>$uuid,'roleable_id'=>$data['class_number'], 'role_id'=>$role_id)
-            ));
+            //Assigning teachers to main class only
+            $group_uuid = null;
+            if($data['class_number']) {
+                $group_uuid = Group::where('class_number', $data['class_number'])->lists('uuid')->toArray();
+
+                $teachers->groups()->sync(array(
+                    $uuid => array('user_id' => $uuid, 'roleable_id' => $group_uuid[0], 'role_id' => $role_id)
+                ));
+            }
+
+
+
+
 
             //Assigning teachers to cluster classes
-            if($data['class_number']){
+/*            if($data['class_number']){
                 $cluster_class = Group::where('class_number', $data['class_number'])->lists('cluster_class')->toArray();
                 foreach($cluster_class as $class){
                     $classes = explode(';',$class);
@@ -156,8 +193,7 @@ class BulkImporter
                     }
                     break;
                 }
-
-            }
+            }*/
 
             return true;
         }
@@ -171,7 +207,7 @@ class BulkImporter
                 $organization_uuid = self::updateStudentsOrganizations($data, $district_uuid);
                 $group_uuid = self::updateStudentsGroups($data, $organization_uuid);
                 $student = self::updateStudentsData($data);
-                return 'Success';
+                return $DDBNNN[1];
     }
 
     protected static function updateStudentsDistricts($data){
