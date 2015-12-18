@@ -283,19 +283,19 @@ class BulkImporter
         }
 
             $user->guardians()->sync([$parent_id],[$student_id]);
-            //$user->guardianReference()->sync([$student_id]);
+            $user->guardianReference()->sync([$student_id]);
 
-//        if(!$user->guardiansall->contains($parent_id)) {
-//            $user->guardiansall()->sync(array(
-//                $student_id => array(
-//                    'user_id' => $parent_id,
-//                    'student_id' => $student_id,
-//                    'first_name' => $data['adult_first_1'],
-//                    'last_name' => $data['adult_last_1'],
-//                    'phone' => $data['adult_phone_1']
-//                )
-//            ));
-//        }
+        if(!$user->guardiansall->contains($parent_id)) {
+            $user->guardiansall()->sync(array(
+                $student_id => array(
+                    'user_id' => $parent_id,
+                    'student_id' => $student_id,
+                    'first_name' => $data['adult_first_1'],
+                    'last_name' => $data['adult_last_1'],
+                    'phone' => $data['adult_phone_1']
+                )
+            ));
+        }
 
 
     }
