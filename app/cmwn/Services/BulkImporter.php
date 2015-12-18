@@ -66,19 +66,19 @@ class BulkImporter
 
             foreach(self::$DATA['Students'] as $data){
                if($data['ddbnnn']){
-                   //var_dump(self::updateStudents($data));
+                   var_dump(self::updateStudents($data));
                }
             }
 
             foreach(self::$DATA['Classes'] as $data){
                 if ($data['offical_class']) {
-                    var_dump(self::updateClasses($data));//Fixed and tested by JT
+                   // var_dump(self::updateClasses($data));//Fixed and tested by JT
                 }
             }
 
             foreach(self::$DATA['Teachers'] as $data){
                 if($data['person_type']) {
-                    var_dump(self::updateTeachers($data));
+                    //var_dump(self::updateTeachers($data));
                 }
             }
 
@@ -199,11 +199,12 @@ class BulkImporter
     protected static function updateStudents($data)
     {
                 $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-                $district_id = self::updateStudentsDistricts($data);
+                $district_id = self::updateStudentsDistricts($data); //Fixed and tested by JT 12/18
                 $organization_id = self::updateStudentsOrganizations($data, $district_id);
-                $group_id = self::updateStudentsGroups($data);
-                $student = self::updateStudentsData($data);
-                return $student;
+                dd($organization_id);
+                //$group_id = self::updateStudentsGroups($data);
+                //$student = self::updateStudentsData($data);
+                return true;
     }
 
     protected static function updateStudentsDistricts($data){
@@ -218,20 +219,14 @@ class BulkImporter
 
     protected static function updateStudentsOrganizations($data, $district_id){
         $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-        $organization = Organization::where(['code' => $DDBNNN[1]])
-            ->with(array('districts' => function ($query) use ($district_id) {
-                $query->where('district_id', $district_id);
-            }));
-        if(!$organization->get()->count()){
-            $organization = new Organization();
-            $organization->code = $DDBNNN[1];
-            $organization->title = $DDBNNN[1];
-            $organization->save();
-        }else{
-            $organization = $organization->first();
-            $organization->description = 'updated';
-            $organization->save();
-        }
+        $organization = Organization::firstOrNew(['code' => $DDBNNN[0]])->with(array('districts' => function ($query) use ($district_id) {
+            $query->where('district_id', $district_id);
+        }))->first();
+        $organization->code = $DDBNNN[1];
+        $organization->title = $DDBNNN[1];
+        $organization->description = 'yesss';
+        $organization->save();
+        $organization->uuid = $organization->id;
         $organization->districts()->sync(array($district_id));
     }
 
