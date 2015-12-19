@@ -90,7 +90,7 @@ class User extends Model implements
 
     public function guardiansall()
     {
-        return $this->belongsToMany('app\User', 'guardians');
+        return $this->belongsToMany('app\User', 'guardians','student_id');
     }
 
     public function guardianReference()

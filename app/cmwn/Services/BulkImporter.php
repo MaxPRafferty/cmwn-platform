@@ -66,19 +66,19 @@ class BulkImporter
 
             foreach(self::$DATA['Students'] as $data){
                if($data['ddbnnn']){
-                   var_dump(self::updateStudents($data));
+                   self::updateStudents($data);
                }
             }
 
             foreach(self::$DATA['Classes'] as $data){
                 if ($data['offical_class']) {
-                   var_dump(self::updateClasses($data));//Fixed and tested by JT
+                    self::updateClasses($data);//Fixed and tested by JT
                 }
             }
 
             foreach(self::$DATA['Teachers'] as $data){
                 if($data['person_type']) {
-                    var_dump(self::updateTeachers($data));
+                    self::updateTeachers($data);
                 }
             }
 
@@ -282,20 +282,19 @@ class BulkImporter
             $parent_id = $parent->id;
         }
 
-            $user->guardians()->sync([$parent_id],[$student_id]);
-            $user->guardianReference()->sync([$student_id]);
+            //$user->guardians()->sync([$parent_id],[$student_id]);
 
-        if(!$user->guardiansall->contains($parent_id)) {
-            $user->guardiansall()->sync(array(
-                $student_id => array(
-                    'user_id' => $parent_id,
-                    'student_id' => $student_id,
-                    'first_name' => $data['adult_first_1'],
-                    'last_name' => $data['adult_last_1'],
-                    'phone' => $data['adult_phone_1']
-                )
-            ));
-        }
+            //$user->guardianReference()->attach($student_id);
+
+
+
+           if (!$user->guardiansall->contains($student_id)) {
+               $user->guardiansall()->sync(array(
+                   $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
+               ));
+           }
+
+
 
 
     }
