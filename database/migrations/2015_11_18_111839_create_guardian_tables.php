@@ -22,10 +22,6 @@ class CreateGuardianTables extends Migration
             $table->string('uuid');
             $table->string('user_id');
             $table->string('student_id');
-            $table->string('first_name');
-            $table->string('middle_name');
-            $table->string('last_name');
-            $table->string('phone');
             //$table->foreign('student_id')->references('student_id')->on('users')->onDelete('cascade');
             //$table->unique(array('student_id', 'first_name', 'last_name', 'phone'));
             $table->timestamps();

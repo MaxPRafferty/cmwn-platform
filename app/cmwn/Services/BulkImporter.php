@@ -72,7 +72,7 @@ class BulkImporter
 
             foreach(self::$DATA['Classes'] as $data){
                 if ($data['offical_class']) {
-                    self::updateClasses($data);//Fixed and tested by JT
+                    self::updateClasses($data);
                 }
             }
 
@@ -119,91 +119,56 @@ class BulkImporter
 
         //adding teachers to users table
 
-            $teacher_id = $data['person_type'].' '.$data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
-            $teacher_id = str_slug($teacher_id);
-            $teachers = User::where('student_id','staff-'.$teacher_id)->where('username',$teacher_id.'@changemyworld.com');
+        $teacher_id = $data['person_type'].' '.$data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
+        $teacher_id = str_slug($teacher_id);
+        $username = $teacher_id.'@changemyworld.com';
+        $teacher_id = 'staff-'.$teacher_id;
 
-            if (!$teachers->get()->count()){
-                $teachers = new User();
-                $teachers->student_id = 'staff-'.$teacher_id;
-                $teachers->username = $teacher_id.'@changemyworld.com';
-                $teachers->first_name = $data['first_name'];
-                $teachers->middle_name = $data['middle_name'];
-                $teachers->last_name = $data['last_name'];
-                $teachers->gender = $data['gender'];
-                $teachers->email = $data['email_address'];
-                $teachers->save();
-            }else {
-                $teachers = User::where('student_id','staff-'.$teacher_id)->where('username',$teacher_id.'@changemyworld.com')->first();
-                $output = $teachers->update([
-                    'student_id' => 'staff-'.$teacher_id,
-                    'username' => $teacher_id.'@changemyworld.com',
-                    'first_name' => $data['first_name'],
-                    'middle_name' => $data['middle_name'],
-                    'last_name' => $data['last_name'],
-                    'email' => $data['email_address'],
-                    'gender' => $data['gender']
-                ]);
-                $teachers->save();
-            }
-            $teacher_id = $teachers->id;
+        $teachers = User::firstOrNew(['student_id' =>$teacher_id,'username' => $username]);
+        $teachers->student_id = $teacher_id;
+        $teachers->username = $username;
+        $teachers->first_name = $data['first_name'];
+        $teachers->middle_name = $data['middle_name'];
+        $teachers->last_name = $data['last_name'];
+        $teachers->gender = $data['gender'];
+        $teachers->email = $data['email_address'];
+        $teachers->save();
+        $teacher_id = (!$teachers->id)?$teachers->uuid:$teachers->id;
 
+        //Assigning the teacher to class
+        if ($data['person_type']=='Principal'){
+            $role_id = 1;
+        }
+        if ($data['person_type']=='Assistant Principal'){
+            $role_id = 1;
+        }
 
-            //Assigning the teacher to class
-            if ($data['person_type']=='Principal'){
-                $role_id = 1;
-            }
-            if ($data['person_type']=='Assistant Principal'){
-                $role_id = 1;
-            }
+        if ($data['person_type']=='Teacher'){
+            $role_id = 2;
+        }
 
-            if ($data['person_type']=='Teacher'){
-                $role_id = 2;
-            }
-
-            //Assigning teachers to main class only
-            $group_id = null;
-            if($data['class_number']) {
-                $group_id = Group::where('class_number', $data['class_number'])->lists('id')->toArray();
-
-                if($group_id && $teacher_id){
-                    $teachers->groups()->sync( array(
+        //Assigning teachers to main class only
+        $group_id = null;
+        if($data['class_number']) {
+            $group_id = Group::where('class_number', $data['class_number'])->lists('id')->toArray();
+            if($group_id){
+                if($group_id && $teacher_id) {
+                    $teachers->groups()->attach( array(
                         $teacher_id => array('user_id' => $teacher_id, 'roleable_id' => $group_id[0], 'role_id' => $role_id)
                     ));
-
                 }
             }
-
-
-
-
-
-            //Assigning teachers to cluster classes
-/*            if($data['class_number']){
-                $cluster_class = Group::where('class_number', $data['class_number'])->lists('cluster_class')->toArray();
-                foreach($cluster_class as $class){
-                    $classes = explode(';',$class);
-                    foreach($classes as $cls){
-                        $teachers->groups()->attach(array(
-                            $id=>array('user_id'=>$id,'roleable_id'=>$cls, 'role_id'=>$role_id)
-                        ));
-                    }
-                    break;
-                }
-            }*/
-
-
-
+        }
     }
 
     protected static function updateStudents($data)
     {
-                $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-                $district_id = self::updateStudentsDistricts($data); //Fixed and tested by JT 12/18
-                $organization_id = self::updateStudentsOrganizations($data, $district_id); //Fixed and tested by JT 12/18
-                $group_id = self::updateStudentsGroups($data);
-                $student = self::updateStudentsData($data);
-                return true;
+        $DDBNNN = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+        $district_id = self::updateStudentsDistricts($data); //Fixed and tested by JT 12/18
+        $organization_id = self::updateStudentsOrganizations($data, $district_id); //Fixed and tested by JT 12/18
+        $group_id = self::updateStudentsGroups($data);
+        $student = self::updateStudentsData($data);
+        return true;
     }
 
     protected static function updateStudentsDistricts($data){
@@ -262,10 +227,8 @@ class BulkImporter
         $user->last_name = $data['last_name'];
         $user->gender = $data['sex'];
         $user->birthdate = $data['birth_dt'];
-        $user->uuid = $user->id;
         $user->save();
-
-        $student_id = $user->id;
+        $student_id = (!$user->id)?$user->uuid:$user->id;
 
         //Add parents
         if ($data['adult_first_1'] && $data['adult_last_1']){
@@ -279,24 +242,18 @@ class BulkImporter
             $parent->first_name = $data['adult_first_1'];
             $parent->last_name = $data['adult_last_1'];
             $parent->save();
-            $parent_id = $parent->id;
+            $parent_id = (!$parent->id)?$parent->uuid:$parent->id;
         }
 
-            //$user->guardians()->sync([$parent_id],[$student_id]);
+            $user->uuid = $student_id;
+            $user->guardians()->attach($student_id);
+            $user->guardianReference()->attach($student_id);
 
-            //$user->guardianReference()->attach($student_id);
-
-
-
-           if (!$user->guardiansall->contains($student_id)) {
+            if (!$user->guardiansall->contains($student_id) && $student_id) {
                $user->guardiansall()->sync(array(
                    $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
                ));
            }
-
-
-
-
     }
 
     protected static function mailNotification($data){
