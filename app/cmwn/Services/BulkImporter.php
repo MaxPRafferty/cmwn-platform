@@ -153,9 +153,9 @@ class BulkImporter
             $group_id = Group::where('class_number', $data['class_number'])->lists('id')->toArray();
             if($group_id){
                 if($group_id && $teacher_id) {
-                    $teachers->groups()->attach( array(
-                        $teacher_id => array('user_id' => $teacher_id, 'roleable_id' => $group_id[0], 'role_id' => $role_id)
-                    ));
+                    $teachers->groups()->attach([
+                        $teacher_id => ['user_id'=>$teacher_id, 'roleable_id'=>$group_id[0],'role_id'=>$role_id]
+                    ]);
                 }
             }
         }
