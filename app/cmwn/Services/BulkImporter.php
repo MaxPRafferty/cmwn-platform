@@ -247,7 +247,10 @@ class BulkImporter
             $parent_id = (!$parent->id)?$parent->uuid:$parent->id;
         }
         $user->uuid = $student_id;
-        $user->guardians()->sync([$student_id]);
+
+        $user->guardians()->sync(
+            [$student_id => $parent_id]);
+
         $user->guardianReference()->sync([$student_id]);
         if (!$user->guardiansall->contains($student_id) && $student_id) {
            $user->guardiansall()->sync(array(
