@@ -18,11 +18,14 @@ class BulkImporter
     protected static $district_id;
     protected static $organization_id;
     protected static $DATA;
+    protected static $ERRORS;
 
-    public static function migratecsv()
-    {
+    public static function migratecsv(){
         self::$file = base_path('storage/app/'.self::$data['file']);
         $output = array();
+        self::$ERRORS.="
+        Error report for importing the excel spreadsheet. \n
+        Submitted on ".date('Y-m-d h:m:i')." by user: " . Auth::user()->student_id."\n";
 
         //try {
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
@@ -81,7 +84,7 @@ class BulkImporter
                 }
             }
 
-
+            self::createReport(self::$ERRORS);
             return true;
         //} catch (\Exception $e) {
             //dd('Houston, we have a problem: '.$e->getMessage());
@@ -179,7 +182,9 @@ class BulkImporter
         $district->title = $DDBNNN[0];
         $district->description = $DDBNNN[0];
         $district->system_id = 1;
-        $district->save();
+        if (!$district->save()){
+            self::$ERRORS.="updateStudentsDistricts: Inserting a new district $DDBNNN[0] has failed \n";
+        }
         return $district->id;
     }
 
@@ -191,9 +196,13 @@ class BulkImporter
         $organization->code = $DDBNNN[1];
         $organization->title = $DDBNNN[1];
         $organization->description = 'yesss';
-        $organization->save();
+        if (!$organization->save()){
+            self::$ERRORS.="updateStudentsOrganizations: Inserting a new organization $DDBNNN[1] has failed \n";
+        }
         $organization->uuid = $organization->id;
-        $organization->districts()->sync(array($district_id));
+        if (!$organization->districts()->sync(array($district_id))){
+            self::$ERRORS.="updateStudentsOrganizations: Assigning organization $organization->id to ditrict has failed \n";
+        }
     }
 
     protected static function updateStudentsGroups($data){
@@ -207,12 +216,16 @@ class BulkImporter
             $group = new Group();
             $group->organization_id = $organization_id;
             $group->class_number = $data['off_cls'];
-            $output['Group'] = $group->save();
+            if(!$group->save()){
+                self::$ERRORS.="updateStudentsGroups: Inserting a new organization $organization_id has failed \n";
+            }
         }else{
             $group = $group->first();
             $group->organization_id = $organization_id;
             $group->class_number = $data['off_cls'];
-            $output['Group'] = $group->save();
+            if(!$group->save()){
+                self::$ERRORS.="updateStudentsGroups: Updating a new organization $organization_id has failed \n";
+            }
         }
         return $group->id;
     }
@@ -229,7 +242,9 @@ class BulkImporter
         $user->last_name = $data['last_name'];
         $user->gender = $data['sex'];
         $user->birthdate = $data['birth_dt'];
-        $user->save();
+        if(!$user->save()){
+            self::$ERRORS.="updateStudentsData: Inserting a new student $username has failed \n";
+        }
         $student_id = (!$user->id)?$user->uuid:$user->id;
 
         //Add parents
@@ -243,8 +258,10 @@ class BulkImporter
             $parent->student_id = $parent_id;
             $parent->first_name = $data['adult_first_1'];
             $parent->last_name = $data['adult_last_1'];
-            $parent->save();
-            $parent_id = (!$parent->id)?$parent->uuid:$parent->id;
+            if(!$parent->save()){
+                self::$ERRORS.="updateStudentsData: Inserting a new parent $username has failed \n";
+            }
+            $teacher_id = $parent_id = (!$parent->id)?$parent->uuid:$parent->id;
         }
         $user->uuid = $student_id;
 
@@ -253,7 +270,7 @@ class BulkImporter
 
         $user->guardianReference()->sync([$student_id]);
         if (!$user->guardiansall->contains($student_id) && $student_id) {
-           $user->guardiansall()->sync(array(
+            $user->guardiansall()->sync(array(
                $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
            ));
        }
@@ -264,6 +281,10 @@ class BulkImporter
                 $student_id =>array('roleable_id'=>key($allclasses), 'role_id'=>3)
             )
         );
+
+        if (!$primary_class){
+            self::$ERRORS.="updateStudentsData: Assigning teacher $teacher_id to cluster class has failed \n";
+        }
 
         if ($allclasses) {
             foreach ($allclasses as $id => $classes) {
@@ -278,6 +299,10 @@ class BulkImporter
                     $student_id => array('roleable_id' => $cls, 'role_id' => 3)
                 )
             );
+
+            if (!$sub_class==null){
+                self::$ERRORS.="updateStudentsData: Assigning student $student_id to cluster class has failed \n";
+            }
         }
     }
 
@@ -294,6 +319,6 @@ class BulkImporter
 
     protected static function createReport($data){
         $path = base_path('storage/app/error_log.csv');
-        $write = \File::put($path, print_r($data));
+        $write = \File::put($path, $data);
     }
 }
