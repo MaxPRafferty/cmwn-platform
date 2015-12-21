@@ -45,7 +45,6 @@ class AuthController extends Controller
             'middle_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'email' => 'email|max:255',
-            'uuid' => 'required|string|unique:users|min:2',
             'password' => 'required|confirmed|min:6',
         ]);
     }
@@ -59,14 +58,11 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
-        $data['uuid'] = str_slug($data['first_name'].' '.$data['middle_name'].' '.$data['last_name'].' '.str_random(10), '-');
-
         return User::create([
             'first_name' => $data['first_name'],
             'middle_name' => $data['middle_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'uuid' => $data['uuid'],
             'password' => bcrypt($data['password']),
         ]);
     }

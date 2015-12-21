@@ -32,7 +32,7 @@ class OrganizationTransformer extends TransformerAbstract
             'code'          => $organization->code,
             'title'         => $organization->title,
             'description'   => $organization->description,
-            'canupdate'     => $user->canUserUpdateObject('organizations', $organization->uuid),
+            'canupdate'     => $user->canUserUpdateObject('organizations', $organization->id),
             'created_at'    => (string) $organization->created_at,
         ];
     }
