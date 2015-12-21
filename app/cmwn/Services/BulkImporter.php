@@ -246,16 +246,36 @@ class BulkImporter
             $parent->save();
             $parent_id = (!$parent->id)?$parent->uuid:$parent->id;
         }
+        $user->uuid = $student_id;
+        $user->guardians()->sync([$student_id]);
+        $user->guardianReference()->sync([$student_id]);
+        if (!$user->guardiansall->contains($student_id) && $student_id) {
+           $user->guardiansall()->sync(array(
+               $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
+           ));
+       }
 
-            $user->uuid = $student_id;
-            $user->guardians()->attach($student_id);
-            $user->guardianReference()->attach($student_id);
+        $allclasses = Group::where('class_number', $data['off_cls'])->lists('cluster_class', 'id')->toArray();
+        $primary_class = $user->groups()->sync(
+            array(
+                $student_id =>array('roleable_id'=>key($allclasses), 'role_id'=>3)
+            )
+        );
 
-            if (!$user->guardiansall->contains($student_id) && $student_id) {
-               $user->guardiansall()->sync(array(
-                   $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
-               ));
-           }
+        if ($allclasses) {
+            foreach ($allclasses as $id => $classes) {
+                $class = explode(';', $classes);
+            }
+        }
+
+        $cluster_class = Group::whereIn('class_number', $class)->lists('id')->toArray();
+        foreach($cluster_class as $cls) {
+            $sub_class = $user->groups()->sync(
+                array(
+                    $student_id => array('roleable_id' => $cls, 'role_id' => 3)
+                )
+            );
+        }
     }
 
     protected static function mailNotification($data){
