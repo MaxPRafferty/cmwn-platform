@@ -147,7 +147,6 @@
             $teacher_id = str_slug($teacher_id);
             $username = $teacher_id.'@changemyworld.com';
             $teacher_id = 'staff-'.$teacher_id;
-
             $teachers = User::firstOrNew(['student_id' =>$teacher_id,'username' => $username]);
             $teachers->student_id = $teacher_id;
             $teachers->username = $username;
@@ -291,12 +290,17 @@
             /*$user->guardians()->sync(
                 [$student_id => $parent_id]);*/
 
-        /*    $user->guardianReference()->sync([$student_id]);
-            if (!$user->guardiansall->contains($student_id) && $student_id) {
-                $user->guardiansall()->sync(array(
-                    $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
+            //$user->guardianReference()->sync([$student_id]);
+
+            if (!$user->guardianReference->contains($student_id) && $student_id) {
+                $user->guardianReference()->sync(array(
+                    $student_id => array(
+                        'user_id' => $student_id,
+                        'first_name' => $data['adult_first_1'],
+                        'last_name' => $data['adult_last_1']
+                    )
                 ));
-            }*/
+            }
 
             $allclasses = Group::where('class_number', $data['off_cls'])->lists('cluster_class', 'id')->toArray();
             $primary_class = $user->groups()->sync(

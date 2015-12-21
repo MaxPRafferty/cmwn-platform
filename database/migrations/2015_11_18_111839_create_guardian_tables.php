@@ -41,7 +41,10 @@ class CreateGuardianTables extends Migration
         Schema::create('guardian_reference', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id')->unsigned();
-            $table->string('student_id');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }
