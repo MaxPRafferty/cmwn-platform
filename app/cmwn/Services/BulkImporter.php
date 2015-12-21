@@ -273,7 +273,7 @@ class BulkImporter
 
         $cluster_class = Group::whereIn('class_number', $class)->lists('id')->toArray();
         foreach($cluster_class as $cls) {
-            $sub_class = $user->groups()->sync(
+            $sub_class = $user->groups()->attach(
                 array(
                     $student_id => array('roleable_id' => $cls, 'role_id' => 3)
                 )
