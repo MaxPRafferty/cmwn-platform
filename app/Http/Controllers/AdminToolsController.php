@@ -77,8 +77,15 @@ class AdminToolsController extends ApiController
                         'file' =>$full_file_name,
                         'parms' => array('organization_id' => $organization_id)
                     );
-                    $this->dispatch(new ImportCSV($data));
-                    return $this->respondWithArray(array('message' => 'Your file has been successfully uploaded. You will receive an email notification once the import is completed.'));
+                    $error = $this->dispatch(new ImportCSV($data));
+                    $error_log = 'storage.app.error_log.csv';
+                    if (!$error) {
+                        return $this->respondWithArray(array(
+                            'message' => 'Your file has been successfully uploaded.You will receive an email notification once the import is completed',
+                            'error_log' => $error_log
+                        ));
+                    }
+                    return $this->errorInternalError('The import has failed. Please see the error log:.' . $error_log);
                 } else {
                     return $this->errorInternalError('The import has failed. Please try again.');
                 }

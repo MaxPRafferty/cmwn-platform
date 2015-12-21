@@ -23,9 +23,19 @@
         public static function migratecsv(){
             self::$file = base_path('storage/app/'.self::$data['file']);
             $output = array();
-            self::$ERRORS.="
-        Error report for importing the excel spreadsheet. \n
-        Submitted on ".date('Y-m-d h:m:i')." by user: " . Auth::user()->student_id."\n";
+            self::$ERRORS.="Error report for importing the excel spreadsheet.\nSubmitted on ".date('Y-m-d h:i:s A')." by user: " . Auth::user()->student_id."\n
+
+            Errors:
+
+            ";
+
+            if (!self::$data['parms']['organization_id']){
+                self::$ERRORS.="migratecsv: Please select the organization.\n";
+                self::createReport(self::$ERRORS);
+                dd("Please select the organization");
+            }
+
+
 
             //try {
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
@@ -46,18 +56,24 @@
 
 
                 foreach(self::$DATA['Students'] as $row=>$data){
+
                     $org_id = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
                     if ($org_id[1]) {
                         $organization = Organization::where('code', $org_id[1])->lists('id')->toArray();
 
                         if(empty($organization)){
-                            dd("Organization not found"); //@TODO: error out here
+                            self::$ERRORS.="migratecsv: Organization $org_id[1] is not found in the DB.\n";
+                            self::createReport(self::$ERRORS);
+                            dd(self::$ERRORS);
                             break;
                         }
 
                         $organization_id = $organization[0];
                         if (self::$data['parms']['organization_id'] != $organization_id) {
-                            dd("wrong organization"); //@TODO: error out here
+                            $org_not_found = self::$data['parms']['organization_id'];
+                            self::$ERRORS.="migratecsv: Organization $org_not_found is not matched with DB.\n";
+                            self::createReport(self::$ERRORS);
+                            dd(self::$ERRORS);
                         }
                         self::$organization_id = $organization_id;
                         break;
@@ -73,7 +89,7 @@
             }
 
             foreach(self::$DATA['Classes'] as $data){
-                if ($data['offical_class']) {
+                if ($data['off_cls']) {
                     self::updateClasses($data);
                 }
             }
@@ -83,7 +99,7 @@
                     self::updateTeachers($data);
                 }
             }
-
+            self::$ERRORS.="\n\n\nEnd of the error report.";
             self::createReport(self::$ERRORS);
             return true;
             //} catch (\Exception $e) {
@@ -94,23 +110,28 @@
         protected static function updateClasses($data)
         {
             $organization_id = self::$organization_id;
-            $group = Group::where('organization_id', '=',  $organization_id)->where('class_number', '=', $data['class_number']);
+            $group = Group::where('organization_id', '=',  $organization_id)->where('class_number', '=', $data['off_cls']);
             //$group = Group::updateOrCreate(['organization_id'=>$organization_id], ['title'=>$data['offical_class']]);
+            //@TODO refactor this according to laravel best practice
             if(!$group->get()->count()){
                 $group = new Group();
                 $group->organization_id = $organization_id;
-                $group->title = $data['offical_class'];
-                $group->class_number = $data['class_number'];
-                $group->cluster_class = $data['sub_class_number'];
-                $group->save();
+                $group->title = $data['title'];
+                $group->class_number = $data['off_cls'];
+                $group->cluster_class = $data['sub_classes'];
+                if (!$group->save()){
+                    self::$ERRORS.="updateClasses: Inserting a new class {$data["offical_class"]} has failed \n";
+                }
 
             }else{
                 $group = $group->first();
                 $group->organization_id = $organization_id;
-                $group->title = $data['offical_class'];
-                $group->class_number = $data['class_number'];
-                $group->cluster_class = $data['sub_class_number'];
-                $group->save();
+                $group->title = $data['title'];
+                $group->class_number = $data['off_cls'];
+                $group->cluster_class = $data['sub_classes'];
+                if (!$group->save()){
+                    self::$ERRORS.="updateClasses: Updating a new class {$data["offical_class"]} has failed \n";
+                }
             }
             $group_id = $group->id;
         }
@@ -135,7 +156,9 @@
             $teachers->last_name = $data['last_name'];
             $teachers->gender = $data['gender'];
             $teachers->email = $data['email_address'];
-            $teachers->save();
+            if (!$teachers->save()){
+                self::$ERRORS.="updateTeachers: Inserting/Updating a techer $teacher_id has failed \n";
+            }
             $teacher_id = (!$teachers->id)?$teachers->uuid:$teachers->id;
             //Assigning the teacher to class
             if ($data['person_type']=='Principal'){
@@ -151,8 +174,8 @@
 
             //Assigning teachers to main class only
             $group_id = null;
-            if($data['class_number']) {
-                $group_id = Group::where('class_number', $data['class_number'])->lists('id')->toArray();
+            if(isset($data['off_cls'])) {
+                $group_id = Group::where('class_number', $data['off_cls'])->lists('id')->toArray();
                 if($group_id){
                     if($group_id && $teacher_id) {
                         $teachers->uuid = $teacher_id;
@@ -265,15 +288,15 @@
             }
             $user->uuid = $student_id;
 
-            $user->guardians()->sync(
-                [$student_id => $parent_id]);
+            /*$user->guardians()->sync(
+                [$student_id => $parent_id]);*/
 
-            $user->guardianReference()->sync([$student_id]);
+        /*    $user->guardianReference()->sync([$student_id]);
             if (!$user->guardiansall->contains($student_id) && $student_id) {
                 $user->guardiansall()->sync(array(
                     $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
                 ));
-            }
+            }*/
 
             $allclasses = Group::where('class_number', $data['off_cls'])->lists('cluster_class', 'id')->toArray();
             $primary_class = $user->groups()->sync(
@@ -288,11 +311,12 @@
 
             if ($allclasses) {
                 foreach ($allclasses as $id => $classes) {
-                    $class = explode(';', $classes);
+                    $class = explode(',', $classes);
                 }
             }
 
             $cluster_class = Group::whereIn('class_number', $class)->lists('id')->toArray();
+
             foreach($cluster_class as $cls) {
                 $sub_class = $user->groups()->attach(
                     array(

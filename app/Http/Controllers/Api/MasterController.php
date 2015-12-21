@@ -62,8 +62,11 @@ class MasterController extends ApiController
                         'file' =>$full_file_name,
                         'parms' => array('organization_id' => $organization_id)
                     );
-                    $this->dispatch(new ImportCSV($data));
-                    return $this->respondWithArray(array('message' => 'The import has been completed successfully.'));
+                    $output = $this->dispatch(new ImportCSV($data));
+                    if ($output) {
+                        return $this->respondWithArray(array('message' => 'The import has been completed successfully.'));
+                    }
+                    return $this->errorInternalError('The import has failed. Please see the error log.' . base_path('storage/app/error_log.csv'));
                 } else {
                     return $this->errorInternalError('The import has failed. Please try again.');
                 }

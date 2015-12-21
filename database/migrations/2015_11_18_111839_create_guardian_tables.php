@@ -17,21 +17,21 @@ class CreateGuardianTables extends Migration
         Schema::dropIfExists('guardians');
         Schema::dropIfExists('guardian_reference');
 
-        Schema::create('guardians', function (Blueprint $table) {
+/*        Schema::create('guardians', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uuid');
+            //$table->string('uuid');
             $table->unsignedInteger('user_id')->unsigned();
             $table->string('student_id');
             //$table->foreign('student_id')->references('student_id')->on('users')->onDelete('cascade');
             //$table->unique(array('student_id', 'first_name', 'last_name', 'phone'));
             $table->timestamps();
             $table->softDeletes();
-        });
+        });*/
 
         Schema::create('child_guardian', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('guardian_id')->unsigned();
-            $table->unsignedInteger('child_id')->unsigned()->unsigned();
+            $table->unsignedInteger('child_id')->unsigned();
             //$table->foreign('child_id')->references('uuid')->on('users')->onDelete('cascade');
             //$table->foreign('guardian_id')->references('uuid')->on('users')->onDelete('cascade');
             //$table->unique(array('guardian_id', 'child_id'));
@@ -40,9 +40,8 @@ class CreateGuardianTables extends Migration
 
         Schema::create('guardian_reference', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('uuid')->unsigned();
             $table->unsignedInteger('user_id')->unsigned();
-            $table->string('student_id')->unsigned();
+            $table->string('student_id');
             $table->timestamps();
         });
     }
