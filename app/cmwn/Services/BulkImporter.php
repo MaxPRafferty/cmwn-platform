@@ -134,7 +134,6 @@ class BulkImporter
         $teachers->email = $data['email_address'];
         $teachers->save();
         $teacher_id = (!$teachers->id)?$teachers->uuid:$teachers->id;
-
         //Assigning the teacher to class
         if ($data['person_type']=='Principal'){
             $role_id = 1;
@@ -153,9 +152,12 @@ class BulkImporter
             $group_id = Group::where('class_number', $data['class_number'])->lists('id')->toArray();
             if($group_id){
                 if($group_id && $teacher_id) {
-                    $teachers->groups()->attach([
-                        $teacher_id => ['user_id'=>$teacher_id, 'roleable_id'=>$group_id[0],'role_id'=>$role_id]
-                    ]);
+                    $teachers->uuid = $teacher_id;
+                    $teachers->groups()->sync(
+                        array(
+                            $teacher_id =>array('roleable_id'=>$group_id[0], 'role_id'=>$role_id)
+                        )
+                    );
                 }
             }
         }
