@@ -110,7 +110,7 @@
         protected static function updateClasses($data)
         {
             $organization_id = self::$organization_id;
-            $group = Group::firstOrNew(['organization_id'=>$organization_id, 'title'=>$data['title']]);
+            $group = Group::firstOrNew(['organization_id'=>$organization_id, 'class_number'=>$data['off_cls']]);
                 $group->organization_id = $organization_id;
                 $group->title = $data['title'];
                 $group->class_number = $data['off_cls'];
