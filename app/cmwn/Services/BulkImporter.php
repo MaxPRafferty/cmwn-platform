@@ -89,7 +89,7 @@
             }
 
             foreach(self::$DATA['Classes'] as $data){
-                if ($data['off_cls']) {
+                if ($data['off_cls'] && $data['title']) {
                     self::updateClasses($data);
                 }
             }
@@ -110,30 +110,15 @@
         protected static function updateClasses($data)
         {
             $organization_id = self::$organization_id;
-            $group = Group::where('organization_id', '=',  $organization_id)->where('class_number', '=', $data['off_cls']);
-            //$group = Group::updateOrCreate(['organization_id'=>$organization_id], ['title'=>$data['offical_class']]);
-            //@TODO refactor this according to laravel best practice
-            if(!$group->get()->count()){
-                $group = new Group();
+            $group = Group::firstOrNew(['organization_id'=>$organization_id, 'title'=>$data['title']]);
                 $group->organization_id = $organization_id;
                 $group->title = $data['title'];
                 $group->class_number = $data['off_cls'];
                 $group->cluster_class = $data['sub_classes'];
                 if (!$group->save()){
-                    self::$ERRORS.="updateClasses: Inserting a new class {$data["offical_class"]} has failed \n";
+                    self::$ERRORS.="updateClasses: Inserting a new class {$data['title']} has failed \n";
                 }
-
-            }else{
-                $group = $group->first();
-                $group->organization_id = $organization_id;
-                $group->title = $data['title'];
-                $group->class_number = $data['off_cls'];
-                $group->cluster_class = $data['sub_classes'];
-                if (!$group->save()){
-                    self::$ERRORS.="updateClasses: Updating a new class {$data["offical_class"]} has failed \n";
-                }
-            }
-            $group_id = $group->id;
+                $group_id = (!$group->id)?$group->uuid:$group->id;
         }
 
         protected static function updateTeachers($data)
