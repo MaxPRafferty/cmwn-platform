@@ -26,8 +26,8 @@ class CreateOrganizationsTables extends Migration
 
         Schema::create('district_organization', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('district_id');
-            $table->string('organization_id');
+            $table->unsignedInteger('district_id')->unsigned();
+            $table->unsignedInteger('organization_id')->unsigned();
             //$table->foreign('district_id')->references('uuid')->on('districts'); //@TODO: add the user table first before generating this table
             $table->unique(array('organization_id'));
             $table->unique(array('district_id', 'organization_id'));

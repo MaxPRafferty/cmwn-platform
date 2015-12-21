@@ -24,8 +24,8 @@ class CreateRolesTable extends Migration
 
         Schema::create('roleables', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id');
-            $table->string('roleable_id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('roleable_id')->unsigned();
             $table->string('roleable_type');
             $table->unsignedInteger('role_id')->unsigned();
             $table->unique(array('user_id', 'roleable_id','roleable_type'));

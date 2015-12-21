@@ -28,7 +28,6 @@ class BulkImporter
             self::$sheetname = \Excel::load(self::$file)->getSheetNames();
             \Excel::load(self::$file, function ($reader) {
                 $sheet = '';
-
                 foreach ($reader->toArray() as $sheet => $row) {
 
                     if (self::$sheetname[$sheet] == 'Students') {
@@ -100,14 +99,15 @@ class BulkImporter
             $group->title = $data['offical_class'];
             $group->class_number = $data['class_number'];
             $group->cluster_class = $data['sub_class_number'];
-            $output['Group'][] = $group->save();
+            $group->save();
+
         }else{
             $group = $group->first();
             $group->organization_id = $organization_id;
             $group->title = $data['offical_class'];
             $group->class_number = $data['class_number'];
             $group->cluster_class = $data['sub_class_number'];
-            $output['Group'][] = $group->save();
+            $group->save();
         }
         $group_id = $group->id;
     }
@@ -287,5 +287,10 @@ class BulkImporter
         $notifier->template = 'emails.import';
         $notifier->attachData(['user' => Auth::user()]);
         $notifier->send();
+    }
+
+    protected static function createReport($data){
+        $path = base_path('storage/app/error_log.csv');
+        $write = \File::put($path, print_r($data));
     }
 }
