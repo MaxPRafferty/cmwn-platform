@@ -12,7 +12,7 @@ trait RoleTrait
             return self::query();
         } else {
             return self::whereHas('users', function ($query) use ($user) {
-                $query->where('user_id', $user->uuid);
+                $query->where('user_id', $user->id);
             });
         }
     }
@@ -46,27 +46,27 @@ trait RoleTrait
     public function isUser($user)
     {
         //TODO replace 1 with type constant!
-        return ($user->type == 1 || $this->users()->where('user_id', $user->uuid)->count() > 0);
+        return ($user->type == 1 || $this->users()->where('user_id', $user->id)->count() > 0);
     }
 
     public function isSuperAdmin($user)
     {
-        return ($user->type == 1 || $this->superAdmins()->where('user_id', $user->uuid)->count() > 0);
+        return ($user->type == 1 || $this->superAdmins()->where('user_id', $user->id)->count() > 0);
     }
 
     public function isAdmin($user)
     {
 
-        return ($user->type == 1 || $this->admin()->where('user_id', $user->uuid)->count() > 0);
+        return ($user->type == 1 || $this->admin()->where('user_id', $user->id)->count() > 0);
     }
 
     public function isMember($user)
     {
-        return ($user->type == 1 || $this->members()->where('user_id', $user->uuid)->count() > 0);
+        return ($user->type == 1 || $this->members()->where('user_id', $user->id)->count() > 0);
     }
 
     public function canUpdate($user)
     {
-        return ($user->type == 1 || $this->users()->where('user_id', $user->uuid)->where('role_id', '>', 1)->count() > 0);
+        return ($user->type == 1 || $this->users()->where('user_id', $user->id)->where('role_id', '>', 1)->count() > 0);
     }
 }

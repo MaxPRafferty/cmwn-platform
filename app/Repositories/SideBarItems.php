@@ -23,8 +23,7 @@ class SideBarItems
         }
     }
 
-
-	public function getAll(){
+    public function getAll(){
         $tags = array();
         if (!Auth::check()){
             $tags = array(
@@ -54,7 +53,7 @@ class SideBarItems
         $tags['Games'] = '/profile';
 
         //Districts Menu
-        $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->uuid);
+        $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->id);
         if ($districtMembers->count()){
             if($districtMembers->count()>1) {
                 $tags = array_add($tags, 'Districts', '/districts');
@@ -65,7 +64,7 @@ class SideBarItems
         }
 
         //Organizations menu
-        $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->uuid);
+        $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->id);
         if ($organizationMembers->count()){
             if($organizationMembers->count()>1) {
                 $tags = array_add($tags, 'Organizations', '/organizations');
@@ -76,7 +75,7 @@ class SideBarItems
         }
 
         //Groups menu
-        $groupMembers = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->uuid);
+        $groupMembers = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->id);
 
         if ($groupMembers->count()){
             if($groupMembers->count()>1) {
