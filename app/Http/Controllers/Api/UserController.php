@@ -75,7 +75,8 @@ class UserController extends ApiController
 
     public function showImage($user_id)
     {
-        $image = User::find($user_id)->images;
+        //$image = User::find(['uuid'=>'38bc77fc-a82f-11e5-8432-6c4008a38944'])->images;
+        $image = User::findByUuid($user_id)->images;
 
         return $this->respondWithCollection($image, new ImageTransformer());
     }

@@ -89,7 +89,7 @@
             }
 
             foreach(self::$DATA['Classes'] as $data){
-                if ($data['off_cls']) {
+                if ($data['off_cls'] && $data['title']) {
                     self::updateClasses($data);
                 }
             }
@@ -110,30 +110,15 @@
         protected static function updateClasses($data)
         {
             $organization_id = self::$organization_id;
-            $group = Group::where('organization_id', '=',  $organization_id)->where('class_number', '=', $data['off_cls']);
-            //$group = Group::updateOrCreate(['organization_id'=>$organization_id], ['title'=>$data['offical_class']]);
-            //@TODO refactor this according to laravel best practice
-            if(!$group->get()->count()){
-                $group = new Group();
+            $group = Group::firstOrNew(['organization_id'=>$organization_id, 'class_number'=>$data['off_cls']]);
                 $group->organization_id = $organization_id;
                 $group->title = $data['title'];
                 $group->class_number = $data['off_cls'];
                 $group->cluster_class = $data['sub_classes'];
                 if (!$group->save()){
-                    self::$ERRORS.="updateClasses: Inserting a new class {$data["offical_class"]} has failed \n";
+                    self::$ERRORS.="updateClasses: Inserting a new class {$data['title']} has failed \n";
                 }
-
-            }else{
-                $group = $group->first();
-                $group->organization_id = $organization_id;
-                $group->title = $data['title'];
-                $group->class_number = $data['off_cls'];
-                $group->cluster_class = $data['sub_classes'];
-                if (!$group->save()){
-                    self::$ERRORS.="updateClasses: Updating a new class {$data["offical_class"]} has failed \n";
-                }
-            }
-            $group_id = $group->id;
+                $group_id = (!$group->id)?$group->uuid:$group->id;
         }
 
         protected static function updateTeachers($data)
@@ -147,7 +132,6 @@
             $teacher_id = str_slug($teacher_id);
             $username = $teacher_id.'@changemyworld.com';
             $teacher_id = 'staff-'.$teacher_id;
-
             $teachers = User::firstOrNew(['student_id' =>$teacher_id,'username' => $username]);
             $teachers->student_id = $teacher_id;
             $teachers->username = $username;
@@ -291,12 +275,17 @@
             /*$user->guardians()->sync(
                 [$student_id => $parent_id]);*/
 
-        /*    $user->guardianReference()->sync([$student_id]);
-            if (!$user->guardiansall->contains($student_id) && $student_id) {
-                $user->guardiansall()->sync(array(
-                    $student_id => array('user_id' => $parent_id, 'student_id' => $student_id)
+            //$user->guardianReference()->sync([$student_id]);
+
+            if (!$user->guardianReference->contains($student_id) && $student_id) {
+                $user->guardianReference()->sync(array(
+                    $student_id => array(
+                        'user_id' => $student_id,
+                        'first_name' => $data['adult_first_1'],
+                        'last_name' => $data['adult_last_1']
+                    )
                 ));
-            }*/
+            }
 
             $allclasses = Group::where('class_number', $data['off_cls'])->lists('cluster_class', 'id')->toArray();
             $primary_class = $user->groups()->sync(

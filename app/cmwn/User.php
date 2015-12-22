@@ -38,7 +38,7 @@ class User extends Model implements
      * @var string
      */
 
-    protected $primaryKey = 'uuid';
+    //protected $primaryKey = 'uuid';
 
     /**
      * The attributes that are mass assignable.
@@ -84,14 +84,13 @@ class User extends Model implements
         'password_confirmation' => 'required',
     );
 
-    public function guardiansall()
-    {
-        return $this->belongsToMany('app\User', 'guardians','student_id');
+    public static function findByUuid($uuid){
+        return self::where('uuid',$uuid)->firstOrFail();
     }
 
     public function guardianReference()
     {
-        return $this->belongsToMany('app\User', 'guardian_reference', 'student_id');
+        return $this->belongsToMany('app\User', 'guardian_reference', 'user_id');
     }
 
     public function assignRoles()
