@@ -59,10 +59,9 @@ class SideBarItems
         if ($districtMembers->count()){
             if($districtMembers->count()>1) {
                 $tags = array_add($tags, 'Districts', '/districts');
+            } elseif ($districtMembers->count() === 1) {
+                $tags[$districtMembers->get()[0]->title] = '/district/'.$districtMembers->get()[0]->uuid;
             }
-            foreach($districtMembers->get() as $district){
-            $tags[$district->title] = '/districts/'.$district->pivot->roleable_id;
-         }
         }
 
         //Organizations menu
@@ -70,6 +69,8 @@ class SideBarItems
         if ($organizationMembers->count()){
             if($organizationMembers->count()>1) {
                 $tags = array_add($tags, 'My Schools', '/organizations');
+            } elseif ($organizationMembers->count() === 1) {
+                $tags[$organizationMembers->get()[0]->title] = '/organization/'.$organizationMembers->get()[0]->uuid;
             }
             //foreach($organizationMembers->get() as $organization){
             //    $tags[$organization->title] = '/organizations/'.$organization->pivot->roleable_id;
@@ -82,13 +83,13 @@ class SideBarItems
         if ($groupMembers->count()){
             if($groupMembers->count()>1) {
                 $tags = array_add($tags, 'My Classes', '/groups');
+                //disabling individual classed simultaneously with
+                //link to My Classes, as per Joni's instructions
                 //foreach($groupMembers->get() as $group){
                 //    $tags[' - '.$group->title] = '/groups/'.$group->pivot->roleable_id;
                 //}
             } elseif ($groupMembers->count() === 1) {
-                foreach($groupMembers->get() as $group){
-                    $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
-                }
+                $tags[$groupMembers->get()[0]->title] = '/group/'.$groupMembers->get()[0]->uuid;
             }
         }
 
