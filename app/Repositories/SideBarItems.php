@@ -39,13 +39,13 @@ class SideBarItems
             $tags = array(
                 'Members' => '/users/members',
                 'Roles' => '/users/members',
-                'Ditricts' => '/districts',
+                'Districts' => '/districts',
                 'Organizations' => '/organizations',
                 'Groups' => '/groups',
                 'Games' => '/games',
                 'Edit Profile' => '/profile/edit',
-                'Upload CSV' => '/admin/importfiles',
-                'Cloudinary Image' => '/admin/playground',
+                //'Upload CSV' => '/admin/importfiles',
+                //'Cloudinary Image' => '/admin/playground',
             );
             return $tags;
         }
