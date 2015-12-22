@@ -44,7 +44,7 @@ class UserSpecificRepository extends ApiController
             $friends['friendrequests'] = User::find($this->currentUser->id)->friendrequests;
         }
 
-        return $friends;
+        return array('data'=>$friends);
     }
 
 
