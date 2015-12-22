@@ -38,7 +38,7 @@ class User extends Model implements
      * @var string
      */
 
-    protected $primaryKey = 'uuid';
+    //protected $primaryKey = 'uuid';
 
     /**
      * The attributes that are mass assignable.
@@ -83,6 +83,10 @@ class User extends Model implements
         'password' => 'required|confirmed',
         'password_confirmation' => 'required',
     );
+
+    public static function findByUuid($uuid){
+        return self::where('uuid',$uuid)->firstOrFail();
+    }
 
     public function guardianReference()
     {
