@@ -40,7 +40,7 @@ class UserController extends ApiController
     {
         $user = User::findFromInput($userId);
 
-            if (!$user->canUpdate($this->currentUser)) {
+        if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');
         }
 
@@ -50,7 +50,7 @@ class UserController extends ApiController
             return $this->errorWrongArgs($validator->errors()->all());
         }
 
-        if ($this->currentUser->updateMember(Input::all())) {
+        if ($user->updateMember(Input::all())) {
             return $this->respondWithItem($user, new UserTransformer());
         } else {
             return $this->errorInternalError('Could not save user.');
