@@ -36,29 +36,28 @@ class UserController extends ApiController
         return $this->respondWithItem($user, new UserTransformer());
     }
 
-    public function create()
+    public function update($userId = null)
     {
-        //return $this->errorInternalError('Cannot create');
-    }
+        if (isset($userId)) {
+            $user = User::findFromInput($userId);
 
-    public function update($userId)
-    {
-        $user = User::findFromInput($userId);
+            if (!$user->canUpdate($this->currentUser)) {
+                return $this->errorInternalError('You are not authorized.');
+            }
 
-        if (!$user->canUpdate($this->currentUser)) {
-            return $this->errorInternalError('You are not authorized.');
-        }
+            $validator = Validator::make(Input::all(), User::$memberUpdateRules);
 
-        $validator = Validator::make(Input::all(), User::$memberUpdateRules);
+            if (!$validator->passes()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
 
-        if (!$validator->passes()) {
-            return $this->errorWrongArgs($validator->errors()->all());
-        }
-
-        if ($this->currentUser->updateMember(Input::all())) {
-            return $this->respondWithItem($user, new UserTransformer());
+            if ($this->currentUser->updateMember(Input::all())) {
+                return $this->respondWithItem($user, new UserTransformer());
+            } else {
+                return $this->errorInternalError('Could not save user.');
+            }
         } else {
-            return $this->errorInternalError('Could not save user.');
+            return $this->errorInternalError('You are not authorized.');
         }
     }
 
