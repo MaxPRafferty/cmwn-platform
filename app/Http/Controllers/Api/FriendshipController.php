@@ -15,34 +15,36 @@ class FriendshipController extends ApiController
     const MEMBER_ID =3;
 
     public function show(){
-        return User::find($this->currentUser)->friendrequests->lists('id');
+        return User::find($this->currentUser->id)->friendrequests->lists('id');
     }
 
     public function accept(){
-        $friend_id = \Request::segment(3);
-        return $this->executeRequest($friend_id, 1);
+        $friend_uuid = \Request::segment(3);
+        return $this->executeRequest($friend_uuid, 1);
     }
 
     public function reject(){
-        $friend_id = \Request::segment(3);
-        return $this->executeRequest($friend_id, -1);
+        $friend_uuid = \Request::segment(3);
+        return $this->executeRequest($friend_uuid, -1);
     }
 
     public function ignore(){
-        $friend_id = \Request::segment(3);
-        return $this->executeRequest($friend_id, -2);
+        $friend_uuid = \Request::segment(3);
+        return $this->executeRequest($friend_uuid, -2);
     }
 
-    public function executeRequest($friend_id, $status){
+    public function executeRequest($friend_uuid, $status){
         list(, $caller) = debug_backtrace(false);
         $requestedFunction = $caller['function'];
+        $friend_id = User::findByUuid($friend_uuid)->id;
+        $isRequestLegit = UsersRelationshipHandler::areWeFriends($this->currentUser->id, $friend_id);
 
-        $isRequestLegit = UsersRelationshipHandler::areWeFriends($this->currentUser, $friend_id);
-        if ($isRequestLegit->count()==0){
+        if ($isRequestLegit){
             return $this->errorInternalError('No active friend request found.');
         }
+
         $areWeInTheSameClass = UsersRelationshipHandler::areWeInSameClass($this->currentUser, $friend_id);
-        if ($areWeInTheSameClass->count()==0){
+        if (!$areWeInTheSameClass){
             return $this->errorInternalError('Sorry you are not in the same class as a student.');
         }
 
@@ -52,12 +54,13 @@ class FriendshipController extends ApiController
             return $this->respondWithArray(array('message' => 'ignore option has not been discussed.'));
         }
 
-        User::find($friend_id)->friends()->sync(array($this->currentUser));
-        User::find($this->currentUser)->friends()->updateExistingPivot($friend_id,array('status'=>$status));
-        User::find($this->currentUser)->friendrequests()->updateExistingPivot($friend_id,array('status'=>$status));
+
+        User::find($friend_id)->friends()->sync(array($this->currentUser->id));
+        User::find($this->currentUser->id)->friends()->updateExistingPivot($friend_id,array('status'=>$status));
+        User::find($this->currentUser->id)->friendrequests()->updateExistingPivot($friend_id,array('status'=>$status));
 
         if ($requestedFunction == 'reject'){
-            User::find($friend_id)->friends()->detach(array($this->currentUser));
+            User::find($friend_id)->friends()->detach(array($this->currentUser->id));
         }
 
         return $this->respondWithArray(array('message' => 'friend request has been updated.'));
