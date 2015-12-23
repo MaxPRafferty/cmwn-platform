@@ -36,11 +36,16 @@ class UserController extends ApiController
         return $this->respondWithItem($user, new UserTransformer());
     }
 
+    public function create()
+    {
+        //return $this->errorInternalError('Cannot create');
+    }
+
     public function update($userId)
     {
         $user = User::findFromInput($userId);
 
-            if (!$user->canUpdate($this->currentUser)) {
+        if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');
         }
 

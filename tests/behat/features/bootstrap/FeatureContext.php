@@ -7,6 +7,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use PHPUnit_Framework_Assert as PHPUnit;
 
+date_default_timezone_set('America/New_York');
+
 /**
  * Features context.
  */
@@ -51,11 +53,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct() //(array $parameters)
     {
-        // $config = isset($parameters['guzzle']) && is_array($parameters['guzzle']) ? $parameters['guzzle'] : [];
-
-        $config['base_url'] = 'http://api.cmwn.localhost';
-
-        $this->client = new Client(['base_url' => 'http://api.cmwn.localhost']);
+        $this->client = new Client(['base_uri' => 'http://api.cmwn.localhost/', 'cookies' => true]);
     }
 
     /**
@@ -64,6 +62,38 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function iHaveThePayload(PyStringNode $requestPayload)
     {
         $this->requestPayload = $requestPayload;
+    }
+
+    /**
+     * @Given I am logged in with the username :username and the password :password
+     */
+    public function iAmLoggedInWithTheUsernameAndThePassword($username, $password)
+    {
+        $this->iRequest('GET', 'csrf_token');
+        $this->iCanTryToLogin($username, $password);
+    }
+
+    /**
+     * @Then /^I can try to login with the username "([^"]*)" and the password "([^"]*)"$/
+     */
+    public function iCanTryToLogin($username, $password)
+    {
+        $payload = $this->getScopePayload();
+
+        try {
+            $this->response = $this->client->request('POST', 'auth/login', ['auth' => [$username, $password], 'headers' => ['X-CSRF-TOKEN' => $payload->token]]);
+        } catch (BadResponseException $e) {
+            $response = $e->getResponse();
+
+            // Sometimes the request will fail, at which point we have
+            // no response at all. Let Guzzle give an error here, it's
+            // pretty self-explanatory.
+            if ($response === null) {
+                throw $e;
+            }
+
+            $this->response = $e->getResponse();
+        }
     }
 
     /**
@@ -81,18 +111,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
                 case 'POST':
                     $this->response = $this
                         ->client
-                        ->$method($resource, [
-                                                'auth' => [
-                                                    'username',
-                                                    'password'
-                                                ]
-                                            ]);
-                        //->$method($resource, $this->requestPayload);
-
+                        ->$method($resource, [], $this->requestPayload);
                     break;
-
                 default:
                     $this->response = $this->client->$method($resource);
+
+                    // if($resource == "sidebar"){
+                    //     echo($this->response->getBody());
+                    // }
             }
         } catch (BadResponseException $e) {
             $response = $e->getResponse();
@@ -114,7 +140,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function iGetAResponse($statusCode)
     {
         $response = $this->getResponse();
+
         $contentType = $response->getHeader('Content-Type');
+
+        $contentType = $contentType[0];
 
         if ($contentType === 'application/json') {
             $bodyOutput = $response->getBody();
@@ -146,6 +175,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function thePropertyExists($property)
     {
         $payload = $this->getScopePayload();
+
+        //var_dump($payload); // only one
 
         $message = sprintf(
             'Asserting the [%s] property exists in the scope [%s]: %s',
@@ -399,7 +430,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     protected function getResponsePayload()
     {
-        if (!$this->responsePayload) {
+        //if (!$this->responsePayload) {
             $json = json_decode($this->getResponse()->getBody(true));
 
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -430,7 +461,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             }
 
             $this->responsePayload = $json;
-        }
+        //}
 
         return $this->responsePayload;
     }

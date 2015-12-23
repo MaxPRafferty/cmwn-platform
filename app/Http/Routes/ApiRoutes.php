@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('/users', 'Api\UserController@index');
     Route::get('/users/{id}', 'Api\UserController@show');
     Route::post('/users/{id}', 'Api\UserController@update');
+    Route::get('/fast', 'Api\UserController@create');
 
     Route::get('/users/{id}/groups', 'Api\UserController@getGroups');
 
