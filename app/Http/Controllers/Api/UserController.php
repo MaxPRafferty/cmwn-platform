@@ -38,6 +38,12 @@ class UserController extends ApiController
 
     public function update($userId)
     {
+        $user = User::findFromInput($userId);
+
+        if (!$user->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
+        }
+
         $validator = Validator::make(Input::all(), User::$memberUpdateRules);
 
         if (!$validator->passes()) {
