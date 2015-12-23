@@ -69,8 +69,8 @@ class User extends Model implements
         'middle_name' => 'string|min:2',
         'last_name' => 'required|string|min:2',
         'email' => 'email|min:2',
-        'username' => 'required|alpha_dash|unique:users',
-        'student_id' => 'required|alpha_dash|unique:users',
+        'username' => 'required|alpha_dash|unique:users,username',
+        'student_id' => 'required|alpha_dash|unique:users,username',
 
     );
 
