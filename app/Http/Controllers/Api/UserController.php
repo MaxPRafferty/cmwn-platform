@@ -36,28 +36,47 @@ class UserController extends ApiController
         return $this->respondWithItem($user, new UserTransformer());
     }
 
-    public function update($userId = null)
+    public function update($userId)
     {
-        if (isset($userId)) {
-            $user = User::findFromInput($userId);
+        $validator = Validator::make(Input::all(), User::$memberUpdateRules);
 
-            if (!$user->canUpdate($this->currentUser)) {
-                return $this->errorInternalError('You are not authorized.');
-            }
+        if (!$validator->passes()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
 
-            $validator = Validator::make(Input::all(), User::$memberUpdateRules);
+        $user = User::findFromInput($userId);
+
+        if (!$user->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
+        }
+
+        if ($user->updateMember(Input::all())) {
+            return $this->respondWithItem($user, new UserTransformer());
+        } else {
+            return $this->errorInternalError('Could not save user.');
+        }
+    }
+
+    public function create()
+    {
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), User::$memberCreateRules);
 
             if (!$validator->passes()) {
                 return $this->errorWrongArgs($validator->errors()->all());
             }
 
-            if ($this->currentUser->updateMember(Input::all())) {
-                return $this->respondWithItem($user, new UserTransformer());
-            } else {
-                return $this->errorInternalError('Could not save user.');
+            $user = new User();
+
+            try {
+                $user->updateMember(Input::all());
+            } catch (Exception $e) {
+                return $this->errorInternalError($e->getMessage());
             }
+
+            return $this->respondWithItem($user, new UserTransformer());
         } else {
-            return $this->errorInternalError('You are not authorized.');
+            return $this->errorInternalError('You are not authorized to create users.');
         }
     }
 
