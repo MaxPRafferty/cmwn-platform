@@ -20,7 +20,7 @@ class Group extends Model
      * Changed to uuid
      * @var string
      */
-    protected $primaryKey = 'uuid';
+    //protected $primaryKey = 'uuid';
 
     protected $fillable = array('organization_id', 'title');
 

@@ -53,7 +53,8 @@ class User extends Model implements
         'password',
         'username',
         'student_id',
-        'gender'
+        'gender',
+        'relationship'
     ];
 
     /**
@@ -62,6 +63,16 @@ class User extends Model implements
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
+    public function setRelationshipAttribute($value)
+    {
+        $this->attributes['relationship'] = $value;
+    }
+
+    public function getRelationshipAttribute()
+    {
+        return $this->attributes['relationship'];
+    }
 
     /*
      * Register all the form validation rules here for User
@@ -241,12 +252,11 @@ class User extends Model implements
     public function suggestedfriends()
     {
         $groups = $this->groups->lists('id');
-        $roles = $this->role->lists('id');
         $suggested = self::whereHas('groups', function ($query) use ($groups) {
             $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
-        })->where('id', '!=', $this->id)->get();
-
-        return $suggested;
+        })->where('id', '!=', $this->id);
+        $suggested->relationship = 'suggested';
+        return $suggested->get();
     }
 
     public function canUserUpdateObject($entity, $id)

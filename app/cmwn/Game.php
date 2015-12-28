@@ -18,7 +18,7 @@ class Game extends Model
      * Changed to uuid
      * @var string
      */
-    protected $primaryKey = 'uuid';
+    //protected $primaryKey = 'uuid';
 
     public static $gameUpdateRules = array(
         'title' => 'required | string',

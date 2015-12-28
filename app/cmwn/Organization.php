@@ -16,7 +16,7 @@ class Organization extends Model
      * Changed to uuid
      * @var string
      */
-    protected $primaryKey = 'uuid';
+    //protected $primaryKey = 'uuid';
 
     protected $fillable = [
         'code',

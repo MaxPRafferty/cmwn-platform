@@ -34,12 +34,13 @@ class UserTransformer extends TransformerAbstract
      */
     public function transform(User $user)
     {
+
         return [
             'uuid'       => $user->uuid,
             'first_name' => $user->first_name,
             'last_name'  => $user->last_name,
             'username'   => $user->username,
-            'relationship'   => 'coming soon 224',
+            'relationship'   => $user->relationship,
             'gender'     => $user->gender,
             'birthdate'  => $user->birthdate,
             'joined'     => (string) $user->created_at,
