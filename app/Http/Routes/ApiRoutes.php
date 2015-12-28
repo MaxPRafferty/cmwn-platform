@@ -14,14 +14,14 @@ Route::post('/auth/login', 'Api\AuthController@authenticate');
 Route::post('/auth/reset', 'Auth\PasswordController@reset');
 Route::get('/auth/logout', 'Auth\AuthController@getLogout');
 
-//must be a site admin to use these routes.
+// The use must be a site admin to use these routes.
 Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
     Route::post('/users', 'Api\UserController@create');
 });
 
+//The user must be a logged in to use the rest of these routes.
 Route::group(['middleware' => 'auth'], function ($router) {
 
-    //must be a logged in to use the rest of these routes.
     Route::post('/auth/password', 'Api\AuthController@updatePassword');
 
     Route::get('/parms/{parm_name}', function ($parm_name) {
