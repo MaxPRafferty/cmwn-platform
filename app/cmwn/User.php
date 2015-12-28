@@ -64,15 +64,7 @@ class User extends Model implements
      */
     protected $hidden = ['password', 'remember_token'];
 
-    public function setRelationshipAttribute($value)
-    {
-        $this->attributes['relationship'] = $value;
-    }
-
-    public function getRelationshipAttribute()
-    {
-        return $this->attributes['relationship'];
-    }
+    protected $relationship;
 
     /*
      * Register all the form validation rules here for User
@@ -255,7 +247,6 @@ class User extends Model implements
         $suggested = self::whereHas('groups', function ($query) use ($groups) {
             $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
         })->where('id', '!=', $this->id);
-        $suggested->relationship = 'suggested';
         return $suggested->get();
     }
 

@@ -18,7 +18,7 @@ class ApiController extends Controller
     const CODE_INTERNAL_ERROR = 'INTERNAL-ERROR';
     const CODE_UNAUTHORIZED = 'UNAUTHORIZED';
     const CODE_FORBIDDEN = 'FORBIDDEN';
-
+    public static $relationship;
 
     public function __construct(Manager $fractal)
     {
@@ -30,6 +30,9 @@ class ApiController extends Controller
             $this->fractal->parseIncludes($_GET['include']);
         }
     }
+
+
+
 
     /**
      * Getter for statusCode.
@@ -70,7 +73,9 @@ class ApiController extends Controller
 
         $rootScope = $this->fractal->createData($resource);
 
-        return $this->respondWithArray($rootScope->toArray());
+        $data = $rootScope->toArray();
+        $data['data'][0]['relationship'] = self::$relationship;
+        return $this->respondWithArray($data);
     }
 
     protected function respondWithArray(array $array, array $headers = [])
