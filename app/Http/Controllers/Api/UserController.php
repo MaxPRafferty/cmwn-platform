@@ -25,9 +25,9 @@ class UserController extends ApiController
         return $this->respondWithCollection($users, new UserTransformer());
     }
 
-    public function show($userId)
+    public function show($uuid)
     {
-        $user = User::findFromInput($userId);
+        $user = User::findByUuid($uuid);
 
         if (!$user) {
             return $this->errorNotFound('User not found');
@@ -36,9 +36,10 @@ class UserController extends ApiController
         return $this->respondWithItem($user, new UserTransformer());
     }
 
-    public function update($userId)
+    public function update($uuid)
     {
-        $user = User::findFromInput($userId);
+
+        $user = User::findByUuid($uuid);
 
         if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');
@@ -49,8 +50,6 @@ class UserController extends ApiController
         if (!$validator->passes()) {
             return $this->errorWrongArgs($validator->errors()->all());
         }
-
-        $user = User::findFromInput($userId);
 
         if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');

@@ -34,8 +34,8 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('/auth/logout', 'Api\AuthController@logout');
 
     Route::get('/users', 'Api\UserController@index');
-    Route::get('/users/{id}', 'Api\UserController@show');
-    Route::post('/users/{id}', 'Api\UserController@update');
+    Route::get('/users/{uuid}', 'Api\UserController@show');
+    Route::post('/users/{uuid}', 'Api\UserController@update');
 
     Route::get('/users/{id}/groups', 'Api\UserController@getGroups');
 
