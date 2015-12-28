@@ -50,10 +50,39 @@ class UserController extends ApiController
             return $this->errorWrongArgs($validator->errors()->all());
         }
 
+        $user = User::findFromInput($userId);
+
+        if (!$user->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
+        }
+
         if ($user->updateMember(Input::all())) {
             return $this->respondWithItem($user, new UserTransformer());
         } else {
             return $this->errorInternalError('Could not save user.');
+        }
+    }
+
+    public function create()
+    {
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), User::$memberCreateRules);
+
+            if (!$validator->passes()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
+
+            $user = new User();
+
+            try {
+                $user->updateMember(Input::all());
+            } catch (Exception $e) {
+                return $this->errorInternalError($e->getMessage());
+            }
+
+            return $this->respondWithItem($user, new UserTransformer());
+        } else {
+            return $this->errorInternalError('You are not authorized to create users.');
         }
     }
 

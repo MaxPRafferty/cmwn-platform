@@ -12,11 +12,8 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use app\cmwn\Image;
 use Illuminate\Support\Facades\Auth;
-
 use app\cmwn\Traits\RoleTrait;
-
 use app\cmwn\Users\UsersRelationshipHandler;
-
 
 class User extends Model implements
     AuthenticatableContract,
@@ -34,7 +31,8 @@ class User extends Model implements
     protected $table = 'users';
 
     /**
-     * The primaryKey is set to id by default
+     * The primaryKey is set to id by default.
+     *
      * @var string
      */
 
@@ -53,7 +51,7 @@ class User extends Model implements
         'password',
         'username',
         'student_id',
-        'gender'
+        'gender',
     ];
 
     /**
@@ -66,11 +64,22 @@ class User extends Model implements
     /*
      * Register all the form validation rules here for User
      */
+    public static $memberCreateRules = array(
+        'first_name' => 'required|string|min:2',
+        'middle_name' => 'string|min:2',
+        'last_name' => 'required|string|min:2',
+        'email' => 'email|min:2',
+        'username' => 'required|alpha_dash|unique:users,username',
+        'student_id' => 'required|alpha_dash|unique:users,username',
+
+    );
+
     public static $memberUpdateRules = array(
         'first_name' => 'string|min:2',
         'middle_name' => 'string|min:2',
         'last_name' => 'string|min:2',
         'email' => 'email|min:2',
+        'student_id' => 'unique:users',
     );
 
     public static $memberDeleteRules = array(
@@ -84,8 +93,9 @@ class User extends Model implements
         'password_confirmation' => 'required',
     );
 
-    public static function findByUuid($uuid){
-        return self::where('uuid',$uuid)->firstOrFail();
+    public static function findByUuid($uuid)
+    {
+        return self::where('uuid', $uuid)->firstOrFail();
     }
 
     public function guardianReference()
@@ -103,24 +113,26 @@ class User extends Model implements
         return $this->morphedByMany('app\Role', 'roleable')->withPivot('role_id');
     }
 
-    public function roles(User $user){
+    public function roles(User $user)
+    {
         $roles = array();
         $user_id = $user->id;
 
-        $districts =  $user->districts()->where(function ($query) use ($user_id){
+        $districts = $user->districts()->where(function ($query) use ($user_id) {
             $query = $query->where('user_id', $user_id);
         });
-        $organizations =  $user->organizations()->where(function ($query) use ($user_id){
+        $organizations = $user->organizations()->where(function ($query) use ($user_id) {
             $query = $query->where('user_id', $user_id);
         });
 
-        $groups =  $user->groups()->where(function ($query)  use ($user_id){
+        $groups = $user->groups()->where(function ($query) use ($user_id) {
             $query = $query->where('user_id', $user_id);
         });
 
         $roles['districts'] = $districts->get()->toArray();
         $roles['organizations'] = $organizations->get()->toArray();
         $roles['groups'] = $groups->get()->toArray();
+
         return $roles;
     }
 
@@ -199,13 +211,14 @@ class User extends Model implements
      */
     public function canUpdate(User $user)
     {
-         return ($this->id == $user->id || $user->isSiteAdmin() ||
+        return ($this->id == $user->id || $user->isSiteAdmin() ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'districts') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'organizations') ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'groups'));
     }
 
-    public function canbeFriend(User $user){
+    public function canbeFriend(User $user)
+    {
         return (UsersRelationshipHandler::areMembersOfSameEntity($user, $this, 'groups') || UsersRelationshipHandler::areAdminOfSameEntity($user, $this, 'groups'));
     }
 
@@ -215,6 +228,7 @@ class User extends Model implements
         $result = $result->where(function ($query) use ($role_ids) {
             $query = $query->whereIn('role_id', $role_ids);
         });
+
         return $result;
     }
 
@@ -253,13 +267,13 @@ class User extends Model implements
     {
         //All default vars
         $districtSuperAdmin = 0;
-        
-        if ($this->isSiteAdmin()){
+
+        if ($this->isSiteAdmin()) {
             return true;
         }
 
         //Districts
-        if ($entity=='districts') {
+        if ($entity == 'districts') {
             $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id) {
                 $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
             })->count();
@@ -268,7 +282,7 @@ class User extends Model implements
         }
 
         //Organizations
-        if ($entity=='organizations') {
+        if ($entity == 'organizations') {
             $districtID = District::whereHas('organizations', function ($query) use ($id) {
                 $query->where('organization_id', $id);
             })->lists('id')->toArray();
@@ -280,25 +294,24 @@ class User extends Model implements
                     $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
                 })->count();
             }
-            
 
             //check to see if organization is admin
             $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($id) {
-                $query->where('roleable_id', $id)->whereIn('role_id', array(1,2));
+                $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
             })->count();
 
-            if ($districtSuperAdmin || $organizationSuperAdmin ){
+            if ($districtSuperAdmin || $organizationSuperAdmin) {
                 return true;
             }
+
             return false;
         }
 
         //Organizations
-        if ($entity=='groups') {
+        if ($entity == 'groups') {
             //Check if user is superadmin or admin in organization of the group
             $gdID = Group::where('id', $id)->lists('organization_id')->toArray();
             $gdID = $gdID[0];
-
 
             $districtID = District::whereHas('organizations', function ($query) use ($gdID) {
                 $query->where('organization_id', 'org-one');
@@ -310,17 +323,18 @@ class User extends Model implements
             })->count();
 
             $groupOrgAdmin = self::whereHas('organizations', function ($query) use ($gdID) {
-                $query->where('roleable_id', $gdID)->whereIn('role_id', array(1,2));
+                $query->where('roleable_id', $gdID)->whereIn('role_id', array(1, 2));
             })->count();
 
             //Check if user is superadmin or admin in the group
             $groupSuperAdmin = self::whereHas('groups', function ($query) use ($id) {
-                $query->where('roleable_id', $id)->whereIn('role_id', array(1,2));
+                $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
             })->count();
 
-            if ($groupSuperAdmin || $groupOrgAdmin){
+            if ($groupSuperAdmin || $groupOrgAdmin) {
                 return true;
             }
+
             return false;
         }
 
@@ -350,6 +364,14 @@ class User extends Model implements
 
     public function updateMember($params)
     {
+        if (isset($params['username'])) {
+            $this->username = $params['username'];
+        }
+
+        if (isset($params['student_id'])) {
+            $this->student_id = $params['student_id'];
+        }
+
         if (isset($params['first_name'])) {
             $this->first_name = $params['first_name'];
         }
@@ -440,7 +462,7 @@ class User extends Model implements
     public function updatePassword($user, $newPassword)
     {
         return $user->fill([
-            'password' => \Hash::make($newPassword)
+            'password' => \Hash::make($newPassword),
         ])->save();
     }
 }
