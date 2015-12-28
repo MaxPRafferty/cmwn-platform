@@ -4,6 +4,7 @@ namespace app\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Redirect;
 
 class SiteAdmin
 {

@@ -14,8 +14,14 @@ Route::post('/auth/login', 'Api\AuthController@authenticate');
 Route::post('/auth/reset', 'Auth\PasswordController@reset');
 Route::get('/auth/logout', 'Auth\AuthController@getLogout');
 
+//must be a site admin to use these routes.
+Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
+    Route::post('/users', 'Api\UserController@create');
+});
+
 Route::group(['middleware' => 'auth'], function ($router) {
 
+    //must be a logged in to use the rest of these routes.
     Route::post('/auth/password', 'Api\AuthController@updatePassword');
 
     Route::get('/parms/{parm_name}', function ($parm_name) {
@@ -29,7 +35,6 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::get('/users', 'Api\UserController@index');
     Route::get('/users/{id}', 'Api\UserController@show');
-    Route::post('/users', 'Api\UserController@create');
     Route::post('/users/{id}', 'Api\UserController@update');
 
     Route::get('/users/{id}/groups', 'Api\UserController@getGroups');
@@ -82,7 +87,6 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('/flips/{id}', 'Api\FlipController@show');
     Route::post('/flips/{id}', 'Api\FlipController@update');
     Route::delete('/flips/{id}', 'Api\FlipController@delete');
-
 
     //Admin tasks: Import Excel files and update the DB.
     Route::post('/admin/importexcel', ['uses' => 'Api\MasterController@importExcel']);
