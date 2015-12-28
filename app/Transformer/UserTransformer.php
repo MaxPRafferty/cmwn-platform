@@ -34,8 +34,27 @@ class UserTransformer extends TransformerAbstract
      */
     public function transform(User $user)
     {
+            $relationship = null;
 
-        return [
+            $pendingfriend = $user::whereHas('friends', function ($query) use ($user) {
+                $query->where('user_id', $user->id)->where('status', 0);
+            })->count();
+
+            if ($pendingfriend){
+                $relationship = 'pending friend';
+            }
+
+            $requestedfriend = $user::whereHas('friends', function ($query) use ($user) {
+                $query->where('friend_id', $user->id)->where('status', 0);
+            })->count();
+
+            if ($requestedfriend){
+                $relationship = 'requested friend';
+            }
+
+
+
+        $data = [
             'uuid'       => $user->uuid,
             'first_name' => $user->first_name,
             'last_name'  => $user->last_name,
@@ -44,6 +63,12 @@ class UserTransformer extends TransformerAbstract
             'birthdate'  => $user->birthdate,
             'joined'     => (string) $user->created_at,
         ];
+
+        if ($relationship){
+            $data['relationship'] = $relationship;
+        }
+
+        return $data;
     }
 
     /**

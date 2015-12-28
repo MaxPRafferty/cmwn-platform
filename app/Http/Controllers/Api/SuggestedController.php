@@ -29,7 +29,6 @@ class SuggestedController extends ApiController
 
     protected function getAllSuggestedFriends(){
         $suggestedfriends = Auth::user()->suggestedfriends();
-        self::$relationship = 'suggested friend';
         return $suggestedfriends;
     }
 }
