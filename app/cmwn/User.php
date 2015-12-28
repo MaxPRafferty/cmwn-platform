@@ -95,7 +95,11 @@ class User extends Model implements
 
     public static function findByUuid($uuid)
     {
-        return self::where('uuid', $uuid)->firstOrFail();
+        if ($uuid ==  'me') {
+            return Auth::user();
+        } else {
+            return self::where('uuid', $uuid)->firstOrFail();
+        }
     }
 
     public function guardianReference()
