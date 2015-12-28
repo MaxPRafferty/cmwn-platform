@@ -39,6 +39,7 @@ class UserTransformer extends TransformerAbstract
             'first_name' => $user->first_name,
             'last_name'  => $user->last_name,
             'username'   => $user->username,
+            'relationship'   => 'coming soon 224',
             'gender'     => $user->gender,
             'birthdate'  => $user->birthdate,
             'joined'     => (string) $user->created_at,
