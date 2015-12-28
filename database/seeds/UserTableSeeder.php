@@ -26,9 +26,6 @@ class UserTableSeeder extends Seeder
         DB::table('games')->delete();
         DB::table('users')->delete();
 
-
-
-
         for ($i = 1; $i <= 5; ++$i) {
             $districts[$i] = District::create(array(
                     'title' => 'Scnhool District ' . rand(100, 900),
@@ -84,7 +81,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('business'),
                 'student_id' => 'arron.kallenberg@gmail.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Cathy',
                 'last_name' => 'Sinoradzki',
@@ -95,7 +92,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('Cmwn2015'),
                 'student_id' => 'cathy@ginasink.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Emily',
                 'last_name' => 'McLean',
@@ -106,7 +103,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('Cmwn2015'),
                 'student_id' => 'emily@ginasink.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Gina',
                 'last_name' => 'Otto',
@@ -117,7 +114,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('Cmwn2015'),
                 'student_id' => 'gina@ginasink.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Janette',
                 'last_name' => 'Barber',
@@ -128,7 +125,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('Cmwn2015'),
                 'student_id' => 'janette@ginasink.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Joni',
                 'last_name' => 'Albers',
@@ -139,7 +136,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('Cmwn2015'),
                 'student_id' => 'joni@ginasink.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Max',
                 'last_name' => 'Rafferty',
@@ -150,7 +147,7 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make('Cmwn2015'),
                 'student_id' => 'max@ginasink.com',
             ));
-        
+
         $users[] = User::create(array(
                 'first_name' => 'Micah',
                 'last_name' => 'Rolon',
