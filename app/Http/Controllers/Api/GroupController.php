@@ -19,9 +19,9 @@ class GroupController extends ApiController
         return $this->respondWithCollection($groups, new GroupTransformer());
     }
 
-    public function show($groupId)
+    public function show($uuid)
     {
-        $group = Group::find($groupId);
+        $group = Group::findByUuid($uuid);
 
         if (!$group) {
             return $this->errorNotFound('Group not found');
@@ -37,7 +37,7 @@ class GroupController extends ApiController
 
     public function update($uuid)
     {
-        $group = Group::findByUuid($groupId);
+        $group = Group::findByUuid($uuid);
 
         if (!$group) {
             return $this->errorNotFound('Group not found');
@@ -84,12 +84,12 @@ class GroupController extends ApiController
         }
     }
 
-    public function getUsers($groupId)
+    public function getUsers($uuid)
     {
-        $group = Group::find($groupId);
+        $group = Group::findByUuid($uuid);
 
         if (!$group) {
-            return $this->errorNotFound('User not found');
+            return $this->errorNotFound('Group not found');
         }
 
         return $this->respondWithCollection($group->users, new UserTransformer());

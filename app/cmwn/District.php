@@ -15,13 +15,6 @@ class District extends Model
     protected $dates = ['deleted_at'];
     protected $table = 'districts';
 
-    /**
-     * The primaryKey is set to id by default
-     * Changed to uuid
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-
     protected $fillable = [
         'code',
     ];

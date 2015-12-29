@@ -32,14 +32,6 @@ class User extends Model implements
     protected $table = 'users';
 
     /**
-     * The primaryKey is set to id by default.
-     *
-     * @var string
-     */
-
-    //protected $primaryKey = 'uuid';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -65,7 +57,7 @@ class User extends Model implements
     /*
      * Register all the form validation rules here for User
      */
-    public static $memberCreateRules = array(
+    public static $createRules = array(
         'first_name' => 'required|string|min:2',
         'middle_name' => 'string|min:2',
         'last_name' => 'required|string|min:2',
@@ -75,7 +67,7 @@ class User extends Model implements
 
     );
 
-    public static $memberUpdateRules = array(
+    public static $updateRules = array(
         'first_name' => 'string|min:2',
         'middle_name' => 'string|min:2',
         'last_name' => 'string|min:2',

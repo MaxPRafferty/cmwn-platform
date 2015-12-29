@@ -55,7 +55,7 @@ class UsersController extends Controller
 
         //Form post data handling
         if (Request::isMethod('post')) {
-            $validator = Validator::make(Input::all(), User::$memberUpdateRules);
+            $validator = Validator::make(Input::all(), User::$updateRules);
             if ($validator->passes()) {
                 if (User::updateMember($request, $id)) {
                     return Redirect::to('users/member/'.$id.'/update')->with('message', 'The following errors occurred')->withErrors('Updated successfully')->with('flag', 'success');

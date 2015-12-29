@@ -17,13 +17,6 @@ class Group extends Model
     protected $dates = ['deleted_at'];
     protected $table = 'groups';
 
-    /**
-     * The primaryKey is set to id by default
-     * Changed to uuid
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-
     protected $fillable = array('organization_id', 'title');
 
     public static $updateRules = array(

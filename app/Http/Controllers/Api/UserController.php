@@ -45,7 +45,7 @@ class UserController extends ApiController
             return $this->errorInternalError('You are not authorized.');
         }
 
-        $validator = Validator::make(Input::all(), User::$memberUpdateRules);
+        $validator = Validator::make(Input::all(), User::$updateRules);
 
         if (!$validator->passes()) {
             return $this->errorWrongArgs($validator->errors()->all());
@@ -65,7 +65,7 @@ class UserController extends ApiController
     public function create()
     {
         if ($this->currentUser->isSiteAdmin()) {
-            $validator = Validator::make(Input::all(), User::$memberCreateRules);
+            $validator = Validator::make(Input::all(), User::$createRules);
 
             if (!$validator->passes()) {
                 return $this->errorWrongArgs($validator->errors()->all());

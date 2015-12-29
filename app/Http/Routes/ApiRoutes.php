@@ -53,8 +53,8 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //Get Groups
     Route::get('/groups', 'Api\GroupController@index');
-    Route::get('/groups/{id}', 'Api\GroupController@show');
-    Route::get('/groups/{id}/users', 'Api\GroupController@getUsers');
+    Route::get('/groups/{uuid}', 'Api\GroupController@show');
+    Route::get('/groups/{uuid}/users', 'Api\GroupController@getUsers');
 
     //Post Groups
     Route::post('/groups/{uuid}', ['uses' => 'Api\GroupController@update']);
