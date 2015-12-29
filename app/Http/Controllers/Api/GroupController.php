@@ -28,8 +28,8 @@ class GroupController extends ApiController
         }
 
         // make sure that the user is authorized to view this group.
-        if (!$group->isUser($this->currentUser)) {
-            return $this->errorUnauthorized();
+        if (!$group->canView($this->currentUser)) {
+            return $this->errorUnauthorized('User is not authorized to view this group');
         }
 
         return $this->respondWithItem($group, new GroupTransformer());
@@ -90,6 +90,11 @@ class GroupController extends ApiController
 
         if (!$group) {
             return $this->errorNotFound('Group not found');
+        }
+
+        // make sure that the user is authorized to view this group.
+        if (!$group->canView($this->currentUser)) {
+            return $this->errorUnauthorized('User is not authorized to view the users of this group');
         }
 
         return $this->respondWithCollection($group->users, new UserTransformer());
