@@ -30,6 +30,11 @@ class District extends Model
         return $this->belongsToMany('app\Organization');
     }
 
+    public function groups()
+    {
+        return $this->hasManyThrough('app\Groups', 'app\Organization');
+    }
+
     public function updateParameters($parameters)
     {
         if (isset($parameters['title'])) {
