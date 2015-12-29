@@ -56,6 +56,10 @@ class UserTransformer extends TransformerAbstract
             $areWeFriends = (bool) UsersRelationshipHandler::areWeFriends(Auth::user()->id, $user->id)->count();
 
 
+        if($areWeFriends){
+            $user = Auth::user();
+        }
+
         $data = [
             'uuid'       => $user->uuid,
             'first_name' => $user->first_name,
@@ -70,9 +74,7 @@ class UserTransformer extends TransformerAbstract
             $data['relationship'] = $relationship;
         }
 
-        if($areWeFriends){
-            $data=[];
-        }
+
 
         return $data;
     }
