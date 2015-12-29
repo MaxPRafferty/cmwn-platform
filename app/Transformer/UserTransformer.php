@@ -41,7 +41,7 @@ class UserTransformer extends TransformerAbstract
             })->count();
 
             if ($pendingfriend){
-                $relationship = 'pending friend';
+                $relationship = 'pending';
             }
 
             $requestedfriend = $user::whereHas('friends', function ($query) use ($user) {
@@ -49,7 +49,7 @@ class UserTransformer extends TransformerAbstract
             })->count();
 
             if ($requestedfriend){
-                $relationship = 'requested friend';
+                $relationship = 'requested';
             }
 
 
