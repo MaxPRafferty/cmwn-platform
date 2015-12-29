@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Request;
 use app\cmwn\Traits\RoleTrait;
+use app\cmwn\Traits\EntityTrait;
 
 class Group extends Model
 {
     use RoleTrait;
+    use EntityTrait;
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
@@ -24,10 +26,12 @@ class Group extends Model
 
     protected $fillable = array('organization_id', 'title');
 
-    public static $groupUpdateRules = array(
+    public static $updateRules = array(
         'title[]' => 'string',
-        //'role[]'=>'required',
-        //'role[]'=>'required|regex:/^[0-9]?$/',
+    );
+
+    public static $createRules = array(
+        'title[]' => 'string',
     );
 
     public function organization()

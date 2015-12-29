@@ -17,6 +17,7 @@ Route::get('/auth/logout', 'Auth\AuthController@getLogout');
 // The use must be a site admin to use these routes.
 Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
     Route::post('/users', 'Api\UserController@create');
+    Route::post('/groups', 'Api\GroupController@create');
 });
 
 //The user must be a logged in to use the rest of these routes.
@@ -56,7 +57,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('/groups/{id}/users', 'Api\GroupController@getUsers');
 
     //Post Groups
-    Route::post('/groups/{id}', ['uses' => 'Api\GroupController@update']);
+    Route::post('/groups/{uuid}', ['uses' => 'Api\GroupController@update']);
 
     //Get Districts
     Route::get('/districts', 'Api\DistrictController@index');

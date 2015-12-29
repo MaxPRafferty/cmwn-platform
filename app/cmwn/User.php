@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use app\cmwn\Image;
 use Illuminate\Support\Facades\Auth;
 use app\cmwn\Traits\RoleTrait;
+use app\cmwn\Traits\EntityTrait;
 use app\cmwn\Users\UsersRelationshipHandler;
 
 class User extends Model implements
@@ -20,7 +21,7 @@ class User extends Model implements
     AuthorizableContract,
     CanResetPasswordContract
 {
-    use Authenticatable, Authorizable, CanResetPassword, SoftDeletes, RoleTrait;
+    use Authenticatable, Authorizable, CanResetPassword, SoftDeletes, RoleTrait, EntityTrait;
     protected $dates = ['deleted_at'];
 
     /**
@@ -92,15 +93,6 @@ class User extends Model implements
         'password' => 'required|confirmed',
         'password_confirmation' => 'required',
     );
-
-    public static function findByUuid($uuid)
-    {
-        if ($uuid ==  'me') {
-            return Auth::user();
-        } else {
-            return self::where('uuid', $uuid)->firstOrFail();
-        }
-    }
 
     public function guardianReference()
     {
