@@ -82,7 +82,7 @@ class UsersController extends Controller
         $action = Request::segment(4);
 
         if (Request::isMethod('get')) {
-            $validator = Validator::make(Input::all(), User::$memberDeleteRules);
+            $validator = Validator::make(Input::all(), User::$deleteRules);
             if ($validator->passes()) {
                 if (User::deleteMember($id)) {
                     return Redirect::to('users/members')->with('message', 'The following errors occurred')->withErrors('Delete successfully')->with('flag', 'success');

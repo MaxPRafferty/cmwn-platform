@@ -22,8 +22,6 @@ class Organization extends Model
      */
     public static $organizationUpdateRules = array(
         'title[]' => 'string',
-        //'role[]'=>'required',
-        //'role[]'=>'required|regex:/^[0-9]?$/',
     );
 
     public function groups()

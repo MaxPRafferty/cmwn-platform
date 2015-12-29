@@ -25,11 +25,12 @@ class GroupTransformer extends TransformerAbstract
     public function transform(Group $group)
     {
         $user = new User();
+
         return [
             'uuid'            => $group->uuid,
-            'organization_id' => $group->organization_id,
+            'organization'    => $group->organization ? $group->organization->uuid : null,
             'title'           => $group->title,
-            'canupdate'       => $user->canUserUpdateObject('groups', $group->id),
+            'can_update'      => $group->canUpdate(),
             'description'     => $group->description,
             'created_at'      => (string) $group->created_at,
         ];

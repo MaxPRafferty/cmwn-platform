@@ -75,7 +75,7 @@ class User extends Model implements
         'student_id' => 'unique:users',
     );
 
-    public static $memberDeleteRules = array(
+    public static $deleteRules = array(
         //'id'=>'required|regex:/^[0-9]?$/',
     );
 
