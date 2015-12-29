@@ -61,18 +61,17 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //Get Districts
     Route::get('/districts', 'Api\DistrictController@index');
-    Route::get('/districts/{id}', 'Api\DistrictController@show');
-    Route::get('/districts/{id}/organizations', 'Api\DistrictController@getOrganizations');
+    Route::get('/districts/{uuid}', 'Api\DistrictController@show');
 
-    //Put Districts
-    Route::post('/districts/{id}', ['uses' => 'Api\DistrictController@update']);
+    //Post Districts
+    Route::post('/districts/{uuid}', ['uses' => 'Api\DistrictController@update']);
 
     //Get Organizations
     Route::get('/organizations', 'Api\OrganizationController@index');
-    Route::get('/organizations/{id}', 'Api\OrganizationController@show');
+    Route::get('/organizations/{uuid}', 'Api\OrganizationController@show');
 
     //Put Organizations
-    Route::post('/organizations/{id}', ['uses' => 'Api\OrganizationController@update']);
+    Route::post('/organizations/{uuid}', ['uses' => 'Api\OrganizationController@update']);
 
     Route::get('/roles', 'Api\RoleController@index');
     Route::get('/roles/{id}', 'Api\RoleController@show');

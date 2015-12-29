@@ -10,9 +10,7 @@ use app\cmwn\Traits\EntityTrait;
 
 class Group extends Model
 {
-    use RoleTrait;
-    use EntityTrait;
-    use SoftDeletes;
+    use RoleTrait, EntityTrait, SoftDeletes;
 
     protected $dates = ['deleted_at'];
     protected $table = 'groups';

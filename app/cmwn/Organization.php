@@ -4,10 +4,11 @@ namespace app;
 
 use Illuminate\Database\Eloquent\Model;
 use app\cmwn\Traits\RoleTrait;
+use app\cmwn\Traits\EntityTrait;
 
 class Organization extends Model
 {
-    use RoleTrait;
+    use RoleTrait, EntityTrait;
 
     protected $table = 'organizations';
 
@@ -16,11 +17,11 @@ class Organization extends Model
     ];
 
     /**
-     * [$organizationUpdateRules description].
+     * [$updateRules description].
      *
      * @var array
      */
-    public static $organizationUpdateRules = array(
+    public static $updateRules = array(
         'title[]' => 'string',
     );
 

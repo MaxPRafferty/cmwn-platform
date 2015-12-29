@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Request;
 use app\cmwn\Traits\RoleTrait;
+use app\cmwn\Traits\EntityTrait;
 
 class District extends Model
 {
-    use RoleTrait;
-    use SoftDeletes;
+    use RoleTrait, EntityTrait, SoftDeletes;
 
     protected $dates = ['deleted_at'];
     protected $table = 'districts';
