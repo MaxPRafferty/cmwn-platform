@@ -197,7 +197,7 @@ class User extends Model implements
      *
      * @return bool
      */
-    public function canUpdate(User $user)
+    public function canUpdate(User $user = null)
     {
         return ($this->id == $user->id || $user->isSiteAdmin() ||
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'districts') ||
