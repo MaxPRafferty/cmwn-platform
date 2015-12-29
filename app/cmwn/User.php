@@ -57,14 +57,20 @@ class User extends Model implements
         'relationship'
     ];
 
+
+    public $relationship;
+
+    public function setRelationshipAttribute($value='working'){
+        $this->relationship = $value;
+    }
+
+
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
-
-    protected $relationship;
 
     /*
      * Register all the form validation rules here for User
@@ -246,8 +252,33 @@ class User extends Model implements
         $groups = $this->groups->lists('id');
         $suggested = self::whereHas('groups', function ($query) use ($groups) {
             $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
-        })->where('id', '!=', $this->id);
-        return $suggested->get();
+        })->where('id', '!=', $this->id)->lists('id')->toArray();
+        $ids = [];
+        foreach($suggested as $friend_id) {
+            $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id)->count();
+           if(!$areWeFriends){
+               $ids[] = $friend_id;
+           }
+        }
+        $data = User::whereIn('id', $ids)->get();
+        foreach($data as $user){
+            $pendingfriend = (self::getRelationship($user->id))?'Pending':null;
+            $requestedfriend = (self::getRelationship($user->id,'friend_id'))?'requested':null;
+            if ($requestedfriend){
+                $user->relationship = $requestedfriend;
+            }
+            if ($pendingfriend){
+                $user->relationship = $pendingfriend;
+            }
+        }
+        return $data;
+    }
+
+
+    public static function getRelationship($user_id, $field='user_id', $status=0){
+        return self::whereHas('friends', function ($query) use ($user_id, $field, $status) {
+            $query->where($field, $user_id)->where('status', $status);
+        })->count();
     }
 
     public function canUserUpdateObject($entity, $id)
