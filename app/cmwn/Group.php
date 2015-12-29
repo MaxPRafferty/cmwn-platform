@@ -6,28 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Request;
 use app\cmwn\Traits\RoleTrait;
+use app\cmwn\Traits\EntityTrait;
 
 class Group extends Model
 {
-    use RoleTrait;
-    use SoftDeletes;
+    use RoleTrait, EntityTrait, SoftDeletes;
 
     protected $dates = ['deleted_at'];
     protected $table = 'groups';
 
-    /**
-     * The primaryKey is set to id by default
-     * Changed to uuid
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-
     protected $fillable = array('organization_id', 'title');
 
-    public static $groupUpdateRules = array(
+    public static $updateRules = array(
         'title[]' => 'string',
-        //'role[]'=>'required',
-        //'role[]'=>'required|regex:/^[0-9]?$/',
+    );
+
+    public static $createRules = array(
+        'title[]' => 'string',
     );
 
     public function organization()

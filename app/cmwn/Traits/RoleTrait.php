@@ -2,6 +2,7 @@
 
 namespace app\cmwn\Traits;
 
+use Illuminate\Support\Facades\Auth;
 use app\User;
 
 trait RoleTrait
@@ -56,7 +57,6 @@ trait RoleTrait
 
     public function isAdmin($user)
     {
-
         return ($user->type == 1 || $this->admin()->where('user_id', $user->id)->count() > 0);
     }
 
@@ -65,8 +65,21 @@ trait RoleTrait
         return ($user->type == 1 || $this->members()->where('user_id', $user->id)->count() > 0);
     }
 
-    public function canUpdate($user)
+    public function canUpdate($user = null)
     {
-        return ($user->type == 1 || $this->users()->where('user_id', $user->id)->where('role_id', '>', 1)->count() > 0);
+        if (!isset($user)) {
+            $user = Auth::user();
+        }
+
+        return ($user->isSiteAdmin() || $this->users()->where('user_id', $user->id)->where('role_id', '>', 1)->count() > 0);
+    }
+
+    public function canView($user = null)
+    {
+        if (!isset($user)) {
+            $user = Auth::user();
+        }
+
+        return ($user->isSiteAdmin() || $this->users()->where('user_id', $user->id)->count() > 0);
     }
 }
