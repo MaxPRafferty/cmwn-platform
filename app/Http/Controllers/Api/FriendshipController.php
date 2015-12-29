@@ -70,11 +70,11 @@ class FriendshipController extends ApiController
         if (!$user_id){
             return $this->errorWrongArgs('User ID blank');
         }
-
         $friend_id = User::findByUuid($user_id)->id;
+
         $areWeFriends = UsersRelationshipHandler::areWeFriends($this->currentUser->id, $friend_id);
-        if ($areWeFriends){
-            //return $this->errorInternalError('You are already friends');
+        if ($areWeFriends && $status==1){
+            return $this->errorInternalError('You are already friends');
         }
 
         $areWeInTheSameClass = UsersRelationshipHandler::areWeInSameClass($this->currentUser, $friend_id);
@@ -82,10 +82,16 @@ class FriendshipController extends ApiController
            return $this->errorInternalError('You are not in the same class');
         }
 
+        $output['sentRequestBefore'] = (bool) $this->currentUser->friends()->wherePivot('user_id',$this->currentUser->id)->wherePivot('status',0)->count();
 
-        $output['add'] = User::find($friend_id)->friends()->sync(array($this->currentUser->id));
-        $output['update'] = User::find($this->currentUser->id)->friends()->updateExistingPivot($friend_id,array('status'=>$status));
-        $output['request'] = User::find($this->currentUser->id)->friendrequests()->updateExistingPivot($friend_id,array('status'=>$status));
+        if($output['sentRequestBefore']) {
+            $output['update'] = User::find($this->currentUser->id)->friends()->updateExistingPivot($friend_id,
+                array('status' => $status));
+            $output['request'] = User::find($this->currentUser->id)->friendrequests()->updateExistingPivot($friend_id,
+                array('status' => $status));
+        }else{
+            $output['add'] = User::find($this->currentUser->id)->friends()->sync(array($friend_id));
+        }
 
         if ($status==-1){
             $output['reject'] = User::find($friend_id)->friends()->detach(array($this->currentUser->id));

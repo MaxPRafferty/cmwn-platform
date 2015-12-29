@@ -24,17 +24,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::get('/sidebar', 'Api\MasterController@sidebar');
     Route::get('/friends', 'Api\MasterController@friends');
-
     Route::post('/friends', 'Api\FriendshipController@handleFriends');
-    //@TODO Finish this.
-    /*
-     * that route is for accept and reject
-     * http://api.cmwn.localhost/users/friends
-     * user_id and status
-     */
-
-
-
     Route::get('/auth/logout', 'Api\AuthController@logout');
 
     Route::get('/users', 'Api\UserController@index');
