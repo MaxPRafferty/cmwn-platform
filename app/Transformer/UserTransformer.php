@@ -2,7 +2,9 @@
 
 namespace app\Transformer;
 
+use app\cmwn\Users\UsersRelationshipHandler;
 use app\User;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
@@ -51,8 +53,10 @@ class UserTransformer extends TransformerAbstract
             if ($requestedfriend){
                 $relationship = 'requested';
             }
-
-
+            $areWeFriends = (bool) UsersRelationshipHandler::areWeFriends(Auth::user(), $user->id)->count();
+            if($areWeFriends){
+                $relationship = null;
+            }
 
         $data = [
             'uuid'       => $user->uuid,
