@@ -32,7 +32,9 @@ class District extends Model
 
     public function groups()
     {
-        return $this->hasManyThrough('app\Groups', 'app\Organization');
+        $organization = $this->organizations->lists('id')->toArray();
+
+        return Group::whereIn('organization_id', $organization)->get();
     }
 
     public function updateParameters($parameters)
