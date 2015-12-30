@@ -207,7 +207,7 @@
                 self::$ERRORS.="updateStudentsOrganizations: Inserting a new organization $DDBNNN[1] has failed \n";
             }
             $organization->uuid = $organization->id;
-            if (!$organization->districts()->sync(array($district_id))){
+            if (!$organization->districts()->sync(array(1=>10))){
                 self::$ERRORS.="updateStudentsOrganizations: Assigning organization $organization->id to ditrict has failed \n";
             }
         }

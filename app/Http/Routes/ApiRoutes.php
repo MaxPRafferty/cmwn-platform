@@ -31,7 +31,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::get('/sidebar', 'Api\MasterController@sidebar');
     Route::get('/friends', 'Api\MasterController@friends');
-
+    Route::post('/friends', 'Api\FriendshipController@handleFriends');
     Route::get('/auth/logout', 'Api\AuthController@logout');
 
     Route::get('/users', 'Api\UserController@index');
@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::get('/suggestedfriends', 'Api\SuggestedController@show');
 
-    Route::get('/users/friendrequest/{id}', 'Api\FriendshipController@show');
+    Route::get('/users/sendfriendrequest', 'Api\FriendshipController@show');
     Route::post('/users/acceptfriendrequest/{id}', 'Api\FriendshipController@accept');
     Route::post('/users/rejectfriendrequest/{id}', 'Api\FriendshipController@reject');
 
