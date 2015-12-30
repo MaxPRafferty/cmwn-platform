@@ -19,7 +19,6 @@ class ApiController extends Controller
     const CODE_UNAUTHORIZED = 'UNAUTHORIZED';
     const CODE_FORBIDDEN = 'FORBIDDEN';
 
-
     public function __construct(Manager $fractal)
     {
         $this->currentUser = Auth::user();
@@ -30,6 +29,9 @@ class ApiController extends Controller
             $this->fractal->parseIncludes($_GET['include']);
         }
     }
+
+
+
 
     /**
      * Getter for statusCode.
@@ -70,7 +72,8 @@ class ApiController extends Controller
 
         $rootScope = $this->fractal->createData($resource);
 
-        return $this->respondWithArray($rootScope->toArray());
+        $data = $rootScope->toArray();
+        return $this->respondWithArray($data);
     }
 
     protected function respondWithArray(array $array, array $headers = [])

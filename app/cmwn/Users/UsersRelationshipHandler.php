@@ -19,6 +19,7 @@ class UsersRelationshipHandler
         return (bool) (User::whereHas('friends', function ($query) use ($friend_id, $user_id) {
             $query->where('status', 1)->where('friend_id', $friend_id)->where('user_id', $user_id);
         })->count());
+
     }
 
     public static function areWeInSameClass($user, $friend_id)

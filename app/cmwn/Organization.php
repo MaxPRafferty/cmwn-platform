@@ -11,7 +11,7 @@ class Organization extends Model
     use RoleTrait, EntityTrait;
 
     protected $table = 'organizations';
-
+    
     protected $fillable = [
         'code',
     ];

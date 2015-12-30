@@ -27,7 +27,8 @@ class SuggestedController extends ApiController
         return $this->respondWithCollection($this->getAllSuggestedFriends(), new UserTransformer);
     }
 
-    protected function getAllSuggestedFriends(){
+    protected function getAllSuggestedFriends()
+    {
         $suggestedfriends = Auth::user()->suggestedfriends();
         return $suggestedfriends;
     }

@@ -6,6 +6,11 @@
 |--------------------------------------------------------------------------
 */
 
+/*    Event::listen('illuminate.query', function($query)
+    {
+        var_dump($query);
+    });*/
+
 Route::get('/csrf_token', 'Api\ApiController@getToken');
 Route::get('/parms/{parm_name}', function ($parm_name) {
     return \Config::get('mycustomvars.'.$parm_name);

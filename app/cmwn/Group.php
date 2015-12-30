@@ -15,7 +15,7 @@ class Group extends Model
     protected $dates = ['deleted_at'];
     protected $table = 'groups';
 
- 
+
     protected $fillable = array('organization_id', 'title');
 
     public static $updateRules = array(

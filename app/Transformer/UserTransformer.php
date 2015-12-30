@@ -2,7 +2,9 @@
 
 namespace app\Transformer;
 
+use app\cmwn\Users\UsersRelationshipHandler;
 use app\User;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
@@ -34,7 +36,8 @@ class UserTransformer extends TransformerAbstract
      */
     public function transform(User $user)
     {
-        return [
+
+        $data = [
             'uuid'       => $user->uuid,
             'first_name' => $user->first_name,
             'last_name'  => $user->last_name,
@@ -42,7 +45,11 @@ class UserTransformer extends TransformerAbstract
             'gender'     => $user->gender,
             'birthdate'  => $user->birthdate,
             'joined'     => (string) $user->created_at,
+            'relationship'=> $user->relationship,
         ];
+
+        return $data;
+
     }
 
     /**
