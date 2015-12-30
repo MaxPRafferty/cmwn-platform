@@ -25,9 +25,9 @@ class UserController extends ApiController
         return $this->respondWithCollection($users, new UserTransformer());
     }
 
-    public function show($userId)
+    public function show($uuid)
     {
-        $user = User::findFromInput($userId);
+        $user = User::findByUuid($uuid);
 
         if (!$user) {
             return $this->errorNotFound('User not found');
@@ -36,24 +36,52 @@ class UserController extends ApiController
         return $this->respondWithItem($user, new UserTransformer());
     }
 
-    public function update($userId)
+    public function update($uuid)
     {
-        $user = User::findFromInput($userId);
+
+        $user = User::findByUuid($uuid);
 
         if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');
         }
 
-        $validator = Validator::make(Input::all(), User::$memberUpdateRules);
+        $validator = Validator::make(Input::all(), User::$updateRules);
 
         if (!$validator->passes()) {
             return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        if (!$user->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
         }
 
         if ($user->updateMember(Input::all())) {
             return $this->respondWithItem($user, new UserTransformer());
         } else {
             return $this->errorInternalError('Could not save user.');
+        }
+    }
+
+    public function create()
+    {
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), User::$createRules);
+
+            if (!$validator->passes()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
+
+            $user = new User();
+
+            try {
+                $user->updateMember(Input::all());
+            } catch (Exception $e) {
+                return $this->errorInternalError($e->getMessage());
+            }
+
+            return $this->respondWithItem($user, new UserTransformer());
+        } else {
+            return $this->errorInternalError('You are not authorized to create users.');
         }
     }
 

@@ -4,19 +4,16 @@ namespace app\Transformer;
 
 use app\Organization;
 use League\Fractal\TransformerAbstract;
-use app\User;
-use Illuminate\Support\Facades\Auth;
 
 class OrganizationTransformer extends TransformerAbstract
 {
-
     protected $availableIncludes = [
         'districts',
         'groups',
         'users',
         'superAdmins',
         'admins',
-        'members'
+        'members',
     ];
 
     /**
@@ -26,14 +23,13 @@ class OrganizationTransformer extends TransformerAbstract
      */
     public function transform(Organization $organization)
     {
-        $user = new User();
         return [
-            'uuid'          => $organization->uuid,
-            'code'          => $organization->code,
-            'title'         => $organization->title,
-            'description'   => $organization->description,
-            'canupdate'     => $user->canUserUpdateObject('organizations', $organization->id),
-            'created_at'    => (string) $organization->created_at,
+            'uuid' => $organization->uuid,
+            'code' => $organization->code,
+            'title' => $organization->title,
+            'description' => $organization->description,
+            'can_update' => $organization->canUpdate(),
+            'created_at' => (string) $organization->created_at,
         ];
     }
 
@@ -45,6 +41,7 @@ class OrganizationTransformer extends TransformerAbstract
     public function includeDistricts(Organization $organization)
     {
         $districts = $organization->districts;
+
         return $this->collection($districts, new DistrictTransformer());
     }
 
@@ -68,6 +65,7 @@ class OrganizationTransformer extends TransformerAbstract
     public function includeUsers(Organization $organization)
     {
         $users = $organization->users;
+
         return $this->collection($users, new UserTransformer());
     }
 
@@ -79,6 +77,7 @@ class OrganizationTransformer extends TransformerAbstract
     public function includeSuperAdmins(Organization $organization)
     {
         $superAdmins = $organization->superAdmins;
+
         return $this->collection($superAdmins, new UserTransformer());
     }
 
@@ -90,6 +89,7 @@ class OrganizationTransformer extends TransformerAbstract
     public function includeAdmins(Organization $organization)
     {
         $admins = $organization->admins;
+
         return $this->collection($admins, new UserTransformer());
     }
 

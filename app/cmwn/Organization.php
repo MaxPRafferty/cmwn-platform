@@ -4,33 +4,25 @@ namespace app;
 
 use Illuminate\Database\Eloquent\Model;
 use app\cmwn\Traits\RoleTrait;
+use app\cmwn\Traits\EntityTrait;
 
 class Organization extends Model
 {
-    use RoleTrait;
+    use RoleTrait, EntityTrait;
 
     protected $table = 'organizations';
-
-    /**
-     * The primaryKey is set to id by default
-     * Changed to uuid
-     * @var string
-     */
-    //protected $primaryKey = 'uuid';
-
+    
     protected $fillable = [
         'code',
     ];
 
     /**
-     * [$organizationUpdateRules description].
+     * [$updateRules description].
      *
      * @var array
      */
-    public static $organizationUpdateRules = array(
+    public static $updateRules = array(
         'title[]' => 'string',
-        //'role[]'=>'required',
-        //'role[]'=>'required|regex:/^[0-9]?$/',
     );
 
     public function groups()

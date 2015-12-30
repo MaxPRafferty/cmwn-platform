@@ -17,9 +17,9 @@ class DistrictController extends ApiController
         return $this->respondWithCollection($districts, new DistrictTransformer());
     }
 
-    public function show($districtsId)
+    public function show($uuid)
     {
-        $district = District::find($districtsId);
+        $district = District::findByUuid($uuid);
 
         if (!$district) {
             return $this->errorNotFound('District not found');
@@ -33,9 +33,9 @@ class DistrictController extends ApiController
         return $this->respondWithItem($district, new DistrictTransformer());
     }
 
-    public function update($districtsId)
+    public function update($uuid)
     {
-        $district = District::find($districtsId);
+        $district = District::findByUuid($uuid);
 
         if (!$district) {
             return $this->errorNotFound('District not found');

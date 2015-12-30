@@ -19,6 +19,13 @@ Route::post('/auth/login', 'Api\AuthController@authenticate');
 Route::post('/auth/reset', 'Auth\PasswordController@reset');
 Route::get('/auth/logout', 'Auth\AuthController@getLogout');
 
+// The use must be a site admin to use these routes.
+Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
+    Route::post('/users', 'Api\UserController@create');
+    Route::post('/groups', 'Api\GroupController@create');
+});
+
+//The user must be a logged in to use the rest of these routes.
 Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::post('/auth/password', 'Api\AuthController@updatePassword');
@@ -29,12 +36,12 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::get('/sidebar', 'Api\MasterController@sidebar');
     Route::get('/friends', 'Api\MasterController@friends');
-
+    Route::post('/friends', 'Api\FriendshipController@handleFriends');
     Route::get('/auth/logout', 'Api\AuthController@logout');
 
     Route::get('/users', 'Api\UserController@index');
-    Route::get('/users/{id}', 'Api\UserController@show');
-    Route::post('/users/{id}', 'Api\UserController@update');
+    Route::get('/users/{uuid}', 'Api\UserController@show');
+    Route::post('/users/{uuid}', 'Api\UserController@update');
 
     Route::get('/users/{id}/groups', 'Api\UserController@getGroups');
 
@@ -45,32 +52,31 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     Route::get('/suggestedfriends', 'Api\SuggestedController@show');
 
-    Route::get('/users/friendrequest/{id}', 'Api\FriendshipController@show');
+    Route::get('/users/sendfriendrequest', 'Api\FriendshipController@show');
     Route::post('/users/acceptfriendrequest/{id}', 'Api\FriendshipController@accept');
     Route::post('/users/rejectfriendrequest/{id}', 'Api\FriendshipController@reject');
 
     //Get Groups
     Route::get('/groups', 'Api\GroupController@index');
-    Route::get('/groups/{id}', 'Api\GroupController@show');
-    Route::get('/groups/{id}/users', 'Api\GroupController@getUsers');
+    Route::get('/groups/{uuid}', 'Api\GroupController@show');
+    Route::get('/groups/{uuid}/users', 'Api\GroupController@getUsers');
 
     //Post Groups
-    Route::post('/groups/{id}', ['uses' => 'Api\GroupController@update']);
+    Route::post('/groups/{uuid}', ['uses' => 'Api\GroupController@update']);
 
     //Get Districts
     Route::get('/districts', 'Api\DistrictController@index');
-    Route::get('/districts/{id}', 'Api\DistrictController@show');
-    Route::get('/districts/{id}/organizations', 'Api\DistrictController@getOrganizations');
+    Route::get('/districts/{uuid}', 'Api\DistrictController@show');
 
-    //Put Districts
-    Route::post('/districts/{id}', ['uses' => 'Api\DistrictController@update']);
+    //Post Districts
+    Route::post('/districts/{uuid}', ['uses' => 'Api\DistrictController@update']);
 
     //Get Organizations
     Route::get('/organizations', 'Api\OrganizationController@index');
-    Route::get('/organizations/{id}', 'Api\OrganizationController@show');
+    Route::get('/organizations/{uuid}', 'Api\OrganizationController@show');
 
     //Put Organizations
-    Route::post('/organizations/{id}', ['uses' => 'Api\OrganizationController@update']);
+    Route::post('/organizations/{uuid}', ['uses' => 'Api\OrganizationController@update']);
 
     Route::get('/roles', 'Api\RoleController@index');
     Route::get('/roles/{id}', 'Api\RoleController@show');
@@ -86,7 +92,6 @@ Route::group(['middleware' => 'auth'], function ($router) {
     Route::get('/flips/{id}', 'Api\FlipController@show');
     Route::post('/flips/{id}', 'Api\FlipController@update');
     Route::delete('/flips/{id}', 'Api\FlipController@delete');
-
 
     //Admin tasks: Import Excel files and update the DB.
     Route::post('/admin/importexcel', ['uses' => 'Api\MasterController@importExcel']);

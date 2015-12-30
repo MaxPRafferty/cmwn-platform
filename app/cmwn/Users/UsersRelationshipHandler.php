@@ -3,6 +3,7 @@
 namespace app\cmwn\Users;
 
 use app\User;
+use Illuminate\Support\Facades\Auth;
 
 class UsersRelationshipHandler
 {
@@ -15,19 +16,20 @@ class UsersRelationshipHandler
 
     public static function areWeFriends($user_id, $friend_id)
     {
-        return User::whereHas('friends', function ($query) use ($friend_id, $user_id) {
+        return (bool) (User::whereHas('friends', function ($query) use ($friend_id, $user_id) {
             $query->where('status', 1)->where('friend_id', $friend_id)->where('user_id', $user_id);
-        });
+        })->count());
+
     }
 
-    public static function areWeInSameClass($user_id, $friend_id)
+    public static function areWeInSameClass($user, $friend_id)
     {
+        $user_id = $user->id;
         $groups = User::find($user_id)->groups->lists('id');
-
-        return User::find($friend_id)->whereHas('groups', function ($query) use ($groups, $friend_id, $user_id) {
+        return (bool) (User::find($friend_id)->whereHas('groups', function ($query) use ($groups, $friend_id, $user_id) {
             $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(self::MEMBER_ID))->where('user_id',
                 $friend_id);
-        });
+        })->count());
     }
 
     public static function isUserInSameEntity($admin, $member, $entity)
