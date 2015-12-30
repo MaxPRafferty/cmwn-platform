@@ -17,9 +17,9 @@ class OrganizationController extends ApiController
         return $this->respondWithCollection($organizations, new OrganizationTransformer());
     }
 
-    public function show($organizationsId)
+    public function show($uuid)
     {
-        $organization = Organization::find($organizationsId);
+        $organization = Organization::findByUuid($uuid);
 
         if (!$organization) {
             return $this->errorNotFound('Organization not found');
@@ -32,9 +32,9 @@ class OrganizationController extends ApiController
         }
     }
 
-    public function update($organizationsId)
+    public function update($uuid)
     {
-        $organization = Organization::find($organizationsId);
+        $organization = Organization::findByUuid($uuid);
 
         if (!$organization) {
             return $this->errorNotFound('Organization not found');
@@ -45,7 +45,7 @@ class OrganizationController extends ApiController
             return $this->errorUnauthorized();
         }
 
-        $validator = Validator::make(Input::all(), Organization::$organizationUpdateRules);
+        $validator = Validator::make(Input::all(), Organization::$updateRules);
 
         if ($validator->passes()) {
             $organization->updateParameters(Input::all());

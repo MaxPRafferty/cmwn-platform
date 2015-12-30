@@ -4,8 +4,6 @@ namespace app\Transformer;
 
 use app\Group;
 use League\Fractal\TransformerAbstract;
-use app\User;
-use Illuminate\Support\Facades\Auth;
 
 class GroupTransformer extends TransformerAbstract
 {
@@ -14,7 +12,7 @@ class GroupTransformer extends TransformerAbstract
         'superAdmins',
         'admins',
         'members',
-        'suggestedfriends'
+        'suggestedfriends',
     ];
 
     /**
@@ -24,14 +22,13 @@ class GroupTransformer extends TransformerAbstract
      */
     public function transform(Group $group)
     {
-        $user = new User();
         return [
-            'uuid'            => $group->uuid,
-            'organization_id' => $group->organization_id,
-            'title'           => $group->title,
-            'canupdate'       => $user->canUserUpdateObject('groups', $group->id),
-            'description'     => $group->description,
-            'created_at'      => (string) $group->created_at,
+            'uuid' => $group->uuid,
+            'organization' => $group->organization ? $group->organization->uuid : null,
+            'title' => $group->title,
+            'can_update' => $group->canUpdate(),
+            'description' => $group->description,
+            'created_at' => (string) $group->created_at,
         ];
     }
 
@@ -43,6 +40,7 @@ class GroupTransformer extends TransformerAbstract
     public function includeUsers(Group $group)
     {
         $users = $group->users;
+
         return $this->collection($users, new UserTransformer());
     }
 
@@ -54,6 +52,7 @@ class GroupTransformer extends TransformerAbstract
     public function includeSuperAdmins(Group $group)
     {
         $superAdmins = $group->superAdmins;
+
         return $this->collection($superAdmins, new UserTransformer());
     }
 
@@ -65,6 +64,7 @@ class GroupTransformer extends TransformerAbstract
     public function includeAdmins(Group $group)
     {
         $admins = $group->admins;
+
         return $this->collection($admins, new UserTransformer());
     }
 
@@ -88,6 +88,7 @@ class GroupTransformer extends TransformerAbstract
     public function includeSuggestedFriends(Group $group)
     {
         $suggestedfriends = $group->suggestedfriends();
+
         return $this->collection($suggestedfriends, new UserTransformer());
     }
 }

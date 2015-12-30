@@ -19,25 +19,25 @@ class GroupController extends ApiController
         return $this->respondWithCollection($groups, new GroupTransformer());
     }
 
-    public function show($groupId)
+    public function show($uuid)
     {
-        $group = Group::find($groupId);
+        $group = Group::findByUuid($uuid);
 
         if (!$group) {
             return $this->errorNotFound('Group not found');
         }
 
         // make sure that the user is authorized to view this group.
-        if (!$group->isUser($this->currentUser)) {
-            return $this->errorUnauthorized();
+        if (!$group->canView($this->currentUser)) {
+            return $this->errorUnauthorized('User is not authorized to view this group');
         }
 
         return $this->respondWithItem($group, new GroupTransformer());
     }
 
-    public function update($groupId)
+    public function update($uuid)
     {
-        $group = Group::find($groupId);
+        $group = Group::findByUuid($uuid);
 
         if (!$group) {
             return $this->errorNotFound('Group not found');
@@ -48,7 +48,7 @@ class GroupController extends ApiController
             return $this->errorUnauthorized();
         }
 
-        $validator = Validator::make(Input::all(), Group::$groupUpdateRules);
+        $validator = Validator::make(Input::all(), Group::$updateRules);
 
         if ($validator->passes()) {
             $group->updateParameters(Input::all());
@@ -57,16 +57,44 @@ class GroupController extends ApiController
         } else {
             $messages = print_r($validator->errors()->getMessages(), true);
 
-            return $this->errorInternalError('Input validation error: '. $messages);
+            return $this->errorInternalError('Input validation error: ' . $messages);
         }
     }
 
-    public function getUsers($groupId)
+    public function create()
     {
-        $group = Group::find($groupId);
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), Group::$createRules);
+
+            if (!$validator->passes()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
+
+            $group = new Group();
+
+            try {
+                $group->updateGroup(Input::all());
+            } catch (Exception $e) {
+                return $this->errorInternalError($e->getMessage());
+            }
+
+            return $this->respondWithItem($user, new UserTransformer());
+        } else {
+            return $this->errorInternalError('You are not authorized to create groups.');
+        }
+    }
+
+    public function getUsers($uuid)
+    {
+        $group = Group::findByUuid($uuid);
 
         if (!$group) {
-            return $this->errorNotFound('User not found');
+            return $this->errorNotFound('Group not found');
+        }
+
+        // make sure that the user is authorized to view this group.
+        if (!$group->canView($this->currentUser)) {
+            return $this->errorUnauthorized('User is not authorized to view the users of this group');
         }
 
         return $this->respondWithCollection($group->users, new UserTransformer());
