@@ -39,39 +39,47 @@ class SideBarItems
             $tags = array(
                 'Members' => '/users/members',
                 'Roles' => '/users/members',
-                'Ditricts' => '/districts',
+                'Districts' => '/districts',
                 'Organizations' => '/organizations',
                 'Groups' => '/groups',
                 'Games' => '/games',
                 'Edit Profile' => '/profile/edit',
-                'Upload CSV' => '/admin/importfiles',
-                'Cloudinary Image' => '/admin/playground',
+                //'Upload CSV' => '/admin/importfiles',
+                //'Cloudinary Image' => '/admin/playground',
             );
             return $tags;
         }
         
         $tags['Games'] = '/profile';
-
+        
+        $friendCount = $user->friends()->count();
+        if ($friendCount > 0){
+            $tags['Friends'] = '/friends';
+        } else {
+            $tags['Suggested Friends'] = '/friends/suggested';
+        }
+        
         //Districts Menu
         $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->id);
         if ($districtMembers->count()){
             if($districtMembers->count()>1) {
                 $tags = array_add($tags, 'Districts', '/districts');
+            } elseif ($districtMembers->count() === 1) {
+                $tags[$districtMembers->get()[0]->title] = '/district/'.$districtMembers->get()[0]->uuid;
             }
-            foreach($districtMembers->get() as $district){
-            $tags[$district->title] = '/districts/'.$district->pivot->roleable_id;
-         }
         }
 
         //Organizations menu
         $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->id);
         if ($organizationMembers->count()){
             if($organizationMembers->count()>1) {
-                $tags = array_add($tags, 'Organizations', '/organizations');
+                $tags = array_add($tags, 'My Schools', '/organizations');
+            } elseif ($organizationMembers->count() === 1) {
+                $tags[$organizationMembers->get()[0]->title] = '/organization/'.$organizationMembers->get()[0]->uuid;
             }
-            foreach($organizationMembers->get() as $organization){
-                $tags[$organization->title] = '/organizations/'.$organization->pivot->roleable_id;
-            }
+            //foreach($organizationMembers->get() as $organization){
+            //    $tags[$organization->title] = '/organizations/'.$organization->pivot->roleable_id;
+            //}
         }
 
         //Groups menu
@@ -80,23 +88,21 @@ class SideBarItems
         if ($groupMembers->count()){
             if($groupMembers->count()>1) {
                 $tags = array_add($tags, 'My Classes', '/groups');
-                foreach($groupMembers->get() as $group){
-                    $tags[' - '.$group->title] = '/groups/'.$group->pivot->roleable_id;
-                }
+                //disabling individual classed simultaneously with
+                //link to My Classes, as per Joni's instructions
+                //foreach($groupMembers->get() as $group){
+                //    $tags[' - '.$group->title] = '/groups/'.$group->pivot->roleable_id;
+                //}
             } elseif ($groupMembers->count() === 1) {
-                foreach($groupMembers->get() as $group){
-                    $tags[$group->title] = '/groups/'.$group->pivot->roleable_id;
-                }
+                $tags[$groupMembers->get()[0]->title] = '/group/'.$groupMembers->get()[0]->uuid;
             }
-            
-
-            $tags['Friends'] = '/friends';
-            $tags['Suggested Friends'] = '/friends/suggested';
         }
 
-
+        if ($friendCount > 0){
+            $tags['Suggested Friends'] = '/friends/suggested';
+        }
         $tags['Edit Profile'] = '/profile/edit';
-        $tags['Logout'] = '/auth/logout';
+        $tags['Logout'] = '/logout';
 
 
         return $tags;
