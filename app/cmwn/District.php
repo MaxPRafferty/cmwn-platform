@@ -30,6 +30,13 @@ class District extends Model
         return $this->belongsToMany('app\Organization');
     }
 
+    public function groups()
+    {
+        $organization = $this->organizations->lists('id')->toArray();
+
+        return Group::whereIn('organization_id', $organization)->get();
+    }
+
     public function updateParameters($parameters)
     {
         if (isset($parameters['title'])) {

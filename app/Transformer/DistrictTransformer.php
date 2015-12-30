@@ -3,12 +3,14 @@
 namespace app\Transformer;
 
 use app\District;
+use app\Group;
 use League\Fractal\TransformerAbstract;
 
 class DistrictTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'organizations',
+        'groups',
         'users',
         'superAdmins',
         'admins',
@@ -43,6 +45,18 @@ class DistrictTransformer extends TransformerAbstract
         $organizations = $district->organizations;
 
         return $this->collection($organizations, new OrganizationTransformer());
+    }
+
+    /**
+     * Include Groups.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeGroups(District $district)
+    {
+        $groups = $district->groups();
+
+        return $this->collection($groups, new GroupTransformer());
     }
 
     /**

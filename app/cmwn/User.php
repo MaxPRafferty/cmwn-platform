@@ -181,7 +181,7 @@ class User extends Model implements
         return $this->morphedByMany('app\Flip', 'roleable')->withPivot('role_id');
     }
 
-    public static function findFromInput($input)
+    public static function findFromInput($input) // TODO remove this method
     {
         if ($input ==  'me') {
             return Auth::user();

@@ -28,7 +28,7 @@ Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
 //The user must be a logged in to use the rest of these routes.
 Route::group(['middleware' => 'auth'], function ($router) {
 
-    Route::post('/auth/password', 'Api\AuthController@updatePassword');
+    Route::post('/auth/password', 'Api\AuthController@updatePassword'); // TODO move this to users/{uuid}/password
 
     Route::get('/parms/{parm_name}', function ($parm_name) {
         return \Config::get('mycustomvars.'.$parm_name);
