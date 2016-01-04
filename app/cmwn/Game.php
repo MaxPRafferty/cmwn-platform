@@ -19,6 +19,12 @@ class Game extends Model
         //'role[]'=>'required|regex:/^[0-9]?$/',
     );
 
+    protected $fillable =
+        array(
+            'title',
+            'description'
+        );
+
     public function flips()
     {
         return $this->belongsToMany('app\Game', 'game_flips', 'game_id', 'flip_id');
