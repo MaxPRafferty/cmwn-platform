@@ -16,7 +16,6 @@ class UserTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'friends',
         'groups',
-        'roles',
         'children',
         'guardians',
         'blockedfriends',
@@ -26,7 +25,8 @@ class UserTransformer extends TransformerAbstract
         'districts',
         'games',
         'flips',
-        'images'
+        'images',
+        'roles'
     ];
 
     /**
@@ -38,18 +38,30 @@ class UserTransformer extends TransformerAbstract
     {
 
         $data = [
-            'uuid'       => $user->uuid,
-            'first_name' => $user->first_name,
-            'last_name'  => $user->last_name,
-            'username'   => $user->username,
-            'gender'     => $user->gender,
-            'birthdate'  => $user->birthdate,
-            'joined'     => (string) $user->created_at,
-            'relationship'=> $user->relationship,
+            'uuid'         => $user->uuid,
+            'first_name'   => $user->first_name,
+            'last_name'    => $user->last_name,
+            'username'     => $user->username,
+            'gender'       => $user->gender,
+            'birthdate'    => $user->birthdate,
+            'joined'       => (string) $user->created_at,
+            'relationship' => $user->relationship,
         ];
 
         return $data;
 
+    }
+
+    /**
+     * Embed Friends.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeRoles(User $user)
+    {
+        $roles = $user->getRoles();
+
+        return $this->collection($roles, new RoleTransformer());
     }
 
     /**
@@ -105,17 +117,6 @@ class UserTransformer extends TransformerAbstract
     {
         $groups = $user->groups;
         return $this->collection($groups, new GroupTransformer());
-    }
-
-    /**
-     * Embed Roles.
-     *
-     * @return League\Fractal\Resource\Collection
-     */
-    public function includeRoles(User $user)
-    {
-        $roles = array('data' => $user->roles($user));
-        return $this->collection($roles, new RolesTransformer());
     }
 
     /**

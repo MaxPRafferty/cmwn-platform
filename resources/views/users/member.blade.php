@@ -25,7 +25,7 @@
 			        <td>Roles: </td>
 			        <td>
 				        <ul>
-				        @foreach($member->role as $role)
+				        @foreach($member->roles as $role)
 					        <li>{{$role->title}}</li>
 				        @endforeach
 				        </ul>

@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use app\cmwn\Image;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use app\cmwn\Traits\RoleTrait;
 use app\cmwn\Traits\EntityTrait;
 use app\cmwn\Users\UsersRelationshipHandler;
@@ -47,13 +48,12 @@ class User extends Model implements
         'gender',
     ];
 
-
     public $relationship;
 
-    public function setRelationshipAttribute($value='working'){
+    public function setRelationshipAttribute($value = 'working')
+    {
         $this->relationship = $value;
     }
-
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -99,35 +99,13 @@ class User extends Model implements
         return $this->belongsToMany('app\User', 'guardian_reference', 'user_id');
     }
 
-    public function assignRoles()
+    public function getRoles()
     {
-        return $this->morphedByMany('app\Role', 'roleable');
-    }
-
-    public function role()
-    {
-        return $this->morphedByMany('app\Role', 'roleable')->withPivot('role_id');
-    }
-
-    public function roles(User $user)
-    {
-        $roles = array();
-        $user_id = $user->id;
-
-        $districts = $user->districts()->where(function ($query) use ($user_id) {
-            $query = $query->where('user_id', $user_id);
-        });
-        $organizations = $user->organizations()->where(function ($query) use ($user_id) {
-            $query = $query->where('user_id', $user_id);
-        });
-
-        $groups = $user->groups()->where(function ($query) use ($user_id) {
-            $query = $query->where('user_id', $user_id);
-        });
-
-        $roles['districts'] = $districts->get()->toArray();
-        $roles['organizations'] = $organizations->get()->toArray();
-        $roles['groups'] = $groups->get()->toArray();
+        $roles = DB::table('roleables')
+        ->select(DB::raw('roleable_type as entity, MAX(role_id) as role_id'))
+        ->where('user_id', $this->id)
+        ->orderByRaw(DB::raw("FIELD(roleable_type,'app\District','app\Organization','app\Group')"))
+        ->groupBy('roleable_type')->get();
 
         return $roles;
     }
@@ -255,28 +233,29 @@ class User extends Model implements
             $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
         })->where('id', '!=', $this->id)->lists('id')->toArray();
         $ids = [];
-        foreach($suggested as $friend_id) {
+        foreach ($suggested as $friend_id) {
             $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id)->count();
-           if(!$areWeFriends){
-               $ids[] = $friend_id;
-           }
+            if (!$areWeFriends) {
+                $ids[] = $friend_id;
+            }
         }
-        $data = User::whereIn('id', $ids)->get();
-        foreach($data as $user){
-            $pendingfriend = (self::getRelationship($user->id))?'Pending':null;
-            $requestedfriend = (self::getRelationship($user->id,'friend_id'))?'requested':null;
-            if ($requestedfriend){
+        $data = self::whereIn('id', $ids)->get();
+        foreach ($data as $user) {
+            $pendingfriend = (self::getRelationship($user->id)) ? 'Pending' : null;
+            $requestedfriend = (self::getRelationship($user->id, 'friend_id')) ? 'requested' : null;
+            if ($requestedfriend) {
                 $user->relationship = $requestedfriend;
             }
-            if ($pendingfriend){
+            if ($pendingfriend) {
                 $user->relationship = $pendingfriend;
             }
         }
+
         return $data;
     }
 
-
-    public static function getRelationship($user_id, $field='user_id', $status=0){
+    public static function getRelationship($user_id, $field = 'user_id', $status = 0)
+    {
         return self::whereHas('friends', function ($query) use ($user_id, $field, $status) {
             $query->where($field, $user_id)->where('status', $status);
         })->count();
