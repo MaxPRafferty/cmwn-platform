@@ -29,7 +29,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \app\Game::creating(function ($game) {
-            $game->uuid = Uuid::uuid1();
+            if (!isset($game->uuid)) {
+                $game->uuid = Uuid::uuid1();
+            }
         });
 
         \app\Flip::creating(function ($flip) {
