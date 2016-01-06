@@ -11,13 +11,7 @@ class GameController extends ApiController
 {
     public function index()
     {
-        $games = Game::limitToUser($this->currentUser);
-
-        if (!$games) {
-            return $this->errorNotFound('Game not found');
-        }
-
-        return $this->respondWithCollection($games->get(), new GameTransformer());
+        return $this->respondWithCollection(Game::all(), new GameTransformer());
     }
 
     public function show($id)
