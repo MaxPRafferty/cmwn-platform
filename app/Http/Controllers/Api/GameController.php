@@ -1,34 +1,38 @@
 <?php
 
 namespace app\Http\Controllers\Api;
+
 use app\Game;
 use app\Transformer\GameTransformer;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use app\User;
 
 class GameController extends ApiController
 {
-    public function index(){
+    public function index()
+    {
         $games = Game::limitToUser($this->currentUser);
+
         if (!$games) {
             return $this->errorNotFound('Game not found');
         }
+
         return $this->respondWithCollection($games->get(), new GameTransformer());
     }
 
-    public function show($id){
-        $game = Game::limitToUser($this->currentUser)->where('uuid',$id);
+    public function show($id)
+    {
+        $game = Game::limitToUser($this->currentUser)->where('uuid', $id);
         if (!$game) {
             return $this->errorNotFound('Game not found');
         }
+
         return $this->respondWithCollection($game->get(), new GameTransformer());
     }
 
-    public function update($id){
-
-        if (!$this->currentUser->isSiteAdmin()){
+    public function update($id)
+    {
+        if (!$this->currentUser->isSiteAdmin()) {
             return $this->errorUnauthorized();
         }
 
@@ -48,10 +52,11 @@ class GameController extends ApiController
         }
 
         $game->updateParameters(Input::all());
-        return $this->respondWithArray(array('message' => 'The game has been updated successfully.'));
 
+        return $this->respondWithArray(array('message' => 'The game has been updated successfully.'));
     }
-    public function delete($id){
+    public function delete($id)
+    {
         $game = Game::find($id);
 
         if (!$game) {
@@ -63,6 +68,7 @@ class GameController extends ApiController
         }
 
         $game->delete();
+
         return $this->respondWithArray(array('message' => 'The game has been deleted successfully.'));
     }
 }

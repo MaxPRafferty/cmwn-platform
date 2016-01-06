@@ -7,8 +7,6 @@ class CreateGamesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -20,7 +18,6 @@ class CreateGamesTable extends Migration
             $table->string('uuid')->unique();
             $table->string('title');
             $table->string('description');
-            $table->string('image');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,8 +25,6 @@ class CreateGamesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
