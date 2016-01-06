@@ -60,16 +60,6 @@ class UserTableSeeder extends Seeder
 
         // Create Users
         $this->command->info('Site Admins!');
-        $users[] = User::create(array(
-                'first_name' => 'Jon',
-                'last_name' => 'Toshmatov',
-                'type' => 1,
-                'username' => 'toshmatov',
-                'gender' => 'male',
-                'email' => 'jontoshmatov@yahoo.com',
-                'password' => Hash::make('business'),
-                'student_id' => 'jontoshmatov@yahoo.com',
-            ));
 
         $users[] = User::create(array(
                 'first_name' => 'Arron',
