@@ -97,7 +97,7 @@
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
 
 							{{--*/  $alluserroles[] = array() /*--}}
-							@foreach($member->role as $role)
+							@foreach($member->roles as $role)
 								@if($role->id)
 									{{--*/  $alluserroles[] = $role->id /*--}}
 								@endif

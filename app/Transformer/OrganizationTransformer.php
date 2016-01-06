@@ -23,7 +23,7 @@ class OrganizationTransformer extends TransformerAbstract
      */
     public function transform(Organization $organization)
     {
-        return [
+        $data = [
             'uuid' => $organization->uuid,
             'code' => $organization->code,
             'title' => $organization->title,
@@ -31,6 +31,12 @@ class OrganizationTransformer extends TransformerAbstract
             'can_update' => $organization->canUpdate(),
             'created_at' => (string) $organization->created_at,
         ];
+
+        if (isset($organization->pivot->role_id)) {
+            $data['role_id'] = $organization->pivot->role_id;
+        }
+
+        return $data;
     }
 
     /**

@@ -70,7 +70,7 @@
 								<td>Role</td>
 								<td>Description</td>
 							</tr>
-							@foreach($data->role as $role)
+							@foreach($data->roles as $role)
 							<tr>
 								<td>{{$role->title}}</td>
 								<td>{{$role->description}}</td>

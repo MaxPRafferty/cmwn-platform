@@ -46,23 +46,22 @@ trait RoleTrait
 
     public function isUser($user)
     {
-        //TODO replace 1 with type constant!
-        return ($user->type == 1 || $this->users()->where('user_id', $user->id)->count() > 0);
+        return ($user->isSiteAdmin() || $this->users()->where('user_id', $user->id)->count() > 0);
     }
 
     public function isSuperAdmin($user)
     {
-        return ($user->type == 1 || $this->superAdmins()->where('user_id', $user->id)->count() > 0);
+        return ($user->isSiteAdmin() || $this->superAdmins()->where('user_id', $user->id)->count() > 0);
     }
 
     public function isAdmin($user)
     {
-        return ($user->type == 1 || $this->admin()->where('user_id', $user->id)->count() > 0);
+        return ($user->isSiteAdmin() || $this->admin()->where('user_id', $user->id)->count() > 0);
     }
 
     public function isMember($user)
     {
-        return ($user->type == 1 || $this->members()->where('user_id', $user->id)->count() > 0);
+        return ($user->isSiteAdmin() || $this->members()->where('user_id', $user->id)->count() > 0);
     }
 
     public function canUpdate($user = null)

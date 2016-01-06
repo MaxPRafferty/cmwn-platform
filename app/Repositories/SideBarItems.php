@@ -1,41 +1,26 @@
 <?php
 
 namespace app\Repositories;
+
 use Illuminate\Support\Facades\Auth;
 
 class SideBarItems
 {
-    protected $role = null;
-	public function __construct(){
-		if (!Auth::check()){
-			return false;
-		}
-		if ($role = Auth::user()->role) {
-			foreach ($role as $rol) {
-				$this->role[] = $rol->title;
-			}
-		}
-		if (Auth::check()) {
-            if (Auth::user()->type==1) {
-                unset($this->role);
-                $this->role[] = 'site_admin';
-            }
-        }
-    }
-
-    public function getAll(){
+    public function getAll()
+    {
         $tags = array();
-        if (!Auth::check()){
+        if (!Auth::check()) {
             $tags = array(
                 'Home' => '/',
                 'Login' => '/auth/login',
-                'Register' => '/auth/register'
+                'Register' => '/auth/register',
             );
+
             return $tags;
         }
 
-		$user = Auth::user();
-        if ($user->type==1){
+        $user = Auth::user();
+        if ($user->type == 1) {
             $tags = array(
                 'Members' => '/users/members',
                 'Roles' => '/users/members',
@@ -47,22 +32,23 @@ class SideBarItems
                 //'Upload CSV' => '/admin/importfiles',
                 //'Cloudinary Image' => '/admin/playground',
             );
+
             return $tags;
         }
-        
+
         $tags['Games'] = '/profile';
-        
+
         $friendCount = $user->friends()->count();
-        if ($friendCount > 0){
+        if ($friendCount > 0) {
             $tags['Friends'] = '/friends';
         } else {
             $tags['Suggested Friends'] = '/friends/suggested';
         }
-        
+
         //Districts Menu
         $districtMembers = $user->getUserInRoleable('app\District')->wherePivot('user_id', $user->id);
-        if ($districtMembers->count()){
-            if($districtMembers->count()>1) {
+        if ($districtMembers->count()) {
+            if ($districtMembers->count() > 1) {
                 $tags = array_add($tags, 'Districts', '/districts');
             } elseif ($districtMembers->count() === 1) {
                 $tags[$districtMembers->get()[0]->title] = '/district/'.$districtMembers->get()[0]->uuid;
@@ -71,39 +57,30 @@ class SideBarItems
 
         //Organizations menu
         $organizationMembers = $user->getUserInRoleable('app\Organization')->wherePivot('user_id', $user->id);
-        if ($organizationMembers->count()){
-            if($organizationMembers->count()>1) {
+        if ($organizationMembers->count()) {
+            if ($organizationMembers->count() > 1) {
                 $tags = array_add($tags, 'My Schools', '/organizations');
             } elseif ($organizationMembers->count() === 1) {
                 $tags[$organizationMembers->get()[0]->title] = '/organization/'.$organizationMembers->get()[0]->uuid;
             }
-            //foreach($organizationMembers->get() as $organization){
-            //    $tags[$organization->title] = '/organizations/'.$organization->pivot->roleable_id;
-            //}
         }
 
         //Groups menu
         $groupMembers = $user->getUserInRoleable('app\Group')->wherePivot('user_id', $user->id);
 
-        if ($groupMembers->count()){
-            if($groupMembers->count()>1) {
+        if ($groupMembers->count()) {
+            if ($groupMembers->count() > 1) {
                 $tags = array_add($tags, 'My Classes', '/groups');
-                //disabling individual classed simultaneously with
-                //link to My Classes, as per Joni's instructions
-                //foreach($groupMembers->get() as $group){
-                //    $tags[' - '.$group->title] = '/groups/'.$group->pivot->roleable_id;
-                //}
             } elseif ($groupMembers->count() === 1) {
                 $tags[$groupMembers->get()[0]->title] = '/group/'.$groupMembers->get()[0]->uuid;
             }
         }
 
-        if ($friendCount > 0){
+        if ($friendCount > 0) {
             $tags['Suggested Friends'] = '/friends/suggested';
         }
         $tags['Edit Profile'] = '/profile/edit';
         $tags['Logout'] = '/logout';
-
 
         return $tags;
     }

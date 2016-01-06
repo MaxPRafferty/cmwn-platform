@@ -22,7 +22,7 @@ class GroupTransformer extends TransformerAbstract
      */
     public function transform(Group $group)
     {
-        return [
+        $data = [
             'uuid' => $group->uuid,
             'organization' => $group->organization ? $group->organization->uuid : null,
             'title' => $group->title,
@@ -30,6 +30,12 @@ class GroupTransformer extends TransformerAbstract
             'description' => $group->description,
             'created_at' => (string) $group->created_at,
         ];
+
+        if (isset($group->pivot->role_id)) {
+            $data['role_id'] = $group->pivot->role_id;
+        }
+
+        return $data;
     }
 
     /**

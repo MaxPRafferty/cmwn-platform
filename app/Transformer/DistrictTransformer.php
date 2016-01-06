@@ -24,7 +24,7 @@ class DistrictTransformer extends TransformerAbstract
      */
     public function transform(District $district)
     {
-        return [
+        $data = [
             'uuid' => $district->uuid,
             'system_id' => (int) $district->system_id,
             'code' => $district->code,
@@ -33,6 +33,12 @@ class DistrictTransformer extends TransformerAbstract
             'description' => $district->description,
             'created_at' => (string) $district->created_at,
         ];
+
+        if (isset($district->pivot->role_id)) {
+            $data['role_id'] = $district->pivot->role_id;
+        }
+
+        return $data;
     }
 
     /**

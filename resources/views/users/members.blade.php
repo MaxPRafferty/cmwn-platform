@@ -35,7 +35,7 @@
 						<td><a href="member/{{$member->id}}/view">{{$member->name}}</a></td>
 						<td><a href="member/{{$member->id}}/view">{{$member->email}}</a></td>
 						<td>
-							@foreach($member->role as $role)
+							@foreach($member->roles as $role)
 								<a href="/admin/users/roles">{{$role->title}}</a>,
 							@endforeach
 
