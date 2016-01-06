@@ -14,3 +14,4 @@ laravel/.idea/workspace.xml
 /config/database.php
 config/database.php
 .tags
+composer.lock
