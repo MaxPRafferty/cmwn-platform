@@ -20,10 +20,10 @@ class FlipTransformer extends TransformerAbstract
     public function transform(Flip $flip)
     {
         return [
-            'uuid'              => $flip->uuid,
-            'title'           => $flip->title,
-            'description'     => $flip->description,
-            'created_at'      => (string) $flip->created_at,
+            'uuid' => $flip->uuid,
+            'title' => $flip->title,
+            'description' => $flip->description,
+            'created_at' => (string) $flip->created_at,
         ];
     }
 
@@ -35,7 +35,7 @@ class FlipTransformer extends TransformerAbstract
     public function includeUsers(Flip $flip)
     {
         $users = $flip->users;
+
         return $this->collection($users, new UserTransformer());
     }
-
 }
