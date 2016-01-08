@@ -7,7 +7,6 @@ use app\Transformer\UserTransformer;
 use app\Transformer\GroupTransformer;
 use app\Transformer\ImageTransformer;
 use Illuminate\Support\Facades\Validator;
-
 use app\User;
 use app\Image;
 
@@ -39,7 +38,6 @@ class UserController extends ApiController
 
     public function update($uuid)
     {
-
         $user = User::findByUuid($uuid);
 
         if (!$user->canUpdate($this->currentUser)) {
@@ -86,6 +84,19 @@ class UserController extends ApiController
         }
     }
 
+    public function addToGroup()
+    {
+        // if ($this->currentUser->isSiteAdmin()) {
+
+        //     User::findByUuid(Input::get('group'));
+
+        //     $user = User::findByUuid($user_id);
+
+        // } else {
+        //     return $this->errorInternalError('You are not authorized to create users.');
+        // }
+    }
+
     public function getGroups($userId)
     {
         $user = User::with('groups')->find($userId);
@@ -112,7 +123,6 @@ class UserController extends ApiController
 
     public function updateImage($uuid)
     {
-
         $user = User::findByUuid($uuid);
 
         if (!$user->canUpdate($this->currentUser)) {
@@ -121,18 +131,13 @@ class UserController extends ApiController
 
         $validator = Validator::make(Input::all(), Image::$imageUpdateRules);
 
-        if ($validator->passes()) {
-
-            if ($user->updateImage(Input::all())) {
-                return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
-            }
-
-            return $this->errorInternalError('The image failed to update');
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->errors()->all());
         }
 
-        $messages = print_r($validator->errors()->getMessages(), true);
-
-        return $this->errorInternalError('Input validation error: '.$messages);
+        if ($user->updateImage(Input::all())) {
+            return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
+        }
     }
 
     public function deleteImage($user_id)

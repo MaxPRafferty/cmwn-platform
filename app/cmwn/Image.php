@@ -13,7 +13,7 @@ class Image extends Model
     // protected $fillable = array('imageable_id', 'imageable_type');
 
     public static $imageUpdateRules = array(
-        'url' => 'string',
+        'cloudinary_id' => 'required|string',
     );
 
     public function imageable()
