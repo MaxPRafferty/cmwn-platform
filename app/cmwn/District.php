@@ -37,6 +37,11 @@ class District extends Model
         return Group::whereIn('organization_id', $organization)->get();
     }
 
+    public function images()
+    {
+        return $this->morphMany('app\Image', 'imageable');
+    }
+
     public function updateParameters($parameters)
     {
         if (isset($parameters['title'])) {

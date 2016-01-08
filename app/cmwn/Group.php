@@ -4,7 +4,6 @@ namespace app;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Request;
 use app\cmwn\Traits\RoleTrait;
 use app\cmwn\Traits\EntityTrait;
 
@@ -28,6 +27,11 @@ class Group extends Model
     public function organization()
     {
         return $this->belongsTo('app\Organization');
+    }
+
+    public function images()
+    {
+        return $this->morphMany('app\Image', 'imageable');
     }
 
     public function updateParameters($parameters)

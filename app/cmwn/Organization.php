@@ -11,7 +11,7 @@ class Organization extends Model
     use RoleTrait, EntityTrait;
 
     protected $table = 'organizations';
-    
+
     protected $fillable = [
         'code',
     ];
@@ -33,6 +33,11 @@ class Organization extends Model
     public function districts()
     {
         return $this->belongsToMany('app\District');
+    }
+
+    public function images()
+    {
+        return $this->morphMany('app\Image', 'imageable');
     }
 
     public function updateParameters($parameters)

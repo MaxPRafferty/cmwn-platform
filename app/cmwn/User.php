@@ -435,30 +435,6 @@ class User extends Model implements
         return $query->where('name', $val);
     }
 
-    public function updateImage($params)
-    {
-        $image = new Image();
-
-        if (isset($params['url'])) {
-            $image->url = $params['url'];
-        }
-
-        if (isset($params['cloudinary_id'])) {
-            $image->cloudinary_id = $params['cloudinary_id'];
-        }
-
-        // $user_image = $this->images->first();
-
-        // $user_image = $image;
-        // $user_image->save();
-
-        if ($this->images()->save($image)) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function deleteImage($user_id)
     {
         $user = self::find($user_id);
