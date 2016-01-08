@@ -243,7 +243,7 @@ class User extends Model implements
         })->where('id', '!=', $this->id)->lists('id')->toArray();
         $ids = [];
         foreach ($suggested as $friend_id) {
-            $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id)->count();
+            $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id);
             if (!$areWeFriends) {
                 $ids[] = $friend_id;
             }
