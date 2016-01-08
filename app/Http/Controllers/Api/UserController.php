@@ -84,17 +84,19 @@ class UserController extends ApiController
         }
     }
 
-    public function addToGroup()
+    public function addToGroup($userId)
     {
-        // if ($this->currentUser->isSiteAdmin()) {
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), Image::$addToGroupRules);
 
-        //     User::findByUuid(Input::get('group'));
+            $user = User::findByUuid($userId);
 
-        //     $user = User::findByUuid($user_id);
+            $group = Group::findByUuid(Input::get('group'));
 
-        // } else {
-        //     return $this->errorInternalError('You are not authorized to create users.');
-        // }
+            $users->groups()->save($group, array('role_id' => Input::get('role_id')));
+        } else {
+            return $this->errorInternalError('You are not authorized to create users.');
+        }
     }
 
     public function getGroups($userId)

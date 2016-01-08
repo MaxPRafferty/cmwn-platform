@@ -93,6 +93,11 @@ class User extends Model implements
         'password_confirmation' => 'required',
     );
 
+    public static $addToGroupRules = array(
+        'group' => 'required',
+        'role_id' => 'required',
+        );
+
     public function guardianReference()
     {
         return $this->belongsToMany('app\User', 'guardian_reference', 'user_id');
