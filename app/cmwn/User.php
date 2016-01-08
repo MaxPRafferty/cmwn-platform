@@ -95,8 +95,8 @@ class User extends Model implements
 
     public static $addToGroupRules = array(
         'group' => 'required',
-        'role_id' => 'required',
-        );
+        'role_id' => 'required|integer',
+    );
 
     public function guardianReference()
     {

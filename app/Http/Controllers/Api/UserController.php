@@ -9,6 +9,7 @@ use app\Transformer\ImageTransformer;
 use Illuminate\Support\Facades\Validator;
 use app\User;
 use app\Image;
+use app\Group;
 
 class UserController extends ApiController
 {
@@ -84,16 +85,24 @@ class UserController extends ApiController
         }
     }
 
-    public function addToGroup($userId)
+    public function addToGroup($uuid)
     {
         if ($this->currentUser->isSiteAdmin()) {
-            $validator = Validator::make(Input::all(), Image::$addToGroupRules);
+            $validator = Validator::make(Input::all(), User::$addToGroupRules);
 
-            $user = User::findByUuid($userId);
+            if ($validator->fails()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
+
+            $user = User::findByUuid($uuid);
 
             $group = Group::findByUuid(Input::get('group'));
 
-            $users->groups()->save($group, array('role_id' => Input::get('role_id')));
+            if ($user->groups()->save($group, array('role_id' => Input::get('role_id')))) {
+                return $this->respondWithArray(array('message' => 'The user has been added to the group.'));
+            } else {
+                return $this->errorInternalError('Failed to add user to group.');
+            }
         } else {
             return $this->errorInternalError('You are not authorized to create users.');
         }

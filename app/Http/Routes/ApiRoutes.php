@@ -22,7 +22,7 @@ Route::get('/auth/logout', 'Auth\AuthController@getLogout');
 // The use must be a site admin to use these routes.
 Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
     Route::post('/users', 'Api\UserController@create');
-    Route::put('/users/{id}/groups', 'Api\UserController@addToGroup');
+    Route::put('/users/{uuid}/groups', 'Api\UserController@addToGroup');
     Route::post('/groups', 'Api\GroupController@create');
 });
 
