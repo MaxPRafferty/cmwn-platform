@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //User Images
     Route::get('/users/{id}/image', 'Api\UserController@showImage');
-    Route::put('/users/{id}/image', 'Api\UserController@updateImage');
+    Route::put('/users/{uuid}/image', 'Api\UserController@updateImage');
     Route::delete('/users/{id}/image', 'Api\UserController@deleteImage');
 
     Route::get('/suggestedfriends', 'Api\SuggestedController@show');
