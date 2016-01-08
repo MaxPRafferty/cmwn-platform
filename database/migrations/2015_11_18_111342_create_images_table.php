@@ -14,11 +14,10 @@ class CreateImagesTable extends Migration
 
         Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uuid')->unique();
-            $table->unsignedInteger('imageable_id')->unsigned();
+            $table->integer('imageable_id');
             $table->string('imageable_type');
             $table->string('url');
-            $table->unsignedInteger('cloudinary_id')->unsigned();
+            $table->string('cloudinary_id');
             $table->timestamps();
         });
     }

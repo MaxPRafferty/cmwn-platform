@@ -2,13 +2,14 @@
 
 namespace app\Http\Controllers\Api;
 
-use app\cmwn\Image;
+use Input;
 use app\Transformer\UserTransformer;
 use app\Transformer\GroupTransformer;
-use app\User;
-use Input;
 use app\Transformer\ImageTransformer;
 use Illuminate\Support\Facades\Validator;
+
+use app\User;
+use app\Image;
 
 class UserController extends ApiController
 {
@@ -109,9 +110,11 @@ class UserController extends ApiController
         return $this->respondWithCollection($image, new ImageTransformer());
     }
 
-    public function updateImage($user_id)
+    public function updateImage($uuid)
     {
-        $user = User::findFromInput($user_id);
+
+        $user = User::findByUuid($uuid);
+
         if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');
         }
@@ -119,13 +122,14 @@ class UserController extends ApiController
         $validator = Validator::make(Input::all(), Image::$imageUpdateRules);
 
         if ($validator->passes()) {
-            $user = new User();
-            if ($user->updateImage($user_id, Input::all())) {
+
+            if ($user->updateImage(Input::all())) {
                 return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
             }
 
             return $this->errorInternalError('The image failed to update');
         }
+
         $messages = print_r($validator->errors()->getMessages(), true);
 
         return $this->errorInternalError('Input validation error: '.$messages);
