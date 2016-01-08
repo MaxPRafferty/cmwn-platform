@@ -22,7 +22,7 @@ Route::get('/auth/logout', 'Auth\AuthController@getLogout');
 // The use must be a site admin to use these routes.
 Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
     Route::post('/users', 'Api\UserController@create');
-    Route::put('/users/{uuid}/groups', 'Api\UserController@addToGroup');
+    Route::post('/users/{uuid}/groups', 'Api\UserController@addToGroup');
     Route::post('/groups', 'Api\GroupController@create');
 });
 
@@ -48,7 +48,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //User Images
     Route::get('/users/{id}/image', 'Api\UserController@showImage');
-    Route::put('/users/{uuid}/image', 'Api\UserController@updateImage');
+    Route::post('/users/{uuid}/image', 'Api\UserController@updateImage');
     Route::delete('/users/{id}/image', 'Api\UserController@deleteImage');
 
     Route::get('/suggestedfriends', 'Api\SuggestedController@show');
