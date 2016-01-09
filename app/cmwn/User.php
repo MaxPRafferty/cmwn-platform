@@ -406,7 +406,7 @@ class User extends Model implements
         }
 
         if (isset($params['email'])) {
-            $this->dob = $params['email'];
+            $this->email = $params['email'];
         }
 
         if ($this->save()) {
