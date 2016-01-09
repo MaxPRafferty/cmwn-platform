@@ -88,19 +88,24 @@ class UserController extends ApiController
 
     public function createDemoTeacher()
     {
-        $validator = Validator::make(Input::all(), User::$createDemoTeacherRules);
+        $credentials = Input::all();
+
+        $credentials['email'] = Input::get('email');
+
+        $credentials['email'] = urldecode($credentials['email']); // temp fix
+
+        $validator = Validator::make($credentials, User::$createDemoTeacherRules);
 
         if (!$validator->passes()) {
             return $this->errorWrongArgs($validator->errors()->all());
         }
 
-        $credentials['email']    = Input::get('email');
         $credentials['password'] = Hash::make('demo123');
 
         $user = User::create($credentials);
 
         try {
-            $user->updateMember(Input::all());
+            $user->updateMember($credentials);
         } catch (Exception $e) {
             return $this->errorInternalError($e->getMessage());
         }

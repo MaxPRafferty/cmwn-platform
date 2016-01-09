@@ -405,10 +405,6 @@ class User extends Model implements
             $this->dob = $params['birthdate'];
         }
 
-        if (isset($params['email'])) {
-            $this->email = $params['email'];
-        }
-
         if ($this->save()) {
             return true;
         }
