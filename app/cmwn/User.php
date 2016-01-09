@@ -68,10 +68,16 @@ class User extends Model implements
         'first_name' => 'required|string|min:2',
         'middle_name' => 'string|min:2',
         'last_name' => 'required|string|min:2',
-        'email' => 'email|min:2',
+        'email' => 'required|unique:users,email',
         'username' => 'required|alpha_dash|unique:users,username',
         'student_id' => 'required|alpha_dash|unique:users,username',
 
+    );
+
+    public static $createDemoTeacherRules = array(
+        'first_name' => 'required|string|min:2',
+        'last_name' => 'required|string|min:2',
+        'email' => 'required|unique:users,email',
     );
 
     public static $updateRules = array(
@@ -399,6 +405,10 @@ class User extends Model implements
             $this->dob = $params['birthdate'];
         }
 
+        if (isset($params['email'])) {
+            $this->email = $params['email'];
+        }
+
         if ($this->save()) {
             return true;
         }
@@ -433,30 +443,6 @@ class User extends Model implements
     public function scopeName($query, $val)
     {
         return $query->where('name', $val);
-    }
-
-    public function updateImage($params)
-    {
-        $image = new Image();
-
-        if (isset($params['url'])) {
-            $image->url = $params['url'];
-        }
-
-        if (isset($params['cloudinary_id'])) {
-            $image->cloudinary_id = $params['cloudinary_id'];
-        }
-
-        // $user_image = $this->images->first();
-
-        // $user_image = $image;
-        // $user_image->save();
-
-        if ($this->images()->save($image)) {
-            return true;
-        }
-
-        return false;
     }
 
     public function deleteImage($user_id)

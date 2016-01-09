@@ -14,6 +14,7 @@ class OrganizationTransformer extends TransformerAbstract
         'superAdmins',
         'admins',
         'members',
+        'images',
     ];
 
     /**
@@ -37,6 +38,17 @@ class OrganizationTransformer extends TransformerAbstract
         }
 
         return $data;
+    }
+
+    /**
+     * Embed Image.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeImages(Organization $organization)
+    {
+        $image = $organization->images;
+        return $this->collection($image, new ImageTransformer());
     }
 
     /**

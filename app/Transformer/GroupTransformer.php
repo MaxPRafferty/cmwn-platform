@@ -13,6 +13,7 @@ class GroupTransformer extends TransformerAbstract
         'admins',
         'members',
         'suggestedfriends',
+        'images',
     ];
 
     /**
@@ -36,6 +37,17 @@ class GroupTransformer extends TransformerAbstract
         }
 
         return $data;
+    }
+
+    /**
+     * Embed Image.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeImages(Group $group)
+    {
+        $image = $group->images;
+        return $this->collection($image, new ImageTransformer());
     }
 
     /**

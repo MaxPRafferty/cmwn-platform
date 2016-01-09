@@ -18,6 +18,7 @@ Route::get('/parms/{parm_name}', function ($parm_name) {
 Route::post('/auth/login', 'Api\AuthController@authenticate');
 Route::post('/auth/reset', 'Auth\PasswordController@reset');
 Route::get('/auth/logout', 'Auth\AuthController@getLogout');
+Route::post('/create_demo_teacher', 'Api\UserController@createDemoTeacher');
 
 // The use must be a site admin to use these routes.
 Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
@@ -59,6 +60,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //Get Groups
     Route::get('/groups', 'Api\GroupController@index');
+    Route::post('/groups/{uuid}/image', 'Api\GroupController@updateImage');
     Route::get('/groups/{uuid}', 'Api\GroupController@show');
     Route::get('/groups/{uuid}/users', 'Api\GroupController@getUsers');
 
@@ -71,12 +73,13 @@ Route::group(['middleware' => 'auth'], function ($router) {
 
     //Post Districts
     Route::post('/districts/{uuid}', ['uses' => 'Api\DistrictController@update']);
+    Route::post('/districts/{uuid}/image', 'Api\DistrictController@updateImage');
 
     //Get Organizations
     Route::get('/organizations', 'Api\OrganizationController@index');
     Route::get('/organizations/{uuid}', 'Api\OrganizationController@show');
+    Route::post('/organizations/{uuid}/image', 'Api\OrganizationController@updateImage');
 
-    //Put Organizations
     Route::post('/organizations/{uuid}', ['uses' => 'Api\OrganizationController@update']);
 
     Route::get('/roles', 'Api\RoleController@index');

@@ -57,4 +57,23 @@ class OrganizationController extends ApiController
             return $this->errorInternalError('Input validation error: '. $messages);
         }
     }
+
+    public function updateImage($uuid)
+    {
+        $organization = Organization::findByUuid($uuid);
+
+        if (!$organization->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
+        }
+
+        $validator = Validator::make(Input::all(), Image::$imageUpdateRules);
+
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        if ($organization->updateImage(Input::all())) {
+            return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
+        }
+    }
 }

@@ -15,6 +15,7 @@ class DistrictTransformer extends TransformerAbstract
         'superAdmins',
         'admins',
         'members',
+        'images',
     ];
 
     /**
@@ -39,6 +40,17 @@ class DistrictTransformer extends TransformerAbstract
         }
 
         return $data;
+    }
+
+    /**
+     * Embed Image.
+     *
+     * @return League\Fractal\Resource\Collection
+     */
+    public function includeImages(District $district)
+    {
+        $image = $district->images;
+        return $this->collection($image, new ImageTransformer());
     }
 
     /**

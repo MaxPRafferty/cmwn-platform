@@ -85,6 +85,32 @@ class UserController extends ApiController
         }
     }
 
+    public function createDemoTeacher()
+    {
+        $validator = Validator::make(Input::all(), User::$createDemoTeacherRules);
+
+        if (!$validator->passes()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        $user = new User();
+
+        try {
+            $user->updateMember(Input::all());
+        } catch (Exception $e) {
+            return $this->errorInternalError($e->getMessage());
+        }
+
+        $group = Group::find(2);
+
+        $user->groups()->save($group, array('role_id' => 2));
+
+        $user->password = bcrypt('demo123');
+        $user->save();
+
+        return $this->respondWithItem($user, new UserTransformer());
+    }
+
     public function addToGroup($uuid)
     {
         if ($this->currentUser->isSiteAdmin()) {

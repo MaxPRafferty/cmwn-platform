@@ -99,4 +99,23 @@ class GroupController extends ApiController
 
         return $this->respondWithCollection($group->users, new UserTransformer());
     }
+
+    public function updateImage($uuid)
+    {
+        $group = Group::findByUuid($uuid);
+
+        if (!$group->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
+        }
+
+        $validator = Validator::make(Input::all(), Image::$imageUpdateRules);
+
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        if ($group->updateImage(Input::all())) {
+            return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
+        }
+    }
 }

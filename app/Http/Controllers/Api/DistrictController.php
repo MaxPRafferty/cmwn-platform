@@ -58,4 +58,23 @@ class DistrictController extends ApiController
             return $this->errorInternalError('Input validation error: '. $messages);
         }
     }
+
+    public function updateImage($uuid)
+    {
+        $district = District::findByUuid($uuid);
+
+        if (!$district->canUpdate($this->currentUser)) {
+            return $this->errorInternalError('You are not authorized.');
+        }
+
+        $validator = Validator::make(Input::all(), Image::$imageUpdateRules);
+
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        if ($district->updateImage(Input::all())) {
+            return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
+        }
+    }
 }
