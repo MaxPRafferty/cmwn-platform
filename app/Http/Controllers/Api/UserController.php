@@ -105,8 +105,7 @@ class UserController extends ApiController
 
         $user->groups()->save($group, array('role_id' => 2));
 
-        $user->password = bcrypt('demo123');
-        $user->save();
+        $user->updatePassword($user, 'demo123');
 
         return $this->respondWithItem($user, new UserTransformer());
     }
