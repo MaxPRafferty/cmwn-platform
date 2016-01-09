@@ -18,19 +18,19 @@
             $games[] = User::create(array(
                 'uuid' => 'polar-bear',
                 'title' => 'Polar Bear',
-                'description' => 'Description: Polar Bear description goes here.'
+                'description' => 'The magnificent Polar Bear is in danger of becoming extinct!  Find out all about where they live and why their fur looks white.  (Hint:  Things are not always as they appear!)  You get to play and do an offline experiment.'
             ));
 
             $games[] = User::create(array(
                 'uuid' => 'sea-turtle',
                 'title' => 'Sea Turtle',
-                'description' => 'Description: Sea Turtle description goes here.'
+                'description' => 'Can you ID the different kinds of animals?  Prove it or learn it right here!  Quick and fun, let your fingers do the clicking and be ready to show your stuff.'
             ));
 
             $games[] = User::create(array(
                 'uuid' => 'animal-id',
                 'title' => 'Animal ID',
-                'description' => 'Description: Animal ID description goes here.'
+                'description' => 'Sea Turtles are wondrous creatures!  Get cool turtle facts, play games and find out why they are endangered.'
             ));
 
             $this->command->info('Games Created!');
