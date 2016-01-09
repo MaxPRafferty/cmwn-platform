@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use app\User;
 use app\Image;
 use app\Group;
+use Hash;
 
 class UserController extends ApiController
 {
@@ -93,7 +94,10 @@ class UserController extends ApiController
             return $this->errorWrongArgs($validator->errors()->all());
         }
 
-        $user = new User();
+        $credentials = Input::only('email');
+        $credentials['password'] = Hash::make('demo123');
+
+        $user = User::create($credentials);
 
         try {
             $user->updateMember(Input::all());
@@ -104,8 +108,6 @@ class UserController extends ApiController
         $group = Group::find(2);
 
         $user->groups()->save($group, array('role_id' => 2));
-
-        $user->updatePassword($user, 'demo123');
 
         return $this->respondWithItem($user, new UserTransformer());
     }
