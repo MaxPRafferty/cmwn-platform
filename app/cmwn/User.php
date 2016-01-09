@@ -74,6 +74,12 @@ class User extends Model implements
 
     );
 
+    public static $createDemoTeacherRules = array(
+        'first_name' => 'required|string|min:2',
+        'last_name' => 'required|string|min:2',
+        'email' => 'email|min:2',
+    );
+
     public static $updateRules = array(
         'first_name' => 'string|min:2',
         'middle_name' => 'string|min:2',

@@ -18,6 +18,8 @@ Route::get('/parms/{parm_name}', function ($parm_name) {
 Route::post('/auth/login', 'Api\AuthController@authenticate');
 Route::post('/auth/reset', 'Auth\PasswordController@reset');
 Route::get('/auth/logout', 'Auth\AuthController@getLogout');
+Route::post('/create_demo_teacher', 'Api\UserController@createDemoTeacher');
+
 
 // The use must be a site admin to use these routes.
 Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
