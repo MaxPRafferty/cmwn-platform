@@ -94,7 +94,7 @@ class UserController extends ApiController
             return $this->errorWrongArgs($validator->errors()->all());
         }
 
-        $credentials = Input::only('email');
+        $credentials['email']    = Input::get('email');
         $credentials['password'] = Hash::make('demo123');
 
         $user = User::create($credentials);
