@@ -68,7 +68,7 @@ class User extends Model implements
         'first_name' => 'required|string|min:2',
         'middle_name' => 'string|min:2',
         'last_name' => 'required|string|min:2',
-        'email' => 'email|min:2',
+        'email' => 'required|email|unique:users,email',
         'username' => 'required|alpha_dash|unique:users,username',
         'student_id' => 'required|alpha_dash|unique:users,username',
 
@@ -78,6 +78,7 @@ class User extends Model implements
         'first_name' => 'required|string|min:2',
         'last_name' => 'required|string|min:2',
         'email' => 'email|min:2',
+        'email' => 'required|email|unique:users,email',
     );
 
     public static $updateRules = array(
