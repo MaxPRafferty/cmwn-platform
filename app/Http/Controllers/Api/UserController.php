@@ -2,13 +2,14 @@
 
 namespace app\Http\Controllers\Api;
 
-use app\cmwn\Image;
+use Input;
 use app\Transformer\UserTransformer;
 use app\Transformer\GroupTransformer;
-use app\User;
-use Input;
 use app\Transformer\ImageTransformer;
 use Illuminate\Support\Facades\Validator;
+use app\User;
+use app\Image;
+use app\Group;
 
 class UserController extends ApiController
 {
@@ -38,7 +39,6 @@ class UserController extends ApiController
 
     public function update($uuid)
     {
-
         $user = User::findByUuid($uuid);
 
         if (!$user->canUpdate($this->currentUser)) {
@@ -85,6 +85,29 @@ class UserController extends ApiController
         }
     }
 
+    public function addToGroup($uuid)
+    {
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), User::$addToGroupRules);
+
+            if ($validator->fails()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
+
+            $user = User::findByUuid($uuid);
+
+            $group = Group::findByUuid(Input::get('group'));
+
+            if ($user->groups()->save($group, array('role_id' => Input::get('role_id')))) {
+                return $this->respondWithArray(array('message' => 'The user has been added to the group.'));
+            } else {
+                return $this->errorInternalError('Failed to add user to group.');
+            }
+        } else {
+            return $this->errorInternalError('You are not authorized to create users.');
+        }
+    }
+
     public function getGroups($userId)
     {
         $user = User::with('groups')->find($userId);
@@ -109,26 +132,23 @@ class UserController extends ApiController
         return $this->respondWithCollection($image, new ImageTransformer());
     }
 
-    public function updateImage($user_id)
+    public function updateImage($uuid)
     {
-        $user = User::findFromInput($user_id);
+        $user = User::findByUuid($uuid);
+
         if (!$user->canUpdate($this->currentUser)) {
             return $this->errorInternalError('You are not authorized.');
         }
 
         $validator = Validator::make(Input::all(), Image::$imageUpdateRules);
 
-        if ($validator->passes()) {
-            $user = new User();
-            if ($user->updateImage($user_id, Input::all())) {
-                return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
-            }
-
-            return $this->errorInternalError('The image failed to update');
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->errors()->all());
         }
-        $messages = print_r($validator->errors()->getMessages(), true);
 
-        return $this->errorInternalError('Input validation error: '.$messages);
+        if ($user->updateImage(Input::all())) {
+            return $this->respondWithArray(array('message' => 'The image has been updated sucessfully.'));
+        }
     }
 
     public function deleteImage($user_id)

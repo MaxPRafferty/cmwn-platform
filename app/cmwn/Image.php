@@ -1,27 +1,19 @@
 <?php
 
-namespace app\cmwn;
+namespace app;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Request;
-use app\cmwn\Traits\RoleTrait;
 
 class Image extends Model
 {
-    use RoleTrait;
-
-    protected $table = 'images';
+    protected $fillable = array('cloudinary_id');
 
     public static $imageUpdateRules = array(
-        'url' => 'string',
-        //'role[]'=>'required',
-        //'role[]'=>'required|regex:/^[0-9]?$/',
+        'cloudinary_id' => 'required|string',
     );
 
-    public function imageabless()
+    public function imageable()
     {
         return $this->morphTo();
     }
-
 }

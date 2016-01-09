@@ -7,9 +7,13 @@ use app\User;
 
 trait RoleTrait
 {
-    public static function limitToUser(User $user)
+    public static function limitToUser(User $user = null)
     {
-        if ($user->type == 1) {
+        if (!isset($user)) {
+            $user = Auth::user();
+        }
+
+        if ($user->isSiteAdmin()) {
             return self::query();
         } else {
             return self::whereHas('users', function ($query) use ($user) {

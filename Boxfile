@@ -22,9 +22,12 @@ global:
 build:
   before_exec:
     - "rm public/.htaccess"
+    - "rm -rf vendor/jeremeamia"
     - "mv public/.htaccess-production public/.htaccess"
   exec:
+    - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer install --no-interaction --prefer-source'
+    - 'composer dump-autoload'
     # - 'npm install'
   after_exec:
     - 'composer dump-autoload --optimize'

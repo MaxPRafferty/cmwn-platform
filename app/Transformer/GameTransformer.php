@@ -10,7 +10,6 @@ class GameTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'users',
-
     ];
 
     /**
@@ -21,10 +20,10 @@ class GameTransformer extends TransformerAbstract
     public function transform(Game $game)
     {
         return [
-            'uuid'              => $game->uuid,
-            'title'           => $game->title,
-            'description'     => $game->description,
-            'created_at'      => (string) $game->created_at,
+            'uuid' => $game->uuid,
+            'title' => $game->title,
+            'description' => $game->description,
+            'created_at' => (string) $game->created_at,
         ];
     }
 
@@ -36,7 +35,7 @@ class GameTransformer extends TransformerAbstract
     public function includeUsers(Game $game)
     {
         $users = $game->users;
+
         return $this->collection($users, new UserTransformer());
     }
-
 }

@@ -10,7 +10,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use app\cmwn\Image;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use app\cmwn\Traits\RoleTrait;
@@ -94,6 +93,11 @@ class User extends Model implements
         'password_confirmation' => 'required',
     );
 
+    public static $addToGroupRules = array(
+        'group' => 'required',
+        'role_id' => 'required|integer',
+    );
+
     public function guardianReference()
     {
         return $this->belongsToMany('app\User', 'guardian_reference', 'user_id');
@@ -108,6 +112,11 @@ class User extends Model implements
         ->groupBy('roleable_type')->get();
 
         return $roles;
+    }
+
+    public function images()
+    {
+        return $this->morphMany('app\Image', 'imageable');
     }
 
     public function districts()
@@ -234,7 +243,7 @@ class User extends Model implements
         })->where('id', '!=', $this->id)->lists('id')->toArray();
         $ids = [];
         foreach ($suggested as $friend_id) {
-            $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id)->count();
+            $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id);
             if (!$areWeFriends) {
                 $ids[] = $friend_id;
             }
@@ -344,10 +353,10 @@ class User extends Model implements
         return false;
     }
 
-    public function images()
-    {
-        return $this->morphMany('app\cmwn\Image', 'imageable');
-    }
+    // public function image()
+    // {
+    //     return $this->morphOne('app\Image', 'imageable');
+    // }
 
     public function hasRole(Array $roles)
     {
@@ -426,9 +435,8 @@ class User extends Model implements
         return $query->where('name', $val);
     }
 
-    public function updateImage($user_id, $params)
+    public function updateImage($params)
     {
-        $user = self::find($user_id);
         $image = new Image();
 
         if (isset($params['url'])) {
@@ -439,7 +447,12 @@ class User extends Model implements
             $image->cloudinary_id = $params['cloudinary_id'];
         }
 
-        if ($user->images()->save($image)) {
+        // $user_image = $this->images->first();
+
+        // $user_image = $image;
+        // $user_image->save();
+
+        if ($this->images()->save($image)) {
             return true;
         }
 
