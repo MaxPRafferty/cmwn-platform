@@ -103,7 +103,7 @@ class UserController extends ApiController
 
         $group = Group::find(2);
 
-        $user->groups()->save($group, array('role_id' => Input::get('role_id')));
+        $user->groups()->save($group, array('role_id' => 2));
 
         return $this->respondWithItem($user, new UserTransformer());
     }
