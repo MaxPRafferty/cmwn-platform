@@ -12,93 +12,124 @@ use Illuminate\Support\Facades\Auth;
 class BulkImporter
 {
     use DispatchesJobs;
-    public static $data;
-    protected static $sheetname;
-    protected static $file;
-    protected static $district_id;
-    protected static $organization_id;
-    protected static $DATA;
-    protected static $ERRORS;
+    public $data;
+    protected $sheetname;
+    protected $excel;
+    protected $district_id;
+    protected $organization_id;
+    protected $DATA;
+    protected $errors;
 
-    public static function migratecsv()
+    public function migratecsv()
     {
-        self::$file = base_path('storage/app/'.self::$data['file']);
-        $output = array();
+        $file_path = base_path('storage/app/'.$this->data['file']);
 
-        self::$ERRORS .= "Error report for importing the excel spreadsheet.\nSubmitted on ".date('Y-m-d h:i:s A').' by user: '.Auth::user()->student_id."\n Errors:";
+        $this->excel = \Excel::load($file_path);
 
-        if (!self::$data['parms']['organization_id']) {
-            self::$ERRORS .= "migratecsv: Please select the organization.\n";
-            self::createReport(self::$ERRORS);
-            dd('Please select the organization');
+        var_dump($this->excel->dd());
+
+        $this->getSheets();
+
+        exit();
+    }
+
+    public function getSheets()
+    {
+        $sheetNames = $this->excel->getSheetNames();
+
+        $target = array('Classes', 'Teachers', 'Students');
+
+        if (count(array_intersect($sheetNames, $target)) == count($target)) {
+            Excel::selectSheets('sheet1', 'sheet2')->load();
+            Excel::selectSheets('sheet1', 'sheet2')->load();
+            Excel::selectSheets('sheet1', 'sheet2')->load();
+        } else {
+            $this->addError('Missing Sheet');
         }
+    }
 
-            //try {
-            self::$sheetname = \Excel::load(self::$file)->getSheetNames();
-        \Excel::load(self::$file, function ($reader) {
-                $sheet = '';
-                foreach ($reader->toArray() as $sheet => $row) {
-                    if (self::$sheetname[$sheet] == 'Students') {
-                        self::$DATA['Students'] = $row;
-                    }
-                    if (self::$sheetname[$sheet] == 'Classes') {
-                        self::$DATA['Classes'] = $row;
-                    }
-                    if (self::$sheetname[$sheet] == 'Teachers') {
-                        self::$DATA['Teachers'] = $row;
-                    }
-                }
+        // self::$file = base_path('storage/app/' . $this->$data['file']);
+        // $output = array();
 
-                foreach (self::$DATA['Students'] as $row => $data) {
-                    $org_id = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
-                    if ($org_id[1]) {
-                        $organization = Organization::where('code', $org_id[1])->lists('id')->toArray();
+        // $this->addError("Error report for importing the excel spreadsheet.\nSubmitted on ".date('Y-m-d h:i:s A').' by user: '.Auth::user()->student_id."\n Errors:");
 
-                        if (empty($organization)) {
-                            self::$ERRORS .= "migratecsv: Organization $org_id[1] is not found in the DB.\n";
-                            self::createReport(self::$ERRORS);
-                            dd(self::$ERRORS);
-                            break;
-                        }
+        // if (!self::$data['parms']['organization_id']) {
+        //     self::$errors[] = "migratecsv: Please select the organization.\n";
+        //     self::createReport();
+        //     dd('Please select the organization');
+        // }
 
-                        $organization_id = $organization[0];
-                        if (self::$data['parms']['organization_id'] != $organization_id) {
-                            $org_not_found = self::$data['parms']['organization_id'];
-                            self::$ERRORS .= "migratecsv: Organization $org_not_found is not matched with DB.\n";
-                            self::createReport(self::$ERRORS);
-                            dd(self::$ERRORS);
-                        }
-                        self::$organization_id = $organization_id;
-                        break;
-                    }
-                    break;
-                }
-            });
+        // self::$sheetname = \Excel::load($this->$file)->getSheetNames();
 
-        foreach (self::$DATA['Students'] as $data) {
-            if ($data['ddbnnn']) {
-                self::updateStudents($data);
-            }
-        }
+        // \Excel::load($this->$file, function ($reader) {
+        //     $sheet = '';
 
-        foreach (self::$DATA['Classes'] as $data) {
-            if ($data['off_cls'] && $data['title']) {
-                self::updateClasses($data);
-            }
-        }
+        //     foreach ($reader->toArray() as $sheet => $row) {
+        //         if (self::$sheetname[$sheet] == 'Students') {
+        //             self::$DATA['Students'] = $row;
+        //         }
+        //         if (self::$sheetname[$sheet] == 'Classes') {
+        //             self::$DATA['Classes'] = $row;
+        //         }
+        //         if (self::$sheetname[$sheet] == 'Teachers') {
+        //             self::$DATA['Teachers'] = $row;
+        //         }
+        //     }
 
-        foreach (self::$DATA['Teachers'] as $data) {
-            if ($data['person_type']) {
-                self::updateTeachers($data);
-            }
-        }
-        self::$ERRORS .= "\n\n\nEnd of the error report.";
-        self::createReport(self::$ERRORS);
+        //     foreach (self::$DATA['Students'] as $row => $data) {
+        //         $org_id = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $data['ddbnnn']);
+        //         if ($org_id[1]) {
+        //             $organization = Organization::where('code', $org_id[1])->lists('id')->toArray();
 
-        return true;
-            //} catch (\Exception $e) {
-            //dd('Houston, we have a problem: '.$e->getMessage());
-            //}
+        //             if (empty($organization)) {
+        //                 self::$errors .= "migratecsv: Organization $org_id[1] is not found in the DB.\n";
+        //                 self::createReport();
+        //                 dd(self::$errors);
+        //                 break;
+        //             }
+
+        //             $organization_id = $organization[0];
+        //             if (self::$data['parms']['organization_id'] != $organization_id) {
+        //                 $org_not_found = self::$data['parms']['organization_id'];
+        //                 self::$errors .= "migratecsv: Organization $org_not_found is not matched with DB.\n";
+        //                 self::createReport();
+        //                 dd(self::$errors);
+        //             }
+        //             self::$organization_id = $organization_id;
+        //             break;
+        //         }
+        //         break;
+        //     }
+        // });
+
+        // foreach (self::$DATA['Students'] as $data) {
+        //     if ($data['ddbnnn']) {
+        //         self::updateStudents($data);
+        //     }
+        // }
+
+        // foreach (self::$DATA['Classes'] as $data) {
+        //     if ($data['off_cls'] && $data['title']) {
+        //         self::updateClasses($data);
+        //     }
+        // }
+
+        // foreach (self::$DATA['Teachers'] as $data) {
+        //     if ($data['person_type']) {
+        //         self::updateTeachers($data);
+        //     }
+        // }
+
+        // $this->addError('End of the error report.');
+
+        // self::createReport();
+
+        // return true;
+    //}
+
+    public function addError($error)
+    {
+        $this->errors[] = $error;
     }
 
     protected static function updateClasses($data)
@@ -110,7 +141,7 @@ class BulkImporter
         $group->class_number = $data['off_cls'];
         $group->cluster_class = $data['sub_classes'];
         if (!$group->save()) {
-            self::$ERRORS .= "updateClasses: Inserting a new class {$data['title']} has failed \n";
+            self::$errors .= "updateClasses: Inserting a new class {$data['title']} has failed \n";
         }
         $group_id = (!$group->id) ? $group->uuid : $group->id;
     }
@@ -135,7 +166,7 @@ class BulkImporter
         $teachers->gender = $data['gender'];
         $teachers->email = $data['email_address'];
         if (!$teachers->save()) {
-            self::$ERRORS .= "updateTeachers: Inserting/Updating a techer $teacher_id has failed \n";
+            self::$errors .= "updateTeachers: Inserting/Updating a techer $teacher_id has failed \n";
         }
         $teacher_id = (!$teachers->id) ? $teachers->uuid : $teachers->id;
             //Assigning the teacher to class
@@ -186,7 +217,7 @@ class BulkImporter
         $district->description = $DDBNNN[0];
         $district->system_id = 1;
         if (!$district->save()) {
-            self::$ERRORS .= "updateStudentsDistricts: Inserting a new district $DDBNNN[0] has failed \n";
+            self::$errors .= "updateStudentsDistricts: Inserting a new district $DDBNNN[0] has failed \n";
         }
 
         return $district->id;
@@ -202,11 +233,11 @@ class BulkImporter
         $organization->title = $DDBNNN[1];
         $organization->description = 'yesss';
         if (!$organization->save()) {
-            self::$ERRORS .= "updateStudentsOrganizations: Inserting a new organization $DDBNNN[1] has failed \n";
+            self::$errors .= "updateStudentsOrganizations: Inserting a new organization $DDBNNN[1] has failed \n";
         }
         $organization->uuid = $organization->id;
         if (!$organization->districts()->sync(array(1 => 10))) {
-            self::$ERRORS .= "updateStudentsOrganizations: Assigning organization $organization->id to ditrict has failed \n";
+            self::$errors .= "updateStudentsOrganizations: Assigning organization $organization->id to ditrict has failed \n";
         }
     }
 
@@ -223,14 +254,14 @@ class BulkImporter
             $group->organization_id = $organization_id;
             $group->class_number = $data['off_cls'];
             if (!$group->save()) {
-                self::$ERRORS .= "updateStudentsGroups: Inserting a new organization $organization_id has failed \n";
+                self::$errors .= "updateStudentsGroups: Inserting a new organization $organization_id has failed \n";
             }
         } else {
             $group = $group->first();
             $group->organization_id = $organization_id;
             $group->class_number = $data['off_cls'];
             if (!$group->save()) {
-                self::$ERRORS .= "updateStudentsGroups: Updating a new organization $organization_id has failed \n";
+                self::$errors .= "updateStudentsGroups: Updating a new organization $organization_id has failed \n";
             }
         }
 
@@ -251,7 +282,7 @@ class BulkImporter
         $user->gender = $data['sex'];
         $user->birthdate = $data['birth_dt'];
         if (!$user->save()) {
-            self::$ERRORS .= "updateStudentsData: Inserting a new student $username has failed \n";
+            self::$errors .= "updateStudentsData: Inserting a new student $username has failed \n";
         }
         $student_id = (!$user->id) ? $user->uuid : $user->id;
 
@@ -267,7 +298,7 @@ class BulkImporter
                 $parent->first_name = $data['adult_first_1'];
                 $parent->last_name = $data['adult_last_1'];
                 if (!$parent->save()) {
-                    self::$ERRORS .= "updateStudentsData: Inserting a new parent $username has failed \n";
+                    self::$errors .= "updateStudentsData: Inserting a new parent $username has failed \n";
                 }
                 $teacher_id = $parent_id = (!$parent->id) ? $parent->uuid : $parent->id;
             }
@@ -296,7 +327,7 @@ class BulkImporter
             );
 
         if (!$primary_class) {
-            self::$ERRORS .= "updateStudentsData: Assigning teacher $teacher_id to cluster class has failed \n";
+            self::$errors .= "updateStudentsData: Assigning teacher $teacher_id to cluster class has failed \n";
         }
 
         if ($allclasses) {
@@ -315,7 +346,7 @@ class BulkImporter
                 );
 
             if (!$sub_class == null) {
-                self::$ERRORS .= "updateStudentsData: Assigning student $student_id to cluster class has failed \n";
+                self::$errors .= "updateStudentsData: Assigning student $student_id to cluster class has failed \n";
             }
         }
     }
@@ -332,9 +363,9 @@ class BulkImporter
         $notifier->send();
     }
 
-    protected static function createReport($data)
+    protected static function createReport()
     {
         $path = base_path('storage/app/error_log.csv');
-        $write = \File::put($path, $data);
+        $write = \File::put($path, $this->errors);
     }
 }

@@ -24,14 +24,17 @@ class ImportCSV extends Job implements SelfHandling, ShouldQueue
      */
     protected $data;
 
-    public function __construct($data){
+    public function __construct($data)
+    {
         $this->data = $data;
     }
 
     public function handle()
     {
-        BulkImporter::$data = $this->data;
-        return BulkImporter::migratecsv();
+        $importer = new BulkImporter();
+
+        $importer->data = $this->data;
+        return $importer->migratecsv();
     }
 
     public function failed()

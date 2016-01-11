@@ -88,7 +88,7 @@ class UserController extends ApiController
 
     public function createDemoTeacher()
     {
-        $credentials = Input::all();
+        $credentials = Input::only('email', 'first_name', 'last_name');
 
         $credentials['email'] = Input::get('email');
 

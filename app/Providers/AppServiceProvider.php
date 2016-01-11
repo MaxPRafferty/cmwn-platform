@@ -14,8 +14,8 @@ class AppServiceProvider extends ServiceProvider
     {
         \app\User::creating(function ($user) {
             $user->uuid = Uuid::uuid1();
-            $user->student_id = $user->uuid;
-            $user->username = $user->uuid;
+            $user->student_id = Uuid::uuid1();
+            $user->username = Uuid::uuid1();
         });
 
         \app\District::creating(function ($district) {
