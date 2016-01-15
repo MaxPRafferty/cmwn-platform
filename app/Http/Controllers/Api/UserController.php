@@ -86,6 +86,35 @@ class UserController extends ApiController
         }
     }
 
+    public function createDemoTeacher()
+    {
+        $credentials = Input::only('email', 'first_name', 'last_name');
+
+        $credentials['email'] = Input::get('email');
+
+        $credentials['password'] = Hash::make('demo123');
+
+        $validator = Validator::make($credentials, User::$createDemoTeacherRules);
+
+        if (!$validator->passes()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        $user = User::create($credentials);
+
+        try {
+            $user->updateMember($credentials);
+        } catch (Exception $e) {
+            return $this->errorInternalError($e->getMessage());
+        }
+
+        $group = Group::find(2);
+
+        $user->groups()->save($group, array('role_id' => 2));
+
+        return $this->respondWithItem($user, new UserTransformer());
+    }
+
     public function createDemoStudent()
     {
         $credentials = Input::only('username', 'first_name', 'last_name');
