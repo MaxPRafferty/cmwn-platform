@@ -79,6 +79,10 @@ class User extends Model implements
         'email' => 'required|unique:users,email',
     );
 
+    public static $createDemoStudentRules = array(
+        'username' => 'required|alpha_dash|unique:users,username',
+    );
+
     public static $updateRules = array(
         'first_name' => 'string|min:2',
         'middle_name' => 'string|min:2',

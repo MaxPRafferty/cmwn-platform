@@ -121,6 +121,12 @@ class UserController extends ApiController
         $credentials['email'] = $credentials['username'] . '@changemyworldnow.com';
         $credentials['password'] = Hash::make('demo123');
 
+        $validator = Validator::make($credentials, User::$createDemoStudentRules);
+
+        if (!$validator->passes()) {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
+
         $user = User::create($credentials);
 
         try {
