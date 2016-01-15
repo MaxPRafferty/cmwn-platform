@@ -33,6 +33,18 @@ class GameTableSeeder extends Seeder
             'description' => 'Sea Turtles are wondrous creatures!  Get cool turtle facts, play games and find out why they are endangered.'
         ));
 
+        $games[] = User::create(array(
+            'uuid' => 'litterbug',
+            'title' => 'Litterbug',
+            'description' => 'Litterbug description goes here.'
+        ));
+
+        $games[] = User::create(array(
+            'uuid' => 'be-bright',
+            'title' => 'Be Bright',
+            'description' => 'Be Bright description goes here.'
+        ));
+
         $this->command->info('Games Created!');
     }
 }
