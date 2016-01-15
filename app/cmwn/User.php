@@ -80,6 +80,12 @@ class User extends Model implements
         'email' => 'required|unique:users,email',
     );
 
+    public static $createDemoStudentRules = array(
+        'first_name' => 'required|string|min:2',
+        'last_name' => 'required|string|min:2',
+        'email' => 'required|unique:users,email',
+    );
+
     public static $updateRules = array(
         'first_name' => 'string|min:2',
         'middle_name' => 'string|min:2',
