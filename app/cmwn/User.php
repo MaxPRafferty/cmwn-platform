@@ -71,19 +71,12 @@ class User extends Model implements
         'email' => 'required|unique:users,email',
         'username' => 'required|alpha_dash|unique:users,username',
         'student_id' => 'required|alpha_dash|unique:users,username',
-
     );
 
     public static $createDemoTeacherRules = array(
         'first_name' => 'required|string|min:2',
         'last_name' => 'required|string|min:2',
         'email' => 'required|unique:users,email',
-    );
-
-    public static $createDemoStudentRules = array(
-        'first_name' => 'required|string|min:2',
-        'last_name' => 'required|string|min:2',
-        'username' => 'required|alpha_dash|unique:users,username',
     );
 
     public static $updateRules = array(
@@ -463,5 +456,12 @@ class User extends Model implements
         return $user->fill([
             'password' => \Hash::make($newPassword),
         ])->save();
+    }
+
+    public static function getUniqueUsername($username)
+    {
+        $count = count(User::whereRaw("username REGEXP '^{$username}(-[0-9]+)?$'")->get());
+
+        return ($count > 0) ? "{$username}-{$count}" : $username;
     }
 }

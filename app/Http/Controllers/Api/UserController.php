@@ -117,17 +117,9 @@ class UserController extends ApiController
 
     public function createDemoStudent()
     {
-        $credentials = Input::only('username', 'first_name', 'last_name');
-
-        $credentials['email'] = Input::get('username') . '@changemyworldnow.com';
-
+        $credentials['username'] = Input::get('username', User::getUniqueUsername('WorldChanger'));
+        $credentials['email'] = $credentials['username'] . '@changemyworldnow.com';
         $credentials['password'] = Hash::make('demo123');
-
-        $validator = Validator::make($credentials, User::$createDemoStudentRules);
-
-        if (!$validator->passes()) {
-            return $this->errorWrongArgs($validator->errors()->all());
-        }
 
         $user = User::create($credentials);
 
