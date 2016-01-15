@@ -86,21 +86,19 @@ class UserController extends ApiController
         }
     }
 
-    public function createDemoTeacher()
+    public function createDemoStudent()
     {
-        $credentials = Input::only('email', 'first_name', 'last_name');
+        $credentials = Input::only('username', 'first_name', 'last_name');
 
-        $credentials['email'] = Input::get('email');
+        $credentials['email'] = Input::get('username') . '@changemyworldnow.com';
 
-        $credentials['email'] = urldecode($credentials['email']); // temp fix
+        $credentials['password'] = Hash::make('demo123');
 
-        $validator = Validator::make($credentials, User::$createDemoTeacherRules);
+        $validator = Validator::make($credentials, User::$createDemoStudentRules);
 
         if (!$validator->passes()) {
             return $this->errorWrongArgs($validator->errors()->all());
         }
-
-        $credentials['password'] = Hash::make('demo123');
 
         $user = User::create($credentials);
 
@@ -112,7 +110,7 @@ class UserController extends ApiController
 
         $group = Group::find(2);
 
-        $user->groups()->save($group, array('role_id' => 2));
+        $user->groups()->save($group, array('role_id' => 1));
 
         return $this->respondWithItem($user, new UserTransformer());
     }
