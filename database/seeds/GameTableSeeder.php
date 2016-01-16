@@ -34,7 +34,7 @@ class GameTableSeeder extends Seeder
         ));
 
         $games[] = Game::create(array(
-            "uuid" => "litterbug",
+            "uuid" => "litter-bug",
             "title" => "Litterbug",
             "description" => "Litter is destructive to our environment and wildlife – see it, experience it, fix it! Nothing brings it home better than a song that is so fun to sing they simply cannot forget the message.  Don't be a litterbug!  And now they won't!"
         ));
