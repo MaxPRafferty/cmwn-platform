@@ -27,14 +27,6 @@ class MasterController extends ApiController
         return $this->respondWithCollection($sidebar, new MasterTransformer);
     }
 
-    public function friends()
-    {
-        $sidebar = new SideBarItems();
-        $friends = new UserSpecificRepository($sidebar);
-        $friends = $friends->friendsForApi();
-        return $friends;
-    }
-
     public function importExcel(Request $request){
         if (\Request::isMethod('post')) {
             $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);

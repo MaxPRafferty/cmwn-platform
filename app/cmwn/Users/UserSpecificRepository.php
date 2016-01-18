@@ -36,16 +36,4 @@ class UserSpecificRepository extends ApiController
 
         $view->with('tags', $this->tag->getAll())->with('acceptedfriends', $acceptedfriends)->with('pendingfriends', $pendingfriends)->with('friendrequests', $friendrequests);
     }
-
-    public function friendsForApi()
-    {
-        $friends = array();
-        if (Auth::check()) {
-            $friends['acceptedfriends'] = User::find($this->currentUser->id)->acceptedfriends;
-            $friends['pendingfriends'] = User::find($this->currentUser->id)->pendingfriends;
-            $friends['friendrequests'] = User::find($this->currentUser->id)->friendrequests;
-        }
-
-        return array('data' => $friends);
-    }
 }
