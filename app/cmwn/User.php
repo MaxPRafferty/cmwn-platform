@@ -80,6 +80,7 @@ class User extends Model implements
     );
 
     public static $createDemoStudentRules = array(
+        'code' => 'required|string|regex:/^MR ECO$/',
         'username' => 'required|alpha_dash|unique:users,username',
     );
 
