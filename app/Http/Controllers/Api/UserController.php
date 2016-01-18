@@ -63,6 +63,15 @@ class UserController extends ApiController
         }
     }
 
+    public function friends()
+    {
+        $friends['acceptedfriend'] = $this->currentUser->acceptedfriend;
+        $friends['pendingfriend'] = $this->currentUser->pendingfriend;
+        $friends['friendrequests'] = $this->currentUser->friendrequests;
+
+        return array('data' => $friends);
+    }
+
     public function create()
     {
         if ($this->currentUser->isSiteAdmin()) {
