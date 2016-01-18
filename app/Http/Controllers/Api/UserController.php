@@ -118,7 +118,7 @@ class UserController extends ApiController
     public function createDemoStudent()
     {
         $credentials['code'] = Input::get('code');
-        $credentials['username'] = Input::get('username', User::getUniqueUsername('WorldChanger'));
+        $credentials['username'] = Input::get('username', User::getUniqueUsername());
         $credentials['email'] = $credentials['username'] . '@changemyworldnow.com';
         $credentials['password'] = Hash::make('demo123');
 

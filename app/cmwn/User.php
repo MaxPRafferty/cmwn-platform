@@ -252,12 +252,14 @@ class User extends Model implements
             $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
         })->where('id', '!=', $this->id)->lists('id')->toArray();
         $ids = [];
+
         foreach ($suggested as $friend_id) {
             $areWeFriends = UsersRelationshipHandler::areWeFriends($this->id, $friend_id);
             if (!$areWeFriends) {
                 $ids[] = $friend_id;
             }
         }
+
         $data = self::whereIn('id', $ids)->get();
         foreach ($data as $user) {
             $pendingfriend = (self::getRelationship($user->id)) ? 'Pending' : null;
@@ -463,7 +465,7 @@ class User extends Model implements
         ])->save();
     }
 
-    public static function getUniqueUsername($username)
+    public static function getUniqueUsername($username = 'WorldChanger')
     {
         $count = count(User::whereRaw("username REGEXP '^{$username}(-[0-9]+)?$'")->get());
 
