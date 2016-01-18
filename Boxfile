@@ -18,6 +18,9 @@ global:
     - MAIL_USERNAME: 4762712fd34d91aa0
     - MAIL_PASSWORD: af48fe96f32502
     - MAIL_ENCRYPTION: null
+    - CLOUDINARY_CLOUD_NAME: changemyworldnow
+    - CLOUDINARY_API_KEY: 145864397418111
+    - CLOUDINARY_API_SECRET: 2L-FIP5z0S29nBLHpOGnLabmdJE
 
 build:
   before_exec:

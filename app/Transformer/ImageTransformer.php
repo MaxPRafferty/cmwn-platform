@@ -14,10 +14,14 @@ class ImageTransformer extends TransformerAbstract
      */
     public function transform(Image $image)
     {
-        return [
-            'cloudinary_id' => $image->cloudinary_id,
-            'url' => $image->url,
-            'created_at' => (string) $image->created_at,
-        ];
+        if ($image->getModerationState() != 'approved') {
+            return [
+                'url' => 'https://www.changemyworldnow.com/ff50fa329edc8a1d64add63c839fe541.png',
+            ];
+        } else {
+            return [
+                'url' => $image->url,
+            ];
+        }
     }
 }
