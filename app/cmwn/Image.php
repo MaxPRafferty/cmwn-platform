@@ -29,6 +29,11 @@ class Image extends Model
         $api = new Cloudinary\Api();
         $list = $api->resource($this->cloudinary_id);
 
-        return $list['moderation'][0]['status'];
+        if(isset($list['moderation'])) {
+            return $list['moderation'][0]['status'];
+        } else {
+            return 'no moderation';
+        }
+
     }
 }
