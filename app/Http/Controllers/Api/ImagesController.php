@@ -10,8 +10,6 @@ class ImagesController extends ApiController
 {
     public function webhook()
     {
-        //var_dump(Input::all(''));
-
         $signature = Request::header('X-Cld-Signature');
         $timestamp = Request::header('X-Cld-Timestamp');
         $data = Request::getContent();
@@ -22,8 +20,6 @@ class ImagesController extends ApiController
                 $image = Image::where('cloudinary_id', Input::get('public_id'))->first();
 
                 if ($image) {
-                    //var_dump(Input::all());
-
                     $moderation_status = Input::get('moderation_status');
 
                     if ($moderation_status == 'approved') {
@@ -39,15 +35,14 @@ class ImagesController extends ApiController
                     }
 
                     $image->save();
-
                 } else {
-                    return $this->errorNotFound('Failed to locate image.');
+                    return $this->errorNotFound('Failed to Locate Image.');
                 }
             } else {
                 return $this->errorNotFound('Invalid Notification Type');
             }
         } else {
-            return $this->errorUnauthorized('Not authorized.');
+            return $this->errorUnauthorized('Not Authorized.');
         }
     }
 }
