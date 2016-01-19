@@ -27,10 +27,18 @@ class Image extends Model
         ));
 
         $api = new Cloudinary\Api();
-        $list = $api->resource($this->cloudinary_id);
 
-        if(isset($list['moderation'])) {
-            return $list['moderation'][0]['status'];
+        $list = $api->resources_by_ids([$this->cloudinary_id]);
+
+        foreach ($list['resources'] as $item) {
+            if($item['public_id'] == $this->cloudinary_id) {
+                $image = $api->resource($this->cloudinary_id);
+                break;
+            }
+        }
+
+        if(isset($image['moderation'])) {
+            return $image['moderation'][0]['status'];
         } else {
             return 'no moderation';
         }
