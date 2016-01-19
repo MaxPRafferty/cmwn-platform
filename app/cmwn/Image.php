@@ -43,15 +43,14 @@ class Image extends Model
         }
 
         if (isset($image['moderation'])) {
-
             $moderation_status = $image['moderation'][0]['status'];
 
             if ($moderation_status = 'approved') {
-                $this->moderation_status =  1;
-                $this->save;
+                $this->moderation_status = 1;
+                $this->save();
             }
 
-            return $image['moderation'][0]['status'];
+            return $moderation_status;
         } else {
             return 'no moderation';
         }
