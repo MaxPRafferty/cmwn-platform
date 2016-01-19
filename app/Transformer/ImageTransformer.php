@@ -14,7 +14,7 @@ class ImageTransformer extends TransformerAbstract
      */
     public function transform(Image $image)
     {
-        if ($image->getModerationState() != 'approved') {
+        if ($image->moderation_state == 1) {
             return [
                 'url' => 'https://www.changemyworldnow.com/ff50fa329edc8a1d64add63c839fe541.png',
             ];
