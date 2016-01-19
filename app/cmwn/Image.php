@@ -20,6 +20,10 @@ class Image extends Model
 
     public function getModerationState()
     {
+        if ($this->moderation_status == 1) {
+            return 'approved';
+        }
+
         Cloudinary::config(array(
           'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
           'api_key' => env('CLOUDINARY_API_KEY'),
@@ -31,18 +35,25 @@ class Image extends Model
         $list = $api->resources_by_ids([$this->cloudinary_id]);
 
         foreach ($list['resources'] as $item) {
-            if($item['public_id'] == $this->cloudinary_id) {
+            if ($item['public_id'] == $this->cloudinary_id) {
                 $image = $api->resource($this->cloudinary_id);
                 $this->url = $item['url'];
                 break;
             }
         }
 
-        if(isset($image['moderation'])) {
+        if (isset($image['moderation'])) {
+
+            $moderation_status = $image['moderation'][0]['status'];
+
+            if ($moderation_status = 'approved') {
+                $this->moderation_status =  1;
+                $this->save;
+            }
+
             return $image['moderation'][0]['status'];
         } else {
             return 'no moderation';
         }
-
     }
 }
