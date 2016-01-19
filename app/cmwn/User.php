@@ -249,7 +249,7 @@ class User extends Model implements
     {
         $groups = $this->groups->lists('id');
         $suggested = self::whereHas('groups', function ($query) use ($groups) {
-            $query->whereIn('roleable_id', $groups)->whereIn('role_id', array(3));
+            $query->whereIn('roleable_id', $groups)->whereIn('role_id', [1]);
         })->where('id', '!=', $this->id)->lists('id')->toArray();
         $ids = [];
 
