@@ -24,6 +24,10 @@ class Image extends Model
             return 'approved';
         }
 
+        if ($this->moderation_status == -1) {
+            return 'rejected';
+        }
+
         Cloudinary::config(array(
           'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
           'api_key' => env('CLOUDINARY_API_KEY'),
@@ -45,8 +49,13 @@ class Image extends Model
         if (isset($image['moderation'])) {
             $moderation_status = $image['moderation'][0]['status'];
 
-            if ($moderation_status = 'approved') {
+            if ($moderation_status == 'approved') {
                 $this->moderation_status = 1;
+                $this->save();
+            }
+
+            if ($moderation_status == 'rejected') {
+                $this->moderation_status = -1;
                 $this->save();
             }
 
