@@ -33,6 +33,7 @@ class Image extends Model
         foreach ($list['resources'] as $item) {
             if($item['public_id'] == $this->cloudinary_id) {
                 $image = $api->resource($this->cloudinary_id);
+                $this->url = $item['url'];
                 break;
             }
         }
