@@ -22,16 +22,18 @@ class ImagesController extends ApiController
                 if ($image) {
                     $moderation_status = Input::get('moderation_status');
 
-                    if ($moderation_status == 'approved') {
-                        $image->moderation_status = 1;
-                    }
+                    switch ($moderation_status) {
+                        case 'approved':
+                            $image->moderation_status = 1;
+                            break;
 
-                    if ($moderation_status == 'rejected') {
-                        $image->moderation_status = -1;
-                    }
+                        case 'rejected':
+                            $image->moderation_status = -1;
+                            break;
 
-                    if ($moderation_status == 'pending') {
-                        $image->moderation_status = 0;
+                        case 'pending':
+                            $image->moderation_status = 0;
+                            break;
                     }
 
                     $image->save();
