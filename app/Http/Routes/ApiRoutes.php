@@ -39,7 +39,7 @@ Route::group(['middleware' => 'auth'], function ($router) {
     })->where('parm_name', '[a-z]+');
 
     Route::get('/sidebar', 'Api\MasterController@sidebar');
-    Route::get('/friends', 'Api\MasterController@friends');
+    Route::get('/friends', 'Api\UserController@friends');
     Route::post('/friends', 'Api\FriendshipController@handleFriends');
     Route::get('/auth/logout', 'Api\AuthController@logout');
 
