@@ -111,6 +111,8 @@ class BulkImporter
     protected static function updateDistrict($code, $system_id)
     {
         $district = District::firstOrNew(['code' => $code], ['system_id' => $system_id]);
+        $district->code = $code;
+        $district->system_id = $system_id;
         $district->title = $code;
         $district->system_id = $system_id;
         $district->save();
