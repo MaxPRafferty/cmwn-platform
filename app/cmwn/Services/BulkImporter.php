@@ -149,7 +149,7 @@ class BulkImporter
     protected static function mailNotification($data)
     {
         //@TODO email notification has been temporarily disabled. JT 10/11
-            return false;
+        return false;
         $notifier = new Notifier();
         $notifier->to = Auth::user()->email;
         $notifier->subject = 'Your import is completed at '.date('m-d-Y h:i:s A');
