@@ -210,11 +210,6 @@ class User extends Model implements
                  UsersRelationshipHandler::isUserInSameEntity($user, $this, 'groups'));
     }
 
-    public function canbeFriend(User $user)
-    {
-        return (UsersRelationshipHandler::areMembersOfSameEntity($user, $this, 'groups') || UsersRelationshipHandler::areAdminOfSameEntity($user, $this, 'groups'));
-    }
-
     public function entities($entity, $role_ids)
     {
         $result = $this->$entity();
@@ -282,93 +277,10 @@ class User extends Model implements
         })->count();
     }
 
-    public function canUserUpdateObject($entity, $id)
-    {
-        //All default vars
-        $districtSuperAdmin = 0;
-
-        if ($this->isSiteAdmin()) {
-            return true;
-        }
-
-        //Districts
-        if ($entity == 'districts') {
-            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id) {
-                $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
-            })->count();
-
-            return ((bool) $districtSuperAdmin);
-        }
-
-        //Organizations
-        if ($entity == 'organizations') {
-            $districtID = District::whereHas('organizations', function ($query) use ($id) {
-                $query->where('organization_id', $id);
-            })->lists('id')->toArray();
-            if (count($districtID) != 0) {
-                $districtID = $districtID[0]; //district-one
-
-                //Check if user is a superadmin or admin in District
-                $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id, $districtID) {
-                    $query->where('roleable_id', $districtID)->whereIn('role_id', array(1, 2));
-                })->count();
-            }
-
-            //check to see if organization is admin
-            $organizationSuperAdmin = self::whereHas('organizations', function ($query) use ($id) {
-                $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
-            })->count();
-
-            if ($districtSuperAdmin || $organizationSuperAdmin) {
-                return true;
-            }
-
-            return false;
-        }
-
-        //Organizations
-        if ($entity == 'groups') {
-            //Check if user is superadmin or admin in organization of the group
-            $gdID = Group::where('id', $id)->lists('organization_id')->toArray();
-            $gdID = $gdID[0];
-
-            $districtID = District::whereHas('organizations', function ($query) use ($gdID) {
-                $query->where('organization_id', 'org-one');
-            })->lists('id')->toArray();
-
-            //District needs work
-            $districtSuperAdmin = self::whereHas('districts', function ($query) use ($id) {
-                $query->where('roleable_id', 'district-one')->whereIn('role_id', array(1, 2));
-            })->count();
-
-            $groupOrgAdmin = self::whereHas('organizations', function ($query) use ($gdID) {
-                $query->where('roleable_id', $gdID)->whereIn('role_id', array(1, 2));
-            })->count();
-
-            //Check if user is superadmin or admin in the group
-            $groupSuperAdmin = self::whereHas('groups', function ($query) use ($id) {
-                $query->where('roleable_id', $id)->whereIn('role_id', array(1, 2));
-            })->count();
-
-            if ($groupSuperAdmin || $groupOrgAdmin) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return false;
-    }
-
     public function siblings()
     {
         return false;
     }
-
-    // public function image()
-    // {
-    //     return $this->morphOne('app\Image', 'imageable');
-    // }
 
     public function hasRole(Array $roles)
     {
