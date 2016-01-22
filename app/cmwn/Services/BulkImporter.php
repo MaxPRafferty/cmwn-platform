@@ -133,9 +133,10 @@ class BulkImporter
 
             $user->save();
 
-            $user->groups()->sync([$class_id => ['role_id' => 1]]);
+            if ($user->taking_classes->where('id', $class_id)->count() == 0) {
+                $user->groups()->attach([$class_id => ['role_id' => 1]]);
+            }
 
-            return true;
         } else {
             return self::constructError('Could not create student. Student ID not set!');
         }
