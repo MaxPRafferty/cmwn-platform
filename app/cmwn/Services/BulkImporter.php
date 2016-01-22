@@ -9,7 +9,6 @@ use app\Organization;
 use app\User;
 use Illuminate\Support\Facades\Auth;
 use Excel;
-use Exception;
 
 class BulkImporter
 {
@@ -30,10 +29,15 @@ class BulkImporter
 
         $this->excel = Excel::load($file_path, function ($reader) use ($organization_id) {
 
-            $reader->each(function ($sheet) use ($organization_id) {
-                self::processSheet($sheet, $organization_id);
+            $errors = [];
+
+            $reader->each(function ($sheet) use ($organization_id, &$errors) {
+                $errors = array_merge($errors, self::processSheet($sheet, $organization_id));
             });
 
+            //var_dump($errors);
+
+            $this->mailNotification($errors);
         });
     }
 
@@ -42,14 +46,16 @@ class BulkImporter
         switch ($sheet->getTitle()) {
             case 'Classes':
                 // self::classes($sheet, $organization_id);
+                return ['classes' => ['error' => 'test']];
                 break;
 
             case 'Teachers':
                 // self::teachers($sheet, $organization_id);
+                return ['teachers' => ['error' => 'test']];
                 break;
 
             case 'Students':
-                self::students($sheet);
+                return ['students' => self::students($sheet)];
                 break;
 
             default:
@@ -75,26 +81,37 @@ class BulkImporter
     private static function teachers($sheet, $organization_id)
     {
         echo('Teachers');
-
-        // $sheet->each(function ($row) {
-        //     var_dump($row);
-        // });
     }
 
     private static function students($sheet)
     {
-        $sheet->each(function ($row) {
+        $errors = [];
 
-            self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
+        $sheet->each(function ($row) use (&$errors) {
 
-                $district_id = self::updateDistrict($ditrict_code, 1);
+            $result = self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
 
-                $school_id = self::updateSchool($school_code, $district_id);
+                //Districts
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($school_code, $row) {
 
-                $class_id = self::updateClass($row->off_cls, $school_id);
+                    //Schools
+                    return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
 
+                        //Students
+                        return self::updateClass($row->off_cls, $school_id, function ($class_id) use ($row) {
+                            return self::updateStudent($row, $class_id);
+                        });
+                    });
+                });
             });
+
+            if (isset($result['error'])) {
+                $errors[] = $result['error'];
+            }
+
         });
+
+        return $errors;
     }
 
     private static function parseDdbnn($ddbnnn, $callback)
@@ -102,23 +119,34 @@ class BulkImporter
         $result = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $ddbnnn);
 
         if (isset($result[0]) && isset($result[1])) {
-            $callback($result[0], $result[1]);
+            return $callback($result[0], $result[1]);
         } else {
-            throw new Exception('Cannot Parse DDBNN: "'.$ddbnnn.'"', 1);
+            return self::constructError('Cannot Parse DDBNN: "'.$ddbnnn.'"');
         }
     }
 
     protected static function updateStudent($row, $class_id)
     {
-        $user = User::firstOrNew(['student_id' => $row->student_id]);
+        if (isset($row->student_id) && !empty($row->student_id)) {
+            $user = User::firstOrNew(['student_id' => $row->student_id]);
 
-        $user->first_name = $row->first_name;
-        $user->last_name = $row->last_name;
-        $user->gender = $row->sex;
+            $user->student_id = $row->student_id;
+            $user->first_name = $row->first_name;
+            $user->last_name = $row->last_name;
+            $user->gender = $row->sex;
+            $user->birthdate = $row->birth_dt;
 
+            $user->save();
+
+            $user->groups()->sync([$class_id => ['role_id' => 1]]);
+
+            return true;
+        } else {
+            return self::constructError('Could not create student. Student ID not set!');
+        }
     }
 
-    protected static function updateDistrict($code, $system_id)
+    protected static function updateDistrict($code, $system_id, $callback)
     {
         $district = District::firstOrNew(['code' => $code], ['system_id' => $system_id]);
         $district->code = $code;
@@ -127,10 +155,10 @@ class BulkImporter
         $district->system_id = $system_id;
         $district->save();
 
-        return $district->id;
+        return $callback($district->id);
     }
 
-    protected static function updateSchool($school_code, $district_id)
+    protected static function updateSchool($school_code, $district_id, $callback)
     {
         $organization = Organization::where(['code' => $school_code])
                         ->whereHas('districts', function ($query) use ($district_id) {
@@ -145,23 +173,26 @@ class BulkImporter
             $organization->districts()->sync([$district_id]);
         }
 
-        return $organization->id;
+        return $callback($organization->id);
     }
 
-    protected static function updateClass($class_code, $school_id)
+    protected static function updateClass($class_code, $school_id, $callback)
     {
         $group = Group::firstOrNew(['code' => $class_code, 'organization_id' => $school_id]);
         $group->code = $class_code;
         $group->organization_id = $school_id;
         $group->save();
 
-        return $group->id;
+        return $callback($group->id);
+    }
+
+    protected static function constructError($message)
+    {
+        return ['error' => $message];
     }
 
     protected static function mailNotification($data)
     {
-        //@TODO email notification has been temporarily disabled. JT 10/11
-        return false;
         $notifier = new Notifier();
         $notifier->to = Auth::user()->email;
         $notifier->subject = 'Your import is completed at '.date('m-d-Y h:i:s A');

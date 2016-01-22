@@ -14,7 +14,11 @@ class AppServiceProvider extends ServiceProvider
     {
         \app\User::creating(function ($user) {
             $user->uuid = Uuid::uuid1();
-            $user->student_id = Uuid::uuid1();
+
+            if (!isset($user->student_id)) {
+                $user->student_id = Uuid::uuid1();
+            }
+
             $user->username = \app\User::getUniqueUsername();
         });
 

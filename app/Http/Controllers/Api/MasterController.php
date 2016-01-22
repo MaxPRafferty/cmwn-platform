@@ -4,10 +4,9 @@ namespace app\Http\Controllers\Api;
 
 use app\Transformer\MasterTransformer;
 use app\Repositories\SideBarItems;
-use Illuminate\Http\Request;
+use Request;
 use app\AdminTool;
 use app\Jobs\ImportCSV;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -25,48 +24,29 @@ class MasterController extends ApiController
 
     public function importExcel(Request $request)
     {
-        if (\Request::isMethod('post')) {
-            $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
-            if ($validator->passes()) {
-                $file = \Request::file('yourcsv');
-                $organization_id = (int) \Request::get('organization_id');
+        $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
 
-                if (!$organization_id) {
-                    return $this->errorInternalError('User input error: Organization id is missing.');
-                }
+        $file = Request::file('yourcsv');
+        $organization_id = Request::get('organization_id');
 
-                if ($file == '') {
-                    return $this->errorInternalError('User input error: Your Excel file is empty or invalid format.');
-                }
+        //the files are stored in storage/app/*files*
+        $user_id = Auth::user()->id;
+        $file_name = $file->getFilename().'_userid'.$user_id.'_time'.time();
+        $extension = $file->getClientOriginalExtension();
+        $full_file_name = $file_name.'.'.$extension;
+        $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
 
-                //the files are stored in storage/app/*files*
-                $user_id = Auth::user()->id;
-                $file_name = $file->getFilename().'_userid'.$user_id.'_time'.time();
-                $extension = $file->getClientOriginalExtension();
-                $full_file_name = $file_name.'.'.$extension;
-                $output = Storage::disk('local')->put($file_name.'.'.$extension,  \File::get($file));
+        $data = array(
+            'file' => $full_file_name,
+            'parms' => array('organization_id' => $organization_id),
+        );
 
-                if ($output) {
-                    $data = array(
-                        'file' => $full_file_name,
-                        'parms' => array('organization_id' => $organization_id),
-                    );
-                    $output = $this->dispatch(new ImportCSV($data));
-                    if ($output) {
-                        return $this->respondWithArray(array('message' => 'The import has been completed successfully.'));
-                    }
+        $output = $this->dispatch(new ImportCSV($data));
 
-                    return $this->errorInternalError('The import has failed. Please see the error log.'.base_path('storage/app/error_log.csv'));
-                } else {
-                    return $this->errorInternalError('The import has failed. Please try again.');
-                }
-            } else {
-                $messages = print_r($validator->errors()->getMessages(), true);
+        var_dump($output);
 
-                return $this->errorInternalError('Input validation error: '.$messages);
-            }
-        }
+        exit();
 
-        return false;
+        return $this->respondWithArray($output);
     }
 }
