@@ -37,7 +37,7 @@ class BulkImporter
 
             //var_dump($errors);
 
-            $this->mailNotification($errors);
+            //$this->mailNotification($errors);
         });
     }
 
@@ -62,11 +62,6 @@ class BulkImporter
                 # code...
                 break;
         }
-
-        // // Loop through all rows
-        // $sheet->each(function ($row) {
-        //     var_dump(expression);
-        // });
     }
 
     private static function classes($sheet, $organization_id)
