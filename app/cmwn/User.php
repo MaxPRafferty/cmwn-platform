@@ -149,9 +149,14 @@ class User extends Model implements
         return $this->morphedByMany('app\Group', 'roleable')->withPivot('role_id');
     }
 
-    public function taking_classes()
+    public function takingClasses()
     {
         return $this->morphedByMany('app\Group', 'roleable')->wherePivot('role_id', 1);
+    }
+
+    public function teachingClasses()
+    {
+        return $this->morphedByMany('app\Group', 'roleable')->wherePivot('role_id', 2);
     }
 
     public function children()

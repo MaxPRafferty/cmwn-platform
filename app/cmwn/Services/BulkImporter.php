@@ -27,7 +27,7 @@ class BulkImporter
 
         $file_path = base_path('storage/app/'.$this->data['file']);
 
-        $this->excel = Excel::load($file_path, function ($reader) use ($organization_id) {
+        Excel::selectSheets('Classes', 'Teachers', 'Students')->load($file_path, function ($reader) use ($organization_id) {
 
             $errors = [];
 
@@ -35,7 +35,7 @@ class BulkImporter
                 $errors = array_merge($errors, self::processSheet($sheet, $organization_id));
             });
 
-            //var_dump($errors);
+            var_dump($errors);
 
             //$this->mailNotification($errors);
         });
@@ -43,15 +43,16 @@ class BulkImporter
 
     private static function processSheet($sheet, $organization_id)
     {
+
+        echo($sheet->getTitle());
+
         switch ($sheet->getTitle()) {
             case 'Classes':
-                // self::classes($sheet, $organization_id);
-                return ['classes' => ['error' => 'test']];
+                return ['classes' => self::classes($sheet)];
                 break;
 
             case 'Teachers':
-                // self::teachers($sheet, $organization_id);
-                return ['teachers' => ['error' => 'test']];
+                return ['teachers' => self::teachers($sheet)];
                 break;
 
             case 'Students':
@@ -64,18 +65,76 @@ class BulkImporter
         }
     }
 
-    private static function classes($sheet, $organization_id)
+    private static function classes($sheet)
     {
-        echo('Classes');
+        $errors = [];
 
-        $sheet->each(function ($row) use ($organization_id) {
-            self::updateClass($row, $organization_id);
+        $sheet->each(function ($row) use (&$errors) {
+
+            $result = self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
+
+                //Districts
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($school_code, $row) {
+
+                    //Schools
+                    return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
+
+                        //Classes
+                        return self::updateClass($row, $school_id);
+                    });
+                });
+            });
+
+            if (isset($result['error'])) {
+                $errors[] = $result['error'];
+            }
+
         });
+
+        return $errors;
     }
 
-    private static function teachers($sheet, $organization_id)
+    private static function teachers($sheet)
     {
-        echo('Teachers');
+        $errors = [];
+
+        $sheet->each(function ($row) use (&$errors) {
+
+            $result = self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
+
+                //Districts
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($school_code, $row) {
+
+                    //Schools
+                    return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
+
+                        switch ($row->type) {
+                            case 'Principal':
+                            case 'Assistant Principal':
+                                # code...
+                                break;
+
+                            case 'Teacher':
+                                return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row) {
+                                    self::updateTeacher($row, $class_id);
+                                });
+                                break;
+
+                            default:
+                                # code...
+                                break;
+                        }
+                    });
+                });
+            });
+
+            if (isset($result['error'])) {
+                $errors[] = $result['error'];
+            }
+
+        });
+
+        return $errors;
     }
 
     private static function students($sheet)
@@ -92,8 +151,8 @@ class BulkImporter
                     //Schools
                     return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
 
-                        //Students
-                        return self::updateClass($row->off_cls, $school_id, function ($class_id) use ($row) {
+                        //Classes
+                        return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row) {
                             return self::updateStudent($row, $class_id);
                         });
                     });
@@ -122,24 +181,63 @@ class BulkImporter
 
     protected static function updateStudent($row, $class_id)
     {
-        if (isset($row->student_id) && !empty($row->student_id)) {
+        if (!empty($row->student_id)) {
             $user = User::firstOrNew(['student_id' => $row->student_id]);
 
-            $user->student_id = $row->student_id;
-            $user->first_name = $row->first_name;
-            $user->last_name = $row->last_name;
-            $user->gender = $row->sex;
-            $user->birthdate = $row->birth_dt;
+            self::updateUser($user, $row);
 
-            $user->save();
-
-            if ($user->taking_classes->where('id', $class_id)->count() == 0) {
+            if ($user->takingClasses->where('id', $class_id)->count() == 0) {
                 $user->groups()->attach([$class_id => ['role_id' => 1]]);
             }
-
         } else {
             return self::constructError('Could not create student. Student ID not set!');
         }
+    }
+
+    protected static function updateTeacher($row, $class_id)
+    {
+        if (!empty($row->email)) {
+            $user = User::firstOrNew(['student_id' => $row->student_id]);
+
+            self::updateUser($user, $row);
+
+            if ($user->teachingClasses->where('id', $class_id)->count() == 0) {
+                $user->groups()->attach([$class_id => ['role_id' => 2]]);
+            }
+        } else {
+            return self::constructError('Could not create teacher. Their email was not set!');
+        }
+    }
+
+    protected static function updateUser(User $user, $row)
+    {
+        if (!empty($row->student_id)) {
+            $user->student_id = $row->student_id;
+        }
+
+        if (!empty($row->email)) {
+            $user->email = $row->email;
+        }
+
+        if (!empty($row->first_name)) {
+            $user->first_name = $row->first_name;
+        }
+
+        if (!empty($row->last_name)) {
+            $user->last_name = $row->last_name;
+        }
+
+        if (!empty($row->sex)) {
+            $user->gender = $row->sex;
+        }
+
+        if (!empty($row->birth_dt)) {
+            $user->birthdate = $row->birth_dt;
+        }
+
+        $user->save();
+
+        return $user;
     }
 
     protected static function updateDistrict($code, $system_id, $callback)
@@ -172,14 +270,34 @@ class BulkImporter
         return $callback($organization->id);
     }
 
-    protected static function updateClass($class_code, $school_id, $callback)
+    protected static function updateClass($row, $school_id, $callback = null)
     {
-        $group = Group::firstOrNew(['code' => $class_code, 'organization_id' => $school_id]);
-        $group->code = $class_code;
+        $group = Group::firstOrNew(['code' => $row->off_cls, 'organization_id' => $school_id]);
+
+        if (isset($row->title)) {
+            $group->title = $row->title;
+        }
+
+        $group->code = $row->off_cls;
         $group->organization_id = $school_id;
         $group->save();
 
-        return $callback($group->id);
+        if (isset($callback)) {
+            return $callback($group->id);
+        }
+    }
+
+    protected static function getClass($class_code, $school_id, $callback = null)
+    {
+        $group = Group::where(['code' => $class_code, 'organization_id' => $school_id])->first();
+
+        if ($group) {
+            if (isset($callback)) {
+                return $callback($group->id);
+            }
+        } else {
+            return self::constructError('Could not locate class with code: "' . $class_code . '" in a school with the following id: "' . $school_id . '"');
+        }
     }
 
     protected static function constructError($message)
