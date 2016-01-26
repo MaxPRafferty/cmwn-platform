@@ -45,6 +45,12 @@ class GameTableSeeder extends Seeder
             "description" => "Become a Light Saver agent of change!  This music video will kick your inner hero into high gear!"
         ));
 
+        $games[] = Game::create(array(
+            "uuid" => "meerkat-mania",
+            "title" => "Meerkat Mania",
+            "description" => "You will learn about fascinating beasts, but don't be surprised to find so much more. A fun video gives you the scoop and the \"Meerkat Move!\" What's the move? Do the Action Item and discover how important you can be to your friends."
+        ));
+
         $this->command->info("Games Created!");
     }
 }
