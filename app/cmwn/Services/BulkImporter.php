@@ -173,7 +173,7 @@ class BulkImporter
             $district_code = $result[0];
             $organization_code = $result[1];
 
-            $district = self::getDistrict($district->code, 1);
+            $district = self::getDistrict($district_code, 1);
 
             if ($district) {
                 $organization = self::getOrganizationWithDistric($organization_code, $district->id);
@@ -183,12 +183,12 @@ class BulkImporter
 
             if ($organization) {
                 if ($organization->canUpdate()) {
-                    return $callback($district_id, $organization_id);
+                    return $callback($district_code, $organization_code);
                 } else {
                     return self::constructError('The current user does not have permission to update "'.$ddbnnn.'"');
                 }
             } else {
-                return self::constructError('The there is no organization associated with "'.$ddbnnn.'"');
+                return self::constructError('The there is no organization with the code "' . $organization_code . '" in the district with code "' . $district_code . '"');
             }
         } else {
             return self::constructError('Cannot Parse DDBNN: "'.$ddbnnn.'"');

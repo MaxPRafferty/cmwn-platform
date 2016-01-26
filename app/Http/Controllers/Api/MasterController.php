@@ -10,9 +10,13 @@ use app\Jobs\ImportCSV;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class MasterController extends ApiController
 {
+
+    use DispatchesJobs;
+
     public function sidebar()
     {
         $userspecific = new SideBarItems();
@@ -27,7 +31,6 @@ class MasterController extends ApiController
         $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
 
         $file = Request::file('yourcsv');
-        $organization_id = Request::get('organization_id');
 
         //the files are stored in storage/app/*files*
         $user_id = Auth::user()->id;
@@ -36,13 +39,11 @@ class MasterController extends ApiController
         $full_file_name = $file_name.'.'.$extension;
         $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
 
-        $data = array(
-            'file' => $full_file_name,
-            'currentUser' => $this->currentUser,
-            'parms' => array('organization_id' => $organization_id),
-        );
+        $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser];
 
-        $output = $this->dispatch(new ImportCSV($data));
+        $job = (new ImportCSV($data))->delay(60)->onQueue('emails');
+
+        $this->dispatch($job);
 
         //return $this->respondWithArray($output);
     }
