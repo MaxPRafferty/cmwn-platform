@@ -23,16 +23,16 @@ class BulkImporter
 
     public function migratecsv()
     {
-        $organization_id = $this->data['parms']['organization_id'];
+        $currentUser = $this->data['currentUser'];
 
         $file_path = base_path('storage/app/'.$this->data['file']);
 
-        Excel::selectSheets('Classes', 'Teachers', 'Students')->load($file_path, function ($reader) use ($organization_id) {
+        Excel::selectSheets('Classes', 'Teachers', 'Students')->load($file_path, function ($reader) use ($currentUser) {
 
             $errors = [];
 
-            $reader->each(function ($sheet) use ($organization_id, &$errors) {
-                $errors = array_merge($errors, self::processSheet($sheet, $organization_id));
+            $reader->each(function ($sheet) use ($currentUser, &$errors) {
+                $errors = array_merge($errors, self::processSheet($sheet, $currentUser));
             });
 
             var_dump($errors);
@@ -41,22 +41,19 @@ class BulkImporter
         });
     }
 
-    private static function processSheet($sheet, $organization_id)
+    private static function processSheet($sheet, $currentUser)
     {
-
-        echo($sheet->getTitle());
-
         switch ($sheet->getTitle()) {
             case 'Classes':
-                return ['classes' => self::classes($sheet)];
+                return ['classes' => self::classes($sheet, $currentUser)];
                 break;
 
             case 'Teachers':
-                return ['teachers' => self::teachers($sheet)];
+                return ['teachers' => self::teachers($sheet, $currentUser)];
                 break;
 
             case 'Students':
-                return ['students' => self::students($sheet)];
+                return ['students' => self::students($sheet, $currentUser)];
                 break;
 
             default:
@@ -65,19 +62,19 @@ class BulkImporter
         }
     }
 
-    private static function classes($sheet)
+    private static function classes($sheet, $currentUser)
     {
         $errors = [];
 
-        $sheet->each(function ($row) use (&$errors) {
+        $sheet->each(function ($row) use ($currentUser, &$errors) {
 
-            $result = self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
+            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row) {
 
                 //Districts
-                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($school_code, $row) {
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row) {
 
                     //Schools
-                    return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
+                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row) {
 
                         //Classes
                         return self::updateClass($row, $school_id);
@@ -94,24 +91,24 @@ class BulkImporter
         return $errors;
     }
 
-    private static function teachers($sheet)
+    private static function teachers($sheet, $currentUser)
     {
         $errors = [];
 
-        $sheet->each(function ($row) use (&$errors) {
+        $sheet->each(function ($row) use ($currentUser, &$errors) {
 
-            $result = self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
+            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row) {
 
                 //Districts
-                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($school_code, $row) {
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row) {
 
                     //Schools
-                    return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
+                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row) {
 
                         switch ($row->type) {
                             case 'Principal':
                             case 'Assistant Principal':
-                                # code...
+                                self::updatePrincipal($row, $school_id);
                                 break;
 
                             case 'Teacher':
@@ -121,7 +118,7 @@ class BulkImporter
                                 break;
 
                             default:
-                                # code...
+                                return self::constructError('The type "'.$row->type.'" is not recognized.');
                                 break;
                         }
                     });
@@ -137,19 +134,19 @@ class BulkImporter
         return $errors;
     }
 
-    private static function students($sheet)
+    private static function students($sheet, $currentUser)
     {
         $errors = [];
 
-        $sheet->each(function ($row) use (&$errors) {
+        $sheet->each(function ($row) use ($currentUser, &$errors) {
 
-            $result = self::parseDdbnn($row->ddbnnn, function ($ditrict_code, $school_code) use ($row) {
+            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row) {
 
                 //Districts
-                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($school_code, $row) {
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row) {
 
                     //Schools
-                    return self::updateSchool($school_code, $district_id, function ($school_id) use ($row) {
+                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row) {
 
                         //Classes
                         return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row) {
@@ -168,12 +165,31 @@ class BulkImporter
         return $errors;
     }
 
-    private static function parseDdbnn($ddbnnn, $callback)
+    private static function parseDdbnn($currentUser, $ddbnnn, $callback)
     {
         $result = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $ddbnnn);
 
         if (isset($result[0]) && isset($result[1])) {
-            return $callback($result[0], $result[1]);
+            $district_code = $result[0];
+            $organization_code = $result[1];
+
+            $district = self::getDistrict($district->code, 1);
+
+            if ($district) {
+                $organization = self::getOrganizationWithDistric($organization_code, $district->id);
+            } else {
+                return self::constructError('The there is no district associated with "'.$ddbnnn.'"');
+            }
+
+            if ($organization) {
+                if ($organization->canUpdate()) {
+                    return $callback($district_id, $organization_id);
+                } else {
+                    return self::constructError('The current user does not have permission to update "'.$ddbnnn.'"');
+                }
+            } else {
+                return self::constructError('The there is no organization associated with "'.$ddbnnn.'"');
+            }
         } else {
             return self::constructError('Cannot Parse DDBNN: "'.$ddbnnn.'"');
         }
@@ -197,7 +213,7 @@ class BulkImporter
     protected static function updateTeacher($row, $class_id)
     {
         if (!empty($row->email)) {
-            $user = User::firstOrNew(['student_id' => $row->student_id]);
+            $user = User::firstOrNew(['email' => $row->email]);
 
             self::updateUser($user, $row);
 
@@ -206,6 +222,21 @@ class BulkImporter
             }
         } else {
             return self::constructError('Could not create teacher. Their email was not set!');
+        }
+    }
+
+    protected static function updatePrincipal($row, $school_id)
+    {
+        if (!empty($row->email)) {
+            $user = User::firstOrNew(['email' => $row->email]);
+
+            self::updateUser($user, $row);
+
+            if ($user->organizations()->where('roleable_id', $school_id)->where('roleables.role_id', 2)->count() == 0) {
+                $user->organizations()->attach([$school_id => ['role_id' => 2]]);
+            }
+        } else {
+            return self::constructError('Could not create principal. Their email was not set!');
         }
     }
 
@@ -242,7 +273,7 @@ class BulkImporter
 
     protected static function updateDistrict($code, $system_id, $callback)
     {
-        $district = District::firstOrNew(['code' => $code], ['system_id' => $system_id]);
+        $district = self::getDistrict($code, $system_id);
         $district->code = $code;
         $district->system_id = $system_id;
         $district->title = $code;
@@ -252,22 +283,32 @@ class BulkImporter
         return $callback($district->id);
     }
 
-    protected static function updateSchool($school_code, $district_id, $callback)
+    protected static function getDistrict($code, $system_id)
     {
-        $organization = Organization::where(['code' => $school_code])
-                        ->whereHas('districts', function ($query) use ($district_id) {
-                            $query->where('districts.id', $district_id);
-                        })->first();
+        return District::firstOrNew(['code' => $code], ['system_id' => $system_id]);
+    }
+
+    protected static function updateSchool($organization_code, $district_id, $callback)
+    {
+        $organization = self::getOrganizationWithDistric($organization_code, $district_id);
 
         if (!$organization) {
             $organization = new Organization();
-            $organization->code = $school_code;
+            $organization->code = $organization_code;
             $organization->save();
 
             $organization->districts()->sync([$district_id]);
         }
 
         return $callback($organization->id);
+    }
+
+    protected static function getOrganizationWithDistric($organization_code, $district_id)
+    {
+        return Organization::where(['code' => $organization_code])
+                        ->whereHas('districts', function ($query) use ($district_id) {
+                            $query->where('districts.id', $district_id);
+                        })->first();
     }
 
     protected static function updateClass($row, $school_id, $callback = null)
@@ -296,7 +337,7 @@ class BulkImporter
                 return $callback($group->id);
             }
         } else {
-            return self::constructError('Could not locate class with code: "' . $class_code . '" in a school with the following id: "' . $school_id . '"');
+            return self::constructError('Could not locate class with code: "'.$class_code.'" in a school with the following id: "'.$school_id.'"');
         }
     }
 

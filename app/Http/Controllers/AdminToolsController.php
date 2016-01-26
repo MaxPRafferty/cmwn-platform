@@ -27,6 +27,7 @@ class AdminToolsController extends ApiController
                     $data = array(
                         'parms' => array(),
                     );
+
                     $this->dispatch(new ImportCSV($data));
 
                     return Redirect::to('admin/uploadcsv')->with('message', 'The following errors occurred')->withErrors('Your file has been successfully uploaded. You will receive an email notification once the import is completed.');

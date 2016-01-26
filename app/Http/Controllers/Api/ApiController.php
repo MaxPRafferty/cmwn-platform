@@ -30,9 +30,6 @@ class ApiController extends Controller
         }
     }
 
-
-
-
     /**
      * Getter for statusCode.
      *

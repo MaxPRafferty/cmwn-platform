@@ -38,15 +38,12 @@ class MasterController extends ApiController
 
         $data = array(
             'file' => $full_file_name,
+            'currentUser' => $this->currentUser,
             'parms' => array('organization_id' => $organization_id),
         );
 
         $output = $this->dispatch(new ImportCSV($data));
 
-        var_dump($output);
-
-        exit();
-
-        return $this->respondWithArray($output);
+        //return $this->respondWithArray($output);
     }
 }
