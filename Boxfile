@@ -80,20 +80,23 @@ storage1:
 # --------------------------------
 # Optional Worker Config
 # --------------------------------
-# worker1:
-#   exec: 'php artisan queue:listen'
-#   php_extensions:
-#     - json
-#     - mbstring
-#     - mcrypt
-#     - tokenizer
-#     - xcache
-#     - redis
-#   network_dirs:
-#     - storage/framework
-#     - storage/app
-#   nonpersistent_writable_dirs:
-#     - bootstrap/cache
-#     - storage/cache
-#   log_watch:
-#     laravel[error]: 'storage/logs/laravel.log'
+
+worker1:
+   exec: 'php artisan queue:listen'
+   php_extensions:
+    - json
+    - mbstring
+    - mcrypt
+    - tokenizer
+    - pdo_mysql
+    - xcache
+    - redis
+    - curl
+   network_dirs:
+     - storage/framework
+     - storage/app
+   nonpersistent_writable_dirs:
+     - bootstrap/cache
+     - storage/cache
+   log_watch:
+     laravel[error]: 'storage/logs/laravel.log'
