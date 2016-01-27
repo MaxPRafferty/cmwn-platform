@@ -41,7 +41,9 @@ class MasterController extends ApiController
 
         $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser];
 
-        $job = (new ImportCSV($data))->delay(60)->onQueue('emails');
+        echo('in MasterController - ');
+
+        $job = (new ImportCSV($data));
 
         $this->dispatch($job);
 

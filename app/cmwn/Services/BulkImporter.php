@@ -23,6 +23,8 @@ class BulkImporter
 
     public function migratecsv()
     {
+        echo('In migratecsv - ');
+
         $currentUser = $this->data['currentUser'];
 
         $file_path = base_path('storage/app/'.$this->data['file']);

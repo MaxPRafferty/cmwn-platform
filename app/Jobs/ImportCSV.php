@@ -27,6 +27,9 @@ class ImportCSV extends Job implements SelfHandling, ShouldQueue
 
     public function handle()
     {
+
+        echo('In ImportCSV handel function - ');
+
         $importer = new BulkImporter();
 
         $importer->data = $this->data;
