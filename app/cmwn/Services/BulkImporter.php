@@ -9,6 +9,7 @@ use app\Organization;
 use app\User;
 use Illuminate\Support\Facades\Auth;
 use Excel;
+use Illuminate\Support\Facades\Storage;
 
 class BulkImporter
 {
@@ -23,8 +24,6 @@ class BulkImporter
 
     public function migratecsv()
     {
-        echo('In migratecsv - ');
-
         $currentUser = $this->data['currentUser'];
 
         $file_path = base_path('storage/app/'.$this->data['file']);
@@ -37,10 +36,10 @@ class BulkImporter
                 $errors = array_merge($errors, self::processSheet($sheet, $currentUser));
             });
 
-            var_dump($errors);
-
             $this->mailNotification($errors, $currentUser);
         });
+
+        Storage::disk('local')->delete($this->data['file']);
     }
 
     private static function processSheet($sheet, $currentUser)
@@ -184,7 +183,7 @@ class BulkImporter
             }
 
             if ($organization) {
-                if ($organization->canUpdate()) {
+                if ($organization->canUpdate($currentUser)) {
                     return $callback($district_code, $organization_code);
                 } else {
                     return self::constructError('The current user does not have permission to update "'.$ddbnnn.'"');

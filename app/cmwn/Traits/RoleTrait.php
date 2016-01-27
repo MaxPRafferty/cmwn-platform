@@ -74,7 +74,7 @@ trait RoleTrait
             $user = Auth::user();
         }
 
-        return ($user->isSiteAdmin() || $this->users()->where('user_id', $user->id)->where('role_id', '>', 1)->count() > 0);
+        return ($user->type == 1 || $this->users()->where('user_id', $user->id)->where('role_id', '>', 1)->count() > 0);
     }
 
     public function canView($user = null)

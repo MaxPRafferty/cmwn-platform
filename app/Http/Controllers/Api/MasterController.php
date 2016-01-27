@@ -41,12 +41,9 @@ class MasterController extends ApiController
 
         $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser];
 
-        echo('in MasterController - ');
-
         $job = (new ImportCSV($data));
 
         $this->dispatch($job);
 
-        //return $this->respondWithArray($output);
     }
 }
