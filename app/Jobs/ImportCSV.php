@@ -35,6 +35,6 @@ class ImportCSV extends Job implements SelfHandling, ShouldQueue
 
     public function failed()
     {
-        Log::info(__CLASS__." has failed with handling the queue request.");
+        //Log::info(__CLASS__." has failed with handling the queue request.");
     }
 }

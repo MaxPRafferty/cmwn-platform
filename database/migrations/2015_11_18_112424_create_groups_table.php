@@ -16,6 +16,7 @@ class CreateGroupsTable extends Migration
             $table->increments('id');
             $table->string('uuid')->unique();
             $table->string('organization_id');
+            $table->string('code');
             $table->string('title');
             $table->string('class_number')->nullable();
             $table->string('cluster_class')->nullable();
