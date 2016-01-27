@@ -51,6 +51,7 @@ web1:
     - xcache
     - redis
     - curl
+    - zip
   httpd_document_root: public
   php_session_save_handler: redis
   php_session_save_path: "tcp://${CACHE1_HOST}:${CACHE1_PORT}"
@@ -92,6 +93,7 @@ worker1:
     - xcache
     - redis
     - curl
+    - zip
    network_dirs:
      - storage/framework
      - storage/app
