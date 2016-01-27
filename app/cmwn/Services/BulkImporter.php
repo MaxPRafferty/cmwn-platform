@@ -35,7 +35,7 @@ class BulkImporter
                 $errors = array_merge($errors, self::processSheet($sheet, $currentUser));
             });
 
-            //var_dump($errors);
+            var_dump($errors);
 
             $this->mailNotification($errors, $currentUser);
         });
