@@ -35,9 +35,9 @@ class BulkImporter
                 $errors = array_merge($errors, self::processSheet($sheet, $currentUser));
             });
 
-            var_dump($errors);
+            //var_dump($errors);
 
-            //$this->mailNotification($errors);
+            $this->mailNotification($errors, $currentUser);
         });
     }
 
@@ -346,13 +346,13 @@ class BulkImporter
         return ['error' => $message];
     }
 
-    protected static function mailNotification($data)
+    protected static function mailNotification($errors, $currentUser)
     {
         $notifier = new Notifier();
-        $notifier->to = Auth::user()->email;
-        $notifier->subject = 'Your import is completed at '.date('m-d-Y h:i:s A');
+        $notifier->to = $currentUser->email;
+        $notifier->subject = 'Import Report :: ' . date('F jS, Y h:i:s A');
         $notifier->template = 'emails.import';
-        $notifier->attachData(['user' => Auth::user()]);
+        $notifier->attachData(['errors' => $errors, 'user' => $currentUser]);
         $notifier->send();
     }
 

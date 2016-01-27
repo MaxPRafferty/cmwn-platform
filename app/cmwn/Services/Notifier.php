@@ -10,7 +10,7 @@ class Notifier
     use DispatchesJobs;
 
     public $data = [];
-    public $from = 'admin@changemyworldnow.education';
+    public $from = 'notifications@ginasink.com';
     public $template = 'email';
     public $subject = 'Default email template';
     public $priority = 'Normal';
