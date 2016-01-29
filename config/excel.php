@@ -32,7 +32,7 @@ return array(
         'settings' => array(
 
             'memoryCacheSize' => '32MB',
-            'cacheTime'       => 600
+            'cacheTime'       => 0
 
         ),
 

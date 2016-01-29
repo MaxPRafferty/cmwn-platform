@@ -27,7 +27,8 @@ class Api
                 ->header('Access-Control-Allow-Credentials', 'true')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
                 ->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization, X-Auth-Token, X-CSRF-TOKEN')
-                ->header('Access-Control-Max-Age', '28800');
+                ->header('Access-Control-Max-Age', '28800')
+                ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         } else {
 
             return $next($request);

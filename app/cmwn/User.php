@@ -146,7 +146,7 @@ class User extends Model implements
 
     public function adults()
     {
-        return $this->hasMany('app\Adults');
+        return $this->hasMany('app\Adult');
     }
 
     public function takingClasses()

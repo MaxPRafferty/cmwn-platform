@@ -5,7 +5,7 @@ namespace app;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Adults extends Model
+class Adult extends Model
 {
     public function organization()
     {
