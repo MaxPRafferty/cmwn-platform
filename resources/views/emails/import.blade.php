@@ -9,12 +9,12 @@
 
     <h3>Teachers Sheet Errors</h3>
     @foreach ($errors['teachers'] as $teacher_error)
-        <p>{{$class_error}}</p>
+        <p>{{$teacher_error}}</p>
     @endforeach
 
     <h3>Students Sheet Errors</h3>
     @foreach ($errors['students'] as $student_error)
-        <p>{{$class_error}}</p>
+        <p>{{$student_error}}</p>
     @endforeach
 
 	<p>Thank you.</p>

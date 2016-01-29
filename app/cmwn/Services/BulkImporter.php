@@ -7,20 +7,13 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use app\District;
 use app\Organization;
 use app\User;
-use Illuminate\Support\Facades\Auth;
+use app\Adult;
 use Excel;
 use Illuminate\Support\Facades\Storage;
 
 class BulkImporter
 {
     use DispatchesJobs;
-    public $data;
-    protected $sheetname;
-    protected $excel;
-    protected $district_id;
-    protected $organization_id;
-    protected $DATA;
-    protected $errors;
 
     public function migratecsv()
     {
@@ -37,6 +30,7 @@ class BulkImporter
             });
 
             $this->mailNotification($errors, $currentUser);
+
         });
 
         Storage::disk('local')->delete($this->data['file']);
@@ -189,7 +183,7 @@ class BulkImporter
                     return self::constructError('The current user does not have permission to update "'.$ddbnnn.'"');
                 }
             } else {
-                return self::constructError('The there is no organization with the code "' . $organization_code . '" in the district with code "' . $district_code . '"');
+                return self::constructError('The there is no organization with the code "'.$organization_code.'" in the district with code "'.$district_code.'"');
             }
         } else {
             return self::constructError('Cannot Parse DDBNN: "'.$ddbnnn.'"');
@@ -206,8 +200,48 @@ class BulkImporter
             if ($user->takingClasses->where('id', $class_id)->count() == 0) {
                 $user->groups()->attach([$class_id => ['role_id' => 1]]);
             }
+
+            self::addAdult($user, $row);
+
         } else {
             return self::constructError('Could not create student. Student ID not set!');
+        }
+    }
+
+    protected static function addAdult($user, $row)
+    {
+
+        $user->adults()->delete();
+
+        if (!empty($row->adult_first_1) || !empty($row->adult_last_1)) {
+            $adult_1 = new Adult();
+            $adult_1->first_name = $row->adult_first_1;
+            $adult_1->last_name = $row->adult_last_1;
+            $adult_1->phone = $row->adult_phone_1;
+            $adult_1->save();
+            $adults[] = $adult_1;
+        }
+
+        if (!empty($row->adult_first_2) || !empty($row->adult_last_2)) {
+            $adult_2 = new Adult();
+            $adult_2->first_name = $row->adult_first_2;
+            $adult_2->last_name = $row->adult_last_2;
+            $adult_2->phone = $row->adult_phone_2;
+            $adult_2->save();
+            $adults[] = $adult_2;
+        }
+
+        if (!empty($row->adult_first_3) || !empty($row->adult_last_3)) {
+            $adult_3 = new Adult();
+            $adult_3->first_name = $row->adult_first_3;
+            $adult_3->last_name = $row->adult_last_3;
+            $adult_3->phone = $row->adult_phone_3;
+            $adult_3->save();
+            $adults[] = $adult_3;
+        }
+
+        if (isset($adults)) {
+            $user->adults()->saveMany($adults);
         }
     }
 
@@ -351,7 +385,7 @@ class BulkImporter
     {
         $notifier = new Notifier();
         $notifier->to = $currentUser->email;
-        $notifier->subject = 'Import Report :: ' . date('F jS, Y h:i:s A');
+        $notifier->subject = 'Import Report :: '.date('F jS, Y h:i:s A');
         $notifier->template = 'emails.import';
         $notifier->attachData(['errors' => $errors, 'user' => $currentUser]);
         $notifier->send();
