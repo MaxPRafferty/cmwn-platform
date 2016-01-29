@@ -211,6 +211,11 @@ class BulkImporter
         }
     }
 
+    protected static function addAdult()
+    {
+
+    }
+
     protected static function updateTeacher($row, $class_id)
     {
         if (!empty($row->email)) {
