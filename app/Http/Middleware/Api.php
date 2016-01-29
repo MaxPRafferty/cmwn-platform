@@ -18,7 +18,6 @@ class Api
     {
         $origin = $request->header('origin');
 
-        //if ($this->endsWith($origin, 'changemyworldnow.com') || $this->endsWith($origin,
         if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?$`i", $origin) ||
             preg_match("`^https?://([0-9a-zA-Z-_]+\.)?cmwn.localhost(:[0-9]+)?/?$`i", $origin)
         ) {
@@ -30,24 +29,6 @@ class Api
                 ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         } else {
             return $next($request);
-
-            // if (env('APP_ENV') == 'local') {
-            //     return $next($request);
-            // } else {
-            //     return response('You are not supposed to be here!', 401);
-            // }
         }
-    }
-
-    private function endsWith($string, $test)
-    {
-        $strlen = strlen($string);
-        $testlen = strlen($test);
-
-        if ($testlen > $strlen) {
-            return false;
-        }
-
-        return substr_compare($string, $test, strlen($string) - strlen($test), strlen($test)) === 0;
     }
 }
