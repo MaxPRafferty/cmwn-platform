@@ -108,11 +108,6 @@ class User extends Model implements
         'role_id' => 'required|integer',
     );
 
-    public function guardianReference()
-    {
-        return $this->belongsToMany('app\User', 'guardian_reference', 'user_id');
-    }
-
     public function getRoles()
     {
         $roles = DB::table('roleables')
@@ -147,6 +142,11 @@ class User extends Model implements
     public function groups()
     {
         return $this->morphedByMany('app\Group', 'roleable')->withPivot('role_id');
+    }
+
+    public function adults()
+    {
+        return $this->hasMany('app\Adults');
     }
 
     public function takingClasses()

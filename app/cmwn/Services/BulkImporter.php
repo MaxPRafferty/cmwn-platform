@@ -211,8 +211,12 @@ class BulkImporter
         }
     }
 
-    protected static function addAdult()
+    protected static function addAdult($user, $row)
     {
+        $adult_1 = new Adult();
+        $adult_2 = new Adult();
+        $adult_3 = new Adult();
+
 
     }
 
