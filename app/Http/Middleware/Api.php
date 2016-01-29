@@ -19,8 +19,7 @@ class Api
         $origin = $request->header('origin');
 
         //if ($this->endsWith($origin, 'changemyworldnow.com') || $this->endsWith($origin,
-        if (
-            preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?$`i", $origin) ||
+        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?$`i", $origin) ||
             preg_match("`^https?://([0-9a-zA-Z-_]+\.)?cmwn.localhost(:[0-9]+)?/?$`i", $origin)
         ) {
             return $next($request)->header('Access-Control-Allow-Origin', $origin)
@@ -30,7 +29,6 @@ class Api
                 ->header('Access-Control-Max-Age', '28800')
                 ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         } else {
-
             return $next($request);
 
             // if (env('APP_ENV') == 'local') {
