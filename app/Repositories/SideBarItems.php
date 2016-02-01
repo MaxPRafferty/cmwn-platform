@@ -39,10 +39,9 @@ class SideBarItems
         $tags['Games'] = '/profile';
 
         $friendCount = $user->friends()->count();
+
         if ($friendCount > 0) {
             $tags['Friends'] = '/friends';
-        } else {
-            $tags['Suggested Friends'] = '/friends/suggested';
         }
 
         //Districts Menu
@@ -76,9 +75,6 @@ class SideBarItems
             }
         }
 
-        if ($friendCount > 0) {
-            $tags['Suggested Friends'] = '/friends/suggested';
-        }
         $tags['Edit Profile'] = '/profile/edit';
         $tags['Logout'] = '/logout';
 
