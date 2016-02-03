@@ -65,17 +65,17 @@ class User extends Model implements
      * Register all the form validation rules here for User
      */
     public static $createRules = array(
-        'first_name' => 'required|string|min:2',
-        'middle_name' => 'string|min:2',
-        'last_name' => 'required|string|min:2',
+        'first_name' => 'required|string',
+        'middle_name' => 'string',
+        'last_name' => 'required|string',
         'email' => 'required|unique:users,email',
         'username' => 'required|alpha_dash|unique:users,username',
         'student_id' => 'required|alpha_dash|unique:users,username',
     );
 
     public static $createDemoTeacherRules = array(
-        'first_name' => 'required|string|min:2',
-        'last_name' => 'required|string|min:2',
+        'first_name' => 'required|string',
+        'last_name' => 'required|string',
         'email' => 'required|unique:users,email',
     );
 
