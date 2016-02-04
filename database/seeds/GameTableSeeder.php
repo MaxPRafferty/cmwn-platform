@@ -18,31 +18,55 @@ class GameTableSeeder extends Seeder
         $games[] = Game::create(array(
             "uuid" => "polar-bear",
             "title" => "Polar Bear",
-            "description" => "The magnificent Polar Bear is in danger of becoming extinct!  Find out all about where they live and why their fur looks white.  (Hint:  Things are not always as they appear!)  You get to play and do an offline experiment."
+            "description" => "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!"
         ));
 
         $games[] = Game::create(array(
             "uuid" => "sea-turtle",
             "title" => "Sea Turtle",
-            "description" => "Can you ID the different kinds of animals?  Prove it or learn it right here!  Quick and fun, let your fingers do the clicking and be ready to show your stuff."
+            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts, play games and find out why they are endangered."
         ));
 
         $games[] = Game::create(array(
             "uuid" => "animal-id",
             "title" => "Animal ID",
-            "description" => "Sea Turtles are wondrous creatures!  Get cool turtle facts, play games and find out why they are endangered."
+            "description" => "Can you ID the different kinds of animals? Do you know what plants and animals belong together? Prove it and learn it right here!"
         ));
 
         $games[] = Game::create(array(
             "uuid" => "litter-bug",
             "title" => "Litterbug",
-            "description" => "Litter is destructive to our environment and wildlife – see it, experience it, fix it! Nothing brings it home better than a song that is so fun to sing they simply cannot forget the message.  Don't be a litterbug!  And now they won't!"
+            "description" => "Sing it strong! Learn a great sing-a-long song while you work to save the environment! Doesn't get better!"
         ));
 
         $games[] = Game::create(array(
             "uuid" => "be-bright",
             "title" => "Be Bright",
-            "description" => "Become a Light Saver agent of change!  This music video will kick your inner hero into high gear!"
+            "description" => "Become a Light Saver agent of change! This music video will kick your inner superhero into high gear!"
+        ));
+
+        $games[] = Game::create(array(
+            "uuid" => "meerkat-mania",
+            "title" => "Meerkat Mania",
+            "description" => "There's more to this one than fascinating beasts! Get a fun video and a secret sign! Learn what it means to look out for others!"
+        ));
+
+        $games[] = Game::create(array(
+            "uuid" => "fire",
+            "title" => "FIRE!!!",
+            "description" => "All about firefighters and firefighting theory. These are true heroes among us - maybe you will be one someday?"
+        ));
+
+        $games[] = Game::create(array(
+            "uuid" => "drought-out",
+            "title" => "DroughtOUT",
+            "description" => "Want to be part of the solution for the biggest issue in our world? You came to the right place! Starts right here!"
+        ));
+
+        $games[] = Game::create(array(
+            "uuid" => "twirl-n-swirl",
+            "title" => "Twirl n' Swirl",
+            "description" => "Flushing isn't as simple as you think!  Avoid the plunger and help the environment!"
         ));
 
         $games[] = Game::create(array(
