@@ -33,6 +33,29 @@ class DistrictController extends ApiController
         return $this->respondWithItem($district, new DistrictTransformer());
     }
 
+    public function create()
+    {
+        if ($this->currentUser->isSiteAdmin()) {
+            $validator = Validator::make(Input::all(), District::$createRules);
+
+            if (!$validator->passes()) {
+                return $this->errorWrongArgs($validator->errors()->all());
+            }
+
+            $district = new District();
+
+            try {
+                $district->updateDistrict(Input::all());
+            } catch (Exception $e) {
+                return $this->errorInternalError($e->getMessage());
+            }
+
+            return $this->respondWithItem($district, new DistrictTransformer());
+        } else {
+            return $this->errorInternalError('You are not authorized to create users.');
+        }
+    }
+
     public function update($uuid)
     {
         $district = District::findByUuid($uuid);
@@ -46,10 +69,10 @@ class DistrictController extends ApiController
             return $this->errorUnauthorized();
         }
 
-        $validator = Validator::make(Input::all(), District::$districtUpdateRules);
+        $validator = Validator::make(Input::all(), District::$updateRules);
 
         if ($validator->passes()) {
-            $district->updateParameters(Input::all());
+            $district->updateDistrict(Input::all());
 
             return $this->respondWithArray(array('message' => 'The district has been updated successfully.'));
         } else {

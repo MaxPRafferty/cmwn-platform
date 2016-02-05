@@ -19,10 +19,13 @@ class District extends Model
         'code',
     ];
 
-    public static $districtUpdateRules = array(
+    public static $updateRules = array(
         'title' => 'string',
-        //'role[]'=>'required',
-        //'role[]'=>'required|regex:/^[0-9]?$/',
+    );
+
+    public static $createRules = array(
+        'system_id' => 'required|integer',
+        'code' => 'required',
     );
 
     public function organizations()
@@ -42,17 +45,33 @@ class District extends Model
         return $this->morphMany('app\Image', 'imageable');
     }
 
-    public function updateParameters($parameters)
+    public function updateDistrict($params)
     {
-        if (isset($parameters['title'])) {
-            $this->title = $parameters['title'];
+        if (isset($params['system_id'])) {
+            $this->system_id = $params['system_id'];
         }
 
-        if (isset($parameters['description'])) {
-            $this->description = $parameters['description'];
+        if (isset($params['code'])) {
+            $this->code = $params['code'];
         }
 
-        return $this->save();
+        if (isset($params['title'])) {
+            $this->title = $params['title'];
+        }
+
+        if (isset($params['middle_name'])) {
+            $this->middle_name = $params['middle_name'];
+        }
+
+        if (isset($params['description'])) {
+            $this->last_name = $params['description'];
+        }
+
+        if ($this->save()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

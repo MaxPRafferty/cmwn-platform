@@ -22,6 +22,7 @@ class CreateDistrictsTable extends Migration
             $table->string('code');
             $table->string('title');
             $table->string('description');
+            $table->unique(['system_id', 'code']);
             $table->timestamps();
             $table->softDeletes();
         });

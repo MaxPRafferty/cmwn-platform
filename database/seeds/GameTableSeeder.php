@@ -46,12 +46,6 @@ class GameTableSeeder extends Seeder
         ));
 
         $games[] = Game::create(array(
-            "uuid" => "meerkat-mania",
-            "title" => "Meerkat Mania",
-            "description" => "There's more to this one than fascinating beasts! Get a fun video and a secret sign! Learn what it means to look out for others!"
-        ));
-
-        $games[] = Game::create(array(
             "uuid" => "fire",
             "title" => "FIRE!!!",
             "description" => "All about firefighters and firefighting theory. These are true heroes among us - maybe you will be one someday?"
