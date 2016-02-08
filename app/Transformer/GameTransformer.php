@@ -23,6 +23,7 @@ class GameTransformer extends TransformerAbstract
             'uuid' => $game->uuid,
             'title' => $game->title,
             'description' => $game->description,
+            'coming_soon' => $game->coming_soon,
             'created_at' => (string) $game->created_at,
         ];
     }
