@@ -7,6 +7,7 @@ use app\District;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 
 class DistrictController extends ApiController
 {
@@ -46,8 +47,8 @@ class DistrictController extends ApiController
 
             try {
                 $district->updateDistrict(Input::all());
-            } catch (Exception $e) {
-                return $this->errorInternalError($e->getMessage());
+            } catch (QueryException $e) {
+                return $this->errorInternalError('Could not create the district. Possible integrity constraint violation.');
             }
 
             return $this->respondWithItem($district, new DistrictTransformer());
