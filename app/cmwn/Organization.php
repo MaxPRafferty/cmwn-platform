@@ -16,7 +16,7 @@ class Organization extends Model
         'code',
     ];
 
-    public static $createRules = [];
+    public static $createRules = ['code' => 'required', 'district_id' => 'required'];
     public static $updateRules = [];
 
     public function groups()
@@ -34,8 +34,21 @@ class Organization extends Model
         return $this->morphMany('app\Image', 'imageable');
     }
 
+    protected static function getOrganizationWithDistric($organization_code, $district_id)
+    {
+        return Organization::where(['code' => $organization_code])
+                        ->whereHas('districts', function ($query) use ($district_id) {
+                            $query->where('districts.id', $district_id);
+                        })->first();
+    }
+
     public function updateOrganization($parameters)
     {
+
+        if (isset($parameters['code'])) {
+            $this->code = $parameters['code'];
+        }
+
         if (isset($parameters['title'])) {
             $this->title = $parameters['title'];
         }
@@ -44,6 +57,10 @@ class Organization extends Model
             $this->description = $parameters['description'];
         }
 
-        return $this->save();
+        $this->save();
+
+        if (isset($parameters['district_id'])) {
+            $this->districts()->sync([$parameters['district_id']]);
+        }
     }
 }

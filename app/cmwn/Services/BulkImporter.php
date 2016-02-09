@@ -202,7 +202,6 @@ class BulkImporter
             }
 
             self::addAdult($user, $row);
-
         } else {
             return self::constructError('Could not create student. Student ID not set!');
         }
@@ -210,7 +209,6 @@ class BulkImporter
 
     protected static function addAdult($user, $row)
     {
-
         $user->adults()->delete();
 
         if (!empty($row->adult_first_1) || !empty($row->adult_last_1)) {
@@ -325,7 +323,7 @@ class BulkImporter
 
     protected static function updateSchool($organization_code, $district_id, $callback)
     {
-        $organization = self::getOrganizationWithDistric($organization_code, $district_id);
+        $organization = Organization::getOrganizationWithDistric($organization_code, $district_id);
 
         if (!$organization) {
             $organization = new Organization();
@@ -336,14 +334,6 @@ class BulkImporter
         }
 
         return $callback($organization->id);
-    }
-
-    protected static function getOrganizationWithDistric($organization_code, $district_id)
-    {
-        return Organization::where(['code' => $organization_code])
-                        ->whereHas('districts', function ($query) use ($district_id) {
-                            $query->where('districts.id', $district_id);
-                        })->first();
     }
 
     protected static function updateClass($row, $school_id, $callback = null)

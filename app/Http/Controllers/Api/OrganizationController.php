@@ -6,7 +6,6 @@ use app\Transformer\OrganizationTransformer;
 use app\Organization;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 
 class OrganizationController extends ApiController
 {
@@ -41,13 +40,20 @@ class OrganizationController extends ApiController
         $validator = Validator::make(Input::all(), Organization::$createRules);
 
         if ($validator->passes()) {
-            $organization->updateOrganization(Input::all());
+            $organization = Organization::getOrganizationWithDistric(Input::get('code'), Input::get('district_id'));
 
-            return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
+            if (!$organization) {
+                $organization = new Organization();
+                $organization->updateOrganization(Input::all());
+
+                return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
+            } else {
+                return $this->errorInternalError('An organization with the same code and district id already exists.');
+            }
         } else {
             $messages = print_r($validator->errors()->getMessages(), true);
 
-            return $this->errorInternalError('Input validation error: '. $messages);
+            return $this->errorInternalError('Input validation error: '.$messages);
         }
     }
 
@@ -73,7 +79,7 @@ class OrganizationController extends ApiController
         } else {
             $messages = print_r($validator->errors()->getMessages(), true);
 
-            return $this->errorInternalError('Input validation error: '. $messages);
+            return $this->errorInternalError('Input validation error: '.$messages);
         }
     }
 
