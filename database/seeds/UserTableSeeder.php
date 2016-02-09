@@ -18,7 +18,6 @@ class UserTableSeeder extends Seeder
         DB::table('organizations')->truncate();
 
         DB::table('groups')->truncate();
-        DB::table('child_guardian')->truncate();
         DB::table('roleables')->truncate();
         DB::table('game_flip')->truncate();
         DB::table('flip_user')->truncate();
@@ -28,6 +27,8 @@ class UserTableSeeder extends Seeder
 
         for ($i = 1; $i <= 5; ++$i) {
             $districts[$i] = District::create(array(
+                    'system_id' => 1,
+                    'code' => $i,
                     'title' => 'Scnhool District ' . rand(100, 900),
                     'description' => 'District: '.$i.$faker->paragraph(1),
                 ));
