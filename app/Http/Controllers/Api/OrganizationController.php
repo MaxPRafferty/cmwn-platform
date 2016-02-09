@@ -67,7 +67,7 @@ class OrganizationController extends ApiController
         $validator = Validator::make(Input::all(), Organization::$updateRules);
 
         if ($validator->passes()) {
-            $organization->updateParameters(Input::all());
+            $organization->updateOrganization(Input::all());
 
             return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
         } else {
