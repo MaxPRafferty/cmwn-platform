@@ -2,6 +2,7 @@
 
 namespace app;
 
+use Image;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Request;
@@ -10,9 +11,9 @@ class Post extends Model
 {
     use SoftDeletes;
 
-    public function images()
+    public function image()
     {
-        return $this->morphOne('images');
+        return $this->morphOne('app\Image', 'imageable');
     }
 
     public function updatePost($parameters)

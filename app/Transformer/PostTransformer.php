@@ -2,11 +2,18 @@
 
 namespace app\Transformer;
 
-use app\Flip;
+use app\Post;
+use app\Image;
 use League\Fractal\TransformerAbstract;
 
 class PostTransformer extends TransformerAbstract
 {
+
+    protected $availableIncludes = [
+        'user',
+        'image',
+    ];
+
     /**
      * Turn this item object into a generic array.
      *
@@ -22,16 +29,16 @@ class PostTransformer extends TransformerAbstract
             'created_at' => (string) $post->created_at,
         ];
     }
-
     /**
-     * Embed User.
+     * Embed Image.
      *
      * @return League\Fractal\Resource\Collection
      */
-    public function includeUsers(Flip $flip)
+    public function includeImage(Post $post)
     {
-        $users = $flip->users;
+        $image = $post->image;
 
-        return $this->collection($users, new UserTransformer());
+        return $this->item($image, new ImageTransformer());
     }
+
 }
