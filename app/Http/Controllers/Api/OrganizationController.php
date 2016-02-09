@@ -4,6 +4,7 @@ namespace app\Http\Controllers\Api;
 
 use app\Transformer\OrganizationTransformer;
 use app\Organization;
+use app\District;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 
@@ -40,20 +41,26 @@ class OrganizationController extends ApiController
         $validator = Validator::make(Input::all(), Organization::$createRules);
 
         if ($validator->passes()) {
-            $organization = Organization::getOrganizationWithDistric(Input::get('code'), Input::get('district_id'));
+            $district = District::findByUuid(Input::get('district'));
+
+            $organization = Organization::getOrganizationWithDistric(Input::get('code'), $district->id);
 
             if (!$organization) {
                 $organization = new Organization();
-                $organization->updateOrganization(Input::all());
+                if ($organization->updateOrganization(Input::all())) {
+                    $organization->districts()->sync([$district->id]);
+                    return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
+                } else {
+                    return $this->errorInternalError('Could not save the organization.');
+                }
 
-                return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
             } else {
                 return $this->errorInternalError('An organization with the same code and district id already exists.');
             }
         } else {
             $messages = print_r($validator->errors()->getMessages(), true);
 
-            return $this->errorInternalError('Input validation error: '.$messages);
+            return $this->errorInternalError($messages);
         }
     }
 

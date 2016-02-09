@@ -16,7 +16,7 @@ class Organization extends Model
         'code',
     ];
 
-    public static $createRules = ['code' => 'required', 'district_id' => 'required'];
+    public static $createRules = ['code' => 'required', 'district' => 'required'];
     public static $updateRules = [];
 
     public function groups()
@@ -57,10 +57,6 @@ class Organization extends Model
             $this->description = $parameters['description'];
         }
 
-        $this->save();
-
-        if (isset($parameters['district_id'])) {
-            $this->districts()->sync([$parameters['district_id']]);
-        }
+        return $this->save();
     }
 }
