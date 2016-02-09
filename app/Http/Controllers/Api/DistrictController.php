@@ -48,7 +48,7 @@ class DistrictController extends ApiController
             try {
                 $district->updateDistrict(Input::all());
             } catch (QueryException $e) {
-                return $this->errorInternalError('Could not create the district. Possible integrity constraint violation.');
+                return $this->errorInternalError('Could not create the district. Possible integrity constraint violation. Check logs for more information.');
             }
 
             return $this->respondWithItem($district, new DistrictTransformer());
