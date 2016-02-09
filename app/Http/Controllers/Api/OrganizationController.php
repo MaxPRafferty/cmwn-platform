@@ -32,6 +32,25 @@ class OrganizationController extends ApiController
         }
     }
 
+    public function create()
+    {
+        if (!$this->currentUser->isSiteAdmin()) {
+            return $this->errorUnauthorized();
+        }
+
+        $validator = Validator::make(Input::all(), Organization::$createRules);
+
+        if ($validator->passes()) {
+            $organization->updateOrganization(Input::all());
+
+            return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
+        } else {
+            $messages = print_r($validator->errors()->getMessages(), true);
+
+            return $this->errorInternalError('Input validation error: '. $messages);
+        }
+    }
+
     public function update($uuid)
     {
         $organization = Organization::findByUuid($uuid);

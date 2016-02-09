@@ -16,14 +16,8 @@ class Organization extends Model
         'code',
     ];
 
-    /**
-     * [$updateRules description].
-     *
-     * @var array
-     */
-    public static $updateRules = array(
-        'title[]' => 'string',
-    );
+    public static $createRules = [];
+    public static $updateRules = [];
 
     public function groups()
     {
@@ -40,7 +34,7 @@ class Organization extends Model
         return $this->morphMany('app\Image', 'imageable');
     }
 
-    public function updateParameters($parameters)
+    public function updateOrganization($parameters)
     {
         if (isset($parameters['title'])) {
             $this->title = $parameters['title'];
