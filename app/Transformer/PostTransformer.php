@@ -25,10 +25,10 @@ class PostTransformer extends TransformerAbstract
             'uuid' => $post->uuid,
             'message' => $post->title,
             'story' => $post->story,
-            'image' => $post->description,
             'created_at' => (string) $post->created_at,
         ];
     }
+
     /**
      * Embed Image.
      *
