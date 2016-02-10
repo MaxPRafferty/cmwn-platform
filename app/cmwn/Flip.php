@@ -24,19 +24,18 @@ class Flip extends Model
         return $this->belongsToMany('app\Flip', 'game_flips', 'game_id', 'flip_id');
     }
 
-    public function users()
-    {
-        return $this->belongsToMany('app\User');
-    }
-
     public function updateParameters($parameters)
     {
-        if (isset($parameters['title'])) {
-            $this->title = $parameters['title'];
+        if (isset($parameters['user_id'])) {
+            $this->user_id = $parameters['user_id'];
         }
 
-        if (isset($parameters['description'])) {
-            $this->description = $parameters['description'];
+        if (isset($parameters['message'])) {
+            $this->message = $parameters['message'];
+        }
+
+        if (isset($parameters['story'])) {
+            $this->story = $parameters['story'];
         }
 
         return $this->save();

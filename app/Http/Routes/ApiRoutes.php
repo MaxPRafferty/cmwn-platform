@@ -40,6 +40,8 @@ Route::group(['middleware' => 'auth'], function ($router) {
         return \Config::get('mycustomvars.'.$parm_name);
     })->where('parm_name', '[a-z]+');
 
+    Route::get('/feed', 'Api\FeedController@index');
+
     Route::get('/sidebar', 'Api\MasterController@sidebar');
     Route::get('/friends', 'Api\UserController@friends');
     Route::post('/friends', 'Api\FriendshipController@handleFriends');
