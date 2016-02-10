@@ -8,7 +8,6 @@ use League\Fractal\TransformerAbstract;
 
 class PostTransformer extends TransformerAbstract
 {
-
     protected $availableIncludes = [
         'user',
         'image',
@@ -40,5 +39,4 @@ class PostTransformer extends TransformerAbstract
 
         return $this->item($image, new ImageTransformer());
     }
-
 }
