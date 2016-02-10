@@ -171,7 +171,7 @@ class BulkImporter
             $district = self::getDistrict($district_code, 1);
 
             if ($district) {
-                $organization = self::getOrganizationWithDistric($organization_code, $district->id);
+                $organization = Organization::getOrganizationWithDistric($organization_code, $district->id);
             } else {
                 return self::constructError('The there is no district associated with "'.$ddbnnn.'"');
             }
