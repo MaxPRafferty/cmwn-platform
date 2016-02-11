@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class AdminTool extends Model
 {
-	public static $uploadCsvRules = array(
-		//'yourcsv'=>'required|mimes:csv,txt',
-		//'importype'=>'required',
-	);
+    public static $uploadCsvRules = array(
+        //'yourcsv'=>'required|mimes:csv,txt',
+        //'importype'=>'required',
+    );
 
-	public static $uploadImageRules = array(
-		'yourfile'=>'required|image',
-	);
+    public static $uploadImageRules = array(
+        'yourfile' => 'required|image',
+        'teacherAccessCode' => 'required|alpha_num',
+        'studentAccessCode' => 'required|alpha_num',
+    );
 }

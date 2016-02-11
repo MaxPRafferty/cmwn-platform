@@ -30,6 +30,9 @@ class MasterController extends ApiController
     {
         $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
 
+        $teacherAccessCode = Input::get('teacherAccessCode');
+        $studentAccessCode = Input::get('studentAccessCode');
+
         $file = Request::file('yourcsv');
 
         //the files are stored in storage/app/*files*
@@ -39,7 +42,7 @@ class MasterController extends ApiController
         $full_file_name = $file_name.'.'.$extension;
         $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
 
-        $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser];
+        $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser, 'teacherAccessCode' => $teacherAccessCode, 'studentAccessCode' => $studentAccessCode];
 
         $job = (new ImportCSV($data));
 
