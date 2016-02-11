@@ -10,6 +10,7 @@ use app\Jobs\ImportCSV;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class MasterController extends ApiController
@@ -28,25 +29,29 @@ class MasterController extends ApiController
 
     public function importExcel(Request $request)
     {
-        $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
+        $validator = Validator::make(Input::all(), AdminTool::$uploadCsvRules);
 
-        $teacherAccessCode = Input::get('teacherAccessCode');
-        $studentAccessCode = Input::get('studentAccessCode');
+        if ($validator->passes()) {
+            $teacherAccessCode = Input::get('teacherAccessCode');
+            $studentAccessCode = Input::get('studentAccessCode');
 
-        $file = Request::file('yourcsv');
+            $file = Request::file('yourcsv');
 
-        //the files are stored in storage/app/*files*
-        $user_id = Auth::user()->id;
-        $file_name = $file->getFilename().'_userid'.$user_id.'_time'.time();
-        $extension = $file->getClientOriginalExtension();
-        $full_file_name = $file_name.'.'.$extension;
-        $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
+            //the files are stored in storage/app/*files*
+            $user_id = Auth::user()->id;
+            $file_name = $file->getFilename().'_userid'.$user_id.'_time'.time();
+            $extension = $file->getClientOriginalExtension();
+            $full_file_name = $file_name.'.'.$extension;
+            $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
 
-        $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser, 'teacherAccessCode' => $teacherAccessCode, 'studentAccessCode' => $studentAccessCode];
+            $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser, 'teacherAccessCode' => $teacherAccessCode, 'studentAccessCode' => $studentAccessCode];
 
-        $job = (new ImportCSV($data));
+            $job = (new ImportCSV($data));
 
-        $this->dispatch($job);
+            $this->dispatch($job);
+        } else {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
 
     }
 }
