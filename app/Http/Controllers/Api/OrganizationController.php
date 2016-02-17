@@ -49,7 +49,7 @@ class OrganizationController extends ApiController
                 $organization = new Organization();
                 if ($organization->updateOrganization(Input::all())) {
                     $organization->districts()->sync([$district->id]);
-                    return $this->respondWithArray(array('message' => 'The organization has been updated successfully.'));
+                    return $this->respondWithItem($organization, new OrganizationTransformer());
                 } else {
                     return $this->errorInternalError('Could not save the organization.');
                 }
