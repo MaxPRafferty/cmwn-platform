@@ -16,17 +16,17 @@ class AuthController extends ApiController
      */
     public function authenticate()
     {
-        // $header = $this->getCredentialsFromHeader();
-        // $email = $header['email'];
-        // $password = $header['password'];
-
-        $ha = base64_decode(substr(\Request::header('Authorization'), 6));
-        list($email, $password) = explode(':', $ha);
+        $hash = base64_decode(substr(\Request::header('Authorization'), 6));
+        list($email, $password) = explode(':', $hash);
 
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             return $this->respondWithArray(['message' => 'Welcome!']);
         } else {
-            return $this->errorUnauthorized();
+            if (Auth::attempt(['username' => $email, 'password' => $password])) {
+                return $this->respondWithArray(['message' => 'Welcome!']);
+            } else {
+                return $this->errorUnauthorized();
+            }
         }
     }
 
