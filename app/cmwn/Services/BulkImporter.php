@@ -278,9 +278,6 @@ class BulkImporter
 
     protected static function updateUser(User $user, $row, $password = null)
     {
-
-        var_dump($row);
-
         if (!empty($row->student_id)) {
             $user->student_id = $row->student_id;
         }
