@@ -10,6 +10,7 @@ use app\User;
 use app\Adult;
 use Excel;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class BulkImporter
 {
@@ -18,15 +19,17 @@ class BulkImporter
     public function migratecsv()
     {
         $currentUser = $this->data['currentUser'];
+        $teacherAccessCode = $this->data['teacherAccessCode'];
+        $studentAccessCode = $this->data['studentAccessCode'];
 
         $file_path = base_path('storage/app/'.$this->data['file']);
 
-        Excel::selectSheets('Classes', 'Teachers', 'Students')->load($file_path, function ($reader) use ($currentUser) {
+        Excel::selectSheets('Classes', 'Teachers', 'Students')->load($file_path, function ($reader) use ($currentUser, $teacherAccessCode, $studentAccessCode) {
 
             $errors = [];
 
-            $reader->each(function ($sheet) use ($currentUser, &$errors) {
-                $errors = array_merge($errors, self::processSheet($sheet, $currentUser));
+            $reader->each(function ($sheet) use ($currentUser, $teacherAccessCode, $studentAccessCode, &$errors) {
+                $errors = array_merge($errors, self::processSheet($sheet, $currentUser, $teacherAccessCode, $studentAccessCode));
             });
 
             $this->mailNotification($errors, $currentUser);
@@ -36,7 +39,7 @@ class BulkImporter
         Storage::disk('local')->delete($this->data['file']);
     }
 
-    private static function processSheet($sheet, $currentUser)
+    private static function processSheet($sheet, $currentUser, $teacherAccessCode, $studentAccessCode)
     {
         switch ($sheet->getTitle()) {
             case 'Classes':
@@ -44,11 +47,11 @@ class BulkImporter
                 break;
 
             case 'Teachers':
-                return ['teachers' => self::teachers($sheet, $currentUser)];
+                return ['teachers' => self::teachers($sheet, $currentUser, $teacherAccessCode)];
                 break;
 
             case 'Students':
-                return ['students' => self::students($sheet, $currentUser)];
+                return ['students' => self::students($sheet, $currentUser, $studentAccessCode)];
                 break;
 
             default:
@@ -86,29 +89,29 @@ class BulkImporter
         return $errors;
     }
 
-    private static function teachers($sheet, $currentUser)
+    private static function teachers($sheet, $currentUser, $teacherAccessCode)
     {
         $errors = [];
 
-        $sheet->each(function ($row) use ($currentUser, &$errors) {
+        $sheet->each(function ($row) use ($currentUser, $teacherAccessCode, &$errors) {
 
-            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row) {
+            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row, $teacherAccessCode) {
 
                 //Districts
-                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row) {
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row, $teacherAccessCode) {
 
                     //Schools
-                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row) {
+                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row, $teacherAccessCode) {
 
                         switch ($row->type) {
                             case 'Principal':
                             case 'Assistant Principal':
-                                self::updatePrincipal($row, $school_id);
+                                self::updatePrincipal($row, $school_id, $teacherAccessCode);
                                 break;
 
                             case 'Teacher':
-                                return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row) {
-                                    self::updateTeacher($row, $class_id);
+                                return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row, $teacherAccessCode) {
+                                    self::updateTeacher($row, $class_id, $teacherAccessCode);
                                 });
                                 break;
 
@@ -129,23 +132,23 @@ class BulkImporter
         return $errors;
     }
 
-    private static function students($sheet, $currentUser)
+    private static function students($sheet, $currentUser, $studentAccessCode)
     {
         $errors = [];
 
-        $sheet->each(function ($row) use ($currentUser, &$errors) {
+        $sheet->each(function ($row) use ($currentUser, $studentAccessCode, &$errors) {
 
-            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row) {
+            $result = self::parseDdbnn($currentUser, $row->ddbnnn, function ($ditrict_code, $organization_code) use ($row, $studentAccessCode) {
 
                 //Districts
-                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row) {
+                return self::updateDistrict($ditrict_code, 1, function ($district_id) use ($organization_code, $row, $studentAccessCode) {
 
                     //Schools
-                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row) {
+                    return self::updateSchool($organization_code, $district_id, function ($school_id) use ($row, $studentAccessCode) {
 
                         //Classes
-                        return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row) {
-                            return self::updateStudent($row, $class_id);
+                        return self::getClass($row->off_cls, $school_id, function ($class_id) use ($row, $studentAccessCode) {
+                            return self::updateStudent($row, $class_id, $studentAccessCode);
                         });
                     });
                 });
@@ -190,12 +193,12 @@ class BulkImporter
         }
     }
 
-    protected static function updateStudent($row, $class_id)
+    protected static function updateStudent($row, $class_id, $studentAccessCode)
     {
         if (!empty($row->student_id)) {
             $user = User::firstOrNew(['student_id' => $row->student_id]);
 
-            self::updateUser($user, $row);
+            self::updateUser($user, $row, $studentAccessCode);
 
             if ($user->takingClasses->where('id', $class_id)->count() == 0) {
                 $user->groups()->attach([$class_id => ['role_id' => 1]]);
@@ -243,12 +246,12 @@ class BulkImporter
         }
     }
 
-    protected static function updateTeacher($row, $class_id)
+    protected static function updateTeacher($row, $class_id, $teacherAccessCode)
     {
         if (!empty($row->email)) {
             $user = User::firstOrNew(['email' => $row->email]);
 
-            self::updateUser($user, $row);
+            self::updateUser($user, $row, $teacherAccessCode);
 
             if ($user->teachingClasses->where('id', $class_id)->count() == 0) {
                 $user->groups()->attach([$class_id => ['role_id' => 2]]);
@@ -258,12 +261,12 @@ class BulkImporter
         }
     }
 
-    protected static function updatePrincipal($row, $school_id)
+    protected static function updatePrincipal($row, $school_id, $teacherAccessCode)
     {
         if (!empty($row->email)) {
             $user = User::firstOrNew(['email' => $row->email]);
 
-            self::updateUser($user, $row);
+            self::updateUser($user, $row, $teacherAccessCode);
 
             if ($user->organizations()->where('roleable_id', $school_id)->where('roleables.role_id', 2)->count() == 0) {
                 $user->organizations()->attach([$school_id => ['role_id' => 2]]);
@@ -273,7 +276,7 @@ class BulkImporter
         }
     }
 
-    protected static function updateUser(User $user, $row)
+    protected static function updateUser(User $user, $row, $password = null)
     {
         if (!empty($row->student_id)) {
             $user->student_id = $row->student_id;
@@ -297,6 +300,10 @@ class BulkImporter
 
         if (!empty($row->birth_dt)) {
             $user->birthdate = $row->birth_dt;
+        }
+
+        if (!empty($password)) {
+            $user->password = Hash::make($password);
         }
 
         $user->save();
