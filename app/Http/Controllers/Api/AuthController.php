@@ -25,7 +25,7 @@ class AuthController extends ApiController
             if (Auth::attempt(['username' => $email, 'password' => $password])) {
                 return $this->respondWithArray(['message' => 'Welcome!']);
             } else {
-                return $this->errorUnauthorized();
+                return $this->errorUnauthorized('Login attempt was unsuccessful.');
             }
         }
     }
