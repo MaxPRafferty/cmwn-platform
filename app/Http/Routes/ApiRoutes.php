@@ -40,6 +40,8 @@ Route::group(['middleware' => 'auth'], function ($router) {
         return \Config::get('mycustomvars.'.$parm_name);
     })->where('parm_name', '[a-z]+');
 
+    Route::get('/auth/logout', 'Api\AuthController@logout');
+
     Route::group(['middleware' => 'previousPassword'], function ($router) {
 
         Route::get('/feed', 'Api\FeedController@index');
@@ -47,7 +49,6 @@ Route::group(['middleware' => 'auth'], function ($router) {
         Route::get('/sidebar', 'Api\MasterController@sidebar');
         Route::get('/friends', 'Api\UserController@friends');
         Route::post('/friends', 'Api\FriendshipController@handleFriends');
-        Route::get('/auth/logout', 'Api\AuthController@logout');
 
         Route::get('/users', 'Api\UserController@index');
         Route::get('/users/{uuid}', 'Api\UserController@show');
