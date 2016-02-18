@@ -3,9 +3,16 @@
 namespace app\Http\Middleware;
 
 use Closure;
+use Illuminate\Contracts\Auth\Guard;
 
 class PreviousPassword
 {
+
+    public function __construct(Guard $auth)
+    {
+        $this->user = $auth->user();
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -16,7 +23,7 @@ class PreviousPassword
      */
     public function handle($request, Closure $next)
     {
-        if (empty($this->previous_password)) {
+        if (empty($this->user->previous_password)) {
             $errorCode = 'RESET_PASSWORD';
             $statusCode = 401;
             $message = 'Password must be reset';
