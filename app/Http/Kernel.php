@@ -32,5 +32,6 @@ class Kernel extends HttpKernel
         'guest' => \app\Http\Middleware\RedirectIfAuthenticated::class,
         'role' => \app\Http\Middleware\Role::class,
         'siteadmin' => \app\Http\Middleware\SiteAdmin::class,
+        'previousPassword' => \app\Http\Middleware\PreviousPassword::class,
     ];
 }
