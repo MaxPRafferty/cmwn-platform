@@ -26,7 +26,7 @@ class PreviousPassword
         if (empty($this->user->previous_password)) {
             $errorCode = 'RESET_PASSWORD';
             $statusCode = 401;
-            $message = 'Password must be reset';
+            $message = 'Password must be reset!';
 
             $response = [
                 'error' => [
