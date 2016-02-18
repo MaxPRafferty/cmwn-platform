@@ -5,9 +5,7 @@ namespace app\Http\Controllers\Api;
 use Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Session;
 use app\User;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends ApiController
 {
@@ -32,22 +30,24 @@ class AuthController extends ApiController
         }
     }
 
-    public function updatePassword(){
-        $user_id = (int) Input::get('user_id');
-        $user = User::findFromInput($user_id);
-
-        if(!$user->canUpdate($this->currentUser)){
-            return $this->errorUnauthorized();
-        }
+    public function updatePassword()
+    {
+        $user = User::findByUuid(Input::get('user'));
 
         $validator = Validator::make($data = Input::all(), User::$passwordUpdateRules);
+
         if ($validator->fails()) {
             return $this->errorWrongArgs($validator->errors()->all());
         }
 
-        if($user->updatePassword($user, $data['password_confirmation'])) {
-            return $this->respondWithArray(array('message' => 'The password has been updated successfully.'));
+        if (!$user->canUpdate($this->currentUser)) {
+            return $this->errorUnauthorized();
         }
+
+        if ($user->updatePassword($user, $data['password_confirmation'])) {
+            return $this->respondWithArray(array('message' => 'The password has been updated successfully!'));
+        }
+
         return $this->errorInternalError('Something went wrong, please try again.');
     }
 
