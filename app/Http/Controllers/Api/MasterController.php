@@ -35,7 +35,7 @@ class MasterController extends ApiController
             $teacherAccessCode = Input::get('teacherAccessCode');
             $studentAccessCode = Input::get('studentAccessCode');
 
-            $file = Request::file('yourcsv');
+            $file = Request::file('xlsx');
 
             //the files are stored in storage/app/*files*
             $user_id = Auth::user()->id;

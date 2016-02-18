@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AdminTool extends Model
 {
     public static $uploadCsvRules = array(
-        //'yourcsv'=>'required|mimes:csv,txt',
+        'xlsx'=>'required', // TODO: add file type validation
         'teacherAccessCode' => 'required|alpha_num',
         'studentAccessCode' => 'required|alpha_num',
     );

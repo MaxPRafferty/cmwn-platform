@@ -10,6 +10,7 @@ use app\User;
 use app\Adult;
 use Excel;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class BulkImporter
 {
@@ -105,7 +106,7 @@ class BulkImporter
                         switch ($row->type) {
                             case 'Principal':
                             case 'Assistant Principal':
-                                self::updatePrincipal($row, $school_id);
+                                self::updatePrincipal($row, $school_id, $teacherAccessCode);
                                 break;
 
                             case 'Teacher':
@@ -197,7 +198,7 @@ class BulkImporter
         if (!empty($row->student_id)) {
             $user = User::firstOrNew(['student_id' => $row->student_id]);
 
-            self::updateUser($user, $row);
+            self::updateUser($user, $row, $studentAccessCode);
 
             if ($user->takingClasses->where('id', $class_id)->count() == 0) {
                 $user->groups()->attach([$class_id => ['role_id' => 1]]);
@@ -250,7 +251,7 @@ class BulkImporter
         if (!empty($row->email)) {
             $user = User::firstOrNew(['email' => $row->email]);
 
-            self::updateUser($user, $row);
+            self::updateUser($user, $row, $teacherAccessCode);
 
             if ($user->teachingClasses->where('id', $class_id)->count() == 0) {
                 $user->groups()->attach([$class_id => ['role_id' => 2]]);
@@ -260,12 +261,12 @@ class BulkImporter
         }
     }
 
-    protected static function updatePrincipal($row, $school_id)
+    protected static function updatePrincipal($row, $school_id, $teacherAccessCode)
     {
         if (!empty($row->email)) {
             $user = User::firstOrNew(['email' => $row->email]);
 
-            self::updateUser($user, $row);
+            self::updateUser($user, $row, $teacherAccessCode);
 
             if ($user->organizations()->where('roleable_id', $school_id)->where('roleables.role_id', 2)->count() == 0) {
                 $user->organizations()->attach([$school_id => ['role_id' => 2]]);
@@ -275,8 +276,11 @@ class BulkImporter
         }
     }
 
-    protected static function updateUser(User $user, $row)
+    protected static function updateUser(User $user, $row, $password = null)
     {
+
+        var_dump($row);
+
         if (!empty($row->student_id)) {
             $user->student_id = $row->student_id;
         }
@@ -299,6 +303,10 @@ class BulkImporter
 
         if (!empty($row->birth_dt)) {
             $user->birthdate = $row->birth_dt;
+        }
+
+        if (!empty($password)) {
+            $user->password = Hash::make($password);
         }
 
         $user->save();
