@@ -5,6 +5,7 @@ namespace app\Http\Controllers\Api;
 use app\Transformer\MasterTransformer;
 use app\Repositories\SideBarItems;
 use Request;
+use Mail;
 use app\AdminTool;
 use app\Jobs\ImportCSV;
 use Illuminate\Support\Facades\Validator;
@@ -15,8 +16,20 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class MasterController extends ApiController
 {
-
     use DispatchesJobs;
+
+    public function emailTest()
+    {
+        $data['subject'] = 'email test';
+        $data['replyTo'] = 'notifications@ginasink.com';
+
+        Mail::send('emails.test', $data, function ($message) use ($data) {
+            $message->from('notifications@ginasink.com', 'Gina\'s Ink');
+            $message->replyTo($data['replyTo']);
+            $message->subject($data['subject']);
+            $message->to($this->currentUser->email);
+        });
+    }
 
     public function sidebar()
     {
@@ -52,6 +65,5 @@ class MasterController extends ApiController
         } else {
             return $this->errorWrongArgs($validator->errors()->all());
         }
-
     }
 }
