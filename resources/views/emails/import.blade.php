@@ -2,17 +2,17 @@
 	<p>Hi {{$user->first_name}},</p>
 	<p>Your import is complete. The results are listed below:</p>
 
-    <h3>Classes Sheet Errors</h3>
+    <h3>Classes Sheet Errors - {{count($errors['classes'])}}</h3>
     @foreach ($errors['classes'] as $class_error)
         <p>{{$class_error}}</p>
     @endforeach
 
-    <h3>Teachers Sheet Errors</h3>
+    <h3>Teachers Sheet Errors - {{count($errors['teachers'])}}</h3>
     @foreach ($errors['teachers'] as $teacher_error)
         <p>{{$teacher_error}}</p>
     @endforeach
 
-    <h3>Students Sheet Errors</h3>
+    <h3>Students Sheet Errors  - {{count($errors['students'])}}</h3>
     @foreach ($errors['students'] as $student_error)
         <p>{{$student_error}}</p>
     @endforeach

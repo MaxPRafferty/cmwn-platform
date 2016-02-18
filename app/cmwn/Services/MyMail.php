@@ -12,7 +12,6 @@ class MyMail
 
         Mail::send($mailData['template'], $mailData, function ($message) use ($mailData) {
             $message->from('notifications@ginasink.com', 'Gina\'s Ink');
-            //$message->cc('jon@ginasink.com', 'Jon at Ginasink');
             $message->replyTo('notifications@ginasink.com');
             $message->subject($mailData['subject']);
             $message->priority($mailData['priority']);

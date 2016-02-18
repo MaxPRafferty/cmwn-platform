@@ -5,17 +5,31 @@ namespace app\Http\Controllers\Api;
 use app\Transformer\MasterTransformer;
 use app\Repositories\SideBarItems;
 use Request;
+use Mail;
 use app\AdminTool;
 use app\Jobs\ImportCSV;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class MasterController extends ApiController
 {
-
     use DispatchesJobs;
+
+    public function emailTest()
+    {
+        $data['subject'] = 'email test';
+        $data['replyTo'] = 'notifications@ginasink.com';
+
+        Mail::send('emails.test', $data, function ($message) use ($data) {
+            $message->from('notifications@ginasink.com', 'Gina\'s Ink');
+            $message->replyTo($data['replyTo']);
+            $message->subject($data['subject']);
+            $message->to($this->currentUser->email);
+        });
+    }
 
     public function sidebar()
     {
@@ -28,22 +42,28 @@ class MasterController extends ApiController
 
     public function importExcel(Request $request)
     {
-        $validator = Validator::make(\Input::all(), AdminTool::$uploadCsvRules);
+        $validator = Validator::make(Input::all(), AdminTool::$uploadCsvRules);
 
-        $file = Request::file('yourcsv');
+        if ($validator->passes()) {
+            $teacherAccessCode = Input::get('teacherAccessCode');
+            $studentAccessCode = Input::get('studentAccessCode');
 
-        //the files are stored in storage/app/*files*
-        $user_id = Auth::user()->id;
-        $file_name = $file->getFilename().'_userid'.$user_id.'_time'.time();
-        $extension = $file->getClientOriginalExtension();
-        $full_file_name = $file_name.'.'.$extension;
-        $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
+            $file = Request::file('xlsx');
 
-        $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser];
+            //the files are stored in storage/app/*files*
+            $user_id = Auth::user()->id;
+            $file_name = $file->getFilename().'_userid'.$user_id.'_time'.time();
+            $extension = $file->getClientOriginalExtension();
+            $full_file_name = $file_name.'.'.$extension;
+            $output = Storage::disk('local')->put($file_name.'.'.$extension, \File::get($file));
 
-        $job = (new ImportCSV($data));
+            $data = ['file' => $full_file_name, 'currentUser' => $this->currentUser, 'teacherAccessCode' => $teacherAccessCode, 'studentAccessCode' => $studentAccessCode];
 
-        $this->dispatch($job);
+            $job = (new ImportCSV($data));
 
+            $this->dispatch($job);
+        } else {
+            return $this->errorWrongArgs($validator->errors()->all());
+        }
     }
 }

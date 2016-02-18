@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth', 'siteadmin']], function ($router) {
     Route::post('/groups', 'Api\GroupController@create');
     Route::post('/districts', 'Api\DistrictController@create');
     Route::post('/organizations', 'Api\OrganizationController@create');
+    Route::post('/email-test', 'Api\MasterController@emailTest');
 });
 
 //The user must be a logged in to use the rest of these routes.
