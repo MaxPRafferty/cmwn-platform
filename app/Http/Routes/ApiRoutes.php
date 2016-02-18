@@ -41,70 +41,73 @@ Route::group(['middleware' => 'auth'], function ($router) {
         return \Config::get('mycustomvars.'.$parm_name);
     })->where('parm_name', '[a-z]+');
 
-    Route::get('/feed', 'Api\FeedController@index');
-
-    Route::get('/sidebar', 'Api\MasterController@sidebar');
-    Route::get('/friends', 'Api\UserController@friends');
-    Route::post('/friends', 'Api\FriendshipController@handleFriends');
     Route::get('/auth/logout', 'Api\AuthController@logout');
 
-    Route::get('/users', 'Api\UserController@index');
-    Route::get('/users/{uuid}', 'Api\UserController@show');
-    Route::post('/users/{uuid}', 'Api\UserController@update');
+    Route::group(['middleware' => 'previousPassword'], function ($router) {
 
-    Route::get('/users/{id}/groups', 'Api\UserController@getGroups');
+        Route::get('/feed', 'Api\FeedController@index');
 
-    //User Images
-    Route::get('/users/{id}/image', 'Api\UserController@showImage');
-    Route::post('/users/{uuid}/image', 'Api\UserController@updateImage');
-    Route::delete('/users/{id}/image', 'Api\UserController@deleteImage');
+        Route::get('/sidebar', 'Api\MasterController@sidebar');
+        Route::get('/friends', 'Api\UserController@friends');
+        Route::post('/friends', 'Api\FriendshipController@handleFriends');
 
-    Route::get('/suggestedfriends', 'Api\SuggestedController@show');
+        Route::get('/users', 'Api\UserController@index');
+        Route::get('/users/{uuid}', 'Api\UserController@show');
+        Route::post('/users/{uuid}', 'Api\UserController@update');
 
-    Route::get('/users/sendfriendrequest', 'Api\FriendshipController@show');
-    Route::post('/users/acceptfriendrequest/{id}', 'Api\FriendshipController@accept');
-    Route::post('/users/rejectfriendrequest/{id}', 'Api\FriendshipController@reject');
+        Route::get('/users/{id}/groups', 'Api\UserController@getGroups');
 
-    //Get Groups
-    Route::get('/groups', 'Api\GroupController@index');
-    Route::post('/groups/{uuid}/image', 'Api\GroupController@updateImage');
-    Route::get('/groups/{uuid}', 'Api\GroupController@show');
-    Route::get('/groups/{uuid}/users', 'Api\GroupController@getUsers');
+        //User Images
+        Route::get('/users/{id}/image', 'Api\UserController@showImage');
+        Route::post('/users/{uuid}/image', 'Api\UserController@updateImage');
+        Route::delete('/users/{id}/image', 'Api\UserController@deleteImage');
 
-    //Post Groups
-    Route::post('/groups/{uuid}', ['uses' => 'Api\GroupController@update']);
+        Route::get('/suggestedfriends', 'Api\SuggestedController@show');
 
-    //Get Districts
-    Route::get('/districts', 'Api\DistrictController@index');
-    Route::get('/districts/{uuid}', 'Api\DistrictController@show');
+        Route::get('/users/sendfriendrequest', 'Api\FriendshipController@show');
+        Route::post('/users/acceptfriendrequest/{id}', 'Api\FriendshipController@accept');
+        Route::post('/users/rejectfriendrequest/{id}', 'Api\FriendshipController@reject');
 
-    //Post Districts
-    Route::post('/districts/{uuid}', ['uses' => 'Api\DistrictController@update']);
-    Route::post('/districts/{uuid}/image', 'Api\DistrictController@updateImage');
+        //Get Groups
+        Route::get('/groups', 'Api\GroupController@index');
+        Route::post('/groups/{uuid}/image', 'Api\GroupController@updateImage');
+        Route::get('/groups/{uuid}', 'Api\GroupController@show');
+        Route::get('/groups/{uuid}/users', 'Api\GroupController@getUsers');
 
-    //Get Organizations
-    Route::get('/organizations', 'Api\OrganizationController@index');
-    Route::get('/organizations/{uuid}', 'Api\OrganizationController@show');
-    Route::post('/organizations/{uuid}/image', 'Api\OrganizationController@updateImage');
+        //Post Groups
+        Route::post('/groups/{uuid}', ['uses' => 'Api\GroupController@update']);
 
-    Route::post('/organizations/{uuid}', ['uses' => 'Api\OrganizationController@update']);
+        //Get Districts
+        Route::get('/districts', 'Api\DistrictController@index');
+        Route::get('/districts/{uuid}', 'Api\DistrictController@show');
 
-    Route::get('/roles', 'Api\RoleController@index');
-    Route::get('/roles/{id}', 'Api\RoleController@show');
+        //Post Districts
+        Route::post('/districts/{uuid}', ['uses' => 'Api\DistrictController@update']);
+        Route::post('/districts/{uuid}/image', 'Api\DistrictController@updateImage');
 
-    //Games
-    Route::get('/games', 'Api\GameController@index');
-    Route::get('/games/{id}', 'Api\GameController@show');
-    Route::post('/games/{id}', 'Api\GameController@update');
-    Route::delete('/games/{id}', 'Api\GameController@delete');
+        //Get Organizations
+        Route::get('/organizations', 'Api\OrganizationController@index');
+        Route::get('/organizations/{uuid}', 'Api\OrganizationController@show');
+        Route::post('/organizations/{uuid}/image', 'Api\OrganizationController@updateImage');
 
-    //Flips
-    Route::get('/flips', 'Api\FlipController@index');
-    Route::get('/flips/{id}', 'Api\FlipController@show');
-    Route::post('/flips/{id}', 'Api\FlipController@update');
-    Route::delete('/flips/{id}', 'Api\FlipController@delete');
+        Route::post('/organizations/{uuid}', ['uses' => 'Api\OrganizationController@update']);
 
-    //Admin tasks: Import Excel files and update the DB.
-    Route::post('/admin/importexcel', ['uses' => 'Api\MasterController@importExcel']);
+        Route::get('/roles', 'Api\RoleController@index');
+        Route::get('/roles/{id}', 'Api\RoleController@show');
 
+        //Games
+        Route::get('/games', 'Api\GameController@index');
+        Route::get('/games/{id}', 'Api\GameController@show');
+        Route::post('/games/{id}', 'Api\GameController@update');
+        Route::delete('/games/{id}', 'Api\GameController@delete');
+
+        //Flips
+        Route::get('/flips', 'Api\FlipController@index');
+        Route::get('/flips/{id}', 'Api\FlipController@show');
+        Route::post('/flips/{id}', 'Api\FlipController@update');
+        Route::delete('/flips/{id}', 'Api\FlipController@delete');
+
+        //Admin tasks: Import Excel files and update the DB.
+        Route::post('/admin/importexcel', ['uses' => 'Api\MasterController@importExcel']);
+    });
 });

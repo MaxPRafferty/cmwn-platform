@@ -42,6 +42,7 @@ class User extends Model implements
         'last_name',
         'email',
         'password',
+        'previous_password',
         'username',
         'student_id',
         'gender',
@@ -97,7 +98,7 @@ class User extends Model implements
     );
 
     public static $passwordUpdateRules = array(
-        'user_id' => 'required|string',
+        'user' => 'string',
         'current_password' => 'required',
         'password' => 'required|confirmed',
         'password_confirmation' => 'required',
@@ -384,6 +385,7 @@ class User extends Model implements
     {
         return $user->fill([
             'password' => \Hash::make($newPassword),
+            'previous_password' => $user->password,
         ])->save();
     }
 

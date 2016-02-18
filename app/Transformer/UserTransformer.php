@@ -2,9 +2,7 @@
 
 namespace app\Transformer;
 
-use app\cmwn\Users\UsersRelationshipHandler;
 use app\User;
-use Illuminate\Support\Facades\Auth;
 use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
@@ -26,7 +24,7 @@ class UserTransformer extends TransformerAbstract
         'games',
         'flips',
         'images',
-        'roles'
+        'roles',
     ];
 
     /**
@@ -36,20 +34,18 @@ class UserTransformer extends TransformerAbstract
      */
     public function transform(User $user)
     {
-
         $data = [
-            'uuid'         => $user->uuid,
-            'first_name'   => $user->first_name,
-            'last_name'    => $user->last_name,
-            'username'     => $user->username,
-            'gender'       => $user->gender,
-            'birthdate'    => $user->birthdate,
-            'joined'       => (string) $user->created_at,
+            'uuid' => $user->uuid,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'username' => $user->username,
+            'gender' => $user->gender,
+            'birthdate' => $user->birthdate,
+            'joined' => (string) $user->created_at,
             'relationship' => $user->relationship,
         ];
 
         return $data;
-
     }
 
     /**
@@ -73,7 +69,7 @@ class UserTransformer extends TransformerAbstract
     {
         $friends = $user->friends;
 
-        return $this->collection($friends, new UserTransformer());
+        return $this->collection($friends, new self());
     }
 
     /**
@@ -84,7 +80,8 @@ class UserTransformer extends TransformerAbstract
     public function includeFriendRequests(User $user)
     {
         $friendrequests = $user->friendrequests;
-        return $this->collection($friendrequests, new UserTransformer());
+
+        return $this->collection($friendrequests, new self());
     }
 
     /**
@@ -95,7 +92,8 @@ class UserTransformer extends TransformerAbstract
     public function includeBlockedFriends(User $user)
     {
         $blockedfriends = $user->blockedfriends;
-        return $this->collection($blockedfriends, new UserTransformer());
+
+        return $this->collection($blockedfriends, new self());
     }
 
     /**
@@ -106,7 +104,8 @@ class UserTransformer extends TransformerAbstract
     public function includePendingFriends(User $user)
     {
         $pendingfriends = $user->pendingfriends;
-        return $this->collection($pendingfriends, new UserTransformer());
+
+        return $this->collection($pendingfriends, new self());
     }
     /**
      * Embed Groups.
@@ -116,6 +115,7 @@ class UserTransformer extends TransformerAbstract
     public function includeGroups(User $user)
     {
         $groups = $user->groups;
+
         return $this->collection($groups, new GroupTransformer());
     }
 
@@ -127,7 +127,8 @@ class UserTransformer extends TransformerAbstract
     public function includeGuardians(User $user)
     {
         $guardians = $user->guardians;
-        return $this->collection($guardians, new UserTransformer());
+
+        return $this->collection($guardians, new self());
     }
 
     /**
@@ -138,7 +139,8 @@ class UserTransformer extends TransformerAbstract
     public function includeChildren(User $user)
     {
         $children = $user->children;
-        return $this->collection($children, new UserTransformer());
+
+        return $this->collection($children, new self());
     }
 
     /**
@@ -149,6 +151,7 @@ class UserTransformer extends TransformerAbstract
     public function includeDistricts(User $user)
     {
         $districts = $user->districts;
+
         return $this->collection($districts, new DistrictTransformer());
     }
 
@@ -160,6 +163,7 @@ class UserTransformer extends TransformerAbstract
     public function includeOrganizations(User $user)
     {
         $organizations = $user->organizations;
+
         return $this->collection($organizations, new OrganizationTransformer());
     }
 
@@ -171,6 +175,7 @@ class UserTransformer extends TransformerAbstract
     public function includeImages(User $user)
     {
         $image = $user->images;
+
         return $this->collection($image, new ImageTransformer());
     }
 
@@ -182,6 +187,7 @@ class UserTransformer extends TransformerAbstract
     public function includeGames(User $user)
     {
         $games = $user->games;
+
         return $this->collection($games, new GameTransformer());
     }
 
@@ -193,6 +199,7 @@ class UserTransformer extends TransformerAbstract
     public function includeFlips(User $user)
     {
         $flips = $user->flips;
+
         return $this->collection($flips, new FlipTransformer());
     }
 }
