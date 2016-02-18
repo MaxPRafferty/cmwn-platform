@@ -35,12 +35,16 @@ class AuthController extends ApiController
 
         // TODO - current_password is currently not validated in this workflow anywhere, and it should be.
 
-        $user = User::findByUuid(Input::get('user'));
-
         $validator = Validator::make($data = Input::all(), User::$passwordUpdateRules);
 
         if ($validator->fails()) {
             return $this->errorWrongArgs($validator->errors()->all());
+        }
+
+        if (Input::has('user')) {
+            $user = User::findByUuid(Input::get('user'));
+        } else {
+            $user = $this->currentUser;
         }
 
         if (!$user->canUpdate($this->currentUser)) {
