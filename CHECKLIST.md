@@ -1,3 +1,10 @@
  - [ ] Default image when image not approved
  - [ ] List for Auto-generated user names
  - [ ] Reserve user names
+ - [ ] Parameters for UserResource Searching
+ - [ ] Parameters for OrgResource
+ - [ ] Hal links for reset password
+ - [ ] Hal Links for Org groups
+ - [ ] Hal links for user Orgs
+ - [ ] Hal links for user groups
+ - [ ] Bad word filter for username

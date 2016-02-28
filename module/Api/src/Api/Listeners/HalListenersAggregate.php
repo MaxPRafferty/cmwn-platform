@@ -35,6 +35,8 @@ class HalListenersAggregate
     {
         /** @var Entity $entity */
         $entity = $event->getParam('entity');
+        // TODO Re-implement once this route is back
+        // TODO Make this listener load other listeners from SM
         return;
         if (!$entity->entity instanceof UserInterface) {
         }

@@ -1,10 +1,6 @@
 <?php
 
 return [
-    'user-table-config' => [
-        'class' => ''
-    ],
-
     'service_manager' => [
         'aliases' => [
             'User\Service' => 'User\Service\UserService'
