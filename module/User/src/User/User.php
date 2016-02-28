@@ -7,6 +7,7 @@ use Application\Utils\Date\DateDeletedTrait;
 use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\Date\DateUpdatedTrait;
 use Application\Utils\MetaDataTrait;
+use Application\Utils\PropertiesTrait;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
@@ -14,6 +15,7 @@ use Zend\Stdlib\ArraySerializableInterface;
  * Astract Class that helps all users
  *
  * @package User
+ * @property string $userId
  */
 abstract class User implements ArraySerializableInterface, UserInterface
 {
@@ -21,6 +23,7 @@ abstract class User implements ArraySerializableInterface, UserInterface
     use DateDeletedTrait;
     use DateUpdatedTrait;
     use MetaDataTrait;
+    use PropertiesTrait;
 
     //  This by no means is a stab at the LGBT commumnity, currently DOE only has male and female
     const GENDER_MALE   = 'Male';
@@ -133,7 +136,7 @@ abstract class User implements ArraySerializableInterface, UserInterface
             'middle_name' => $this->getMiddleName(),
             'last_name'   => $this->getLastName(),
             'gender'      => $this->getGender(),
-            'birthdate'   => $this->getBirthdate() !== null ? $this->getBirthdate()->format(\DateTime::ISO8601) : null,
+            'birthdate'   => $this->getBirthdate() !== null ? $this->getBirthdate()->format('Y-m-d') : null,
             'meta'        => $this->getMeta(),
             'created'     => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
             'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,

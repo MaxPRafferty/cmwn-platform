@@ -48,7 +48,7 @@ class AdultTest extends TestCase
             'middle_name' => 'Henry',
             'last_name'   => 'Reeves',
             'gender'      => Adult::GENDER_MALE,
-            'birthdate'   => $date->format(\DateTime::ISO8601),
+            'birthdate'   => $date->format('Y-m-d'),
             'created'     => $date->format(\DateTime::ISO8601),
             'updated'     => $date->format(\DateTime::ISO8601),
             'deleted'     => $date->format(\DateTime::ISO8601),

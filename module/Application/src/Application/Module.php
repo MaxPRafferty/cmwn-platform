@@ -14,6 +14,7 @@ use Zend\Mvc\MvcEvent;
  * Class Module
  *
  * @package Application
+ * @codeCoverageIgnore
  */
 class Module implements ConfigProviderInterface
 {

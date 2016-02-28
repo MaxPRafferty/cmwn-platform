@@ -5,7 +5,7 @@ namespace User\Service;
 use Application\Exception\NotFoundException;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Predicate\Predicate;
 use Zend\Paginator\Adapter\DbSelect;
 
 interface UserServiceInterface
@@ -42,7 +42,7 @@ interface UserServiceInterface
     public function deleteUser(UserInterface $user, $soft = true);
 
     /**
-     * @param null|Where|array $where
+     * @param null|Predicate|array $where
      * @param bool $paginate
      * @param null|object $prototype
      * @return HydratingResultSet|DbSelect
