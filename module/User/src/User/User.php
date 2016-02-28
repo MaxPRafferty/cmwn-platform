@@ -8,6 +8,7 @@ use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\Date\DateUpdatedTrait;
 use Application\Utils\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
+use Application\Utils\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
@@ -17,7 +18,7 @@ use Zend\Stdlib\ArraySerializableInterface;
  * @package User
  * @property string $userId
  */
-abstract class User implements ArraySerializableInterface, UserInterface
+abstract class User implements ArraySerializableInterface, UserInterface, SoftDeleteInterface
 {
     use DateCreatedTrait;
     use DateDeletedTrait;

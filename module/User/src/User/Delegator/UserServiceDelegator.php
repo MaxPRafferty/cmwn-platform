@@ -3,6 +3,7 @@
 namespace User\Delegator;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\HideDeletedEntitiesListener;
 use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -34,8 +35,11 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
 
     protected function attachDefaultListeners()
     {
+        $hideListener = new HideDeletedEntitiesListener(['fetch.all.users'], ['fetch.user.post']);
+        $hideListener->setEntityParamKey('user');
+
         $this->getEventManager()->attach(new CheckUserListener());
-        $this->getEventManager()->attach(new HideDeletedUsersListener());
+        $this->getEventManager()->attach($hideListener);
     }
 
 

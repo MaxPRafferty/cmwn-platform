@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class UserName extends AbstractMigration
+class OrgType extends AbstractMigration
 {
     /**
      * Change Method.
@@ -27,15 +27,10 @@ class UserName extends AbstractMigration
      */
     public function change()
     {
-        if ($this->hasTable('names')) {
-            return;
+        $table = $this->table('organizations');
+        if (!$table->hasColumn('type')) {
+            $table->addColumn('type', 'string', ['null' => true])
+                ->update();
         }
-
-        $table = $this->table('names', ['id' => false, 'primary_key' => ['name']]);
-        $table->addColumn('name', 'string')
-            ->addColumn('position', 'enum', ['values' => ['LEFT', 'RIGHT']])
-            ->addColumn('count', 'integer', ['signed' => false])
-            ->addIndex(['name', 'position'], ['unique' => true])
-            ->create();
     }
 }
