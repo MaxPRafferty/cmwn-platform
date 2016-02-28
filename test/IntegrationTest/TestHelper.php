@@ -13,10 +13,18 @@ use Zend\ServiceManager\ServiceManager;
  */
 class TestHelper
 {
-     /**
-      * @var ServiceManager
-      */
-     protected static $serviceManager;
+    /**
+     * @var ServiceManager
+     */
+    protected static $serviceManager;
+
+    /**
+     * @return bool
+     */
+    public static function isBootstrapped()
+    {
+        return null !== static::$serviceManager;
+    }
 
     /**
      * @before

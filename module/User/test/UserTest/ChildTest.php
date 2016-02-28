@@ -2,8 +2,10 @@
 
 namespace UserTest;
 
+use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
+use User\Service\StaticNameService;
 
 /**
  * Test AdultTest
@@ -12,11 +14,23 @@ use User\Child;
  */
 class ChildTest extends TestCase
 {
-    public function testItShouldExtractAndhydrateWithNulls()
+    /**
+     * @before
+     */
+    public function checkThatApplicationHasBeenBootstrapped()
     {
+        $this->assertTrue(
+            TestHelper::isBootstrapped(),
+            'This test can only be run if the application has been bootstrapped'
+        );
+    }
+
+    public function testItShouldExtractAndHydrateWithNulls()
+    {
+        $name = StaticNameService::generateRandomName();
         $expected = [
             'user_id'     => '',
-            'username'    => null,
+            'username'    => $name->userName,
             'email'       => null,
             'first_name'  => null,
             'middle_name' => null,
@@ -39,10 +53,10 @@ class ChildTest extends TestCase
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
-
+        $name = StaticNameService::generateRandomName();
         $expected = [
             'user_id'     => 'abcd-efgh-ijklm-nop',
-            'username'    => 'manchuck',
+            'username'    => $name->userName,
             'email'       => 'chuck@manchuck.com',
             'first_name'  => 'Charles',
             'middle_name' => 'Henry',
@@ -60,5 +74,20 @@ class ChildTest extends TestCase
         $adult->exchangeArray($expected);
 
         $this->assertEquals($expected, $adult->getArrayCopy());
+    }
+
+    public function testItShouldGenerateRandomNameWhenUserNameIsNotSet()
+    {
+        $child = new Child();
+        $this->assertFalse($child->isNameGenerated());
+        $this->assertNull($child->getGenratedName());
+
+        $this->assertNotEmpty($child->getUserName());
+        $this->assertNotNull($child->getGenratedName());
+        $this->assertTrue($child->isNameGenerated());
+
+        $child->setUserName('foo_bar');
+        $this->assertFalse($child->isNameGenerated());
+        $this->assertNull($child->getGenratedName());
     }
 }

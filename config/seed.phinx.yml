@@ -1,0 +1,7 @@
+paths:
+    migrations: /var/www/data/migrations
+    seeds: /var/www/data/seeds
+environments:
+    default_migration_table: phinxlog
+    default_database: zf2
+    zf2: { adapter: mysql, host: localhost, name: cmwn, user: cmwn_user, pass: cmwn_pass123$, port: 3306 }

@@ -2,7 +2,9 @@
 
 namespace User;
 
+use User\Service\StaticNameService;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\Mvc\MvcEvent;
 
 /**
  * Core Classes for Cmwn
@@ -29,5 +31,11 @@ class Module implements ConfigProviderInterface
                 ],
             ],
         ];
+    }
+
+    public function onBootstrap(MvcEvent $event)
+    {
+        $appConfig = $event->getTarget()->getServiceManager()->get('Config');
+        StaticNameService::seedNames($appConfig['user-names']);
     }
 }
