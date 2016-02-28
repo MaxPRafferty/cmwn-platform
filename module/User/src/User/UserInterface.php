@@ -148,4 +148,11 @@ interface UserInterface
      * @return $this
      */
     public function setUpdated($updated);
+
+    /**
+     * Test to see if the user is deleted
+     *
+     * @return bool
+     */
+    public function isDeleted();
 }
