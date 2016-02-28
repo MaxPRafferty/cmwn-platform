@@ -38,6 +38,10 @@ class UserMigration extends AbstractMigration
 
     protected function upUsers()
     {
+        if ($this->hasTable('users')) {
+            return $this;
+        }
+
         $table = $this->table('users', ['id' => false, 'primary_key' => ['user_id']]);
         $table->addColumn('user_id', 'string')
             ->addColumn('username', 'string', ['limit' => 60])
@@ -63,6 +67,10 @@ class UserMigration extends AbstractMigration
 
     protected function upOrganizations()
     {
+        if ($this->hasTable('organizations')) {
+            return $this;
+        }
+
         $table = $this->table('organizations', ['id' => false, 'primary_key' => ['org_id']]);
         $table->addColumn('org_id', 'string')
             ->addColumn('title', 'string')
@@ -78,6 +86,10 @@ class UserMigration extends AbstractMigration
 
     protected function upGroups()
     {
+        if ($this->hasTable('groups')) {
+            return $this;
+        }
+
         $table = $this->table('groups', ['id' => false, 'primary_key' => ['group_id']]);
         $table->addColumn('group_id', 'string')
             ->addColumn('organization_id', 'string')
@@ -104,6 +116,10 @@ class UserMigration extends AbstractMigration
 
     protected function upImages()
     {
+        if ($this->hasTable('images')) {
+            return $this;
+        }
+
         $table = $this->table('images', ['id' => false, 'primary_key' => ['image_id']]);
         $table->addColumn('image_id', 'string')
             ->addColumn('url', 'string')
@@ -117,6 +133,10 @@ class UserMigration extends AbstractMigration
 
     protected function upGames()
     {
+        if ($this->hasTable('games')) {
+            return $this;
+        }
+
         $table = $this->table('games', ['id' => false, 'primary_key' => ['game_id']]);
         $table->addColumn('game_id', 'string')
             ->addColumn('url', 'string')
@@ -130,19 +150,23 @@ class UserMigration extends AbstractMigration
 
     protected function upPivots()
     {
-        $table = $this->table('user_groups', ['id' => false, 'primary_key' => ['user_id', 'group_id']]);
-        $table->addColumn('user_id', 'string')
-            ->addColumn('group_id', 'string')
-            ->addForeignKey('user_id', 'users', 'user_id', ['delete' => 'CASCADE'])
-            ->addForeignKey('group_id', 'groups', 'group_id', ['delete' => 'CASCADE'])
-            ->create();
+        if (!$this->hasTable('user_groups')) {
+            $table = $this->table('user_groups', ['id' => false, 'primary_key' => ['user_id', 'group_id']]);
+            $table->addColumn('user_id', 'string')
+                ->addColumn('group_id', 'string')
+                ->addForeignKey('user_id', 'users', 'user_id', ['delete' => 'CASCADE'])
+                ->addForeignKey('group_id', 'groups', 'group_id', ['delete' => 'CASCADE'])
+                ->create();
+        }
 
-        $table = $this->table('user_images', ['id' => false, 'primary_key' => ['user_id', 'image_id']]);
-        $table->addColumn('user_id', 'string')
-            ->addColumn('image_id', 'string')
-            ->addForeignKey('user_id', 'users', 'user_id', ['delete' => 'CASCADE'])
-            ->addForeignKey('image_id', 'images', 'image_id', ['delete' => 'CASCADE'])
-            ->create();
+        if ($this->hasTable('images')) {
+            $table = $this->table('user_images', ['id' => false, 'primary_key' => ['user_id', 'image_id']]);
+            $table->addColumn('user_id', 'string')
+                ->addColumn('image_id', 'string')
+                ->addForeignKey('user_id', 'users', 'user_id', ['delete' => 'CASCADE'])
+                ->addForeignKey('image_id', 'images', 'image_id', ['delete' => 'CASCADE'])
+                ->create();
+        }
 
         return $this;
     }
