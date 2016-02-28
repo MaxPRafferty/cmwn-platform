@@ -6,7 +6,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Service\UserService;
 use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Predicate\Predicate as Where;
 
 /**
  * Test UserServiceTest
@@ -52,7 +52,7 @@ class UserServiceTest extends TestCase
         $this->tableGateway
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Where', $where);
+                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -66,7 +66,7 @@ class UserServiceTest extends TestCase
         $this->tableGateway
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Where', $where);
+                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -81,7 +81,7 @@ class UserServiceTest extends TestCase
         $this->tableGateway
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) use (&$expectedWhere) {
-                /** @var \Zend\Db\Sql\Where $where */
+                /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
                 return new \ArrayIterator([]);
 

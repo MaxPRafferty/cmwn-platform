@@ -5,7 +5,7 @@ namespace UserTest\Delegator;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Delegator\UserServiceDelegator;
-use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Predicate\Predicate as Where;
 use Zend\EventManager\Event;
 
 /**
@@ -50,6 +50,7 @@ class UserServiceDelegatorTest extends TestCase
     {
         $this->calledEvents = [];
         $this->delegator    = new UserServiceDelegator($this->userService);
+        $this->delegator->getEventManager()->clearListeners('save.user');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
