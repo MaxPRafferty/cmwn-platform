@@ -3,7 +3,6 @@ namespace Api\V1\Rest\User;
 
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
-use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;

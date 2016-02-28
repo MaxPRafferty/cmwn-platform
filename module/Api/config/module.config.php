@@ -3,6 +3,7 @@ return array(
     'service_manager' => array(
         'factories' => array(
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
+            'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
         ),
     ),
     'router' => array(
@@ -16,11 +17,21 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.org' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/org[/:org_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Org\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
         'uri' => array(
             0 => 'api.rest.user',
+            1 => 'api.rest.org',
         ),
     ),
     'zf-rest' => array(
@@ -57,10 +68,32 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\User\\UserCollection',
             'service_name' => 'User',
         ),
+        'Api\\V1\\Rest\\Org\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Org\\OrgResource',
+            'route_name' => 'api.rest.org',
+            'route_identifier_name' => 'org_id',
+            'collection_name' => 'org',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PUT',
+                2 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Org\\OrgEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Org\\OrgCollection',
+            'service_name' => 'Org',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
             'Api\\V1\\Rest\\User\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Org\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -68,9 +101,18 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Org\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Org\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -90,11 +132,26 @@ return array(
                 'route_identifier_name' => 'user_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Org\\OrgEntity' => array(
+                'entity_identifier_name' => 'org_id',
+                'route_name' => 'api.rest.org',
+                'route_identifier_name' => 'org_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Org\\OrgCollection' => array(
+                'entity_identifier_name' => 'org_id',
+                'route_name' => 'api.rest.org',
+                'route_identifier_name' => 'org_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
         'Api\\V1\\Rest\\User\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\User\\Validator',
+        ),
+        'Api\\V1\\Rest\\Org\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Org\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -157,9 +214,7 @@ return array(
             ),
             6 => array(
                 'required' => false,
-                'validators' => array(
-
-                ),
+                'validators' => array(),
                 'filters' => array(),
                 'name' => 'username',
                 'description' => 'Users name',
@@ -172,7 +227,6 @@ return array(
                         'name' => 'Zend\\Validator\\EmailAddress',
                         'options' => array(),
                     ),
-
                 ),
                 'filters' => array(),
                 'name' => 'email',
@@ -191,6 +245,57 @@ return array(
                 'name' => 'birthdate',
                 'description' => 'birthdate',
                 'error_message' => 'Invalid Birthdate',
+            ),
+        ),
+        'Api\\V1\\Rest\\Org\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'max' => '255',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'title',
+                'description' => 'Organizations title',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'max' => '255',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'description',
+                'description' => 'Organizations description',
+            ),
+            2 => array(
+                'required' => false,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'max' => '255',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'type',
+                'description' => 'Type of organization',
+            ),
+            3 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'meta',
+                'description' => 'Meta data for the organization',
             ),
         ),
     ),

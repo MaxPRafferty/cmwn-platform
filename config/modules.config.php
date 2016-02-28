@@ -7,6 +7,7 @@
 return array(
     'Application',
     'User',
+    'Org',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',
