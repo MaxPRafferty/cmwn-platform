@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.6/phpunit.xsd"
+        bootstrap="./Bootstrap.php"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        colors="false"
+        timeoutForSmallTests="1"
+        timeoutForMediumTests="10"
+        timeoutForLargeTests="60">
+    <php>
+        <ini name="date.timezone" value="UTC"/>
+    </php>
+    <testsuites>
+        <testsuite name="CMWN Tests">
+            <directory>../module/*/test</directory>
+            <directory>./IntegrationTest</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>../module/*/src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
