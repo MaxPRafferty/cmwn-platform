@@ -26,29 +26,54 @@ class TypeValidatorTest extends TestCase
         $this->validator = new TypeValidator();
     }
 
-    public function testItShouldPassWhenAdultIsPassedAndNoBirthdatePassed()
+    public function testItShouldPassWhenAdultIsPassedAndUsernamePassed()
     {
-        $this->assertTrue($this->validator->isValid(UserInterface::TYPE_ADULT, []));
+        $this->assertTrue(
+            $this->validator->isValid(
+                UserInterface::TYPE_ADULT,
+                ['username' => 'manchuck']
+            )
+        );
     }
 
     public function testItShouldFailWhenChildIsPassedAndNoBirthdatePassed()
     {
-        $this->assertFalse($this->validator->isValid(UserInterface::TYPE_CHILD, []));
+        $this->assertFalse(
+            $this->validator->isValid(
+                UserInterface::TYPE_CHILD,
+                []
+            )
+        );
     }
 
-    public function testItShouldPassWhenAdultIsPassedAndBirthdatePassed()
+    public function testItShouldFailWhenAdultIsPassedAndUserNameIsMissing()
     {
-        $this->assertTrue($this->validator->isValid(UserInterface::TYPE_ADULT, ['birthdate' => '1982-05-13']));
+        $this->assertFalse(
+            $this->validator->isValid(
+                UserInterface::TYPE_ADULT,
+                []
+            )
+        );
     }
 
     public function testItShouldPassWhenChildIsPassedAndBirthdatePassed()
     {
-        $this->assertTrue($this->validator->isValid(UserInterface::TYPE_CHILD, ['birthdate' => '1982-05-13']));
+        $this->assertTrue(
+            $this->validator->isValid(
+                UserInterface::TYPE_CHILD,
+                ['birthdate' => '1982-05-13']
+            )
+        );
     }
 
     public function testItShouldFailWhenInvalidTypePassed()
     {
-        $this->assertFalse($this->validator->isValid('foo', []));
+        $this->assertFalse(
+            $this->validator->isValid(
+                'foo',
+                []
+            )
+        );
     }
 
 }
