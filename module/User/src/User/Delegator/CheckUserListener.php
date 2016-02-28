@@ -3,12 +3,10 @@
 namespace User\Delegator;
 
 use Application\Exception\DuplicateEntryException;
-use Application\Exception\NotFoundException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;

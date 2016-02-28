@@ -8,8 +8,9 @@ use User\StaticUserFactory;
 use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\Predicate;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Json\Json;
 use Zend\Paginator\Adapter\DbSelect;
@@ -32,14 +33,14 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * @param null|Predicate|array $where
+     * @param null|PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof Predicate ? new Predicate($where) : $where;
+        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
         $resultSet = new HydratingResultSet(new UserHydrator($prototype), $prototype);
 
         if ($paginate) {

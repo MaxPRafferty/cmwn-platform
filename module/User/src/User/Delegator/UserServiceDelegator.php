@@ -7,7 +7,8 @@ use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\Predicate;
+use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -34,6 +35,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     protected function attachDefaultListeners()
     {
         $this->getEventManager()->attach(new CheckUserListener());
+        $this->getEventManager()->attach(new HideDeletedUsersListener());
     }
 
 
@@ -111,14 +113,14 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     }
 
     /**
-     * @param null|Predicate|array $where
+     * @param null|PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where    = !$where instanceof Predicate ? new Predicate($where) : $where;
+        $where    = !$where instanceof PredicateInterface ? new Where($where) : $where;
         $event    = new Event(
             'fetch.all.users',
             $this->realService,
