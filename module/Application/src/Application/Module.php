@@ -25,6 +25,8 @@ class Module implements ConfigProviderInterface
         $eventManager        = $mvcEvent->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+
     }
 
     /**
