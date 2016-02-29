@@ -11,11 +11,10 @@ use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
 
 /**
- * Class HideDeletedUsersListener
+ * Class HideDeletedEntityListener
  *
- * @todo Allow some users to be able to see deleted users
+ * @todo Allow some entitys to be able to see deleted entitys
  * @todo Make this class more genric
- * @package User\Delegator
  */
 class HideDeletedEntitiesListener implements ListenerAggregateInterface
 {
@@ -157,12 +156,12 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
      */
     public function hideEntity(Event $event)
     {
-        $user = $event->getParam($this->entityParamKey);
-        if (!$user instanceof SoftDeleteInterface) {
+        $entity = $event->getParam($this->entityParamKey);
+        if (!$entity instanceof SoftDeleteInterface) {
             return;
         }
 
-        if ($user->isDeleted()) {
+        if ($entity->isDeleted()) {
             throw new NotFoundException('Entity not found');
         }
     }

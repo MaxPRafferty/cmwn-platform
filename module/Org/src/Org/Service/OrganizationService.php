@@ -78,8 +78,6 @@ class OrganizationService implements OrganizationServiceInterface
         $data = $org->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
-
-        unset($data['password']);
         unset($data['deleted']);
 
         if ($new) {
