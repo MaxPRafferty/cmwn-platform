@@ -10,6 +10,7 @@ return array(
     'Org',
     'Game',
     'Asset',
+    'Group',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',

@@ -93,6 +93,7 @@ interface ImageInterface
      * @return bool
      */
     public function isDeleted();
+
     /**
      * @return \DateTime|null
      */
