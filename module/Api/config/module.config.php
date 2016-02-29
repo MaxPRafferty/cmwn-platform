@@ -4,6 +4,7 @@ return array(
         'factories' => array(
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
+            'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',
         ),
     ),
     'router' => array(
@@ -26,12 +27,22 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.game' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/game[/:game_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Game\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
         'uri' => array(
             0 => 'api.rest.user',
             1 => 'api.rest.org',
+            2 => 'api.rest.game',
         ),
     ),
     'zf-rest' => array(
@@ -89,11 +100,30 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Org\\OrgCollection',
             'service_name' => 'Org',
         ),
+        'Api\\V1\\Rest\\Game\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Game\\GameResource',
+            'route_name' => 'api.rest.game',
+            'route_identifier_name' => 'game_id',
+            'collection_name' => 'game',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Game\\GameEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Game\\GameCollection',
+            'service_name' => 'Game',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
             'Api\\V1\\Rest\\User\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Org\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Game\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -106,6 +136,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Game\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -113,6 +148,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Org\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Game\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -142,6 +181,18 @@ return array(
                 'entity_identifier_name' => 'org_id',
                 'route_name' => 'api.rest.org',
                 'route_identifier_name' => 'org_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Game\\GameEntity' => array(
+                'entity_identifier_name' => 'game_id',
+                'route_name' => 'api.rest.game',
+                'route_identifier_name' => 'game_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Game\\GameCollection' => array(
+                'entity_identifier_name' => 'game_id',
+                'route_name' => 'api.rest.game',
+                'route_identifier_name' => 'game_id',
                 'is_collection' => true,
             ),
         ),

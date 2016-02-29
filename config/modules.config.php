@@ -8,6 +8,7 @@ return array(
     'Application',
     'User',
     'Org',
+    'Game',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',
