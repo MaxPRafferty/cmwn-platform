@@ -5,6 +5,7 @@ return array(
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
             'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',
+            'Api\\V1\\Rest\\Image\\ImageResource' => 'Api\\V1\\Rest\\Image\\ImageResourceFactory',
         ),
     ),
     'router' => array(
@@ -36,6 +37,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.image' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/image[/:image_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Image\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -43,6 +53,7 @@ return array(
             0 => 'api.rest.user',
             1 => 'api.rest.org',
             2 => 'api.rest.game',
+            3 => 'api.rest.image',
         ),
     ),
     'zf-rest' => array(
@@ -74,7 +85,7 @@ return array(
                 9 => 'gender',
             ),
             'page_size' => 25,
-            'page_size_param' => 'page',
+            'page_size_param' => 'per_page',
             'entity_class' => 'Api\\V1\\Rest\\User\\UserEntity',
             'collection_class' => 'Api\\V1\\Rest\\User\\UserCollection',
             'service_name' => 'User',
@@ -93,9 +104,12 @@ return array(
                 0 => 'GET',
                 1 => 'POST',
             ),
-            'collection_query_whitelist' => array(),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+            ),
             'page_size' => 25,
-            'page_size_param' => null,
+            'page_size_param' => 'per_page',
             'entity_class' => 'Api\\V1\\Rest\\Org\\OrgEntity',
             'collection_class' => 'Api\\V1\\Rest\\Org\\OrgCollection',
             'service_name' => 'Org',
@@ -111,12 +125,33 @@ return array(
             'collection_http_methods' => array(
                 0 => 'GET',
             ),
-            'collection_query_whitelist' => array(),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+            ),
             'page_size' => 25,
-            'page_size_param' => null,
+            'page_size_param' => 'per_page',
             'entity_class' => 'Api\\V1\\Rest\\Game\\GameEntity',
             'collection_class' => 'Api\\V1\\Rest\\Game\\GameCollection',
             'service_name' => 'Game',
+        ),
+        'Api\\V1\\Rest\\Image\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Image\\ImageResource',
+            'route_name' => 'api.rest.image',
+            'route_identifier_name' => 'image_id',
+            'collection_name' => 'image',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => 'page',
+            'entity_class' => 'Api\\V1\\Rest\\Image\\ImageEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Image\\ImageCollection',
+            'service_name' => 'Image',
         ),
     ),
     'zf-content-negotiation' => array(
@@ -124,6 +159,7 @@ return array(
             'Api\\V1\\Rest\\User\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Org\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Game\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Image\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -141,6 +177,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Image\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -152,6 +193,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Game\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Image\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -195,6 +240,18 @@ return array(
                 'route_identifier_name' => 'game_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Image\\ImageEntity' => array(
+                'entity_identifier_name' => 'image_id',
+                'route_name' => 'api.rest.image',
+                'route_identifier_name' => 'image_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Image\\ImageCollection' => array(
+                'entity_identifier_name' => 'image_id',
+                'route_name' => 'api.rest.image',
+                'route_identifier_name' => 'image_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -203,6 +260,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Org\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Org\\Validator',
+        ),
+        'Api\\V1\\Rest\\Image\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Image\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -347,6 +407,31 @@ return array(
                 'filters' => array(),
                 'name' => 'meta',
                 'description' => 'Meta data for the organization',
+            ),
+        ),
+        'Api\\V1\\Rest\\Image\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'image_id',
+                'description' => 'The Image Id',
+                'error_message' => 'Invalid Image Id',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\Uri',
+                        'options' => array(
+                            'allowRelative' => false,
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'url',
+                'description' => 'Url for the image',
+                'error_message' => 'Invalid URL',
             ),
         ),
     ),
