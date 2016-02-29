@@ -26,7 +26,9 @@ class NamesSeeds extends AbstractSeed
         }
 
         $table = $this->table('names');
-        $table->insert($data)
+
+        $table
+            ->insert($data)
             ->save();
     }
 }
