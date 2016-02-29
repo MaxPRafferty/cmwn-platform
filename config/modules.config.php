@@ -11,7 +11,7 @@ return array(
     'Game',
     'Asset',
     'Group',
-    'Security',
+//    'Security',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',
