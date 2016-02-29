@@ -10,3 +10,7 @@
  - [ ] Bad word filter for username
  - [ ] Entity Trait to reduce number of imported traits
  - [ ] Cloudaniry webhook
+ - [ ] Mailtrap
+ - [ ] Email templates
+ - [ ] Group Stored Proc
+   - [ ] Attach Groups
