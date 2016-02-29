@@ -6,6 +6,7 @@ return array(
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
             'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',
             'Api\\V1\\Rest\\Image\\ImageResource' => 'Api\\V1\\Rest\\Image\\ImageResourceFactory',
+            'Api\\V1\\Rest\\Group\\GroupResource' => 'Api\\V1\\Rest\\Group\\GroupResourceFactory',
         ),
     ),
     'router' => array(
@@ -46,6 +47,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.group' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/group[/:group_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Group\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -54,6 +64,7 @@ return array(
             1 => 'api.rest.org',
             2 => 'api.rest.game',
             3 => 'api.rest.image',
+            4 => 'api.rest.group',
         ),
     ),
     'zf-rest' => array(
@@ -153,6 +164,31 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Image\\ImageCollection',
             'service_name' => 'Image',
         ),
+        'Api\\V1\\Rest\\Group\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Group\\GroupResource',
+            'route_name' => 'api.rest.group',
+            'route_identifier_name' => 'group_id',
+            'collection_name' => 'group',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+            ),
+            'page_size' => 25,
+            'page_size_param' => 'per_page',
+            'entity_class' => 'Api\\V1\\Rest\\Group\\GroupEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Group\\GroupCollection',
+            'service_name' => 'Group',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -160,6 +196,7 @@ return array(
             'Api\\V1\\Rest\\Org\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Game\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Image\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Group\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -182,6 +219,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Group\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -197,6 +239,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Image\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Group\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -252,6 +298,18 @@ return array(
                 'route_identifier_name' => 'image_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Group\\GroupEntity' => array(
+                'entity_identifier_name' => 'group',
+                'route_name' => 'api.rest.group',
+                'route_identifier_name' => 'group_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Group\\GroupCollection' => array(
+                'entity_identifier_name' => 'group',
+                'route_name' => 'api.rest.group',
+                'route_identifier_name' => 'group_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -263,6 +321,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Image\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Image\\Validator',
+        ),
+        'Api\\V1\\Rest\\Group\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Group\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -404,7 +465,12 @@ return array(
             3 => array(
                 'required' => false,
                 'validators' => array(),
-                'filters' => array(),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Application\\Utils\\MetaFilter',
+                        'options' => array(),
+                    ),
+                ),
                 'name' => 'meta',
                 'description' => 'Meta data for the organization',
             ),
@@ -432,6 +498,61 @@ return array(
                 'name' => 'url',
                 'description' => 'Url for the image',
                 'error_message' => 'Invalid URL',
+            ),
+        ),
+        'Api\\V1\\Rest\\Group\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'max' => '255',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'organization_id',
+                'description' => 'The Id of the organization this group belongs too',
+                'error_message' => 'Invalid Organization or not found',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'max' => '255',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'title',
+                'description' => 'The title for this Organization',
+                'error_message' => 'Invalid Title',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'max' => '255',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'description',
+                'description' => 'Organizations description',
+                'error_message' => 'Invalid Description',
+            ),
+            3 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'meta',
+                'description' => 'Meta data for the group',
+                'error_message' => 'Invalid Meta data',
             ),
         ),
     ),
