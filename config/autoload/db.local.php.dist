@@ -1,0 +1,8 @@
+<?php
+
+return [
+    'db' => [
+        'username' => 'cmwn_user',
+        'password' => 'cmwn_pass123$',
+    ],
+];
