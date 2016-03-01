@@ -14,3 +14,6 @@
  - [ ] Email templates
  - [ ] Group Stored Proc
    - [ ] Attach Groups
+- [ ] SA will not pull in group and org hals 
+- [ ] limit group/org hal links to 100 
+- [ ] Scope to represent perms only on self link
