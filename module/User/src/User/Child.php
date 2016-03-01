@@ -4,7 +4,7 @@ namespace User;
 
 use User\Service\StaticNameService;
 
-class Child extends User
+class Child extends User implements ChildInterface
 {
     /**
      * @var \stdClass|null

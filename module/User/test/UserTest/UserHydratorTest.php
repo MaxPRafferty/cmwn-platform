@@ -30,10 +30,10 @@ class UserHydratorTest extends TestCase
             'middle_name' => 'Henry',
             'last_name'   => 'Reeves',
             'gender'      => 'male',
-            'birthdate'   => $date->format('Y-m-d'),
-            'created'     => $date->format(\DateTime::ISO8601),
-            'updated'     => $date->format(\DateTime::ISO8601),
-            'deleted'     => $date->format(\DateTime::ISO8601),
+            'birthdate'   => $date->getTimestamp(),
+            'created'     => $date->getTimestamp(),
+            'updated'     => $date->getTimestamp(),
+            'deleted'     => $date->getTimestamp(),
             'type'        => 'ADULT',
             'meta'        => []
         ];

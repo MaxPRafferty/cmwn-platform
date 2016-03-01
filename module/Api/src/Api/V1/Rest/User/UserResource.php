@@ -40,7 +40,7 @@ class UserResource extends AbstractResourceListener
         unset($data['user_id']);
         $user = StaticUserFactory::createUser($data);
 
-        $this->service->saveUser($user);
+        $this->service->createUser($user);
         return new UserEntity($user->getArrayCopy());
     }
 
@@ -99,7 +99,7 @@ class UserResource extends AbstractResourceListener
             $user->__set($key, $value);
         }
 
-        $this->service->saveUser($user);
+        $this->service->updateUser($user);
         return $user;
     }
 }

@@ -3,6 +3,7 @@
 namespace User;
 
 use User\Service\StaticNameService;
+use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
 
@@ -12,7 +13,7 @@ use Zend\Mvc\MvcEvent;
  * @package Cmwn
  * @codeCoverageIgnore
  */
-class Module implements ConfigProviderInterface
+class Module implements ConfigProviderInterface, AutoloaderProviderInterface
 {
     public function getConfig()
     {

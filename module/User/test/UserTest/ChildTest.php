@@ -62,10 +62,10 @@ class ChildTest extends TestCase
             'middle_name' => 'Henry',
             'last_name'   => 'Reeves',
             'gender'      => Child::GENDER_MALE,
-            'birthdate'   => $date->format('Y-m-d'),
-            'created'     => $date->format(\DateTime::ISO8601),
-            'updated'     => $date->format(\DateTime::ISO8601),
-            'deleted'     => $date->format(\DateTime::ISO8601),
+            'birthdate'   => $date->getTimestamp(),
+            'created'     => $date->getTimestamp(),
+            'updated'     => $date->getTimestamp(),
+            'deleted'     => $date->getTimestamp(),
             'type'        => Child::TYPE_CHILD,
             'meta'        => []
         ];

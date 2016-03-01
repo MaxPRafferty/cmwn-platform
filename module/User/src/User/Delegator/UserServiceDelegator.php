@@ -42,17 +42,24 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
         $this->getEventManager()->attach($hideListener);
     }
 
+    public function createUser(UserInterface $user)
+    {
+        $event    = new Event('save.new.user', $this->realService, ['user' => $user]);
+        $response = $this->getEventManager()->trigger($event);
 
-    /**
-     * Saves a user
-     *
-     * If the user id is null, then a new user is created
-     *
-     * @param UserInterface $user
-     * @return bool
-     * @throws NotFoundException
-     */
-    public function saveUser(UserInterface $user)
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->createUser($user);
+
+        $event    = new Event('save.new.user.post', $this->realService, ['user' => $user]);
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
+
+    public function updateUser(UserInterface $user)
     {
         $event    = new Event('save.user', $this->realService, ['user' => $user]);
         $response = $this->getEventManager()->trigger($event);
@@ -61,13 +68,12 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             return $response->last();
         }
 
-        $return = $this->realService->saveUser($user);
+        $return = $this->realService->updateUser($user);
 
         $event    = new Event('save.user.post', $this->realService, ['user' => $user]);
         $this->getEventManager()->trigger($event);
 
         return $return;
-
     }
 
     /**

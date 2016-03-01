@@ -7,7 +7,6 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
 use ZF\Hal\Link\Link;
-use ZF\Rest\RestController;
 
 /**
  * Class HalListenersAggregate

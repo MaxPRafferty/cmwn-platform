@@ -58,37 +58,51 @@ class UserService implements UserServiceInterface
         return $resultSet;
     }
 
-
     /**
-     * Saves a user
+     * Create a new user
      *
-     * If the user id is null, then a new user is created
+     * A User Id will be auto generated
      *
      * @param UserInterface $user
      * @return bool
-     * @throws NotFoundException
      */
-    public function saveUser(UserInterface $user)
+    public function createUser(UserInterface $user)
     {
-        $new = empty($user->getUserId());
-        $user->setUpdated(new \DateTime());
-        $data = $user->getArrayCopy();
-
+        $data         = $user->getArrayCopy();
         $data['meta'] = Json::encode($data['meta']);
 
         unset($data['password']);
         unset($data['deleted']);
 
-        if ($new) {
-            $user->setCreated(new \DateTime());
-            $user->setUserId(Uuid::uuid1());
+        $user->setUpdated(new \DateTime());
+        $user->setCreated(new \DateTime());
+        $user->setUserId(Uuid::uuid1());
 
-            $data['user_id'] = $user->getUserId();
-            $data['created'] = $user->getCreated()->format(\DateTime::ISO8601);
+        $data['user_id'] = $user->getUserId();
+        $data['created'] = $user->getCreated()->getTimestamp();
+        $data['updated'] = $user->getUpdated()->getTimestamp();
 
-            $this->userTableGateway->insert($data);
-            return true;
-        }
+        $this->userTableGateway->insert($data);
+        return true;
+    }
+
+    /**
+     * Saves an Existing user
+     *
+     * @param UserInterface $user
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function updateUser(UserInterface $user)
+    {
+        $data = $user->getArrayCopy();
+        $data['meta'] = Json::encode($data['meta']);
+
+        $user->setUpdated(new \DateTime());
+        $data['updated'] = $user->getUpdated()->getTimestamp();
+
+        unset($data['password']);
+        unset($data['deleted']);
 
         $this->fetchUser($user->getUserId());
 

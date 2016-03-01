@@ -77,15 +77,44 @@ class UserServiceDelegatorTest extends TestCase
         ];
     }
 
-    public function testItShouldCallSaveUser()
+    public function testItShouldCallCreateUser()
     {
-        $this->userService->shouldReceive('saveUser')
+        $this->userService->shouldReceive('createUser')
             ->with($this->user)
             ->andReturn(true)
             ->once();
 
 
-        $this->delegator->saveUser($this->user);
+        $this->delegator->createUser($this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'save.new.user',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'save.new.user.post',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    public function testItShouldCallUpdateUser()
+    {
+        $this->userService->shouldReceive('updateUser')
+            ->with($this->user)
+            ->andReturn(true)
+            ->once();
+
+
+        $this->delegator->updateUser($this->user);
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -106,9 +135,33 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
-    public function testItShouldNotCallSaveUserWhenEventPrevents()
+    public function testItShouldNotCallCreateUserWhenEventPrevents()
     {
-        $this->userService->shouldReceive('saveUser')
+        $this->userService->shouldReceive('createUser')
+            ->with($this->user)
+            ->never();
+
+        $this->delegator->getEventManager()->attach('save.new.user', function (Event $event) {
+            $event->stopPropagation(true);
+            return ['foo' => 'bar'];
+        });
+
+        $this->assertEquals(['foo' => 'bar'], $this->delegator->createUser($this->user));
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'save.new.user',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user]
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    public function testItShouldNotCallUpdateUserWhenEventPrevents()
+    {
+        $this->userService->shouldReceive('UpdateUser')
             ->with($this->user)
             ->never();
 
@@ -117,7 +170,7 @@ class UserServiceDelegatorTest extends TestCase
             return ['foo' => 'bar'];
         });
 
-        $this->assertEquals(['foo' => 'bar'], $this->delegator->saveUser($this->user));
+        $this->assertEquals(['foo' => 'bar'], $this->delegator->updateUser($this->user));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
