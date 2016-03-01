@@ -93,7 +93,7 @@ return array(
                 6 => 'first_name',
                 7 => 'last_name',
                 8 => 'middle_name',
-                9 => 'gender',
+                9 => 'gender'
             ),
             'page_size' => 25,
             'page_size_param' => 'per_page',
@@ -299,13 +299,13 @@ return array(
                 'is_collection' => true,
             ),
             'Api\\V1\\Rest\\Group\\GroupEntity' => array(
-                'entity_identifier_name' => 'group',
+                'entity_identifier_name' => 'group_id',
                 'route_name' => 'api.rest.group',
                 'route_identifier_name' => 'group_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
             ),
             'Api\\V1\\Rest\\Group\\GroupCollection' => array(
-                'entity_identifier_name' => 'group',
+                'entity_identifier_name' => 'group_id',
                 'route_name' => 'api.rest.group',
                 'route_identifier_name' => 'group_id',
                 'is_collection' => true,

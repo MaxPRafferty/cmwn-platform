@@ -2,7 +2,7 @@
 
 namespace User;
 
-class Adult extends User
+class Adult extends User implements AdultInterface
 {
     /**
      * @return string

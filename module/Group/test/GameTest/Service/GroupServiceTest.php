@@ -110,7 +110,11 @@ class GroupServiceTest extends TestCase
 
                 $expected = $newGroup->getArrayCopy();
                 $expected['meta'] = '[]';
-                unset($expected['password']);
+                $expected['lft']  = $newGroup->getLeft();
+                $expected['rgt']  = $newGroup->getRight();
+                unset($expected['depth']);
+                unset($expected['left']);
+                unset($expected['right']);
                 unset($expected['deleted']);
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
@@ -150,8 +154,12 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals(['group_id' => $group->getGroupId()], $where);
                 $expected = $group->getArrayCopy();
                 $expected['meta'] = '[]';
-
+                $expected['lft']  = $group->getLeft();
+                $expected['rgt']  = $group->getRight();
                 unset($expected['deleted']);
+                unset($expected['left']);
+                unset($expected['right']);
+                unset($expected['depth']);
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);

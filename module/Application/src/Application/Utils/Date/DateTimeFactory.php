@@ -18,8 +18,17 @@ class DateTimeFactory
             return $date;
         }
 
-        if (!$date instanceof \DateTime) {
-            $date = new \DateTime($date);
+        try {
+            if (!$date instanceof \DateTime) {
+                $date = new \DateTime($date);
+            }
+            
+        // Handle time stamps 
+        // Remind me to tell Derick that he now owes me a beer ;)
+        } catch (\Exception $dateException) {
+            if (!$date instanceof \DateTime) {
+                $date = new \DateTime(date(strftime('Y-m-d H:i:s', $date)));
+            }
         }
 
         $date->setTimezone(new \DateTimeZone('UTC'));

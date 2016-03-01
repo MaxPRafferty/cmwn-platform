@@ -11,17 +11,6 @@ use Zend\Paginator\Adapter\DbSelect;
 interface UserServiceInterface
 {
     /**
-     * Saves a user
-     *
-     * If the user id is null, then a new user is created
-     *
-     * @param UserInterface $user
-     * @return bool
-     * @throws NotFoundException
-     */
-    public function saveUser(UserInterface $user);
-
-    /**
      * Fetches one user from the DB using the id
      *
      * @param $userId
@@ -48,4 +37,23 @@ interface UserServiceInterface
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null);
+
+    /**
+     * Create a new user
+     *
+     * A User Id will be auto generated
+     *
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function createUser(UserInterface $user);
+
+    /**
+     * Saves an Existing user
+     *
+     * @param UserInterface $user
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function updateUser(UserInterface $user);
 }

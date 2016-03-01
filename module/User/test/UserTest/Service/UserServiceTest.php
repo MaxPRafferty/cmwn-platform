@@ -84,7 +84,6 @@ class UserServiceTest extends TestCase
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
                 return new \ArrayIterator([]);
-
             })
             ->once();
 
@@ -110,15 +109,19 @@ class UserServiceTest extends TestCase
 
                 $expected = $newUser->getArrayCopy();
                 $expected['meta'] = '[]';
+                $expected['created'] = $newUser->getCreated()->getTimestamp();
+                $expected['updated'] = $newUser->getUpdated()->getTimestamp();
                 unset($expected['password']);
                 unset($expected['deleted']);
+
+
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
                 return 1;
             })
             ->once();
 
-        $this->assertTrue($this->userService->saveUser($newUser));
+        $this->assertTrue($this->userService->createUser($newUser));
     }
 
     public function testItShouldUpdateExistingUser()
@@ -153,13 +156,15 @@ class UserServiceTest extends TestCase
 
                 unset($expected['password']);
                 unset($expected['deleted']);
+
+                $expected['updated'] = $user->getUpdated()->getTimestamp();
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
 
             });
 
-        $this->assertTrue($this->userService->saveUser($user));
+        $this->assertTrue($this->userService->updateUser($user));
     }
 
     public function testItShouldFetchUserById()
@@ -231,7 +236,6 @@ class UserServiceTest extends TestCase
             ->andReturnUsing(function ($data, $where) use (&$user) {
                 $this->assertEquals(['user_id' => $user->getUserId()], $where);
                 $this->assertNotEmpty($data['deleted']);
-
             });
 
         $this->assertTrue($this->userService->deleteUser($user));
@@ -264,7 +268,6 @@ class UserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('delete')
             ->andReturnUsing(function ($where) use (&$user) {
                 $this->assertEquals(['user_id' => $user->getUserId()], $where);
-
             });
 
         $this->assertTrue($this->userService->deleteUser($user, false));

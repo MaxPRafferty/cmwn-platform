@@ -74,7 +74,12 @@ class GroupService implements GroupServiceInterface
         $data = $group->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
+        $data['lft'] = $group->getLeft();
+        $data['rgt'] = $group->getRight();
 
+        unset($data['left']);
+        unset($data['right']);
+        unset($data['depth']);
         unset($data['deleted']);
 
         if ($new) {
