@@ -11,7 +11,7 @@ return array(
     'Game',
     'Asset',
     'Group',
-//    'Security',
+    'Security',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',
@@ -27,5 +27,6 @@ return array(
     'ZF\\Rest',
     'ZF\\Rpc',
     'ZF\\Versioning',
+    'ZF\MvcAuth',
     'Api',
 );

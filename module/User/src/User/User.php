@@ -48,11 +48,6 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     /**
      * @var string|null
      */
-    protected $password;
-
-    /**
-     * @var string|null
-     */
     protected $firstName;
 
     /**

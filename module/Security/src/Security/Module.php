@@ -2,10 +2,12 @@
 
 namespace Security;
 
+use Security\Guard\CsrfGuard;
+use Security\Guard\OriginGuard;
+use Zend\Console\Request;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
-use Zend\Session\SessionManager;
 use Zend\Session\Container;
 
 /**
@@ -40,12 +42,20 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface
 
     public function onBootstrap(MvcEvent $event)
     {
+        if ($event->getRequest() instanceof Request) {
+            return;
+        }
+
+        /** @var \Zend\Session\SessionManager $session */
         $session = $event->getApplication()
             ->getServiceManager()
             ->get('Zend\Session\SessionManager');
         $session->start();
 
         $container = new Container('initialized');
+
+        // This sets the user agennt and remote addr on the 1st request to the application
+
         if (!isset($container->init)) {
             $serviceManager = $event->getApplication()->getServiceManager();
             $request        = $serviceManager->get('Request');
@@ -80,5 +90,13 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface
                 }
             }
         }
+
+        // Attaches the origin header check to ensure this is not coming from another origin
+
+        $app          = $event->getTarget();
+        $events       = $app->getEventManager();
+
+        $events->attachAggregate(new OriginGuard());
+        $events->attachAggregate(new CsrfGuard(['session' => $container]));
     }
 }
