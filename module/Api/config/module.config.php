@@ -7,6 +7,10 @@ return array(
             'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',
             'Api\\V1\\Rest\\Image\\ImageResource' => 'Api\\V1\\Rest\\Image\\ImageResourceFactory',
             'Api\\V1\\Rest\\Group\\GroupResource' => 'Api\\V1\\Rest\\Group\\GroupResourceFactory',
+            'Api\\V1\\Rest\\Token\\TokenResource' => 'Api\\V1\\Rest\\Token\\TokenResourceFactory',
+            'Api\\V1\\Rest\\Login\\LoginResource' => 'Api\\V1\\Rest\\Login\\LoginResourceFactory',
+            'Api\\V1\\Rest\\Logout\\LogoutResource' => 'Api\\V1\\Rest\\Logout\\LogoutResourceFactory',
+            'Api\\V1\\Rest\\Forgot\\ForgotResource' => 'Api\\V1\\Rest\\Forgot\\ForgotResourceFactory',
         ),
     ),
     'router' => array(
@@ -56,6 +60,42 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.token' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Token\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.login' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/login',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Login\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.logout' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/logout',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Logout\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.forgot' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/forgot[/:forgot_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Forgot\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -65,6 +105,10 @@ return array(
             2 => 'api.rest.game',
             3 => 'api.rest.image',
             4 => 'api.rest.group',
+            5 => 'api.rest.token',
+            6 => 'api.rest.login',
+            7 => 'api.rest.logout',
+            8 => 'api.rest.forgot',
         ),
     ),
     'zf-rest' => array(
@@ -93,7 +137,7 @@ return array(
                 6 => 'first_name',
                 7 => 'last_name',
                 8 => 'middle_name',
-                9 => 'gender'
+                9 => 'gender',
             ),
             'page_size' => 25,
             'page_size_param' => 'per_page',
@@ -189,6 +233,76 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Group\\GroupCollection',
             'service_name' => 'Group',
         ),
+        'Api\\V1\\Rest\\Token\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Token\\TokenResource',
+            'route_name' => 'api.rest.token',
+            'route_identifier_name' => 'token_id',
+            'collection_name' => 'token',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Token\\TokenEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Token\\TokenCollection',
+            'service_name' => 'Token',
+        ),
+        'Api\\V1\\Rest\\Login\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Login\\LoginResource',
+            'route_name' => 'api.rest.login',
+            'route_identifier_name' => 'login_id',
+            'collection_name' => 'login',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Login\\LoginEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Login\\LoginCollection',
+            'service_name' => 'login',
+        ),
+        'Api\\V1\\Rest\\Logout\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Logout\\LogoutResource',
+            'route_name' => 'api.rest.logout',
+            'route_identifier_name' => 'logout_id',
+            'collection_name' => 'logout',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Logout\\LogoutEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Logout\\LogoutCollection',
+            'service_name' => 'Logout',
+        ),
+        'Api\\V1\\Rest\\Forgot\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Forgot\\ForgotResource',
+            'route_name' => 'api.rest.forgot',
+            'route_identifier_name' => 'forgot_id',
+            'collection_name' => 'forgot',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Forgot\\ForgotEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Forgot\\ForgotCollection',
+            'service_name' => 'Forgot',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -197,6 +311,10 @@ return array(
             'Api\\V1\\Rest\\Game\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Image\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Group\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Token\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Login\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Logout\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Forgot\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -224,6 +342,26 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Token\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Login\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Logout\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Forgot\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -243,6 +381,22 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Group\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Token\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Login\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Logout\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Forgot\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -308,6 +462,48 @@ return array(
                 'entity_identifier_name' => 'group_id',
                 'route_name' => 'api.rest.group',
                 'route_identifier_name' => 'group_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Token\\TokenEntity' => array(
+                'entity_identifier_name' => 'token',
+                'route_name' => 'api.rest.token',
+                'route_identifier_name' => 'token_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Login\\LoginEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.login',
+                'route_identifier_name' => 'login_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Login\\LoginCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.login',
+                'route_identifier_name' => 'login_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Logout\\LogoutEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.logout',
+                'route_identifier_name' => 'logout_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Logout\\LogoutCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.logout',
+                'route_identifier_name' => 'logout_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Forgot\\ForgotEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.forgot',
+                'route_identifier_name' => 'forgot_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Forgot\\ForgotCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.forgot',
+                'route_identifier_name' => 'forgot_id',
                 'is_collection' => true,
             ),
         ),
