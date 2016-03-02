@@ -38,10 +38,17 @@ cd /vagrant
 
 For vagrant documentation, please refer to [vagrantup.com](https://www.vagrantup.com/)
 
+### Host
+
+Vagrant is configured for api-local.changemyworldnow.com to 192.168.56.101
+Update your host file to point to that IP
+
 ### Config Files
 
-To get started, copy all the *.dist files in config and config/autoload.  These are local files that 
-contain the passwords for connecting to the vagrant DB.
+1st you need to take all the *.php.dist files and copy them to *.php in config/autoload
+ex: db.local.php.dist -> db.local.php 
+
+2nd copy config/development.config.php.dist to config/development.config.php
 
 ## Database Migration
 
