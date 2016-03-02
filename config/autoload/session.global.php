@@ -12,7 +12,6 @@ return [
         ],
         'storage' => 'Zend\Session\Storage\SessionArrayStorage',
         'validators' => [
-            'Zend\Session\Validator\RemoteAddr',
             'Zend\Session\Validator\HttpUserAgent',
         ],
     ],

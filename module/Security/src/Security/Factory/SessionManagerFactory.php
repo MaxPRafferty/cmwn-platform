@@ -10,6 +10,7 @@ use Zend\Session\Container;
 /**
  * Class SessionManagerFactory
  * @package Security\Factory
+ * @codeCoverageIgnore
  */
 class SessionManagerFactory implements FactoryInterface
 {

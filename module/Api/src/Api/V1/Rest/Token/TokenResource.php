@@ -20,6 +20,7 @@ class TokenResource extends AbstractResourceListener
 
         $user->setUserId('foo-bar-baz-bat');
         return new MeEntity($user);
-//        return new TokenEntity(['token' => 'bar']);
+
+//        return new TokenEntity(['token' => $csrf->getHash()]);
     }
 }
