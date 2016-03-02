@@ -47,6 +47,7 @@ vagrantfile:
                     smb_username: ''
                     smb_password: ''
                     mount_options:
+
                         dir_mode: '0775'
                         file_mode: '0664'
                 rsync:
