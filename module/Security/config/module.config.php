@@ -8,5 +8,27 @@ return [
             'Security\Authentication\CmwnAuthenticationAdapter' => 'Security\Authentication\CmwnAuthenticationAdapterFactory',
             'Security\Authentication\CmwnAuthenticationService' => 'Security\Authentication\CmwnAuthenticationServiceFactory',
         ]
-    ]
+    ],
+
+    'controllers' => [
+        'factories' => [
+            'Security\Controller\User' => 'Security\Controller\UserControllerFactory',
+        ],
+    ],
+
+    'console' => [
+        'router' => [
+            'routes' => [
+                'add-user' => [
+                    'options' => [
+                        'route'    => 'create user',
+                        'defaults' => [
+                            'controller' => 'Security\Controller\User',
+                            'action'     => 'createUser'
+                        ],
+                    ],
+                ]
+            ],
+        ],
+    ],
 ];

@@ -7,7 +7,7 @@ use Security\SecurityUser;
 use User\UserInterface;
 use Zend\Db\TableGateway\TableGateway;
 
-class SecurityService
+class SecurityService implements SecurityServiceInterface
 {
     /**
      * @var TableGateway
@@ -80,7 +80,7 @@ class SecurityService
      * @param $password
      * @return mixed
      */
-    protected static function encryptPassword($password)
+    public static function encryptPassword($password)
     {
         // cost 10
         return password_hash($password, PASSWORD_DEFAULT, ['cost' => 10]);
