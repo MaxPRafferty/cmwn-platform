@@ -6,6 +6,11 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * Class UserControllerFactory
+ * @package Security\Controller
+ * @codeCoverageIgnore
+ */
 class UserControllerFactory implements FactoryInterface
 {
     /**

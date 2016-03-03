@@ -521,6 +521,9 @@ return array(
         'Api\\V1\\Rest\\Group\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Group\\Validator',
         ),
+        'Api\\V1\\Rest\\Login\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Login\\Validator',
+        ),
     ),
     'input_filter_specs' => array(
         'Api\\V1\\Rest\\User\\Validator' => array(
@@ -749,6 +752,24 @@ return array(
                 'name' => 'meta',
                 'description' => 'Meta data for the group',
                 'error_message' => 'Invalid Meta data',
+            ),
+        ),
+        'Api\\V1\\Rest\\Login\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'username',
+                'description' => 'The Username or email address to use',
+                'error_message' => 'Invalid Username',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'password',
+                'description' => 'The Password',
+                'error_message' => 'Invalid Password',
             ),
         ),
     ),

@@ -18,6 +18,7 @@ use Zend\Validator\StringLength;
 /**
  * Class UserController
  * @package Security\Controller
+ * @codeCoverageIgnore
  */
 class UserController extends AbstractConsoleController
 {

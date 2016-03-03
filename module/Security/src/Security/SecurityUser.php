@@ -3,8 +3,13 @@
 namespace Security;
 
 use Application\Utils\Date\DateTimeFactory;
+use User\User;
 
-class SecurityUser
+/**
+ * Class SecurityUser
+ * @package Security
+ */
+class SecurityUser extends User
 {
     const CODE_EXPIRED = 'Expired';
     const CODE_INVALID = 'Invalid';
@@ -40,28 +45,49 @@ class SecurityUser
      */
     protected $codeExpires;
 
+    /**
+     * @var string
+     */
+    protected $type;
 
-    public function __construct(array $options)
+
+    public function exchangeArray(array $array)
     {
         $defaults = [
-            'user_id'      => null,
-            'username'     => null,
-            'email'        => null,
             'code'         => null,
             'code_expires' => null,
-            'password'     => null
+            'password'     => null,
         ];
 
-        $array = array_merge($defaults, $options);
+        $array = array_merge($defaults, $array);
+        parent::exchangeArray($array);
 
-        $this->userId      = $array['user_id'];
-        $this->userName    = $array['username'];
-        $this->email       = $array['email'];
+        $this->password    = $array['password'];
         $this->code        = $array['code'];
         $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
-        $this->password    = $array['password'];
     }
 
+    /**
+     * Gets the type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Sets the type
+     *
+     * @param $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
 
     /**
      * Verifies the password
@@ -92,30 +118,6 @@ class SecurityUser
         }
 
         return static::CODE_VALID;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUserId()
-    {
-        return $this->userId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUserName()
-    {
-        return $this->userName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
 
     /**
