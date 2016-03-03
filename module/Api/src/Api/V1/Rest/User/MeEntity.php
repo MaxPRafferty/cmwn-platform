@@ -9,11 +9,21 @@ use Api\Links\ProfileLink;
 use User\UserInterface;
 use ZF\Hal\Entity;
 
+/**
+ * Class MeEntity
+ * @package Api\V1\Rest\User
+ */
 class MeEntity extends Entity
 {
-    public function __construct(UserInterface $user)
+    public function __construct(UserInterface $user, $token = null)
     {
-        parent::__construct($user->getArrayCopy());
+        $userData = $user->getArrayCopy();
+
+        if ($token !== null) {
+            $userData['token'] = $token;
+        }
+
+        parent::__construct($userData);
         $this->getLinks()->add(new MeLink($user));
         $this->getLinks()->add(new ProfileLink($user));
         $this->getLinks()->add(new ForgotLink());
