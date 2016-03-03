@@ -7,6 +7,11 @@ use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\MvcEvent;
 use ZF\Apigility\Provider\ApigilityProviderInterface;
 
+
+/**
+ * Class Module
+ * @package Api
+ */
 class Module implements ApigilityProviderInterface
 {
     public function getConfig()
@@ -27,11 +32,13 @@ class Module implements ApigilityProviderInterface
 
     public function onBootstrap(MvcEvent $event)
     {
-        $app      = $event->getTarget();
+        $app      = $event->getApplication();
         $services = $app->getServiceManager();
         /** @var SharedEventManager $sharedEvents */
         $sharedEvents = $services->get('SharedEventManager');
         $aggregate = new HalListenersAggregate();
         $aggregate->attachShared($sharedEvents);
+
+        $app->getEventManager()->attach($services->get('Api\Listeners\ChangePasswordListener'));
     }
 }

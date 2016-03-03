@@ -11,6 +11,13 @@ use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\MvcEvent;
 use Zend\Validator\Csrf;
 
+/**
+ * Class CsrfGuard
+ *
+ * Checks XSRF token on requests
+ *
+ * @package Security\Guard
+ */
 class CsrfGuard extends Csrf implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
@@ -31,11 +38,21 @@ class CsrfGuard extends Csrf implements ListenerAggregateInterface
 //        $this->listeners[] = $events->attach(MvcEvent::EVENT_FINISH, [$this, 'setCookie'], 210);
     }
 
+    /**
+     * Forces the session name
+     *
+     * @return string
+     */
     public function getSessionName()
     {
         return 'CMWN_XSRF';
     }
 
+    /**
+     * Generates a new hash if one is not set
+     *
+     * @return mixed
+     */
     protected function getHashFromSession()
     {
         $session = $this->getSession();
@@ -46,6 +63,11 @@ class CsrfGuard extends Csrf implements ListenerAggregateInterface
         return $session->hash;
     }
 
+    /**
+     * Sets the Cookie
+     *
+     * @param MvcEvent $event
+     */
     public function setCookie(MvcEvent $event)
     {
         $response = $event->getResponse();

@@ -2,10 +2,8 @@
 
 namespace Security;
 
-use Security\Guard\CsrfGuard;
-use Security\Guard\OriginGuard;
 use Zend\Console\Adapter\AdapterInterface;
-use Zend\Console\Request;
+use Zend\Console\Request as ConsoleRequest;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
@@ -92,9 +90,14 @@ class Module implements
         ];
     }
 
+    /**
+     * Registers the session and attaches guards
+     *
+     * @param MvcEvent $event
+     */
     public function onBootstrap(MvcEvent $event)
     {
-        if ($event->getRequest() instanceof Request) {
+        if ($event->getRequest() instanceof ConsoleRequest) {
             return;
         }
 
@@ -102,6 +105,7 @@ class Module implements
         $session = $event->getApplication()
             ->getServiceManager()
             ->get('Zend\Session\SessionManager');
+
         $session->start();
 
         $container = new Container('initialized');
@@ -138,17 +142,27 @@ class Module implements
                             $validator = new $validator();
                     }
 
-                    $chain->attach('session.validate', array($validator, 'isValid'));
+                    $chain->attach('session.validate', [$validator, 'isValid']);
                 }
             }
         }
 
-        // Attaches the origin header check to ensure this is not coming from another origin
+        $this->attachGuards($event);
+    }
 
-        $app          = $event->getTarget();
-        $events       = $app->getEventManager();
+    /**
+     * Attaches all the guards for the routes
+     *
+     * @todo Make one aggreate that can be configured
+     * @param MvcEvent $event
+     */
+    protected function attachGuards(MvcEvent $event)
+    {
+        $events  = $event->getApplication()->getEventManager();
+        $service = $event->getApplication()->getServiceManager();
 
-        $events->attachAggregate(new OriginGuard());
-        $events->attachAggregate(new CsrfGuard(['session' => $container]));
+        $events->attach($service->get('Security\Guard\OriginGuard'));
+        $events->attach($service->get('Security\Guard\CsrfGuard'));
+        $events->attach($service->get('Security\Guard\ResetPasswordGuard'));
     }
 }

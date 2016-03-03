@@ -2,7 +2,12 @@
 
 return [
     'service_manager' => [
+        'invokables' => [
+            'Security\Guard\CsrfGuard' => 'Security\Guard\CsrfGuard',
+            'Security\Guard\OriginGuard' => 'Security\Guard\OriginGuard',
+        ],
         'factories' => [
+            'Security\Guard\ResetPasswordGuard' => 'Security\Guard\ResetPasswordGuardFactory',
             'Zend\Session\SessionManager'                       => 'Security\Session\SessionManagerFactory',
             'Security\Service\SecurityService'                  => 'Security\Service\SecurityServiceFactory',
             

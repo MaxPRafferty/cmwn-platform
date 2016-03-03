@@ -1,16 +1,16 @@
 <?php
 
-namespace Api\V1\Rest\Logout;
+namespace Security\Guard;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-
 /**
- * Class LogoutResourceFactory
- * @package Api\V1\Rest\Logout
+ * Creates a Reset Password Guard
+ *
+ * @package Security\Guard
  */
-class LogoutResourceFactory implements FactoryInterface
+class ResetPasswordGuardFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -20,6 +20,6 @@ class LogoutResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new LogoutResource($serviceLocator->get('Security\Authentication\CmwnAuthenticationService'));
+        return new ResetPasswordGuard($serviceLocator->get('Security\Authentication\CmwnAuthenticationService'));
     }
 }
