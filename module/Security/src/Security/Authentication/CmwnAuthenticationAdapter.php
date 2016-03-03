@@ -84,7 +84,7 @@ class CmwnAuthenticationAdapter implements AdapterInterface
 
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
-            return new Result(Result::SUCCESS, $user);;
+            return new Result(Result::SUCCESS, $user);
         }
         
         switch ($user->compareCode($this->password)) {
@@ -97,11 +97,7 @@ class CmwnAuthenticationAdapter implements AdapterInterface
             case $user::CODE_VALID:
                 return new Result(
                     Result::SUCCESS,
-                    new ChangePasswordUser([
-                        'user_id'  => $user->getUserId(),
-                        'email'    => $user->getEmail(),
-                        'username' => $user->getUserName()
-                    ])
+                    new ChangePasswordUser($user->getArrayCopy())
                 );
         }
 

@@ -1,6 +1,9 @@
 <?php
 return array(
     'service_manager' => array(
+        'invokables' => [
+            'Api\Listeners\ChangePasswordListener' => 'Api\Listeners\ChangePasswordListener'
+        ],
         'factories' => array(
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
@@ -11,6 +14,7 @@ return array(
             'Api\\V1\\Rest\\Login\\LoginResource' => 'Api\\V1\\Rest\\Login\\LoginResourceFactory',
             'Api\\V1\\Rest\\Logout\\LogoutResource' => 'Api\\V1\\Rest\\Logout\\LogoutResourceFactory',
             'Api\\V1\\Rest\\Forgot\\ForgotResource' => 'Api\\V1\\Rest\\Forgot\\ForgotResourceFactory',
+            'Api\\V1\\Rest\\Password\\PasswordResource' => 'Api\\V1\\Rest\\Password\\PasswordResourceFactory',
         ),
     ),
     'router' => array(
@@ -96,6 +100,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.password' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/password',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Password\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -109,6 +122,7 @@ return array(
             6 => 'api.rest.login',
             7 => 'api.rest.logout',
             8 => 'api.rest.forgot',
+            9 => 'api.rest.password',
         ),
     ),
     'zf-rest' => array(
@@ -303,6 +317,28 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Forgot\\ForgotCollection',
             'service_name' => 'Forgot',
         ),
+        'Api\\V1\\Rest\\Password\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Password\\PasswordResource',
+            'route_name' => 'api.rest.password',
+            'route_identifier_name' => 'password_id',
+            'collection_name' => 'password',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Password\\PasswordEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Password\\PasswordCollection',
+            'service_name' => 'Password',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -315,6 +351,7 @@ return array(
             'Api\\V1\\Rest\\Login\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Logout\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Forgot\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Password\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -362,6 +399,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Password\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -397,6 +439,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Forgot\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Password\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -504,6 +550,18 @@ return array(
                 'entity_identifier_name' => 'id',
                 'route_name' => 'api.rest.forgot',
                 'route_identifier_name' => 'forgot_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Password\\PasswordEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.password',
+                'route_identifier_name' => 'password_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Password\\PasswordCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.password',
+                'route_identifier_name' => 'password_id',
                 'is_collection' => true,
             ),
         ),

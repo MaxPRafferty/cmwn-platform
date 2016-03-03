@@ -1,15 +1,38 @@
 <?php
 
-
 namespace Security\Exception;
 
+use Security\ChangePasswordUser;
 
+/**
+ * Class ChangePasswordException
+ *
+ * @package Security\Exception
+ */
 class ChangePasswordException extends \Exception
 {
-    public function __construct($message = null, $code = null, \Exception $previous = null)
+    protected $user;
+
+    /**
+     * ChangePasswordException constructor.
+     * @param ChangePasswordUser $user
+     * @param null $message
+     * @param null $code
+     * @param \Exception|null $previous
+     */
+    public function __construct(ChangePasswordUser $user, $message = null, $code = null, \Exception $previous = null)
     {
-        $code    = 403;
-        $message = $message === null ? 'Reset password' : $message;
+        $this->user = $user;
+        $code       = 403;
+        $message    = $message === null ? 'Reset password' : $message;
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @return ChangePasswordUser
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

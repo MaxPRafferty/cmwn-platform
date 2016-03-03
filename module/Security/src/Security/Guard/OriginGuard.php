@@ -9,6 +9,13 @@ use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\MvcEvent;
 
+/**
+ * Class OriginGuard
+ *
+ * Adds the CORS headers to all requests
+ *
+ * @package Security\Guard
+ */
 class OriginGuard implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
@@ -22,7 +29,7 @@ class OriginGuard implements ListenerAggregateInterface
     }
 
     /**
-     * Listen to the finish event
+     * Listen to the finish event and set the headers
      *
      * @param MvcEvent $event
      */
@@ -41,7 +48,10 @@ class OriginGuard implements ListenerAggregateInterface
             ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'))
             ->addHeaderLine('Access-Control-Allow-Credentials', 'true')
             ->addHeaderLine('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
-            ->addHeaderLine('Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization, X-Auth-Token, X-CSRF-TOKEN')
+            ->addHeaderLine(
+                'Access-Control-Allow-Headers',
+                'Origin, Content-Type, Authorization, X-Auth-Token, X-CSRF-TOKEN'
+            )
             ->addHeaderLine('Access-Control-Max-Age', '28800')
             ->addHeaderLine('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
