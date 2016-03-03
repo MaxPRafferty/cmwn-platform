@@ -8,6 +8,7 @@ use Zend\EventManager\ListenerAggregateTrait;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\MvcEvent;
+use Zend\Uri\Uri;
 
 /**
  * Class OriginGuard
@@ -48,14 +49,21 @@ class OriginGuard implements ListenerAggregateInterface
         //$origin = $request->header('origin');
 
         $origin = $request->getServer('HTTP_REFERER');
-        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $origin)
-        ) {
+        // TODO Config?
+        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $origin))
+        {
+            // We dont need the path query or fragments
+            $url = new Uri($origin);
+            $url->setPath('');
+            $url->setQuery('');
+            $url->setFragment('');
             $response->getHeaders()
-                ->addHeaderLine('Access-Control-Allow-Origin', $origin);
+                ->addHeaderLine('Access-Control-Allow-Origin', $url->toString());
         } else {
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'));
         }
+
         $response->getHeaders()
             ->addHeaderLine('Access-Control-Allow-Credentials', 'true')
             ->addHeaderLine('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
