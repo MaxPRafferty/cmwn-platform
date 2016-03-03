@@ -230,6 +230,8 @@ php:
         php:
             - cli
             - intl
+            - curl
+            - xml
         pear: {  }
         pecl: {  }
     ini:
