@@ -63,7 +63,7 @@ class SecurityServiceTest extends TestCase
     public function testItShouldSavePasswordWhenPassedAUserId()
     {
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($actualSet, $actualWhere)  use (&$user){
+            ->andReturnUsing(function ($actualSet, $actualWhere)  use (&$user) {
                 $this->assertArrayHasKey('password', $actualSet);
                 $this->assertNotEquals('foobar', $actualSet['password']);
 

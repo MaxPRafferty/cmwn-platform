@@ -51,12 +51,23 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             return $response->last();
         }
 
-        $return = $this->realService->createUser($user);
+        try {
+            $return = $this->realService->createUser($user);
+            $event    = new Event('save.new.user.post', $this->realService, ['user' => $user]);
+            $this->getEventManager()->trigger($event);
 
-        $event    = new Event('save.new.user.post', $this->realService, ['user' => $user]);
-        $this->getEventManager()->trigger($event);
+            return $return;
+        } catch (\Exception $createException) {
+            $event    = new Event(
+                'save.new.user.error',
+                $this->realService,
+                ['user' => $user, 'error' => $createException]
+            );
 
-        return $return;
+            $this->getEventManager()->trigger($event);
+
+            return false;
+        }
     }
 
     public function updateUser(UserInterface $user)
