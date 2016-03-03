@@ -40,12 +40,23 @@ class OriginGuard implements ListenerAggregateInterface
         if (!$response instanceof Response) {
             return;
         }
-
+        
         /** @var Request $request */
         $request = $event->getRequest();
 
+        //var_dump($response);
+        //$origin = $request->header('origin');
+
+        $origin = $request->getServer('HTTP_REFERER');
+        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $origin)
+        ) {
+            $response->getHeaders()
+                ->addHeaderLine('Access-Control-Allow-Origin', $origin);
+        } else {
+            $response->getHeaders()
+                ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'));
+        }
         $response->getHeaders()
-            ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'))
             ->addHeaderLine('Access-Control-Allow-Credentials', 'true')
             ->addHeaderLine('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
             ->addHeaderLine(
