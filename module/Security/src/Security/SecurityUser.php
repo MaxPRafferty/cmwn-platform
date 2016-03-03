@@ -44,6 +44,7 @@ class SecurityUser
     public function __construct(array $options)
     {
         $defaults = [
+            'user_id'      => null,
             'username'     => null,
             'email'        => null,
             'code'         => null,
@@ -53,14 +54,12 @@ class SecurityUser
 
         $array = array_merge($defaults, $options);
 
-        foreach ($array as $key => $value) {
-            if (isset($this->{$key})) {
-                $this->{$key} = $value;
-            }
-        }
-
-        $this->userId = isset($array['user_id']) ? $array['user_id'] : null;
-        $this->codeExpires = isset($array['code_expires']) ? DateTimeFactory::factory($array['code_expires']) : null;
+        $this->userId      = $array['user_id'];
+        $this->userName    = $array['username'];
+        $this->email       = $array['email'];
+        $this->code        = $array['code'];
+        $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
+        $this->password    = $array['password'];
     }
 
 
@@ -72,9 +71,15 @@ class SecurityUser
      */
     public function comparePassword($password)
     {
-        return password_verify($this->password, $password);
+        return password_verify($password, $this->password);
     }
 
+    /**
+     * Compare string to a code
+     *
+     * @param $code
+     * @return string
+     */
     public function compareCode($code)
     {
         if ($code !== $this->code) {

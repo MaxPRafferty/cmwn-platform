@@ -1,9 +1,10 @@
 <?php
 
-namespace Security\Service;
+namespace SecurityTest\Service;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
+use Security\Service\SecurityService;
 use User\Adult;
 
 class SecurityServiceTest extends TestCase

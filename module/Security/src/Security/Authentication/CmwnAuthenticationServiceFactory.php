@@ -9,7 +9,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Class CmwnAuthenticationServiceFactory
  * @package Security\Authentication
- * @codeCoverageIgnore
  */
 class CmwnAuthenticationServiceFactory implements FactoryInterface
 {
