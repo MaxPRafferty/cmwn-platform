@@ -19,8 +19,8 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testItShouldCreateDateTimeFromTimeStamp()
     {
-        $expectedDate = new \DateTimeImmutable();
-        $testDate     = DateTimeFactory::factory($expectedDate->getTimestamp());
+        $expectedDate = new \DateTimeImmutable('1982-05-13 23:43:00');
+        $testDate     = DateTimeFactory::factory(390181380);
 
         $this->assertEquals($expectedDate->getTimestamp(), $testDate->getTimestamp());
     }

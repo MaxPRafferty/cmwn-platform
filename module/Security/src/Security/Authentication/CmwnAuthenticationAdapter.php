@@ -3,6 +3,7 @@
 namespace Security\Authentication;
 
 use Application\Exception\NotFoundException;
+use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
 use Security\Service\SecurityService;
@@ -81,24 +82,31 @@ class CmwnAuthenticationAdapter implements AdapterInterface
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
         }
 
-        $goodResult = new Result(Result::SUCCESS, $user);
-
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
-            return $goodResult;
+            return new Result(Result::SUCCESS, $user);;
         }
         
         switch ($user->compareCode($this->password)) {
             case $user::CODE_EXPIRED:
-                throw new ChangePasswordException('Code is expired');
+                return new Result(Result::FAILURE_UNCATEGORIZED, new GuestUser());
                 
             case $user::CODE_INVALID:
                 return new Result(Result::FAILURE_CREDENTIAL_INVALID, new GuestUser());
 
             case $user::CODE_VALID:
-                return $goodResult;
+                return new Result(
+                    Result::SUCCESS,
+                    new ChangePasswordUser([
+                        'user_id'  => $user->getUserId(),
+                        'email'    => $user->getEmail(),
+                        'username' => $user->getUserName()
+                    ])
+                );
         }
 
+        // @codeCoverageIgnoreStart
+        // Hard to get here unless a new code status is added
         return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, new GuestUser());
     }
 }

@@ -27,7 +27,7 @@ class DateTimeFactory
         // Remind me to tell Derick that he now owes me a beer ;)
         } catch (\Exception $dateException) {
             if (!$date instanceof \DateTime) {
-                $date = new \DateTime(date(strftime('Y-m-d H:i:s', $date)));
+                $date = new \DateTime(date('Y-m-d H:i:s', $date));
             }
         }
 

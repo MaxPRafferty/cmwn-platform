@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Security\Service;
-
 
 use Application\Exception\NotFoundException;
 use Security\SecurityUser;

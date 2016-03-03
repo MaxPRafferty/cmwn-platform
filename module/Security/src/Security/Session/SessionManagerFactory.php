@@ -1,6 +1,6 @@
 <?php
 
-namespace Security\Factory;
+namespace Security\Session;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
