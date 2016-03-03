@@ -1,11 +1,28 @@
 <?php
 namespace Api\V1\Rest\Login;
 
+use Api\V1\Rest\User\MeEntity;
+use Security\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
+/**
+ * Class LoginResource
+ *
+ * @package Api\V1\Rest\Login
+ */
 class LoginResource extends AbstractResourceListener
 {
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    protected $authService;
+
+    public function __construct(AuthenticationServiceInterface $authService)
+    {
+        $this->authService = $authService;
+    }
+
     /**
      * Create a resource
      *
@@ -14,85 +31,24 @@ class LoginResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        return new ApiProblem(405, 'The POST method has not been defined');
-    }
+        if ($this->authService->hasIdentity()) {
+            return new MeEntity($this->authService->getIdentity());
+        }
 
-    /**
-     * Delete a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    public function delete($id)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
-    }
+        $this->authService->getAdapter()->setUserIdentifier(
+            $this->getInputFilter()->getValue('username')
+        );
 
-    /**
-     * Delete a collection, or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function deleteList($data)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for collections');
-    }
+        $this->authService->getAdapter()->setPassword(
+            $this->getInputFilter()->getValue('password')
+        );
 
-    /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    public function fetch($id)
-    {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
-    }
+        $result = $this->authService->authenticate();
 
-    /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return ApiProblem|mixed
-     */
-    public function fetchAll($params = array())
-    {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
-    }
+        if (!$result->isValid()) {
+            return new ApiProblem(401, "Invalid Login");
+        }
 
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function patch($id, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
-    }
-
-    /**
-     * Replace a collection or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for collections');
-    }
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function update($id, $data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
+        return new MeEntity($result->getIdentity());
     }
 }
