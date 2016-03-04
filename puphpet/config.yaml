@@ -27,6 +27,9 @@ vagrantfile:
                                 vflmnfp_0gble5l0kk19:
                                     host: '5327'
                                     guest: '22'
+                                vflmnfp_7cr5k517lwfr:
+                                    host: '3307'
+                                    guest: '3306'
                         hostname: cmwn.dev
                         memory: '2048'
                         cpus: '2'

@@ -62,6 +62,8 @@ class UserController extends AbstractConsoleController
         $this->securityService->savePasswordToUser($user, $password);
         $this->getConsole()->writeLine('Password Saved');
 
+        $this->securityService->setSuper($user, true);
+        $this->getConsole()->writeLine('User marked as super user');
     }
 
     /**
