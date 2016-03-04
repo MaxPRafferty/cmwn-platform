@@ -61,7 +61,6 @@ class OrganizationService implements OrganizationServiceInterface
         return $resultSet;
     }
 
-
     /**
      * Saves an Organization
      *
@@ -69,29 +68,37 @@ class OrganizationService implements OrganizationServiceInterface
      *
      * @param OrganizationInterface $org
      * @return bool
-     * @throws NotFoundException
      */
-    public function saveOrg(OrganizationInterface $org)
+    public function createOrganization(OrganizationInterface $org)
     {
-        $new = empty($org->getOrgId());
         $org->setUpdated(new \DateTime());
+        $org->setCreated(new \DateTime());
+        $org->setOrgId(Uuid::uuid1());
         $data = $org->getArrayCopy();
 
-        $data['meta'] = Json::encode($data['meta']);
+        $data['meta']    = Json::encode($data['meta']);
+        $data['org_id']  = $org->getOrgId();
         unset($data['deleted']);
 
-        if ($new) {
-            $org->setCreated(new \DateTime());
-            $org->setOrgId(Uuid::uuid1());
+        $this->orgTableGateway->insert($data);
+        return true;
+    }
 
-            $data['org_id'] = $org->getOrgId();
-            $data['created'] = $org->getCreated()->format(\DateTime::ISO8601);
+    /**
+     * Saves an existing Organization
+     *
+     * @param OrganizationInterface $org
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function updateOrganization(OrganizationInterface $org)
+    {
+        $this->fetchOrganization($org->getOrgId());
+        $org->setUpdated(new \DateTime());
 
-            $this->orgTableGateway->insert($data);
-            return true;
-        }
-
-        $this->fetchOrg($org->getOrgId());
+        $data         = $org->getArrayCopy();
+        $data['meta'] = Json::encode($data['meta']);
+        unset($data['deleted']);
 
         $this->orgTableGateway->update(
             $data,
@@ -108,7 +115,7 @@ class OrganizationService implements OrganizationServiceInterface
      * @return OrganizationInterface
      * @throws NotFoundException
      */
-    public function fetchOrg($orgId)
+    public function fetchOrganization($orgId)
     {
         $rowset = $this->orgTableGateway->select(['org_id' => $orgId]);
         $row    = $rowset->current();
@@ -128,9 +135,9 @@ class OrganizationService implements OrganizationServiceInterface
      * @param bool $soft
      * @return bool
      */
-    public function deleteOrg(OrganizationInterface $org, $soft = true)
+    public function deleteOrganization(OrganizationInterface $org, $soft = true)
     {
-        $this->fetchOrg($org->getOrgId());
+        $this->fetchOrganization($org->getOrgId());
 
         if ($soft) {
             $org->setDeleted(new \DateTime());
