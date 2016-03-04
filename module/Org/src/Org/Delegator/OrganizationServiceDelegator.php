@@ -29,11 +29,18 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
      */
     protected $realService;
 
+    /**
+     * OrganizationServiceDelegator constructor.
+     * @param OrganizationService $service
+     */
     public function __construct(OrganizationService $service)
     {
         $this->realService = $service;
     }
 
+    /**
+     * Attaches the Hides Deleted Listeners
+     */
     protected function attachDefaultListeners()
     {
         $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post']);
@@ -42,17 +49,32 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $this->getEventManager()->attach($hideListener);
     }
 
+    /**
+     * @param OrganizationInterface $org
+     * @return mixed
+     */
+    public function createOrganization(OrganizationInterface $org)
+    {
+        $event    = new Event('save.new.org', $this->realService, ['org' => $org]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->createOrganization($org);
+
+        $event    = new Event('save.new.org.post', $this->realService, ['org' => $org]);
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
 
     /**
-     * Saves a organization
-     *
-     * If the org id is null, then a new organization is created
-     *
      * @param OrganizationInterface $org
-     * @return bool
-     * @throws NotFoundException
+     * @return mixed
      */
-    public function saveOrg(OrganizationInterface $org)
+    public function updateOrganization(OrganizationInterface $org)
     {
         $event    = new Event('save.org', $this->realService, ['org' => $org]);
         $response = $this->getEventManager()->trigger($event);
@@ -61,13 +83,12 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
             return $response->last();
         }
 
-        $return = $this->realService->saveOrg($org);
+        $return = $this->realService->updateOrganization($org);
 
         $event    = new Event('save.org.post', $this->realService, ['org' => $org]);
         $this->getEventManager()->trigger($event);
 
         return $return;
-
     }
 
     /**
@@ -77,7 +98,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
      * @return OrganizationInterface
      * @throws NotFoundException
      */
-    public function fetchOrg($orgId)
+    public function fetchOrganization($orgId)
     {
         $event    = new Event('fetch.org', $this->realService, ['org_id' => $orgId]);
         $response = $this->getEventManager()->trigger($event);
@@ -86,7 +107,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
             return $response->last();
         }
 
-        $return = $this->realService->fetchOrg($orgId);
+        $return = $this->realService->fetchOrganization($orgId);
         $event    = new Event('fetch.org.post', $this->realService, ['org_id' => $orgId, 'org' => $return]);
         $this->getEventManager()->trigger($event);
         return $return;
@@ -101,7 +122,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
      * @param bool $soft
      * @return bool
      */
-    public function deleteOrg(OrganizationInterface $org, $soft = true)
+    public function deleteOrganization(OrganizationInterface $org, $soft = true)
     {
         $event    = new Event('delete.org', $this->realService, ['org' => $org, 'soft' => $soft]);
         $response = $this->getEventManager()->trigger($event);
@@ -110,7 +131,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
             return $response->last();
         }
 
-        $return = $this->realService->deleteOrg($org, $soft);
+        $return = $this->realService->deleteOrganization($org, $soft);
         $event  = new Event('delete.org.post', $this->realService, ['org' => $org, 'soft' => $soft]);
         $this->getEventManager()->trigger($event);
         return $return;

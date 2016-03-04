@@ -4,8 +4,10 @@ namespace Org\Service;
 
 use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
+use Ramsey\Uuid\Uuid;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Json\Json;
 use Zend\Paginator\Adapter\DbSelect;
 
 
@@ -29,24 +31,13 @@ interface OrganizationServiceInterface
     public function fetchAll($where = null, $paginate = true, $prototype = null);
 
     /**
-     * Saves an Organization
-     *
-     * If the org_id is null, then a new Organization is created
-     *
-     * @param OrganizationInterface $org
-     * @return bool
-     * @throws NotFoundException
-     */
-    public function saveOrg(OrganizationInterface $org);
-
-    /**
      * Fetches one Organization from the DB using the id
      *
      * @param $orgId
      * @return OrganizationInterface
      * @throws NotFoundException
      */
-    public function fetchOrg($orgId);
+    public function fetchOrganization($orgId);
 
     /**
      * Deletes an Organization from the database
@@ -57,5 +48,24 @@ interface OrganizationServiceInterface
      * @param bool $soft
      * @return bool
      */
-    public function deleteOrg(OrganizationInterface $org, $soft = true);
+    public function deleteOrganization(OrganizationInterface $org, $soft = true);
+
+    /**
+     * Saves an Organization
+     *
+     * If the org_id is null, then a new Organization is created
+     *
+     * @param OrganizationInterface $org
+     * @return bool
+     */
+    public function createOrganization(OrganizationInterface $org);
+
+    /**
+     * Saves an existing Organization
+     *
+     * @param OrganizationInterface $org
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function updateOrganization(OrganizationInterface $org);
 }

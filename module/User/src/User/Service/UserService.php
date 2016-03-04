@@ -68,19 +68,18 @@ class UserService implements UserServiceInterface
      */
     public function createUser(UserInterface $user)
     {
-        $data         = $user->getArrayCopy();
-        $data['meta'] = Json::encode($data['meta']);
-
-        unset($data['password']);
-        unset($data['deleted']);
-
         $user->setUpdated(new \DateTime());
         $user->setCreated(new \DateTime());
         $user->setUserId(Uuid::uuid1());
 
+        $data            = $user->getArrayCopy();
+        $data['meta']    = Json::encode($data['meta']);
         $data['user_id'] = $user->getUserId();
         $data['created'] = $user->getCreated()->getTimestamp();
         $data['updated'] = $user->getUpdated()->getTimestamp();
+
+        unset($data['password']);
+        unset($data['deleted']);
 
         $this->userTableGateway->insert($data);
         return true;
@@ -95,10 +94,9 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
-        $data = $user->getArrayCopy();
-        $data['meta'] = Json::encode($data['meta']);
-
         $user->setUpdated(new \DateTime());
+        $data            = $user->getArrayCopy();
+        $data['meta']    = Json::encode($data['meta']);
         $data['updated'] = $user->getUpdated()->getTimestamp();
 
         unset($data['password']);

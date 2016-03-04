@@ -118,7 +118,7 @@ class OrganizationServiceTest extends TestCase
             })
             ->once();
 
-        $this->assertTrue($this->organizationService->saveOrg($newOrg));
+        $this->assertTrue($this->organizationService->createOrganization($newOrg));
     }
 
     public function testItShouldUpdateExistingOrg()
@@ -154,7 +154,7 @@ class OrganizationServiceTest extends TestCase
 
             });
 
-        $this->assertTrue($this->organizationService->saveOrg($org));
+        $this->assertTrue($this->organizationService->updateOrganization($org));
     }
 
     public function testItShouldFetchOrgById()
@@ -175,7 +175,7 @@ class OrganizationServiceTest extends TestCase
             ->with(['org_id' => $orgData['org_id']])
             ->andReturn($result);
 
-        $this->assertInstanceOf('Org\Organization', $this->organizationService->fetchOrg($orgData['org_id']));
+        $this->assertInstanceOf('Org\Organization', $this->organizationService->fetchOrganization($orgData['org_id']));
     }
 
     public function testItShouldThrowNotFoundExceptionWhenOrgIsNotFound()
@@ -190,7 +190,7 @@ class OrganizationServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturn($result);
 
-        $this->organizationService->fetchOrg('foo');
+        $this->organizationService->fetchOrganization('foo');
     }
 
     public function testItShouldSoftDeleteByDefault()
@@ -219,7 +219,7 @@ class OrganizationServiceTest extends TestCase
 
             });
 
-        $this->assertTrue($this->organizationService->deleteOrg($org));
+        $this->assertTrue($this->organizationService->deleteOrganization($org));
     }
 
     public function testItShouldSoftDeleteWhenForced()
@@ -247,6 +247,6 @@ class OrganizationServiceTest extends TestCase
 
             });
 
-        $this->assertTrue($this->organizationService->deleteOrg($org, false));
+        $this->assertTrue($this->organizationService->deleteOrganization($org, false));
     }
 }

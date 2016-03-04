@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Group\Group;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
@@ -29,6 +30,31 @@ class GroupService implements GroupServiceInterface
     public function __construct(TableGateway $gateway)
     {
         $this->groupTableGateway = $gateway;
+    }
+
+    /**
+     * Attaches a user to a group
+     *
+     * @param GroupInterface $group
+     * @param UserInterface $user
+     * @param $role
+     * @return bool
+     */
+    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role)
+    {
+        // TODO: Implement attachUserToGroup() method.
+    }
+
+    /**
+     * Detaches a user from a group
+     *
+     * @param GroupInterface $group
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function detachUserFromGroup(GroupInterface $group, UserInterface $user)
+    {
+        // TODO: Implement detachUserFromGroup() method.
     }
 
     /**

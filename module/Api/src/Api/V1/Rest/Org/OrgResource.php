@@ -52,7 +52,7 @@ class OrgResource extends AbstractResourceListener
     {
         $org = $this->fetch($orgId);
 
-        $this->service->deleteOrg($org);
+        $this->service->deleteOrganization($org);
         return new ApiProblem(200, 'Organization deleted', 'Ok');
     }
 
@@ -64,7 +64,7 @@ class OrgResource extends AbstractResourceListener
      */
     public function fetch($orgId)
     {
-        return new OrgEntity($this->service->fetchOrg($orgId)->getArrayCopy());
+        return new OrgEntity($this->service->fetchOrganization($orgId)->getArrayCopy());
     }
 
     /**

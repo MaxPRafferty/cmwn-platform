@@ -52,6 +52,7 @@ class OrganizationServiceDelegatorTest extends TestCase
         $this->calledEvents = [];
         $this->delegator    = new OrganizationServiceDelegator($this->orgService);
         $this->delegator->getEventManager()->clearListeners('save.org');
+        $this->delegator->getEventManager()->clearListeners('save.new.org');
         $this->delegator->getEventManager()->clearListeners('fetch.org.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.orgs');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
@@ -78,15 +79,42 @@ class OrganizationServiceDelegatorTest extends TestCase
         ];
     }
 
-    public function testItShouldCallSaveOrg()
+    public function testItShouldCallCreateOrganization()
     {
-        $this->orgService->shouldReceive('saveOrg')
+        $this->orgService->shouldReceive('createOrganization')
+            ->once()
+            ->with($this->org)
+            ->andReturn(true);
+
+        $this->delegator->createOrganization($this->org);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'save.new.org',
+                'target' => $this->orgService,
+                'params' => ['org' => $this->org]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'save.new.org.post',
+                'target' => $this->orgService,
+                'params' => ['org' => $this->org]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    public function testItShouldCallUpdateOrganization()
+    {
+        $this->orgService->shouldReceive('updateOrganization')
             ->with($this->org)
             ->andReturn(true)
             ->once();
 
-
-        $this->delegator->saveOrg($this->org);
+        $this->delegator->updateOrganization($this->org);
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -107,23 +135,23 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
-    public function testItShouldNotCallSaveOrgWhenEventPrevents()
+    public function testItShouldNotCallCreateOrganizationWhenEventPrevents()
     {
-        $this->orgService->shouldReceive('saveOrg')
+        $this->orgService->shouldReceive('createOrganization')
             ->with($this->org)
             ->never();
 
-        $this->delegator->getEventManager()->attach('save.org', function (Event $event) {
+        $this->delegator->getEventManager()->attach('save.new.org', function (Event $event) {
             $event->stopPropagation(true);
             return ['foo' => 'bar'];
         });
 
-        $this->assertEquals(['foo' => 'bar'], $this->delegator->saveOrg($this->org));
+        $this->assertEquals(['foo' => 'bar'], $this->delegator->createOrganization($this->org));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
             [
-                'name'   => 'save.org',
+                'name'   => 'save.new.org',
                 'target' => $this->orgService,
                 'params' => ['org' => $this->org]
             ],
@@ -133,14 +161,14 @@ class OrganizationServiceDelegatorTest extends TestCase
 
     public function testItShouldCallFetchOrg()
     {
-        $this->orgService->shouldReceive('fetchOrg')
+        $this->orgService->shouldReceive('fetchOrganization')
             ->with($this->org->getOrgId())
             ->andReturn($this->org)
             ->once();
 
         $this->assertSame(
             $this->org,
-            $this->delegator->fetchOrg($this->org->getOrgId())
+            $this->delegator->fetchOrganization($this->org->getOrgId())
         );
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -176,7 +204,7 @@ class OrganizationServiceDelegatorTest extends TestCase
 
         $this->assertSame(
             $this->org,
-            $this->delegator->fetchOrg($this->org->getOrgId())
+            $this->delegator->fetchOrganization($this->org->getOrgId())
         );
 
         $this->assertEquals(1, count($this->calledEvents));
@@ -192,14 +220,14 @@ class OrganizationServiceDelegatorTest extends TestCase
 
     public function testItShouldCallDeleteOrg()
     {
-        $this->orgService->shouldReceive('deleteOrg')
+        $this->orgService->shouldReceive('deleteOrganization')
             ->with($this->org, true)
             ->andReturn($this->org)
             ->once();
 
         $this->assertSame(
             $this->org,
-            $this->delegator->deleteOrg($this->org)
+            $this->delegator->deleteOrganization($this->org)
         );
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -235,7 +263,7 @@ class OrganizationServiceDelegatorTest extends TestCase
 
         $this->assertSame(
             $this->org,
-            $this->delegator->deleteOrg($this->org)
+            $this->delegator->deleteOrganization($this->org)
         );
 
         $this->assertEquals(1, count($this->calledEvents));
