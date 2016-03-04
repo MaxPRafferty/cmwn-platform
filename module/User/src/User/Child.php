@@ -41,8 +41,11 @@ class Child extends User implements ChildInterface
      */
     public function setUserName($userName)
     {
-        parent::setUserName($userName);
-        $this->generatedName = null;
+        if ($this->userName === null) {
+            parent::setUserName($userName);
+            $this->generatedName = null;
+        }
+
         return $this;
     }
 

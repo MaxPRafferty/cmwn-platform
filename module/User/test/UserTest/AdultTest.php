@@ -61,4 +61,13 @@ class AdultTest extends TestCase
 
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
+
+    public function testItShouldChangeUserNameForAdults()
+    {
+        $adult = new Adult();
+        $adult->setUserName('manchuck');
+        $adult->setUserName('foobar');
+
+        $this->assertEquals('foobar', $adult->getUserName());
+    }
 }
