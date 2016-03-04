@@ -7,6 +7,10 @@ use Security\SecurityUser;
 use User\UserInterface;
 use Zend\Db\TableGateway\TableGateway;
 
+/**
+ * Class SecurityService
+ * @package Security\Service
+ */
 class SecurityService implements SecurityServiceInterface
 {
     /**
@@ -72,6 +76,23 @@ class SecurityService implements SecurityServiceInterface
         );
 
         return true;
+    }
+
+    /**
+     * Sets the user as a super admin
+     *
+     * @param $user
+     * @param bool $super
+     */
+    public function setSuper($user, $super = true)
+    {
+        $bit    = $super ? 1 : 0;
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+
+        $this->gateway->update(
+            ['super'   => $bit],
+            ['user_id' => $userId]
+        );
     }
 
     /**

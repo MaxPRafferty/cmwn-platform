@@ -1,13 +1,14 @@
 <?php
 
-
 namespace Security\Service;
-
 
 use Application\Exception\NotFoundException;
 use Security\SecurityUser;
-use User\UserInterface;
 
+/**
+ * Interface SecurityServiceInterface
+ * @package Security\Service
+ */
 interface SecurityServiceInterface
 {
     /**
@@ -44,4 +45,12 @@ interface SecurityServiceInterface
      * @return bool
      */
     public function savePasswordToUser($user, $password);
+
+    /**
+     * Sets the user as a super admin
+     *
+     * @param $user
+     * @param bool $super
+     */
+    public function setSuper($user, $super = true);
 }

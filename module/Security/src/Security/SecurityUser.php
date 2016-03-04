@@ -7,6 +7,11 @@ use User\User;
 
 /**
  * Class SecurityUser
+ *
+ * A security user, is a user that is logged in.   This user can be saved to the database
+ * however not all the security will be saved.  To Save the passowrd, code and super flag,
+ * use the security service
+ *
  * @package Security
  */
 class SecurityUser extends User
@@ -50,13 +55,25 @@ class SecurityUser extends User
      */
     protected $type;
 
+    /**
+     * @var bool
+     */
+    protected $super = false;
 
+    /**
+     * Sets the data for the user
+     *
+     * Also sets the code, password and super flag
+     *
+     * @param array $array
+     */
     public function exchangeArray(array $array)
     {
         $defaults = [
             'code'         => null,
             'code_expires' => null,
             'password'     => null,
+            'super'        => false
         ];
 
         $array = array_merge($defaults, $array);
@@ -65,6 +82,7 @@ class SecurityUser extends User
         $this->password    = $array['password'];
         $this->code        = $array['code'];
         $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
+        $this->super       = (bool) $array['super'];
     }
 
     /**
@@ -121,10 +139,22 @@ class SecurityUser extends User
     }
 
     /**
+     * Gets the temp code for the user
+     *
      * @return string
      */
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * Tests if the user is a super admin or not
+     *
+     * @return bool
+     */
+    public function isSuper()
+    {
+        return $this->super;
     }
 }

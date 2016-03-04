@@ -36,6 +36,13 @@ interface GroupServiceInterface
     public function detachUserFromGroup(GroupInterface $group, UserInterface $user);
 
     /**
+     * @param GroupInterface $parent
+     * @param GroupInterface $child
+     * @return bool
+     */
+    public function addChildToGroup(GroupInterface $parent, GroupInterface $child);
+
+    /**
      * @param null|PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype

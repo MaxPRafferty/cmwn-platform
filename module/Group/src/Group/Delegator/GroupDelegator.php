@@ -69,6 +69,16 @@ class GroupDelegator implements GroupServiceInterface
 
 
     /**
+     * @param GroupInterface $parent
+     * @param GroupInterface $child
+     * @return bool
+     */
+    public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
+    {
+        // TODO: Implement addChildToGroup() method.
+    }
+
+    /**
      * Saves a group
      *
      * If the group id is null, then a new group is created
