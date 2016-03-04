@@ -80,6 +80,7 @@ class UserService implements UserServiceInterface
 
         unset($data['password']);
         unset($data['deleted']);
+        unset($data['super']);
 
         $this->userTableGateway->insert($data);
         return true;
@@ -101,6 +102,7 @@ class UserService implements UserServiceInterface
 
         unset($data['password']);
         unset($data['deleted']);
+        unset($data['super']);
 
         $this->fetchUser($user->getUserId());
 
