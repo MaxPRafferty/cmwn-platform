@@ -1,6 +1,6 @@
 <?php
 
-namespace GameTest\Delegator;
+namespace GroupTest\Delegator;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
