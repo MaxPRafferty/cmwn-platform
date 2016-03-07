@@ -29,7 +29,7 @@ class ChildTest extends TestCase
     {
         $name = StaticNameService::generateRandomName();
         $expected = [
-            'user_id'     => '',
+            'user_id'     => null,
             'username'    => $name->userName,
             'email'       => null,
             'first_name'  => null,
@@ -86,6 +86,12 @@ class ChildTest extends TestCase
         $this->assertNotNull($child->getGenratedName());
         $this->assertTrue($child->isNameGenerated());
 
+    }
+
+    public function testItShouldReportNameNotGeneratedWhenSet()
+    {
+        $child = new Child();
+        
         $child->setUserName('foo_bar');
         $this->assertFalse($child->isNameGenerated());
         $this->assertNull($child->getGenratedName());

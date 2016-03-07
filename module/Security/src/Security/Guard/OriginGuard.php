@@ -48,6 +48,7 @@ class OriginGuard implements ListenerAggregateInterface
             return;
         }
 
+        /** @var Response $response */
         $response = $event->getResponse();
         $refferer = $request->getServer('HTTP_REFERER');
         // TODO Config?

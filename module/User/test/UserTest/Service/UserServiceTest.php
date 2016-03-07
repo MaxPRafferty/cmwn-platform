@@ -51,11 +51,7 @@ class UserServiceTest extends TestCase
     {
         $this->tableGateway
             ->shouldReceive('select')
-            ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
-                return new \ArrayIterator([]);
-            })
-            ->once();
+            ->never();
 
         $result = $this->userService->fetchAll(null);
         $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);

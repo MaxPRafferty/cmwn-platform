@@ -1,11 +1,13 @@
 <?php
 
-
 namespace ApplicationTest\Utils\Date;
-
 
 use Application\Utils\Date\DateTimeFactory;
 
+/**
+ * Class DateTimeFactoryTest
+ * @package ApplicationTest\Utils\Date
+ */
 class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -29,7 +31,7 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $expectedDate = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $newDate      = new \DateTimeImmutable('now', new \DateTimeZone('America/New_York'));
-        $testDate     = DateTimeFactory::factory($newDate->getTimestamp());
+        $testDate     = DateTimeFactory::factory($newDate->format(\DateTime::ISO8601));
 
         $this->assertEquals($expectedDate->getTimestamp(), $testDate->getTimestamp());
     }

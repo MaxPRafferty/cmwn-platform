@@ -2,6 +2,10 @@
 
 namespace Application\Utils\Date;
 
+/**
+ * Class DateTimeFactory
+ * @package Application\Utils\Date
+ */
 class DateTimeFactory
 {
     /**
@@ -18,17 +22,13 @@ class DateTimeFactory
             return $date;
         }
 
-        try {
-            if (!$date instanceof \DateTime) {
-                $date = new \DateTime($date);
-            }
-            
-        // Handle time stamps 
-        // Remind me to tell Derick that he now owes me a beer ;)
-        } catch (\Exception $dateException) {
-            if (!$date instanceof \DateTime) {
-                $date = new \DateTime(date('Y-m-d H:i:s', $date));
-            }
+        // Timestamp
+        if (is_int($date)) {
+            $date = date(\DateTime::ISO8601, $date);
+        }
+
+        if (!$date instanceof \DateTime) {
+            $date = new \DateTime($date);
         }
 
         $date->setTimezone(new \DateTimeZone('UTC'));

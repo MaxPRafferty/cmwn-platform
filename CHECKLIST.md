@@ -16,10 +16,10 @@
 - [ ] Strict Enforcement
 - [ ] Change all dates to timestamps
 - [ ] Import Endpoint
+- [ ] Login clear identity
 
 ## DA FURTURE
 - [ ] Settings API
-
 ## General note
 
 - SA will not pull in group and org hals 
