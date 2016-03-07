@@ -7,6 +7,7 @@ use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
+use Zend\Console\Request as ConsoleRequest;
 use Zend\Mvc\MvcEvent;
 use Zend\Uri\Uri;
 
@@ -27,7 +28,7 @@ class OriginGuard implements ListenerAggregateInterface
     public function attach(EventManagerInterface $events)
     {
         $this->listeners[] = $events->attach(
-            [MvcEvent::EVENT_RENDER, MvcEvent::EVENT_RENDER_ERROR],
+            [MvcEvent::EVENT_FINISH],
             [$this, 'attachCors'],
             200
         );
@@ -40,14 +41,14 @@ class OriginGuard implements ListenerAggregateInterface
      */
     public function attachCors(MvcEvent $event)
     {
-        $response = $event->getResponse();
-        // Coming in from the console
-        if (!$response instanceof Response) {
-            return;
-        }
-        
         /** @var Request $request */
         $request  = $event->getRequest();
+        // Coming in from the console
+        if ($event->getRequest() instanceof ConsoleRequest) {
+            return;
+        }
+
+        $response = $event->getResponse();
         $refferer = $request->getServer('HTTP_REFERER');
         // TODO Config?
         if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $refferer))
