@@ -9,6 +9,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Class UserGroupServiceDelegatorFactory
  * @package Group\Delegator
+ * @codeCoverageIgnore
  */
 class UserGroupServiceDelegatorFactory implements DelegatorFactoryInterface
 {

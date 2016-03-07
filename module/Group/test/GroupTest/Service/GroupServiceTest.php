@@ -6,6 +6,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use Group\Service\GroupService;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Predicate as Where;
 
 /**
@@ -257,7 +258,7 @@ class GroupServiceTest extends TestCase
             'deleted'         => '',
         ];
 
-        $group   = new Group($groupData);
+        $group  = new Group($groupData);
         $result = new ResultSet();
         $result->initialize([$groupData]);
         $this->tableGateway->shouldReceive('select')
@@ -271,5 +272,104 @@ class GroupServiceTest extends TestCase
             });
 
         $this->assertTrue($this->groupService->deleteGroup($group, false));
+    }
+
+    public function testItShouldRebuildTreeWhenChildAddedForNewTree()
+    {
+        $parent = new Group([
+            'group_id'        => 'parent',
+            'left'            => 0,
+            'right'           => 0,
+        ]);
+
+        $child = new Group();
+        $child->setGroupId('child');
+
+        $result = new ResultSet();
+        $result->initialize([$parent->getArrayCopy()]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['group_id' => $parent->getGroupId()])
+            ->andReturn($result);
+
+        $this->tableGateway->shouldReceive('update')
+            ->with(
+                ['lft' => 1, 'rgt' => 4],
+                ['group_id' => 'parent']
+            )
+            ->once();
+
+        $this->tableGateway->shouldReceive('update')
+            ->with(
+                ['lft' => 2, 'rgt' => 3],
+                ['group_id' => 'child']
+            )
+            ->once();
+
+        $this->groupService->addChildToGroup($parent, $child);
+    }
+
+    public function testItShouldRebuildTreeWhenChildAddedForExistingTree()
+    {
+        $parent = new Group([
+            'group_id'        => 'parent',
+            'organization_id' => 'org',
+            'left'            => 1,
+            'right'           => 2,
+        ]);
+
+        $child = new Group();
+        $child->setGroupId('child');
+
+        $result = new ResultSet();
+        $result->initialize([$parent->getArrayCopy()]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['group_id' => $parent->getGroupId()])
+            ->andReturn($result);
+
+
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($actualSet, $actualWhere) {
+
+                $expectedWhere = new Where();
+                $expectedWhere->addPredicate(new Operator('rgt', 1, Operator::OP_GT));
+                $expectedWhere->addPredicate(new Operator('org_id', 'org'));
+
+                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
+                $this->assertEquals(['rgt' => 'rgt + 2'], $actualSet);
+                $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+                return true;
+            })
+            ->times(1)
+            ->ordered();
+
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($actualSet, $actualWhere) {
+
+                $expectedWhere = new Where();
+                $expectedWhere->addPredicate(new Operator('lft', 1, Operator::OP_GT));
+                $expectedWhere->addPredicate(new Operator('org_id', 'org'));
+
+                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
+                $this->assertEquals(['lft' => 'lft + 2'], $actualSet);
+                $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+                return true;
+            })
+            ->times(1)
+            ->ordered();
+
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($actualSet, $actualWhere) {
+                $expectedWhere = new Where();
+                $expectedWhere->addPredicate(new Operator('group_id', 'child'));
+
+                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
+                $this->assertEquals(['lft' => 2, 'rgt' => 3], $actualSet);
+                $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+                return true;
+            })
+            ->times(1)
+            ->ordered();
+
+        $this->groupService->addChildToGroup($parent, $child);
     }
 }

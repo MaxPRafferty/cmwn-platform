@@ -6,7 +6,6 @@ use Application\Exception\NotFoundException;
 use Group\Group;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
-use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
@@ -31,31 +30,6 @@ class GroupService implements GroupServiceInterface
     public function __construct(TableGateway $gateway)
     {
         $this->groupTableGateway = $gateway;
-    }
-
-    /**
-     * Attaches a user to a group
-     *
-     * @param GroupInterface $group
-     * @param UserInterface $user
-     * @param $role
-     * @return bool
-     */
-    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role)
-    {
-        // TODO: Implement attachUserToGroup() method.
-    }
-
-    /**
-     * Detaches a user from a group
-     *
-     * @param GroupInterface $group
-     * @param UserInterface $user
-     * @return bool
-     */
-    public function detachUserFromGroup(GroupInterface $group, UserInterface $user)
-    {
-        // TODO: Implement detachUserFromGroup() method.
     }
 
     /**
@@ -86,6 +60,7 @@ class GroupService implements GroupServiceInterface
         // UPDATE group SET rgt = rgt + 2 WHERE rgt > @lft AND org_id = @org_id
         // UPDATE group SET lft = lft + 2 WHERE lft > @lft AND org_id = @org_id
 
+        // TODO create transaction
         $where = new Where();
         $where->addPredicate(new Operator('rgt', $parent->getLeft(), Operator::OP_GT));
         $where->addPredicate(new Operator('org_id', $parent->getOrganizationId()));
@@ -105,7 +80,7 @@ class GroupService implements GroupServiceInterface
         // UPDATE group SET rgt = $parent->getLeft() + 1, rgt = $parent->getLeft() + 2 WHERE group_id = $child->getGroupid()
 
         $where = new Where();
-        $where->addPredicate(new Operator('group_id', $child->getOrganizationId()));
+        $where->addPredicate(new Operator('group_id', $child->getGroupId()));
         $this->groupTableGateway->update(
             ['lft' => $parent->getLeft() + 1, 'rgt' => $parent->getLeft() + 2],
             $where
