@@ -26,7 +26,11 @@ class OriginGuard implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 200);
+        $this->listeners[] = $events->attach(
+            [MvcEvent::EVENT_RENDER, MvcEvent::EVENT_RENDER_ERROR],
+            [$this, 'attachCors'],
+            200
+        );
     }
 
     /**
@@ -34,7 +38,7 @@ class OriginGuard implements ListenerAggregateInterface
      *
      * @param MvcEvent $event
      */
-    public function onFinish(MvcEvent $event)
+    public function attachCors(MvcEvent $event)
     {
         $response = $event->getResponse();
         // Coming in from the console
@@ -43,17 +47,13 @@ class OriginGuard implements ListenerAggregateInterface
         }
         
         /** @var Request $request */
-        $request = $event->getRequest();
-
-        //var_dump($response);
-        //$origin = $request->header('origin');
-
-        $origin = $request->getServer('HTTP_REFERER');
+        $request  = $event->getRequest();
+        $refferer = $request->getServer('HTTP_REFERER');
         // TODO Config?
-        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $origin))
+        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $refferer))
         {
             // We dont need the path query or fragments
-            $url = new Uri($origin);
+            $url = new Uri($refferer);
             $url->setPath('');
             $url->setQuery('');
             $url->setFragment('');
