@@ -14,11 +14,17 @@ class UserEntity extends User implements UserInterface
 {
     protected $type;
 
+    /**
+     * @param $type
+     */
     protected function setType($type)
     {
         $this->type = $type;
     }
 
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->type;

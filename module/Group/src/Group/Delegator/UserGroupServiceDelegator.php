@@ -94,4 +94,60 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $this->getEventManager()->trigger($event);
         return $return;
     }
+
+    /**
+     * @param GroupInterface|string|\Zend\Db\Sql\Where $group
+     * @param null $prototype
+     * @return bool
+     */
+    public function fetchUsersForGroup($group, $prototype = null)
+    {
+        $eventParams = ['group' => $group];
+        $event       = new Event('fetch.group.users', $this->realService, $eventParams);
+        if ($this->getEventManager()->trigger($event)->stopped()) {
+            return false;
+        }
+
+        try {
+            $return = $this->realService->fetchUsersForGroup($group, $prototype);
+        } catch (\Exception $attachException) {
+            $eventParams['exception'] = $attachException;
+            $event                    = new Event('fetch.group.users.error', $this->realService, $eventParams);
+            $this->getEventManager()->trigger($event);
+
+            return false;
+        }
+
+        $event = new Event('fetch.group.users.post', $this->realService, $eventParams);
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
+     * @param $organization
+     * @param null $prototype
+     * @return bool
+     */
+    public function fetchUsersForOrg($organization, $prototype = null)
+    {
+        $eventParams = ['group' => $organization];
+        $event       = new Event('fetch.org.users', $this->realService, $eventParams);
+        if ($this->getEventManager()->trigger($event)->stopped()) {
+            return false;
+        }
+
+        try {
+            $return = $this->realService->fetchUsersForOrg($organization, $prototype);
+        } catch (\Exception $attachException) {
+            $eventParams['exception'] = $attachException;
+            $event                    = new Event('fetch.org.users.error', $this->realService, $eventParams);
+            $this->getEventManager()->trigger($event);
+
+            return false;
+        }
+
+        $event = new Event('fetch.org.users.post', $this->realService, $eventParams);
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace Api\Listeners;
 
+use Api\Links\ForgotLink;
+use Api\Links\ProfileLink;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -14,12 +16,13 @@ use ZF\Hal\Link\Link;
  */
 class HalListenersAggregate
 {
+    protected $listeners = [];
     /**
      * @param SharedEventManagerInterface $manager
      */
     public function attachShared(SharedEventManagerInterface $manager)
     {
-        $manager->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'addUserLinks']);
+        $this->listeners[] = $manager->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'addUserLinks']);
     }
 
     /**
@@ -27,27 +30,26 @@ class HalListenersAggregate
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-
+        foreach ($this->listeners as $listener) {
+            $manager->detach('ZF\Hal\Plugin\Hal', $listener);
+        }
     }
 
+    /**
+     * @param Event $event
+     */
     public function addUserLinks(Event $event)
     {
         /** @var Entity $entity */
         $entity = $event->getParam('entity');
-        // TODO Re-implement once this route is back
         // TODO Make this listener load other listeners from SM
-        return;
         if (!$entity->entity instanceof UserInterface) {
+            return;
         }
 
         /** @var UserInterface $user */
         $user = $entity->entity;
-        $entity->getLinks()->add(Link::factory([
-            'rel' => 'cmwn:reset.password',
-            'route' => [
-                'name' => 'api.rest.user-password',
-                'params' => ['user_id' => $user->getUserId()]
-            ]
-        ]));
+        $entity->getLinks()->add(new ForgotLink()); // TODO Change this to Reset Link
+        $entity->getLinks()->add(new ProfileLink($user));
     }
 }

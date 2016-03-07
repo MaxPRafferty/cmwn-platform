@@ -1,9 +1,9 @@
 <?php
 return array(
     'service_manager' => array(
-        'invokables' => [
-            'Api\Listeners\ChangePasswordListener' => 'Api\Listeners\ChangePasswordListener'
-        ],
+        'invokables' => array(
+            'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
+        ),
         'factories' => array(
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
@@ -15,6 +15,8 @@ return array(
             'Api\\V1\\Rest\\Logout\\LogoutResource' => 'Api\\V1\\Rest\\Logout\\LogoutResourceFactory',
             'Api\\V1\\Rest\\Forgot\\ForgotResource' => 'Api\\V1\\Rest\\Forgot\\ForgotResourceFactory',
             'Api\\V1\\Rest\\Password\\PasswordResource' => 'Api\\V1\\Rest\\Password\\PasswordResourceFactory',
+            'Api\\V1\\Rest\\GroupUsers\\GroupUsersResource' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersResourceFactory',
+            'Api\\V1\\Rest\\OrgUsers\\OrgUsersResource' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersResourceFactory',
         ),
     ),
     'router' => array(
@@ -109,6 +111,24 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.group-users' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/group/:group_id/users',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\GroupUsers\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.org-users' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/org/:org_id/users',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\OrgUsers\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -123,6 +143,8 @@ return array(
             7 => 'api.rest.logout',
             8 => 'api.rest.forgot',
             9 => 'api.rest.password',
+            10 => 'api.rest.group-users',
+            11 => 'api.rest.org-users',
         ),
     ),
     'zf-rest' => array(
@@ -339,6 +361,50 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Password\\PasswordCollection',
             'service_name' => 'Password',
         ),
+        'Api\\V1\\Rest\\GroupUsers\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersResource',
+            'route_name' => 'api.rest.group-users',
+            'route_identifier_name' => 'group_id',
+            'collection_name' => 'group_users',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersEntity',
+            'collection_class' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersCollection',
+            'service_name' => 'GroupUsers',
+        ),
+        'Api\\V1\\Rest\\OrgUsers\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersResource',
+            'route_name' => 'api.rest.org-users',
+            'route_identifier_name' => 'org_id',
+            'collection_name' => 'org_users',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersEntity',
+            'collection_class' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersCollection',
+            'service_name' => 'OrgUsers',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -352,6 +418,8 @@ return array(
             'Api\\V1\\Rest\\Logout\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Forgot\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Password\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\GroupUsers\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\OrgUsers\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -404,6 +472,16 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\GroupUsers\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\OrgUsers\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -443,6 +521,14 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Password\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\GroupUsers\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\OrgUsers\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -562,6 +648,30 @@ return array(
                 'entity_identifier_name' => 'id',
                 'route_name' => 'api.rest.password',
                 'route_identifier_name' => 'password_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\GroupUsers\\GroupUsersEntity' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.group-users',
+                'route_identifier_name' => 'group_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\GroupUsers\\GroupUsersCollection' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.group-users',
+                'route_identifier_name' => 'group_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\OrgUsers\\OrgUsersEntity' => array(
+                'entity_identifier_name' => 'org_id',
+                'route_name' => 'api.rest.org-users',
+                'route_identifier_name' => 'org_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\OrgUsers\\OrgUsersCollection' => array(
+                'entity_identifier_name' => 'org_id',
+                'route_name' => 'api.rest.org-users',
+                'route_identifier_name' => 'org_id',
                 'is_collection' => true,
             ),
         ),
