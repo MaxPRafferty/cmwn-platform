@@ -1,16 +1,16 @@
 <?php
 
-namespace Api\V1\Rest\Logout;
+namespace Api\Factory;
 
+use Api\Listeners\UserRouteListener;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-
 /**
- * Class LogoutResourceFactory
- * @package Api\V1\Rest\Logout
+ * Class UserRouteListenerFactory
+ * @package Api\Factory
  */
-class LogoutResourceFactory implements FactoryInterface
+class UserRouteListenerFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -20,6 +20,6 @@ class LogoutResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new LogoutResource($serviceLocator->get('authentication'));
+        return new UserRouteListener($serviceLocator->get('User\Service'));
     }
 }

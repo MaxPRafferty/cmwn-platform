@@ -2,7 +2,7 @@
 
 namespace Security\Guard;
 
-use Security\Authentication\AuthenticationServiceInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Zend\EventManager\EventManagerInterface;

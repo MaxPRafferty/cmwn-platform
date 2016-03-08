@@ -13,10 +13,10 @@ use Zend\Authentication\Result;
 use Zend\Validator\StaticValidator;
 
 /**
- * Class CmwnAuthenticationAdapter
+ * Class AuthAdapter
  * @package Security\Authentication
  */
-class CmwnAuthenticationAdapter implements AdapterInterface
+class AuthAdapter implements AdapterInterface
 {
     /**
      * @var SecurityService
@@ -33,6 +33,10 @@ class CmwnAuthenticationAdapter implements AdapterInterface
      */
     protected $password;
 
+    /**
+     * AuthAdapter constructor.
+     * @param SecurityService $service
+     */
     public function __construct(SecurityService $service)
     {
         $this->service = $service;
@@ -86,11 +90,11 @@ class CmwnAuthenticationAdapter implements AdapterInterface
         if ($user->comparePassword($this->password)) {
             return new Result(Result::SUCCESS, $user);
         }
-        
+
         switch ($user->compareCode($this->password)) {
             case $user::CODE_EXPIRED:
                 return new Result(Result::FAILURE_UNCATEGORIZED, new GuestUser());
-                
+
             case $user::CODE_INVALID:
                 return new Result(Result::FAILURE_CREDENTIAL_INVALID, new GuestUser());
 
