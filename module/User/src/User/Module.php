@@ -38,5 +38,6 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface
     {
         $appConfig = $event->getTarget()->getServiceManager()->get('Config');
         StaticNameService::seedNames($appConfig['user-names']);
+        
     }
 }

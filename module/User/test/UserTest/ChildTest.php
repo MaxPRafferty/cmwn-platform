@@ -82,10 +82,10 @@ class ChildTest extends TestCase
     {
         $child = new Child();
         $this->assertFalse($child->isNameGenerated());
-        $this->assertNull($child->getGenratedName());
+        $this->assertNull($child->getGeneratedName());
 
         $this->assertNotEmpty($child->getUserName());
-        $this->assertNotNull($child->getGenratedName());
+        $this->assertNotNull($child->getGeneratedName());
         $this->assertTrue($child->isNameGenerated());
 
     }
@@ -96,7 +96,7 @@ class ChildTest extends TestCase
         
         $child->setUserName('foo_bar');
         $this->assertFalse($child->isNameGenerated());
-        $this->assertNull($child->getGenratedName());
+        $this->assertNull($child->getGeneratedName());
     }
 
     public function testItShouldNotChangeTheUserNameAfterItHasBeenSet()
