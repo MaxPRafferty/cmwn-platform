@@ -201,7 +201,6 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     public function setUserName($userName)
     {
         $this->userName = $userName;
-
         return $this;
     }
 
