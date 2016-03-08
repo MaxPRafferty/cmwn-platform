@@ -2,6 +2,8 @@
 
 namespace Api\V1\Rest\Login;
 
+use Security\Authentication\AuthAdapter;
+use Zend\Authentication\AuthenticationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -19,6 +21,10 @@ class LoginResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new LoginResource($serviceLocator->get('Security\Authentication\CmwnAuthenticationService'));
+        /** @var AuthenticationService $authService */
+        $authService = $serviceLocator->get('ZF\MvcAuth\Authentication');
+        /** @var AuthAdapter $adapter */
+        $adapter     = $serviceLocator->get('Security\Authentication\AuthAdapter');
+        return new LoginResource($authService, $adapter);
     }
 }

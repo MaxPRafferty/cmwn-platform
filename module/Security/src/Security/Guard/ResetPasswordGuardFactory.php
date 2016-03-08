@@ -20,6 +20,6 @@ class ResetPasswordGuardFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new ResetPasswordGuard($serviceLocator->get('Security\Authentication\CmwnAuthenticationService'));
+        return new ResetPasswordGuard($serviceLocator->get('authentication'));
     }
 }

@@ -3,8 +3,10 @@ return array(
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
+            
         ),
         'factories' => array(
+            'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
             'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',
@@ -17,6 +19,7 @@ return array(
             'Api\\V1\\Rest\\Password\\PasswordResource' => 'Api\\V1\\Rest\\Password\\PasswordResourceFactory',
             'Api\\V1\\Rest\\GroupUsers\\GroupUsersResource' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersResourceFactory',
             'Api\\V1\\Rest\\OrgUsers\\OrgUsersResource' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersResourceFactory',
+            'Api\\V1\\Rest\\UserImage\\UserImageResource' => 'Api\\V1\\Rest\\UserImage\\UserImageResourceFactory',
         ),
     ),
     'router' => array(
@@ -129,6 +132,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.user-image' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/image',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\UserImage\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -145,6 +157,7 @@ return array(
             9 => 'api.rest.password',
             10 => 'api.rest.group-users',
             11 => 'api.rest.org-users',
+            12 => 'api.rest.user-image',
         ),
     ),
     'zf-rest' => array(
@@ -405,6 +418,22 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersCollection',
             'service_name' => 'OrgUsers',
         ),
+        'Api\\V1\\Rest\\UserImage\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\UserImage\\UserImageResource',
+            'route_name' => 'api.rest.user-image',
+            'route_identifier_name' => 'user_id',
+            'collection_name' => 'user_image',
+            'entity_http_methods' => array(
+                0 => 'POST',
+            ),
+            'collection_http_methods' => array(),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\UserImage\\UserImageEntity',
+            'collection_class' => 'Api\\V1\\Rest\\UserImage\\UserImageCollection',
+            'service_name' => 'UserImage',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -420,6 +449,7 @@ return array(
             'Api\\V1\\Rest\\Password\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\GroupUsers\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\OrgUsers\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\UserImage\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -482,6 +512,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\UserImage\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -529,6 +564,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\OrgUsers\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\UserImage\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -674,6 +713,18 @@ return array(
                 'route_identifier_name' => 'org_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\UserImage\\UserImageEntity' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.user-image',
+                'route_identifier_name' => 'user_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\UserImage\\UserImageCollection' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.user-image',
+                'route_identifier_name' => 'user_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -691,6 +742,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Login\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Login\\Validator',
+        ),
+        'Api\\V1\\Rest\\UserImage\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\UserImage\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -938,6 +992,31 @@ return array(
                 'name' => 'password',
                 'description' => 'The Password',
                 'error_message' => 'Invalid Password',
+            ),
+        ),
+        'Api\\V1\\Rest\\UserImage\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'image_id',
+                'description' => 'Image Id from Cloudainiary',
+                'error_message' => 'Invalid ImageId',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\Uri',
+                        'options' => array(
+                            'allowRelative' => false,
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'Url',
+                'description' => 'Url to the image',
+                'error_message' => 'Invalid URL',
             ),
         ),
     ),

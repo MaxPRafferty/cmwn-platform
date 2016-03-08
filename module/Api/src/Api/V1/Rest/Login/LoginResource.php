@@ -2,7 +2,8 @@
 namespace Api\V1\Rest\Login;
 
 use Api\V1\Rest\User\MeEntity;
-use Security\Authentication\AuthenticationServiceInterface;
+use Security\Authentication\AuthAdapter;
+use Zend\Authentication\AuthenticationService;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -14,13 +15,19 @@ use ZF\Rest\AbstractResourceListener;
 class LoginResource extends AbstractResourceListener
 {
     /**
-     * @var AuthenticationServiceInterface
+     * @var AuthenticationService
      */
     protected $authService;
 
-    public function __construct(AuthenticationServiceInterface $authService)
+    /**
+     * @var AuthAdapter
+     */
+    protected $adapter;
+
+    public function __construct(AuthenticationService $authService, AuthAdapter $adapter)
     {
         $this->authService = $authService;
+        $this->adapter     = $adapter;
     }
 
     /**
@@ -31,19 +38,20 @@ class LoginResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        if ($this->authService->hasIdentity()) {
-            return new MeEntity($this->authService->getIdentity());
-        }
+//        if ($this->authService->hasIdentity()) {
+//            return new MeEntity($this->authService->getIdentity());
+//        }
 
-        $this->authService->getAdapter()->setUserIdentifier(
+        $this->adapter->setUserIdentifier(
             $this->getInputFilter()->getValue('username')
         );
 
-        $this->authService->getAdapter()->setPassword(
+        $this->adapter->setPassword(
             $this->getInputFilter()->getValue('password')
         );
 
-        $result = $this->authService->authenticate();
+        $this->authService->setAdapter($this->adapter);
+        $result = $this->authService->authenticate($this->adapter);
 
         if (!$result->isValid()) {
             return new ApiProblem(401, "Invalid Login");

@@ -4,11 +4,11 @@ namespace Api\Listeners;
 
 use Api\Links\ForgotLink;
 use Api\Links\ProfileLink;
+use Api\Links\UserImageLink;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
-use ZF\Hal\Link\Link;
 
 /**
  * Class HalListenersAggregate
@@ -17,6 +17,7 @@ use ZF\Hal\Link\Link;
 class HalListenersAggregate
 {
     protected $listeners = [];
+    
     /**
      * @param SharedEventManagerInterface $manager
      */
@@ -51,5 +52,6 @@ class HalListenersAggregate
         $user = $entity->entity;
         $entity->getLinks()->add(new ForgotLink()); // TODO Change this to Reset Link
         $entity->getLinks()->add(new ProfileLink($user));
+        $entity->getLinks()->add(new UserImageLink($user));
     }
 }

@@ -2,7 +2,7 @@
 namespace Api\V1\Rest\Token;
 
 use Api\V1\Rest\User\MeEntity;
-use Security\Authentication\AuthenticationServiceInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 

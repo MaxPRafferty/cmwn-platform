@@ -6,6 +6,7 @@ use Api\Links\ForgotLink;
 use Api\Links\GameLink;
 use Api\Links\MeLink;
 use Api\Links\ProfileLink;
+use Api\Links\UserImageLink;
 use User\UserInterface;
 use ZF\Hal\Entity;
 
@@ -28,5 +29,6 @@ class MeEntity extends Entity
         $this->getLinks()->add(new ProfileLink($user));
         $this->getLinks()->add(new ForgotLink());
         $this->getLinks()->add(new GameLink());
+        $this->getLinks()->add(new UserImageLink($user));
     }
 }

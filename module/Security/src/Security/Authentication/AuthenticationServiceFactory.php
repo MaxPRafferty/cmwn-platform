@@ -1,18 +1,17 @@
 <?php
 
-
 namespace Security\Authentication;
 
-
+use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\Storage\Session;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class CmwnAuthenticationAdapterFactory
+ * Class CmwnAuthenticationServiceFactory
  * @package Security\Authentication
- * @codeCoverageIgnore
  */
-class CmwnAuthenticationAdapterFactory implements FactoryInterface
+class AuthenticationServiceFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -22,9 +21,6 @@ class CmwnAuthenticationAdapterFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Security\Service\SecurityService $securityService */
-        $securityService = $serviceLocator->get('Security\Service\SecurityService');
-        return new CmwnAuthenticationAdapter($securityService);
+        return new AuthenticationService(new Session());
     }
-
 }

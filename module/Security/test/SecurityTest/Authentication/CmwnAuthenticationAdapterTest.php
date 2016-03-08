@@ -4,7 +4,7 @@ namespace SecurityTest\Authentication;
 
 use Application\Exception\NotFoundException;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Security\Authentication\CmwnAuthenticationAdapter;
+use Security\Authentication\ApiAdapter;
 use Security\ChangePasswordUser;
 use Security\GuestUser;
 use Security\SecurityUser;
@@ -18,7 +18,7 @@ class CmwnAuthenticationAdapterTest extends TestCase
     protected $service;
 
     /**
-     * @var CmwnAuthenticationAdapter
+     * @var ApiAdapter
      */
     protected $adapter;
 
@@ -40,7 +40,7 @@ class CmwnAuthenticationAdapterTest extends TestCase
      */
     public function setUpAdapter()
     {
-        $this->adapter = new CmwnAuthenticationAdapter($this->service);
+        $this->adapter = new ApiAdapter($this->service);
     }
 
     /**

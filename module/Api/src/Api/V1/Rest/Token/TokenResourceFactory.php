@@ -13,12 +13,12 @@ class TokenResourceFactory implements FactoryInterface
 {
     /**
      * Create service
-     *
+     *  
      * @param ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new TokenResource($serviceLocator->get('Security\Authentication\CmwnAuthenticationService'));
+        return new TokenResource($serviceLocator->get('authentication'));
     }
 }
