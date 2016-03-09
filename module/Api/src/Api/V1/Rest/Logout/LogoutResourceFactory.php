@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\Logout;
 
+use Zend\Authentication\AuthenticationService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-
 
 /**
  * Class LogoutResourceFactory
@@ -20,6 +20,8 @@ class LogoutResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new LogoutResource($serviceLocator->get('authentication'));
+        /** @var AuthenticationService $authService */
+        $authService = $serviceLocator->get('ZF\MvcAuth\Authentication');
+        return new LogoutResource($authService);
     }
 }

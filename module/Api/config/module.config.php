@@ -211,6 +211,7 @@ return array(
             'collection_query_whitelist' => array(
                 0 => 'page',
                 1 => 'per_page',
+                2 => 'type'
             ),
             'page_size' => 25,
             'page_size_param' => 'per_page',

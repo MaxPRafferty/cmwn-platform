@@ -17,6 +17,7 @@ return [
             'Security\Guard\ResetPasswordGuard' => 'Security\Guard\ResetPasswordGuardFactory',
             'Zend\Session\SessionManager' => 'Security\Session\SessionManagerFactory',
             'Security\Service\SecurityService' => 'Security\Service\SecurityServiceFactory',
+            'Security\Service\SecurityOrgService' => 'Security\Service\SecurityOrgServiceFactory',
 
             'Security\Authentication\ApiAdapter' => 'Security\Authentication\ApiAdapterFactory',
 

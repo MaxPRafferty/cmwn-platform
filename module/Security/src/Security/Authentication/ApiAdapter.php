@@ -7,7 +7,6 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 use ZF\MvcAuth\Authentication\AdapterInterface as ZfApiAdapter;
 use ZF\MvcAuth\Identity\AuthenticatedIdentity;
-use ZF\MvcAuth\Identity\GuestIdentity;
 use ZF\MvcAuth\Identity\IdentityInterface;
 use ZF\MvcAuth\MvcAuthEvent;
 
@@ -91,7 +90,7 @@ class ApiAdapter implements ZfApiAdapter
     public function authenticate(Request $request, Response $response, MvcAuthEvent $mvcAuthEvent)
     {
         if (!$this->service->hasIdentity()) {
-            return new GuestIdentity();
+            return null;
         }
 
         return new AuthenticatedIdentity($this->service->getIdentity());

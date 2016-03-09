@@ -25,5 +25,4 @@ class SecurityServiceFactory implements FactoryInterface
         $tableGateway = $serviceLocator->get('UsersTable');
         return new SecurityService($tableGateway);
     }
-
 }
