@@ -33,6 +33,6 @@ class LogoutResource extends AbstractResourceListener
     {
         $this->authService->clearIdentity();
         $this->authService->getStorage()->clear();
-        return new LogoutEntity();
+        return [];
     }
 }
