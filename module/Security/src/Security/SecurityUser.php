@@ -3,6 +3,7 @@
 namespace Security;
 
 use Application\Utils\Date\DateTimeFactory;
+use Group\GroupInterface;
 use Org\OrganizationInterface;
 use User\User;
 
@@ -65,6 +66,11 @@ class SecurityUser extends User
      * @var array
      */
     protected $organizations = [];
+
+    /**
+     * @var array
+     */
+    protected $groupTypes = [];
 
     /**
      * Sets the data for the user
@@ -189,5 +195,24 @@ class SecurityUser extends User
     public function getOrganizations()
     {
         return $this->organizations;
+    }
+
+    /**
+     * @param $type|GroupInterface
+     * @return $this
+     */
+    public function addGroupType($type)
+    {
+        $type = $type instanceof GroupInterface ? $type->getType() : $type;
+        $this->groupTypes[$type] = $type;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroupTypes()
+    {
+        return $this->groupTypes;
     }
 }

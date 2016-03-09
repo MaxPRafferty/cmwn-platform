@@ -4,11 +4,13 @@ namespace Api\V1\Rest\User;
 
 use Api\Links\ForgotLink;
 use Api\Links\GameLink;
+use Api\Links\GroupLink;
 use Api\Links\MeLink;
 use Api\Links\OrgLink;
 use Api\Links\ProfileLink;
 use Api\Links\UserImageLink;
 use Api\V1\Rest\Org\OrgEntity;
+use Security\SecurityUser;
 use User\UserInterface;
 use ZF\Hal\Collection;
 use ZF\Hal\Entity;
@@ -33,15 +35,23 @@ class MeEntity extends Entity
         }
 
         parent::__construct($userData);
-        $this->attachHalLinksToOrg();
+        $this->addOrganizations();
         $this->getLinks()->add(new MeLink($user));
         $this->getLinks()->add(new ProfileLink($user));
         $this->getLinks()->add(new ForgotLink());
         $this->getLinks()->add(new GameLink());
         $this->getLinks()->add(new UserImageLink($user));
+
+        if (!$user instanceof SecurityUser) {
+            return;
+        }
+        
+        foreach ($user->getGroupTypes() as $groupType) {
+            $this->getLinks()->add(new GroupLink($groupType));
+        }
     }
 
-    protected function attachHalLinksToOrg()
+    protected function addOrganizations()
     {
         if (!isset($this->entity['organizations'])) {
             return;
