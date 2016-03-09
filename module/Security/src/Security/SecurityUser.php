@@ -3,6 +3,7 @@
 namespace Security;
 
 use Application\Utils\Date\DateTimeFactory;
+use Org\OrganizationInterface;
 use User\User;
 
 /**
@@ -61,6 +62,11 @@ class SecurityUser extends User
     protected $super = false;
 
     /**
+     * @var array
+     */
+    protected $organizations = [];
+
+    /**
      * Sets the data for the user
      *
      * Also sets the code, password and super flag
@@ -83,6 +89,17 @@ class SecurityUser extends User
         $this->code        = $array['code'];
         $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
         $this->super       = (bool) $array['super'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getArrayCopy()
+    {
+        $array                  = parent::getArrayCopy();
+        $array['organizations'] = array_values($this->getOrganizations());
+
+        return $array;
     }
 
     /**
@@ -156,5 +173,21 @@ class SecurityUser extends User
     public function isSuper()
     {
         return $this->super;
+    }
+
+    /**
+     * @param OrganizationInterface $org
+     */
+    public function addOrganization(OrganizationInterface $org)
+    {
+        $this->organizations[$org->getOrgId()] = $org;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrganizations()
+    {
+        return $this->organizations;
     }
 }

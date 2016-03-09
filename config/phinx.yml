@@ -1,5 +1,6 @@
 paths:
-    migrations: /var/www/data/migrations
+    migrations: ./data/migrations
+    seeds: ./data/seeds
 environments:
     default_migration_table: phinxlog
     default_database: zf2

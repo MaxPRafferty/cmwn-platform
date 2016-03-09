@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
+use Security\Service\SecurityOrgService;
 use Security\Service\SecurityService;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Exception\RuntimeException;
@@ -34,12 +35,18 @@ class AuthAdapter implements AdapterInterface
     protected $password;
 
     /**
+     * @var SecurityOrgService
+     */
+    protected $orgService;
+
+    /**
      * AuthAdapter constructor.
      * @param SecurityService $service
      */
-    public function __construct(SecurityService $service)
+    public function __construct(SecurityService $service, SecurityOrgService $orgService)
     {
-        $this->service = $service;
+        $this->service    = $service;
+        $this->orgService = $orgService;
     }
 
     /**
@@ -88,6 +95,7 @@ class AuthAdapter implements AdapterInterface
 
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
+            $this->orgService->attachOrganizationsToUser($user);
             return new Result(Result::SUCCESS, $user);
         }
 

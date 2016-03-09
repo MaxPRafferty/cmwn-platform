@@ -1,10 +1,9 @@
 <?php
 namespace Api\V1\Rest\Logout;
 
-use Security\Authentication\AuthenticationServiceInterface;
+use Zend\Authentication\AuthenticationService;
 use Zend\Stdlib\ArrayObject;
 use ZF\ApiProblem\ApiProblem;
-use ZF\Hal\Entity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -15,11 +14,11 @@ use ZF\Rest\AbstractResourceListener;
 class LogoutResource extends AbstractResourceListener
 {
     /**
-     * @var AuthenticationServiceInterface
+     * @var AuthenticationService
      */
     protected $authService;
 
-    public function __construct(AuthenticationServiceInterface $authService)
+    public function __construct(AuthenticationService $authService)
     {
         $this->authService = $authService;
     }
@@ -33,6 +32,7 @@ class LogoutResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         $this->authService->clearIdentity();
+        $this->authService->getStorage()->clear();
         return new LogoutEntity();
     }
 }

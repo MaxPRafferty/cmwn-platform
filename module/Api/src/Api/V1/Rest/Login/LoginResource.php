@@ -38,9 +38,10 @@ class LoginResource extends AbstractResourceListener
      */
     public function create($data)
     {
-//        if ($this->authService->hasIdentity()) {
-//            return new MeEntity($this->authService->getIdentity());
-//        }
+        if ($this->authService->hasIdentity()) {
+            $this->authService->clearIdentity();
+            $this->authService->getStorage()->clear();
+        }
 
         $this->adapter->setUserIdentifier(
             $this->getInputFilter()->getValue('username')
@@ -50,7 +51,6 @@ class LoginResource extends AbstractResourceListener
             $this->getInputFilter()->getValue('password')
         );
 
-        $this->authService->setAdapter($this->adapter);
         $result = $this->authService->authenticate($this->adapter);
 
         if (!$result->isValid()) {

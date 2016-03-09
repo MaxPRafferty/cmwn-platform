@@ -4,6 +4,7 @@ namespace Api\V1\Rest\Token;
 use Api\V1\Rest\User\MeEntity;
 use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
+use ZF\MvcAuth\Identity\GuestIdentity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -31,7 +32,7 @@ class TokenResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        if ($this->authService->hasIdentity()) {
+        if ($this->authService->hasIdentity() && !$this->authService->getIdentity() instanceof GuestIdentity) {
             return new MeEntity($this->authService->getIdentity(), md5('foo'));
         }
 

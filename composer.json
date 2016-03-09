@@ -27,6 +27,7 @@
         "zfcampus/zf-apigility-admin": "^1.4.1",
         "zfcampus/zf-apigility-admin-ui": "^1.2.2",
         "zfcampus/zf-deploy": "~1.0",
-        "valorin/zf2-phinx-module": "0.*"
+        "valorin/zf2-phinx-module": "0.*",
+        "fzaninotto/faker": "^1.5"
     }
 }
