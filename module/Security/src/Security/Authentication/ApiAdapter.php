@@ -7,6 +7,7 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 use ZF\MvcAuth\Authentication\AdapterInterface as ZfApiAdapter;
 use ZF\MvcAuth\Identity\AuthenticatedIdentity;
+use ZF\MvcAuth\Identity\GuestIdentity;
 use ZF\MvcAuth\Identity\IdentityInterface;
 use ZF\MvcAuth\MvcAuthEvent;
 
@@ -47,7 +48,7 @@ class ApiAdapter implements ZfApiAdapter
      */
     public function matches($type)
     {
-        return in_array($type, $this->provides(), true);
+        return true;
     }
 
     /**
@@ -91,6 +92,15 @@ class ApiAdapter implements ZfApiAdapter
     {
         if (!$this->service->hasIdentity()) {
             return null;
+        }
+
+        $identity = $this->service->getIdentity();
+        if ($identity instanceof GuestIdentity) {
+            return $identity;
+        }
+
+        if ($identity instanceof AuthenticatedIdentity) {
+            return $identity;
         }
 
         return new AuthenticatedIdentity($this->service->getIdentity());

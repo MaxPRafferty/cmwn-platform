@@ -6,6 +6,7 @@ use User\StaticUserFactory;
 use User\UserInterface;
 use Zend\Paginator\Adapter\DbSelect;
 use ZF\ApiProblem\ApiProblem;
+use ZF\MvcAuth\Identity\AuthenticatedIdentity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -68,17 +69,21 @@ class UserResource extends AbstractResourceListener
     public function fetch($userId)
     {
         $user = $this->getEvent()->getRouteParam('user', false);
+        $loggedInUser = $this->getIdentity();
+        $loggedInUser = $loggedInUser instanceof AuthenticatedIdentity
+            ? $loggedInUser->getAuthenticationIdentity()
+            : $loggedInUser;
+
+        if ($loggedInUser instanceof UserInterface && $loggedInUser->getUserId() === $user->getUserId()) {
+            return new MeEntity($loggedInUser);
+        }
+
         if ($user === false) {
             $user = $this->service->fetchUser($userId);
         }
 
         if ($user->getUserId() !== $userId) {
             return new ApiProblem(409, 'Loaded user does not match requested user');
-        }
-
-        $loggedInUser = $this->getIdentity();
-        if ($loggedInUser instanceof UserInterface && $loggedInUser->getUserId() === $user->getUserId()) {
-            return new MeEntity($user);
         }
 
         return new UserEntity($user->getArrayCopy());
