@@ -3,14 +3,57 @@
 namespace Import\Importer;
 
 use Import\PreprocessInterface;
+use Zend\Log\Logger;
+use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerAwareTrait;
+use Zend\Log\Writer\Noop;
 
 /**
  * Class NycDoeImporter
  *
  * @package Import\Importer
  */
-class NycDoeImporter implements PreprocessInterface
+class NycDoeImporter implements PreprocessInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
+    const CLASS_SHEET_NAME = 'Classes';
+
+    /**
+     * @var string the file name to process
+     */
+    protected $fileName;
+
+    /**
+     * @var \PHPExcel
+     */
+    protected $reader;
+
+    /**
+     * @var \PHPExcel_Worksheet
+     */
+    protected $classWorksheet;
+
+    /**
+     * @var \PHPExcel_Worksheet
+     */
+    protected $teacherWorksheet;
+
+    /**
+     * @var \PHPExcel_Worksheet
+     */
+    protected $studentWorksheet;
+
+
+    /**
+     * NycDoeImporter constructor.
+     */
+    public function __construct()
+    {
+        $this->setLogger(new Logger(['writers' => [new Noop()]]));
+
+    }
+
     /**
      * Sets the name of the file to import
      *
@@ -19,7 +62,8 @@ class NycDoeImporter implements PreprocessInterface
      */
     public function setFile($file)
     {
-        // TODO: Implement setFile() method.
+        $this->fileName = $file;
+        return $this;
     }
 
     /**
@@ -29,7 +73,17 @@ class NycDoeImporter implements PreprocessInterface
      */
     public function canImport()
     {
-        // TODO: Implement canImport() method.
+        if (null === $this->fileName) {
+            $this->getLogger()->err('Importer is missing file');
+            return false;
+        }
+
+        if (!file_exists($this->fileName)) {
+            $this->getLogger()->err(sprintf('File name %s does not exist', $this->fileName));
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -39,7 +93,6 @@ class NycDoeImporter implements PreprocessInterface
      */
     public function import()
     {
-        // TODO: Implement import() method.
     }
 
     /**
@@ -52,7 +105,15 @@ class NycDoeImporter implements PreprocessInterface
      */
     public function preProcess()
     {
-        // TODO: Implement preProcess() method.
+        $this->getLogger()->info('Starting preprocess for file: ' . $this->fileName);
+        $this->reader = \PHPExcel_IOFactory::load($this->fileName);
+
+        $sheets = $this->reader->getAllSheets();
+
+        foreach ($sheets as $sheet) {
+            switch ($sheet->getTitle()) {
+            }
+        }
     }
 
     /**
@@ -66,5 +127,28 @@ class NycDoeImporter implements PreprocessInterface
     public function getErrors()
     {
         return [];
+    }
+
+    protected function verifyClassesSheet()
+    {
+        $sheet = $this->reader->getSheet();
+    }
+
+    /**
+     * Validates the DDBNNN Format
+     *
+     * @param $ddbnnn
+     * @return bool
+     */
+    protected function validateDdbnnn($ddbnnn)
+    {
+        $result = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $ddbnnn);
+        $this->getLogger()->debug('Validating DDBNNN: ' . $ddbnnn);
+        if (count($result) !== 2) {
+            $this->getLogger()->debug('Invalid DDBNNN');
+            return false;
+        }
+
+        return true;
     }
 }
