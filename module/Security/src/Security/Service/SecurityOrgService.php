@@ -113,6 +113,7 @@ class SecurityOrgService
         ]);
 
         $where = new Where();
+        // FIXME When orgIds empty just continue;
         $where->addPredicate(new In('organization_id', $orgIds));
 
         $select->from(['g'  => 'groups']);
