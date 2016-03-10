@@ -1,19 +1,19 @@
 <?php
 
-namespace ImportTest\Importer;
+namespace ImportTest\Importer\Nyc;
 
-use Import\Importer\NycDoeImporter;
+use Import\Importer\Nyc\DoeImporter;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Class NycDoeImporterTest
  * @package ImportTest\Importer
  */
-class NycDoeImporterTest extends TestCase
+class DoeImporterTest extends TestCase
 {
     public function testItShouldReturnErrorsOnBadDdbnnn()
     {
-        $importer = new NycDoeImporter();
+        $importer = new DoeImporter();
         $importer->setFile(__DIR__ . '/_files/bad_ddbnnn.xlsx');
 
         $this->assertTrue($importer->canImport(), "Adjust test for new NYC DOE requirements");

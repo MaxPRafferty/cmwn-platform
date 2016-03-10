@@ -1,6 +1,6 @@
 <?php
 
-namespace Import\Importer;
+namespace Import\Importer\Nyc;
 
 use Import\PreprocessInterface;
 use Zend\Log\Logger;
@@ -13,11 +13,13 @@ use Zend\Log\Writer\Noop;
  *
  * @package Import\Importer
  */
-class NycDoeImporter implements PreprocessInterface, LoggerAwareInterface
+class DoeImporter implements PreprocessInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const CLASS_SHEET_NAME = 'Classes';
+    const SHEET_CLASS   = 'Classes';
+    const SHEET_STUDENT = 'Students';
+    const SHEET_TEACHER = 'Teachers';
 
     /**
      * @var string the file name to process
@@ -44,6 +46,10 @@ class NycDoeImporter implements PreprocessInterface, LoggerAwareInterface
      */
     protected $studentWorksheet;
 
+    /**
+     * @var array
+     */
+    protected $errors = [];
 
     /**
      * NycDoeImporter constructor.
@@ -112,8 +118,30 @@ class NycDoeImporter implements PreprocessInterface, LoggerAwareInterface
 
         foreach ($sheets as $sheet) {
             switch ($sheet->getTitle()) {
+                case static::SHEET_CLASS:
+                    $this->classWorksheet = $sheet;
+                    break;
+
+                case static::SHEET_STUDENT:
+                    $this->studentWorksheet = $sheet;
+                    break;
+
+                case static::SHEET_TEACHER:
+                    $this->teacherWorksheet = $sheet;
+                    break;
             }
         }
+
+        $this->preProcessSheets();
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    protected function preProcessSheets()
+    {
+        return $this->verifyClassesSheet();
     }
 
     /**
@@ -126,29 +154,31 @@ class NycDoeImporter implements PreprocessInterface, LoggerAwareInterface
      */
     public function getErrors()
     {
-        return [];
-    }
-
-    protected function verifyClassesSheet()
-    {
-        $sheet = $this->reader->getSheet();
+        return $this->errors;
     }
 
     /**
-     * Validates the DDBNNN Format
-     *
-     * @param $ddbnnn
-     * @return bool
+     * @throws \PHPExcel_Exception
      */
-    protected function validateDdbnnn($ddbnnn)
+    protected function verifyClassesSheet()
     {
-        $result = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $ddbnnn);
-        $this->getLogger()->debug('Validating DDBNNN: ' . $ddbnnn);
-        if (count($result) !== 2) {
-            $this->getLogger()->debug('Invalid DDBNNN');
+        if (null === $this->classWorksheet) {
+            $this->errors[] = sprintf('The Excel Sheet is missing the workbook called: %s', static::SHEET_CLASS);
             return false;
         }
 
-        return true;
+        $rowIterator = $this->classWorksheet->getRowIterator(1);
+
+        iterator_apply($rowIterator, [$this, 'checkRow'], ['type' => static::SHEET_CLASS]);
     }
+
+    public function checkRow(\PHPExcel_Worksheet_Row $row)
+    {
+        $cellIterator = $row->getCellIterator('A', 'D');
+
+        foreach ($cellIterator as $cell) {
+            /** @var \PHPExcel_Cell $cell */
+        }
+    }
+
 }
