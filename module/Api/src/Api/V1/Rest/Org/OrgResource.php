@@ -1,6 +1,7 @@
 <?php
 namespace Api\V1\Rest\Org;
 
+use Org\Organization;
 use Org\Service\OrganizationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -36,10 +37,10 @@ class OrgResource extends AbstractResourceListener
     {
         $data = (array) $data;
         unset($data['org_id']);
-        $org = new OrgEntity($data);
+        $org = new Organization($data);
 
-        $this->service->saveOrg($org);
-        return $org;
+        $this->service->createOrganization($org);
+        return new OrgEntity($org);
     }
 
     /**

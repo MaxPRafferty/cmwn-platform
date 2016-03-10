@@ -24,24 +24,23 @@ class OrgEntity extends Entity
      */
     public function __construct($entity = null, $scope = null)
     {
-        if ($entity instanceof OrganizationInterface) {
-            parent::__construct($entity);
-            $this->scope = (int)$scope;
-        }
+        $entity = $entity instanceof OrganizationInterface
+            ? $entity->getArrayCopy()
+            : $entity;
+
+        parent::__construct($entity);
+        $this->scope = (int)$scope;
     }
 
-    public function exchangeArray(array $data)
-    {
-        parent::__construct(new Organization($data));
-    }
-
+    /**
+     * @return array
+     */
     public function getArrayCopy()
     {
-        $data = $this->entity->getArrayCopy();
-        if (null !== $this->scope) {
-            $data['scope'] = $this->scope;
+        if (is_array($this->entity)) {
+            return $this->entity;
         }
 
-        return $data;
+        return [];
     }
 }

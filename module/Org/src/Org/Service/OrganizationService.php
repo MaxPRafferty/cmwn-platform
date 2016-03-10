@@ -73,7 +73,7 @@ class OrganizationService implements OrganizationServiceInterface
     {
         $org->setUpdated(new \DateTime());
         $org->setCreated(new \DateTime());
-        $org->setOrgId(Uuid::uuid1());
+        $org->setOrgId((string) Uuid::uuid1());
         $data = $org->getArrayCopy();
 
         $data['meta']    = Json::encode($data['meta']);
