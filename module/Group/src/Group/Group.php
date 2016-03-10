@@ -67,6 +67,11 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     protected $type;
 
+    /**
+     * @var string
+     */
+    protected $externalId;
+
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -95,6 +100,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'created'         => null,
             'updated'         => null,
             'deleted'         => null,
+            'external_id'     => null
         ];
 
         $array = array_merge($defaults, $array);
@@ -124,6 +130,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'left'            => $this->getLeft(),
             'right'           => $this->getRight(),
             'depth'           => $this->getDepth(),
+            'external_id'     => $this->getExternalId(),
             'created'         => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
             'updated'         => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
             'deleted'         => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
@@ -320,5 +327,26 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
         }
 
         return $this->left === ($this->right - 1);
+    }
+
+    /**
+     * Gets the users Identifier for this group
+     *
+     * @return null|string
+     */
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
+
+    /**
+     * Sets the users identifier for this group
+     *
+     * @param $externalId
+     * @return string
+     */
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
     }
 }

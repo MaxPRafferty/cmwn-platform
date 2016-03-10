@@ -2,7 +2,7 @@
 
 namespace Import\Importer\Nyc;
 
-use Import\PreprocessInterface;
+use Import\ParserInterface;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerAwareTrait;
@@ -13,7 +13,7 @@ use Zend\Log\Writer\Noop;
  *
  * @package Import\Importer
  */
-class DoeImporter implements PreprocessInterface, LoggerAwareInterface
+class DoeImporter implements ParserInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
