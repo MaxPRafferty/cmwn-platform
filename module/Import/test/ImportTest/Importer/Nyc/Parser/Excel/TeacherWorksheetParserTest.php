@@ -82,7 +82,7 @@ class TeacherWorksheetParserTest extends TestCase
     {
         return new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
     }
-
+    
     public function testItShouldCreateCorrectActionsForTeacher()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet.xlsx');
@@ -97,6 +97,14 @@ class TeacherWorksheetParserTest extends TestCase
         $this->assertEmpty($parser->getErrors(), 'Teacher Processor is Reporting errors');
         $this->assertFalse($parser->hasWarnings(), 'Teacher Processor is Reporting warnings on good file');
         $this->assertEmpty($parser->getWarnings(), 'Teacher Processor is Reporting warnings');
+
+        $setup = new TeacherParserSetup();
+
+        $this->assertEquals(
+            $setup->getExpectedGoodActions($this->userService),
+            $parser->getActions(),
+            'Parser did not create actions correctly'
+        );
     }
 
     public function testItShouldErrorWithInvalidDdbnnn()

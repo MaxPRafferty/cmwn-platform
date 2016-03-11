@@ -14,32 +14,32 @@ class Teacher
     /**
      * @var string
      */
-    protected $role;
+    protected $role = '';
 
     /**
      * @var string
      */
-    protected $firstName;
+    protected $firstName = '';
 
     /**
      * @var string
      */
-    protected $middleName;
+    protected $middleName = '';
 
     /**
      * @var string
      */
-    protected $lastName;
+    protected $lastName = '';
 
     /**
      * @var string
      */
-    protected $email;
+    protected $email = '';
 
     /**
      * @var string
      */
-    protected $gender;
+    protected $gender = '';
 
     /**
      * @var ClassRoom
