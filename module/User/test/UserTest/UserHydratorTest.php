@@ -35,7 +35,8 @@ class UserHydratorTest extends TestCase
             'updated'     => $date->getTimestamp(),
             'deleted'     => $date->getTimestamp(),
             'type'        => 'ADULT',
-            'meta'        => []
+            'meta'        => [],
+            'external_id' => 'foo-bar',
         ];
     }
 

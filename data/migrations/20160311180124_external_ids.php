@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class GroupExternalId extends AbstractMigration
+class ExternalIds extends AbstractMigration
 {
     /**
      * Change Method.
@@ -31,7 +31,15 @@ class GroupExternalId extends AbstractMigration
 
         if (!$table->hasColumn('external_id')) {
             $table
-                ->addColumn('external_id', 'string', ['null' => true]);
+                ->addColumn('external_id', 'string', ['null' => true])
+                ->update();
+        }
+
+        $users = $this->table('users');
+        if (!$users->hasColumn('external_id')) {
+            $users
+                ->addColumn('external_id', 'string', ['null' => true])
+                ->update();
         }
     }
 }
