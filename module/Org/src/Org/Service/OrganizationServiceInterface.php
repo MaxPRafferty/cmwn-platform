@@ -4,10 +4,8 @@ namespace Org\Service;
 
 use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
-use Ramsey\Uuid\Uuid;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Json\Json;
 use Zend\Paginator\Adapter\DbSelect;
 
 
