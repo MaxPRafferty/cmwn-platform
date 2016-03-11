@@ -110,6 +110,33 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     }
 
     /**
+     * Fetches one user from the DB using the id
+     *
+     * @param $externalId
+     * @return UserInterface
+     * @throws NotFoundException
+     */
+    public function fetchUserByExternalId($externalId)
+    {
+        $event    = new Event('fetch.user.external', $this->realService, ['external_id' => $externalId]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchUserByExternalId($externalId);
+        $event    = new Event(
+            'fetch.user.external.post',
+            $this->realService,
+            ['external_id' => $externalId, 'user' => $return]
+        );
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+
+    /**
      * Deletes a user from the database
      *
      * Soft deletes unless soft is false

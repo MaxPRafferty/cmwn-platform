@@ -8,6 +8,9 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
+/**
+ * Interface UserServiceInterface
+ */
 interface UserServiceInterface
 {
     /**
@@ -18,6 +21,15 @@ interface UserServiceInterface
      * @throws NotFoundException
      */
     public function fetchUser($userId);
+
+    /**
+     * Fetches one user from the DB using the id
+     *
+     * @param $externalId
+     * @return UserInterface
+     * @throws NotFoundException
+     */
+    public function fetchUserByExternalId($externalId);
 
     /**
      * Deletes a user from the database
