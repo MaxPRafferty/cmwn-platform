@@ -13,15 +13,31 @@ use Api\V1\Rest\Org\OrgEntity;
 use Security\SecurityUser;
 use User\UserInterface;
 use ZF\Hal\Collection;
-use ZF\Hal\Entity;
+use ZF\Hal\Link\LinkCollection;
+use ZF\Hal\Link\LinkCollectionAwareInterface;
 use ZF\MvcAuth\Identity\IdentityInterface;
 
 /**
  * Class MeEntity
  * @package Api\V1\Rest\User
  */
-class MeEntity extends Entity
+class MeEntity extends UserEntity implements LinkCollectionAwareInterface
 {
+    /**
+     * @var LinkCollection
+     */
+    protected $links;
+
+    /**
+     * @var Collection
+     */
+    protected $organizations;
+
+    /**
+     * MeEntity constructor.
+     * @param array $user
+     * @param null $token
+     */
     public function __construct($user, $token = null)
     {
         if ($user instanceof IdentityInterface) {
@@ -34,35 +50,69 @@ class MeEntity extends Entity
             $userData['token'] = $token;
         }
 
-        parent::__construct($userData);
-        $this->addOrganizations();
+
         $this->getLinks()->add(new MeLink($user));
         $this->getLinks()->add(new ProfileLink($user));
         $this->getLinks()->add(new ForgotLink());
         $this->getLinks()->add(new GameLink());
         $this->getLinks()->add(new UserImageLink($user));
 
-        if (!$user instanceof SecurityUser) {
-            return;
+        if ($user instanceof SecurityUser) {
+            $this->addOrganizations($user, $userData);
+            foreach ($user->getGroupTypes() as $groupType) {
+                $this->getLinks()->add(new GroupLink($groupType));
+            }
         }
-        
-        foreach ($user->getGroupTypes() as $groupType) {
-            $this->getLinks()->add(new GroupLink($groupType));
-        }
+
+        parent::__construct($userData);
     }
 
-    protected function addOrganizations()
+    public function getArrayCopy()
     {
-        if (!isset($this->entity['organizations'])) {
-            return;
-        }
+        return array_merge(
+            parent::getArrayCopy(),
+            ['organizations' => $this->organizations]
+        );
+    }
 
+    /**
+     * @param SecurityUser $user
+     * @param array $userData
+     */
+    protected function addOrganizations(SecurityUser $user)
+    {
         $orgs = [];
-        foreach ($this->entity['organizations'] as $key => $org) {
+        foreach ($user->getOrganizations() as $key => $org) {
             $orgs[]  = new OrgEntity($org, 7);
             $this->getLinks()->add(new OrgLink($org));
         }
 
-        $this->entity['organizations'] = new Collection($orgs);
+        $this->organizations = new Collection($orgs);
+    }
+
+    /**
+     * Set link collection
+     *
+     * @param  LinkCollection $links
+     * @return self
+     */
+    public function setLinks(LinkCollection $links)
+    {
+        $this->links = $links;
+        return $this;
+    }
+
+    /**
+     * Get link collection
+     *
+     * @return LinkCollection
+     */
+    public function getLinks()
+    {
+        if (!$this->links instanceof LinkCollection) {
+            $this->setLinks(new LinkCollection());
+        }
+
+        return $this->links;
     }
 }
