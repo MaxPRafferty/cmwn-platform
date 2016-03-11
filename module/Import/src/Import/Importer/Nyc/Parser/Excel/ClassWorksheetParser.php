@@ -3,6 +3,7 @@
 namespace Import\Importer\Nyc\Parser\Excel;
 
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
+use Import\Importer\Nyc\ClassRoom\AddClassRoomAction;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidWorksheetException;
 use \PHPExcel_Worksheet_RowCellIterator as CellIterator;
@@ -38,6 +39,7 @@ class ClassWorksheetParser extends AbstractParser
 
     /**
      * @return ClassRoomRegistry
+     * @codeCoverageIgnore
      */
     public function getClassRomRegistry()
     {
@@ -49,6 +51,7 @@ class ClassWorksheetParser extends AbstractParser
      */
     public function preProcess()
     {
+        $this->getLogger()->info('Pre processing Classes worksheet');
         $iterator = $this->getWorksheetIterator();
         $iterator->rewind();
 
@@ -104,8 +107,95 @@ class ClassWorksheetParser extends AbstractParser
             }
 
             $subClasses = $this->getSubClasses($cellIterator);
-            $this->classRegistry->addClassroom(new ClassRoom($classTitle, $classId, $subClasses));
+            if (!$this->classRegistry->offsetExists($classId)) {
+                $this->classRegistry->addClassroom(new ClassRoom($classTitle, $classId, $subClasses));
+            }
         };
+
+        $this->checkRegistry();
+        if ($this->hasErrors()) {
+            return;
+        }
+
+        $this->buildActions();
+    }
+
+    protected function buildActions()
+    {
+        $this->getLogger()->info('Building Actions for classroom');
+        foreach ($this->classRegistry as $classRoom) {
+            if (!$classRoom->isNew()) {
+                $this->getLogger()->debug(sprintf(
+                    'Classroom [%s] "%s" is not a new classroom',
+                    $classRoom->getClassRoomId(),
+                    $classRoom->getTitle()
+                ));
+                continue;
+            }
+
+            $this->getLogger()->debug(sprintf(
+                'Creating add action for classroom [%s] "%s"',
+                $classRoom->getClassRoomId(),
+                $classRoom->getTitle()
+            ));
+
+            $this->addAction(new AddClassRoomAction($this->classRegistry->getGroupService(), $classRoom));
+        }
+    }
+
+    /**
+     * Checks the classroom registry for missing classes
+     *
+     * @return bool
+     */
+    protected function checkRegistry()
+    {
+        $this->getLogger()->info('Checking subclasses in the registry');
+        foreach ($this->classRegistry as $classRoom) {
+            $subClasses = $classRoom->getSubClassRooms();
+            if (empty($subClasses)) {
+                $this->getLogger()->debug(sprintf(
+                    'Class [%s] "%s" has no sub classes',
+                    $classRoom->getClassRoomId(),
+                    $classRoom->getTitle()
+                ));
+                continue;
+            }
+
+            array_walk($subClasses, [$this, 'checkIfSubClassExists'], [$classRoom]);
+        }
+
+        return $this->hasErrors();
+    }
+
+    /**
+     * Checks if a sub class exists in the registry or not
+     *
+     * @param $subClassId
+     * @param $subClassIndex
+     * @param ClassRoom[] $extra
+     * @return bool
+     */
+    public function checkIfSubClassExists($subClassId, $subClassIndex, $extra)
+    {
+        if ($this->classRegistry->offsetExists($subClassId)) {
+            $this->getLogger()->debug('Sub class was found');
+            return true;
+        }
+
+        $classRoom = $extra[0];
+
+        $this->addError(
+            sprintf(
+                'A subclass with the id "%s" was not found for Class [%s] "%s"',
+                $subClassId,
+                $classRoom->getClassRoomId(),
+                $classRoom->getTitle()
+            ),
+            static::SHEET_NAME
+        );
+
+        return false;
     }
 
     /**

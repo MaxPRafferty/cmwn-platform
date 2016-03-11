@@ -11,7 +11,7 @@ use Import\ActionInterface;
  *
  * ${CARET}
  */
-class ClassRoomAction implements ActionInterface
+class AddClassRoomAction implements ActionInterface
 {
     /**
      * @var GroupServiceInterface

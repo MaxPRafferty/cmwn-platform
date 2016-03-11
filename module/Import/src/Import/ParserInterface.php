@@ -45,4 +45,11 @@ interface ParserInterface
      * @return mixed
      */
     public function hasWarnings();
+
+    /**
+     * Gets list of actions the parser has discovered it needs to run
+     *
+     * @return ActionInterface[]
+     */
+    public function getActions();
 }
