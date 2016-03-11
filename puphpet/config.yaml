@@ -197,6 +197,10 @@ apache:
             port: '443'
             setenv:
                 - 'APP_ENV dev'
+                - 'DATABASE1_NAME cmwn'
+                - 'DATABASE1_HOST localhost'
+                - 'DATABASE1_USER cmwn_user'
+                - 'DATABASE1_PASS cmwn_pass123$'
             setenvif:
                 - 'Authorization "(.*)" HTTP_AUTHORIZATION=$1'
             custom_fragment: ''
