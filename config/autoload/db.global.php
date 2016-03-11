@@ -7,6 +7,7 @@ $dbPass = getenv('DATABASE1_PASS');
 
 return [
     'db' => [
+        'driver'   => 'Pdo',
         'dsn'      => 'mysql:dbname=' . $dbName . ';host=' . $dbHost,
         'database' => $dbName,
         'username' => $dbUser,
