@@ -70,6 +70,11 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
      */
     protected $gender;
 
+    /**
+     * @var string
+     */
+    protected $externalId;
+
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -104,7 +109,8 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
             'created'     => null,
             'updated'     => null,
             'deleted'     => null,
-            'type'        => null
+            'type'        => null,
+            'external_id' => null,
         ];
 
         $array = array_merge($defaults, $array);
@@ -137,8 +143,28 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
             'created'     => $this->getCreated() !== null ? $this->getCreated()->getTimestamp() : null,
             'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->getTimestamp() : null,
             'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->getTimestamp() : null,
-            'type'        => $this->getType()
+            'type'        => $this->getType(),
+            'external_id' => $this->getExternalId(),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     * @return User
+     */
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
+
+        return $this;
     }
 
     /**

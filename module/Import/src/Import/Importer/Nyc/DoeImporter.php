@@ -13,7 +13,7 @@ use Zend\Log\Writer\Noop;
  *
  * @package Import\Importer
  */
-class DoeImporter implements ParserInterface, LoggerAwareInterface
+class DoeImporter 
 {
     use LoggerAwareTrait;
 

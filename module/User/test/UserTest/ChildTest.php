@@ -41,7 +41,8 @@ class ChildTest extends TestCase
             'updated'     => null,
             'deleted'     => null,
             'type'        => Child::TYPE_CHILD,
-            'meta'        => []
+            'meta'        => [],
+            'external_id' => null,
         ];
 
         $adult = new Child();
@@ -67,7 +68,8 @@ class ChildTest extends TestCase
             'updated'     => $date->getTimestamp(),
             'deleted'     => $date->getTimestamp(),
             'type'        => Child::TYPE_CHILD,
-            'meta'        => []
+            'meta'        => [],
+            'external_id' => 'foo-bar'
         ];
 
         $adult = new Child();

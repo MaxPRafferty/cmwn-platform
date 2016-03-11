@@ -27,7 +27,8 @@ class AdultTest extends TestCase
             'updated'     => null,
             'deleted'     => null,
             'type'        => Adult::TYPE_ADULT,
-            'meta'        => []
+            'meta'        => [],
+            'external_id' => null,
         ];
 
         $adult = new Adult();
@@ -53,7 +54,8 @@ class AdultTest extends TestCase
             'updated'     => $date->getTimestamp(),
             'deleted'     => $date->getTimestamp(),
             'type'        => Adult::TYPE_ADULT,
-            'meta'        => []
+            'meta'        => [],
+            'external_id' => 'foo-bar',
         ];
 
         $adult = new Adult();
