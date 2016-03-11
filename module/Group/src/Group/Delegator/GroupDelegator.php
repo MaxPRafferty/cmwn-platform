@@ -128,6 +128,32 @@ class GroupDelegator implements GroupServiceInterface
     }
 
     /**
+     * Fetches on group from the DB by using the external id
+     *
+     * @param $externalId
+     * @return GroupInterface
+     * @throws NotFoundException
+     */
+    public function fetchGroupByExternalId($externalId)
+    {
+        $event    = new Event('fetch.group.external', $this->realService, ['external_id' => $externalId]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchGroupByExternalId($externalId);
+        $event  = new Event(
+            'fetch.group.external.post',
+            $this->realService,
+            ['external_id' => $externalId, 'group' => $return]
+        );
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
      * Deletes a group from the database
      *
      * Soft deletes unless soft is false
@@ -181,4 +207,6 @@ class GroupDelegator implements GroupServiceInterface
 
         return $return;
     }
+
+
 }

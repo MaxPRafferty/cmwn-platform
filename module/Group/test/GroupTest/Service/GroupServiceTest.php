@@ -192,6 +192,33 @@ class GroupServiceTest extends TestCase
         $this->assertInstanceOf('Group\Group', $this->groupService->fetchGroup($groupData['group_id']));
     }
 
+    public function testItShouldFetchGroupByExternalIdId()
+    {
+        $groupData = [
+            'group_id'        => 'abcd-efgh-ijklm-nop',
+            'organization_id' => 'abcd-efgh-ijklm-nop',
+            'title'           => 'manchuck\s group',
+            'description'     => 'My Awesome group',
+            'type'            => 'school',
+            'meta'            => [],
+            'left'            => 1,
+            'right'           => 2,
+            'depth'           => 3,
+            'created'         => '2016-02-28',
+            'updated'         => '2016-02-28',
+            'deleted'         => '2016-02-28',
+            'external_id'     => 'foo-bar'
+        ];
+
+        $result = new ResultSet();
+        $result->initialize([$groupData]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['external_id' => $groupData['external_id']])
+            ->andReturn($result);
+
+        $this->assertInstanceOf('Group\Group', $this->groupService->fetchGroupByExternalId($groupData['external_id']));
+    }
+
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFound()
     {
         $this->setExpectedException(
@@ -205,6 +232,21 @@ class GroupServiceTest extends TestCase
             ->andReturn($result);
 
         $this->groupService->fetchGroup('foo');
+    }
+
+    public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFoundByExternalId()
+    {
+        $this->setExpectedException(
+            'Application\Exception\NotFoundException',
+            'Group not Found'
+        );
+
+        $result = new ResultSet();
+        $result->initialize([]);
+        $this->tableGateway->shouldReceive('select')
+            ->andReturn($result);
+
+        $this->groupService->fetchGroupByExternalId('foo');
     }
 
     public function testItShouldSoftDeleteByDefault()

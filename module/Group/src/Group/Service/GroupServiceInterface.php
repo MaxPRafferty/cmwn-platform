@@ -51,6 +51,15 @@ interface GroupServiceInterface
     public function fetchGroup($groupId);
 
     /**
+     * Fetches on group from the DB by using the external id
+     * 
+     * @param $externalId
+     * @return GroupInterface
+     * @throws NotFoundException
+     */
+    public function fetchGroupByExternalId($externalId);
+
+    /**
      * Deletes a group from the database
      *
      * Soft deletes unless soft is false
