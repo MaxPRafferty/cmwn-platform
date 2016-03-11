@@ -12,7 +12,12 @@ use Zend\Stdlib\ArrayUtils;
  */
 class OrgEntity extends Organization
 {
-    public function __construct($options)
+    /**
+     * @var int
+     */
+    protected $scope = 0;
+
+    public function __construct($options, $scope = null)
     {
         if ($options instanceof OrganizationInterface) {
             $options = $options->getArrayCopy();
@@ -22,6 +27,17 @@ class OrgEntity extends Organization
             $options = ArrayUtils::iteratorToArray($options);
         }
 
+        if ($scope !== null) {
+            $this->scope = $scope;
+        }
         parent::__construct($options);
+    }
+
+    public function getArrayCopy()
+    {
+        return array_merge(
+            parent::getArrayCopy(),
+            ['scope' => $this->scope]
+        );
     }
 }
