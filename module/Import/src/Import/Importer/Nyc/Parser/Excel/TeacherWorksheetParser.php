@@ -2,10 +2,13 @@
 
 namespace Import\Importer\Nyc\Parser\Excel;
 
+use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidWorksheetException;
+use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use \PHPExcel_Worksheet_RowCellIterator as CellIterator;
 use \PHPExcel_Worksheet as WorkSheet;
+use Zend\Validator\StaticValidator;
 
 /**
  * Class TeacherWorksheetParser
@@ -19,24 +22,10 @@ class TeacherWorksheetParser extends AbstractParser
      */
     protected $teacherRegistry;
 
-    protected $headerFields = [
-        'A' => 'DDBNNN',
-        'B' => 'TYPE',
-        'C' => 'FIRST NAME',
-        'D' => 'MIDDLE NAME',
-        'E' => 'LAST NAME',
-        'F' => 'EMAIL',
-        'G' => 'SEX',
-        'H' => 'OFF CLS',
-    ];
-
-    protected $requiredFields = [
-        'B' => 'TYPE',
-        'C' => 'FIRST NAME',
-        'E' => 'LAST NAME',
-        'F' => 'EMAIL',
-        'H' => 'OFF CLS',
-    ];
+    /**
+     * @var ClassRoomRegistry
+     */
+    protected $classRoomRegistry;
 
     /**
      * TeacherWorksheetParser constructor.
@@ -45,15 +34,54 @@ class TeacherWorksheetParser extends AbstractParser
      * @param TeacherRegistry $teacherRegistry
      * @throws InvalidWorksheetException
      */
-    public function __construct(WorkSheet $worksheet, TeacherRegistry $teacherRegistry)
-    {
+    public function __construct(
+        WorkSheet $worksheet,
+        TeacherRegistry $teacherRegistry,
+        ClassRoomRegistry $classRoomRegistry
+    ) {
         if ($worksheet->getTitle() !== static::SHEET_NAME) {
             throw new InvalidWorksheetException(sprintf('Missing worksheet "%s"', static::SHEET_NAME));
         }
 
         parent::__construct($worksheet);
-        $this->teacherRegistry = $teacherRegistry;
+        $this->teacherRegistry   = $teacherRegistry;
+        $this->classRoomRegistry = $classRoomRegistry;
     }
+
+    /**
+     * Returns a list of header fields expected
+     *
+     * @return mixed
+     */
+    protected function getHeaderFields()
+    {
+        return [
+            'A' => 'DDBNNN',
+            'B' => 'TYPE',
+            'C' => 'FIRST NAME',
+            'D' => 'MIDDLE NAME',
+            'E' => 'LAST NAME',
+            'F' => 'EMAIL',
+            'G' => 'SEX',
+            'H' => 'OFF CLS',
+        ];
+    }
+
+    /**
+     * Returns back a list of fields/Cells that are required
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return [
+            'B' => 'TYPE',
+            'C' => 'FIRST NAME',
+            'E' => 'LAST NAME',
+            'F' => 'EMAIL'
+        ];
+    }
+
 
     /**
      * PreProcess a file
@@ -72,7 +100,6 @@ class TeacherWorksheetParser extends AbstractParser
             return;
         }
 
-
         $iterator->next();
         while ($iterator->valid()) {
             $row       = $iterator->current();
@@ -90,88 +117,60 @@ class TeacherWorksheetParser extends AbstractParser
             }
 
             $cellIterator = $row->getCellIterator();
-            $ddbnnn = $this->getDdbnnn($cellIterator, $rowNumber);
-            if ($ddbnnn === false) {
+            $ddbnnn  = $this->getDdbnnn($cellIterator, $rowNumber);
+            $rowData = $this->parseRow($cellIterator, $rowNumber);
+
+            if ($rowData === false || $ddbnnn === false) {
                 continue;
             }
 
-            $rowData = $this->parseRow($cellIterator, $rowNumber);
+            if (StaticValidator::execute($rowData['EMAIL'], 'EmailAddress') === false) {
+                $this->addError(
+                    sprintf('Teacher has invalid email "%s"', $rowData['EMAIL']),
+                    static::SHEET_NAME,
+                    $rowNumber
+                );
+                continue;
+            }
+
+            $teacher = new Teacher();
+            $teacher->setFirstName($rowData['FIRST NAME'])
+                ->setMiddleName($rowData['MIDDLE NAME'])
+                ->setLastName($rowData['LAST NAME'])
+                ->setEmail($rowData['EMAIL'])
+                ->setGender($rowData['SEX'])
+                ->setRole($rowData['TYPE']);
+
+            $this->getClassForTeacher($rowData, $teacher, $rowNumber);
+            // TODO add actions
         };
     }
 
     /**
-     * Parses data out of the row
+     * Attaches the class room to the teacher
      *
-     * @param CellIterator $row
+     * @param array $rowData
+     * @param Teacher $teacher
      * @param $rowNumber
-     * @return array|bool
+     * @throws \Import\Importer\Nyc\Exception\InvalidTeacherException
      */
-    protected function parseRow(CellIterator $row, $rowNumber)
+    protected function getClassForTeacher(array $rowData, Teacher $teacher, $rowNumber)
     {
-        $rowOk   = true;
-        $rowData = [];
-        foreach ($this->headerFields as $cell => $field) {
-            $rowData['field'] = $this->getField($row, $cell);
-
-            if (array_key_exists($cell, $this->requiredFields) && empty($classTitle)) {
-                $this->addError(
-                    sprintf('Missing %s', $field),
-                    static::SHEET_NAME,
-                    $rowNumber
-                );
-                $rowOk = false;
-            }
+        $class   = $rowData['OFF CLS'];
+        if (empty($class)) {
+            return;
         }
 
-        return $rowOk ? $rowData : false;
-    }
-
-    /**
-     * Gets a value from the current row
-     *
-     * @param CellIterator $cellIterator
-     * @param $col
-     * @return mixed
-     * @throws \PHPExcel_Exception
-     */
-    protected function getField(CellIterator $cellIterator, $col)
-    {
-        $col = !array_key_exists($col, $this->headerFields)
-            ? array_search($col, $this->headerFields)
-            : $col;
-
-        return trim($cellIterator->seek($col)->current()->getFormattedValue());
-    }
-
-    /**
-     * @param CellIterator $cellIterator
-     * @return bool
-     * @throws \PHPExcel_Exception
-     */
-    protected function checkHeader(CellIterator $cellIterator)
-    {
-        $headerOk = true;
-        try {
-            foreach ($this->headerFields as $colField => $title) {
-                if ($cellIterator->seek($colField)->current()->getFormattedValue() !== $title) {
-                    $headerOk = false;
-                    $this->addError(
-                        sprintf('Column "%s" in the header is not labeled as "%s"', $colField, $title),
-                        static::SHEET_NAME,
-                        1
-                    );
-                }
-            }
-        } catch (\PHPExcel_Exception $badHeader) {
+        if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(
-                'Is missing one or more column(s) between "A" and "D"',
+                sprintf('Class ID "%s" was not found', $class),
                 static::SHEET_NAME,
-                1
+                $rowNumber
             );
-
-            $headerOk = false;
+            return;
         }
 
-        return $headerOk;
+        $teacher->setClassRoom($this->classRoomRegistry->offsetGet($class));
+        $this->teacherRegistry->addTeacher($teacher);
     }
 }

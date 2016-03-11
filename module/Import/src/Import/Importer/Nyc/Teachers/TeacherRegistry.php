@@ -63,11 +63,9 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
         }
 
         $user = $this->lookUpUser($teacher->getEmail());
-        if ($user !== false) {
+        if ($user instanceof UserInterface) {
             $teacher->setUser($user);
         }
-
-
     }
 
     /**
@@ -77,7 +75,7 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
     protected function lookUpUser($email)
     {
         try {
-            return $this->userService->fetchUser($email);
+            return $this->userService->fetchUserByEmail($email);
         } catch (NotFoundException $groupNotFound) {
 
         }
@@ -104,7 +102,8 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
             ->setFirstName($user->getFirstName())
             ->setMiddleName($user->getMiddleName())
             ->setLastName($user->getLastName())
-            ->setGender($user->getGender());
+            ->setGender($user->getGender())
+            ->setUser($user);
 
         return $teacher;
     }
@@ -117,7 +116,7 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
     {
         $local = $this->teachers->offsetExists($offset);
 
-        if (!$local) {
+        if ($local) {
             return true;
         }
 

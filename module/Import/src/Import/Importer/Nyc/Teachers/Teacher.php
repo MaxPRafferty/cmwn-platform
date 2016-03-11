@@ -64,8 +64,7 @@ class Teacher
      */
     public function isValid()
     {
-        return !empty($this->role) &&
-            !empty($this->email) &&
+        return !empty($this->email) &&
             !empty($this->firstName) &&
             !empty($this->lastName);
     }

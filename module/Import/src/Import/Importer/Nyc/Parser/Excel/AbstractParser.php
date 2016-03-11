@@ -249,7 +249,7 @@ abstract class AbstractParser implements LoggerAwareInterface, ParserInterface
 
             if (array_key_exists($cell, $this->getRequiredFields()) && empty($cellValue)) {
                 $this->addError(
-                    sprintf('Missing %s', $field),
+                    sprintf('Missing "%s"', $field),
                     static::SHEET_NAME,
                     $rowNumber
                 );
