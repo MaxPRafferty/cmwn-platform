@@ -3,6 +3,7 @@
 namespace Import\Importer\Nyc\ClassRoom;
 
 use Application\Exception\NotFoundException;
+use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Import\Importer\Nyc\Exception\InvalidClassRoomException;
 use \ArrayObject;
@@ -36,6 +37,15 @@ class ClassRoomRegistry implements ArrayAccess
     }
 
     /**
+     * @return GroupServiceInterface
+     * @codeCoverageIgnore
+     */
+    public function getGroupService()
+    {
+        return $this->groupService;
+    }
+
+    /**
      * Adds a new classroom to in memory
      *
      * @param ClassRoom $classRoom
@@ -48,30 +58,32 @@ class ClassRoomRegistry implements ArrayAccess
         }
 
         $this->classRooms->offsetSet($classRoom->getClassRoomId(), $classRoom);
+        if (!$classRoom->isNew()) {
+            return;
+        }
+
+        $group = $this->lookUpGroup($classRoom->getClassRoomId());
+        if ($group !== false) {
+            $classRoom->setGroup($group);
+        }
     }
 
     /**
      * Checks the database for the group and stores it locally
      *
      * @param $classRoomId
-     * @return array|bool
+     * @return GroupInterface|false
      * @throws InvalidClassRoomException
      */
     protected function lookUpGroup($classRoomId)
     {
         try {
             // FIXME add fetch group by external id
-            $group      = $this->groupService->fetchGroup($classRoomId);
-            $groupMeta  = $group->getMeta();
-            $subClasses = isset($groupMeta['sub_class_rooms']) ? $groupMeta['sub_class_rooms'] : [];
-            $classRoom  = new ClassRoom($group->getTitle(), $group->getExternalId(), $subClasses);
-
-            $this->addClassroom($classRoom);
+            return $this->groupService->fetchGroup($classRoomId);
         } catch (NotFoundException $groupNotFound) {
-            return false;
-        }
 
-        return $classRoom;
+        }
+        return false;
     }
 
     /**
@@ -91,7 +103,17 @@ class ClassRoomRegistry implements ArrayAccess
             return true;
         }
 
-        return $this->lookUpGroup($classRoomId) !== false;
+        $group = $this->lookUpGroup($classRoomId);
+        if ($group == false) {
+            return false;
+        }
+
+        $groupMeta  = $group->getMeta();
+        $subClasses = isset($groupMeta['sub_class_rooms']) ? $groupMeta['sub_class_rooms'] : [];
+        $classRoom  = new ClassRoom($group->getTitle(), $group->getExternalId(), $subClasses);
+        $classRoom->setGroup($group);
+        $this->addClassroom($classRoom);
+        return true;
     }
 
     /**
