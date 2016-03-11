@@ -232,4 +232,96 @@ abstract class AbstractParser implements LoggerAwareInterface, ParserInterface
 
         return $ddbnnn;
     }
+
+    /**
+     * Parses data out of the row
+     *
+     * @param CellIterator $row
+     * @param $rowNumber
+     * @return string[]|bool
+     */
+    protected function parseRow(CellIterator $row, $rowNumber)
+    {
+        $rowOk   = true;
+        $rowData = [];
+        foreach ($this->getHeaderFields() as $cell => $field) {
+            $cellValue = $this->getField($row, $cell);
+
+            if (array_key_exists($cell, $this->getRequiredFields()) && empty($cellValue)) {
+                $this->addError(
+                    sprintf('Missing %s', $field),
+                    static::SHEET_NAME,
+                    $rowNumber
+                );
+                $rowOk = false;
+            }
+
+            $rowData[$field] = $cellValue;
+        }
+
+        return $rowOk ? $rowData : false;
+    }
+
+    /**
+     * Gets a value from the current row
+     *
+     * @param CellIterator $cellIterator
+     * @param $col
+     * @return mixed
+     * @throws \PHPExcel_Exception
+     */
+    protected function getField(CellIterator $cellIterator, $col)
+    {
+        $col = !array_key_exists($col, $this->getHeaderFields())
+            ? array_search($col, $this->getHeaderFields())
+            : $col;
+
+        return trim($cellIterator->seek($col)->current()->getFormattedValue());
+    }
+
+    /**
+     * @param CellIterator $cellIterator
+     * @return bool
+     * @throws \PHPExcel_Exception
+     */
+    protected function checkHeader(CellIterator $cellIterator)
+    {
+        $headerOk = true;
+        try {
+            foreach ($this->getHeaderFields() as $colField => $title) {
+                if ($cellIterator->seek($colField)->current()->getFormattedValue() !== $title) {
+                    $headerOk = false;
+                    $this->addError(
+                        sprintf('Column "%s" in the header is not labeled as "%s"', $colField, $title),
+                        static::SHEET_NAME,
+                        1
+                    );
+                }
+            }
+        } catch (\PHPExcel_Exception $badHeader) {
+            $this->addError(
+                'Is missing one or more column(s) between "A" and "D"',
+                static::SHEET_NAME,
+                1
+            );
+
+            $headerOk = false;
+        }
+
+        return $headerOk;
+    }
+    
+    /**
+     * Returns a list of header fields expected
+     *
+     * @return mixed
+     */
+    abstract protected function getHeaderFields();
+
+    /**
+     * Returns back a list of fields/Cells that are required
+     *
+     * @return array
+     */
+    abstract protected function getRequiredFields();
 }
