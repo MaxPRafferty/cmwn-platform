@@ -2,9 +2,11 @@
 
 namespace Import\Importer\Nyc\Parser\Excel;
 
+use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidWorksheetException;
 use \PHPExcel_Worksheet_RowCellIterator as CellIterator;
+use \PHPExcel_Worksheet as WorkSheet;
 
 /**
  * Class ClassWorksheetParser
@@ -21,17 +23,17 @@ class ClassWorksheetParser extends AbstractParser
     /**
      * ClassesParser constructor.
      *
-     * @param \PHPExcel_Worksheet $worksheet
+     * @param WorkSheet $worksheet
      * @throws InvalidWorksheetException
      */
-    public function __construct(\PHPExcel_Worksheet $worksheet)
+    public function __construct(WorkSheet $worksheet, ClassRoomRegistry $classRoomRegistry)
     {
         if ($worksheet->getTitle() !== static::SHEET_NAME) {
-            throw new InvalidWorksheetException();
+            throw new InvalidWorksheetException(sprintf('Missing worksheet "%s"', static::SHEET_NAME));
         }
 
         parent::__construct($worksheet);
-        $this->classRegistry = new ClassRoomRegistry();
+        $this->classRegistry = $classRoomRegistry;
     }
 
     /**
@@ -65,7 +67,7 @@ class ClassWorksheetParser extends AbstractParser
             $iterator->next();
 
             // Skip if empty only if the next row is not empty
-            if ($this->isRowEmpty($row, 'A', 'D') && $iterator->valid()) {
+            if ($this->isRowEmpty($row, 'A', 'C') && $iterator->valid()) {
                 $this->addWarning(
                     'No data found between cells "A" and "D" Skipping this row',
                     static::SHEET_NAME,
@@ -102,12 +104,7 @@ class ClassWorksheetParser extends AbstractParser
             }
 
             $subClasses = $this->getSubClasses($cellIterator);
-
-            $classRoom = [
-                'title'           => $classTitle,
-                'class_id'        => $classId,
-                'sub_class_rooms' => $subClasses,
-            ];
+            $this->classRegistry->addClassroom(new ClassRoom($classTitle, $classId, $subClasses));
         };
     }
 
@@ -121,7 +118,7 @@ class ClassWorksheetParser extends AbstractParser
     protected function getSubClasses(CellIterator $cellIterator)
     {
         $classString = trim($cellIterator->seek('D')->current()->getFormattedValue());
-        return explode(',', $classString);
+        return empty($classString) ? [] : explode(',', $classString);
     }
 
     /**
@@ -156,24 +153,34 @@ class ClassWorksheetParser extends AbstractParser
     protected function checkHeader(CellIterator $cellIterator)
     {
         $headerOk = true;
-        if ($cellIterator->seek('A')->current()->getFormattedValue() !== 'DDBNNN') {
-            $headerOk = false;
-            $this->addError('Missing "DDBNNN" from header', static::SHEET_NAME, 1);
-        }
+        try {
+            if ($cellIterator->seek('A')->current()->getFormattedValue() !== 'DDBNNN') {
+                $headerOk = false;
+                $this->addError('Column "A" in the header is not labeled as "DDBNNN"', static::SHEET_NAME, 1);
+            }
 
-        if ($cellIterator->seek('B')->current()->getFormattedValue() !== 'TITLE') {
-            $headerOk = false;
-            $this->addError('Missing "TITLE" from header', static::SHEET_NAME, 1);
-        }
+            if ($cellIterator->seek('B')->current()->getFormattedValue() !== 'TITLE') {
+                $headerOk = false;
+                $this->addError('Column "B" in the header is not labeled as "TITLE"', static::SHEET_NAME, 1);
+            }
 
-        if ($cellIterator->seek('C')->current()->getFormattedValue() !== 'OFF CLS') {
-            $headerOk = false;
-            $this->addError('Missing "OFF CLS" from header', static::SHEET_NAME, 1);
-        }
+            if ($cellIterator->seek('C')->current()->getFormattedValue() !== 'OFF CLS') {
+                $headerOk = false;
+                $this->addError('Column "C" in the header is not labeled as "OFF CLS"', static::SHEET_NAME, 1);
+            }
 
-        if ($cellIterator->seek('D')->current()->getFormattedValue() !== 'SUB CLASSES') {
+            if ($cellIterator->seek('D')->current()->getFormattedValue() !== 'SUB CLASSES') {
+                $headerOk = false;
+                $this->addError('Column "D" in the header is not labeled as "SUB CLASSES"', static::SHEET_NAME, 1);
+            }
+        } catch (\PHPExcel_Exception $badHeader) {
+            $this->addError(
+                'Is missing one or more column(s) between "A" and "D"',
+                static::SHEET_NAME,
+                1
+            );
+
             $headerOk = false;
-            $this->addError('Missing "SUB CLASSES" from header', static::SHEET_NAME, 1);
         }
 
         return $headerOk;

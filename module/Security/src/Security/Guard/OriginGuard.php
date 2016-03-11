@@ -51,7 +51,7 @@ class OriginGuard implements ListenerAggregateInterface
         /** @var Response $response */
         $response = $event->getResponse();
         $refferer = $request->getServer('HTTP_REFERER');
-        // TODO Config?
+        // THOUGHT Config?
         if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $refferer))
         {
             // We dont need the path query or fragments

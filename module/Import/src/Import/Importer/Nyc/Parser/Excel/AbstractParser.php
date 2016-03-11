@@ -87,7 +87,7 @@ abstract class AbstractParser implements LoggerAwareInterface, ParserInterface
      */
     protected function addWarning($message, $sheet, $row)
     {
-        $warningMessage   = sprintf('Sheet %s Row: %s %s', $sheet, $row, $message);
+        $warningMessage   = sprintf('Sheet "%s" Row: %s %s', $sheet, $row, $message);
         $this->warnings[] =  $warningMessage;
         $this->getLogger()->warn($warningMessage);
     }
