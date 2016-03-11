@@ -64,6 +64,7 @@ class UserServiceDelegatorTest extends TestCase
         $this->user = new Adult();
         $this->user->setUserId(md5('foobar'));
         $this->user->setExternalId('foo-bar');
+        $this->user->setEmail('chuck@manchuck.com');
     }
 
     /**
@@ -215,7 +216,7 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
     
-    public function testItShouldCallfetchUserByExternalId()
+    public function testItShouldCallFetchUserByExternalId()
     {
         $this->userService->shouldReceive('fetchUserByExternalId')
             ->with($this->user->getExternalId())
@@ -241,6 +242,37 @@ class UserServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.user.external.post',
                 'target' => $this->userService,
                 'params' => ['user' => $this->user, 'external_id' => $this->user->getExternalId()]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+    
+    public function testItShouldCallfetchUserByEmail()
+    {
+        $this->userService->shouldReceive('fetchUserByEmail')
+            ->with($this->user->getEmail())
+            ->andReturn($this->user)
+            ->once();
+
+        $this->assertSame(
+            $this->user,
+            $this->delegator->fetchUserByEmail($this->user->getEmail())
+        );
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.email',
+                'target' => $this->userService,
+                'params' => ['email' => $this->user->getEmail()]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.email.post',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user, 'email' => $this->user->getEmail()]
             ],
             $this->calledEvents[1]
         );

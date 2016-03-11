@@ -23,13 +23,22 @@ interface UserServiceInterface
     public function fetchUser($userId);
 
     /**
-     * Fetches one user from the DB using the id
+     * Fetches one user from the DB using the external id
      *
      * @param $externalId
      * @return UserInterface
      * @throws NotFoundException
      */
     public function fetchUserByExternalId($externalId);
+
+    /**
+     * Fetches one user from the DB using the email
+     *
+     * @param $email
+     * @return UserInterface
+     * @throws NotFoundException
+     */
+    public function fetchUserByEmail($email);
 
     /**
      * Deletes a user from the database
