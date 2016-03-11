@@ -63,6 +63,7 @@ class GroupServiceDelegatorTest extends TestCase
     {
         $this->group = new Group();
         $this->group->setGroupId(md5('foobar'));
+        $this->group->setExternalId('foo-bar');
     }
 
     /**
@@ -156,6 +157,37 @@ class GroupServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.group.post',
                 'target' => $this->groupService,
                 'params' => ['group' => $this->group, 'group_id' => $this->group->getGroupId()]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    public function testItShouldCallFetchGroupByExternalId()
+    {
+        $this->groupService->shouldReceive('fetchGroupByExternalId')
+            ->with($this->group->getExternalId())
+            ->andReturn($this->group)
+            ->once();
+
+        $this->assertSame(
+            $this->group,
+            $this->delegator->fetchGroupByExternalId($this->group->getExternalId())
+        );
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.external',
+                'target' => $this->groupService,
+                'params' => ['external_id' => $this->group->getExternalId()]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.external.post',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group, 'external_id' => $this->group->getExternalId()]
             ],
             $this->calledEvents[1]
         );
