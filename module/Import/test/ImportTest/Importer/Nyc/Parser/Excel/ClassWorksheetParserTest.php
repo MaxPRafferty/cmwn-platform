@@ -308,7 +308,7 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Classes" Row: 2 Missing TITLE'];
+        $expectedErrors = ['Sheet "Classes" Row: 2 Missing "TITLE"'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -340,7 +340,7 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Classes" Row: 2 Missing OFF CLS'];
+        $expectedErrors = ['Sheet "Classes" Row: 2 Missing "OFF CLS"'];
 
         $this->assertTrue(
             $parser->hasErrors(),
