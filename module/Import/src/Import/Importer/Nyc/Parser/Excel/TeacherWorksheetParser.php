@@ -4,6 +4,7 @@ namespace Import\Importer\Nyc\Parser\Excel;
 
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidWorksheetException;
+use Import\Importer\Nyc\Teachers\AddTeacherAction;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use \PHPExcel_Worksheet_RowCellIterator as CellIterator;
@@ -141,9 +142,35 @@ class TeacherWorksheetParser extends AbstractParser
                 ->setGender($rowData['SEX'])
                 ->setRole($rowData['TYPE']);
 
+            $this->teacherRegistry->addTeacher($teacher);
             $this->getClassForTeacher($rowData, $teacher, $rowNumber);
-            // TODO add actions
         };
+
+        if (!$this->hasErrors()) {
+            $this->createActions();
+        }
+    }
+
+    /**
+     * Creates all the add teacher actions
+     *
+     * @todo Add the association action to classes
+     * @todo add the association action to the school for teachers with no classes
+     */
+    protected function createActions()
+    {
+        $this->getLogger()->info('Creating actions for teachers');
+        foreach ($this->teacherRegistry as $teacher) {
+            if (!$teacher->isNew()) {
+                $this->getLogger()->debug(
+                    sprintf('Teacher with email %s already exists', $teacher->getEmail())
+                );
+
+                continue;
+            }
+
+            $this->addAction(new AddTeacherAction($this->teacherRegistry->getUserService(), $teacher));
+        }
     }
 
     /**
@@ -171,6 +198,5 @@ class TeacherWorksheetParser extends AbstractParser
         }
 
         $teacher->setClassRoom($this->classRoomRegistry->offsetGet($class));
-        $this->teacherRegistry->addTeacher($teacher);
     }
 }
