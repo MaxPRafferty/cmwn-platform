@@ -38,6 +38,36 @@ class ClassWorksheetParser extends AbstractParser
     }
 
     /**
+     * Returns a list of header fields expected
+     *
+     * @return mixed
+     */
+    protected function getHeaderFields()
+    {
+        return [
+            'A' => 'DDBNNN',
+            'B' => 'TITLE',
+            'C' => 'OFF CLS',
+            'D' => 'SUB CLASSES',
+        ];
+    }
+
+    /**
+     * Returns back a list of fields/Cells that are required
+     *
+     * @return array
+     */
+    protected function getRequiredFields()
+    {
+        return [
+            'A' => 'DDBNNN',
+            'B' => 'TITLE',
+            'C' => 'OFF CLS',
+        ];
+    }
+
+
+    /**
      * @return ClassRoomRegistry
      * @codeCoverageIgnore
      */
@@ -85,30 +115,16 @@ class ClassWorksheetParser extends AbstractParser
                 continue;
             }
 
-            $classTitle = $this->getClassTitle($cellIterator);
-
-            if (empty($classTitle)) {
-                $this->addError(
-                    'Missing class title',
-                    static::SHEET_NAME,
-                    $rowNumber
-                );
+            $rowData = $this->parseRow($cellIterator, $rowNumber);
+            if ($rowData === false) {
                 continue;
             }
-
-            $classId = $this->getClassId($cellIterator);
-            if (empty($classId)) {
-                $this->addError(
-                    'Missing class id',
-                    static::SHEET_NAME,
-                    $rowNumber
-                );
-                continue;
-            }
-
+            
             $subClasses = $this->getSubClasses($cellIterator);
-            if (!$this->classRegistry->offsetExists($classId)) {
-                $this->classRegistry->addClassroom(new ClassRoom($classTitle, $classId, $subClasses));
+            if (!$this->classRegistry->offsetExists($rowData['OFF CLS'])) {
+                $this->classRegistry->addClassroom(
+                    new ClassRoom($rowData['TITLE'], $rowData['OFF CLS'], $subClasses)
+                );
             }
         };
 
@@ -209,70 +225,5 @@ class ClassWorksheetParser extends AbstractParser
     {
         $classString = trim($cellIterator->seek('D')->current()->getFormattedValue());
         return empty($classString) ? [] : explode(',', $classString);
-    }
-
-    /**
-     * Gets the class Id
-     *
-     * @param CellIterator $cellIterator
-     * @return mixed
-     * @throws \PHPExcel_Exception
-     */
-    protected function getClassId(CellIterator $cellIterator)
-    {
-        return trim($cellIterator->seek('C')->current()->getFormattedValue());
-    }
-
-    /**
-     * Gets the Title of the class from a row
-     *
-     * @param CellIterator $cellIterator
-     * @return string
-     * @throws \PHPExcel_Exception
-     */
-    protected function getClassTitle(CellIterator $cellIterator)
-    {
-        return trim($cellIterator->seek('B')->current()->getFormattedValue());
-    }
-
-    /**
-     * @param CellIterator $cellIterator
-     * @return bool
-     * @throws \PHPExcel_Exception
-     */
-    protected function checkHeader(CellIterator $cellIterator)
-    {
-        $headerOk = true;
-        try {
-            if ($cellIterator->seek('A')->current()->getFormattedValue() !== 'DDBNNN') {
-                $headerOk = false;
-                $this->addError('Column "A" in the header is not labeled as "DDBNNN"', static::SHEET_NAME, 1);
-            }
-
-            if ($cellIterator->seek('B')->current()->getFormattedValue() !== 'TITLE') {
-                $headerOk = false;
-                $this->addError('Column "B" in the header is not labeled as "TITLE"', static::SHEET_NAME, 1);
-            }
-
-            if ($cellIterator->seek('C')->current()->getFormattedValue() !== 'OFF CLS') {
-                $headerOk = false;
-                $this->addError('Column "C" in the header is not labeled as "OFF CLS"', static::SHEET_NAME, 1);
-            }
-
-            if ($cellIterator->seek('D')->current()->getFormattedValue() !== 'SUB CLASSES') {
-                $headerOk = false;
-                $this->addError('Column "D" in the header is not labeled as "SUB CLASSES"', static::SHEET_NAME, 1);
-            }
-        } catch (\PHPExcel_Exception $badHeader) {
-            $this->addError(
-                'Is missing one or more column(s) between "A" and "D"',
-                static::SHEET_NAME,
-                1
-            );
-
-            $headerOk = false;
-        }
-
-        return $headerOk;
     }
 }
