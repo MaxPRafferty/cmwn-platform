@@ -63,6 +63,7 @@ class UserServiceDelegatorTest extends TestCase
     {
         $this->user = new Adult();
         $this->user->setUserId(md5('foobar'));
+        $this->user->setExternalId('foo-bar');
     }
 
     /**
@@ -209,6 +210,37 @@ class UserServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.user.post',
                 'target' => $this->userService,
                 'params' => ['user' => $this->user, 'user_id' => $this->user->getUserId()]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+    
+    public function testItShouldCallfetchUserByExternalId()
+    {
+        $this->userService->shouldReceive('fetchUserByExternalId')
+            ->with($this->user->getExternalId())
+            ->andReturn($this->user)
+            ->once();
+
+        $this->assertSame(
+            $this->user,
+            $this->delegator->fetchUserByExternalId($this->user->getExternalId())
+        );
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.external',
+                'target' => $this->userService,
+                'params' => ['external_id' => $this->user->getExternalId()]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.external.post',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user, 'external_id' => $this->user->getExternalId()]
             ],
             $this->calledEvents[1]
         );
