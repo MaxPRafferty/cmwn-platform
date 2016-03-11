@@ -60,15 +60,11 @@ class ClassRoomRegistry implements ArrayAccess
     protected function lookUpGroup($classRoomId)
     {
         try {
-            // TODO add fetch group by external id
-            $group     = $this->groupService->fetchGroup($classRoomId);
-            $groupMeta = $group->getMeta();
+            // FIXME add fetch group by external id
+            $group      = $this->groupService->fetchGroup($classRoomId);
+            $groupMeta  = $group->getMeta();
             $subClasses = isset($groupMeta['sub_class_rooms']) ? $groupMeta['sub_class_rooms'] : [];
-            $classRoom = [
-                'title'           => $group->getTitle(),
-                'class_id'        => $group->getExternalId(),
-                'sub_class_rooms' => $subClasses,
-            ];
+            $classRoom  = new ClassRoom($group->getTitle(), $group->getExternalId(), $subClasses);
 
             $this->addClassroom($classRoom);
         } catch (NotFoundException $groupNotFound) {
@@ -79,57 +75,46 @@ class ClassRoomRegistry implements ArrayAccess
     }
 
     /**
-     * Whether a offset exists
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
-     * @since 5.0.0
+     * Tests if the class room with an Id exists
+     *
+     * Checks the DB if the class room has not been loaded into memory
+     *
+     * @todo Cache misses so that a DB call with the same ID will not need to make another call
+     * @param mixed $classRoomId
+     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($classRoomId)
     {
-        $local = $this->classRooms->offsetExists($offset);
+        $local = $this->classRooms->offsetExists($classRoomId);
 
         if ($local) {
             return true;
         }
 
-        return $this->lookUpGroup($offset) !== false;
+        return $this->lookUpGroup($classRoomId) !== false;
     }
 
     /**
-     * Offset to retrieve
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
-     * @return mixed Can return all value types.
-     * @since 5.0.0
+     * Returns a class room
+     *
+     * @param string $classRoomId
+     * @return ClassRoom|null
      */
-    public function offsetGet($offset)
+    public function offsetGet($classRoomId)
     {
-        if ($this->classRooms->offsetExists($offset)) {
-            return $this->classRooms->offsetGet($offset);
+        if ($this->offsetExists($classRoomId)) {
+            return $this->classRooms->offsetGet($classRoomId);
         }
 
         return null;
     }
 
     /**
-     * Offset to set
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
-     * @since 5.0.0
+     * Proxy for Add class Room
+     *
+     * @param string $offset
+     * @param ClassRoom $value
+     * @throws InvalidClassRoomException
      */
     public function offsetSet($offset, $value)
     {
@@ -137,13 +122,9 @@ class ClassRoomRegistry implements ArrayAccess
     }
 
     /**
-     * Offset to unset
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
-     * @since 5.0.0
+     * Just here to statisfiy the interface
+     * @param mixed $offset
+     * @throws BadMethodCallException
      */
     public function offsetUnset($offset)
     {
