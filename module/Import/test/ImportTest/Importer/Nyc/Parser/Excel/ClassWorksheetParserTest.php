@@ -32,7 +32,7 @@ class ClassWorksheetParserTest extends TestCase
     public function setUpGroupService()
     {
         $this->groupService = \Mockery::mock('\Group\Service\GroupService');
-        $this->groupService->shouldReceive('fetchGroup')
+        $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->andThrow(NotFoundException::class)
             ->byDefault();
     }
