@@ -9,12 +9,12 @@ use Import\Importer\Nyc\Exception\InvalidClassRoomException;
 use \ArrayObject;
 use \ArrayAccess;
 use \BadMethodCallException;
-use Traversable;
+use \IteratorAggregate;
 
 /**
  * Class ClassRegistry
  */
-class ClassRoomRegistry implements ArrayAccess, \IteratorAggregate
+class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
 {
     /**
      * @var GroupServiceInterface
@@ -116,7 +116,7 @@ class ClassRoomRegistry implements ArrayAccess, \IteratorAggregate
         }
 
         $group = $this->lookUpGroup($classRoomId);
-        if ($group == false) {
+        if ($group === false) {
             return false;
         }
 
