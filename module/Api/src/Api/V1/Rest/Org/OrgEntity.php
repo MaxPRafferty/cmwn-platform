@@ -17,7 +17,7 @@ class OrgEntity extends Organization
      */
     protected $scope = 0;
 
-    public function __construct($options, $scope = null)
+    public function __construct($options = [], $scope = null)
     {
         if ($options instanceof OrganizationInterface) {
             $options = $options->getArrayCopy();
