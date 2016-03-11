@@ -90,8 +90,7 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
     protected function lookUpGroup($classRoomId)
     {
         try {
-            // FIXME add fetch group by external id
-            return $this->groupService->fetchGroup($classRoomId);
+            return $this->groupService->fetchGroupByExternalId($classRoomId);
         } catch (NotFoundException $groupNotFound) {
 
         }
