@@ -37,10 +37,10 @@ class OrgResource extends AbstractResourceListener
     {
         $data = (array) $data;
         unset($data['org_id']);
-        $org = new Organization($data);
+        $org = new OrgEntity($data);
 
         $this->service->createOrganization($org);
-        return new OrgEntity($org);
+        return $org;
     }
 
     /**
