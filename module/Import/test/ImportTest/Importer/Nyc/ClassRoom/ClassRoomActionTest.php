@@ -4,7 +4,7 @@ namespace ImportTest\Importer\Nyc\ClassRoom;
 
 use Group\GroupInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
-use Import\Importer\Nyc\ClassRoom\ClassRoomAction;
+use Import\Importer\Nyc\ClassRoom\AddClassRoomAction;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -36,7 +36,7 @@ class ClassRoomActionTest extends TestCase
             'Update this test to account for new login in class room'
         );
 
-        $action = new ClassRoomAction($this->groupService, $classRoom);
+        $action = new AddClassRoomAction($this->groupService, $classRoom);
 
         $this->assertEquals(100, $action->priority(), 'Priority for class room has changed');
         $this->groupService->shouldReceive('saveGroup')

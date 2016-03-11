@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc\Parser\Excel;
 
+use Import\ActionInterface;
 use Import\Importer\Nyc\Exception\InvalidDdbnnException;
 use Import\ParserInterface;
 use PHPExcel_Worksheet_RowCellIterator as CellIterator;
@@ -43,6 +44,11 @@ abstract class AbstractParser implements LoggerAwareInterface, ParserInterface
     protected $iterator;
 
     /**
+     * @var ActionInterface[] help children write actions
+     */
+    protected $actionList = [];
+
+    /**
      * AbstractParser constructor.
      * @param \PHPExcel_Worksheet $worksheet
      */
@@ -65,15 +71,36 @@ abstract class AbstractParser implements LoggerAwareInterface, ParserInterface
     }
 
     /**
+     * Gets the list of actions the parser has found
+     *
+     * @return \Import\ActionInterface[]
+     */
+    public function getActions()
+    {
+        return $this->actionList;
+    }
+
+    /**
+     * Adds an action to the action list
+     *
+     * @param ActionInterface $action
+     */
+    protected function addAction(ActionInterface $action)
+    {
+        array_push($this->actionList, $action);
+    }
+
+    /**
      * Adds and error
      *
      * @param $message
      * @param $sheet
      * @param $row
      */
-    protected function addError($message, $sheet, $row)
+    protected function addError($message, $sheet, $row = null)
     {
-        $errorMessage   = sprintf('Sheet "%s" Row: %s %s', $sheet, $row, $message);
+        $rowString      = $row !== null ? ' Row: ' . $row : "";
+        $errorMessage   = sprintf('Sheet "%s"%s %s', $sheet, $rowString, $message);
         $this->errors[] =  $errorMessage;
         $this->getLogger()->err($errorMessage);
     }
@@ -195,7 +222,7 @@ abstract class AbstractParser implements LoggerAwareInterface, ParserInterface
             $ddbnnn = AbstractParser::parseDdbnnn($dString);
         } catch (InvalidDdbnnException $badNumber) {
             $this->addError(
-                sprintf('Invalid DDBNNN %s', $dString),
+                sprintf('Invalid DDBNNN "%s"', $dString),
                 static::SHEET_NAME,
                 $rowNumber
             );

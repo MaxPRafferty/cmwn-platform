@@ -36,11 +36,15 @@ class ClassRoom
      * @param $classRoomId
      * @param array $subClasses
      */
-    public function __construct($title, $classRoomId, array $subClasses = [])
+    public function __construct($title, $classRoomId, array $subClasses = [], GroupInterface $group = null)
     {
         $this->setTitle($title);
         $this->setClassRoomId($classRoomId);
         $this->setSubClassRooms($subClasses);
+
+        if ($group !== null) {
+            $this->setGroup($group);
+        }
     }
 
     /**

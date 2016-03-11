@@ -9,11 +9,12 @@ use Import\Importer\Nyc\Exception\InvalidClassRoomException;
 use \ArrayObject;
 use \ArrayAccess;
 use \BadMethodCallException;
+use Traversable;
 
 /**
  * Class ClassRegistry
  */
-class ClassRoomRegistry implements ArrayAccess
+class ClassRoomRegistry implements ArrayAccess, \IteratorAggregate
 {
     /**
      * @var GroupServiceInterface
@@ -35,6 +36,17 @@ class ClassRoomRegistry implements ArrayAccess
         $this->groupService = $groupService;
         $this->classRooms   = new ArrayObject();
     }
+
+    /**
+     * Gets an iterator for the registry
+     *
+     * @return \IteratorIterator
+     */
+    public function getIterator()
+    {
+        return new \IteratorIterator($this->classRooms);
+    }
+
 
     /**
      * @return GroupServiceInterface
