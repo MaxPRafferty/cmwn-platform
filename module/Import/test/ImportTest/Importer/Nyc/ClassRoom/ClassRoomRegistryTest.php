@@ -32,7 +32,7 @@ class ClassRoomRegistryTest extends TestCase
     public function setUpGroupService()
     {
         $this->groupService = \Mockery::mock('\Group\Service\GroupService');
-        $this->groupService->shouldReceive('fetchGroup')->andThrow(new NotFoundException())->byDefault();
+        $this->groupService->shouldReceive('fetchGroupByExternalId')->andThrow(new NotFoundException())->byDefault();
     }
 
     /**
@@ -48,7 +48,7 @@ class ClassRoomRegistryTest extends TestCase
         $classroom = new ClassRoom('History of the world', 'hist101');
         $this->registry->addClassroom($classroom);
 
-        $this->groupService->shouldNotReceive('fetchGroup');
+        $this->groupService->shouldNotReceive('fetchGroupByExternalId');
 
         $this->assertTrue($this->registry->offsetExists('hist101'));
     }
@@ -60,7 +60,7 @@ class ClassRoomRegistryTest extends TestCase
         $group->setExternalId('hist101');
         $group->setMeta(['sub_classes' => ['foo', 'bar']]);
 
-        $this->groupService->shouldReceive('fetchGroup')
+        $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->with('hist101')
             ->andReturn($group)
             ->once();
@@ -79,7 +79,7 @@ class ClassRoomRegistryTest extends TestCase
         $group->setExternalId('hist101');
         $group->setMeta(['sub_classes' => ['foo', 'bar']]);
 
-        $this->groupService->shouldReceive('fetchGroup')
+        $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->with('hist101')
             ->andReturn($group)
             ->once();
@@ -94,7 +94,7 @@ class ClassRoomRegistryTest extends TestCase
 
     public function testItShouldReturnFalseWhenDbLookFailsToFindClass()
     {
-        $this->groupService->shouldReceive('fetchGroup')
+        $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->with('hist101')
             ->andThrow(new NotFoundException())
             ->once();
@@ -107,14 +107,14 @@ class ClassRoomRegistryTest extends TestCase
         $classroom = new ClassRoom('History of the world', 'hist101');
         $this->registry->offsetSet('foobar', $classroom);
 
-        $this->groupService->shouldNotReceive('fetchGroup');
+        $this->groupService->shouldNotReceive('fetchGroupByExternalId');
 
         $this->assertSame($classroom, $this->registry->offsetGet('hist101'));
     }
 
     public function testItShouldReturnNullWhenNotSet()
     {
-        $this->groupService->shouldReceive('fetchGroup')
+        $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->with('hist101')
             ->andThrow(new NotFoundException())
             ->once();
