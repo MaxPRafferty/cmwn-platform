@@ -1,13 +1,19 @@
 <?php
 
+$dbName = getenv('DATABASE1_NAME');
+$dbHost = getenv('DATABASE1_HOST');
+$dbUser = getenv('DATABASE1_USER');
+$dbPass = getenv('DATABASE1_PASS');
+
 return [
     'db' => [
-        'driver'         => 'Pdo',
-        'dsn'            => 'mysql:dbname=cmwn;host=localhost',
+        'dsn'      => 'mysql:dbname=' . $dbName . ';host=' . $dbHost,
+        'database' => $dbName,
+        'username' => $dbUser,
+        'password' => $dbPass,
         'driver_options' => [
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
         ],
-        'database'       => 'cmwn'
     ],
     'service_manager' => [
         'factories' => [

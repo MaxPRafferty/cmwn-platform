@@ -79,6 +79,7 @@ class OrganizationService implements OrganizationServiceInterface
         $data['meta']    = Json::encode($data['meta']);
         $data['org_id']  = $org->getOrgId();
         unset($data['deleted']);
+        unset($data['scope']);
 
         $this->orgTableGateway->insert($data);
         return true;
