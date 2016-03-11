@@ -44,6 +44,16 @@ class ClassRoom
     }
 
     /**
+     * Tests if this is a new class room that will be saved
+     *
+     * @return bool
+     */
+    public function isNew()
+    {
+        return $this->group === null;
+    }
+
+    /**
      * @return string
      */
     public function getTitle()
