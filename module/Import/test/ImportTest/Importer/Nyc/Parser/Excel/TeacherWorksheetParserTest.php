@@ -6,8 +6,10 @@ use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser;
+use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use \PHPUnit_Framework_TestCase as TestCase;
+use User\Adult;
 
 /**
  * Exception TeacherWorksheetParserTest
@@ -102,6 +104,69 @@ class TeacherWorksheetParserTest extends TestCase
 
         $this->assertEquals(
             $setup->getExpectedGoodActions($this->userService),
+            $parser->getActions(),
+            'Parser did not create actions correctly'
+        );
+    }
+
+    public function testItShouldCreateCorrectActionsForSomeExistingTeachers()
+    {
+        $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet.xlsx');
+        $sheet  = $reader->getSheet(0);
+        $parser = $this->getParser($sheet);
+        $class  = new ClassRoom('History of the world', '001');
+        $this->classRegistry->addClassroom($class);
+
+        $teacher = new Teacher();
+        $teacher->setRole('Assistant Principal')
+            ->setFirstName('Carol')
+            ->setLastName('Smitt')
+            ->setEmail('smith@gmail.com')
+            ->setGender('F')
+            ->setUser(new Adult());
+
+        $this->assertFalse($teacher->isNew());
+        $this->registry->addTeacher($teacher);
+        $parser->preProcess();
+
+        $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
+        $this->assertEmpty($parser->getErrors(), 'Teacher Processor is Reporting errors');
+        $this->assertFalse($parser->hasWarnings(), 'Teacher Processor is Reporting warnings on good file');
+        $this->assertEmpty($parser->getWarnings(), 'Teacher Processor is Reporting warnings');
+
+        $setup = new TeacherParserSetup();
+
+        $this->assertEquals(
+            $setup->getExpectedMixedActions($this->userService),
+            $parser->getActions(),
+            'Parser did not create actions correctly'
+        );
+    }
+
+    public function testItShouldCreateCorrectActionsForTeacherWithWarnings()
+    {
+        $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet_with_warnings.xlsx');
+        $sheet  = $reader->getSheet(0);
+        $parser = $this->getParser($sheet);
+        $class  = new ClassRoom('History of the world', '001');
+        $this->classRegistry->addClassroom($class);
+
+        $parser->preProcess();
+
+        $expectedWarnings = [
+            'Sheet "Teachers" Row: 5 No data found between cells "A" and "H" Skipping this row',
+            'Sheet "Teachers" Row: 7 No data found between cells "A" and "H" Skipping this row',
+        ];
+
+        $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
+        $this->assertEmpty($parser->getErrors(), 'Teacher Processor is Reporting errors');
+        $this->assertTrue($parser->hasWarnings(), 'Teacher Processor is Not reporting warnings');
+        $this->assertEquals($expectedWarnings, $parser->getWarnings(), 'Teacher Processor is Reporting warnings');
+
+        $setup = new TeacherParserSetup();
+
+        $this->assertEquals(
+            $setup->getExpectedWarningActions($this->userService),
             $parser->getActions(),
             'Parser did not create actions correctly'
         );

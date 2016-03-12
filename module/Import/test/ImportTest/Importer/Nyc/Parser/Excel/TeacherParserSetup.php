@@ -23,11 +23,52 @@ class TeacherParserSetup
      */
     public function getExpectedGoodActions(UserServiceInterface $userService)
     {
+        $this->actions = [];
         $this->addActionForMariaSandoval($userService)
             ->addActionForCarolSmitt($userService)
             ->addActionForSamSolomon($userService)
             ->addActionForBrittneyLucas($userService)
             ->addActionForJenniferRamirez($userService)
+            ->addActionForTanyaAddonis($userService)
+            ->addActionForKyleAgnone($userService)
+            ->addActionForAstaAgrawal($userService)
+            ->addActionForEdwardLopez($userService)
+            ->addActionForMaryKind($userService);
+
+        return $this->actions;
+    }
+
+    /**
+     * @param UserServiceInterface $userService
+     * @return \Import\Importer\Nyc\Teachers\AddTeacherAction[]
+     */
+    public function getExpectedMixedActions(UserServiceInterface $userService)
+    {
+        $this->actions = [];
+        $this->addActionForMariaSandoval($userService)
+            ->addActionForSamSolomon($userService)
+            ->addActionForBrittneyLucas($userService)
+            ->addActionForJenniferRamirez($userService)
+            ->addActionForTanyaAddonis($userService)
+            ->addActionForKyleAgnone($userService)
+            ->addActionForAstaAgrawal($userService)
+            ->addActionForEdwardLopez($userService)
+            ->addActionForMaryKind($userService);
+
+        return $this->actions;
+    }
+
+    /**
+     * @param UserServiceInterface $userService
+     * @return \Import\Importer\Nyc\Teachers\AddTeacherAction[]
+     */
+    public function getExpectedWarningActions(UserServiceInterface $userService)
+    {
+        $this->actions = [];
+        $this->addActionForMariaSandoval($userService)
+            ->addActionForCarolSmitt($userService)
+            ->addActionForSamSolomon($userService)
+            ->addActionForBrittneyLucas($userService)
             ->addActionForTanyaAddonis($userService)
             ->addActionForKyleAgnone($userService)
             ->addActionForAstaAgrawal($userService)
