@@ -42,7 +42,6 @@ web1:
     - mbstring
     - mcrypt
     - pdo_mysql
-    - xcache
     - redis
     - curl
     - zip
