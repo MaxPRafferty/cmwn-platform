@@ -33,6 +33,7 @@ class TeacherWorksheetParser extends AbstractParser
      *
      * @param WorkSheet $worksheet
      * @param TeacherRegistry $teacherRegistry
+     * @param ClassRoomRegistry $classRoomRegistry
      * @throws InvalidWorksheetException
      */
     public function __construct(
@@ -83,13 +84,12 @@ class TeacherWorksheetParser extends AbstractParser
         ];
     }
 
-
     /**
      * PreProcess a file
      */
     public function preProcess()
     {
-        $this->getLogger()->info('Pre processing Classes worksheet');
+        $this->getLogger()->info('Pre processing Teachers worksheet');
         $iterator = $this->getWorksheetIterator();
         $iterator->rewind();
 

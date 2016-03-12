@@ -161,7 +161,11 @@ class TeacherWorksheetParserTest extends TestCase
         $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
         $this->assertEmpty($parser->getErrors(), 'Teacher Processor is Reporting errors');
         $this->assertTrue($parser->hasWarnings(), 'Teacher Processor is Not reporting warnings');
-        $this->assertEquals($expectedWarnings, $parser->getWarnings(), 'Teacher Processor is Reporting warnings');
+        $this->assertEquals(
+            $expectedWarnings,
+            $parser->getWarnings(),
+            'Teacher Processor did not report correct warnings'
+        );
 
         $setup = new TeacherParserSetup();
 
