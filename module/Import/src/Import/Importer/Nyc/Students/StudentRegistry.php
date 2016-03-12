@@ -1,9 +1,9 @@
 <?php
 
-namespace Import\Importer\Nyc\Teachers;
+namespace Import\Importer\Nyc\Students;
 
 use Application\Exception\NotFoundException;
-use Import\Importer\Nyc\Exception\InvalidTeacherException;
+use Import\Importer\Nyc\Exception\InvalidStudentException;
 use User\Service\UserServiceInterface;
 use \ArrayObject;
 use \ArrayAccess;
@@ -13,9 +13,9 @@ use \IteratorIterator;
 use User\UserInterface;
 
 /**
- * Class TeacherRegistry
+ * Class StudentRegistry
  */
-class TeacherRegistry implements ArrayAccess, IteratorAggregate
+class StudentRegistry implements ArrayAccess, IteratorAggregate
 {
     /**
      * @var UserServiceInterface
@@ -23,19 +23,19 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
     protected $userService;
 
     /**
-     * @var ArrayObject|Teacher[]
+     * @var ArrayObject|Student[]
      */
-    protected $teachers;
+    protected $students;
 
     /**
-     * TeacherRegistry constructor.
+     * StudentRegistry constructor.
      *
      * @param UserServiceInterface $userService
      */
     public function __construct(UserServiceInterface $userService)
     {
         $this->userService = $userService;
-        $this->teachers    = new ArrayObject();
+        $this->students    = new ArrayObject();
     }
 
     /**
@@ -48,34 +48,34 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @param Teacher $teacher
-     * @throws InvalidTeacherException
+     * @param Student $student
+     * @throws InvalidStudentException
      */
-    public function addTeacher(Teacher $teacher)
+    public function addStudent(Student $student)
     {
-        if (!$teacher->isValid()) {
-            throw new InvalidTeacherException('Teacher has invalid keys');
+        if (!$student->isValid()) {
+            throw new InvalidStudentException('Student has invalid keys');
         }
 
-        $this->teachers->offsetSet($teacher->getEmail(), $teacher);
-        if (!$teacher->isNew()) {
+        $this->students->offsetSet($student->getStudentId(), $student);
+        if (!$student->isNew()) {
             return;
         }
 
-        $user = $this->lookUpUser($teacher->getEmail());
+        $user = $this->lookUpUser($student->getStudentId());
         if ($user instanceof UserInterface) {
-            $teacher->setUser($user);
+            $student->setUser($user);
         }
     }
 
     /**
-     * @param $email
+     * @param $externalId
      * @return bool|\User\UserInterface
      */
-    protected function lookUpUser($email)
+    protected function lookUpUser($externalId)
     {
         try {
-            return $this->userService->fetchUserByEmail($email);
+            return $this->userService->fetchUserByExternalId($externalId);
         } catch (NotFoundException $notFound) {
 
         }
@@ -88,24 +88,26 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
      */
     public function getIterator()
     {
-        return new \IteratorIterator($this->teachers);
+        return new \IteratorIterator($this->students);
     }
 
     /**
      * @param UserInterface $user
-     * @return Teacher
+     * @return Student
      */
-    protected function getTeacherFromUser(UserInterface $user)
+    protected function getStudentFromUser(UserInterface $user)
     {
-        $teacher = new Teacher();
-        $teacher->setEmail($user->getEmail())
+        $student = new Student();
+        $student->setEmail($user->getEmail())
+            ->setStudentId($user->getExternalId())
             ->setFirstName($user->getFirstName())
-            ->setMiddleName($user->getMiddleName())
             ->setLastName($user->getLastName())
             ->setGender($user->getGender())
+            ->setBirthday($user->getBirthdate())
+            ->setExtra($user->getMeta())
             ->setUser($user);
 
-        return $teacher;
+        return $student;
     }
 
     /**
@@ -114,7 +116,7 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
      */
     public function offsetExists($offset)
     {
-        $local = $this->teachers->offsetExists($offset);
+        $local = $this->students->offsetExists($offset);
 
         if ($local) {
             return true;
@@ -125,18 +127,18 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
             return false;
         }
 
-        $this->addTeacher($this->getTeacherFromUser($user));
+        $this->addStudent($this->getStudentFromUser($user));
         return true;
     }
 
     /**
      * @param mixed $offset
-     * @return Teacher|null
+     * @return Student|null
      */
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {
-            return $this->teachers->offsetGet($offset);
+            return $this->students->offsetGet($offset);
         }
 
         return null;
@@ -145,11 +147,11 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
     /**
      * @param mixed $offset
      * @param mixed $value
-     * @throws InvalidTeacherException
+     * @throws InvalidStudentException
      */
     public function offsetSet($offset, $value)
     {
-        $this->addTeacher($value);
+        $this->addStudent($value);
     }
 
     /**
@@ -157,6 +159,6 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
      */
     public function offsetUnset($offset)
     {
-        throw new BadMethodCallException('Cannot unset values from the Teacher Registry');
+        throw new BadMethodCallException('Cannot unset values from the Student Registry');
     }
 }

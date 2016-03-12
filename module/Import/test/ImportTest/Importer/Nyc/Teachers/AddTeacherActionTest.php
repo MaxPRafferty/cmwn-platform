@@ -3,7 +3,6 @@
 namespace ImportTest\Importer\Nyc\Teachers;
 
 use Application\Exception\NotFoundException;
-use Import\Importer\Nyc\Exception\InvalidTeacherException;
 use Import\Importer\Nyc\Teachers\AddTeacherAction;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;

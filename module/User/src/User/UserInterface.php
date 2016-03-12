@@ -8,6 +8,17 @@ interface UserInterface
     const TYPE_CHILD = 'CHILD';
 
     /**
+     * @param $externalId
+     * @return $this
+     */
+    public function setExternalId($externalId);
+
+    /**
+     * @return mixed
+     */
+    public function getExternalId();
+    
+    /**
      * Gets the type of user
      *
      * @return string
@@ -155,4 +166,26 @@ interface UserInterface
      * @return bool
      */
     public function isDeleted();
+
+
+    /**
+     * Sets the meta data
+     * @param array $meta
+     */
+    public function setMeta($meta = []);
+
+    /**
+     * Gets all the meta data
+     *
+     * @return array
+     */
+    public function getMeta();
+
+    /**
+     * Add a value to meta data
+     *
+     * @param $key
+     * @param $value
+     */
+    public function addToMeta($key, $value);
 }
