@@ -1,5 +1,6 @@
 <?php
-
+$cacheHost = getenv('CACHE1_HOST');
+$cachePort = getenv('CACHE1_PORT');
 return [
     'session' => [
         'config' => [
@@ -11,6 +12,14 @@ return [
             ],
         ],
         'storage' => 'Zend\Session\Storage\SessionArrayStorage',
+        'save_handler' => [
+            'adapter' => [
+                'name' => 'redis',
+                'options' => [
+                    'server' => 'tcp://' . $cacheHost . ':' . $cachePort,
+                ],
+            ],
+        ],
         'validators' => [
             'Zend\Session\Validator\HttpUserAgent',
         ],

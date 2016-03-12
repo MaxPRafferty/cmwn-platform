@@ -41,9 +41,7 @@ web1:
     - json
     - mbstring
     - mcrypt
-    - tokenizer
     - pdo_mysql
-    - xcache
     - redis
     - curl
     - zip
@@ -51,7 +49,7 @@ web1:
   php_session_save_handler: redis
   php_session_save_path: "tcp://${CACHE1_HOST}:${CACHE1_PORT}"
   network_dirs:
-    - storage/app
+    - tmp/
   nonpersistent_writable_dirs:
     - data/cache
   log_watch:
