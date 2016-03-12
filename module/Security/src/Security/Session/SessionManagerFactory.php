@@ -2,8 +2,10 @@
 
 namespace Security\Session;
 
+use Zend\Cache\StorageFactory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\SaveHandler\Cache;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
 
@@ -52,7 +54,7 @@ class SessionManagerFactory implements FactoryInterface
         $sessionSaveHandler = null;
         if (isset($session['save_handler'])) {
             // class should be fetched from service manager since it will require constructor arguments
-            $sessionSaveHandler = $service->get($session['save_handler']);
+            $sessionSaveHandler = new Cache(StorageFactory::factory($session['save_handler']));
         }
 
         $sessionManager = new SessionManager($sessionConfig, $sessionStorage, $sessionSaveHandler);
