@@ -47,7 +47,6 @@ class AddTeacherAction implements ActionInterface
         $user->setMiddleName($this->teacher->getMiddleName());
         $user->setLastName($this->teacher->getLastName());
         $user->setGender($this->teacher->getGender());
-        $user->setUserId($this->teacher->getEmail());
         $user->setUserName($this->teacher->getEmail());
         $user->setEmail($this->teacher->getEmail());
 
@@ -64,5 +63,4 @@ class AddTeacherAction implements ActionInterface
     {
         return 50;
     }
-
 }
