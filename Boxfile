@@ -37,6 +37,7 @@ build:
 
 web1:
   type: php
+  version: 5.6
   php_extensions:
     - json
     - mbstring
