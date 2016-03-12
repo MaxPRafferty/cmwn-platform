@@ -142,6 +142,9 @@ class TeacherWorksheetParser extends AbstractParser
                 ->setGender($rowData['SEX'])
                 ->setRole($rowData['TYPE']);
 
+            if ($this->teacherRegistry->offsetExists($teacher->getEmail())) {
+                continue;
+            }
             $this->teacherRegistry->addTeacher($teacher);
             $this->getClassForTeacher($rowData, $teacher, $rowNumber);
         };
