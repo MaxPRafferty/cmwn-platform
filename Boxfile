@@ -28,7 +28,6 @@ build:
     - 'rm -rf html'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
-    - 'pecl install redis'
     - 'composer install --no-interaction --prefer-source --no-dev'
   after_exec:
     - 'composer dump-autoload --optimize'
