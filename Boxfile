@@ -31,12 +31,15 @@ build:
     - 'composer install --no-interaction --prefer-source --no-dev'
   after_exec:
     - 'composer dump-autoload --optimize'
+    - 'php vendor/bin/phinx migrate -c config/autoload/phinx.local.php -e prod'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e dev --seed GameSeed'
   lib_dirs:
     - vendor
   reuse_libs: true
 
 web1:
   type: php
+  version: 5.6
   php_extensions:
     - json
     - mbstring
