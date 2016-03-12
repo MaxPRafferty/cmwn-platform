@@ -26,8 +26,6 @@ build:
     - 'rm Vagrantfile'
     - 'rm -rf public/img'
     - 'rm -rf html'
-    - 'rm config/development.config.php'
-    - 'rm config/autoload/local.php'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'pecl install redis'
