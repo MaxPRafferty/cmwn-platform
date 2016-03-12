@@ -106,8 +106,14 @@ class GameSeed extends AbstractSeed
             "deleted" => null
         ];
 
-        $this->table('games')
-            ->insert($games)
-            ->save();
+        foreach ($games as $game) {
+            try {
+                $this->table('games')
+                    ->insert($game)
+                    ->save();
+            } catch (\PDOException $insertException) {
+                // noop
+            }
+        }
     }
 }
