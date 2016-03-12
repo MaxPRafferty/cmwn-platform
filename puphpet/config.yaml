@@ -201,6 +201,8 @@ apache:
                 - 'DATABASE1_HOST localhost'
                 - 'DATABASE1_USER cmwn_user'
                 - 'DATABASE1_PASS cmwn_pass123$'
+                - 'CACHE1_HOST 127.0.0.1'
+                - 'CACHE1_PORT 6379'
             setenvif:
                 - 'Authorization "(.*)" HTTP_AUTHORIZATION=$1'
             custom_fragment: ''
@@ -388,7 +390,7 @@ mongodb:
         version: 2.6.0
     databases: {  }
 redis:
-    install: '0'
+    install: '1'
     settings:
         port: '6379'
 sqlite:
