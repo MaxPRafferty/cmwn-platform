@@ -14,6 +14,8 @@ use User\UserInterface;
 
 /**
  * Class StudentRegistry
+ *
+ * @todo add org Id and attach to students id
  */
 class StudentRegistry implements ArrayAccess, IteratorAggregate
 {
@@ -129,6 +131,19 @@ class StudentRegistry implements ArrayAccess, IteratorAggregate
 
         $this->addStudent($this->getStudentFromUser($user));
         return true;
+    }
+
+    /**
+     * Checks if the student exists locally
+     *
+     * This is used to check for when adding two students with the same Id in the same sheet
+     *
+     * @param $offset
+     * @return bool
+     */
+    public function localExists($offset)
+    {
+        return $this->students->offsetExists((string) $offset);
     }
 
     /**
