@@ -2,7 +2,7 @@
 
 namespace ImportTest\Importer\Nyc\Parser\Excel;
 
-use Import\Importer\Nyc\Parser\Excel\AbstractParser;
+use Import\Importer\Nyc\Parser\Excel\AbstractExcelParser;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -10,12 +10,12 @@ use \PHPUnit_Framework_TestCase as TestCase;
  *
  * ${CARET}
  */
-class AbstractParserTest extends TestCase
+class AbstractExcelParserTest extends TestCase
 {
     public function testItShouldReturnValueObjectWhenValid()
     {
         $dString = '02B001';
-        $dValue  = AbstractParser::parseDdbnnn($dString);
+        $dValue  = AbstractExcelParser::parseDdbnnn($dString);
         $this->assertInstanceOf('\stdClass', $dValue);
 
         $this->assertEquals('02', $dValue->district);
@@ -29,7 +29,7 @@ class AbstractParserTest extends TestCase
     public function testItShouldThrowExceptionOnBadNumber($dString)
     {
         $this->setExpectedException('Import\Importer\Nyc\Exception\InvalidDdbnnException');
-        AbstractParser::parseDdbnnn($dString);
+        AbstractExcelParser::parseDdbnnn($dString);
     }
 
     /**
