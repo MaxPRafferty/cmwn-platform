@@ -12,7 +12,7 @@ use \PHPExcel_Worksheet as WorkSheet;
 /**
  * Class ClassWorksheetParser
  */
-class ClassWorksheetParser extends AbstractParser
+class ClassWorksheetParser extends AbstractExcelParser
 {
     const SHEET_NAME = 'Classes';
 

@@ -14,7 +14,7 @@ use Zend\Validator\StaticValidator;
 /**
  * Class TeacherWorksheetParser
  */
-class TeacherWorksheetParser extends AbstractParser
+class TeacherWorksheetParser extends AbstractExcelParser
 {
     const SHEET_NAME = "Teachers";
 

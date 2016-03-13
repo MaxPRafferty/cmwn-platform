@@ -6,10 +6,8 @@ use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser;
-use Import\Importer\Nyc\Students\Student;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use \PHPUnit_Framework_TestCase as TestCase;
-use User\Adult;
 
 /**
  * Test StudentWorksheetParserTest
