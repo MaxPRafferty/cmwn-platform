@@ -81,7 +81,13 @@ fzaninotto/faker: "~1.5"
         "cloudinary/cloudinary_php": "~1.3",
         "acelaya/zf2-acmailer": "~5.0",
         "zfcampus/zf-mvc-auth": "^1.3",
+<<<<<<< HEAD
         "robmorgan/phinx": "*"
+=======
+        "phpoffice/phpexcel": "^1.8",
+        "robmorgan/phinx": "*",
+        "chrisboulton/php-resque": "^1.2"
+>>>>>>> Added Resque
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
