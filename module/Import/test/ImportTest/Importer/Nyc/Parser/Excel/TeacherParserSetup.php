@@ -13,7 +13,7 @@ use User\Service\UserServiceInterface;
 class TeacherParserSetup
 {
     /**
-     * @var AddTeacherAction[]
+     * @var \SplPriorityQueue|AddTeacherAction[]
      */
     protected $actions = [];
 
@@ -23,7 +23,7 @@ class TeacherParserSetup
      */
     public function getExpectedGoodActions(UserServiceInterface $userService)
     {
-        $this->actions = [];
+        $this->actions = new \SplPriorityQueue();
         $this->addActionForMariaSandoval($userService)
             ->addActionForCarolSmitt($userService)
             ->addActionForSamSolomon($userService)
@@ -44,7 +44,7 @@ class TeacherParserSetup
      */
     public function getExpectedMixedActions(UserServiceInterface $userService)
     {
-        $this->actions = [];
+        $this->actions = new \SplPriorityQueue();
         $this->addActionForMariaSandoval($userService)
             ->addActionForSamSolomon($userService)
             ->addActionForBrittneyLucas($userService)
@@ -64,7 +64,7 @@ class TeacherParserSetup
      */
     public function getExpectedWarningActions(UserServiceInterface $userService)
     {
-        $this->actions = [];
+        $this->actions = new \SplPriorityQueue();
         $this->addActionForMariaSandoval($userService)
             ->addActionForCarolSmitt($userService)
             ->addActionForSamSolomon($userService)
@@ -91,7 +91,8 @@ class TeacherParserSetup
             ->setEmail('sandoval@gmail.com')
             ->setGender('F');
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -108,7 +109,8 @@ class TeacherParserSetup
             ->setEmail('smith@gmail.com')
             ->setGender('F');
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -126,7 +128,8 @@ class TeacherParserSetup
             ->setGender('M')
             ->setClassRoom(new ClassRoom('History of the world', '001'));
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -144,7 +147,8 @@ class TeacherParserSetup
             ->setGender('F')
             ->setClassRoom(new ClassRoom('History of the world', '001'));
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -162,7 +166,8 @@ class TeacherParserSetup
             ->setGender('F')
             ->setClassRoom(new ClassRoom('History of the world', '001'));
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -180,7 +185,8 @@ class TeacherParserSetup
             ->setGender('F')
             ->setClassRoom(new ClassRoom('History of the world', '001'));
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -198,7 +204,8 @@ class TeacherParserSetup
             ->setGender('M')
             ->setClassRoom(new ClassRoom('History of the world', '001'));
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -215,7 +222,8 @@ class TeacherParserSetup
             ->setEmail('agrawal@gmail.com')
             ->setGender('M');
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -232,7 +240,8 @@ class TeacherParserSetup
             ->setEmail('lopez@gmail.com')
             ->setGender('M');
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -249,7 +258,8 @@ class TeacherParserSetup
             ->setEmail('kind@gmail.com')
             ->setGender('F');
 
-        $this->actions[] = new AddTeacherAction($userService, $teacher);
+        $action = new AddTeacherAction($userService, $teacher);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 }

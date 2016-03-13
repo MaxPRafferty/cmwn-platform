@@ -5,6 +5,7 @@ namespace ImportTest\Importer\Nyc\Parser\Excel;
 use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
+use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use \PHPUnit_Framework_TestCase as TestCase;
@@ -69,6 +70,7 @@ class StudentWorksheetParserTest extends TestCase
      */
     public function setUpClassRegistry()
     {
+        AbstractParser::clearActions();
         $this->classRegistry = new ClassRoomRegistry($this->groupService);
     }
 

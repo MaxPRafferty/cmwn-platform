@@ -16,7 +16,7 @@ class StudentParserSetup
 
     public function getExpectedGoodActions(UserServiceInterface $userService)
     {
-        $this->actions = [];
+        $this->actions = new \SplPriorityQueue();
         $this->addActionForDylanSmith($userService)
             ->addActionForCollinMarts($userService)
             ->addActionForSallySmith($userService)
@@ -28,7 +28,7 @@ class StudentParserSetup
 
     public function getExpectedGoodActionsForBlanks(UserServiceInterface $userService)
     {
-        $this->actions = [];
+        $this->actions = new \SplPriorityQueue();
         $this->addActionForDylanSmith($userService)
             ->addActionForCollinMarts($userService)
             ->addActionForSallySmith($userService)
@@ -75,7 +75,8 @@ class StudentParserSetup
                 'YTD ATTD PCT'  => '',
             ]);
 
-        $this->actions[] = new AddStudentAction($userService, $student);
+        $action = new AddStudentAction($userService, $student);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -117,7 +118,8 @@ class StudentParserSetup
                 'YTD ATTD PCT'  => '',
             ]);
 
-        $this->actions[] = new AddStudentAction($userService, $student);
+        $action = new AddStudentAction($userService, $student);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -159,7 +161,8 @@ class StudentParserSetup
                 'YTD ATTD PCT'  => '',
             ]);
 
-        $this->actions[] = new AddStudentAction($userService, $student);
+        $action = new AddStudentAction($userService, $student);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -201,7 +204,8 @@ class StudentParserSetup
                 'YTD ATTD PCT'  => '',
             ]);
 
-        $this->actions[] = new AddStudentAction($userService, $student);
+        $action = new AddStudentAction($userService, $student);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -243,7 +247,8 @@ class StudentParserSetup
                 'YTD ATTD PCT'  => '',
             ]);
 
-        $this->actions[] = new AddStudentAction($userService, $student);
+        $action = new AddStudentAction($userService, $student);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 
@@ -287,7 +292,8 @@ class StudentParserSetup
                 'YTD ATTD PCT'  => '',
             ]);
 
-        $this->actions[] = new AddStudentAction($userService, $student);
+        $action = new AddStudentAction($userService, $student);
+        $this->actions->insert($action, $action->priority());
         return $this;
     }
 }

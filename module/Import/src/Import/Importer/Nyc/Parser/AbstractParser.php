@@ -37,9 +37,9 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
     protected $iterator;
 
     /**
-     * @var ActionInterface[] help children write actions
+     * @var \SplPriorityQueue|ActionInterface[] help children write actions
      */
-    protected $actionList = [];
+    protected static $actionList;
 
     /**
      * Gets the list of actions the parser has found
@@ -48,7 +48,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     public function getActions()
     {
-        return $this->actionList;
+        return self::$actionList;
     }
 
     /**
@@ -56,9 +56,23 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      *
      * @param ActionInterface $action
      */
-    public function addAction(ActionInterface $action)
+    public static function addAction(ActionInterface $action)
     {
-        array_push($this->actionList, $action);
+        if (self::$actionList === null) {
+            self::$actionList = new \SplPriorityQueue();
+        }
+
+        self::$actionList->insert($action, $action->priority());
+    }
+
+    /**
+     * Clears the action queue
+     *
+     * Mainly used for testing
+     */
+    public static function clearActions()
+    {
+        self::$actionList = new \SplPriorityQueue();
     }
 
     /**

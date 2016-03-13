@@ -4,6 +4,7 @@ namespace ImportTest\Importer\Nyc\Parser;
 
 use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
+use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
@@ -113,6 +114,7 @@ class DoeParserTest extends TestCase
      */
     public function setUpClassParser()
     {
+        AbstractParser::clearActions();
         $this->classParser = \Mockery::mock('\Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser');
         $this->classParser->shouldReceive('preProcess')
             ->byDefault();
@@ -306,23 +308,23 @@ class DoeParserTest extends TestCase
     {
         /** @var \Mockery\MockInterface|\Import\ActionInterface $classAction */
         $classAction = \Mockery::mock('\Import\ActionInterface');
+        $classAction->shouldReceive('priority')->andReturn(100);
 
         /** @var \Mockery\MockInterface|\Import\ActionInterface $teacherAction */
         $teacherAction = \Mockery::mock('\Import\ActionInterface');
+        $teacherAction->shouldReceive('priority')->andReturn(50);
 
         /** @var \Mockery\MockInterface|\Import\ActionInterface $studentAction */
         $studentAction = \Mockery::mock('\Import\ActionInterface');
+        $studentAction->shouldReceive('priority')->andReturn(25);
 
         $this->classParser->shouldReceive('getActions')
-            ->once()
             ->andReturn([$classAction]);
 
         $this->teacherParser->shouldReceive('getActions')
-            ->once()
             ->andReturn([$teacherAction]);
 
         $this->studentParser->shouldReceive('getActions')
-            ->once()
             ->andReturn([$teacherAction]);
 
         $parser = $this->getParser();
@@ -339,11 +341,10 @@ class DoeParserTest extends TestCase
             'Doe Parser is reporting warnings'
         );
 
-        $expectedActions = [
-            $classAction,
-            $teacherAction,
-            $studentAction
-        ];
+        $expectedActions = new \SplPriorityQueue();
+        $expectedActions->insert($classAction, $classAction->priority());
+        $expectedActions->insert($teacherAction, $teacherAction->priority());
+        $expectedActions->insert($studentAction, $studentAction->priority());
 
         $this->assertEquals($expectedActions, $parser->getActions(), 'Parser did not merge actions');
     }
@@ -352,23 +353,23 @@ class DoeParserTest extends TestCase
     {
         /** @var \Mockery\MockInterface|\Import\ActionInterface $classAction */
         $classAction = \Mockery::mock('\Import\ActionInterface');
+        $classAction->shouldReceive('priority')->andReturn(100);
 
         /** @var \Mockery\MockInterface|\Import\ActionInterface $teacherAction */
         $teacherAction = \Mockery::mock('\Import\ActionInterface');
+        $teacherAction->shouldReceive('priority')->andReturn(50);
 
         /** @var \Mockery\MockInterface|\Import\ActionInterface $studentAction */
         $studentAction = \Mockery::mock('\Import\ActionInterface');
+        $studentAction->shouldReceive('priority')->andReturn(25);
 
         $this->classParser->shouldReceive('getActions')
-            ->once()
             ->andReturn([$classAction]);
 
         $this->teacherParser->shouldReceive('getActions')
-            ->once()
             ->andReturn([$teacherAction]);
 
         $this->studentParser->shouldReceive('getActions')
-            ->once()
             ->andReturn([$teacherAction]);
 
         $parser = $this->getParser();
@@ -391,11 +392,11 @@ class DoeParserTest extends TestCase
             'Doe Parser did not report warning for extra sheet'
         );
 
-        $expectedActions = [
-            $classAction,
-            $teacherAction,
-            $studentAction
-        ];
+        $expectedActions = new \SplPriorityQueue();
+        $expectedActions->insert($classAction, $classAction->priority());
+        $expectedActions->insert($teacherAction, $teacherAction->priority());
+        $expectedActions->insert($studentAction, $studentAction->priority());
+
 
         $this->assertEquals($expectedActions, $parser->getActions(), 'Parser did not merge actions');
     }
