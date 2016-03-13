@@ -3,15 +3,13 @@
 namespace Import\Importer\Nyc\Parser;
 
 use Group\GroupInterface;
-use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
-use Import\Importer\Nyc\Parser\Excel\ClassWorksheetExcelParser as ClassParser;
-use Import\Importer\Nyc\Parser\Excel\StudentWorksheetExcelParser as StudentParser;
-use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetExcelParser as TeacherParser;
+use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser as ClassParser;
+use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser as StudentParser;
+use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser as TeacherParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
-use User\Service\UserServiceInterface;
 use Zend\Log\Logger;
 
 /**
@@ -19,31 +17,6 @@ use Zend\Log\Logger;
  */
 class DoeParser extends AbstractParser
 {
-    /**
-     * @var ClassParser
-     */
-    protected $classProcessor;
-
-    /**
-     * @var TeacherParser
-     */
-    protected $teacherProcessor;
-
-    /**
-     * @var StudentParser
-     */
-    protected $studentProcessor;
-
-    /**
-     * @var UserServiceInterface
-     */
-    protected $userService;
-
-    /**
-     * @var GroupServiceInterface
-     */
-    protected $groupService;
-
     /**
      * @var UserGroupServiceInterface
      */
@@ -90,24 +63,23 @@ class DoeParser extends AbstractParser
     protected $school;
 
     /**
-     * DoeProcessor constructor.
+     * DoeParser constructor.
      *
-     * @param UserServiceInterface $userService
-     * @param GroupServiceInterface $groupService
+     * @param ClassRoomRegistry $classRegistry
+     * @param TeacherRegistry $teacherRegistry
+     * @param StudentRegistry $studentRegistry
      * @param UserGroupServiceInterface $userGroupService
      */
     public function __construct(
-        UserServiceInterface $userService,
-        GroupServiceInterface $groupService,
+        ClassRoomRegistry $classRegistry,
+        TeacherRegistry $teacherRegistry,
+        StudentRegistry $studentRegistry,
         UserGroupServiceInterface $userGroupService
     ) {
-        $this->userService      = $userService;
-        $this->groupService     = $groupService;
+        $this->classRegistry    = $classRegistry;
+        $this->teacherRegistry  = $teacherRegistry;
+        $this->studentRegistry  = $studentRegistry;
         $this->userGroupService = $userGroupService;
-
-        $this->classRegistry    = new ClassRoomRegistry($this->groupService);
-        $this->teacherRegistry  = new TeacherRegistry($this->userService);
-        $this->studentRegistry  = new StudentRegistry($this->userService);
         $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
     }
 
@@ -151,14 +123,6 @@ class DoeParser extends AbstractParser
         $foundSheets = [];
         foreach ($reader->getAllSheets() as $sheet) {
             $this->getLogger()->debug('Found Sheet: ' . $sheet->getTitle());
-            if (isset($foundSheets[$sheet->getTitle()])) {
-                $this->addError(
-                    sprintf('More than one sheet with the name %s found', $sheet->getTitle())
-                );
-
-                continue;
-            }
-
             $foundSheets[$sheet->getTitle()] = true;
             switch ($sheet->getTitle()) {
                 case ClassParser::SHEET_NAME:
@@ -183,11 +147,21 @@ class DoeParser extends AbstractParser
             }
         }
 
+        $this->parseFoundSheets($foundSheets);
+    }
+
+    /**
+     * Parses the sheets that were found
+     *
+     * @param array $foundSheets
+     */
+    protected function parseFoundSheets(array $foundSheets)
+    {
         foreach ([ClassParser::SHEET_NAME, TeacherParser::SHEET_NAME, StudentParser::SHEET_NAME] as $requiredSheet) {
             $this->getLogger()->debug('Checking for sheet: ' . $requiredSheet);
             if (!isset($foundSheets[$requiredSheet])) {
                 $this->addError(
-                    sprintf('Required sheet "%s" is missing')
+                    sprintf('Required sheet "%s" is missing', $requiredSheet)
                 );
             }
 
@@ -211,7 +185,33 @@ class DoeParser extends AbstractParser
     protected function createAssociationActions()
     {
         $this->getLogger()->info('Creating associations to classes');
+    }
 
+    /**
+     * @return ClassParser
+     * @codeCoverageIgnore
+     */
+    public function getClassParser()
+    {
+        return $this->classParser;
+    }
+
+    /**
+     * @return TeacherParser
+     * @codeCoverageIgnore
+     */
+    public function getTeacherParser()
+    {
+        return $this->teacherParser;
+    }
+
+    /**
+     * @return StudentParser
+     * @codeCoverageIgnore
+     */
+    public function getStudentParser()
+    {
+        return $this->studentParser;
     }
 
     /**
@@ -222,18 +222,19 @@ class DoeParser extends AbstractParser
     protected function parseClassSheet()
     {
         $this->getLogger()->info('Parsing Class Sheet');
-        $this->classParser->preProcess();
-        if ($this->classParser->hasWarnings()) {
-            $this->warnings += $this->classParser->getWarnings();
+        $this->getClassParser()->preProcess();
+        if ($this->getClassParser()->hasWarnings()) {
+            $this->warnings = array_merge($this->warnings, $this->getClassParser()->getWarnings());
         }
 
-        if ($this->classParser->hasErrors()) {
-            $this->errors += $this->classParser->getErrors();
+        if ($this->getClassParser()->hasErrors()) {
+            $this->errors = array_merge($this->errors, $this->getClassParser()->getErrors());
         }
 
         if (!$this->hasErrors()) {
             $this->getLogger()->debug('Merging actions from class parser');
-            array_walk($this->classParser->getActions(), [$this, 'addAction']);
+            $actions = $this->getClassParser()->getActions();
+            array_walk($actions, [$this, 'addAction']);
         }
     }
 
@@ -244,18 +245,19 @@ class DoeParser extends AbstractParser
      */
     protected function parseTeacherSheet()
     {
-        $this->teacherParser->preProcess();
-        if ($this->teacherParser->hasWarnings()) {
-            $this->warnings += $this->teacherParser->getWarnings();
+        $this->getTeacherParser()->preProcess();
+        if ($this->getTeacherParser()->hasWarnings()) {
+            $this->warnings = array_merge($this->warnings, $this->getTeacherParser()->getWarnings());
         }
 
-        if ($this->teacherParser->hasErrors()) {
-            $this->errors += $this->teacherParser->getErrors();
+        if ($this->getTeacherParser()->hasErrors()) {
+            $this->errors = array_merge($this->errors, $this->getTeacherParser()->getErrors());
         }
 
         if (!$this->hasErrors()) {
             $this->getLogger()->debug('Merging actions from teacher parser');
-            array_walk($this->teacherParser->getActions(), [$this, 'addAction']);
+            $actions = $this->getTeacherParser()->getActions();
+            array_walk($actions, [$this, 'addAction']);
         }
     }
 
@@ -266,18 +268,19 @@ class DoeParser extends AbstractParser
      */
     protected function parseStudentSheet()
     {
-        $this->studentParser->preProcess();
-        if ($this->studentParser->hasWarnings()) {
-            $this->warnings += $this->studentParser->getWarnings();
+        $this->getStudentParser()->preProcess();
+        if ($this->getStudentParser()->hasWarnings()) {
+            $this->warnings = array_merge($this->warnings, $this->getStudentParser()->getWarnings());
         }
 
-        if ($this->studentParser->hasErrors()) {
-            $this->errors += $this->studentParser->getErrors();
+        if ($this->getStudentParser()->hasErrors()) {
+            $this->errors = array_merge($this->errors, $this->getStudentParser()->getErrors());
         }
 
         if (!$this->hasErrors()) {
             $this->getLogger()->debug('Merging actions from student parser');
-            array_walk($this->studentParser->getActions(), [$this, 'addAction']);
+            $actions = $this->getStudentParser()->getActions();
+            array_walk($actions, [$this, 'addAction']);
         }
     }
 

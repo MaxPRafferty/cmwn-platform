@@ -56,7 +56,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      *
      * @param ActionInterface $action
      */
-    protected function addAction(ActionInterface $action)
+    public function addAction(ActionInterface $action)
     {
         array_push($this->actionList, $action);
     }
