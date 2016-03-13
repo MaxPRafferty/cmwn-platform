@@ -5,7 +5,7 @@ $dbHost = getenv('DATABASE1_HOST');
 $dbUser = getenv('DATABASE1_USER');
 $dbPass = getenv('DATABASE1_PASS');
 
-return [
+$config = [
     'paths' => [
         'migrations' => realpath(__DIR__ . '/../data/migrations'),
         'seeds' => realpath(__DIR__ . '/../data/seeds'),
@@ -30,6 +30,4 @@ return [
     ]
 ];
 
-
-// [gopagoda@gopagoda-redacted ~]$ php --ri redis
-// Extension 'redis' not present.
+return $config;
