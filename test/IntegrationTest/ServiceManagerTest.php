@@ -19,7 +19,8 @@ class ServiceManagerTest extends TestCase
     protected $blackList = [
         'ZF\OAuth2\Adapter\PdoAdapter',
         'ZF\OAuth2\Adapter\IbmDb2Adapter',
-        'ZF\OAuth2\Adapter\MongoAdapter'
+        'ZF\OAuth2\Adapter\MongoAdapter',
+        'Zend\Session\SessionManager',  // TODO Destroy James Spader
     ];
 
     /**
