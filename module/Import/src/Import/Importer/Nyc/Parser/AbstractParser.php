@@ -9,8 +9,6 @@ use Zend\Log\LoggerAwareTrait;
 
 /**
  * Class AbstractProcesser
- *
- * ${CARET}
  */
 abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
 {
@@ -19,12 +17,17 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
     /**
      * @var string[] errors that were generated during processing
      */
-    protected $errors = [];
+    protected static $errors = [];
 
     /**
      * @var string[] warnings that generated during processing
      */
-    protected $warnings = [];
+    protected static $warnings = [];
+
+    /**
+     * @var \SplPriorityQueue|ActionInterface[] help children write actions
+     */
+    protected static $actionList;
 
     /**
      * @var \PHPExcel_Worksheet
@@ -37,14 +40,9 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
     protected $iterator;
 
     /**
-     * @var \SplPriorityQueue|ActionInterface[] help children write actions
-     */
-    protected static $actionList;
-
-    /**
      * Gets the list of actions the parser has found
      *
-     * @return \Import\ActionInterface[]
+     * @return \SplPriorityQueue|\Import\ActionInterface[]
      */
     public function getActions()
     {
@@ -70,9 +68,11 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      *
      * Mainly used for testing
      */
-    public static function clearActions()
+    public static function clear()
     {
         self::$actionList = new \SplPriorityQueue();
+        self::$errors     = [];
+        self::$warnings   = [];
     }
 
     /**
@@ -87,7 +87,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
         $rowString      = $row !== null ? 'Row: ' . $row . ' ': "";
         $sheetString    = $sheet !== null ? 'Sheet "' . $sheet . '" ' : "";
         $errorMessage   = sprintf('%s%s%s', $sheetString, $rowString, $message);
-        $this->errors[] =  $errorMessage;
+        self::$errors[] =  $errorMessage;
         $this->getLogger()->err($errorMessage);
     }
 
@@ -103,7 +103,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
         $rowString        = $row !== null ? 'Row: ' . $row . ' ' : "";
         $sheetString      = $sheet !== null ? 'Sheet "' . $sheet . '" ' : "";
         $warningMessage   = sprintf('%s%s%s', $sheetString, $rowString, $message);
-        $this->warnings[] =  $warningMessage;
+        self::$warnings[] =  $warningMessage;
         $this->getLogger()->warn($warningMessage);
     }
 
@@ -115,7 +115,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     public function getWarnings()
     {
-        return $this->warnings;
+        return self::$warnings;
     }
 
     /**
@@ -125,7 +125,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     public function hasWarnings()
     {
-        return !empty($this->warnings);
+        return !empty(self::$warnings);
     }
 
     /**
@@ -135,7 +135,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     public function hasErrors()
     {
-        return !empty($this->errors);
+        return !empty(self::$errors);
     }
 
     /**
@@ -148,6 +148,6 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     public function getErrors()
     {
-        return $this->errors;
+        return self::$errors;
     }
 }

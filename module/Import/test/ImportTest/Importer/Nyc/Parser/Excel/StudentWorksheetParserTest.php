@@ -70,7 +70,7 @@ class StudentWorksheetParserTest extends TestCase
      */
     public function setUpClassRegistry()
     {
-        AbstractParser::clearActions();
+        AbstractParser::clear();
         $this->classRegistry = new ClassRoomRegistry($this->groupService);
     }
 
