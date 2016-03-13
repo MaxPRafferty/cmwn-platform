@@ -8,6 +8,7 @@ use Import\Importer\Nyc\ClassRoom\AddClassRoomAction;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidWorksheetException;
+use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser;
 use \PHPUnit_Framework_TestCase as TestCase;
 
@@ -51,6 +52,7 @@ class ClassWorksheetParserTest extends TestCase
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)
     {
+        AbstractParser::clearActions();
         return new ClassWorksheetParser($sheet, $this->registry);
     }
 
@@ -77,99 +79,155 @@ class ClassWorksheetParserTest extends TestCase
      */
     protected function getExpectedAddActions()
     {
-        return [
-            '001'  => new AddClassRoomAction(
+        $actions = new \SplPriorityQueue();
+
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Lunch', '001', ['8001', '8002'])
             ),
+            100
+        );
 
-            '102'  => new AddClassRoomAction(
+
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('PreK', '102', ['8001', '8002'])
             ),
+            100
+        );
 
-            '011'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Kindergarten', '011', ['8001', '8002'])
             ),
+            100
+        );
 
-            '101'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('First Grade', '101', ['8001', '8002', '8003'])
             ),
+            100
+        );
 
-            '201'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Second Grade', '201', ['8001', '8002', '8003'])
             ),
+            100
+        );
 
-            '301'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Third Grade', '301', ['8001', '8002', '8003'])
             ),
+            100
+        );
 
-            '8001' => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Physical Education', '8001', [])
             ),
+            100
+        );
 
-            '8002' => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Art', '8002', [])
             ),
+            100
+        );
 
-            '8003' => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Technology', '8003', [])
             ),
-        ];
+            100
+        );
+
+        return $actions;
     }
     /**
      * @return AddClassRoomAction[]
      */
     protected function getExpectedMixedActions()
     {
-        return [
-            '001'  => new AddClassRoomAction(
+        $actions = new \SplPriorityQueue();
+
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Lunch', '001', ['8001', '8002'])
             ),
+            100
+        );
 
-            '102'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('PreK', '102', ['8001', '8002'])
             ),
+            100
+        );
 
-            '011'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Kindergarten', '011', ['8001', '8002'])
             ),
+            100
+        );
 
-            '101'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('First Grade', '101', ['8001', '8002', '8003'])
             ),
+            100
+        );
 
-            '301'  => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Third Grade', '301', ['8001', '8002', '8003'])
             ),
+            100
+        );
 
-            '8001' => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Physical Education', '8001', [])
             ),
+            100
+        );
 
-            '8002' => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Art', '8002', [])
             ),
+            100
+        );
 
-            '8003' => new AddClassRoomAction(
+        $actions->insert(
+            new AddClassRoomAction(
                 $this->groupService,
                 new ClassRoom('Technology', '8003', [])
             ),
-        ];
+            100
+        );
+
+        return $actions;
     }
 
     protected function checkRegistry()
@@ -194,7 +252,7 @@ class ClassWorksheetParserTest extends TestCase
     protected function checkMixedActions(ClassWorksheetParser $parser)
     {
         $this->assertEquals(
-            array_values($this->getExpectedMixedActions()),
+            $this->getExpectedMixedActions(),
             $parser->getActions(),
             'Parser did not create correct add actions'
         );
@@ -206,7 +264,7 @@ class ClassWorksheetParserTest extends TestCase
     protected function checkAddActions(ClassWorksheetParser $parser)
     {
         $this->assertEquals(
-            array_values($this->getExpectedAddActions()),
+            $this->getExpectedAddActions(),
             $parser->getActions(),
             'Parser did not create correct add actions'
         );

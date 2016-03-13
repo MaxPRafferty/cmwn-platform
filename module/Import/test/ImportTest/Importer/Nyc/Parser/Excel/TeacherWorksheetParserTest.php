@@ -5,6 +5,7 @@ namespace ImportTest\Importer\Nyc\Parser\Excel;
 use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
+use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
@@ -82,6 +83,7 @@ class TeacherWorksheetParserTest extends TestCase
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)
     {
+        AbstractParser::clearActions();
         return new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
     }
     

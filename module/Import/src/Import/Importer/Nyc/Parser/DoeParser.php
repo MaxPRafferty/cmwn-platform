@@ -230,12 +230,6 @@ class DoeParser extends AbstractParser
         if ($this->getClassParser()->hasErrors()) {
             $this->errors = array_merge($this->errors, $this->getClassParser()->getErrors());
         }
-
-        if (!$this->hasErrors()) {
-            $this->getLogger()->debug('Merging actions from class parser');
-            $actions = $this->getClassParser()->getActions();
-            array_walk($actions, [$this, 'addAction']);
-        }
     }
 
     /**
@@ -253,12 +247,6 @@ class DoeParser extends AbstractParser
         if ($this->getTeacherParser()->hasErrors()) {
             $this->errors = array_merge($this->errors, $this->getTeacherParser()->getErrors());
         }
-
-        if (!$this->hasErrors()) {
-            $this->getLogger()->debug('Merging actions from teacher parser');
-            $actions = $this->getTeacherParser()->getActions();
-            array_walk($actions, [$this, 'addAction']);
-        }
     }
 
     /**
@@ -275,12 +263,6 @@ class DoeParser extends AbstractParser
 
         if ($this->getStudentParser()->hasErrors()) {
             $this->errors = array_merge($this->errors, $this->getStudentParser()->getErrors());
-        }
-
-        if (!$this->hasErrors()) {
-            $this->getLogger()->debug('Merging actions from student parser');
-            $actions = $this->getStudentParser()->getActions();
-            array_walk($actions, [$this, 'addAction']);
         }
     }
 
