@@ -3,7 +3,9 @@
 namespace Import\Importer\Nyc\Parser;
 
 use Group\GroupInterface;
+use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
+use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser as ClassParser;
 use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser as StudentParser;
@@ -63,23 +65,31 @@ class DoeParser extends AbstractParser
     protected $school;
 
     /**
+     * @var GroupServiceInterface
+     */
+    protected $groupService;
+
+    /**
      * DoeParser constructor.
      *
      * @param ClassRoomRegistry $classRegistry
      * @param TeacherRegistry $teacherRegistry
      * @param StudentRegistry $studentRegistry
      * @param UserGroupServiceInterface $userGroupService
+     * @param GroupServiceInterface $groupService
      */
     public function __construct(
         ClassRoomRegistry $classRegistry,
         TeacherRegistry $teacherRegistry,
         StudentRegistry $studentRegistry,
-        UserGroupServiceInterface $userGroupService
+        UserGroupServiceInterface $userGroupService,
+        GroupServiceInterface $groupService
     ) {
         $this->classRegistry    = $classRegistry;
         $this->teacherRegistry  = $teacherRegistry;
         $this->studentRegistry  = $studentRegistry;
         $this->userGroupService = $userGroupService;
+        $this->groupService     = $groupService;
         $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
     }
 
@@ -117,6 +127,10 @@ class DoeParser extends AbstractParser
         $this->getLogger()->info('Starting to process file: ' . $this->getFileName());
         if ($this->fileName === null) {
             throw new \RuntimeException('Cannot pre process: No File name set');
+        }
+
+        if ($this->school === null) {
+            throw new \RuntimeException('Cannot pre process: No school set');
         }
 
         $reader      = \PHPExcel_IOFactory::load($this->fileName);
@@ -182,14 +196,38 @@ class DoeParser extends AbstractParser
         }
     }
 
+    /**
+     * Creates the actions to associate the user to the group
+     */
     protected function createAssociationActions()
     {
         $this->getLogger()->info('Creating associations to classes');
+        $schoolGroup = new ClassRoom('school', $this->school->getTitle());
+        $schoolGroup->setGroup($this->school);
+        foreach ($this->teacherRegistry as $teacher) {
+            $groupType = "class";
+            if (!$teacher->hasClassAssigned()) {
+                $teacher->setClassRoom($schoolGroup);
+                $groupType = "school";
+            }
+
+            $this->getLogger()->debug(sprintf('Adding teacher "%s" to %s', $teacher->getEmail(), $groupType));
+            $this->addAction(new AddTeacherToGroupAction($teacher, $this->userGroupService));
+        }
+
+        foreach ($this->studentRegistry as $student) {
+            $this->getLogger()->debug('Adding student to class');
+            $this->addAction(new AddStudentToGroup($student, $this->userGroupService));
+        }
+
+        foreach ($this->classRegistry as $classRoom) {
+            $this->getLogger()->debug(sprintf('Adding class %s to school', $classRoom->getTitle()));
+            $this->addAction(new AddClassToSchooAction($this->school, $classRoom, $this->groupService));
+        }
     }
 
     /**
      * @return ClassParser
-     * @codeCoverageIgnore
      */
     public function getClassParser()
     {
@@ -198,7 +236,6 @@ class DoeParser extends AbstractParser
 
     /**
      * @return TeacherParser
-     * @codeCoverageIgnore
      */
     public function getTeacherParser()
     {
@@ -207,7 +244,6 @@ class DoeParser extends AbstractParser
 
     /**
      * @return StudentParser
-     * @codeCoverageIgnore
      */
     public function getStudentParser()
     {
@@ -223,13 +259,6 @@ class DoeParser extends AbstractParser
     {
         $this->getLogger()->info('Parsing Class Sheet');
         $this->getClassParser()->preProcess();
-        if ($this->getClassParser()->hasWarnings()) {
-            $this->warnings = array_merge($this->warnings, $this->getClassParser()->getWarnings());
-        }
-
-        if ($this->getClassParser()->hasErrors()) {
-            $this->errors = array_merge($this->errors, $this->getClassParser()->getErrors());
-        }
     }
 
     /**
@@ -239,14 +268,8 @@ class DoeParser extends AbstractParser
      */
     protected function parseTeacherSheet()
     {
+        $this->getLogger()->info('Parsing Teacher sheet');
         $this->getTeacherParser()->preProcess();
-        if ($this->getTeacherParser()->hasWarnings()) {
-            $this->warnings = array_merge($this->warnings, $this->getTeacherParser()->getWarnings());
-        }
-
-        if ($this->getTeacherParser()->hasErrors()) {
-            $this->errors = array_merge($this->errors, $this->getTeacherParser()->getErrors());
-        }
     }
 
     /**
@@ -256,14 +279,8 @@ class DoeParser extends AbstractParser
      */
     protected function parseStudentSheet()
     {
+        $this->getLogger()->info('Parsing Student Sheet');
         $this->getStudentParser()->preProcess();
-        if ($this->getStudentParser()->hasWarnings()) {
-            $this->warnings = array_merge($this->warnings, $this->getStudentParser()->getWarnings());
-        }
-
-        if ($this->getStudentParser()->hasErrors()) {
-            $this->errors = array_merge($this->errors, $this->getStudentParser()->getErrors());
-        }
     }
 
     /**

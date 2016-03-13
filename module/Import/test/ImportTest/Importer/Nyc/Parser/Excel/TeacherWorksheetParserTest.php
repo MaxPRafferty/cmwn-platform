@@ -83,7 +83,7 @@ class TeacherWorksheetParserTest extends TestCase
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)
     {
-        AbstractParser::clearActions();
+        AbstractParser::clear();
         return new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
     }
     

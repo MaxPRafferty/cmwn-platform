@@ -3,8 +3,8 @@
 namespace ImportTest\Importer\Nyc\Parser;
 
 use Application\Exception\NotFoundException;
+use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
-use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
@@ -36,19 +36,14 @@ class DoeParserTest extends TestCase
     protected $userGroupService;
 
     /**
-     * @var \Mockery\MockInterface|\Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser
+     * @var \Mockery\MockInterface|\Group\Service\GroupServiceInterface
      */
-    protected $classParser;
+    protected $groupService;
 
     /**
-     * @var \Mockery\MockInterface|\Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser
+     * @var Group
      */
-    protected $teacherParser;
-
-    /**
-     * @var \Mockery\MockInterface|\Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser
-     */
-    protected $studentParser;
+    protected $school;
 
     /**
      * @before
@@ -57,13 +52,12 @@ class DoeParserTest extends TestCase
     {
         $this->userGroupService = \Mockery::mock('\Group\Service\UserGroupServiceInterface');
     }
-
     /**
      * @before
      */
-    public function setUpClassParserMock()
+    public function setUpGroupService()
     {
-        $this->classParser = \Mockery::mock('Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser');
+        $this->groupService = \Mockery::mock('\Group\Service\GroupServiceInterface');
     }
 
     /**
@@ -102,66 +96,21 @@ class DoeParserTest extends TestCase
     {
         /** @var \Mockery\MockInterface|\User\Service\UserServiceInterface $userService */
         $userService = \Mockery::mock('\User\Service\UserServiceInterface');
-        $userService->shouldReceive('fetchUserByEmail')
+        $userService->shouldReceive('fetchUserByExternalId')
             ->andThrow(NotFoundException::class)
             ->byDefault();
 
         $this->studentRegistry = new StudentRegistry($userService, $this->classRegistry);
     }
-    
-    /**
-     * @before
-     */
-    public function setUpClassParser()
-    {
-        AbstractParser::clearActions();
-        $this->classParser = \Mockery::mock('\Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser');
-        $this->classParser->shouldReceive('preProcess')
-            ->byDefault();
-
-        $this->classParser->shouldReceive('hasErrors')
-            ->andReturn(false)
-            ->byDefault();
-
-        $this->classParser->shouldReceive('hasWarnings')
-            ->andReturn(false)
-            ->byDefault();
-    }
 
     /**
      * @before
      */
-    public function setUpTeacherParser()
+    public function setUpSchoolGroup()
     {
-        $this->teacherParser = \Mockery::mock('\Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser');
-        $this->teacherParser->shouldReceive('preProcess')
-            ->byDefault();
-
-        $this->teacherParser->shouldReceive('hasErrors')
-            ->andReturn(false)
-            ->byDefault();
-
-        $this->teacherParser->shouldReceive('hasWarnings')
-            ->andReturn(false)
-            ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpStudentParser()
-    {
-        $this->studentParser = \Mockery::mock('\Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser');
-        $this->studentParser->shouldReceive('preProcess')
-            ->byDefault();
-
-        $this->studentParser->shouldReceive('hasErrors')
-            ->andReturn(false)
-            ->byDefault();
-
-        $this->studentParser->shouldReceive('hasWarnings')
-            ->andReturn(false)
-            ->byDefault();
+        $this->school = new Group();
+        $this->school->setGroupId('manchuck');
+        $this->school->setTitle('MANCHUCK School of Rock');
     }
 
     /**
@@ -169,24 +118,16 @@ class DoeParserTest extends TestCase
      */
     protected function getParser()
     {
-        /** @var \Mockery\MockInterface|\Import\Importer\Nyc\Parser\DoeParser $parser */
-        $parser = \Mockery::mock(
-            '\Import\Importer\Nyc\Parser\DoeParser[getClassParser,getStudentParser,getTeacherParser]',
-            [$this->classRegistry, $this->teacherRegistry, $this->studentRegistry, $this->userGroupService]
+        DoeParser::clear();
+        $parser = new DoeParser(
+            $this->classRegistry,
+            $this->teacherRegistry,
+            $this->studentRegistry,
+            $this->userGroupService,
+            $this->groupService
         );
 
-        $parser->shouldReceive('getClassParser')
-            ->andReturn($this->classParser)
-            ->byDefault();
-
-        $parser->shouldReceive('getTeacherParser')
-            ->andReturn($this->teacherParser)
-            ->byDefault();
-
-        $parser->shouldReceive('getStudentParser')
-            ->andReturn($this->studentParser)
-            ->byDefault();
-
+        $parser->setSchool($this->school);
         return $parser;
     }
 
@@ -195,10 +136,6 @@ class DoeParserTest extends TestCase
      */
     public function testItShouldNotCallParsersWhenSheetsNotFound($fileName)
     {
-        $this->classParser->shouldReceive('preProcess')->never();
-        $this->teacherParser->shouldReceive('preProcess')->never();
-        $this->studentParser->shouldReceive('preProcess')->never();
-        
         $parser = $this->getParser();
         $parser->setFileName($fileName);
 
@@ -213,72 +150,14 @@ class DoeParserTest extends TestCase
     
     public function testItShouldMergeErrorsAndWarningsFromParsers()
     {
-        // classes
-        $this->classParser->shouldReceive('hasErrors')
-            ->atLeast(1)
-            ->andReturn(true);
-        
-        $this->classParser->shouldReceive('getErrors')
-            ->andReturn(['class parser error']);
-            
-        $this->classParser->shouldReceive('hasWarnings')
-            ->atLeast(1)
-            ->andReturn(true);
-        
-        $this->classParser->shouldReceive('getWarnings')
-            ->andReturn(['class parser warning']);
-
-        $this->classParser->shouldNotReceive('getActions');
-
-        // Teachers
-        $this->teacherParser->shouldReceive('hasErrors')
-            ->atLeast(1)
-            ->andReturn(true);
-        
-        $this->teacherParser->shouldReceive('getErrors')
-            ->andReturn(['teacher parser error']);
-            
-        $this->teacherParser->shouldReceive('hasWarnings')
-            ->atLeast(1)
-            ->andReturn(true);
-        
-        $this->teacherParser->shouldReceive('getWarnings')
-            ->andReturn(['teacher parser warning']);
-
-        $this->teacherParser->shouldNotReceive('getActions');
-
-        // Students
-        $this->studentParser->shouldReceive('hasErrors')
-            ->atLeast(1)
-            ->andReturn(true);
-        
-        $this->studentParser->shouldReceive('getErrors')
-            ->andReturn(['student parser error']);
-            
-        $this->studentParser->shouldReceive('hasWarnings')
-            ->atLeast(1)
-            ->andReturn(true);
-        
-        $this->studentParser->shouldReceive('getWarnings')
-            ->andReturn(['student parser warning']);
-
-        $this->studentParser->shouldNotReceive('getActions');
-
-
         $parser = $this->getParser();
-        $parser->setFileName(__DIR__ . '/_files/test_sheet.xlsx');
+        $parser->setFileName(__DIR__ . '/_files/error_sheet.xlsx');
         $parser->preProcess();
 
         $expectedErrors = [
-            'class parser error',
-            'teacher parser error',
-            'student parser error',
-        ];
-
-        $expectedWarnings = [
-            'class parser warning',
-            'teacher parser warning',
-            'student parser warning',
+            'Sheet "Classes" Row: 1 Column "B" in the header is not labeled as "TITLE"',
+            'Sheet "Teachers" Row: 1 Column "B" in the header is not labeled as "TYPE"',
+            'Sheet "Students" Row: 1 Column "C" in the header is not labeled as "FIRST NAME"',
         ];
 
         $this->assertTrue(
@@ -291,42 +170,10 @@ class DoeParserTest extends TestCase
             $parser->getErrors(),
             'Doe Parser did not merge errors from parsers'
         );
-
-        $this->assertTrue(
-            $parser->hasWarnings(),
-            'Doe Parser is not reporting warnings when parsers have warnings'
-        );
-
-        $this->assertEquals(
-            $expectedWarnings,
-            $parser->getWarnings(),
-            'Doe Parser is not merging warnings from parsers'
-        );
     }
     
     public function testItShouldMergeActionsFromParsers()
     {
-        /** @var \Mockery\MockInterface|\Import\ActionInterface $classAction */
-        $classAction = \Mockery::mock('\Import\ActionInterface');
-        $classAction->shouldReceive('priority')->andReturn(100);
-
-        /** @var \Mockery\MockInterface|\Import\ActionInterface $teacherAction */
-        $teacherAction = \Mockery::mock('\Import\ActionInterface');
-        $teacherAction->shouldReceive('priority')->andReturn(50);
-
-        /** @var \Mockery\MockInterface|\Import\ActionInterface $studentAction */
-        $studentAction = \Mockery::mock('\Import\ActionInterface');
-        $studentAction->shouldReceive('priority')->andReturn(25);
-
-        $this->classParser->shouldReceive('getActions')
-            ->andReturn([$classAction]);
-
-        $this->teacherParser->shouldReceive('getActions')
-            ->andReturn([$teacherAction]);
-
-        $this->studentParser->shouldReceive('getActions')
-            ->andReturn([$teacherAction]);
-
         $parser = $this->getParser();
         $parser->setFileName(__DIR__ . '/_files/test_sheet.xlsx');
         $parser->preProcess();
@@ -341,37 +188,12 @@ class DoeParserTest extends TestCase
             'Doe Parser is reporting warnings'
         );
 
-        $expectedActions = new \SplPriorityQueue();
-        $expectedActions->insert($classAction, $classAction->priority());
-        $expectedActions->insert($teacherAction, $teacherAction->priority());
-        $expectedActions->insert($studentAction, $studentAction->priority());
+        $this->assertEquals(8, count($parser->getActions()), 'Parser did not merge actions');
 
-        $this->assertEquals($expectedActions, $parser->getActions(), 'Parser did not merge actions');
     }
 
     public function testItShouldMergeActionsFromParsersAndReportWarningForExtraSheet()
     {
-        /** @var \Mockery\MockInterface|\Import\ActionInterface $classAction */
-        $classAction = \Mockery::mock('\Import\ActionInterface');
-        $classAction->shouldReceive('priority')->andReturn(100);
-
-        /** @var \Mockery\MockInterface|\Import\ActionInterface $teacherAction */
-        $teacherAction = \Mockery::mock('\Import\ActionInterface');
-        $teacherAction->shouldReceive('priority')->andReturn(50);
-
-        /** @var \Mockery\MockInterface|\Import\ActionInterface $studentAction */
-        $studentAction = \Mockery::mock('\Import\ActionInterface');
-        $studentAction->shouldReceive('priority')->andReturn(25);
-
-        $this->classParser->shouldReceive('getActions')
-            ->andReturn([$classAction]);
-
-        $this->teacherParser->shouldReceive('getActions')
-            ->andReturn([$teacherAction]);
-
-        $this->studentParser->shouldReceive('getActions')
-            ->andReturn([$teacherAction]);
-
         $parser = $this->getParser();
         $parser->setFileName(__DIR__ . '/_files/extra_sheet.xlsx');
         $parser->preProcess();
@@ -392,13 +214,7 @@ class DoeParserTest extends TestCase
             'Doe Parser did not report warning for extra sheet'
         );
 
-        $expectedActions = new \SplPriorityQueue();
-        $expectedActions->insert($classAction, $classAction->priority());
-        $expectedActions->insert($teacherAction, $teacherAction->priority());
-        $expectedActions->insert($studentAction, $studentAction->priority());
-
-
-        $this->assertEquals($expectedActions, $parser->getActions(), 'Parser did not merge actions');
+        $this->assertEquals(8, count($parser->getActions()), 'Parser did not merge actions');
     }
 
     public function testItShouldThrowExceptionWhenFileNameNotSet()
