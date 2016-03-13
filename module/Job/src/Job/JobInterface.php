@@ -5,58 +5,27 @@ namespace Job;
 /**
  * Interface JobInterface
  *
- * @package Job
+ * ${CARET}
  */
 interface JobInterface
 {
-    const JOB_PROCESSING = 1;
-    const JOB_COMPLETED  = 2;
-    const JOB_ERROR      = 4;
-    const JOB_RESPAWN    = 8;
-
     /**
-     * Runs the code for the job
-     *
-     * Returning false will prevent further events listeners from triggering
-     *
-     * @return bool
+     * Performs the work for the job
      */
-    public function run();
+    public function perform();
 
     /**
-     * Should be of one the states above.
-     *
-     * @return int
-     */
-    public function getJobState();
-
-    /**
-     * The Id of the job from the queue
-     *
-     * @return string
-     */
-    public function getJobId();
-
-    /**
-     * Sets the Id of the job
-     *
-     * @param $jobId
-     * @return $this
-     */
-    public function setJobId($jobId);
-
-    /**
-     * Data that will be passed along in the message
+     * Gets the data that will be passed for the job
      *
      * @return array
      */
-    public function getJobData();
+    public function getArrayCopy();
 
     /**
-     * Sets the data that was passed from getJobData
+     * Returns the argumet values back to the object
      *
-     * @param array $jobData
-     * @return $this
+     * @param array $data
+     * @return mixed
      */
-    public function setJobData(array $jobData);
+    public function exchangeArray(array $data);
 }
