@@ -62,16 +62,16 @@ class GroupService implements GroupServiceInterface
 
         // TODO create transaction
         $where = new Where();
-        $where->addPredicate(new Operator('rgt', $parent->getLeft(), Operator::OP_GT));
-        $where->addPredicate(new Operator('org_id', $parent->getOrganizationId()));
+        $where->addPredicate(new Operator('rgt', Operator::OP_GT, $parent->getLeft()));
+        $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $this->groupTableGateway->update(
             ['rgt' => 'rgt + 2'],
             $where
         );
 
         $where = new Where();
-        $where->addPredicate(new Operator('lft', $parent->getLeft(), Operator::OP_GT));
-        $where->addPredicate(new Operator('org_id', $parent->getOrganizationId()));
+        $where->addPredicate(new Operator('lft', Operator::OP_GT, $parent->getLeft()));
+        $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $this->groupTableGateway->update(
             ['lft' => 'lft + 2'],
             $where
@@ -80,7 +80,7 @@ class GroupService implements GroupServiceInterface
         // UPDATE group SET rgt = $parent->getLeft() + 1, rgt = $parent->getLeft() + 2 WHERE group_id = $child->getGroupid()
 
         $where = new Where();
-        $where->addPredicate(new Operator('group_id', $child->getGroupId()));
+        $where->addPredicate(new Operator('group_id', Operator::OP_EQ, $child->getGroupId()));
         $this->groupTableGateway->update(
             ['lft' => $parent->getLeft() + 1, 'rgt' => $parent->getLeft() + 2],
             $where
@@ -224,6 +224,4 @@ class GroupService implements GroupServiceInterface
         $this->groupTableGateway->delete(['group_id' => $group->getGroupId()]);
         return true;
     }
-
-
 }

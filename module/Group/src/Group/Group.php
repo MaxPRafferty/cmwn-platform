@@ -105,6 +105,9 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
 
         $array = array_merge($defaults, $array);
 
+        $array['left'] = isset($array['lft']) ? $array['lft'] : $array['left'];
+        $array['right'] = isset($array['rgt']) ? $array['rgt'] : $array['right'];
+
         foreach ($array as $key => $value) {
             $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
             if (method_exists($this, $method)) {

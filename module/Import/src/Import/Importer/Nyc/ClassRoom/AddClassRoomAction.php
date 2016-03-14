@@ -5,13 +5,14 @@ namespace Import\Importer\Nyc\ClassRoom;
 use Group\Group;
 use Group\Service\GroupServiceInterface;
 use Import\ActionInterface;
+use Org\OrgAwareInterface;
 
 /**
  * Class ClassRoomAction
  *
  * ${CARET}
  */
-class AddClassRoomAction implements ActionInterface
+class AddClassRoomAction implements ActionInterface, OrgAwareInterface
 {
     /**
      * @var GroupServiceInterface
@@ -22,6 +23,11 @@ class AddClassRoomAction implements ActionInterface
      * @var ClassRoom
      */
     protected $classRoom;
+
+    /**
+     * @var string;
+     */
+    protected $orgId;
 
     /**
      * ClassRoomAction constructor.
@@ -35,6 +41,14 @@ class AddClassRoomAction implements ActionInterface
     }
 
     /**
+     * @param $orgId
+     */
+    public function setOrgId($orgId)
+    {
+        $this->orgId = $orgId;
+    }
+
+    /**
      * Process the action
      *
      * @return void
@@ -44,8 +58,9 @@ class AddClassRoomAction implements ActionInterface
         $group = new Group();
         $group->setExternalId($this->classRoom->getClassRoomId());
         $group->setTitle($this->classRoom->getTitle());
+        $group->setType('class');
         $group->setMeta(['sub_class_rooms' => $this->classRoom->getSubClassRooms()]);
-
+        $group->setOrganizationId($this->orgId);
         $this->groupService->saveGroup($group);
         $this->classRoom->setGroup($group);
     }
