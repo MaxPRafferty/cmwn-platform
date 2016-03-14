@@ -3,6 +3,7 @@
 namespace Import\Controller;
 
 use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -20,6 +21,10 @@ class ImportControllerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
+            ? $serviceLocator->getServiceLocator()
+            : $serviceLocator;
+        
         return new ImportController($serviceLocator);
     }
 

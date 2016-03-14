@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc;
 
+use Group\Service\GroupServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -20,6 +21,8 @@ class DoeImporterFactory implements FactoryInterface
     {
         /** @var \Import\Importer\Nyc\Parser\DoeParser $parser */
         $parser = $services->get('Import\Importer\Nyc\Parser\DoeParser');
-        return new DoeImporter($parser);
+        /** @var GroupServiceInterface $groupService */
+        $groupService = $services->get('Group\Service\GroupService');
+        return new DoeImporter($parser, $groupService);
     }
 }
