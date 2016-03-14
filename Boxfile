@@ -1,24 +1,11 @@
 global:
   env:
     - APP_ENV: production
-    - APP_DEBUG: true
-    - APP_KEY: SomeRandomStringWith32Characters
     - DB_HOST: 'MAP:DATABASE1_HOST'
     - DB_DATABASE: 'MAP:DATABASE1_NAME'
     - DB_USERNAME: 'MAP:DATABASE1_USER'
     - DB_PASSWORD: 'MAP:DATABASE1_PASS'
-    - CACHE_DRIVER: file
     - SESSION_DRIVER: redis
-    - QUEUE_DRIVER: redis
-    - MAIL_DRIVER: smtp
-#   - MAIL_HOST: mailtrap.io
-#   - MAIL_PORT: 2525
-#   - MAIL_USERNAME: 4762712fd34d91aa0
-#   - MAIL_PASSWORD: af48fe96f32502
-#   - MAIL_ENCRYPTION: null
-    - CLOUDINARY_CLOUD_NAME: changemyworldnow
-    - CLOUDINARY_API_KEY: 145864397418111
-    - CLOUDINARY_API_SECRET: 2L-FIP5z0S29nBLHpOGnLabmdJE
 
 build:
   before_exec:
@@ -31,9 +18,6 @@ build:
     - 'composer install --no-interaction --prefer-source --no-dev'
   after_exec:
     - 'composer dump-autoload --optimize'
-  after_deploy:
-    - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
-    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
   lib_dirs:
     - vendor
   reuse_libs: true
@@ -56,10 +40,9 @@ web1:
     - tmp/
   nonpersistent_writable_dirs:
     - data/cache
-  log_watch:
-    laravel[error]: 'storage/logs/laravel.log'
-  before_deploy:
-
+  after_deploy:
+    - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
 
 database1:
   type: mysql
