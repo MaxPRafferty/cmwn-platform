@@ -21,6 +21,7 @@ build:
     - 'composer install --no-interaction --prefer-dist --no-dev -vvvv'
   after_exec:
     - 'composer dump-autoload --optimize'
+  after_deploy:
     - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
   lib_dirs:
