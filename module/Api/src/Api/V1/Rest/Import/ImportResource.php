@@ -43,9 +43,7 @@ class ImportResource extends AbstractResourceListener
             return new ApiProblem(500, 'Invalid importer type');
         }
 
-        $file = $this->getInputFilter()->getValue('file');
-        $job->setFileName($file);
-
+        $job->exchangeArray($this->getInputFilter()->getValues());
         $token = $this->jobService->sendJob($job);
         return new ImportEntity($token);
     }

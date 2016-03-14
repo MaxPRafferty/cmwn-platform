@@ -15,6 +15,7 @@ return [
             'Nyc\DoeImporter'
                 => 'Import\Importer\Nyc\DoeImporter'
         ],
+
         'factories' => [
             'Import\Importer\Nyc\Students\StudentRegistry'
                 => 'Import\Importer\Nyc\Students\StudentRegistryFactory',
@@ -31,6 +32,28 @@ return [
             'Import\Importer\Nyc\DoeImporter'
                 => 'Import\Importer\Nyc\DoeImporterFactory'
 
+        ],
+    ],
+
+    'controllers' => [
+        'factories' => [
+            'Import\Controller' => 'Import\Controller\ImportControllerFactory',
+        ],
+    ],
+
+    'console' => [
+        'router' => [
+            'routes' => [
+                'import-file' => [
+                    'options' => [
+                        'route'    => 'import:file <type> <file> <teacherCode> <studentCode>',
+                        'defaults' => [
+                            'controller' => 'Import\Controller',
+                            'action'     => 'Import'
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
 ];

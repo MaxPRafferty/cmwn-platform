@@ -36,6 +36,16 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
     protected $logger;
 
     /**
+     * @var string
+     */
+    protected $teacherCode;
+
+    /**
+     * @var string
+     */
+    protected $studentCode;
+
+    /**
      * DoeImporter constructor.
      * @param DoeParser $parser
      */
@@ -79,6 +89,11 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
      */
     public function setFileName($fileName)
     {
+        // pass through from file upload
+        if (is_array($fileName)) {
+            $fileName = isset($data['file']['tmp_name']) ? $data['file']['tmp_name'] : null;
+        }
+
         $this->fileName = $fileName;
         return $this;
     }
@@ -127,7 +142,9 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
     public function getArrayCopy()
     {
         return [
-            'file_name' => $this->getFileName()
+            'file'         => $this->getFileName(),
+            'teacher_code' => $this->teacherCode,
+            'student_code' => $this->studentCode
         ];
     }
 
@@ -139,6 +156,9 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
      */
     public function exchangeArray(array $data)
     {
-        $this->setFileName(isset($data['file_name']) ? $data['file_name'] : null);
+        $fileName = isset($data['file']) ? $data['file'] : null;
+        $this->setFileName($fileName);
+        $this->teacherCode = isset($data['teacher_code']) ? $data['teacher_code'] : null;
+        $this->studentCode = isset($data['student_code']) ? $data['student_code'] : null;
     }
 }

@@ -144,7 +144,7 @@ return array(
             'api.rest.import' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/import[/:import_id]',
+                    'route' => '/group/:group_id/import',
                     'defaults' => array(
                         'controller' => 'Api\\V1\\Rest\\Import\\Controller',
                     ),
@@ -450,15 +450,9 @@ return array(
             'route_name' => 'api.rest.import',
             'route_identifier_name' => 'import_id',
             'collection_name' => 'import',
-            'entity_http_methods' => array(
-                0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ),
+            'entity_http_methods' => array(),
             'collection_http_methods' => array(
-                0 => 'GET',
-                1 => 'POST',
+                0 => 'POST',
             ),
             'collection_query_whitelist' => array(),
             'page_size' => 25,
@@ -1116,6 +1110,20 @@ return array(
                 'name' => 'type',
                 'description' => 'the type of importer to use',
                 'error_message' => 'Invalid import type',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'student_code',
+                'description' => 'Student Access Code',
+            ),
+            3 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'teacher_code',
+                'description' => 'Teacher Access Code',
             ),
         ),
     ),

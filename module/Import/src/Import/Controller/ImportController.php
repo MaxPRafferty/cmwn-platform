@@ -1,7 +1,8 @@
 <?php
 
-namespace Job\Controller;
+namespace Import\Controller;
 
+use Import\ImporterInterface;
 use Job\Service\ResqueWorker;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Log\Logger;
@@ -12,10 +13,9 @@ use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class WorkerController
- * @method
+ * Class ImportController
  */
-class WorkerController extends ConsoleController implements LoggerAwareInterface
+class ImportController extends ConsoleController implements LoggerAwareInterface
 {
     /**
      * @var ServiceLocatorInterface
@@ -59,7 +59,7 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
         return $this->logger;
     }
 
-    public function workAction()
+    public function importAction()
     {
         $request = $this->getRequest();
         if (!$request instanceof ConsoleRequest) {
@@ -68,12 +68,22 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
 
         $this->getLogger()->addWriter(new Stream(STDOUT));
 
-        $queue    = [$request->getParam('queue', 'default')];
-        $interval = $request->getParam('interval', 5);
-        $worker   = new ResqueWorker($queue, $this->services);
-        $worker->setLogger($this->getLogger());
+        $this->getLogger()->notice('File Importer');
+        $type = $request->getParam('type');
+        if (!$this->services->has($type)) {
+            $this->getLogger()->alert(sprintf('Importer "%s" not found in services: ', $type));
+            return;
+        }
 
-        $this->getLogger()->notice('Starting Worker');
-        $worker->work($interval);
+        $job  = $this->services->get($type);
+
+        if (!$job instanceof ImporterInterface) {
+            $this->getLogger()->alert(sprintf('Invalid importer: %s', $type));
+            return;
+        }
+
+        $file        = $request->getParam('file');
+        $teacherCode = $request->getParam('teacherCode');
+        $studentCode = $request->getParam('studentCode');
     }
 }
