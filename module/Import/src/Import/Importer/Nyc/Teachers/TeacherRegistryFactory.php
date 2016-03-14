@@ -20,7 +20,7 @@ class TeacherRegistryFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get('User\UserService');
+        $userService = $serviceLocator->get('User\Service\UserService');
         return new TeacherRegistry($userService);
     }
 }

@@ -33,6 +33,7 @@ class DoeImporterTest extends TestCase
     public function setUpDoeParser()
     {
         $this->parser = \Mockery::mock('\Import\Importer\Nyc\Parser\DoeParser');
+        $this->parser->shouldReceive('setLogger')->byDefault();
     }
 
     /**

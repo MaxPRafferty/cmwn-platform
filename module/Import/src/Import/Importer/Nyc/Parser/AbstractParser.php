@@ -4,16 +4,15 @@ namespace Import\Importer\Nyc\Parser;
 
 use Import\ActionInterface;
 use Import\ParserInterface;
+use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
+use Zend\Log\LoggerInterface;
 
 /**
  * Class AbstractProcesser
  */
 abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
 {
-    use LoggerAwareTrait;
-
     /**
      * @var string[] errors that were generated during processing
      */
@@ -38,6 +37,31 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      * @var \PHPExcel_WorksheetIterator
      */
     protected $iterator;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected static $logger;
+
+    /**
+     * @param LoggerInterface $loggerInterface
+     */
+    public function setLogger(LoggerInterface $loggerInterface)
+    {
+        self::$logger = $loggerInterface;
+    }
+
+    /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        if (self::$logger === null) {
+            self::$logger = new Logger(['writers' => [['name' => 'noop']]]);
+        }
+
+        return self::$logger;
+    }
 
     /**
      * Gets the list of actions the parser has found

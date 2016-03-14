@@ -6,6 +6,7 @@
 
 namespace Application;
 
+use Zend\Log\Logger;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -27,7 +28,12 @@ class Module implements ConfigProviderInterface
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
+        /** @var Logger $logger */
+        $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
 
+        Logger::registerErrorHandler($logger);
+        Logger::registerExceptionHandler($logger);
+        Logger::registerFatalErrorShutdownFunction($logger);
     }
 
     /**

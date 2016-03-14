@@ -3,12 +3,15 @@
 namespace Job\Service;
 
 use Job\JobInterface;
+use Zend\Log\Logger;
+use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class Job
  */
-class ResqueJob extends \Resque_Job
+class ResqueJob extends \Resque_Job implements LoggerAwareInterface
 {
     /**
      * @var object  Override the instance var since it is private
@@ -19,6 +22,11 @@ class ResqueJob extends \Resque_Job
      * @var ServiceLocatorInterface
      */
     protected $services;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * ResqueJob constructor.
@@ -34,11 +42,47 @@ class ResqueJob extends \Resque_Job
     }
 
     /**
+     * Set logger instance
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @return null|LoggerInterface
+     */
+    public function getLogger()
+    {
+        if ($this->logger === null) {
+            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        }
+
+        return $this->logger;
+    }
+
+    /**
+     * Find the next available job from the specified queue and return an
+     * instance of Resque_Job for it.
+     *
+     * @param string $queue The name of the queue to check for a job in.
+     * @return null|object Null when there aren't any waiting jobs, instance of Resque_Job when a job was found.
+     */
+    public static function reserve($queue)
+    {
+        throw new \RuntimeException('Do not call native reserve for this job');
+    }
+
+
+    /**
      * @param string $queue
      * @param ServiceLocatorInterface $services
      * @return bool|ResqueJob
      */
-    public static function reserve($queue, ServiceLocatorInterface $services)
+    public static function reserveJob($queue, ServiceLocatorInterface $services)
     {
         $payload = \Resque::pop($queue);
         if (!is_array($payload)) {
@@ -62,6 +106,7 @@ class ResqueJob extends \Resque_Job
         $serviceName = isset($this->payload['class']) ? $this->payload['class'] : null;
 
         if (!$this->services->has($serviceName)) {
+            $this->getLogger()->alert(sprintf('Service with name %s was not found', $serviceName));
             throw new \Resque_Job_DirtyExitException(sprintf('No Service found for "%s"', $serviceName));
         }
 

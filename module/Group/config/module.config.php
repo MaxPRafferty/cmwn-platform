@@ -4,6 +4,7 @@ return [
     'service_manager' => [
         'aliases' => [
             'Group\Service' => 'Group\Service\GroupService',
+            'Group\GroupService' => 'Group\Service\GroupService',
         ],
         'invokables' => [
             'Group\Delegator\GroupDelegatorFactory'             => 'Group\Delegator\GroupDelegatorFactory',
