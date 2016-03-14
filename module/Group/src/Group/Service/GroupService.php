@@ -7,6 +7,7 @@ use Group\Group;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
@@ -65,7 +66,7 @@ class GroupService implements GroupServiceInterface
         $where->addPredicate(new Operator('rgt', Operator::OP_GT, $parent->getLeft()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $this->groupTableGateway->update(
-            ['rgt' => 'rgt + 2'],
+            ['rgt' => new Expression("rgt + 2")],
             $where
         );
 
@@ -73,7 +74,7 @@ class GroupService implements GroupServiceInterface
         $where->addPredicate(new Operator('lft', Operator::OP_GT, $parent->getLeft()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $this->groupTableGateway->update(
-            ['lft' => 'lft + 2'],
+            ['lft' => new Expression('lft + 2')],
             $where
         );
 
