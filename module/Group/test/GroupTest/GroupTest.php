@@ -27,6 +27,7 @@ class GroupTest extends TestCase
             'created'         => null,
             'updated'         => null,
             'deleted'         => null,
+            'external_id'     => null,
         ];
 
         $adult = new Group();
@@ -51,6 +52,7 @@ class GroupTest extends TestCase
             'created'         => $date->format(\DateTime::ISO8601),
             'updated'         => $date->format(\DateTime::ISO8601),
             'deleted'         => $date->format(\DateTime::ISO8601),
+            'external_id'     => 'foo-bar',
         ];
 
         $adult = new Group();

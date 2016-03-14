@@ -11,6 +11,8 @@ return array(
     'Game',
     'Asset',
     'Group',
+    'Job',
+    'Import',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',

@@ -3,7 +3,6 @@ return array(
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
-            
         ),
         'factories' => array(
             'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
@@ -20,6 +19,7 @@ return array(
             'Api\\V1\\Rest\\GroupUsers\\GroupUsersResource' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersResourceFactory',
             'Api\\V1\\Rest\\OrgUsers\\OrgUsersResource' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersResourceFactory',
             'Api\\V1\\Rest\\UserImage\\UserImageResource' => 'Api\\V1\\Rest\\UserImage\\UserImageResourceFactory',
+            'Api\\V1\\Rest\\Import\\ImportResource' => 'Api\\V1\\Rest\\Import\\ImportResourceFactory',
         ),
     ),
     'router' => array(
@@ -141,6 +141,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.import' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/group/:group_id/import',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Import\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -158,6 +167,7 @@ return array(
             10 => 'api.rest.group-users',
             11 => 'api.rest.org-users',
             12 => 'api.rest.user-image',
+            13 => 'api.rest.import',
         ),
     ),
     'zf-rest' => array(
@@ -211,7 +221,7 @@ return array(
             'collection_query_whitelist' => array(
                 0 => 'page',
                 1 => 'per_page',
-                2 => 'type'
+                2 => 'type',
             ),
             'page_size' => 25,
             'page_size_param' => 'per_page',
@@ -435,6 +445,22 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\UserImage\\UserImageCollection',
             'service_name' => 'UserImage',
         ),
+        'Api\\V1\\Rest\\Import\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Import\\ImportResource',
+            'route_name' => 'api.rest.import',
+            'route_identifier_name' => 'import_id',
+            'collection_name' => 'import',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Import\\ImportEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Import\\ImportCollection',
+            'service_name' => 'Import',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -451,6 +477,7 @@ return array(
             'Api\\V1\\Rest\\GroupUsers\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\OrgUsers\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UserImage\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Import\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -518,6 +545,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Import\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -571,6 +603,11 @@ return array(
             'Api\\V1\\Rest\\UserImage\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Import\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+                2 => 'multipart/form-data',
             ),
         ),
     ),
@@ -726,6 +763,18 @@ return array(
                 'route_identifier_name' => 'user_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Import\\ImportEntity' => array(
+                'entity_identifier_name' => 'token',
+                'route_name' => 'api.rest.import',
+                'route_identifier_name' => 'import_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Import\\ImportCollection' => array(
+                'entity_identifier_name' => 'token',
+                'route_name' => 'api.rest.import',
+                'route_identifier_name' => 'import_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -746,6 +795,9 @@ return array(
         ),
         'Api\\V1\\Rest\\UserImage\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\UserImage\\Validator',
+        ),
+        'Api\\V1\\Rest\\Import\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Import\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1018,6 +1070,60 @@ return array(
                 'name' => 'Url',
                 'description' => 'Url to the image',
                 'error_message' => 'Invalid URL',
+            ),
+        ),
+        'Api\\V1\\Rest\\Import\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\File\\UploadFile',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\File\\RenameUpload',
+                        'options' => array(
+                            'target' => './tmp',
+                            'randomize' => true,
+                        ),
+                    ),
+                ),
+                'name' => 'file',
+                'type' => 'Zend\\InputFilter\\FileInput',
+                'description' => 'File to upload',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 'Nyc\\DoeImporter',
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'type',
+                'description' => 'the type of importer to use',
+                'error_message' => 'Invalid import type',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'student_code',
+                'description' => 'Student Access Code',
+            ),
+            3 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'teacher_code',
+                'description' => 'Teacher Access Code',
             ),
         ),
     ),

@@ -63,7 +63,7 @@ class Module implements
     public function getConsoleUsage(AdapterInterface $console)
     {
         return [
-            'create user' => 'Creates a new'
+            'create user' => 'Creates a new super admin'
         ];
     }
 

@@ -189,6 +189,60 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('User\Adult', $this->userService->fetchUser($userData['user_id']));
     }
 
+    public function testItShouldFetchUserByExternalId()
+    {
+        $userData = [
+            'user_id'     => 'abcd-efgh-ijklm-nop',
+            'username'    => 'manchuck',
+            'email'       => 'chuck@manchuck.com',
+            'first_name'  => 'Charles',
+            'middle_name' => 'Henry',
+            'last_name'   => 'Reeves',
+            'gender'      => Adult::GENDER_MALE,
+            'birthdate'   => '2016-02-28',
+            'created'     => '2016-02-28',
+            'updated'     => '2016-02-28',
+            'deleted'     => '2016-02-28',
+            'type'        => Adult::TYPE_ADULT,
+            'external_id' => 'foo-bar'
+        ];
+
+        $result = new ResultSet();
+        $result->initialize([$userData]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['external_id' => $userData['external_id']])
+            ->andReturn($result);
+
+        $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByExternalId($userData['external_id']));
+    }
+
+    public function testItShouldFetchUserByEmail()
+    {
+        $userData = [
+            'user_id'     => 'abcd-efgh-ijklm-nop',
+            'username'    => 'manchuck',
+            'email'       => 'chuck@manchuck.com',
+            'first_name'  => 'Charles',
+            'middle_name' => 'Henry',
+            'last_name'   => 'Reeves',
+            'gender'      => Adult::GENDER_MALE,
+            'birthdate'   => '2016-02-28',
+            'created'     => '2016-02-28',
+            'updated'     => '2016-02-28',
+            'deleted'     => '2016-02-28',
+            'type'        => Adult::TYPE_ADULT,
+            'external_id' => 'foo-bar'
+        ];
+
+        $result = new ResultSet();
+        $result->initialize([$userData]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['email' => $userData['email']])
+            ->andReturn($result);
+
+        $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByEmail($userData['email']));
+    }
+
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFound()
     {
         $this->setExpectedException(
@@ -202,6 +256,36 @@ class UserServiceTest extends TestCase
             ->andReturn($result);
 
         $this->userService->fetchUser('foo');
+    }
+
+    public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByExternalId()
+    {
+        $this->setExpectedException(
+            'Application\Exception\NotFoundException',
+            'User not Found'
+        );
+
+        $result = new ResultSet();
+        $result->initialize([]);
+        $this->tableGateway->shouldReceive('select')
+            ->andReturn($result);
+
+        $this->userService->fetchUserByExternalId('foo');
+    }
+    
+    public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByEmail()
+    {
+        $this->setExpectedException(
+            'Application\Exception\NotFoundException',
+            'User not Found'
+        );
+
+        $result = new ResultSet();
+        $result->initialize([]);
+        $this->tableGateway->shouldReceive('select')
+            ->andReturn($result);
+
+        $this->userService->fetchUserByEmail('foo@example.com');
     }
 
     public function testItShouldSoftDeleteByDefault()

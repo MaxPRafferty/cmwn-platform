@@ -133,6 +133,42 @@ class UserService implements UserServiceInterface
     }
 
     /**
+     * Fetches one user from the DB using the external id
+     *
+     * @param $externalId
+     * @return UserInterface
+     * @throws NotFoundException
+     */
+    public function fetchUserByExternalId($externalId)
+    {
+        $rowset = $this->userTableGateway->select(['external_id' => $externalId]);
+        $row    = $rowset->current();
+        if (!$row) {
+            throw new NotFoundException("User not Found");
+        }
+
+        return StaticUserFactory::createUser($row->getArrayCopy());
+    }
+
+    /**
+     * Fetches one user from the DB using the email
+     *
+     * @param $email
+     * @return UserInterface
+     * @throws NotFoundException
+     */
+    public function fetchUserByEmail($email)
+    {
+        $rowset = $this->userTableGateway->select(['email' => $email]);
+        $row    = $rowset->current();
+        if (!$row) {
+            throw new NotFoundException("User not Found");
+        }
+
+        return StaticUserFactory::createUser($row->getArrayCopy());
+    }
+
+    /**
      * Deletes a user from the database
      *
      * Soft deletes unless soft is false

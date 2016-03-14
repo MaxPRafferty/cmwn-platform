@@ -180,6 +180,24 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
+     * Fetches on group from the DB by using the external id
+     *
+     * @param $externalId
+     * @return GroupInterface
+     * @throws NotFoundException
+     */
+    public function fetchGroupByExternalId($externalId)
+    {
+        $rowset = $this->groupTableGateway->select(['external_id' => $externalId]);
+        $row    = $rowset->current();
+        if (!$row) {
+            throw new NotFoundException("Group not Found");
+        }
+
+        return new Group($row->getArrayCopy());
+    }
+
+    /**
      * Deletes a group from the database
      *
      * Soft deletes unless soft is false
@@ -206,4 +224,6 @@ class GroupService implements GroupServiceInterface
         $this->groupTableGateway->delete(['group_id' => $group->getGroupId()]);
         return true;
     }
+
+
 }

@@ -172,4 +172,19 @@ interface GroupInterface
      * @return $this
      */
     public function setCreated($created);
+
+    /**
+     * Gets the users Identifier for this group
+     *
+     * @return string
+     */
+    public function getExternalId();
+
+    /**
+     * Sets the users identifier for this group
+     *
+     * @param $externalId
+     * @return string
+     */
+    public function setExternalId($externalId);
 }
