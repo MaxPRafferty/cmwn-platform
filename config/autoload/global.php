@@ -1,10 +1,18 @@
 <?php
-return array(
-    'zf-mvc-auth' => array(
-        'authentication' => array(
-            'map' => array(
+return [
+    'log' => [
+        'Log\App' => [
+            'writers' => [
+                ['name' => 'noop'],
+            ],
+        ],
+    ],
+
+    'zf-mvc-auth' => [
+        'authentication' => [
+            'map' => [
                 'Api\\V1' => 'user',
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];

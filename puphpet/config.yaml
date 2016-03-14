@@ -30,6 +30,9 @@ vagrantfile:
                                 vflmnfp_7cr5k517lwfr:
                                     host: '3307'
                                     guest: '3306'
+                                vflmnfp_resque:
+                                    host: '8282'
+                                    guest: '8282'
                         hostname: cmwn.dev
                         memory: '2048'
                         cpus: '2'
@@ -234,7 +237,7 @@ apache:
 php:
     install: '1'
     settings:
-        version: '56'
+        version: '70'
     modules:
         php:
             - cli
@@ -242,7 +245,8 @@ php:
             - curl
             - xml
         pear: {  }
-        pecl: {  }
+        pecl:
+            - redis
     ini:
         display_errors: 'On'
         error_reporting: '-1'

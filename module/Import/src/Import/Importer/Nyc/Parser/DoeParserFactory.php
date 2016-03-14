@@ -25,6 +25,12 @@ class DoeParserFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        /** @var UserGroupServiceInterface $userGroupService */
+        $userGroupService = $serviceLocator->get('Group\Service\UserGroupService');
+
+//        /** @var GroupServiceInterface $groupService */
+//        $groupService     = $serviceLocator->get('Group\Service\GroupService');
+//
         /** @var ClassRoomRegistry $classRegistry */
         $classRegistry    = $serviceLocator->get('Nyc\ClassRegistry');
 
@@ -34,18 +40,12 @@ class DoeParserFactory implements FactoryInterface
         /** @var StudentRegistry $studentRegistry */
         $studentRegistry  = $serviceLocator->get('Nyc\StudentRegistry');
 
-        /** @var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get('Group\Service\UserGroupService');
-
-        /** @var GroupServiceInterface $groupService */
-        $groupService     = $serviceLocator->get('Group\Service\GroupService');
-
         return new DoeParser(
             $classRegistry,
             $teacherRegistry,
             $studentRegistry,
             $userGroupService,
-            $groupService
+            $classRegistry->getGroupService()
         );
     }
 

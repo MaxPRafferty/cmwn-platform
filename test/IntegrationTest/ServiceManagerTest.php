@@ -67,7 +67,6 @@ class ServiceManagerTest extends TestCase
      */
     public function testItShouldBeAbleToLoadService($service)
     {
-        $this->getServiceManager()->get('Job\Service\ResqueWorker');
         try {
             $this->getServiceManager()->get($service);
         } catch (\Exception $serviceException) {

@@ -5,8 +5,6 @@ namespace Import\Importer\Nyc\Parser\Excel;
 use Import\Importer\Nyc\Exception\InvalidDdbnnException;
 use Import\Importer\Nyc\Parser\AbstractParser;
 use PHPExcel_Worksheet_RowCellIterator as CellIterator;
-use Zend\Log\Logger;
-use Zend\Log\LoggerAwareTrait;
 use \PHPExcel_Worksheet_Row as ExcelRow;
 
 /**
@@ -17,8 +15,6 @@ use \PHPExcel_Worksheet_Row as ExcelRow;
  */
 abstract class AbstractExcelParser extends AbstractParser
 {
-    use LoggerAwareTrait;
-
     const SHEET_NAME = 'NYCDOE';
 
     /**
@@ -33,7 +29,6 @@ abstract class AbstractExcelParser extends AbstractParser
     public function __construct(\PHPExcel_Worksheet $worksheet)
     {
         $this->workSheet = $worksheet;
-        $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
     }
 
     /**

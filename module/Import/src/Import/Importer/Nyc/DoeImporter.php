@@ -3,22 +3,21 @@
 namespace Import\Importer\Nyc;
 
 use Import\Importer\Nyc\Parser\DoeParser;
-use Job\JobInterface;
+use Import\ImporterInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Log\Logger;
+use Zend\Log\LoggerInterface;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
 
 /**
  * Class NycDoeImporter
  *
  * @package Import\Importer
  */
-class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, JobInterface
+class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, ImporterInterface
 {
-    use LoggerAwareTrait;
     use EventManagerAwareTrait;
 
     /**
@@ -32,13 +31,38 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, J
     protected $parser;
 
     /**
+     * @var LoggerInterface;
+     */
+    protected $logger;
+
+    /**
      * DoeImporter constructor.
      * @param DoeParser $parser
      */
     public function __construct(DoeParser $parser)
     {
-        $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
         $this->parser = $parser;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        $this->parser->setLogger($logger);
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        if ($this->logger === null) {
+            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        }
+
+        return $this->logger;
     }
 
     /**

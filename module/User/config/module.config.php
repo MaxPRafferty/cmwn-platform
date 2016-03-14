@@ -3,7 +3,7 @@
 return [
     'service_manager' => [
         'aliases' => [
-            'User\Service' => 'User\Service\UserService'
+            'User\Service' => 'User\Service\UserService',
         ],
         'invokables' => [
             'User\Delegator\UserDelegatorFactory'

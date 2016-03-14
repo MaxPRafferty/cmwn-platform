@@ -46,6 +46,11 @@ if (isset($appConfig['module_listener_options']['config_glob_paths'])) {
 // Run the application!
 $app = Zend\Mvc\Application::init($appConfig);
 
+
+if (!$app->getServiceManager()->has('Job\Service\ResqueWorker')) {
+    die('Job\Service\ResqueWorker not in service manager');
+}
+
 // From bin/Rescue
 $REDIS_BACKEND = getenv('REDIS_BACKEND');
 if(!empty($REDIS_BACKEND)) {
@@ -94,6 +99,7 @@ if($count > 1) {
 // Start a single worker
 else {
     $queues = explode(',', $QUEUE);
+    /** @var \Job\Service\ResqueWorker $worker */
     $worker = $app->getServiceManager()->get('Job\Service\ResqueWorker');
 
     $PIDFILE = getenv('PIDFILE');
