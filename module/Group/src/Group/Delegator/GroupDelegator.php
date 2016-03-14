@@ -43,39 +43,13 @@ class GroupDelegator implements GroupServiceInterface
     }
 
     /**
-     * Attaches a user to a group
-     *
-     * @param GroupInterface $group
-     * @param UserInterface $user
-     * @param $role
-     * @return bool
-     */
-    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role)
-    {
-        // TODO: Implement attachUserToGroup() method.
-    }
-
-    /**
-     * Detaches a user from a group
-     *
-     * @param GroupInterface $group
-     * @param UserInterface $user
-     * @return bool
-     */
-    public function detachUserFromGroup(GroupInterface $group, UserInterface $user)
-    {
-        // TODO: Implement detachUserFromGroup() method.
-    }
-
-
-    /**
      * @param GroupInterface $parent
      * @param GroupInterface $child
      * @return bool
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
     {
-        // TODO: Implement addChildToGroup() method.
+        $this->realService->addChildToGroup($parent, $child);
     }
 
     /**

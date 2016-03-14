@@ -23,7 +23,7 @@ class UserGroupServiceFactory implements FactoryInterface
         /** @var \Zend\Db\Adapter\Adapter $adapter */
         $adapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
         return new UserGroupService(
-            new TableGateway('users_group', $adapter)
+            new TableGateway('user_groups', $adapter)
         );
     }
 }

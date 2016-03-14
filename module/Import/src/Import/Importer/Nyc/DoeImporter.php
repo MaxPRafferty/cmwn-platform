@@ -6,6 +6,7 @@ use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\ImporterInterface;
+use Org\OrgAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -175,8 +176,13 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
             $actions->top();
             $this->getLogger()->info(sprintf('Got %d actions', count($actions)));
             while ($actions->valid()) {
-                $actions->current()->execute();
+                $currentAction = $actions->current();
                 $actions->next();
+                if ($currentAction instanceof OrgAwareInterface) {
+                    $currentAction->setOrgId($this->school->getOrganizationId());
+                }
+
+                $currentAction->execute();
             }
 
             $event->setName('nyc.import.excel.complete');
