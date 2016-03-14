@@ -46,7 +46,7 @@ return [
             'routes' => [
                 'import-file' => [
                     'options' => [
-                        'route'    => 'import:file <type> <file> <teacherCode> <studentCode>',
+                        'route'    => 'import:file <type> <file> <teacherCode> <studentCode> <school>',
                         'defaults' => [
                             'controller' => 'Import\Controller',
                             'action'     => 'Import'

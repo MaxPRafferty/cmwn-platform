@@ -2,6 +2,7 @@
 
 namespace Import\Controller;
 
+use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
 use Job\Service\ResqueWorker;
 use Zend\Console\Request as ConsoleRequest;
@@ -28,12 +29,12 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
     protected $logger;
 
     /**
-     * WorkerController constructor.
-     * @param ResqueWorker $worker
+     * ImportController constructor.
+     * @param ServiceLocatorInterface $services
      */
     public function __construct(ServiceLocatorInterface $services)
     {
-        $this->services = $services;
+        $this->services     = $services;
     }
 
     /**
@@ -61,29 +62,46 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
 
     public function importAction()
     {
-        $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
-            throw new \RuntimeException('Invalid Request');
-        }
-
         $this->getLogger()->addWriter(new Stream(STDOUT));
 
-        $this->getLogger()->notice('File Importer');
-        $type = $request->getParam('type');
-        if (!$this->services->has($type)) {
-            $this->getLogger()->alert(sprintf('Importer "%s" not found in services: ', $type));
-            return;
+        try {
+            $request = $this->getRequest();
+            if (!$request instanceof ConsoleRequest) {
+                throw new \RuntimeException('Invalid Request');
+            }
+
+            $this->getLogger()->notice('File Importer');
+            $type = $request->getParam('type');
+            if (!$this->services->has($type)) {
+                $this->getLogger()->alert(sprintf('Importer "%s" not found in services: ', $type));
+
+                return;
+            }
+
+            $job = $this->services->get($type);
+
+            if (!$job instanceof ImporterInterface) {
+                $this->getLogger()->alert(sprintf('Invalid importer: %s', $type));
+
+                return;
+            }
+
+            $job->exchangeArray([
+                'file'         => $request->getParam('file'),
+                'teacher_code' => $request->getParam('teacherCode'),
+                'student_code' => $request->getParam('studentCode'),
+                'group'        => $request->getParam('school')
+            ]);
+
+            $job->setLogger($this->getLogger());
+
+            $this->getLogger()->info('Running importer');
+            $job->perform();
+        } catch (\Exception $processException) {
+            $this->getLogger()->emerg(
+                'Error when trying to process: ' . $processException->getMessage(),
+                $processException->getTrace()
+            );
         }
-
-        $job  = $this->services->get($type);
-
-        if (!$job instanceof ImporterInterface) {
-            $this->getLogger()->alert(sprintf('Invalid importer: %s', $type));
-            return;
-        }
-
-        $file        = $request->getParam('file');
-        $teacherCode = $request->getParam('teacherCode');
-        $studentCode = $request->getParam('studentCode');
     }
 }
