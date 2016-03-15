@@ -9,6 +9,7 @@ use Zend\Log\LoggerAwareTrait;
 
 /**
  * Class JobRunner
+ * @codeCoverageIgnore
  */
 class JobRunner implements LoggerAwareInterface
 {

@@ -11,6 +11,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class Job
+ * @codeCoverageIgnore
  */
 class ResqueJob extends \Resque_Job implements LoggerAwareInterface
 {

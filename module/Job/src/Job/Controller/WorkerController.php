@@ -13,7 +13,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class WorkerController
- * @method
+ * @codeCoverageIgnore
  */
 class WorkerController extends ConsoleController implements LoggerAwareInterface
 {
@@ -29,7 +29,7 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
 
     /**
      * WorkerController constructor.
-     * @param ResqueWorker $worker
+     * @param ServiceLocatorInterface $services
      */
     public function __construct(ServiceLocatorInterface $services)
     {
