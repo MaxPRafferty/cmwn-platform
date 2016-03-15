@@ -221,8 +221,10 @@ class DoeParser extends AbstractParser
         }
 
         foreach ($this->classRegistry as $classRoom) {
-            $this->getLogger()->debug(sprintf('Adding class %s to school', $classRoom->getTitle()));
-            $this->addAction(new AddClassToSchooAction($this->school, $classRoom, $this->groupService));
+            if ($classRoom->isNew()) {
+                $this->getLogger()->debug(sprintf('Adding class %s to school', $classRoom->getTitle()));
+                $this->addAction(new AddClassToSchooAction($this->school, $classRoom, $this->groupService));
+            }
         }
     }
 
