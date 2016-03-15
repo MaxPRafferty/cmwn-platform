@@ -35,6 +35,17 @@ class AddTeacherAction implements ActionInterface
         $this->teacher     = $teacher;
     }
 
+    public function __toString()
+    {
+        return sprintf(
+            'Creating a user for %s %s %s %s',
+            $this->teacher->getRole(),
+            $this->teacher->getFirstName(),
+            $this->teacher->getLastName(),
+            $this->teacher->getEmail()
+        );
+    }
+
     /**
      * Process the action
      *

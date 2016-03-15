@@ -9,6 +9,14 @@ namespace Import;
  */
 interface ActionInterface
 {
+
+    /**
+     * Make this pretty human readable so we can understand what is going on
+     *
+     * @return string
+     */
+    public function __toString();
+
     /**
      * Process the action
      *

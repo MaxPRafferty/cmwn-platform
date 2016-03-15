@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc\Parser;
 
+use Group\GroupInterface;
 use Group\Service\UserGroupServiceInterface;
 use Import\ActionInterface;
 use Import\Importer\Nyc\Teachers\Teacher;
@@ -31,6 +32,20 @@ class AddTeacherToGroupAction implements ActionInterface
     {
         $this->teacher          = $teacher;
         $this->userGroupService = $userGroupService;
+    }
+
+    public function __toString()
+    {
+        $group = $this->teacher->getClassRoom()->getGroup();
+        $type  = $group instanceof GroupInterface ? $group->getType() : 'Classroom';
+        return sprintf(
+            'Adding %s %s to %s [%s] "%s"',
+            $this->teacher->getRole(),
+            $this->teacher->getEmail(),
+            $type,
+            $this->teacher->getClassRoom()->getClassRoomId(),
+            $this->teacher->getClassRoom()->getTitle()
+        );
     }
 
     /**

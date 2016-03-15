@@ -2,15 +2,18 @@
 
 namespace Import\Controller;
 
-use Group\Service\GroupServiceInterface;
+use Application\Utils\NoopLoggerAwareTrait;
 use Import\ImporterInterface;
-use Job\Service\ResqueWorker;
+use Job\Feature\DryRunInterface;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Log\Filter\Priority;
+use Zend\Log\Formatter\Simple;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerInterface;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
+use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -18,6 +21,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 class ImportController extends ConsoleController implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @var ServiceLocatorInterface
      */
@@ -38,32 +43,31 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
     }
 
     /**
-     * Set logger instance
+     * Sets the logging level
      *
-     * @param LoggerInterface $logger
-     * @return void
+     * @param MvcEvent $event
+     * @return mixed
      */
-    public function setLogger(LoggerInterface $logger)
+    public function onDispatch(MvcEvent $event)
     {
-        $this->logger = $logger;
-    }
+        $routeMatch = $event->getRouteMatch();
 
-    /**
-     * @return Logger
-     */
-    public function getLogger()
-    {
-        if ($this->logger === null) {
-            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
-        }
+        $writer = new Stream(STDOUT);
+        $writer->setFormatter(new Simple('%priorityName%: %message%'));
 
-        return $this->logger;
+        $priority = Logger::NOTICE;
+        $verbose  = $routeMatch->getParam('verbose') || $routeMatch->getParam('v');
+        $debug    = $routeMatch->getParam('debug') || $routeMatch->getParam('d');
+
+        $priority = $verbose ? Logger::INFO : $priority;
+        $priority = $debug ? Logger::DEBUG : $priority;
+        $writer->addFilter(new Priority(['priority' => $priority]));
+        $this->getLogger()->addWriter($writer);
+        return parent::onDispatch($event);
     }
 
     public function importAction()
     {
-        $this->getLogger()->addWriter(new Stream(STDOUT));
-
         try {
             $request = $this->getRequest();
             if (!$request instanceof ConsoleRequest) {
@@ -71,6 +75,8 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
             }
 
             $this->getLogger()->notice('File Importer');
+            $this->getLogger()->info('Turning on verbose');
+            $this->getLogger()->debug('Turning on Debug');
             $type = $request->getParam('type');
             if (!$this->services->has($type)) {
                 $this->getLogger()->alert(sprintf('Importer "%s" not found in services: ', $type));
@@ -86,11 +92,15 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 return;
             }
 
+            if ($job instanceof DryRunInterface) {
+                $job->setDryRun($request->getParam('dry-run'));
+            }
+
             $job->exchangeArray([
                 'file'         => $request->getParam('file'),
                 'teacher_code' => $request->getParam('teacherCode'),
                 'student_code' => $request->getParam('studentCode'),
-                'group'        => $request->getParam('school')
+                'school'       => $request->getParam('school')
             ]);
 
             $job->setLogger($this->getLogger());
