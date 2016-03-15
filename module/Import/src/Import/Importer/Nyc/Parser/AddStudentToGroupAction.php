@@ -11,7 +11,7 @@ use Import\Importer\Nyc\Students\Student;
  *
  * ${CARET}
  */
-class AddStudentToGroup implements ActionInterface
+class AddStudentToGroupAction implements ActionInterface
 {
     /**
      * @var Student

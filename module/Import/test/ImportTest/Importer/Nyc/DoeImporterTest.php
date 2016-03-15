@@ -133,6 +133,25 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    public function testItShouldSetFileNameUsingFiles()
+    {
+        $fileName = '/path/to/file.xsls';
+        $files = [
+            'name'     => 'my file',
+            'tmp_name' => $fileName,
+            'type'     => 'foo/bar',
+            'error'    => UPLOAD_ERR_OK,
+        ];
+
+        $this->importer->setFileName($files);
+
+        $this->assertEquals(
+            $fileName,
+            $this->importer->getFileName(),
+            'Importer did not use $_FILES for setting file name'
+        );
+    }
+
     public function testItShouldExecuteActions()
     {
 
@@ -239,6 +258,106 @@ class DoeImporterTest extends TestCase
                 'params' => []
             ],
             $this->calledEvents[0]
+        );
+    }
+
+    public function testItShouldNotExecuteActionsWhenParserInDryRun()
+    {
+        $fileName = '/path/to/file.xsls';
+        /** @var \Mockery\MockInterface|\Import\ActionInterface $action */
+        $action = \Mockery::mock('\Import\ActionInterface');
+
+        $action->shouldReceive('execute')->never();
+
+        $actionQueue = new \SplPriorityQueue();
+        $actionQueue->insert($action, 1);
+
+        $this->parser->shouldReceive('setFileName')->with($fileName)->once();
+        $this->parser->shouldReceive('preProcess')->once();
+        $this->parser->shouldReceive('getActions')->once()->andReturn($actionQueue);
+        $this->parser->shouldReceive('hasErrors')->once()->andReturn(false);
+
+        $this->importer->setDryRun(true);
+        $this->importer->setFileName($fileName);
+        $this->importer->setGroup($this->school);
+        $this->importer->perform();
+
+        $this->assertEquals(3, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'nyc.import.excel',
+                'target' => $this->parser,
+                'params' => []
+            ],
+            $this->calledEvents[0]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'nyc.import.excel.run',
+                'target' => $this->parser,
+                'params' => []
+            ],
+            $this->calledEvents[1]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'nyc.import.excel.complete',
+                'target' => $this->parser,
+                'params' => []
+            ],
+            $this->calledEvents[2]
+        );
+    }
+
+    public function testItShouldPassOrgIdToActionWhenActionOrgAware()
+    {
+        $fileName = '/path/to/file.xsls';
+        /** @var \Mockery\MockInterface|\Import\ActionInterface $action */
+        $action = \Mockery::mock('\Import\ActionInterface, \Org\OrgAwareInterface');
+
+        $action->shouldReceive('execute')->once();
+        $action->shouldReceive('setOrgId')->once()->with($this->school->getOrganizationId());
+
+        $actionQueue = new \SplPriorityQueue();
+        $actionQueue->insert($action, 1);
+
+        $this->parser->shouldReceive('setFileName')->with($fileName)->once();
+        $this->parser->shouldReceive('preProcess')->once();
+        $this->parser->shouldReceive('getActions')->once()->andReturn($actionQueue);
+        $this->parser->shouldReceive('hasErrors')->once()->andReturn(false);
+
+        $this->importer->setFileName($fileName);
+        $this->importer->setGroup($this->school);
+        $this->importer->perform();
+
+        $this->assertEquals(3, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'nyc.import.excel',
+                'target' => $this->parser,
+                'params' => []
+            ],
+            $this->calledEvents[0]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'nyc.import.excel.run',
+                'target' => $this->parser,
+                'params' => []
+            ],
+            $this->calledEvents[1]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'nyc.import.excel.complete',
+                'target' => $this->parser,
+                'params' => []
+            ],
+            $this->calledEvents[2]
         );
     }
 }

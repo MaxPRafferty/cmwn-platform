@@ -2,7 +2,9 @@
 
 namespace GroupTest\Delegator;
 
+use Application\Exception\NotFoundException;
 use Group\Delegator\UserGroupServiceDelegator;
+use Mockery\Matcher\Not;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use User\Adult;
@@ -200,6 +202,174 @@ class UserGroupServiceDelegatorTest extends TestCase
                 'params' => ['group' => $this->group, 'user' => $this->user]
             ],
             $this->calledEvents[1]
+        );
+    }
+
+
+    public function testItShouldCallFetchUsersForGroup()
+    {
+        $this->groupService->shouldReceive('fetchUsersForGroup')
+            ->with($this->group, $this->user)
+            ->once();
+
+        $this->delegator->fetchUsersForGroup($this->group, $this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.users',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group]
+            ],
+            $this->calledEvents[0],
+            'Pre event for fetchUsersForGroup Is incorrect'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.users.post',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group]
+            ],
+            $this->calledEvents[1],
+            'Post event for fetchUsersForGroup Is incorrect'
+        );
+    }
+
+    public function testItShouldCallFetchUsersForOrg()
+    {
+        $this->groupService->shouldReceive('fetchUsersForOrg')
+            ->with($this->group, $this->user)
+            ->once();
+
+        $this->delegator->fetchUsersForOrg($this->group, $this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.org.users',
+                'target' => $this->groupService,
+                'params' => ['organization' => $this->group]
+            ],
+            $this->calledEvents[0],
+            'Pre event for fetchUsersForGroup Is incorrect'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.org.users.post',
+                'target' => $this->groupService,
+                'params' => ['organization' => $this->group]
+            ],
+            $this->calledEvents[1],
+            'Post event for fetchUsersForGroup Is incorrect'
+        );
+    }
+
+    public function testItShouldNotCallFetchUsersForGroupWhenEventStops()
+    {
+        $this->groupService->shouldReceive('fetchUsersForGroup')
+            ->never();
+
+        $this->delegator->getEventManager()->attach('fetch.group.users', function (Event $event) {
+            $event->stopPropagation(true);
+        });
+
+        $this->delegator->fetchUsersForGroup($this->group, $this->user);
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.users',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group]
+            ],
+            $this->calledEvents[0],
+            'Pre event for fetchUsersForGroup was not fired for fetch users for group'
+        );
+    }
+
+    public function testItShouldNotCallFetchUsersForOrgWhenEventStops()
+    {
+        $this->groupService->shouldReceive('fetchUsersForOrg')
+            ->never();
+
+        $this->delegator->getEventManager()->attach('fetch.org.users', function (Event $event) {
+            $event->stopPropagation(true);
+        });
+
+        $this->delegator->fetchUsersForOrg($this->group, $this->user);
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.org.users',
+                'target' => $this->groupService,
+                'params' => ['organization' => $this->group]
+            ],
+            $this->calledEvents[0],
+            'Pre event for fetchUsersForGroup Is incorrect'
+        );
+    }
+
+    public function testItShouldNotCallFetchUsersPostForGroupErrorHappens()
+    {
+        $exception = new NotFoundException();
+        $this->groupService->shouldReceive('fetchUsersForGroup')
+            ->andThrow($exception)
+            ->once();
+
+        $this->delegator->fetchUsersForGroup($this->group, $this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.users',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group]
+            ],
+            $this->calledEvents[0],
+            'Pre event for fetchUsersForGroup was not fired for fetch users for group'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.group.users.error',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group, 'exception' => $exception]
+            ],
+            $this->calledEvents[1],
+            'Pre event for fetchUsersForGroup was not fired for fetch users for group'
+        );
+    }
+
+    public function testItShouldNotCallFetchUsersPostForOrgWhenErrorHappens()
+    {
+        $exception = new NotFoundException();
+        $this->groupService->shouldReceive('fetchUsersForOrg')
+            ->andThrow($exception);
+
+        $this->delegator->fetchUsersForOrg($this->group, $this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.org.users',
+                'target' => $this->groupService,
+                'params' => ['organization' => $this->group]
+            ],
+            $this->calledEvents[0],
+            'Pre event for fetchUsersForGroup Is incorrect'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.org.users.error',
+                'target' => $this->groupService,
+                'params' => ['organization' => $this->group, 'exception' => $exception]
+            ],
+            $this->calledEvents[1],
+            'Pre event for fetchUsersForGroup Is incorrect'
         );
     }
 

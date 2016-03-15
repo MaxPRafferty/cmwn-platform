@@ -130,7 +130,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
      */
     public function fetchUsersForOrg($organization, $prototype = null)
     {
-        $eventParams = ['group' => $organization];
+        $eventParams = ['organization' => $organization];
         $event       = new Event('fetch.org.users', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
             return false;

@@ -57,6 +57,18 @@ class AddTeacherActionTest extends TestCase
         return $teacher;
     }
 
+    public function testItShouldReportCorrectAction()
+    {
+        $teacher = $this->getGoodTeacher();
+        $action = new AddTeacherAction($this->service, $teacher);
+
+        $this->assertEquals(
+            'Creating a user for The man Chuck Reeves chuck@manchuck.com',
+            $action->__toString(),
+            'Add Teacher action reported incorrect command'
+        );
+    }
+
     public function testItShouldSaveTeacherToDataBase()
     {
         $teacher = $this->getGoodTeacher();
