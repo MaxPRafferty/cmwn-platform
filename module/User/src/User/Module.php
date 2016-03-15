@@ -38,6 +38,10 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface
     {
         $appConfig = $event->getTarget()->getServiceManager()->get('Config');
         StaticNameService::seedNames($appConfig['user-names']);
-        
+        /** @var \User\Service\RandomNameListener $listener */
+        $listener = $event->getApplication()->getServiceManager()->get('User\Service\RandomNameListener');
+
+        $shared = $event->getApplication()->getEventManager()->getSharedManager();
+        $listener->attachShared($shared);
     }
 }

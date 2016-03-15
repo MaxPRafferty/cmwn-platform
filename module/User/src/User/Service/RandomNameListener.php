@@ -4,7 +4,7 @@ namespace User\Service;
 
 use User\Child;
 use User\Delegator\UserServiceDelegator;
-use User\UserInterface;
+use Zend\Db\Sql\Expression;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -68,20 +68,25 @@ class RandomNameListener
 
         $child->getUserName();
         $userName = $child->getGeneratedName();
-
-        $results = $this->gateway->select(['name' => [$userName->left, $userName->right]]);
+        $results  = $this->gateway->select(['name' => [$userName->left, $userName->right]]);
 
         if ($results->count() < 2) {
-            // runtime exception?
             return;
         }
 
-        $wordCounts = [
-            'left'  => 1,
-            'right' => 2,
+        $wordValues = [
+            'LEFT'  => 1,
+            'RIGHT' => 1,
         ];
+
         foreach ($results as $word) {
-            
+            $wordValues[$word['position']] = $word['count'];
         }
+
+        $userName->setValues($wordValues['LEFT'], $wordValues['RIGHT']);
+        $this->gateway->update(
+            ['count' => new Expression('count + 1')],
+            ['name' => [$userName->left, $userName->right]]
+        );
     }
 }

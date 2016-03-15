@@ -41,6 +41,14 @@ class UserName
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->userName;
+    }
+
+    /**
      * @param $name
      */
     public function __get($name)
@@ -60,7 +68,8 @@ class UserName
     {
         $leftValue     = abs($leftValue) < 1 ? 1 : $leftValue;
         $rightValue    = abs($rightValue) < 1 ? 1 : $rightValue;
-        $userNameCount = sprintf('%1$03d', ($leftValue + $rightValue));
+        $userNumber    = $leftValue + $rightValue;
+        $userNameCount = $userNumber < 1000 ? sprintf('%1$03d', ($leftValue + $rightValue)) : $userNumber;
 
         $this->userName = $this->left . static::SEPARATOR . $this->right . $userNameCount;
     }

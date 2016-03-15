@@ -132,7 +132,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     {
         return [
             'user_id'     => $this->getUserId(),
-            'username'    => $this->getUserName(),
+            'username'    => (string) $this->getUserName(),
             'email'       => $this->getEmail(),
             'first_name'  => $this->getFirstName(),
             'middle_name' => $this->getMiddleName(),
