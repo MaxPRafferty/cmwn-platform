@@ -116,7 +116,6 @@ class Module implements
             $serviceManager = $event->getApplication()->getServiceManager();
             $request        = $serviceManager->get('Request');
 
-//            $session->regenerateId(true);
             $container->init          = 1;
             $container->remoteAddr    = $request->getServer()->get('REMOTE_ADDR');
             $container->httpUserAgent = $request->getServer()->get('HTTP_USER_AGENT');

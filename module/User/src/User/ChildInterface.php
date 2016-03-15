@@ -15,5 +15,5 @@ interface ChildInterface extends UserInterface
     /**
      * @return null|\stdClass
      */
-    public function getGenratedName();
+    public function getGeneratedName();
 }
