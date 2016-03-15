@@ -35,6 +35,14 @@ class AddStudentAction implements ActionInterface
         $this->student     = $student;
     }
 
+    public function __toString()
+    {
+        return sprintf(
+            'Creating user for a student with id %s',
+            $this->student->getStudentId()
+        );
+    }
+
     /**
      * Process the action
      *

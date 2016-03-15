@@ -2,16 +2,18 @@
 
 namespace Import\Importer\Nyc;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Group\GroupAwareInterface;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\ImporterInterface;
+use Job\Feature\DryRunInterface;
+use Job\Feature\DryRunTrait;
 use Org\OrgAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
-use Zend\Log\Logger;
 use Zend\Log\LoggerInterface;
 use Zend\Log\LoggerAwareInterface;
 
@@ -20,9 +22,16 @@ use Zend\Log\LoggerAwareInterface;
  *
  * @package Import\Importer
  */
-class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, ImporterInterface, GroupAwareInterface
+class DoeImporter implements 
+    LoggerAwareInterface,
+    EventManagerAwareInterface,
+    ImporterInterface,
+    GroupAwareInterface,
+    DryRunInterface
 {
     use EventManagerAwareTrait;
+    use NoopLoggerAwareTrait;
+    use DryRunTrait;
 
     /**
      * @var string the file name to process
@@ -75,10 +84,11 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
     public function attachDefaultListeners()
     {
         $this->getEventManager()->attach('nyc.import.excel', function () {
-            $this->getLogger()->debug('Attaching school to parser');
+            $this->getLogger()->debug(sprintf('Attaching school "%s" to parser', $this->getSchool()));
             $this->parser->setSchool($this->getSchool());
         });
     }
+
 
     /**
      * Sets the group to this object
@@ -87,29 +97,7 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
      */
     public function setGroup($group)
     {
-        return $this->setSchool($group);
-    }
-
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        $this->parser->setLogger($logger);
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        if ($this->logger === null) {
-            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
-        }
-
-        return $this->logger;
+        $this->setSchool($group);
     }
 
     /**
@@ -190,13 +178,23 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
             while ($actions->valid()) {
                 $currentAction = $actions->current();
                 $actions->next();
+
                 if ($currentAction instanceof OrgAwareInterface) {
                     $currentAction->setOrgId($this->school->getOrganizationId());
                 }
 
+                $this->getLogger()->info('Action: ' . $currentAction);
+
+                if ($this->isDryRun()) {
+                    $this->getLogger()->debug('Not executing action (dry-run)');
+                    continue;
+                }
+
                 $currentAction->execute();
+                $this->getLogger()->debug('Action executed');
             }
 
+            $this->getLogger()->notice('Done Executing Actions');
             $event->setName('nyc.import.excel.complete');
             $this->getEventManager()->trigger($event);
         } catch (\Exception $processException) {

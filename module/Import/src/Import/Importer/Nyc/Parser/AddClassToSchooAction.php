@@ -40,6 +40,15 @@ class AddClassToSchooAction implements ActionInterface
         $this->classRoom    = $classRoom;
     }
 
+    public function __toString()
+    {
+        return sprintf(
+            'Adding class room "%s" to school "%s"',
+            $this->classRoom->getTitle(),
+            $this->school->getTitle()
+        );
+    }
+
     /**
      * Process the action
      *

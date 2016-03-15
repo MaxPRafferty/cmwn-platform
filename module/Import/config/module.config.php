@@ -61,7 +61,7 @@ return [
             'routes' => [
                 'import-file' => [
                     'options' => [
-                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school=',
+                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= [--verbose|-v] [--debug|-d] [--dry-run]',
                         'defaults' => [
                             'controller' => 'Import\Controller',
                             'action'     => 'Import'

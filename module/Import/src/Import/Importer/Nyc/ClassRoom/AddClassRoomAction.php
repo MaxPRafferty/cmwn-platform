@@ -40,6 +40,15 @@ class AddClassRoomAction implements ActionInterface, OrgAwareInterface
         $this->classRoom    = $classRoom;
     }
 
+    public function __toString()
+    {
+        return sprintf(
+            'Creating new class room [%s] "%s"',
+            $this->classRoom->getClassRoomId(),
+            $this->classRoom->getTitle()
+        );
+    }
+
     /**
      * @param $orgId
      */
