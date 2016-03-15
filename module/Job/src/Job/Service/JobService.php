@@ -7,6 +7,7 @@ use Job\JobInterface;
 
 /**
  * Class JobService
+ * @codeCoverageIgnore
  */
 class JobService implements JobServiceInterface
 {
