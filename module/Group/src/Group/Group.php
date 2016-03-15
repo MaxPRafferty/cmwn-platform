@@ -154,8 +154,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     public function setGroupId($groupId)
     {
-        $this->groupId = $groupId;
-
+        $this->groupId = (string) $groupId;
         return $this;
     }
 

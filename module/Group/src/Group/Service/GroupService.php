@@ -73,6 +73,7 @@ class GroupService implements GroupServiceInterface
         $where = new Where();
         $where->addPredicate(new Operator('lft', Operator::OP_GT, $parent->getLeft()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
+        $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
         $this->groupTableGateway->update(
             ['lft' => new Expression('lft + 2')],
             $where
