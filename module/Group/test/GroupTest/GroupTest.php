@@ -3,6 +3,7 @@
 namespace GroupTest;
 
 use Group\Group;
+use Org\Organization;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -59,5 +60,58 @@ class GroupTest extends TestCase
         $adult->exchangeArray($expected);
 
         $this->assertEquals($expected, $adult->getArrayCopy());
+    }
+
+    public function testItShouldReportRoot()
+    {
+        $group = new Group();
+        $this->assertEquals(
+            1,
+            $group->getLeft(),
+            'Left value for group must be set to 1'
+        );
+
+        $this->assertEquals(
+            2,
+            $group->getRight(),
+            'Right value for group must be set to 2'
+        );
+
+        $this->assertTrue(
+            $group->isRoot(),
+            'Group must be root when left value is 1'
+        );
+
+        $this->assertFalse(
+            $group->hasChildren(),
+            'Group must not have children when right value is 1 greater than left'
+        );
+
+
+        $group->setRight(4);
+        $this->assertTrue(
+            $group->hasChildren(),
+            'Group must report children when right is not 1 greater than left'
+        );
+
+        $group->setLeft(3);
+        $this->assertFalse(
+            $group->isRoot(),
+            'Group must not be root when left value not 1'
+        );
+    }
+
+    public function testItShouldSetOrgIdWhenOrganizationPassed()
+    {
+        $group = new Group();
+        $org   = new Organization();
+        $org->setOrgId('foo-bar');
+
+        $group->setOrganizationId($org);
+        $this->assertEquals(
+            'foo-bar',
+            $group->getOrganizationId(),
+            'Group did not set the org Id from an organization'
+        );
     }
 }

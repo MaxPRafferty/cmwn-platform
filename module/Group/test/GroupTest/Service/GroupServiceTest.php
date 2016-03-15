@@ -6,6 +6,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use Group\Service\GroupService;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Predicate as Where;
 
@@ -368,16 +369,15 @@ class GroupServiceTest extends TestCase
             ->with(['group_id' => $parent->getGroupId()])
             ->andReturn($result);
 
-
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, $actualWhere) {
 
                 $expectedWhere = new Where();
-                $expectedWhere->addPredicate(new Operator('rgt', 1, Operator::OP_GT));
-                $expectedWhere->addPredicate(new Operator('org_id', 'org'));
+                $expectedWhere->addPredicate(new Operator('rgt', '>', 1));
+                $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['rgt' => 'rgt + 2'], $actualSet);
+                $this->assertEquals(['rgt' => new Expression('rgt + 2')], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
@@ -388,11 +388,12 @@ class GroupServiceTest extends TestCase
             ->andReturnUsing(function ($actualSet, $actualWhere) {
 
                 $expectedWhere = new Where();
-                $expectedWhere->addPredicate(new Operator('lft', 1, Operator::OP_GT));
-                $expectedWhere->addPredicate(new Operator('org_id', 'org'));
+                $expectedWhere->addPredicate(new Operator('lft', '>', 1));
+                $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
+                $expectedWhere->addPredicate(new Operator('group_id', '!=', 'parent'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['lft' => 'lft + 2'], $actualSet);
+                $this->assertEquals(['lft' => new Expression('lft + 2')], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
@@ -402,7 +403,7 @@ class GroupServiceTest extends TestCase
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, $actualWhere) {
                 $expectedWhere = new Where();
-                $expectedWhere->addPredicate(new Operator('group_id', 'child'));
+                $expectedWhere->addPredicate(new Operator('group_id', '=', 'child'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
                 $this->assertEquals(['lft' => 2, 'rgt' => 3], $actualSet);
