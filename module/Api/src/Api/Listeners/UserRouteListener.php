@@ -8,7 +8,6 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
 
 /**
@@ -47,7 +46,7 @@ class UserRouteListener implements ListenerAggregateInterface
         $userId = $route->getParam('user_id', false);
 
         if ($userId === false) {
-            return;
+            return null;
         }
 
         try {
@@ -57,5 +56,6 @@ class UserRouteListener implements ListenerAggregateInterface
         }
 
         $route->setParam('user', $user);
+        return null;
     }
 }
