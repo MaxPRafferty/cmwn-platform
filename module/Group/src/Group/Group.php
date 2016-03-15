@@ -79,6 +79,11 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
         }
     }
 
+    public function __toString()
+    {
+        return (string) $this->getTitle();
+    }
+
     /**
      * Exchange internal values from provided array
      *
@@ -328,7 +333,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             return false;
         }
 
-        return $this->left === ($this->right - 1);
+        return $this->left !== ($this->right - 1);
     }
 
     /**

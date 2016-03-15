@@ -162,7 +162,6 @@ class DoeImporter implements
             }
 
             $this->getLogger()->info('Pre-processing');
-            $this->parser->setFileName($this->fileName);
             $this->parser->preProcess();
             if ($this->parser->hasErrors()) {
                 throw new \Exception('Parser has errors');
