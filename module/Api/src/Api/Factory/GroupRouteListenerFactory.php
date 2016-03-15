@@ -1,14 +1,17 @@
 <?php
 
-namespace Job\Service;
+namespace Api\Factory;
 
+use Api\Listeners\GroupRouteListener;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ResqueJobFactory
+ * Class GroupRouteListenerFactory
+ *
+ * ${CARET}
  */
-class ResqueWorkerFactory implements FactoryInterface
+class GroupRouteListenerFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -18,8 +21,6 @@ class ResqueWorkerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $queue  = getenv('QUEUE');
-        $queues = explode(',', $queue);
-        return new ResqueWorker($queues, $serviceLocator);
+        return new GroupRouteListener($serviceLocator->get('Group\Service\GroupService'));
     }
 }

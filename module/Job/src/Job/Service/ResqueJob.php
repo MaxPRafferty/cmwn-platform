@@ -3,6 +3,7 @@
 namespace Job\Service;
 
 use Job\JobInterface;
+use Job\Processor\JobRunner;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerInterface;
@@ -93,9 +94,11 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
     }
 
     /**
-     * This loads the job from the service manager and sets the arguements back
+     * Creates a JobRunner
      *
-     * @return object
+     * The job is loaded from the SM and passed the data so it can be sanitized by the job
+     *
+     * @return JobRunner
      */
     public function getInstance()
     {
@@ -110,6 +113,8 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
             throw new \Resque_Job_DirtyExitException(sprintf('No Service found for "%s"', $serviceName));
         }
 
+        // We create the job so we can pass the params though to the job
+        // this way it can sanitize the data before execution
         $job = $this->services->get($serviceName);
 
         if (!$job instanceof JobInterface) {
@@ -117,6 +122,19 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
         }
 
         $job->exchangeArray($this->getArguments());
+
+        /** @var JobRunner $runner */
+        $runner = $this->services->get('Job\Processor\JobRunner');
+        $runner->setLogger($this->getLogger());
+        try {
+            $runner->setJob($serviceName, $job->getArrayCopy());
+        } catch (\RuntimeException $jobException) {
+            $msg = sprintf('Error creating job %s: %s', $serviceName, $jobException->getMessage());
+            $this->getLogger()->emerg($msg);
+            throw new \Resque_Job_DirtyExitException($msg);
+        }
+
+        $this->jobInstance = $runner;
         return $this->jobInstance;
     }
 }

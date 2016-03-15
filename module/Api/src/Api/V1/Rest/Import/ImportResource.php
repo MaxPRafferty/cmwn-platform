@@ -1,6 +1,7 @@
 <?php
 namespace Api\V1\Rest\Import;
 
+use Group\GroupAwareInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -44,6 +45,10 @@ class ImportResource extends AbstractResourceListener
         }
 
         $job->exchangeArray($this->getInputFilter()->getValues());
+        if ($job instanceof GroupAwareInterface) {
+            $job->setGroup($this->getEvent()->getRouteParam('group'));
+        }
+
         $token = $this->jobService->sendJob($job);
         return new ImportEntity($token);
     }

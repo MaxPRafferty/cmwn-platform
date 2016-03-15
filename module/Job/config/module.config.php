@@ -5,9 +5,12 @@ return [
         'aliases' => [
             'Job\Service' => 'Job\Service\JobService'
         ],
+        'factories' => [
+            'Job\Processor\JobRunner' => 'Job\Processor\JobRunnerFactory',
+        ],
         'invokables' => [
-            'Job\Service\JobService' => 'Job\Service\JobService'
-        ]
+            'Job\Service\JobService' => 'Job\Service\JobService',
+        ],
     ],
 
     'controllers' => [
@@ -21,10 +24,10 @@ return [
             'routes' => [
                 'run-worker' => [
                     'options' => [
-                        'route'    => 'worker <queue>',
+                        'route'    => 'worker --queue=',
                         'defaults' => [
                             'controller' => 'Job\Controller',
-                            'action'     => 'work'
+                            'action'     => 'work',
                         ],
                     ],
                 ],

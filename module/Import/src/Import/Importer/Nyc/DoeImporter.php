@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc;
 
+use Group\GroupAwareInterface;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Import\Importer\Nyc\Parser\DoeParser;
@@ -19,7 +20,7 @@ use Zend\Log\LoggerAwareInterface;
  *
  * @package Import\Importer
  */
-class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, ImporterInterface
+class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, ImporterInterface, GroupAwareInterface
 {
     use EventManagerAwareTrait;
 
@@ -80,6 +81,17 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
     }
 
     /**
+     * Sets the group to this object
+     *
+     * @param GroupInterface|string $group
+     */
+    public function setGroup($group)
+    {
+        return $this->setSchool($group);
+    }
+
+
+    /**
      * @param LoggerInterface $logger
      */
     public function setLogger(LoggerInterface $logger)
@@ -138,7 +150,7 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
     {
         // pass through from file upload
         if (is_array($fileName)) {
-            $fileName = isset($data['file']['tmp_name']) ? $data['file']['tmp_name'] : null;
+            $fileName = isset($fileName['tmp_name']) ? $fileName['tmp_name'] : null;
         }
 
         $this->fileName = $fileName;
@@ -204,10 +216,11 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
     public function getArrayCopy()
     {
         return [
+            'type'         => get_class($this),
             'file'         => $this->getFileName(),
             'teacher_code' => $this->teacherCode,
             'student_code' => $this->studentCode,
-            'group'        => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null
+            'school'       => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null
         ];
     }
 
@@ -223,6 +236,6 @@ class DoeImporter implements LoggerAwareInterface, EventManagerAwareInterface, I
         $this->setFileName($fileName);
         $this->teacherCode = isset($data['teacher_code']) ? $data['teacher_code'] : null;
         $this->studentCode = isset($data['student_code']) ? $data['student_code'] : null;
-        $this->setSchool(isset($data['group']) ? $data['group'] : null);
+        $this->setSchool(isset($data['school']) ? $data['school'] : null);
     }
 }
