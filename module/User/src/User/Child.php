@@ -26,7 +26,7 @@ class Child extends User implements ChildInterface
     /**
      * Generates a random user name for the child
      *
-     * @return string
+     * @return UserName
      */
     public function getUserName()
     {
