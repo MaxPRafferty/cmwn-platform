@@ -217,7 +217,7 @@ class DoeParser extends AbstractParser
 
         foreach ($this->studentRegistry as $student) {
             $this->getLogger()->debug('Adding student to class');
-            $this->addAction(new AddStudentToGroup($student, $this->userGroupService));
+            $this->addAction(new AddStudentToGroupAction($student, $this->userGroupService));
         }
 
         foreach ($this->classRegistry as $classRoom) {

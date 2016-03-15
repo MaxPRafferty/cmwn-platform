@@ -53,6 +53,18 @@ class AddStudentActionTest extends TestCase
 
         return $student;
     }
+    
+    public function testItShouldReportCorrectName()
+    {
+        $student = $this->getGoodStudent();
+        $action = new AddStudentAction($this->service, $student);
+
+        $this->assertEquals(
+            'Creating user for a student with id foo-bar',
+            $action->__toString(),
+            'AddStudentAction has the wrong toString'
+        );
+    }
 
     public function testItShouldSaveStudentToDataBase()
     {

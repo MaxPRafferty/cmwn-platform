@@ -27,6 +27,24 @@ class ClassRoomActionTest extends TestCase
         $this->groupService = \Mockery::mock('\Group\Service\GroupService');
     }
 
+    public function testItShouldReportCorrectName()
+    {
+        $classRoom = new ClassRoom('History of the world', 'hist101', ['hist001']);
+
+        $this->assertTrue(
+            $classRoom->isNew(),
+            'Update this test to account for new login in class room'
+        );
+
+        $action = new AddClassRoomAction($this->groupService, $classRoom);
+
+        $this->assertEquals(
+            'Creating new class room [hist101] "History of the world"',
+            $action->__toString(),
+            'AddClassRoomAction has incorrect to string'
+        );
+    }
+
     public function testItShouldSaveClassRoomAndSetGroup()
     {
         $classRoom = new ClassRoom('History of the world', 'hist101', ['hist001']);

@@ -10,7 +10,6 @@ use Zend\Log\Filter\Priority;
 use Zend\Log\Formatter\Simple;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
 use Zend\Mvc\MvcEvent;
@@ -18,6 +17,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ImportController
+ * @codeCoverageIgnore
  */
 class ImportController extends ConsoleController implements LoggerAwareInterface
 {

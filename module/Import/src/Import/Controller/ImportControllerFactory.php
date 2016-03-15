@@ -8,8 +8,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ImportControllerFactory
- *
- * ${CARET}
+ * @codeCoverageIgnore
  */
 class ImportControllerFactory implements FactoryInterface
 {
@@ -27,5 +26,4 @@ class ImportControllerFactory implements FactoryInterface
         
         return new ImportController($serviceLocator);
     }
-
 }
