@@ -5,6 +5,9 @@ namespace IntegrationTest;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * Class ServiceManagerTest
+ */
 class ServiceManagerTest extends TestCase
 {
     /**
@@ -20,7 +23,8 @@ class ServiceManagerTest extends TestCase
         'ZF\OAuth2\Adapter\PdoAdapter',
         'ZF\OAuth2\Adapter\IbmDb2Adapter',
         'ZF\OAuth2\Adapter\MongoAdapter',
-        'Zend\Session\SessionManager',  // TODO Destroy James Spader
+        'Zend\Session\SessionManager',
+        'Log\App'
     ];
 
     /**

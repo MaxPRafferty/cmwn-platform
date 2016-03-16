@@ -227,7 +227,6 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     public function setEmail($email)
     {
         $this->email = $email;
-
         return $this;
     }
 

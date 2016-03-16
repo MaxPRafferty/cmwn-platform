@@ -234,11 +234,15 @@ class DoeParser extends AbstractParser
     protected function addCodeActions()
     {
         foreach ($this->teacherRegistry as $teacher) {
-            $this->addAction(new AddCodeToUserAction($teacher, $this->securityService, $this->teacherCode));
+            if ($teacher->isNew()) {
+                $this->addAction(new AddCodeToUserAction($teacher, $this->securityService, $this->teacherCode));
+            }
         }
 
         foreach ($this->studentRegistry as $student) {
-            $this->addAction(new AddCodeToUserAction($student, $this->securityService, $this->studentCode));
+            if ($student->isNew()) {
+                $this->addAction(new AddCodeToUserAction($student, $this->securityService, $this->studentCode));
+            }
         }
     }
 

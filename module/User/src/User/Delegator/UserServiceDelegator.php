@@ -22,6 +22,10 @@ use Zend\Paginator\Adapter\DbSelect;
 class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
+    /**
+     * @var array Adds the Importer interface the shared manager
+     */
+    protected $eventIdentifier = ['User\Service\UserServiceInterface'];
 
     /**
      * @var UserService

@@ -13,6 +13,8 @@ return array(
     'Group',
     'Job',
     'Import',
+    'Notice',
+    'AcMailer',
     'ZF\\DevelopmentMode',
     'ZF\\Apigility',
     'ZF\\Apigility\\Provider',
