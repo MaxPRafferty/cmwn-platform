@@ -11,6 +11,7 @@ return [
                     'teacher_code',
                     'student_code',
                     'school',
+                    'email',
                 ],
             ],
         ],
@@ -61,7 +62,7 @@ return [
             'routes' => [
                 'import-file' => [
                     'options' => [
-                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= [--verbose|-v] [--debug|-d] [--dry-run]',
+                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= --email= [--verbose|-v] [--debug|-d] [--dry-run]',
                         'defaults' => [
                             'controller' => 'Import\Controller',
                             'action'     => 'Import'

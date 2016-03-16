@@ -12,14 +12,17 @@ use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser as StudentParser;
 use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser as TeacherParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
+use Notice\NotificationAwareInterface;
+use Notice\NotificationAwareTrait;
 use Security\Service\SecurityServiceInterface;
-use Zend\Log\Logger;
 
 /**
  * Class DoePreProcessor
  */
-class DoeParser extends AbstractParser
+class DoeParser extends AbstractParser implements NotificationAwareInterface
 {
+    use NotificationAwareTrait;
+
     /**
      * @var UserGroupServiceInterface
      */
@@ -111,6 +114,7 @@ class DoeParser extends AbstractParser
         $this->securityService  = $securityService;
     }
 
+    
     /**
      * Sets the school this parser is for
      *
