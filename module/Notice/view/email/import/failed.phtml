@@ -1,0 +1,18 @@
+<h1>Import Failed!</h1>
+
+<h4>These are the errors reported: </h4>
+
+<ul>
+<?php foreach ($errors as $errorMsg): ?>
+    <li><?= $errorMsg ?></li>
+<?php endforeach; ?>
+</ul>
+
+<?php if (count($warnings) > 0): ?>
+<h4>The following warnings were also produced: </h4>
+    <ul>
+        <?php foreach ($warnings as $warnMsg): ?>
+            <li><?= $warnMsg ?></li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>

@@ -31,7 +31,7 @@ class ChildTest extends TestCase
         $expected = [
             'user_id'     => null,
             'username'    => $name->userName,
-            'email'       => null,
+            'email'       => $name->userName . '@changemyworldnow.com',
             'first_name'  => null,
             'middle_name' => null,
             'last_name'   => null,

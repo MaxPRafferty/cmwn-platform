@@ -70,4 +70,17 @@ class Child extends User implements ChildInterface
     {
         return $this->generatedName;
     }
+
+    /**
+     * Will default the email to be username@changemyworldnow.com if empty
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (empty($this->email)) {
+            $this->setEmail($this->getUserName() . '@changemyworldnow.com');
+        }
+
+        return $this->email;
+    }
 }

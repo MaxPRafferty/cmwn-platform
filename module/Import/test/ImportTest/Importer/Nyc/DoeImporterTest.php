@@ -61,6 +61,10 @@ class DoeImporterTest extends TestCase
         $this->parser->shouldReceive('setStudentCode')->byDefault();
         $this->parser->shouldReceive('setTeacherCode')->byDefault();
         $this->parser->shouldReceive('setFileName')->byDefault();
+        $this->parser->shouldReceive('hasWarnings')->andReturn(false)->byDefault();
+        $this->parser->shouldReceive('hasErrors')->andReturn(false)->byDefault();
+        $this->parser->shouldReceive('getWarnings')->andReturn([])->byDefault();
+        $this->parser->shouldReceive('getErrors')->andReturn([])->byDefault();
     }
 
     /**
@@ -210,8 +214,8 @@ class DoeImporterTest extends TestCase
         $this->parser->shouldReceive('setFileName')->with($fileName)->once();
         $this->parser->shouldReceive('preProcess')->once();
         $this->parser->shouldReceive('getActions')->never();
-        $this->parser->shouldReceive('hasErrors')->once()->andReturn(true);
-        $this->parser->shouldReceive('getErrors')->once()->andReturn(['I am Error']);
+        $this->parser->shouldReceive('hasErrors')->atLeast(1)->andReturn(true);
+        $this->parser->shouldReceive('getErrors')->atLeast(1)->andReturn(['I am Error']);
 
         $this->importer->setFileName($fileName);
         $this->importer->setGroup($this->school);
