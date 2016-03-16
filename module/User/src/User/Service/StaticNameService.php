@@ -26,6 +26,7 @@ class StaticNameService
      * Seeds the list of names
      *
      * @param array $nameList
+     * @codeCoverageIgnore
      */
     public static function seedNames(array $nameList)
     {
@@ -37,8 +38,6 @@ class StaticNameService
             throw new \InvalidArgumentException('left or right values must be an array');
         }
 
-        // The application will be calling this when bootstrapped
-        // @codeCoverageIgnoreStart
         foreach ($nameList['left'] as $name) {
             array_push(static::$left, $name);
         }
@@ -49,7 +48,6 @@ class StaticNameService
 
         array_unique(static::$right);
         array_unique(static::$left);
-        // @codeCoverageIgnoreEnd
     }
 
     /**

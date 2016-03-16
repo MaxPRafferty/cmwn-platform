@@ -55,6 +55,7 @@ class AddStudentAction implements ActionInterface
         $user->setLastName($this->student->getLastName());
         $user->setGender($this->student->getGender());
         $user->setEmail($this->student->getEmail());
+        $user->setBirthdate($this->student->getBirthday());
         $user->setExternalId($this->student->getStudentId());
         $user->setMeta($this->student->getExtra());
 

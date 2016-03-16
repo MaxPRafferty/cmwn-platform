@@ -83,6 +83,7 @@ class SecurityService implements SecurityServiceInterface
      *
      * @param $user
      * @param bool $super
+     * @return bool
      */
     public function setSuper($user, $super = true)
     {
@@ -93,6 +94,27 @@ class SecurityService implements SecurityServiceInterface
             ['super'   => $bit],
             ['user_id' => $userId]
         );
+
+        return true;
+    }
+
+    /**
+     * Saves the temp code to a user
+     *
+     * @param $code
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function saveCodeToUser($code, $user)
+    {
+        $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $expires = new \DateTime('+3 days');
+        $this->gateway->update(
+            ['code'    => $code, 'code_expires' => $expires->getTimestamp()],
+            ['user_id' => $userId]
+        );
+
+        return true;
     }
 
     /**
