@@ -3,10 +3,13 @@
 namespace UserTest\Service;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use User\Adult;
 use User\Child;
 use User\Delegator\UserServiceDelegator;
 use User\Service\RandomNameListener;
+use User\UserInterface;
 use Zend\Db\Sql\Expression;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
 
@@ -21,19 +24,9 @@ class RandomNameListenerTest extends TestCase
     protected $tableGateway;
 
     /**
-     * @var SharedEventManager
-     */
-    protected $sharedEvents;
-
-    /**
      * @var RandomNameListener
      */
     protected $listener;
-
-    /**
-     * @var EventManager
-     */
-    protected $events;
 
     /**
      * @before
@@ -58,32 +51,26 @@ class RandomNameListenerTest extends TestCase
     }
 
     /**
-     * @before
+     * @param UserInterface $user
+     * @return Event
      */
-    public function setUpSharedEvents()
+    public function getEvent(UserInterface $user)
     {
-        $this->sharedEvents = new SharedEventManager();
-        $this->sharedEvents->clearListeners(UserServiceDelegator::class);
-        $this->listener->attachShared($this->sharedEvents);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpEventManager()
-    {
-        $this->events = new EventManager();
-        $this->events->addIdentifiers(UserServiceDelegator::class);
+        return new Event(
+            'save.new.user',
+            new \stdClass(),
+            ['user' => $user]
+        );
     }
 
     public function testItShouldReserveRandomNameLessThanAThousand()
     {
-        $this->markTestSkipped('Cant clear shared listeners at this time');
         $user     = new Child();
+        $user->getUserName();
         $userName = $user->getGeneratedName();
         $beforeRunName = $userName->userName;
 
-        $return = [
+        $return = new \ArrayObject([
             [
                 'name'     => $userName->left,
                 'position' => 'LEFT',
@@ -94,7 +81,7 @@ class RandomNameListenerTest extends TestCase
                 'position' => 'RIGHT',
                 'count'    => 5,
             ]
-        ];
+        ]);
 
         $this->tableGateway->shouldReceive('select')
             ->once()
@@ -108,12 +95,100 @@ class RandomNameListenerTest extends TestCase
                 ['name' => [$userName->left, $userName->right]]
             );
 
-        $this->events->trigger('save.new.user', new \stdClass(), ['user' => $user]);
+        $event = $this->getEvent($user);
+        $this->assertEmpty($this->listener->reserveRandomName($event));
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
 
         $this->assertNotEquals(
             $beforeRunName,
             $userName->userName,
             'User name has not changed'
+        );
+
+        $this->assertRegExp('/[a-z]+_[a-z]+\d{3}/', $userName->userName, 'Number was not appended to user name');
+    }
+
+    public function testItShouldReserveRandomNameMoreThanAThousand()
+    {
+        $user     = new Child();
+        $user->getUserName();
+        $userName = $user->getGeneratedName();
+        $beforeRunName = $userName->userName;
+
+        $return = new \ArrayObject([
+            [
+                'name'     => $userName->left,
+                'position' => 'LEFT',
+                'count'    => 500,
+            ],
+            [
+                'name'     => $userName->right,
+                'position' => 'RIGHT',
+                'count'    => 500,
+            ]
+        ]);
+
+        $this->tableGateway->shouldReceive('select')
+            ->once()
+            ->with(['name' => [$userName->left, $userName->right]])
+            ->andReturn($return);
+
+        $this->tableGateway->shouldReceive('update')
+            ->once()
+            ->with(
+                ['count' => new Expression('count + 1')],
+                ['name' => [$userName->left, $userName->right]]
+            );
+
+        $event = $this->getEvent($user);
+        $this->assertEmpty($this->listener->reserveRandomName($event));
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+
+        $this->assertNotEquals(
+            $beforeRunName,
+            $userName->userName,
+            'User name has not changed'
+        );
+
+        $this->assertRegExp('/[a-z]+_[a-z]+\d{4}/', $userName->userName, 'Number was not appended to user name');
+    }
+
+    public function testItShouldDoNothingWhenPassedAdult()
+    {
+        $this->tableGateway->shouldNotReceive('select');
+        $this->tableGateway->shouldNotReceive('update');
+
+        $user = new Adult();
+
+        $event = $this->getEvent($user);
+        $this->assertEmpty($this->listener->reserveRandomName($event));
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+    }
+    
+    public function testItShouldDoNothingWhenNoNamesReturned()
+    {
+        $user     = new Child();
+        $user->getUserName();
+        $userName = $user->getGeneratedName();
+        $beforeRunName = $userName->userName;
+
+        $return = new \ArrayObject();
+
+        $this->tableGateway->shouldReceive('select')
+            ->once()
+            ->with(['name' => [$userName->left, $userName->right]])
+            ->andReturn($return);
+
+        $this->tableGateway->shouldNotReceive('update');
+
+        $event = $this->getEvent($user);
+        $this->assertEmpty($this->listener->reserveRandomName($event));
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+
+        $this->assertEquals(
+            $beforeRunName,
+            $userName->userName,
+            'Username must not be adjusted when no names returned from db'
         );
     }
 }

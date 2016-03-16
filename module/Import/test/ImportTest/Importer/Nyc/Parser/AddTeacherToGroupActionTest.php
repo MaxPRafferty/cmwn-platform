@@ -84,7 +84,7 @@ class AddTeacherToGroupActionTest extends TestCase
         $teacher->setEmail('chuck@manchuck.com');
         $teacher->setRole('The man');
         $teacher->setClassRoom($this->classRoom);
-
+        $teacher->setUser($this->teacherUser);
         return $teacher;
     }
 
@@ -106,8 +106,10 @@ class AddTeacherToGroupActionTest extends TestCase
         $action = new AddTeacherToGroupAction($teacher, $this->userGroupService);
 
         $this->assertEquals(10, $action->priority(), 'AddTeacherToGroupAction has incorrect priority');
-        $this->userGroupService->shouldReceive()
+        $this->userGroupService->shouldReceive('attachUserToGroup')
             ->with($this->classRoomGroup, $this->teacherUser, 'The man')
             ->once();
+
+        $action->execute();
     }
 }

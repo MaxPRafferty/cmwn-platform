@@ -36,6 +36,7 @@ class RandomNameListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
      */
     public function attachShared(SharedEventManagerInterface $manager)
     {
@@ -48,6 +49,7 @@ class RandomNameListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {

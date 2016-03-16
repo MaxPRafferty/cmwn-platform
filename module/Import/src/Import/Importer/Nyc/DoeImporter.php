@@ -11,6 +11,7 @@ use Import\ImporterInterface;
 use Job\Feature\DryRunInterface;
 use Job\Feature\DryRunTrait;
 use Org\OrgAwareInterface;
+use Security\Service\SecurityServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -70,7 +71,9 @@ class DoeImporter implements
 
     /**
      * DoeImporter constructor.
+     *
      * @param DoeParser $parser
+     * @param GroupServiceInterface $groupService
      */
     public function __construct(DoeParser $parser, GroupServiceInterface $groupService)
     {
@@ -154,6 +157,8 @@ class DoeImporter implements
         $this->getLogger()->notice('Importing file: ' . $this->getFileName());
 
         $event = new Event('nyc.import.excel', $this->parser);
+        $this->parser->setStudentCode($this->studentCode);
+        $this->parser->setTeacherCode($this->teacherCode);
 
         try {
             if ($this->getEventManager()->trigger($event)->stopped()) {
@@ -204,7 +209,7 @@ class DoeImporter implements
             return;
         }
     }
-
+    
     /**
      * Gets the data that will be passed for the job
      *

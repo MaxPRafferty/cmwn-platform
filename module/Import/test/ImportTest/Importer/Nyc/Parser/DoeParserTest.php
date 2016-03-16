@@ -41,6 +41,11 @@ class DoeParserTest extends TestCase
     protected $groupService;
 
     /**
+     * @var \Mockery\MockInterface|\Security\Service\SecurityServiceInterface
+     */
+    protected $securityService;
+
+    /**
      * @var Group
      */
     protected $school;
@@ -74,6 +79,14 @@ class DoeParserTest extends TestCase
         $this->classRegistry = new ClassRoomRegistry($groupService);
     }
 
+    /**
+     * @before
+     */
+    public function setUpSecurityService()
+    {
+        /** @var  $this->securityService */
+        $this->securityService = \Mockery::mock('\Security\Service\SecurityServiceInterface');
+    }
 
     /**
      * @before
@@ -124,10 +137,13 @@ class DoeParserTest extends TestCase
             $this->teacherRegistry,
             $this->studentRegistry,
             $this->userGroupService,
-            $this->groupService
+            $this->groupService,
+            $this->securityService
         );
 
         $parser->setSchool($this->school);
+        $parser->setStudentCode('foo_bar');
+        $parser->setTeacherCode('baz_bat');
         return $parser;
     }
 
@@ -188,7 +204,7 @@ class DoeParserTest extends TestCase
             'Doe Parser is reporting warnings'
         );
 
-        $this->assertEquals(8, count($parser->getActions()), 'Parser did not merge actions');
+        $this->assertEquals(11, count($parser->getActions()), 'Parser did not merge actions');
 
     }
 
@@ -214,7 +230,7 @@ class DoeParserTest extends TestCase
             'Doe Parser did not report warning for extra sheet'
         );
 
-        $this->assertEquals(8, count($parser->getActions()), 'Parser did not merge actions');
+        $this->assertEquals(11, count($parser->getActions()), 'Parser did not merge actions');
     }
 
     public function testItShouldThrowExceptionWhenFileNameNotSet()

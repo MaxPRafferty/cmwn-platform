@@ -58,6 +58,8 @@ class DoeImporterTest extends TestCase
         $this->parser = \Mockery::mock('\Import\Importer\Nyc\Parser\DoeParser');
         $this->parser->shouldReceive('setLogger')->byDefault();
         $this->parser->shouldReceive('setSchool')->with($this->school)->byDefault();
+        $this->parser->shouldReceive('setStudentCode')->byDefault();
+        $this->parser->shouldReceive('setTeacherCode')->byDefault();
         $this->parser->shouldReceive('setFileName')->byDefault();
     }
 

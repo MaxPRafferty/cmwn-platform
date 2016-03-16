@@ -83,6 +83,14 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getUserName();
+    }
+
+    /**
      * Returns the type of user
      *
      * @return string

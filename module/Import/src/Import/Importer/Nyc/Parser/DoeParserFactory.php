@@ -7,6 +7,7 @@ use Group\Service\UserGroupServiceInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
+use Security\Service\SecurityService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -28,9 +29,6 @@ class DoeParserFactory implements FactoryInterface
         /** @var UserGroupServiceInterface $userGroupService */
         $userGroupService = $serviceLocator->get('Group\Service\UserGroupService');
 
-//        /** @var GroupServiceInterface $groupService */
-//        $groupService     = $serviceLocator->get('Group\Service\GroupService');
-//
         /** @var ClassRoomRegistry $classRegistry */
         $classRegistry    = $serviceLocator->get('Nyc\ClassRegistry');
 
@@ -40,12 +38,16 @@ class DoeParserFactory implements FactoryInterface
         /** @var StudentRegistry $studentRegistry */
         $studentRegistry  = $serviceLocator->get('Nyc\StudentRegistry');
 
+        /** @var SecurityService $securityService */
+        $securityService  = $serviceLocator->get('Security\Service\SecurityService');
+
         return new DoeParser(
             $classRegistry,
             $teacherRegistry,
             $studentRegistry,
             $userGroupService,
-            $classRegistry->getGroupService()
+            $classRegistry->getGroupService(),
+            $securityService
         );
     }
 
