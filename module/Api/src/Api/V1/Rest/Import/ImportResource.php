@@ -4,8 +4,10 @@ namespace Api\V1\Rest\Import;
 use Group\GroupAwareInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
+use Notice\NotificationAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
+use ZF\MvcAuth\Identity\AuthenticatedIdentity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -45,6 +47,12 @@ class ImportResource extends AbstractResourceListener
         }
 
         $job->exchangeArray($this->getInputFilter()->getValues());
+
+        $user = $this->getIdentity();
+        if ($job instanceof NotificationAwareInterface && $user instanceof AuthenticatedIdentity) {
+            $job->setEmail($user->getAuthenticationIdentity()->getEmail());
+        }
+
         if ($job instanceof GroupAwareInterface) {
             $job->setGroup($this->getEvent()->getRouteParam('group'));
         }

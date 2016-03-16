@@ -2,17 +2,17 @@
 
 <h4>These are the errors reported: </h4>
 
-<ul>
+<ol>
 <?php foreach ($errors as $errorMsg): ?>
     <li><?= $errorMsg ?></li>
 <?php endforeach; ?>
-</ul>
+</ol>
 
 <?php if (count($warnings) > 0): ?>
 <h4>The following warnings were also produced: </h4>
-    <ul>
+    <ol>
         <?php foreach ($warnings as $warnMsg): ?>
             <li><?= $warnMsg ?></li>
         <?php endforeach; ?>
-    </ul>
+    </ol>
 <?php endif; ?>

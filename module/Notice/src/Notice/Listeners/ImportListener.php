@@ -8,6 +8,7 @@ use Import\ParserInterface;
 use Notice\EmailModel\ImportFailedModel;
 use Notice\EmailModel\ImportSuccessModel;
 use Notice\NoticeInterface;
+use Notice\NotificationAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
@@ -80,8 +81,11 @@ class ImportListener implements NoticeInterface
      */
     protected function notifyError(ParserInterface $parser)
     {
-        // TODO get from identity
-        $this->getMailService()->getMessage()->setTo('chuck@manchuck.com');
+        if (!$parser instanceof NotificationAwareInterface) {
+            return;
+        }
+
+        $this->getMailService()->getMessage()->setTo($parser->getEmail());
         $this->getMailService()->getMessage()->setSubject('User import error');
         $this->getMailService()->setTemplate(
             new ImportFailedModel(['errors' => $parser->getErrors(), 'warnings' => $parser->getWarnings()])
@@ -99,8 +103,11 @@ class ImportListener implements NoticeInterface
      */
     protected function notifySuccess(ParserInterface $parser)
     {
-        // TODO get from identity
-        $this->getMailService()->getMessage()->setTo('chuck@manchuck.com');
+        if (!$parser instanceof NotificationAwareInterface) {
+            return;
+        }
+
+        $this->getMailService()->getMessage()->setTo($parser->getEmail());
         $this->getMailService()->getMessage()->setSubject('User import Success');
 
         $this->getMailService()->setTemplate(

@@ -115,6 +115,7 @@ class DoeImporterTest extends TestCase
                 'teacher_code' => null,
                 'student_code' => null,
                 'school'       => null,
+                'email'        => null,
             ],
             $this->importer->getArrayCopy()
         );
@@ -125,6 +126,7 @@ class DoeImporterTest extends TestCase
             'teacher_code' => 'tcode',
             'student_code' => 'scode',
             'school'       => 'school',
+            'email'        => 'chuck@manchuck.com',
         ]);
 
         $this->assertEquals(
@@ -134,6 +136,7 @@ class DoeImporterTest extends TestCase
                 'teacher_code' => 'tcode',
                 'student_code' => 'scode',
                 'school'       => $this->school->getGroupId(),
+                'email'        => 'chuck@manchuck.com',
             ],
             $this->importer->getArrayCopy()
         );

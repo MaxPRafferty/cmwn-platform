@@ -2,9 +2,9 @@
 
 <?php if (count($warnings) > 0): ?>
     <h4>The following warnings were found but there is no need to worry: </h4>
-    <ul>
+    <ol>
         <?php foreach ($warnings as $warnMsg): ?>
             <li><?= $warnMsg ?></li>
         <?php endforeach; ?>
-    </ul>
+    </ol>
 <?php endif; ?>
