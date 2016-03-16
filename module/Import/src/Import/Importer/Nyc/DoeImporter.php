@@ -11,7 +11,6 @@ use Import\ImporterInterface;
 use Job\Feature\DryRunInterface;
 use Job\Feature\DryRunTrait;
 use Org\OrgAwareInterface;
-use Security\Service\SecurityServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -34,6 +33,11 @@ class DoeImporter implements
     use NoopLoggerAwareTrait;
     use DryRunTrait;
 
+    /**
+     * @var array Adds the Importer interface the shared manager
+     */
+    protected $eventIdentifier = ['Import\ImporterInterface'];
+    
     /**
      * @var string the file name to process
      */

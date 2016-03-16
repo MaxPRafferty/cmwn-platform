@@ -21,7 +21,7 @@ return [
     ],
     'service_manager' => [
         'initializers' => [
-            'Application\Service\LoggerAwareInitializer'
+            'Application\Service\LoggerAwareInitializer' => 'Application\Service\LoggerAwareInitializer',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
