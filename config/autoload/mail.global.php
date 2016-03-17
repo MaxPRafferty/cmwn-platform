@@ -278,7 +278,7 @@ return [
                  *
                  * Default value is 'data/mail/output'
                  */
-                'path' => __DIR__ . '/../../data/mail',
+                //'path' => __DIR__ . '/../../data/mail',
 
                 /**
                  * A callable that will get the Zend\Mail\Transport\File object as an argument and should return the
