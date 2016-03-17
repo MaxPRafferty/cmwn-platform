@@ -10,6 +10,7 @@ use Import\Importer\Nyc\Parser\DoeParser;
 use Import\ImporterInterface;
 use Job\Feature\DryRunInterface;
 use Job\Feature\DryRunTrait;
+use Notice\NotificationAwareInterface;
 use Notice\NotificationAwareTrait;
 use Org\OrgAwareInterface;
 use Zend\EventManager\Event;
@@ -23,12 +24,13 @@ use Zend\Log\LoggerAwareInterface;
  *
  * @package Import\Importer
  */
-class DoeImporter implements 
+class DoeImporter implements
     LoggerAwareInterface,
     EventManagerAwareInterface,
     ImporterInterface,
     GroupAwareInterface,
-    DryRunInterface
+    DryRunInterface,
+    NotificationAwareInterface
 {
     use EventManagerAwareTrait;
     use NoopLoggerAwareTrait;
