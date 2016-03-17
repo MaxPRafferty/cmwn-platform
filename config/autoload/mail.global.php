@@ -1,10 +1,9 @@
 <?php
 
-
-$mailHost = getenv('MAIL_HOST') || 'mailtrap.io';
-$mailPort = getenv('MAIL_PORT') || 2525;
-$mailUser = getenv('MAIL_USERNAME') || '4762712fd34d91aa0';
-$mailPass = getenv('MAIL_PASSWORD') || 'af48fe96f32502';
+$mailHost = getenv('MAIL_HOST');
+$mailPort = getenv('MAIL_PORT');
+$mailUser = getenv('MAIL_USERNAME');
+s$mailPass = getenv('MAIL_PASSWORD');
 
 return [
     'acmailer_options' => [
@@ -41,13 +40,12 @@ return [
              *
              * Default value is \Zend\Mail\Transport\Sendmail
              */
-            //'mail_adapter' => '\Zend\Mail\Transport\Sendmail',
+            'mail_adapter' => '\Zend\Mail\Transport\Smtp',
 
             /**
              * An alias for the 'mail_adapter' option. Use just one or another.
              */
-            //'transport' => '\Zend\Mail\Transport\Sendmail',
-
+            'transport' => '\Zend\Mail\Transport\Smtp',
 
             /************
              * RENDERER *
@@ -70,14 +68,14 @@ return [
                  *
                  * Default value is an empty string
                  */
-                //'from' => '',
+                'from' => 'no-reply@changemyworldnow.com',
 
                 /**
                  * From name to be displayed instead of from address.
                  *
                  * Default value is an empty string
                  */
-                //'from_name' => '',
+                'from_name' => 'Change My World Now',
 
                 /**
                  * ReplyTo email address of the email.
@@ -212,14 +210,14 @@ return [
                  *
                  * Default value is localhost
                  */
-                //'host' => 'localhost',
+                'host' => $mailHost,
 
                 /**
                  * Port of the mail server.
                  *
                  * Default value is 25
                  */
-                //'port' => 25,
+                'port' => $mailPort,
 
                 /**
                  * The connection class used for authentication.
@@ -227,23 +225,23 @@ return [
                  *
                  * Default value is 'smtp'.
                  */
-                //'connection_class' => 'smtp',
+                'connection_class' => 'plain',
 
-                //'connection_config' => [
+                'connection_config' => [
                     /**
                      * The SMTP authentication identity.
                      * If this is not set, the 'from' option of the message will be used.
                      *
                      * Default value is an empty string
                      */
-                    //'username' => '',
+                    'username' => $mailUser,
 
                     /**
                      * The SMTP authentication credential.
                      *
                      * Default value is an empty string
                      */
-                    //'password' => '',
+                    'password' => $mailPass,
 
                     /**
                      * This defines the encryption type to be used, 'ssl' or 'tls'.
@@ -251,8 +249,8 @@ return [
                      *
                      * Default value is false
                      */
-                    //'ssl' => false,
-                //],
+//                    'ssl' => false,
+                ],
             ],
 
 
@@ -270,7 +268,7 @@ return [
                  *
                  * Default value is 'data/mail/output'
                  */
-                //'path' => 'data/mail/output',
+                'path' => __DIR__ . '/../../data/mail',
 
                 /**
                  * A callable that will get the Zend\Mail\Transport\File object as an argument and should return the
