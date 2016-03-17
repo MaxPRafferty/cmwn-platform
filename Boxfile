@@ -45,6 +45,23 @@ web1:
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed NamesSeeds'
 
+worker1:
+   exec: 'php artisan queue:listen'
+   php_extensions:
+    - json
+    - mbstring
+    - mcrypt
+    - pdo_mysql
+    - redis
+    - curl
+    - zip
+   network_dirs:
+    - tmp/
+   nonpersistent_writable_dirs:
+    - data/cache
+#   log_watch:
+#     - laravel[error]: 'storage/logs/laravel.log'
+
 database1:
   type: mysql
   version: 5.6
