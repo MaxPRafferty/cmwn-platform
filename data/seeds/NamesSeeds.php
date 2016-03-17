@@ -27,8 +27,14 @@ class NamesSeeds extends AbstractSeed
 
         $table = $this->table('names');
 
-        $table
-            ->insert($data)
-            ->save();
+        foreach ($data as $names) {
+            try {
+                $table
+                    ->insert($names)
+                    ->save();
+            } catch (\PDOException $insertException) {
+                // noop
+            }
+        }
     }
 }
