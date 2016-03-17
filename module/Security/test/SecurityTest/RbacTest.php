@@ -17,12 +17,38 @@ class RbacTest extends TestCase
         $roles = [
             'super' => [
                 'permissions' => [
-                    ['permission' => 'view.all',     'label' => 'View All Entities'],
-                    ['permission' => 'create.org',   'label' => 'Create an organization'],
-                    ['permission' => 'edit.org',     'label' => 'Edit an organization'],
-                    ['permission' => 'remove.org',   'label' => 'Delete an organization'],
-                    ['permission' => 'remove.group', 'label' => 'Delete a group'],
-                    ['permission' => 'create.user',  'label' => 'Create a User'],
+                    [
+                        'permission' => 'view.all',
+                        'label'      => 'View All Entities'
+                    ],
+                    [
+                        'permission' => 'create.org',
+                        'label'      => 'Create an organization',
+                        'entity'     => 'organization',
+                        'scope'      => Rbac::SCOPE_CREATE
+                    ],
+                    [
+                        'permission' => 'edit.org',
+                        'label'      => 'Edit an organization',
+                        'entity'     => 'organization',
+                        'scope'      => Rbac::SCOPE_UPDATE
+                    ],
+                    [
+                        'permission' => 'remove.org',
+                        'label'      => 'Delete an organization',
+                        'entity'     => 'organization',
+                        'scope'      => Rbac::SCOPE_REMOVE
+                    ],
+                    [
+                        'permission' => 'remove.group',
+                        'label'      => 'Delete a group',
+                        'entity'     => 'group',
+                        'scope'      => Rbac::SCOPE_REMOVE
+                    ],
+                    [
+                        'permission' => 'create.user',
+                        'label'      => 'Create a User'
+                    ],
                     ['permission' => 'edit.user',    'label' => 'Edit a User'],
                     ['permission' => 'remove.user',  'label' => 'Delete a User'],
                 ]
@@ -54,17 +80,34 @@ class RbacTest extends TestCase
                         'entity'     => 'group',
                         'scope'      => Rbac::SCOPE_REMOVE,
                     ],
-                    ['permission' => 'import',             'label' => 'Import file'],
+                    [
+                        'permission' => 'import',
+                        'label'      => 'Import file'
+                    ],
                 ],
             ],
 
             'group_admin' => [
                 'parents'     => ['admin'],
                 'permissions' => [
-                    ['permission' => 'edit.group',       'label' => 'Edit a group'],
-                    ['permission' => 'child.code',       'label' => 'Send code to child'],
-                    ['permission' => 'add.group.user',   'label' => 'Add user to group'],
-                    ['permission' => 'remove.group.user','label' => 'Remove user to group'],
+                    [
+                        'permission' => 'edit.group',
+                        'label'      => 'Edit a group',
+                        'entity'     => 'group',
+                        'scope'      => Rbac::SCOPE_UPDATE,
+                    ],
+                    [
+                        'permission' => 'child.code',
+                        'label'      => 'Send code to child'
+                    ],
+                    [
+                        'permission' => 'add.group.user',
+                        'label'      => 'Add user to group'
+                    ],
+                    [
+                        'permission' => 'remove.group.user',
+                        'label'      => 'Remove user to group'
+                    ],
                 ]
             ],
 
@@ -88,20 +131,42 @@ class RbacTest extends TestCase
 
         $rbac = new Rbac($roles);
 
-        $this->assertTrue(
-            $rbac->isGranted('asstprincipal', 'edit.group')
+        $this->assertEquals(
+            7,
+            $rbac->getScopeForEntity('super', 'organization'),
+            'Super has incorrect bits for Organization'
         );
 
-        $this->assertTrue(
-            $rbac->isGranted('asstprincipal', 'edit.child.group')
+        $this->assertEquals(
+            7,
+            $rbac->getScopeForEntity('super', 'group'),
+            'Super has incorrect bits for Group'
         );
 
-        $this->assertTrue(
-            $rbac->isGranted('teacher', 'edit.group')
+        $this->assertEquals(
+            0,
+            $rbac->getScopeForEntity('admin', 'organization'),
+            'Admin has incorrect bits for Organization'
         );
 
-        $this->assertFalse(
-            $rbac->isGranted('teacher', 'edit.child.group')
+        $this->assertEquals(
+            7,
+            $rbac->getScopeForEntity('admin', 'group'),
+            'Admin has incorrect bits for Group'
         );
+
+        $this->assertEquals(
+            0,
+            $rbac->getScopeForEntity('group_admin', 'organization'),
+            'Group Admin has incorrect bits for Organization'
+        );
+        $this->assertEquals(
+            Rbac::SCOPE_UPDATE,
+            $rbac->getScopeForEntity('group_admin', 'group'),
+            'Group Admin has incorrect bits for Group'
+        );
+
+        $this->assertEquals(0, $rbac->getScopeForEntity('teacher', 'organization'));
+        $this->assertEquals(Rbac::SCOPE_UPDATE, $rbac->getScopeForEntity('teacher', 'group'));
     }
 }
