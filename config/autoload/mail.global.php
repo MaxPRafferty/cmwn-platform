@@ -1,9 +1,22 @@
 <?php
 
-$mailHost = getenv('MAIL_HOST');
-$mailPort = getenv('MAIL_PORT');
-$mailUser = getenv('MAIL_USERNAME');
-s$mailPass = getenv('MAIL_PASSWORD');
+
+$mailHost = getenv('MAIL_HOST')
+    ? getenv('MAIL_HOST')
+    : 'mailtrap.io';
+
+$mailPort = getenv('MAIL_PORT')
+    ? getenv('MAIL_PORT')
+    : 25;
+
+$mailUser = getenv('MAIL_USERNAME')
+    ? getenv('MAIL_USERNAME')
+    : '1fccb9203477e3';
+
+$mailPass = getenv('MAIL_PASSWORD')
+    ? getenv('MAIL_PASSWORD')
+    : '1014d39a5059ac';
+
 
 return [
     'acmailer_options' => [

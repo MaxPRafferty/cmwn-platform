@@ -67,7 +67,11 @@ class ImportNotiferTest extends TestCase
      */
     public function setUpParser()
     {
-        $this->parser = \Mockery::mock('\Import\ParserInterface');
+        $this->parser = \Mockery::mock('\Import\ParserInterface, \Notice\NotificationAwareInterface');
+        $this->parser->shouldReceive('getEmail')
+            ->andReturn('chuck@manchuck.com')
+            ->byDefault();
+
     }
 
     public function testItShouldSendErrorMessageWhenFailed()

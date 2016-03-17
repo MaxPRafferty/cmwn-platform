@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "55f97df6ccdbf081a14b81723ed6655a",
-    "content-hash": "8c7ccf24c59b16177c68c3a3c2f207d5",
+    "hash": "c9e03d7e119d9bd905710e6223d0b262",
+    "content-hash": "f6ce90d2a69a390c1b52c68a66fbab8d",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -2469,20 +2469,20 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.3.3",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "4d54fde709664562eb63356f0250d527824d05de"
+                "reference": "b1d59735b672865dbeb930805029c24f226e3e77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/4d54fde709664562eb63356f0250d527824d05de",
-                "reference": "4d54fde709664562eb63356f0250d527824d05de",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/b1d59735b672865dbeb930805029c24f226e3e77",
+                "reference": "b1d59735b672865dbeb930805029c24f226e3e77",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
+                "php": "^5.4 || ^7.0",
                 "psr/http-message": "~1.0"
             },
             "provide": {
@@ -2515,7 +2515,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2016-01-04 21:37:32"
+            "time": "2016-03-17 18:02:05"
         },
         {
             "name": "zendframework/zend-dom",
@@ -6714,16 +6714,16 @@
         },
         {
             "name": "zfcampus/zf-apigility-admin-ui",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-apigility-admin-ui.git",
-                "reference": "8084dd9bf6147d678750e0d240970f4d6ddf2908"
+                "reference": "fa6670bd711fadd32252d97a328967279d94979e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin-ui/zipball/8084dd9bf6147d678750e0d240970f4d6ddf2908",
-                "reference": "8084dd9bf6147d678750e0d240970f4d6ddf2908",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin-ui/zipball/fa6670bd711fadd32252d97a328967279d94979e",
+                "reference": "fa6670bd711fadd32252d97a328967279d94979e",
                 "shasum": ""
             },
             "require": {
@@ -6758,7 +6758,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-01-25 18:14:34"
+            "time": "2016-03-16 18:02:41"
         },
         {
             "name": "zfcampus/zf-console",
@@ -6877,7 +6877,8 @@
     "platform": {
         "php": "^5.6 || ^7.0",
         "ext-redis": "*",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-zip": "*"
     },
     "platform-dev": []
 }
