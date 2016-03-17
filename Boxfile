@@ -40,6 +40,7 @@ web1:
     - tmp/
   nonpersistent_writable_dirs:
     - data/cache
+    - data/log
   after_deploy:
     - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
@@ -59,6 +60,7 @@ worker1:
     - tmp/
    nonpersistent_writable_dirs:
     - data/cache
+    - data/log
    log_watch:
      - cmwn[php]: data/log/app.log
 
