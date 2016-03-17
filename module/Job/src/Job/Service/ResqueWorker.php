@@ -10,8 +10,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class Worker
- *
- * ${CARET}
+ * @codeCoverageIgnore
  */
 class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
 {

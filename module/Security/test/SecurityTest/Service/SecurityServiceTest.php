@@ -146,4 +146,36 @@ class SecurityServiceTest extends TestCase
 
         $this->securityService->fetchUserByEmail('chuck@manchuck.com');
     }
+
+    public function testItShouldSaveSuperBitToUser()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($actualSet, $actualWhere) use (&$user) {
+                $this->assertArrayHasKey('super', $actualSet, 'Super field is not set');
+                $this->assertEquals(1, $actualSet['super'], 'Super bit was not set to 1');
+
+                $this->assertEquals(['user_id' => 'abcdef'], $actualWhere);
+
+                return 1;
+            })
+            ->once();
+
+        $this->assertTrue($this->securityService->setSuper('abcdef', true));
+    }
+
+    public function testItShouldRemoveSuperBitToUser()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($actualSet, $actualWhere) use (&$user) {
+                $this->assertArrayHasKey('super', $actualSet, 'Super field is not set');
+                $this->assertEquals(0, $actualSet['super'], 'Super bit was not set to 1');
+
+                $this->assertEquals(['user_id' => 'abcdef'], $actualWhere);
+
+                return 1;
+            })
+            ->once();
+
+        $this->assertTrue($this->securityService->setSuper('abcdef', false));
+    }
 }

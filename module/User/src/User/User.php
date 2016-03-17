@@ -83,6 +83,14 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getUserName();
+    }
+
+    /**
      * Returns the type of user
      *
      * @return string
@@ -132,7 +140,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     {
         return [
             'user_id'     => $this->getUserId(),
-            'username'    => $this->getUserName(),
+            'username'    => (string) $this->getUserName(),
             'email'       => $this->getEmail(),
             'first_name'  => $this->getFirstName(),
             'middle_name' => $this->getMiddleName(),
@@ -201,7 +209,6 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     public function setUserName($userName)
     {
         $this->userName = $userName;
-
         return $this;
     }
 
@@ -220,7 +227,6 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     public function setEmail($email)
     {
         $this->email = $email;
-
         return $this;
     }
 

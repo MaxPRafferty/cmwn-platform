@@ -1,7 +1,12 @@
 <?php
 
 namespace User\Service;
+use User\UserName;
 
+/**
+ * Class StaticNameService
+ * @package User\Service
+ */
 class StaticNameService
 {
     const POSITION_LEFT  = 'LEFT';
@@ -21,6 +26,7 @@ class StaticNameService
      * Seeds the list of names
      *
      * @param array $nameList
+     * @codeCoverageIgnore
      */
     public static function seedNames(array $nameList)
     {
@@ -32,8 +38,6 @@ class StaticNameService
             throw new \InvalidArgumentException('left or right values must be an array');
         }
 
-        // The application will be calling this when bootstrapped
-        // @codeCoverageIgnoreStart
         foreach ($nameList['left'] as $name) {
             array_push(static::$left, $name);
         }
@@ -44,7 +48,6 @@ class StaticNameService
 
         array_unique(static::$right);
         array_unique(static::$left);
-        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -84,20 +87,14 @@ class StaticNameService
     /**
      * Validates that a generated name is correct
      *
-     * @param \stdClass $generatedName
+     * @param UserName $generatedName
      * @return bool
      */
-    public static function validateGeneratedName(\stdClass $generatedName)
+    public static function validateGeneratedName(UserName $generatedName)
     {
-        if (!isset($generatedName->leftName)
-            || !isset($generatedName->rightName)
-            || !isset($generatedName->userName)) {
-            return false;
-        }
-
-        $leftOk     = static::validateName($generatedName->leftName, static::POSITION_LEFT);
-        $rightOk    = static::validateName($generatedName->rightName, static::POSITION_RIGHT);
-        $userNameOk = $generatedName->leftName . '_' . $generatedName->rightName == $generatedName->userName;
+        $leftOk     = static::validateName($generatedName->left, static::POSITION_LEFT);
+        $rightOk    = static::validateName($generatedName->right, static::POSITION_RIGHT);
+        $userNameOk = $generatedName->left . UserName::SEPARATOR . $generatedName->right == $generatedName->userName;
 
         return $leftOk && $rightOk && $userNameOk;
     }
@@ -105,19 +102,13 @@ class StaticNameService
     /**
      * Generates a random name
      *
-     * @return \stdClass
+     * @return UserName
      */
     public static function generateRandomName()
     {
-        $result = new \stdClass();
-
         $leftKey  = array_rand(static::$left, 1);
         $rightKey = array_rand(static::$right, 1);
 
-        $result->leftName  = static::$left[$leftKey];
-        $result->rightName = static::$right[$rightKey];
-        $result->userName  = $result->leftName . '_' . $result->rightName;
-
-        return $result;
+        return new UserName(static::$left[$leftKey], static::$right[$rightKey]);
     }
 }

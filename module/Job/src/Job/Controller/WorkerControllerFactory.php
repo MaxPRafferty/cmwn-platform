@@ -8,6 +8,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class WorkerControllerFactory
+ * @codeCoverageIgnore
  */
 class WorkerControllerFactory implements FactoryInterface
 {

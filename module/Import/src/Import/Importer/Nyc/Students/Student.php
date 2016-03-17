@@ -4,12 +4,13 @@ namespace Import\Importer\Nyc\Students;
 
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Exception\InvalidStudentException;
+use User\UserAwareInterface;
 use User\UserInterface;
 
 /**
  * Class Student
  */
-class Student
+class Student implements UserAwareInterface
 {
     /**
      * @var string

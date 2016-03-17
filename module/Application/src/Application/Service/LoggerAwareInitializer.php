@@ -27,6 +27,10 @@ class LoggerAwareInitializer implements InitializerInterface
             return;
         }
 
+        if (!$serviceLocator->has('Log\App')) {
+            return ;
+        }
+
         /** @var Logger $logger */
         $logger = $serviceLocator->get('Log\App');
         $instance->setLogger($logger);

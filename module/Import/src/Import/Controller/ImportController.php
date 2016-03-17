@@ -100,7 +100,8 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 'file'         => $request->getParam('file'),
                 'teacher_code' => $request->getParam('teacherCode'),
                 'student_code' => $request->getParam('studentCode'),
-                'school'       => $request->getParam('school')
+                'school'       => $request->getParam('school'),
+                'email'        => $request->getParam('email'),
             ]);
 
             $job->setLogger($this->getLogger());

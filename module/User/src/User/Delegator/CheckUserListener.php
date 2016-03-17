@@ -12,6 +12,10 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
 
+/**
+ * Class CheckUserListener
+ * @package User\Delegator
+ */
 class CheckUserListener implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
@@ -31,17 +35,22 @@ class CheckUserListener implements ListenerAggregateInterface
         $this->listeners[] = $events->attach('save.user', [$this, 'checkUniqueFields']);
     }
 
+    /**
+     * Checks if the user name or email already exists
+     *
+     * @param Event $event
+     * @throws DuplicateEntryException
+     */
     public function checkUniqueFields(Event $event)
     {
         $userService = $event->getTarget();
         if (!$userService instanceof UserServiceInterface) {
-            return; // TODO Throw Exception?
+            return;
         }
 
         $user        = $event->getParam('user');
-
         if (!$user instanceof UserInterface) {
-            return; // TODO Throw Exception?
+            return;
         }
 
         // SELECT `users`.* FROM `users` WHERE (`email` = :email OR `username` = :username) AND `user_id` != :user_id

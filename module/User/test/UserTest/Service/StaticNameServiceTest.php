@@ -5,6 +5,7 @@ namespace UserTest\Service;
 use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Service\StaticNameService;
+use User\UserName;
 
 /**
  * Test StaticNameServiceTest
@@ -82,52 +83,21 @@ class StaticNameServiceTest extends TestCase
     public function testItShouldGenerateRandomNameAndNameShouldBeValidated()
     {
         $generatedName = StaticNameService::generateRandomName();
-        $this->assertInstanceOf('\stdClass', $generatedName);
-        $this->assertNotEmpty($generatedName->leftName);
-        $this->assertNotEmpty($generatedName->rightName);
-        $this->assertEquals($generatedName->leftName . '_' . $generatedName->rightName, $generatedName->userName);
-        $this->assertTrue(StaticNameService::validateGeneratedName($generatedName));
+        $this->assertInstanceOf('\User\UserName', $generatedName, 'Invalid type returned');
+        $this->assertTrue(StaticNameService::validateGeneratedName($generatedName), 'Generated Username is not valid');
     }
 
     public function testItShouldValidateFailureWhenGeneratedNameHasBadLeft()
     {
         $generatedName = StaticNameService::generateRandomName();
-        $generatedName->leftName = 'foo';
-        $this->assertFalse(StaticNameService::validateGeneratedName($generatedName));
+        $userName      = new UserName('foo', $generatedName->right);
+        $this->assertFalse(StaticNameService::validateGeneratedName($userName));
     }
 
     public function testItShouldValidateFailureWhenGeneratedNameHasBadRight()
     {
         $generatedName = StaticNameService::generateRandomName();
-        $generatedName->rightName = 'foo';
-        $this->assertFalse(StaticNameService::validateGeneratedName($generatedName));
-    }
-
-    public function testItShouldValidateFailureWhenGeneratedNameHasMisMatchedUserName()
-    {
-        $generatedName = StaticNameService::generateRandomName();
-        $generatedName->userName = 'foo';
-        $this->assertFalse(StaticNameService::validateGeneratedName($generatedName));
-    }
-
-    public function testItShouldValidateFailureWhenGeneratedNameMissingLeft()
-    {
-        $generatedName = StaticNameService::generateRandomName();
-        unset($generatedName->leftName);
-        $this->assertFalse(StaticNameService::validateGeneratedName($generatedName));
-    }
-
-    public function testItShouldValidateFailureWhenGeneratedNameMissingRight()
-    {
-        $generatedName = StaticNameService::generateRandomName();
-        unset($generatedName->rightName);
-        $this->assertFalse(StaticNameService::validateGeneratedName($generatedName));
-    }
-
-    public function testItShouldValidateFailureWhenGeneratedNameMissingUserName()
-    {
-        $generatedName = StaticNameService::generateRandomName();
-        unset($generatedName->userName);
-        $this->assertFalse(StaticNameService::validateGeneratedName($generatedName));
+        $userName      = new UserName($generatedName->left, 'foo');
+        $this->assertFalse(StaticNameService::validateGeneratedName($userName));
     }
 }

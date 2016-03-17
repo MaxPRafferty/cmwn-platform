@@ -58,7 +58,14 @@ class DoeImporterTest extends TestCase
         $this->parser = \Mockery::mock('\Import\Importer\Nyc\Parser\DoeParser');
         $this->parser->shouldReceive('setLogger')->byDefault();
         $this->parser->shouldReceive('setSchool')->with($this->school)->byDefault();
+        $this->parser->shouldReceive('setStudentCode')->byDefault();
+        $this->parser->shouldReceive('setTeacherCode')->byDefault();
         $this->parser->shouldReceive('setFileName')->byDefault();
+        $this->parser->shouldReceive('hasWarnings')->andReturn(false)->byDefault();
+        $this->parser->shouldReceive('hasErrors')->andReturn(false)->byDefault();
+        $this->parser->shouldReceive('getWarnings')->andReturn([])->byDefault();
+        $this->parser->shouldReceive('getErrors')->andReturn([])->byDefault();
+        $this->parser->shouldReceive('setEmail')->byDefault();
     }
 
     /**
@@ -109,6 +116,7 @@ class DoeImporterTest extends TestCase
                 'teacher_code' => null,
                 'student_code' => null,
                 'school'       => null,
+                'email'        => null,
             ],
             $this->importer->getArrayCopy()
         );
@@ -119,6 +127,7 @@ class DoeImporterTest extends TestCase
             'teacher_code' => 'tcode',
             'student_code' => 'scode',
             'school'       => 'school',
+            'email'        => 'chuck@manchuck.com',
         ]);
 
         $this->assertEquals(
@@ -128,6 +137,7 @@ class DoeImporterTest extends TestCase
                 'teacher_code' => 'tcode',
                 'student_code' => 'scode',
                 'school'       => $this->school->getGroupId(),
+                'email'        => 'chuck@manchuck.com',
             ],
             $this->importer->getArrayCopy()
         );
@@ -208,8 +218,8 @@ class DoeImporterTest extends TestCase
         $this->parser->shouldReceive('setFileName')->with($fileName)->once();
         $this->parser->shouldReceive('preProcess')->once();
         $this->parser->shouldReceive('getActions')->never();
-        $this->parser->shouldReceive('hasErrors')->once()->andReturn(true);
-        $this->parser->shouldReceive('getErrors')->once()->andReturn(['I am Error']);
+        $this->parser->shouldReceive('hasErrors')->atLeast(1)->andReturn(true);
+        $this->parser->shouldReceive('getErrors')->atLeast(1)->andReturn(['I am Error']);
 
         $this->importer->setFileName($fileName);
         $this->importer->setGroup($this->school);

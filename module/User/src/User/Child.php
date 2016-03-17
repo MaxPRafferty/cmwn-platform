@@ -4,10 +4,14 @@ namespace User;
 
 use User\Service\StaticNameService;
 
+/**
+ * Class Child
+ * @package User
+ */
 class Child extends User implements ChildInterface
 {
     /**
-     * @var \stdClass|null
+     * @var UserName|null
      */
     protected $generatedName;
 
@@ -22,7 +26,7 @@ class Child extends User implements ChildInterface
     /**
      * Generates a random user name for the child
      *
-     * @return string
+     * @return UserName
      */
     public function getUserName()
     {
@@ -32,7 +36,9 @@ class Child extends User implements ChildInterface
             $this->generatedName = $generatedName;
         }
 
-        return parent::getUserName();
+        return $this->isNameGenerated()
+            ? $this->generatedName->userName
+            : parent::getUserName();
     }
 
     /**
@@ -58,10 +64,23 @@ class Child extends User implements ChildInterface
     }
 
     /**
-     * @return null|\stdClass
+     * @return null|UserName
      */
-    public function getGenratedName()
+    public function getGeneratedName()
     {
         return $this->generatedName;
+    }
+
+    /**
+     * Will default the email to be username@changemyworldnow.com if empty
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (empty($this->email)) {
+            $this->setEmail($this->getUserName() . '@changemyworldnow.com');
+        }
+
+        return $this->email;
     }
 }

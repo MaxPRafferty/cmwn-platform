@@ -10,6 +10,8 @@ use Import\Importer\Nyc\Parser\DoeParser;
 use Import\ImporterInterface;
 use Job\Feature\DryRunInterface;
 use Job\Feature\DryRunTrait;
+use Notice\NotificationAwareInterface;
+use Notice\NotificationAwareTrait;
 use Org\OrgAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -22,17 +24,24 @@ use Zend\Log\LoggerAwareInterface;
  *
  * @package Import\Importer
  */
-class DoeImporter implements 
+class DoeImporter implements
     LoggerAwareInterface,
     EventManagerAwareInterface,
     ImporterInterface,
     GroupAwareInterface,
-    DryRunInterface
+    DryRunInterface,
+    NotificationAwareInterface
 {
     use EventManagerAwareTrait;
     use NoopLoggerAwareTrait;
     use DryRunTrait;
+    use NotificationAwareTrait;
 
+    /**
+     * @var array Adds the Importer interface the shared manager
+     */
+    protected $eventIdentifier = ['Import\ImporterInterface'];
+    
     /**
      * @var string the file name to process
      */
@@ -70,7 +79,9 @@ class DoeImporter implements
 
     /**
      * DoeImporter constructor.
+     *
      * @param DoeParser $parser
+     * @param GroupServiceInterface $groupService
      */
     public function __construct(DoeParser $parser, GroupServiceInterface $groupService)
     {
@@ -88,7 +99,6 @@ class DoeImporter implements
             $this->parser->setSchool($this->getSchool());
         });
     }
-
 
     /**
      * Sets the group to this object
@@ -154,6 +164,9 @@ class DoeImporter implements
         $this->getLogger()->notice('Importing file: ' . $this->getFileName());
 
         $event = new Event('nyc.import.excel', $this->parser);
+        $this->parser->setStudentCode($this->studentCode);
+        $this->parser->setTeacherCode($this->teacherCode);
+        $this->parser->setEmail($this->getEmail());
 
         try {
             if ($this->getEventManager()->trigger($event)->stopped()) {
@@ -204,7 +217,7 @@ class DoeImporter implements
             return;
         }
     }
-
+    
     /**
      * Gets the data that will be passed for the job
      *
@@ -217,22 +230,34 @@ class DoeImporter implements
             'file'         => $this->getFileName(),
             'teacher_code' => $this->teacherCode,
             'student_code' => $this->studentCode,
-            'school'       => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null
+            'school'       => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null,
+            'email'        => $this->getEmail(),
         ];
     }
 
     /**
-     * Returns the argumet values back to the object
+     * Returns the values back to the object
      *
      * @param array $data
      * @return mixed
      */
     public function exchangeArray(array $data)
     {
-        $fileName = isset($data['file']) ? $data['file'] : null;
-        $this->setFileName($fileName);
-        $this->teacherCode = isset($data['teacher_code']) ? $data['teacher_code'] : null;
-        $this->studentCode = isset($data['student_code']) ? $data['student_code'] : null;
-        $this->setSchool(isset($data['school']) ? $data['school'] : null);
+        $defaults = [
+            'file'         => null,
+            'teacher_code' => null,
+            'student_code' => null,
+            'school'       => null,
+            'email'        => null,
+        ];
+
+        $data = array_merge($defaults, $data);
+        $this->setFileName($data['file']);
+
+        $this->teacherCode = $data['teacher_code'];
+        $this->studentCode = $data['student_code'];
+
+        $this->setSchool($data['school']);
+        $this->setEmail($data['email']);
     }
 }

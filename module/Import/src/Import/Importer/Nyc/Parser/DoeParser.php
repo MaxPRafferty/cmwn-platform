@@ -12,13 +12,17 @@ use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser as StudentParser;
 use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser as TeacherParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
-use Zend\Log\Logger;
+use Notice\NotificationAwareInterface;
+use Notice\NotificationAwareTrait;
+use Security\Service\SecurityServiceInterface;
 
 /**
  * Class DoePreProcessor
  */
-class DoeParser extends AbstractParser
+class DoeParser extends AbstractParser implements NotificationAwareInterface
 {
+    use NotificationAwareTrait;
+
     /**
      * @var UserGroupServiceInterface
      */
@@ -70,6 +74,21 @@ class DoeParser extends AbstractParser
     protected $groupService;
 
     /**
+     * @var string
+     */
+    protected $teacherCode;
+
+    /**
+     * @var string
+     */
+    protected $studentCode;
+
+    /**
+     * @var SecurityServiceInterface
+     */
+    protected $securityService;
+
+    /**
      * DoeParser constructor.
      *
      * @param ClassRoomRegistry $classRegistry
@@ -77,22 +96,25 @@ class DoeParser extends AbstractParser
      * @param StudentRegistry $studentRegistry
      * @param UserGroupServiceInterface $userGroupService
      * @param GroupServiceInterface $groupService
+     * @param SecurityServiceInterface $securityService
      */
     public function __construct(
         ClassRoomRegistry $classRegistry,
         TeacherRegistry $teacherRegistry,
         StudentRegistry $studentRegistry,
         UserGroupServiceInterface $userGroupService,
-        GroupServiceInterface $groupService
+        GroupServiceInterface $groupService,
+        SecurityServiceInterface $securityService
     ) {
         $this->classRegistry    = $classRegistry;
         $this->teacherRegistry  = $teacherRegistry;
         $this->studentRegistry  = $studentRegistry;
         $this->userGroupService = $userGroupService;
         $this->groupService     = $groupService;
-        $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        $this->securityService  = $securityService;
     }
 
+    
     /**
      * Sets the school this parser is for
      *
@@ -120,13 +142,29 @@ class DoeParser extends AbstractParser
     }
 
     /**
+     * @param string $teacherCode
+     */
+    public function setTeacherCode($teacherCode)
+    {
+        $this->teacherCode = $teacherCode;
+    }
+
+    /**
+     * @param string $studentCode
+     */
+    public function setStudentCode($studentCode)
+    {
+        $this->studentCode = $studentCode;
+    }
+
+    /**
      * PreProcess a file
      */
     public function preProcess()
     {
         $this->getLogger()->info('Starting to process file: ' . $this->getFileName());
-        if ($this->fileName === null) {
-            throw new \RuntimeException('Cannot pre process: No File name set');
+        if ($this->fileName === null || empty($this->teacherCode) || empty($this->studentCode)) {
+            throw new \RuntimeException('Cannot pre process: Missing required fields');
         }
 
         if ($this->school === null) {
@@ -193,6 +231,22 @@ class DoeParser extends AbstractParser
 
         if (!$this->hasErrors()) {
             $this->createAssociationActions();
+            $this->addCodeActions();
+        }
+    }
+
+    protected function addCodeActions()
+    {
+        foreach ($this->teacherRegistry as $teacher) {
+            if ($teacher->isNew()) {
+                $this->addAction(new AddCodeToUserAction($teacher, $this->securityService, $this->teacherCode));
+            }
+        }
+
+        foreach ($this->studentRegistry as $student) {
+            if ($student->isNew()) {
+                $this->addAction(new AddCodeToUserAction($student, $this->securityService, $this->studentCode));
+            }
         }
     }
 

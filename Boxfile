@@ -7,6 +7,7 @@ global:
     - DB_PASSWORD: 'MAP:DATABASE1_PASS'
     - SESSION_DRIVER: redis
 
+
 build:
   before_exec:
     - 'rm -rf puphet'
@@ -40,9 +41,32 @@ web1:
     - tmp/
   nonpersistent_writable_dirs:
     - data/cache
+    - data/logs
   after_deploy:
     - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed NamesSeeds'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed SuperSeed'
+  log_watch:
+    - cmwn[php]: data/logs/app.log
+
+worker1:
+   exec: 'php public/index.php worker --queue=default'
+   php_extensions:
+    - json
+    - mbstring
+    - mcrypt
+    - pdo_mysql
+    - redis
+    - curl
+    - zip
+   network_dirs:
+    - tmp/
+   nonpersistent_writable_dirs:
+    - data/cache
+    - data/logs
+   log_watch:
+     - cmwn[php]: data/logs/app.log
 
 database1:
   type: mysql

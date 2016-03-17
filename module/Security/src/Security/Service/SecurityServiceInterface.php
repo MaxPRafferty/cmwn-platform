@@ -4,6 +4,7 @@ namespace Security\Service;
 
 use Application\Exception\NotFoundException;
 use Security\SecurityUser;
+use User\UserInterface;
 
 /**
  * Interface SecurityServiceInterface
@@ -53,4 +54,12 @@ interface SecurityServiceInterface
      * @param bool $super
      */
     public function setSuper($user, $super = true);
+
+    /**
+     * Saves the temp code to a user
+     *
+     * @param $code
+     * @param UserInterface|string $user
+     */
+    public function saveCodeToUser($code, $user);
 }
