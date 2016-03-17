@@ -40,11 +40,12 @@ web1:
     - tmp/
   nonpersistent_writable_dirs:
     - data/cache
-    - data/log
   after_deploy:
     - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed GameSeed'
     - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed NamesSeeds'
+  log_watch:
+    - cmwn[php]: data/logs/app.log
 
 worker1:
    exec: 'php public/index.php worker --queue=default'
@@ -60,9 +61,8 @@ worker1:
     - tmp/
    nonpersistent_writable_dirs:
     - data/cache
-    - data/log
    log_watch:
-     - cmwn[php]: data/log/app.log
+     - cmwn[php]: data/logs/app.log
 
 database1:
   type: mysql
