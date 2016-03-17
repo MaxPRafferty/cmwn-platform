@@ -65,6 +65,7 @@ class DoeImporterTest extends TestCase
         $this->parser->shouldReceive('hasErrors')->andReturn(false)->byDefault();
         $this->parser->shouldReceive('getWarnings')->andReturn([])->byDefault();
         $this->parser->shouldReceive('getErrors')->andReturn([])->byDefault();
+        $this->parser->shouldReceive('setEmail')->byDefault();
     }
 
     /**
