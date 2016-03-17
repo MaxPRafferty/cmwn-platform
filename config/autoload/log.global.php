@@ -4,10 +4,14 @@ return [
         'Log\App' => [
             'writers' => [
                 [
-                    'name'     => 'noop',
+                    'name'     => 'stream',
                     'priority' => 1000,
+                    'options'  => [
+                        'stream' => realpath(__DIR__ . '/../../') . '/data/logs/app.log',
+                    ],
                 ],
             ],
         ],
     ],
 ];
+
