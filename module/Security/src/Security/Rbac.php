@@ -10,9 +10,9 @@ use Zend\Permissions\Rbac\RoleInterface;
  */
 class Rbac extends ZfRbac
 {
-    const SCOPE_CREATE = 2;
-    const SCOPE_UPDATE = 4;
-    const SCOPE_REMOVE = 8;
+    const SCOPE_CREATE = 1;
+    const SCOPE_UPDATE = 2;
+    const SCOPE_REMOVE = 4;
 
     /**
      * @var array
@@ -61,13 +61,18 @@ class Rbac extends ZfRbac
     public function addRoleFromConfig($roleConfig, $roleName)
     {
         $role = new Role($roleName);
-        if (array_key_exists('permissions', $roleConfig)) {
-            $this->addPermissionsToRole($role, $roleConfig['permissions']);
-        }
 
         $parents = array_key_exists('parents', $roleConfig) ? $roleConfig['parents'] : [];
         $parents = !is_array($parents) ? [$parents] : $parents;
         $this->addRole($role, $parents);
+
+        if (!array_key_exists($roleName, $this->permissionBits)) {
+            $this->permissionBits[$roleName] = [];
+        }
+
+        if (array_key_exists('permissions', $roleConfig)) {
+            $this->addPermissionsToRole($role, $roleConfig['permissions']);
+        }
     }
 
     /**
@@ -84,8 +89,19 @@ class Rbac extends ZfRbac
                 continue;
             }
 
-            $permission = array_key_exists('permission', $permConfig) ? $permConfig['permission'] : null;
-            $label      = array_key_exists('label', $permConfig) ? $permConfig['label'] : $permission;
+            $defaults = [
+                'permission' => null,
+                'label'      => null,
+                'entity'     => null,
+                'scope'      => 0,
+            ];
+
+            $permConfig = array_merge($defaults, $permConfig);
+
+            $permission = $permConfig['permission'];
+            $label      = $permConfig['label'] === null ? $permission : $permConfig['label'];
+            $entity     = $permConfig['entity'];
+            $scope      = $permConfig['scope'];
 
             if ($permission === null) {
                 throw new \RuntimeException('Invalid Permission in config');
@@ -93,6 +109,32 @@ class Rbac extends ZfRbac
 
             $role->addPermission($permission);
             $this->permissionLabels[$permission] = $label;
+
+            if (!array_key_exists($entity, $this->permissionBits[$role->getName()])) {
+                $this->permissionBits[$role->getName()] = $scope;
+            } else {
+                $this->permissionBits[$role->getName()] += $scope;
+            }
         }
+    }
+
+    /**
+     * @param $role
+     * @param $entity
+     * @return int
+     */
+    public function getScopeForEntity($role, $entity)
+    {
+        $roleName = $role instanceof RoleInterface ? $role->getName() : $role;
+
+        if (!array_key_exists($roleName, $this->permissionBits)) {
+            return 0;
+        }
+
+        if (!array_key_exists($entity, $this->permissionBits[$roleName])) {
+            return 0;
+        }
+
+        return $this->permissionBits[$roleName][$entity];
     }
 }
