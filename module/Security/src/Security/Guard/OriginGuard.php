@@ -50,17 +50,21 @@ class OriginGuard implements ListenerAggregateInterface
 
         /** @var Response $response */
         $response = $event->getResponse();
-        $refferer = $request->getServer('HTTP_REFERER');
-        // THOUGHT Config?
-        if (preg_match("`^https?://([0-9a-zA-Z-_]+\.)?changemyworldnow.com(:[0-9]+)?/?.+$`i", $refferer))
+        $referrer = '';
+        foreach ($_SERVER as $name => $value) 
         {
-            // We dont need the path query or fragments
-            $url = new Uri($refferer);
-            $url->setPath('');
-            $url->setQuery('');
-            $url->setFragment('');
+            if ($name == 'HTTP_ORIGIN') {
+                $referrer = $value;
+                        $response->getHeaders()
+                ->addHeaderLine('X-'.$name, $value);
+            }
+        }
+        // THOUGHT Config?
+        if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $referrer))
+        {
+
             $response->getHeaders()
-                ->addHeaderLine('Access-Control-Allow-Origin', $url->toString());
+                ->addHeaderLine('Access-Control-Allow-Origin', $referrer);
         } else {
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'));
