@@ -63,22 +63,18 @@ class RbacTest extends TestCase
                         'entity'     => 'adult'
                     ],
                     [
-                        'permission' => 'edit.child.group',
-                        'label'      => 'Edit a group',
-                        'entity'     => 'group',
-                        'scope'      => 0,
-                    ],
-                    [
-                        'permission' => 'create.child.group',
+                        'permission' => 'create.group',
                         'label'      => 'Create a group',
                         'entity'     => 'group',
                         'scope'      => Rbac::SCOPE_CREATE,
                     ],
                     [
                         'permission' => 'remove.child.group',
-                        'label'      => 'Edit a group',
-                        'entity'     => 'group',
-                        'scope'      => Rbac::SCOPE_REMOVE,
+                        'label'      => 'Remove a sub group',
+                    ],
+                    [
+                        'permission' => 'create.child.group',
+                        'label'      => 'Create a sub group',
                     ],
                     [
                         'permission' => 'import',
@@ -160,6 +156,7 @@ class RbacTest extends TestCase
             $rbac->getScopeForEntity('group_admin', 'organization'),
             'Group Admin has incorrect bits for Organization'
         );
+
         $this->assertEquals(
             Rbac::SCOPE_UPDATE,
             $rbac->getScopeForEntity('group_admin', 'group'),

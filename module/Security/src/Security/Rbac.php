@@ -32,6 +32,7 @@ class Rbac extends ZfRbac
     {
         array_walk($roles, [$this, 'addRoleFromConfig']);
         array_walk($roles, [$this, 'copyPermissionsFromSibling']);
+        array_walk(array_keys($roles), [$this, 'copyPermissionBitsFromRole']);
     }
 
     /**
@@ -49,6 +50,44 @@ class Rbac extends ZfRbac
             /** @var Role $sibling */
             $sibling = $this->getRole($siblingRole);
             $sibling->copyPermissionToRole($role);
+            $this->copyBitsFromRole($roleName, $siblingRole);
+        }
+    }
+
+    /**
+     * Copies the permissions from each parent role
+     *
+     * @param $roleName
+     */
+    public function copyPermissionBitsFromRole($roleName)
+    {
+        $role = $roleName instanceof RoleInterface ? $roleName : $this->getRole($roleName);
+        foreach ($role as $childRole) {
+            $this->copyBitsFromRole($childRole->getName(), $role->getName());
+        }
+    }
+
+    /**
+     * Copies the bits from a role to another role
+     *
+     * @param $roleFrom
+     * @param $roleTo
+     */
+    protected function copyBitsFromRole($roleFrom, $roleTo)
+    {
+        $roleFrom = $roleFrom instanceof RoleInterface ? $roleFrom : $this->getRole($roleFrom);
+        $roleTo   = $roleTo instanceof RoleInterface ? $roleTo : $this->getRole($roleTo);
+
+        foreach ($this->permissionBits[$roleFrom->getName()] as $entity => $scope) {
+            $currentBit = array_key_exists($entity, $this->permissionBits[$roleTo->getName()])
+                ? $this->permissionBits[$roleTo->getName()][$entity]
+                : 0;
+
+            $this->permissionBits[$roleTo->getName()][$entity] = $scope | $currentBit;
+        }
+
+        foreach ($roleFrom as $childRole) {
+            $this->copyBitsFromRole($childRole, $roleTo);
         }
     }
 
@@ -110,11 +149,11 @@ class Rbac extends ZfRbac
             $role->addPermission($permission);
             $this->permissionLabels[$permission] = $label;
 
-            if (!array_key_exists($entity, $this->permissionBits[$role->getName()])) {
-                $this->permissionBits[$role->getName()] = $scope;
-            } else {
-                $this->permissionBits[$role->getName()] += $scope;
-            }
+            $currentBit = array_key_exists($entity, $this->permissionBits[$role->getName()])
+                ? $this->permissionBits[$role->getName()][$entity]
+                : 0;
+
+            $this->permissionBits[$role->getName()][$entity] = $scope | $currentBit;
         }
     }
 
