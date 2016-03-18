@@ -112,15 +112,24 @@ class ApiAdapter implements ZfApiAdapter
             $identity->setName(
                 $this->resolveCurrentRoleForUser($mvcAuthEvent, $identity->getAuthenticationIdentity())
             );
+
             return $identity;
         }
 
         $user = $this->service->getIdentity();
         $identity = new AuthenticatedIdentity($user);
-        $identity->setName($this->resolveRoleForUser($mvcAuthEvent, $user));
+        $identity->setName(
+            $this->resolveCurrentRoleForUser($mvcAuthEvent, $user)
+        );
+
         return $identity;
     }
 
+    /**
+     * @param MvcAuthEvent $mvcAuthEvent
+     * @param SecurityUser $securityUser
+     * @return string
+     */
     protected function resolveCurrentRoleForUser(MvcAuthEvent $mvcAuthEvent, SecurityUser $securityUser)
     {
         if ($securityUser->isSuper()) {
@@ -133,7 +142,7 @@ class ApiAdapter implements ZfApiAdapter
         }
 
         $role = $this->securityOrgService->getRoleForGroup($groupId, $securityUser);
-
-        return 'logged_in';
+        $role = $role === null ? 'logged_in' : $role;
+        return $role;
     }
 }
