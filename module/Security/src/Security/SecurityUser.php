@@ -73,6 +73,11 @@ class SecurityUser extends User
     protected $groupTypes = [];
 
     /**
+     * @var string
+     */
+    protected $role = 'guest';
+
+    /**
      * Sets the data for the user
      *
      * Also sets the code, password and super flag
@@ -206,6 +211,26 @@ class SecurityUser extends User
         $type = $type instanceof GroupInterface ? $type->getType() : $type;
         $this->groupTypes[$type] = $type;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRole()
+    {
+        if ($this->isSuper()) {
+            return 'super';
+        }
+
+        return $this->role;
+    }
+
+    /**
+     * @param $role
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
     }
 
     /**

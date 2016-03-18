@@ -7,12 +7,4 @@ return [
             ],
         ],
     ],
-
-    'zf-mvc-auth' => [
-        'authentication' => [
-            'map' => [
-                'Api\\V1' => 'user',
-            ],
-        ],
-    ],
 ];
