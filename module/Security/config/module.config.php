@@ -1,11 +1,15 @@
 <?php
 
+use \Security\Authorization\Rbac;
+
 return [
     'service_manager' => [
         'aliases' => [
             'authentication' => 'Security\Authentication\AuthenticationService',
             'ZF\MvcAuth\Authentication' => 'Security\Authentication\AuthenticationService',
+            'Security\Service\SecurityServiceInterface' => 'Security\Service\SecurityService',
         ],
+
         'invokables' => [
             'Security\Guard\CsrfGuard' => 'Security\Guard\CsrfGuard',
             'Security\Guard\OriginGuard' => 'Security\Guard\OriginGuard',
@@ -13,7 +17,9 @@ return [
                 => 'Security\Authentication\AuthenticationDelegatorFactory'
 
         ],
+
         'factories' => [
+//            'ZF\MvcAuth\Authorization\DefaultAuthorizationListener' => 'Security\Authorization\MvcAuthListener',
             'Security\Guard\ResetPasswordGuard' => 'Security\Guard\ResetPasswordGuardFactory',
             'Zend\Session\SessionManager' => 'Security\Session\SessionManagerFactory',
             'Security\Service\SecurityService' => 'Security\Service\SecurityServiceFactory',
@@ -23,9 +29,12 @@ return [
 
             'Security\Authentication\AuthAdapter' => 'Security\Authentication\AuthAdapterFactory',
 
+            'Security\Authorization\Rbac' => 'Security\Authorization\RbacFactory',
+
             'Security\Authentication\AuthenticationService'
                 => 'Security\Authentication\AuthenticationServiceFactory',
         ],
+
         'delegators' => [
             'ZF\MvcAuth\Authentication\DefaultAuthenticationListener' => [
                 'Security\Authentication\AuthenticationDelegatorFactory'
@@ -55,6 +64,118 @@ return [
         ],
     ],
 
+    'cmwn-roles' => [
+        'super' => [
+            'entity_bits' => [
+                'group'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+                'organization' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+            ],
+            'permissions' => [
+                [
+                    'permission' => 'view.all',
+                    'label'      => 'View All Entities'
+                ],
+                [
+                    'permission' => 'create.org',
+                    'label'      => 'Create an organization',
+                ],
+                [
+                    'permission' => 'edit.org',
+                    'label'      => 'Edit an organization',
+                ],
+                [
+                    'permission' => 'remove.org',
+                    'label'      => 'Delete an organization',
+                ],
+                [
+                    'permission' => 'remove.group',
+                    'label'      => 'Delete a group',
+                ],
+                [
+                    'permission' => 'create.user',
+                    'label'      => 'Create a User'
+                ],
+                ['permission' => 'edit.user',    'label' => 'Edit a User'],
+                ['permission' => 'remove.user',  'label' => 'Delete a User'],
+            ]
+        ],
+
+        'admin' => [
+            'parents'     => ['super'],
+            'entity_bits' => [
+                'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
+            ],
+            'permissions' => [
+                [
+                    'permission' => 'adult.code',
+                    'label'      => 'Send code to adult',
+                    'entity'     => 'adult'
+                ],
+                [
+                    'permission' => 'create.group',
+                    'label'      => 'Create a group',
+                ],
+                [
+                    'permission' => 'remove.child.group',
+                    'label'      => 'Remove a sub group',
+                ],
+                [
+                    'permission' => 'create.child.group',
+                    'label'      => 'Create a sub group',
+                ],
+                [
+                    'permission' => 'import',
+                    'label'      => 'Import file'
+                ],
+            ],
+        ],
+
+        'group_admin' => [
+            'entity_bits' => [
+                'group' => Rbac::SCOPE_UPDATE,
+            ],
+            'parents'     => ['admin'],
+            'permissions' => [
+                [
+                    'permission' => 'edit.group',
+                    'label'      => 'Edit a group',
+                ],
+                [
+                    'permission' => 'child.code',
+                    'label'      => 'Send code to child'
+                ],
+                [
+                    'permission' => 'add.group.user',
+                    'label'      => 'Add user to group'
+                ],
+                [
+                    'permission' => 'remove.group.user',
+                    'label'      => 'Remove user to group'
+                ],
+            ]
+        ],
+
+        'principal' => [
+            'siblings' => ['group_admin', 'admin']
+        ],
+
+        'asstprincipal' => [
+            'siblings' => ['group_admin', 'admin']
+        ],
+
+        'teacher' => [
+            'parents'     => ['admin'],
+            'siblings'    => 'group_admin',
+        ],
+
+        'logged_in' => [
+            'parents' => ['group_admin'],
+        ],
+        'guest' => [
+            'parents'     => ['group_admin'],
+        ]
+    ],
+
     'zf-mvc-auth' => [
         'authentication' => [
             'types' => [
@@ -67,15 +188,6 @@ return [
                 'user' => [
                     // This defines an OAuth2 adapter backed by PDO.
                     'adapter' => 'Security\Authentication\ApiAdapter',
-                    'storage' => [
-                        'adapter' => 'pdo',
-                        'dsn' => 'mysql:dbname=cmwn;host=localhost;dbname=cmwn',
-                        'username' => 'root',
-                        'password' => 'root123$',
-                        'options' => [
-                            1002 => 'SET NAMES utf8', // PDO::MYSQL_ATTR_INIT_COMMAND
-                        ],
-                    ],
                 ],
             ],
         ],

@@ -2,8 +2,10 @@
 
 namespace Security\Service;
 
+use Group\GroupInterface;
 use Org\Organization;
 use Security\SecurityUser;
+use User\UserInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\In;
@@ -107,6 +109,11 @@ class SecurityOrgService
         }
 
         $orgIds = array_keys($user->getOrganizations());
+
+        if (empty($orgIds)) {
+            return $this;
+        }
+
         $select = new Select();
         $select->columns([
             new Expression('DISTINCT(g.type) AS type'),
@@ -131,4 +138,5 @@ class SecurityOrgService
 
         return $this;
     }
+
 }

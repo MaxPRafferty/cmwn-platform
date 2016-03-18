@@ -20,8 +20,11 @@ class ApiAdapterFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Zend\Authentication\AuthenticationService $securityService */
-        $securityService = $serviceLocator->get('Security\Authentication\AuthenticationService');
-        return new ApiAdapter($securityService);
+        /** @var \Zend\Authentication\AuthenticationService $authService */
+        $authService = $serviceLocator->get('Security\Authentication\AuthenticationService');
+
+        /** @var \Security\Service\SecurityOrgService $securityService */
+        $securityService = $serviceLocator->get('Security\Service\SecurityOrgService');
+        return new ApiAdapter($authService, $securityService);
     }
 }

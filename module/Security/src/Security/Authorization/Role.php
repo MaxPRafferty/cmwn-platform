@@ -1,6 +1,6 @@
 <?php
 
-namespace Security;
+namespace Security\Authorization;
 
 use Zend\Permissions\Rbac\Role as ZfRole;
 use Zend\Permissions\Rbac\RoleInterface;
