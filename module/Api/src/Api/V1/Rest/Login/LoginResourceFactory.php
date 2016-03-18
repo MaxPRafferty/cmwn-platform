@@ -22,7 +22,7 @@ class LoginResourceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var AuthenticationService $authService */
-        $authService = $serviceLocator->get('ZF\MvcAuth\Authentication');
+        $authService = $serviceLocator->get('Security\Authentication\AuthenticationService');
         /** @var AuthAdapter $adapter */
         $adapter     = $serviceLocator->get('Security\Authentication\AuthAdapter');
         return new LoginResource($authService, $adapter);

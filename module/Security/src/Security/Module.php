@@ -4,12 +4,14 @@ namespace Security;
 
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\EventManager\SharedEventManager;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
+use ZF\MvcAuth\MvcAuthEvent;
 
 /**
  * Core Classes for Cmwn
@@ -160,6 +162,7 @@ class Module implements
         $events  = $event->getApplication()->getEventManager();
         $service = $event->getApplication()->getServiceManager();
 
+        $events->attach($service->get('Security\Authorization\RouteListener'));
         $events->attach($service->get('Security\Guard\OriginGuard'));
         $events->attach($service->get('Security\Guard\CsrfGuard'));
         $events->attach($service->get('Security\Guard\ResetPasswordGuard'));

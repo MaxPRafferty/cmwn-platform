@@ -5,40 +5,29 @@ use \Security\Authorization\Rbac;
 return [
     'service_manager' => [
         'aliases' => [
-            'authentication' => 'Security\Authentication\AuthenticationService',
-            'ZF\MvcAuth\Authentication' => 'Security\Authentication\AuthenticationService',
+            'authentication'                            => 'Security\Authentication\AuthenticationService',
             'Security\Service\SecurityServiceInterface' => 'Security\Service\SecurityService',
         ],
 
         'invokables' => [
-            'Security\Guard\CsrfGuard' => 'Security\Guard\CsrfGuard',
-            'Security\Guard\OriginGuard' => 'Security\Guard\OriginGuard',
-            'Security\Authentication\AuthenticationDelegatorFactory'
-                => 'Security\Authentication\AuthenticationDelegatorFactory'
-
+            'Security\Guard\CsrfGuard'                               => 'Security\Guard\CsrfGuard',
+            'Security\Guard\OriginGuard'                             => 'Security\Guard\OriginGuard',
+            'Security\Authentication\AuthenticationDelegatorFactory' =>
+                'Security\Authentication\AuthenticationDelegatorFactory',
         ],
 
         'factories' => [
-//            'ZF\MvcAuth\Authorization\DefaultAuthorizationListener' => 'Security\Authorization\MvcAuthListener',
-            'Security\Guard\ResetPasswordGuard' => 'Security\Guard\ResetPasswordGuardFactory',
-            'Zend\Session\SessionManager' => 'Security\Session\SessionManagerFactory',
-            'Security\Service\SecurityService' => 'Security\Service\SecurityServiceFactory',
+            'Security\Guard\ResetPasswordGuard'   => 'Security\Guard\ResetPasswordGuardFactory',
+            'Security\Authorization\RouteListener'   => 'Security\Authorization\RouteListenerFactory',
+            'Zend\Session\SessionManager'         => 'Security\Session\SessionManagerFactory',
+            'Security\Service\SecurityService'    => 'Security\Service\SecurityServiceFactory',
             'Security\Service\SecurityOrgService' => 'Security\Service\SecurityOrgServiceFactory',
 
-            'Security\Authentication\ApiAdapter' => 'Security\Authentication\ApiAdapterFactory',
-
             'Security\Authentication\AuthAdapter' => 'Security\Authentication\AuthAdapterFactory',
+            'Security\Authorization\Rbac'         => 'Security\Authorization\RbacFactory',
 
-            'Security\Authorization\Rbac' => 'Security\Authorization\RbacFactory',
-
-            'Security\Authentication\AuthenticationService'
-                => 'Security\Authentication\AuthenticationServiceFactory',
-        ],
-
-        'delegators' => [
-            'ZF\MvcAuth\Authentication\DefaultAuthenticationListener' => [
-                'Security\Authentication\AuthenticationDelegatorFactory'
-            ]
+            'Security\Authentication\AuthenticationService' =>
+                'Security\Authentication\AuthenticationServiceFactory',
         ],
     ],
 
@@ -56,7 +45,7 @@ return [
                         'route'    => 'create user',
                         'defaults' => [
                             'controller' => 'Security\Controller\User',
-                            'action'     => 'createUser'
+                            'action'     => 'createUser',
                         ],
                     ],
                 ],
@@ -73,7 +62,7 @@ return [
             'permissions' => [
                 [
                     'permission' => 'view.all',
-                    'label'      => 'View All Entities'
+                    'label'      => 'View All Entities',
                 ],
                 [
                     'permission' => 'create.org',
@@ -93,11 +82,11 @@ return [
                 ],
                 [
                     'permission' => 'create.user',
-                    'label'      => 'Create a User'
+                    'label'      => 'Create a User',
                 ],
-                ['permission' => 'edit.user',    'label' => 'Edit a User'],
-                ['permission' => 'remove.user',  'label' => 'Delete a User'],
-            ]
+                ['permission' => 'edit.user', 'label' => 'Edit a User'],
+                ['permission' => 'remove.user', 'label' => 'Delete a User'],
+            ],
         ],
 
         'admin' => [
@@ -109,7 +98,7 @@ return [
                 [
                     'permission' => 'adult.code',
                     'label'      => 'Send code to adult',
-                    'entity'     => 'adult'
+                    'entity'     => 'adult',
                 ],
                 [
                     'permission' => 'create.group',
@@ -125,7 +114,7 @@ return [
                 ],
                 [
                     'permission' => 'import',
-                    'label'      => 'Import file'
+                    'label'      => 'Import file',
                 ],
             ],
         ],
@@ -142,60 +131,43 @@ return [
                 ],
                 [
                     'permission' => 'child.code',
-                    'label'      => 'Send code to child'
+                    'label'      => 'Send code to child',
                 ],
                 [
                     'permission' => 'add.group.user',
-                    'label'      => 'Add user to group'
+                    'label'      => 'Add user to group',
                 ],
                 [
                     'permission' => 'remove.group.user',
-                    'label'      => 'Remove user to group'
+                    'label'      => 'Remove user to group',
                 ],
-            ]
+            ],
         ],
 
         'principal' => [
-            'siblings' => ['group_admin', 'admin']
+            'siblings' => ['group_admin', 'admin'],
         ],
 
         'asstprincipal' => [
-            'siblings' => ['group_admin', 'admin']
+            'siblings' => ['group_admin', 'admin'],
         ],
 
         'teacher' => [
-            'parents'     => ['admin'],
-            'siblings'    => 'group_admin',
+            'parents'  => ['admin'],
+            'siblings' => 'group_admin',
         ],
 
         'logged_in' => [
             'parents' => ['group_admin'],
-        ],
-        'guest' => [
-            'parents'     => ['group_admin'],
-        ]
-    ],
-
-    'zf-mvc-auth' => [
-        'authentication' => [
-            'types' => [
-                'api',
-            ],
-            'map' => [
-                'Login' => 'user'
-            ],
-            'adapters' => [
-                'user' => [
-                    // This defines an OAuth2 adapter backed by PDO.
-                    'adapter' => 'Security\Authentication\ApiAdapter',
+            'permissions' => [
+                [
+                    'permission' => 'read.group',
+                    'label'      => 'Read group',
                 ],
             ],
         ],
-        'authorization' => [
-            'deny_by_default' => false,
-            'Api\V1\Rest\Login\Controller' => [
-                'default' => true
-            ]
+        'guest'     => [
+            'parents' => ['group_admin'],
         ],
     ],
 ];
