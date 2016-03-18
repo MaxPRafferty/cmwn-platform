@@ -2,6 +2,8 @@
 
 namespace Security\Authentication;
 
+use Security\SecurityUser;
+use Security\Service\SecurityOrgService;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -23,12 +25,19 @@ class ApiAdapter implements ZfApiAdapter
     protected $service;
 
     /**
+     * @var SecurityOrgService
+     */
+    protected $securityOrgService;
+
+    /**
      * ApiAdapter constructor.
      * @param AuthenticationServiceInterface $service
+     * @param SecurityOrgService $securityOrgService
      */
-    public function __construct(AuthenticationServiceInterface $service)
+    public function __construct(AuthenticationServiceInterface $service, SecurityOrgService $securityOrgService)
     {
-        $this->service = $service;
+        $this->service            = $service;
+        $this->securityOrgService = $securityOrgService;
     }
 
     /**
@@ -100,9 +109,29 @@ class ApiAdapter implements ZfApiAdapter
         }
 
         if ($identity instanceof AuthenticatedIdentity) {
+            $identity->setName(
+                $this->resolveCurrentRoleForUser($mvcAuthEvent, $identity->getAuthenticationIdentity())
+            );
             return $identity;
         }
 
-        return new AuthenticatedIdentity($this->service->getIdentity());
+        $user = $this->service->getIdentity();
+        $identity = new AuthenticatedIdentity($user);
+        $identity->setName($this->resolveRoleForUser($mvcAuthEvent, $user));
+        return $identity;
+    }
+
+    protected function resolveCurrentRoleForUser(MvcAuthEvent $mvcAuthEvent, SecurityUser $securityUser)
+    {
+        if ($securityUser->isSuper()) {
+            return 'super';
+        }
+
+        $groupId = $mvcAuthEvent->getMvcEvent()->getRouteMatch()->getParam('group_id', false);
+        if ($groupId === false) {
+            return 'logged_in';
+        }
+
+        return 'logged_in';
     }
 }

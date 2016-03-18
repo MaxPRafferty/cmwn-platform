@@ -1,6 +1,6 @@
 <?php
 
-namespace Security;
+namespace Security\Authorization;
 
 use Zend\Permissions\Rbac\Rbac as ZfRbac;
 use Zend\Permissions\Rbac\RoleInterface;
@@ -32,7 +32,6 @@ class Rbac extends ZfRbac
     {
         array_walk($roles, [$this, 'addRoleFromConfig']);
         array_walk($roles, [$this, 'copyPermissionsFromSibling']);
-        array_walk(array_keys($roles), [$this, 'copyPermissionBitsFromRole']);
     }
 
     /**
@@ -50,44 +49,7 @@ class Rbac extends ZfRbac
             /** @var Role $sibling */
             $sibling = $this->getRole($siblingRole);
             $sibling->copyPermissionToRole($role);
-            $this->copyBitsFromRole($roleName, $siblingRole);
-        }
-    }
-
-    /**
-     * Copies the permissions from each parent role
-     *
-     * @param $roleName
-     */
-    public function copyPermissionBitsFromRole($roleName)
-    {
-        $role = $roleName instanceof RoleInterface ? $roleName : $this->getRole($roleName);
-        foreach ($role as $childRole) {
-            $this->copyBitsFromRole($childRole->getName(), $role->getName());
-        }
-    }
-
-    /**
-     * Copies the bits from a role to another role
-     *
-     * @param $roleFrom
-     * @param $roleTo
-     */
-    protected function copyBitsFromRole($roleFrom, $roleTo)
-    {
-        $roleFrom = $roleFrom instanceof RoleInterface ? $roleFrom : $this->getRole($roleFrom);
-        $roleTo   = $roleTo instanceof RoleInterface ? $roleTo : $this->getRole($roleTo);
-
-        foreach ($this->permissionBits[$roleFrom->getName()] as $entity => $scope) {
-            $currentBit = array_key_exists($entity, $this->permissionBits[$roleTo->getName()])
-                ? $this->permissionBits[$roleTo->getName()][$entity]
-                : 0;
-
-            $this->permissionBits[$roleTo->getName()][$entity] = $scope | $currentBit;
-        }
-
-        foreach ($roleFrom as $childRole) {
-            $this->copyBitsFromRole($childRole, $roleTo);
+            $this->permissionBits[$roleName] = $this->permissionBits[$siblingRole];
         }
     }
 
@@ -105,12 +67,12 @@ class Rbac extends ZfRbac
         $parents = !is_array($parents) ? [$parents] : $parents;
         $this->addRole($role, $parents);
 
-        if (!array_key_exists($roleName, $this->permissionBits)) {
-            $this->permissionBits[$roleName] = [];
-        }
-
         if (array_key_exists('permissions', $roleConfig)) {
             $this->addPermissionsToRole($role, $roleConfig['permissions']);
+        }
+
+        if (array_key_exists('entity_bits', $roleConfig)) {
+            $this->permissionBits[$roleName] = $roleConfig['entity_bits'];
         }
     }
 
@@ -131,16 +93,11 @@ class Rbac extends ZfRbac
             $defaults = [
                 'permission' => null,
                 'label'      => null,
-                'entity'     => null,
-                'scope'      => 0,
             ];
 
             $permConfig = array_merge($defaults, $permConfig);
-
             $permission = $permConfig['permission'];
             $label      = $permConfig['label'] === null ? $permission : $permConfig['label'];
-            $entity     = $permConfig['entity'];
-            $scope      = $permConfig['scope'];
 
             if ($permission === null) {
                 throw new \RuntimeException('Invalid Permission in config');
@@ -148,12 +105,6 @@ class Rbac extends ZfRbac
 
             $role->addPermission($permission);
             $this->permissionLabels[$permission] = $label;
-
-            $currentBit = array_key_exists($entity, $this->permissionBits[$role->getName()])
-                ? $this->permissionBits[$role->getName()][$entity]
-                : 0;
-
-            $this->permissionBits[$role->getName()][$entity] = $scope | $currentBit;
         }
     }
 
