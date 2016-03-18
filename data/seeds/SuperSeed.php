@@ -16,6 +16,7 @@ class SuperSeed extends AbstractSeed
     {
         $table = $this->table('users');
 
+        $date = new \DateTime();
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'mfafferty',
@@ -28,7 +29,8 @@ class SuperSeed extends AbstractSeed
                 'gender'     => 'male',
                 'meta'       => '[]',
                 'birthdate'  => null,
-                'updated'    => null,
+                'created'    => $date->getTimestamp(),
+                'updated'    => $date->getTimestamp(),
                 'super'      => 1
             ])
                 ->save();
@@ -45,7 +47,8 @@ class SuperSeed extends AbstractSeed
                 'gender'     => 'female',
                 'meta'       => '[]',
                 'birthdate'  => null,
-                'updated'    => null,
+                'created'    => $date->getTimestamp(),
+                'updated'    => $date->getTimestamp(),
                 'super'      => 1
             ])
                 ->save();
@@ -62,7 +65,8 @@ class SuperSeed extends AbstractSeed
                 'gender'     => 'male',
                 'meta'       => '[]',
                 'birthdate'  => null,
-                'updated'    => null,
+                'created'    => $date->getTimestamp(),
+                'updated'    => $date->getTimestamp(),
                 'super'      => 1
             ])
                 ->save();
