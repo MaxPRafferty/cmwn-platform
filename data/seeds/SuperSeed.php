@@ -16,7 +16,6 @@ class SuperSeed extends AbstractSeed
     {
         $table = $this->table('users');
 
-        try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'mfafferty',
@@ -33,11 +32,7 @@ class SuperSeed extends AbstractSeed
                 'super'      => 1
             ])
                 ->save();
-        } catch (\Exception $saveException) {
-            // noop
-        }
         
-        try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'jalbers',
@@ -54,11 +49,7 @@ class SuperSeed extends AbstractSeed
                 'super'      => 1
             ])
                 ->save();
-        } catch (\Exception $saveException) {
-            // noop
-        }
         
-        try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'manchuck',
@@ -75,9 +66,6 @@ class SuperSeed extends AbstractSeed
                 'super'      => 1
             ])
                 ->save();
-        } catch (\Exception $saveException) {
-            // noop
-        }
 
 
     }
