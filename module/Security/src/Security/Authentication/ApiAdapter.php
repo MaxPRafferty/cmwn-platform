@@ -132,6 +132,8 @@ class ApiAdapter implements ZfApiAdapter
             return 'logged_in';
         }
 
+        $role = $this->securityOrgService->getRoleForGroup($groupId, $securityUser);
+
         return 'logged_in';
     }
 }
