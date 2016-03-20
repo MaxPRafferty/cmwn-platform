@@ -2,17 +2,16 @@
 
 namespace Security\Authorization;
 
-use Application\Exception\NotAuthorizedException;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
-use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
+use ZF\Hal\View\HalJsonModel;
 
 /**
  * Class RouteListener
@@ -80,6 +79,15 @@ class RouteListener implements ListenerAggregateInterface
     public function attach(EventManagerInterface $events)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onRender'], -10);
+    }
+
+    public function onRender(MvcEvent $event)
+    {
+        /** @var HalJsonModel $response */
+        $response = $event->getResult();
+
+        $payload = $response->getPayload();
     }
 
     /**
