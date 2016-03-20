@@ -73,6 +73,10 @@ return [
                     'label'      => 'Edit an organization',
                 ],
                 [
+                    'permission' => 'view.org',
+                    'label'      => 'View an organization',
+                ],
+                [
                     'permission' => 'remove.org',
                     'label'      => 'Delete an organization',
                 ],
@@ -153,7 +157,6 @@ return [
         ],
 
         'teacher' => [
-            'parents'  => ['admin'],
             'siblings' => 'group_admin',
         ],
 
@@ -163,6 +166,14 @@ return [
                 [
                     'permission' => 'read.group',
                     'label'      => 'Read group',
+                ],
+                [
+                    'permission' => 'update password',
+                    'label'      => 'Update password',
+                ],
+                [
+                    'permission' => 'view.games',
+                    'label'      => 'View Games',
                 ],
             ],
         ],
