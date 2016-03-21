@@ -50,12 +50,7 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
             $userData['token'] = $token;
         }
 
-
-        $this->getLinks()->add(new MeLink($user));
-        $this->getLinks()->add(new ProfileLink($user));
-        $this->getLinks()->add(new ForgotLink());
         $this->getLinks()->add(new GameLink());
-        $this->getLinks()->add(new UserImageLink($user));
 
         if ($user instanceof SecurityUser) {
             $this->addOrganizations($user, $userData);
@@ -74,7 +69,7 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
     {
         return array_merge(
             parent::getArrayCopy(),
-            ['organizations' => $this->organizations]
+            ['organizations' => $this->organizations, 'links' => $this->getLinks()]
         );
     }
 
