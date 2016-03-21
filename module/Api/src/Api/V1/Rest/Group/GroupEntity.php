@@ -2,6 +2,7 @@
 namespace Api\V1\Rest\Group;
 
 use Api\Links\GroupUserLink;
+use Api\ScopeAwareInterface;
 use Group\Group;
 use Group\GroupInterface;
 use ZF\Hal\Link\LinkCollection;
@@ -11,7 +12,7 @@ use ZF\Hal\Link\LinkCollectionAwareInterface;
  * Class GroupEntity
  * @package Api\V1\Rest\Group
  */
-class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareInterface
+class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareInterface, ScopeAwareInterface
 {
     /**
      * @var LinkCollection
@@ -30,6 +31,16 @@ class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareIn
 
         $array['links'] = $this->getLinks();
         return $array;
+    }
+
+    /**
+     * Gets the entity type to allow the rbac to set the correct scope
+     *
+     * @return string
+     */
+    public function getEntityType()
+    {
+        return 'group';
     }
 
     /**

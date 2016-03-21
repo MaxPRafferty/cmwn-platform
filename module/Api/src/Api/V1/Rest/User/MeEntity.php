@@ -67,6 +67,9 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
         parent::__construct($userData);
     }
 
+    /**
+     * @return mixed
+     */
     public function getArrayCopy()
     {
         return array_merge(
@@ -77,7 +80,6 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
 
     /**
      * @param SecurityUser $user
-     * @param array $userData
      */
     protected function addOrganizations(SecurityUser $user)
     {

@@ -2,6 +2,7 @@
 
 namespace Security\Authorization;
 
+use Zend\Permissions\Rbac\Exception\InvalidArgumentException;
 use Zend\Permissions\Rbac\Rbac as ZfRbac;
 use Zend\Permissions\Rbac\RoleInterface;
 
@@ -33,6 +34,22 @@ class Rbac extends ZfRbac
         array_walk($roles, [$this, 'addRoleFromConfig']);
         array_walk($roles, [$this, 'copyPermissionsFromSibling']);
     }
+
+    /**
+     * @param string|RoleInterface $objectOrName
+     * @return RoleInterface
+     */
+    public function getRole($objectOrName)
+    {
+        try {
+            return parent::getRole($objectOrName);
+        } catch (InvalidArgumentException $notFound) {
+
+        }
+
+        return parent::getRole('guest');
+    }
+
 
     /**
      * Copies the permissions from each sibling role

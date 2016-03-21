@@ -79,15 +79,6 @@ class RouteListener implements ListenerAggregateInterface
     public function attach(EventManagerInterface $events)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onRender'], -10);
-    }
-
-    public function onRender(MvcEvent $event)
-    {
-        /** @var HalJsonModel $response */
-        $response = $event->getResult();
-
-        $payload = $response->getPayload();
     }
 
     /**
@@ -162,7 +153,14 @@ class RouteListener implements ListenerAggregateInterface
             return 'logged_in';
         }
 
-        $foundRole = $this->orgService->getRoleForGroup($group, $this->authService->getIdentity());
-        return $foundRole !== false ? 'logged_in' : $foundRole;
+        $identity  = $this->authService->getIdentity();
+        $foundRole = $this->orgService->getRoleForGroup($group, $identity);
+        $foundRole = $foundRole === false ? 'logged_in' : $foundRole;
+
+        if ($identity instanceof SecurityUser) {
+            $identity->setRole($foundRole);
+        }
+
+        return $foundRole;
     }
 }
