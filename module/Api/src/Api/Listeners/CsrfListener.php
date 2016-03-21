@@ -62,7 +62,7 @@ class CsrfListener extends Csrf
      */
     public function checkToken(ResourceEvent $event)
     {
-        if (in_array(['api.rest.token', 'api.rest.logout', 'api.rest.forgot'], $event->getRouteMatch()->getMatchedRouteName())) {
+        if (in_array($event->getRouteMatch()->getMatchedRouteName(), ['api.rest.token', 'api.rest.logout', 'api.rest.forgot'])) {
             return null;
         }
 
