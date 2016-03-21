@@ -164,7 +164,7 @@ class Module implements
 
         $events->attach($service->get('Security\Authorization\RouteListener'));
         $events->attach($service->get('Security\Guard\OriginGuard'));
-        $events->attach($service->get('Security\Guard\CsrfGuard'));
+        $events->attach($service->get('Security\Guard\XsrfGuard'));
         $events->attach($service->get('Security\Guard\ResetPasswordGuard'));
     }
 }

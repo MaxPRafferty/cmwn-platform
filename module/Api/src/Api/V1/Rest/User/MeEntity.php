@@ -34,6 +34,11 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
     protected $organizations;
 
     /**
+     * @var string|null
+     */
+    protected $token = null;
+
+    /**
      * MeEntity constructor.
      * @param array $user
      * @param null $token
@@ -47,7 +52,7 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
         $userData = $user instanceof UserInterface ? $user->getArrayCopy() : $user;
 
         if ($token !== null) {
-            $userData['token'] = $token;
+            $this->token = $token;
         }
 
         $this->getLinks()->add(new GameLink());
@@ -69,7 +74,11 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
     {
         return array_merge(
             parent::getArrayCopy(),
-            ['organizations' => $this->organizations, 'links' => $this->getLinks()]
+            [
+                'organizations' => $this->organizations,
+                'links' => $this->getLinks(),
+                'token' => $this->token
+            ]
         );
     }
 

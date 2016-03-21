@@ -5,11 +5,14 @@ namespace Security\Guard;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
+use Zend\Http\Header\Cookie;
 use Zend\Http\Header\SetCookie;
-use Zend\Http\PhpEnvironment\Request;
-use Zend\Http\PhpEnvironment\Response;
+use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Http\PhpEnvironment\Response as HttpResponse;
 use Zend\Mvc\MvcEvent;
 use Zend\Validator\Csrf;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class CsrfGuard
@@ -18,7 +21,7 @@ use Zend\Validator\Csrf;
  *
  * @package Security\Guard
  */
-class CsrfGuard extends Csrf implements ListenerAggregateInterface
+class XsrfGuard extends Csrf implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
 
@@ -34,8 +37,7 @@ class CsrfGuard extends Csrf implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
-        // TODO attach when you get workflow from apigility
-//        $this->listeners[] = $events->attach(MvcEvent::EVENT_FINISH, [$this, 'setCookie'], 210);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_FINISH, [$this, 'setCookie'], 210);
     }
 
     /**
@@ -64,24 +66,23 @@ class CsrfGuard extends Csrf implements ListenerAggregateInterface
     }
 
     /**
-     * Sets the Cookie
-     *
      * @param MvcEvent $event
+     * @return null|void|ApiProblemResponse
      */
     public function setCookie(MvcEvent $event)
     {
         $response = $event->getResponse();
-        /** @var Request $request */
+        /** @var HttpRequest $request */
         $request  = $event->getRequest();
 
         // Coming in from the console
-        if (!$response instanceof Response) {
-            return;
+        if (!$response instanceof HttpResponse) {
+            return null;
         }
 
         $cookie = $request->getCookie();
         if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
-            return;
+            return $this->verifyToken($cookie);
         }
 
         $cookie = new SetCookie(
@@ -94,5 +95,19 @@ class CsrfGuard extends Csrf implements ListenerAggregateInterface
         );
 
         $response->getHeaders()->addHeader($cookie);
+        return null;
+    }
+
+    /**
+     * @param Cookie $cookie
+     * @return null|ApiProblemResponse
+     */
+    protected function verifyToken(Cookie $cookie)
+    {
+        if ($cookie->offsetGet('XSRF-TOKEN') !== $this->getHashFromSession()) {
+            return new ApiProblemResponse(new ApiProblem(500, 'Invalid Token'));
+        }
+
+        return null;
     }
 }
