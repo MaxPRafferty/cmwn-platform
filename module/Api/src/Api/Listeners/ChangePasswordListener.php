@@ -2,13 +2,13 @@
 
 namespace Api\Listeners;
 
-use Api\V1\Rest\User\ResetEntity;
 use Security\Exception\ChangePasswordException;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
 use Zend\Mvc\MvcEvent;
-use ZF\Hal\View\HalJsonModel;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class ChangePasswordListener
@@ -36,7 +36,7 @@ class ChangePasswordListener implements ListenerAggregateInterface
 
     /**
      * @param MvcEvent $event
-     * @return void|HalJsonModel
+     * @return void
      */
     public function onError(MvcEvent $event)
     {
@@ -49,13 +49,7 @@ class ChangePasswordListener implements ListenerAggregateInterface
             return;
         }
 
-        $entity = new ResetEntity($exception->getUser());
-
-        $viewModel = new HalJsonModel();
-        $viewModel->setPayload($entity);
-        $event->setResult($viewModel);
+        $event->setResult(new ApiProblemResponse(new ApiProblem(401, 'Change Password')));
         $event->setError(false);
-        return $viewModel;
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\Org;
 
+use Api\ScopeAwareInterface;
 use Org\Organization;
 use Org\OrganizationInterface;
 use Zend\Stdlib\ArrayUtils;
@@ -10,14 +11,13 @@ use Zend\Stdlib\ArrayUtils;
  * Class OrgEntity
  * @package Api\V1\Rest\Org
  */
-class OrgEntity extends Organization
+class OrgEntity extends Organization implements ScopeAwareInterface
 {
     /**
-     * @var int
+     * OrgEntity constructor.
+     * @param array $options
      */
-    protected $scope = 0;
-
-    public function __construct($options = [], $scope = null)
+    public function __construct($options = [])
     {
         if ($options instanceof OrganizationInterface) {
             $options = $options->getArrayCopy();
@@ -27,17 +27,18 @@ class OrgEntity extends Organization
             $options = ArrayUtils::iteratorToArray($options);
         }
 
-        if ($scope !== null) {
-            $this->scope = $scope;
-        }
         parent::__construct($options);
     }
 
-    public function getArrayCopy()
+    /**
+     * Gets the entity type to allow the rbac to set the correct scope
+     *
+     * @return string
+     */
+    public function getEntityType()
     {
-        return array_merge(
-            parent::getArrayCopy(),
-            ['scope' => $this->scope]
-        );
+        return 'organization';
     }
+
+
 }
