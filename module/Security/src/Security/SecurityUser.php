@@ -159,7 +159,7 @@ class SecurityUser extends User
         }
 
         $now = DateTimeFactory::factory('now');
-        if ($this->codeExpires === null || $now->getTimestamp() > $this->codeExpires->getTimestamp()) {
+        if ($this->codeExpires === null || $now->format("Y-m-d H:i:s") > $this->codeExpires->format("Y-m-d H:i:s")) {
             return static::CODE_EXPIRED;
         }
 

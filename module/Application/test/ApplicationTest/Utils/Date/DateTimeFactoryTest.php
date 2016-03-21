@@ -16,7 +16,7 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
         $expectedDate = new \DateTimeImmutable();
         $testDate     = DateTimeFactory::factory($expectedDate->format(\DateTime::ISO8601));
 
-        $this->assertEquals($expectedDate->getTimestamp(), $testDate->getTimestamp());
+        $this->assertEquals($expectedDate->format("Y-m-d H:i:s"), $testDate->format("Y-m-d H:i:s"));
     }
 
     public function testItShouldCreateDateTimeFromTimeStamp()
@@ -24,7 +24,7 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
         $expectedDate = new \DateTimeImmutable('1982-05-13 23:43:00');
         $testDate     = DateTimeFactory::factory(390181380);
 
-        $this->assertEquals($expectedDate->getTimestamp(), $testDate->getTimestamp());
+        $this->assertEquals($expectedDate->format("Y-m-d H:i:s"), $testDate->format("Y-m-d H:i:s"));
     }
 
     public function testItShouldChangeTimeZoneToBeUTC()
@@ -33,7 +33,7 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
         $newDate      = new \DateTimeImmutable('now', new \DateTimeZone('America/New_York'));
         $testDate     = DateTimeFactory::factory($newDate->format(\DateTime::ISO8601));
 
-        $this->assertEquals($expectedDate->getTimestamp(), $testDate->getTimestamp());
+        $this->assertEquals($expectedDate->format("Y-m-d H:i:s"), $testDate->format("Y-m-d H:i:s"));
     }
 
     public function testItShouldReturnNullWhenPassedNull()

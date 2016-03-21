@@ -16,7 +16,7 @@ class SecurityUserTest extends TestCase
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
             'code'         => 'some_code',
-            'code_expires' => $date->getTimestamp(),
+            'code_expires' => $date->format("Y-m-d H:i:s"),
             'password'     => password_hash('foobar', PASSWORD_DEFAULT)
         ];
 
@@ -37,7 +37,7 @@ class SecurityUserTest extends TestCase
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
             'code'         => 'some_code',
-            'code_expires' => $date->getTimestamp(),
+            'code_expires' => $date->format("Y-m-d H:i:s"),
             'password'     => password_hash('foobar', PASSWORD_DEFAULT)
         ];
 
@@ -53,7 +53,7 @@ class SecurityUserTest extends TestCase
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
             'code'         => 'some_code',
-            'code_expires' => $date->getTimestamp(),
+            'code_expires' => $date->format("Y-m-d H:i:s"),
             'password'     => password_hash('foobar', PASSWORD_DEFAULT)
         ];
 
@@ -69,7 +69,7 @@ class SecurityUserTest extends TestCase
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
             'code'         => 'some_code',
-            'code_expires' => $date->getTimestamp(),
+            'code_expires' => $date->format("Y-m-d H:i:s"),
             'password'     => password_hash('foobar', PASSWORD_DEFAULT)
         ];
 
