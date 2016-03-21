@@ -75,8 +75,8 @@ class UserService implements UserServiceInterface
         $data            = $user->getArrayCopy();
         $data['meta']    = Json::encode($data['meta']);
         $data['user_id'] = $user->getUserId();
-        $data['created'] = $user->getCreated()->getTimestamp();
-        $data['updated'] = $user->getUpdated()->getTimestamp();
+        $data['created'] = $user->getCreated()->format("Y-m-d H:i:s");
+        $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
 
         unset($data['password']);
         unset($data['deleted']);
@@ -98,7 +98,7 @@ class UserService implements UserServiceInterface
         $user->setUpdated(new \DateTime());
         $data            = $user->getArrayCopy();
         $data['meta']    = Json::encode($data['meta']);
-        $data['updated'] = $user->getUpdated()->getTimestamp();
+        $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
 
         unset($data['password']);
         unset($data['deleted']);
