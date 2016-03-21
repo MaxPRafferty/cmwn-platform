@@ -5,47 +5,53 @@
  *
  * @see https://github.com/zendframework/ZFTool
  */
-return array(
-    'modules' => array(
-        'Application',
-        'User',
-        'Org',
-        'Game',
-        'Asset',
-        'Group',
-        'Job',
-        'Import',
-        'AcMailer',
-        'ZF\\DevelopmentMode',
-        'ZF\\Apigility',
-        'ZF\\Apigility\\Provider',
-        'ZF\\Apigility\\Documentation',
-        'AssetManager',
-        'ZF\\ApiProblem',
-        'ZF\\Configuration',
-        'ZF\\OAuth2',
-        'ZF\\MvcAuth',
-        'ZF\\Hal',
-        'ZF\\ContentNegotiation',
-        'ZF\\ContentValidation',
-        'ZF\\Rest',
-        'ZF\\Rpc',
-        'ZF\\Versioning',
-        'ZF\\MvcAuth',
-        'Api',
-        'Security',
-        'Notice',
-    ),
-    'module_listener_options' => array(
-        'module_paths' => array(
+return [
+    'modules' => include __DIR__ . '/modules.config.php',
+    'module_listener_options' => [
+        'module_paths' => [
             './module',
             './vendor',
-        ),
+        ],
         'config_glob_paths'        => [realpath(__DIR__) . '/autoload/{,*.}{global,local}.php'],
         'config_cache_key' => 'application.config.cache',
         'config_cache_enabled' => true,
         'module_map_cache_key' => 'application.module.cache',
         'module_map_cache_enabled' => true,
         'cache_dir' => 'data/cache/',
-    ),
-);
+    ],
+
+    'service_manager' => [
+        'router' => [
+            'routes' => [
+                'home' => [
+                    'type' => 'Literal',
+                    'options' => [
+                        'route'    => '/',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Index',
+                            'action'     => 'index',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'service_manager' => [
+            'abstract_factories' => [
+                'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+                'Zend\Db\Adapter\AdapterAbstractServiceFactory',
+                'Zend\Log\LoggerAbstractServiceFactory',
+                'Application\Utils\AbstractTableFactory'
+            ],
+        ],
+        'controllers' => [
+            'invokables' => [
+                'Application\Controller\Index' => 'Application\Controller\IndexController',
+            ],
+        ],
+        'view_manager' => [
+            'display_not_found_reason' => false,
+            'display_exceptions'       => false,
+            'doctype'                  => 'HTML5',
+        ],
+    ],
+];

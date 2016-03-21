@@ -1,98 +1,62 @@
 <?php
+
 namespace Api\V1\Rest\Password;
 
+use Security\SecurityUser;
+use Security\Service\SecurityServiceInterface;
+use User\UserInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
+/**
+ * Class PasswordResource
+ */
 class PasswordResource extends AbstractResourceListener
 {
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    protected $authService;
+
+    /**
+     * @var SecurityServiceInterface
+     */
+    protected $securityService;
+
+    public function __construct(AuthenticationServiceInterface $authService, SecurityServiceInterface $securityService)
+    {
+        $this->authService     = $authService;
+        $this->securityService = $securityService;
+    }
+
     /**
      * Create a resource
      *
      * @param  mixed $data
      * @return ApiProblem|mixed
+     * @todo make a validator so this code can be moved out of the controller
      */
     public function create($data)
     {
-        return new ApiProblem(405, 'The POST method has not been defined');
-    }
+        $data = (array) $data;
+        if (!$this->authService->hasIdentity()) {
+            return new ApiProblem(401, 'Not Authorized');
+        }
 
-    /**
-     * Delete a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    public function delete($id)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
-    }
+        $securityUser = $this->authService->getIdentity();
+        if (!$securityUser instanceof SecurityUser) {
+            return new ApiProblem(401, 'Not Authorized');
+        }
 
-    /**
-     * Delete a collection, or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function deleteList($data)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for collections');
-    }
+        /** @var UserInterface $user */
+        $user = $this->getEvent()->getRouteParam('user');
+        if (!$securityUser->getUserId() === $user->getUserId()) {
+            return new ApiProblem(401, 'Not Authorized');
+        }
 
-    /**
-     * Fetch a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    public function fetch($id)
-    {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
-    }
-
-    /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return ApiProblem|mixed
-     */
-    public function fetchAll($params = array())
-    {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
-    }
-
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function patch($id, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
-    }
-
-    /**
-     * Replace a collection or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for collections');
-    }
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function update($id, $data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
+        $this->securityService->savePasswordToUser($securityUser, $data['password']);
+        $this->authService->clearIdentity();
+        return new ApiProblem(200, 'Password Updated', 'Ok');
     }
 }

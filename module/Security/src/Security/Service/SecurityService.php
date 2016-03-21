@@ -71,7 +71,7 @@ class SecurityService implements SecurityServiceInterface
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 
         $this->gateway->update(
-            ['password' => static::encryptPassword($password)],
+            ['password' => static::encryptPassword($password), 'code' => null, 'code_expires' => null],
             ['user_id'  => $userId]
         );
 
@@ -110,7 +110,7 @@ class SecurityService implements SecurityServiceInterface
         $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
         $expires = new \DateTime('+3 days');
         $this->gateway->update(
-            ['code'    => $code, 'code_expires' => $expires->getTimestamp()],
+            ['code'    => $code, 'code_expires' => (string) $expires->format("Y-m-d H:i:s")],
             ['user_id' => $userId]
         );
 

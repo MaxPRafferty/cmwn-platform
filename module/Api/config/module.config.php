@@ -800,6 +800,9 @@ return array(
         'Api\\V1\\Rest\\Import\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Import\\Validator',
         ),
+        'Api\\V1\\Rest\\Password\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Password\\Validator',
+        ),
     ),
     'input_filter_specs' => array(
         'Api\\V1\\Rest\\User\\Validator' => array(
@@ -1125,6 +1128,33 @@ return array(
                 'filters' => array(),
                 'name' => 'teacher_code',
                 'description' => 'Teacher Access Code',
+            ),
+        ),
+        'Api\\V1\\Rest\\Password\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        "name" => "Security\\PasswordValidator",
+                        "options" => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'password',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\Identical',
+                        'options' => array(
+                            'token' => 'password',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'confirm',
+                'error_message' => 'Passwords do not match',
             ),
         ),
     ),
