@@ -105,8 +105,8 @@ class UserServiceTest extends TestCase
 
                 $expected = $newUser->getArrayCopy();
                 $expected['meta'] = '[]';
-                $expected['created'] = $newUser->getCreated()->getTimestamp();
-                $expected['updated'] = $newUser->getUpdated()->getTimestamp();
+                $expected['created'] = $newUser->getCreated()->format("Y-m-d H:i:s");
+                $expected['updated'] = $newUser->getUpdated()->format("Y-m-d H:i:s");
                 unset($expected['password']);
                 unset($expected['deleted']);
 
@@ -153,7 +153,7 @@ class UserServiceTest extends TestCase
                 unset($expected['password']);
                 unset($expected['deleted']);
 
-                $expected['updated'] = $user->getUpdated()->getTimestamp();
+                $expected['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
