@@ -168,7 +168,7 @@ return [
                     'label'      => 'Read group',
                 ],
                 [
-                    'permission' => 'update password',
+                    'permission' => 'update.password',
                     'label'      => 'Update password',
                 ],
                 [
