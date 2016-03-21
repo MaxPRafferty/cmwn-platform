@@ -9,6 +9,7 @@ use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Validator\Csrf;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
+use ZF\Hal\Entity;
 use ZF\Rest\ResourceEvent;
 
 /**
@@ -23,8 +24,8 @@ class CsrfListener extends Csrf
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'onRender']);
-//        $this->listeners[] = $events->attach('ZF\Rest\ResourceInterface', '*', [$this, 'checkToken'], 1000);
+        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'onRender']);
+        $this->listeners[] = $events->attach('ZF\Rest\ResourceInterface', '*', [$this, 'checkToken'], 1000);
     }
 
     /**
@@ -42,12 +43,17 @@ class CsrfListener extends Csrf
      */
     public function onRender(EventInterface $event)
     {
-        $entity  = $event->getParam('entity');
+        $entity = $event->getParam('entity');
+        $entity = !$entity instanceof TokenEntityInterface && $entity instanceof Entity
+            ? $entity->entity
+            : $entity;
+
         if (!$entity instanceof TokenEntityInterface) {
             return;
         }
 
-        $entity->setToken($this->getHashFromSession());
+        $payload = $event->getParam('payload');
+        $payload['token'] = $this->getHashFromSession();
     }
 
     /**
@@ -60,12 +66,15 @@ class CsrfListener extends Csrf
             return null;
         }
 
-
         /** @var HttpRequest $request */
         $request = $event->getRequest();
-        $header  = $request->getHeader('X-Csrf-Token');
+        $header  = $request->getHeader('X-CSRF');
 
         if ($header === false) {
+            return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
+        }
+
+        if ($header->getFieldValue() !== $this->getHashFromSession()) {
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
         }
     }
