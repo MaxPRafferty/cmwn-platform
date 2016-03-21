@@ -3,6 +3,7 @@ return array(
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
+            'Api\\Listeners\\CsrfListener' => 'Api\\Listeners\\CsrfListener',
         ),
         'factories' => array(
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',

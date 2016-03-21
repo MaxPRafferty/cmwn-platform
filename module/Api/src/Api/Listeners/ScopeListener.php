@@ -16,7 +16,6 @@ use ZF\Hal\Entity;
  */
 class ScopeListener
 {
-
     protected $listeners = [];
 
     /**

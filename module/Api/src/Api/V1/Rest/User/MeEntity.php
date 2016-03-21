@@ -2,13 +2,10 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\ForgotLink;
 use Api\Links\GameLink;
 use Api\Links\GroupLink;
-use Api\Links\MeLink;
 use Api\Links\OrgLink;
-use Api\Links\ProfileLink;
-use Api\Links\UserImageLink;
+use Api\TokenEntityInterface;
 use Api\V1\Rest\Org\OrgEntity;
 use Security\SecurityUser;
 use User\UserInterface;
@@ -21,7 +18,7 @@ use ZF\MvcAuth\Identity\IdentityInterface;
  * Class MeEntity
  * @package Api\V1\Rest\User
  */
-class MeEntity extends UserEntity implements LinkCollectionAwareInterface
+class MeEntity extends UserEntity implements LinkCollectionAwareInterface, TokenEntityInterface
 {
     /**
      * @var LinkCollection
@@ -52,19 +49,27 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
         $userData = $user instanceof UserInterface ? $user->getArrayCopy() : $user;
 
         if ($token !== null) {
-            $this->token = $token;
+            $this->setToken($token);
         }
 
         $this->getLinks()->add(new GameLink());
 
         if ($user instanceof SecurityUser) {
-            $this->addOrganizations($user, $userData);
+            $this->addOrganizations($user);
             foreach ($user->getGroupTypes() as $groupType) {
                 $this->getLinks()->add(new GroupLink($groupType));
             }
         }
 
         parent::__construct($userData);
+    }
+
+    /**
+     * @param $token
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
     }
 
     /**
@@ -89,7 +94,7 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface
     {
         $orgs = [];
         foreach ($user->getOrganizations() as $key => $org) {
-            $orgs[]  = new OrgEntity($org, 7);
+            $orgs[]  = new OrgEntity($org);
             $this->getLinks()->add(new OrgLink($org));
         }
 
