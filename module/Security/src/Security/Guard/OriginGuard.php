@@ -66,7 +66,7 @@ class OriginGuard implements ListenerAggregateInterface
             ->addHeaderLine('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE')
             ->addHeaderLine(
                 'Access-Control-Allow-Headers',
-                'Origin, Content-Type, Authorization, X-Auth-Token, X-CSRF-TOKEN'
+                'Origin, Content-Type, X-CSRF'
             )
             ->addHeaderLine('Access-Control-Max-Age', '28800')
             ->addHeaderLine('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
