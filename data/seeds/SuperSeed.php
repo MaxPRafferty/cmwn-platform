@@ -29,8 +29,8 @@ class SuperSeed extends AbstractSeed
                 'gender'     => 'male',
                 'meta'       => '[]',
                 'birthdate'  => null,
-                'created'    => $date->getTimestamp(),
-                'updated'    => $date->getTimestamp(),
+                'created'    => $date->format("Y-m-d H:i:s"),
+                'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
                 ->save();
@@ -47,8 +47,8 @@ class SuperSeed extends AbstractSeed
                 'gender'     => 'female',
                 'meta'       => '[]',
                 'birthdate'  => null,
-                'created'    => $date->getTimestamp(),
-                'updated'    => $date->getTimestamp(),
+                'created'    => $date->format("Y-m-d H:i:s"),
+                'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
                 ->save();
@@ -65,8 +65,8 @@ class SuperSeed extends AbstractSeed
                 'gender'     => 'male',
                 'meta'       => '[]',
                 'birthdate'  => null,
-                'created'    => $date->getTimestamp(),
-                'updated'    => $date->getTimestamp(),
+                'created'    => $date->format("Y-m-d H:i:s"),
+                'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
                 ->save();
