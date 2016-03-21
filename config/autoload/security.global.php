@@ -28,7 +28,7 @@ return [
                 'DELETE' => 'remote.group',
             ],
             'api.rest.password'    => [
-                'PUT'  => 'update.password',
+                'POST'  => 'update.password',
             ],
             'api.rest.group-users' => [
                 
