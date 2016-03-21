@@ -36,6 +36,6 @@ class TokenResource extends AbstractResourceListener
             return new MeEntity($this->authService->getIdentity(), md5('foo'));
         }
 
-        return new TokenEntity(['token' => md5('foo')]);
+        return new TokenEntity([]);
     }
 }

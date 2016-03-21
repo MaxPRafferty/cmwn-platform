@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Api\Listeners\CsrfListener;
 use Api\Listeners\HalListenersAggregate;
 use Api\Listeners\ScopeListener;
 use Zend\EventManager\SharedEventManager;
@@ -39,9 +40,14 @@ class Module implements ApigilityProviderInterface
         $sharedEvents = $services->get('SharedEventManager');
         $aggregate = new HalListenersAggregate();
         $aggregate->attachShared($sharedEvents);
+
         /** @var ScopeListener $scope */
         $scope = $services->get('Api\Listeners\ScopeListener');
         $scope->attachShared($sharedEvents);
+
+        /** @var CsrfListener $scope */
+        $csrf = $services->get('Api\Listeners\CsrfListener');
+        $csrf->attachShared($sharedEvents);
 
         $app->getEventManager()->attach($services->get('Api\Listeners\ChangePasswordListener'));
         $app->getEventManager()->attach($services->get('Api\Listeners\UserRouteListener'));
