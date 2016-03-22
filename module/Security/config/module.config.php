@@ -12,8 +12,6 @@ return [
         'invokables' => [
             'Security\Guard\XsrfGuard'                               => 'Security\Guard\XsrfGuard',
             'Security\Guard\OriginGuard'                             => 'Security\Guard\OriginGuard',
-            'Security\Authentication\AuthenticationDelegatorFactory' =>
-                'Security\Authentication\AuthenticationDelegatorFactory',
         ],
 
         'factories' => [
