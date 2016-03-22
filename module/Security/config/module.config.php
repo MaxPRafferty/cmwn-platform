@@ -118,7 +118,6 @@ return [
                 [
                     'permission' => 'adult.code',
                     'label'      => 'Send code to adult',
-                    'entity'     => 'adult',
                 ],
                 [
                     'permission' => 'create.group',
