@@ -4,8 +4,13 @@ namespace Org\Service;
 
 use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
+use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 
 
@@ -66,4 +71,19 @@ interface OrganizationServiceInterface
      * @throws NotFoundException
      */
     public function updateOrganization(OrganizationInterface $org);
+
+    /**
+     * SELECT o.*
+     * FROM organizations o
+     *   INNER JOIN groups AS g ON g.organization_id = o.org_id
+     *   LEFT JOIN user_groups AS ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = '87512ab4-f039-11e5-96b2-0800274f2cef';
+     *
+     * @param string|UserInterface $user
+     * @param null|PredicateInterface|array $where
+     * @param bool $paginate
+     * @param null $prototype
+     * @return HydratingResultSet|DbSelect
+     */
+    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null);
 }
