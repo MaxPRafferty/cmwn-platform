@@ -4,6 +4,7 @@ namespace Api;
 
 use Api\Listeners\CsrfListener;
 use Api\Listeners\HalListenersAggregate;
+use Api\Listeners\ImportRouteListener;
 use Api\Listeners\ScopeListener;
 use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\MvcEvent;
@@ -43,9 +44,14 @@ class Module implements ApigilityProviderInterface
         /** @var ScopeListener $scope */
         $scope = $services->get('Api\Listeners\ScopeListener');
         $scope->attachShared($sharedEvents);
+        
+        /** @var ImportRouteListener $import */
+        $import = $services->get('Api\Listeners\ImportRouteListener');
+        $import->attachShared($sharedEvents);
 
         $app->getEventManager()->attach($services->get('Api\Listeners\ChangePasswordListener'));
         $app->getEventManager()->attach($services->get('Api\Listeners\UserRouteListener'));
         $app->getEventManager()->attach($services->get('Api\Listeners\GroupRouteListener'));
+        
     }
 }
