@@ -50,7 +50,7 @@ return [
         'Security\Guard\OriginGuard',
         'Security\Guard\XsrfGuard',
         'Security\Guard\ResetPasswordGuard',
-        'Api\Listeners\CsrfListener',
+//        'Api\Listeners\CsrfListener',``
     ],
     
     'console' => [

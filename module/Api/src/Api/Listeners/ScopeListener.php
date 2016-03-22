@@ -8,7 +8,6 @@ use Security\SecurityUser;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-use ZF\Hal\Collection;
 use ZF\Hal\Entity;
 
 /**
@@ -53,7 +52,7 @@ class ScopeListener
     public function detachShared(SharedEventManagerInterface $manager)
     {
         foreach ($this->listeners as $listener) {
-            $manager->detach('ZF\Rest\Fetch', $listener);
+            $manager->detach('ZF\Hal\Plugin\Hal', $listener);
         }
     }
 
