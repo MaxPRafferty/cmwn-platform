@@ -63,7 +63,7 @@ class AddTeacherActionTest extends TestCase
         $action = new AddTeacherAction($this->service, $teacher);
 
         $this->assertEquals(
-            'Creating a user for The man Chuck Reeves chuck@manchuck.com',
+            'Creating a user for the_man Chuck Reeves chuck@manchuck.com',
             $action->__toString(),
             'Add Teacher action reported incorrect command'
         );
