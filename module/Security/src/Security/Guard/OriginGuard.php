@@ -2,14 +2,11 @@
 
 namespace Security\Guard;
 
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Mvc\MvcEvent;
-use Zend\Uri\Uri;
 
 /**
  * Class OriginGuard
@@ -18,20 +15,26 @@ use Zend\Uri\Uri;
  *
  * @package Security\Guard
  */
-class OriginGuard implements ListenerAggregateInterface
+class OriginGuard
 {
-    use ListenerAggregateTrait;
+    protected $listeners = [];
 
     /**
-     * @param EventManagerInterface $events
+     * @param SharedEventManagerInterface $events
      */
-    public function attach(EventManagerInterface $events)
+    public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(
-            [MvcEvent::EVENT_FINISH],
-            [$this, 'attachCors'],
-            200
-        );
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], 200);
+    }
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach('*', $listener);
+        }
     }
 
     /**

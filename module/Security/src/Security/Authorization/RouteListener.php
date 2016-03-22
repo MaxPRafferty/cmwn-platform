@@ -2,13 +2,13 @@
 
 namespace Security\Authorization;
 
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
-use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
@@ -17,9 +17,10 @@ use ZF\ApiProblem\ApiProblemResponse;
 /**
  * Class RouteListener
  */
-class RouteListener implements ListenerAggregateInterface
+class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface
 {
-    use ListenerAggregateTrait;
+    use RbacAwareTrait;
+    use AuthenticationServiceAwareTrait;
 
     /**
      * @var array
@@ -32,54 +33,43 @@ class RouteListener implements ListenerAggregateInterface
     protected $routePerms = [];
 
     /**
-     * @var AuthenticationServiceInterface
-     */
-    protected $authService;
-
-    /**
      * @var SecurityOrgService
      */
     protected $orgService;
 
-    /**
-     * @var Rbac
-     */
-    protected $rbac;
+    protected $listeners = [];
 
     /**
      * RouteListener constructor.
      *
      * @param array $config
-     * @param AuthenticationServiceInterface $autService
      * @param SecurityOrgService $orgService
-     * @param Rbac $rbac
      */
     public function __construct(
         array $config,
-        AuthenticationServiceInterface $autService,
-        SecurityOrgService $orgService,
-        Rbac $rbac
+        SecurityOrgService $orgService
     ) {
         $this->openRoutes  = isset($config['open-routes']) ? $config['open-routes'] : [];
         $this->routePerms  = isset($config['route-permissions']) ? $config['route-permissions'] : [];
-        $this->authService = $autService;
         $this->orgService  = $orgService;
-        $this->rbac        = $rbac;
     }
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
+     * @param SharedEventManagerInterface $events
      */
-    public function attach(EventManagerInterface $events)
+    public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+    }
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach('*', $listener);
+        }
     }
 
     /**

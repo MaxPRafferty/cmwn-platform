@@ -11,9 +11,9 @@ use Zend\Permissions\Rbac\RoleInterface;
  */
 class Rbac extends ZfRbac
 {
-    const SCOPE_CREATE = 1;
+    const SCOPE_REMOVE = 1;
     const SCOPE_UPDATE = 2;
-    const SCOPE_REMOVE = 4;
+    const SCOPE_CREATE = 4;
 
     /**
      * @var array

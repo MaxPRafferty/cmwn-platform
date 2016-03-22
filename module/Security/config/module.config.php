@@ -45,7 +45,12 @@ return [
     ],
 
     'security-listeners' => [
-        'Security\Listeners\OrgServiceListener'
+        'Security\Listeners\OrgServiceListener',
+        'Security\Authorization\RouteListener',
+        'Security\Guard\OriginGuard',
+        'Security\Guard\XsrfGuard',
+        'Security\Guard\ResetPasswordGuard',
+        'Api\Listeners\CsrfListener',
     ],
     
     'console' => [
