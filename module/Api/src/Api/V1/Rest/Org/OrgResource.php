@@ -3,6 +3,7 @@ namespace Api\V1\Rest\Org;
 
 use Org\Organization;
 use Org\Service\OrganizationServiceInterface;
+use Security\SecurityUser;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -19,12 +20,12 @@ class OrgResource extends AbstractResourceListener
     protected $service;
 
     /**
-     * orgResource constructor.
+     * OrgResource constructor.
      * @param OrganizationServiceInterface $service
      */
     public function __construct(OrganizationServiceInterface $service)
     {
-        $this->service = $service;
+        $this->service     = $service;
     }
 
     /**
@@ -76,31 +77,13 @@ class OrgResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        $orgs = $this->service->fetchAll(null, true, new OrgEntity());
+        $query = [];
+        if (isset($params['type'])) {
+            $query['type'] = $params['type'];
+        }
+
+        $orgs = $this->service->fetchAll($query, true, new OrgEntity());
         return new OrgCollection($orgs);
-    }
-
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $id
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function patch($id, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
-    }
-
-    /**
-     * Replace a collection or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for collections');
     }
 
     /**

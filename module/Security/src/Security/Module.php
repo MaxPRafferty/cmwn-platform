@@ -159,8 +159,16 @@ class Module implements
      */
     protected function attachGuards(MvcEvent $event)
     {
-        $events  = $event->getApplication()->getEventManager();
         $service = $event->getApplication()->getServiceManager();
+        $events  = $event->getApplication()->getEventManager();
+
+        /** @var \Security\Listeners\ListenersAggregate $aggregate */
+        $aggregate = $service->get('Security\Listeners\ListenersAggregate');
+
+        /** @var SharedEventManager $sharedEvents */
+        $sharedEvents = $service->get('SharedEventManager');
+
+        $aggregate->attachShared($sharedEvents);
 
         $events->attach($service->get('Security\Authorization\RouteListener'));
         $events->attach($service->get('Security\Guard\OriginGuard'));

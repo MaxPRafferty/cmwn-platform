@@ -8,9 +8,11 @@ use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -49,7 +51,7 @@ class OrganizationService implements OrganizationServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
-            $select    = new Select($this->orgTableGateway->getTable());
+            $select    = new Select(['o' => $this->orgTableGateway->getTable()]);
             $select->where($where);
             return new DbSelect(
                 $select,
@@ -84,15 +86,13 @@ class OrganizationService implements OrganizationServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         $select->columns([Select::SQL_STAR], 'o');
-        $select->from($this->orgTableGateway->getTable());
-        $select->join(['g'  => 'groups'], 'groups AS g ON g.organization_id = o.org_id', [], Select::JOIN_INNER);
-        $select->join(['ug' => 'user_groups'], 'user_groups AS ug ON ug.group_id = g.group_id', [], Select::JOIN_LEFT);
-        $where->addPredicate(new Operator('user_id', '=', $userId));
+        $select->from(['o' => $this->orgTableGateway->getTable()]);
+        $select->join(['g'  => 'groups'], 'g.organization_id = o.org_id', [], Select::JOIN_INNER);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $where->addPredicate(new Operator(new Expression('ug.user_id'), '=', $userId));
         $select->where($where);
 
         if ($paginate) {
-            $select    = new Select($this->orgTableGateway->getTable());
-            $select->where($where);
             return new DbSelect(
                 $select,
                 $this->orgTableGateway->getAdapter(),

@@ -25,6 +25,8 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
 {
     use EventManagerAwareTrait;
 
+    protected $eventIdentifier = 'Org\Service\OrganizationServiceInterface';
+
     /**
      * @var OrganizationService
      */
@@ -44,7 +46,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
      */
     protected function attachDefaultListeners()
     {
-        $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post']);
+        $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post'], 'o');
         $hideListener->setEntityParamKey('org');
 
         $this->getEventManager()->attach($hideListener);

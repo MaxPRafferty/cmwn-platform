@@ -64,10 +64,6 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
     public function setLinks(LinkCollection $links)
     {
         $this->links = $links;
-        $this->links->add(new GameLink());
-        $this->links->add(new ForgotLink());
-        $this->links->add(new ProfileLink($this));
-        $this->links->add(new UserImageLink($this));
         return $this;
     }
 
@@ -80,6 +76,13 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
     {
         if (!$this->links instanceof LinkCollection) {
             $this->setLinks(new LinkCollection());
+        }
+
+        if (!empty($this->getUserId())) {
+            $this->links->add(new GameLink());
+            $this->links->add(new ForgotLink());
+            $this->links->add(new ProfileLink($this));
+            $this->links->add(new UserImageLink($this));
         }
 
         return $this->links;

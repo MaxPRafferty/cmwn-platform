@@ -46,15 +46,21 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
     protected $entityEvents = [];
 
     /**
+     * @var string
+     */
+    protected $table;
+
+    /**
      * HideDeletedEntitiesListener constructor.
      *
      * @param array $whereEvents
      * @param array $entityEvents
      */
-    public function __construct(array $whereEvents, array $entityEvents)
+    public function __construct(array $whereEvents, array $entityEvents, $table = null)
     {
         $this->whereEvents  = $whereEvents;
         $this->entityEvents = $entityEvents;
+        $this->table        = $table;
     }
 
     /**
@@ -64,7 +70,6 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
     public function setDeletedField($deletedField)
     {
         $this->deletedField = $deletedField;
-
         return $this;
     }
 
@@ -86,7 +91,6 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
     public function setWhereParamKey($whereParamKey)
     {
         $this->whereParamKey = $whereParamKey;
-
         return $this;
     }
 
@@ -97,7 +101,6 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
     public function setEntityParamKey($entityParamKey)
     {
         $this->entityParamKey = $entityParamKey;
-
         return $this;
     }
 
@@ -110,6 +113,15 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
         $this->entityEvents = $entityEvents;
 
         return $this;
+    }
+
+    protected function getDeletedField()
+    {
+        if ($this->table !== null) {
+            return $this->table . '.' . $this->deletedField;
+        }
+
+        return $this->deletedField;
     }
 
     /**
@@ -145,7 +157,7 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
             return;
         }
 
-        $where->addPredicate(new IsNull($this->deletedField));
+        $where->addPredicate(new IsNull($this->getDeletedField()));
     }
 
     /**

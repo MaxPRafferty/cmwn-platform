@@ -46,7 +46,7 @@ class Module implements ApigilityProviderInterface
 
         /** @var CsrfListener $scope */
         $csrf = $services->get('Api\Listeners\CsrfListener');
-        $csrf->attachShared($sharedEvents);
+//        $csrf->attachShared($sharedEvents);
 
         $app->getEventManager()->attach($services->get('Api\Listeners\ChangePasswordListener'));
         $app->getEventManager()->attach($services->get('Api\Listeners\UserRouteListener'));

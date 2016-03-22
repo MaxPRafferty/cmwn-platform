@@ -10,22 +10,31 @@ return [
         ],
 
         'invokables' => [
-            'Security\Guard\XsrfGuard'                               => 'Security\Guard\XsrfGuard',
-            'Security\Guard\OriginGuard'                             => 'Security\Guard\OriginGuard',
+            'Security\Guard\XsrfGuard'              => 'Security\Guard\XsrfGuard',
+            'Security\Guard\OriginGuard'            => 'Security\Guard\OriginGuard',
+            'Security\Listeners\OrgServiceListener' => 'Security\Listeners\OrgServiceListener',
         ],
 
         'factories' => [
-            'Security\Guard\ResetPasswordGuard'   => 'Security\Guard\ResetPasswordGuardFactory',
-            'Security\Authorization\RouteListener'   => 'Security\Authorization\RouteListenerFactory',
-            'Zend\Session\SessionManager'         => 'Security\Session\SessionManagerFactory',
-            'Security\Service\SecurityService'    => 'Security\Service\SecurityServiceFactory',
-            'Security\Service\SecurityOrgService' => 'Security\Service\SecurityOrgServiceFactory',
+            'Security\Guard\ResetPasswordGuard'    => 'Security\Guard\ResetPasswordGuardFactory',
+            'Security\Authorization\RouteListener' => 'Security\Authorization\RouteListenerFactory',
+            'Zend\Session\SessionManager'          => 'Security\Session\SessionManagerFactory',
+            'Security\Service\SecurityService'     => 'Security\Service\SecurityServiceFactory',
+            'Security\Service\SecurityOrgService'  => 'Security\Service\SecurityOrgServiceFactory',
+            'Security\Listeners\ListenersAggregate' => 'Security\Listeners\ListenersAggregateFactory',
 
             'Security\Authentication\AuthAdapter' => 'Security\Authentication\AuthAdapterFactory',
             'Security\Authorization\Rbac'         => 'Security\Authorization\RbacFactory',
 
             'Security\Authentication\AuthenticationService' =>
                 'Security\Authentication\AuthenticationServiceFactory',
+        ],
+
+        'initializers' => [
+            'Security\Authentication\AuthenticationServiceAwareInitializer' =>
+                'Security\Authentication\AuthenticationServiceAwareInitializer',
+
+            'Security\Authorization\RbacAwareInitializer' => 'Security\Authorization\RbacAwareInitializer'
         ],
     ],
 
@@ -35,6 +44,10 @@ return [
         ],
     ],
 
+    'security-listeners' => [
+        'Security\Listeners\OrgServiceListener'
+    ],
+    
     'console' => [
         'router' => [
             'routes' => [
@@ -71,7 +84,7 @@ return [
                     'label'      => 'Edit an organization',
                 ],
                 [
-                    'permission' => 'view.org',
+                    'permission' => 'view.all.orgs',
                     'label'      => 'View an organization',
                 ],
                 [
@@ -159,7 +172,7 @@ return [
         ],
 
         'logged_in' => [
-            'parents' => ['group_admin'],
+            'parents'     => ['group_admin'],
             'permissions' => [
                 [
                     'permission' => 'read.group',
@@ -172,6 +185,10 @@ return [
                 [
                     'permission' => 'view.games',
                     'label'      => 'View Games',
+                ],
+                [
+                    'permission' => 'view.org',
+                    'label'      => 'View an organization',
                 ],
             ],
         ],
