@@ -36,10 +36,9 @@ class Module implements ApigilityProviderInterface
     {
         $app      = $event->getApplication();
         $services = $app->getServiceManager();
+
         /** @var SharedEventManager $sharedEvents */
         $sharedEvents = $services->get('SharedEventManager');
-        $aggregate = new HalListenersAggregate();
-        $aggregate->attachShared($sharedEvents);
 
         /** @var ScopeListener $scope */
         $scope = $services->get('Api\Listeners\ScopeListener');

@@ -2,7 +2,10 @@
 
 namespace Api\V1\Rest\User;
 
+use Api\Links\ForgotLink;
 use Api\Links\GameLink;
+use Api\Links\ProfileLink;
+use Api\Links\UserImageLink;
 use User\User;
 use User\UserInterface;
 use ZF\Hal\Link\LinkCollection;
@@ -62,6 +65,9 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
     {
         $this->links = $links;
         $this->links->add(new GameLink());
+        $this->links->add(new ForgotLink());
+        $this->links->add(new ProfileLink($this));
+        $this->links->add(new UserImageLink($this));
         return $this;
     }
 
