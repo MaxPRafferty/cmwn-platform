@@ -2,12 +2,12 @@
 
 namespace Security\Guard;
 
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 
@@ -15,15 +15,35 @@ use Zend\Mvc\MvcEvent;
  * Class ResetPasswordGuard
  * @package Security\Guard
  */
-class ResetPasswordGuard implements ListenerAggregateInterface
+class ResetPasswordGuard implements AuthenticationServiceAwareInterface
 {
-    use ListenerAggregateTrait;
+
+    use AuthenticationServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
      */
     protected $authService;
 
+    protected $listeners = [];
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function attachShared(SharedEventManagerInterface $events)
+    {
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
+    }
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach('*', $listener);
+        }
+    }
     /**
      * ResetPasswordGuard constructor.
      *
@@ -35,13 +55,9 @@ class ResetPasswordGuard implements ListenerAggregateInterface
     }
 
     /**
-     * @param EventManagerInterface $events
+     * @param MvcEvent $event
+     * @return mixed|void
      */
-    public function attach(EventManagerInterface $events)
-    {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
-    }
-
     public function onDispatch(MvcEvent $event)
     {
         // Coming in from the console

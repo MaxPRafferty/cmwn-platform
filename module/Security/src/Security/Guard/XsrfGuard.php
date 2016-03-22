@@ -2,9 +2,7 @@
 
 namespace Security\Guard;
 
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Header\Cookie;
 use Zend\Http\Header\SetCookie;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
@@ -21,23 +19,26 @@ use ZF\ApiProblem\ApiProblemResponse;
  *
  * @package Security\Guard
  */
-class XsrfGuard extends Csrf implements ListenerAggregateInterface
+class XsrfGuard extends Csrf
 {
-    use ListenerAggregateTrait;
+    protected $listeners = [];
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
+     * @param SharedEventManagerInterface $events
      */
-    public function attach(EventManagerInterface $events)
+    public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_FINISH, [$this, 'setCookie'], 210);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'setCookie'], 210);
+    }
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach('*', $listener);
+        }
     }
 
     /**

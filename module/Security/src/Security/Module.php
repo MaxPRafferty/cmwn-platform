@@ -154,7 +154,6 @@ class Module implements
     /**
      * Attaches all the guards for the routes
      *
-     * @todo Make one aggreate that can be configured
      * @param MvcEvent $event
      */
     protected function attachGuards(MvcEvent $event)
@@ -169,10 +168,5 @@ class Module implements
         $sharedEvents = $service->get('SharedEventManager');
 
         $aggregate->attachShared($sharedEvents);
-
-        $events->attach($service->get('Security\Authorization\RouteListener'));
-        $events->attach($service->get('Security\Guard\OriginGuard'));
-        $events->attach($service->get('Security\Guard\XsrfGuard'));
-        $events->attach($service->get('Security\Guard\ResetPasswordGuard'));
     }
 }
