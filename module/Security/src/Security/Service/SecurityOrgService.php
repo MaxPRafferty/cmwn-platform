@@ -8,7 +8,6 @@ use Security\SecurityUser;
 use User\UserInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\In;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;

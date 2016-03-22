@@ -6,7 +6,9 @@ use Application\Exception\NotFoundException;
 use Org\Organization;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -45,6 +47,48 @@ class OrganizationService implements OrganizationServiceInterface
     {
         $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        if ($paginate) {
+            $select    = new Select($this->orgTableGateway->getTable());
+            $select->where($where);
+            return new DbSelect(
+                $select,
+                $this->orgTableGateway->getAdapter(),
+                $resultSet
+            );
+        }
+
+        $results = $this->orgTableGateway->select($where);
+        $resultSet->initialize($results);
+        return $resultSet;
+    }
+
+    /**
+     * SELECT o.*
+     * FROM organizations o
+     *   INNER JOIN groups AS g ON g.organization_id = o.org_id
+     *   LEFT JOIN user_groups AS ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = '87512ab4-f039-11e5-96b2-0800274f2cef';
+     *
+     * @param string|UserInterface $user
+     * @param null|PredicateInterface|array $where
+     * @param bool $paginate
+     * @param null $prototype
+     * @return HydratingResultSet|DbSelect
+     */
+    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
+    {
+        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $userId    = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $select    = new Select();
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        $select->columns([Select::SQL_STAR], 'o');
+        $select->from($this->orgTableGateway->getTable());
+        $select->join(['g'  => 'groups'], 'groups AS g ON g.organization_id = o.org_id', [], Select::JOIN_INNER);
+        $select->join(['ug' => 'user_groups'], 'user_groups AS ug ON ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $where->addPredicate(new Operator('user_id', '=', $userId));
+        $select->where($where);
 
         if ($paginate) {
             $select    = new Select($this->orgTableGateway->getTable());
