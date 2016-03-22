@@ -53,7 +53,7 @@ class GroupRouteListener implements ListenerAggregateInterface
      */
     public function onRoute(MvcEvent $event)
     {
-        $route = $event->getRouteMatch();
+        $route   = $event->getRouteMatch();
         $groupId = $route->getParam('group_id', false);
 
         if ($groupId === false) {

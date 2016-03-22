@@ -42,7 +42,7 @@ class UserRouteListener implements ListenerAggregateInterface
      */
     public function onRoute(MvcEvent $event)
     {
-        $route = $event->getRouteMatch();
+        $route  = $event->getRouteMatch();
         $userId = $route->getParam('user_id', false);
 
         if ($userId === false) {
