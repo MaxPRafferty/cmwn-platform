@@ -8,10 +8,10 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
+use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
-use ZF\Hal\View\HalJsonModel;
 
 /**
  * Class RouteListener
@@ -136,6 +136,11 @@ class RouteListener implements ListenerAggregateInterface
      */
     protected function isRouteOpen(MvcEvent $event)
     {
+        $request = $event->getRequest();
+        if ($request instanceof HttpRequest && $request->getMethod() === HttpRequest::METHOD_OPTIONS) {
+            return true;
+        }
+
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         return in_array($routeName, $this->openRoutes);
     }
