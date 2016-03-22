@@ -3,7 +3,10 @@
 namespace Api\Listeners;
 
 use Application\Exception\NotFoundException;
+use Security\Authorization\Assertions\UserAssertion;
 use User\Service\UserServiceInterface;
+use User\UserInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
@@ -23,9 +26,15 @@ class UserRouteListener implements ListenerAggregateInterface
      */
     protected $userService;
 
-    public function __construct(UserServiceInterface $userService)
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    protected $authService;
+
+    public function __construct(UserServiceInterface $userService, AuthenticationServiceInterface $authService)
     {
         $this->userService = $userService;
+        $this->authService = $authService;
     }
 
     /**
@@ -56,6 +65,21 @@ class UserRouteListener implements ListenerAggregateInterface
         }
 
         $route->setParam('user', $user);
+        $this->addAssertion($event, $user);
         return null;
+    }
+
+    /**
+     * @param MvcEvent $event
+     */
+    protected function addAssertion(MvcEvent $event, UserInterface $user)
+    {
+        if (!$this->authService->hasIdentity()) {
+            return;
+        }
+
+        $assertion = new UserAssertion($this->authService->getIdentity());
+        $assertion->setUser($user);
+        $event->setParam('assertion', $assertion);
     }
 }

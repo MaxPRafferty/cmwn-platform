@@ -2,6 +2,7 @@
 
 namespace Security\Authorization;
 
+use Security\Authorization\Assertions\DefaultAssertion;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
 use Zend\Authentication\AuthenticationServiceInterface;
@@ -120,12 +121,32 @@ class RouteListener implements ListenerAggregateInterface
 
         $method     = $event->getRequest()->getMethod();
         $permission = isset($this->routePerms[$routeName][$method]) ? $this->routePerms[$routeName][$method] : null;
+        $role       = $user->getRole();
+        $assertion  = $this->getAssertion($event, $role, $permission);
 
-        if (!$this->rbac->isGranted($user->getRole(), $permission)) {
+        if (!$this->rbac->isGranted(null, null, $assertion)) {
             return new ApiProblemResponse(new ApiProblem(401, 'Not Authorized'));
         }
 
         return null;
+    }
+
+    /**
+     * @param MvcEvent $event
+     * @param $role
+     * @param $permission
+     * @return AssertionInterface
+     */
+    protected function getAssertion(MvcEvent $event, $role, $permission)
+    {
+        $assertion  = $event->getParam('assertion', new DefaultAssertion());
+
+        if ($assertion instanceof AssertionInterface) {
+            $assertion->setRole($role);
+            $assertion->setPermission($permission);
+        }
+
+        return $assertion;
     }
 
     /**
