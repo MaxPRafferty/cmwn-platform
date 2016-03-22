@@ -62,6 +62,7 @@ class DevSeed extends AbstractSeed
                 'rgt'             => 2,
                 'created'         => $date->format("Y-m-d H:i:s"),
                 'updated'         => $date->format("Y-m-d H:i:s"),
+                'type'            => 'class'
             ])->save();
 
 
