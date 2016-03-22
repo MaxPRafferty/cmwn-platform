@@ -72,6 +72,7 @@ class XsrfGuard extends Csrf implements ListenerAggregateInterface
     public function setCookie(MvcEvent $event)
     {
         $response = $event->getResponse();
+
         /** @var HttpRequest $request */
         $request  = $event->getRequest();
 
