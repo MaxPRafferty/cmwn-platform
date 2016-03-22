@@ -44,7 +44,9 @@ web1:
     - data/logs
   after_deploy:
     - 'php vendor/bin/phinx migrate -c config/phinx.php -e prod'
-    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed=GameSeed'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed=NamesSeed'
+    - 'php vendor/bin/phinx seed:run -c config/phinx.php -e prod --seed=SuperSeed'
   log_watch:
     - cmwn[php]: data/logs/app.log
 

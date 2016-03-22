@@ -17,13 +17,14 @@ class SuperSeed extends AbstractSeed
         $table = $this->table('users');
 
         $date = new \DateTime();
+        try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'mfafferty',
                 'email'      => 'max@ginasink.com',
                 'code'       => null,
                 'type'       => 'ADULT',
-                'password'   => '$2y$10$J9fRJQkrFfkfN7edCGvZb.MIZrukyffFmypLYiwRba.HdlOV6JUxm',
+                'password'   => password_hash('business', PASSWORD_DEFAULT),
                 'first_name' => 'Max',
                 'last_name'  => 'Rafferty',
                 'gender'     => 'male',
@@ -34,14 +35,20 @@ class SuperSeed extends AbstractSeed
                 'super'      => 1
             ])
                 ->save();
-        
+        } catch (PDOException $exception) {
+            $this->getOutput()->write(
+                'Got Exception When creating max (this might be ok): ' . $exception->getMessage()
+            );
+        }
+
+        try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'jalbers',
                 'email'      => 'joni@ginasink.com',
                 'code'       => null,
                 'type'       => 'ADULT',
-                'password'   => '$2y$10$J9fRJQkrFfkfN7edCGvZb.MIZrukyffFmypLYiwRba.HdlOV6JUxm',
+                'password'   => password_hash('business', PASSWORD_DEFAULT),
                 'first_name' => 'Joni',
                 'last_name'  => 'Albers',
                 'gender'     => 'female',
@@ -52,14 +59,20 @@ class SuperSeed extends AbstractSeed
                 'super'      => 1
             ])
                 ->save();
-        
+        } catch (PDOException $exception) {
+            $this->getOutput()->write(
+                'Got Exception When creating joni (this might be ok): ' . $exception->getMessage()
+            );
+        }
+
+        try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
                 'username'   => 'manchuck',
                 'email'      => 'chuck@ginasink.com',
                 'code'       => null,
                 'type'       => 'ADULT',
-                'password'   => '$2y$10$pN.agLiJnp4DgSrjBv8Sy.olHnPj42dFGfd/FBZFjt7mKUqyhe2JS',
+                'password'   => password_hash('business', PASSWORD_DEFAULT),
                 'first_name' => 'Chuck',
                 'last_name'  => 'Reeves',
                 'gender'     => 'male',
@@ -70,7 +83,10 @@ class SuperSeed extends AbstractSeed
                 'super'      => 1
             ])
                 ->save();
-
-
+        } catch (PDOException $exception) {
+            $this->getOutput()->write(
+                'Got Exception When creating chuck (this might be ok): ' . $exception->getMessage()
+            );
+        }
     }
 }
