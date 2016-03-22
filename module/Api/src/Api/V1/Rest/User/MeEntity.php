@@ -10,21 +10,14 @@ use Api\V1\Rest\Org\OrgEntity;
 use Security\SecurityUser;
 use User\UserInterface;
 use ZF\Hal\Collection;
-use ZF\Hal\Link\LinkCollection;
-use ZF\Hal\Link\LinkCollectionAwareInterface;
 use ZF\MvcAuth\Identity\IdentityInterface;
 
 /**
  * Class MeEntity
  * @package Api\V1\Rest\User
  */
-class MeEntity extends UserEntity implements LinkCollectionAwareInterface, TokenEntityInterface
+class MeEntity extends UserEntity implements TokenEntityInterface
 {
-    /**
-     * @var LinkCollection
-     */
-    protected $links;
-
     /**
      * @var Collection
      */
@@ -101,29 +94,4 @@ class MeEntity extends UserEntity implements LinkCollectionAwareInterface, Token
         $this->organizations = new Collection($orgs);
     }
 
-    /**
-     * Set link collection
-     *
-     * @param  LinkCollection $links
-     * @return self
-     */
-    public function setLinks(LinkCollection $links)
-    {
-        $this->links = $links;
-        return $this;
-    }
-
-    /**
-     * Get link collection
-     *
-     * @return LinkCollection
-     */
-    public function getLinks()
-    {
-        if (!$this->links instanceof LinkCollection) {
-            $this->setLinks(new LinkCollection());
-        }
-
-        return $this->links;
-    }
 }
