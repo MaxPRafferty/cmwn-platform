@@ -17,7 +17,15 @@ use ZF\Rest\ResourceEvent;
  */
 class CsrfListener extends Csrf
 {
+    /**
+     * @var array
+     */
     protected $listeners = [];
+
+    /**
+     * @var array
+     */
+    protected $allowedRoutes = ['api.rest.token', 'api.rest.logout', 'api.rest.forgot'];
 
     /**
      * @param SharedEventManagerInterface $events
@@ -62,19 +70,16 @@ class CsrfListener extends Csrf
      */
     public function checkToken(ResourceEvent $event)
     {
-        if (in_array($event->getRouteMatch()->getMatchedRouteName(), ['api.rest.token', 'api.rest.logout', 'api.rest.forgot'])) {
+        if (in_array($event->getRouteMatch()->getMatchedRouteName(), $this->allowedRoutes)) {
             return null;
         }
 
         /** @var HttpRequest $request */
         $request = $event->getRequest();
         $header  = $request->getHeader('X-CSRF');
+        $token   = $header === false ? $request->getPost('_token', null) : $header->getFieldValue();
 
-        if ($header === false) {
-            return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
-        }
-
-        if ($header->getFieldValue() !== $this->getHashFromSession()) {
+        if ($token !== $this->getHashFromSession()) {
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
         }
     }
