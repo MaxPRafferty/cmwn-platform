@@ -10,7 +10,9 @@ return [
         ],
         'route-permissions' => [
             'api.rest.user'        => [
-
+                'GET'   => 'view.user',
+                'POST'  => 'create.user',
+                'PUT'   => 'update.user',
             ],
             'api.rest.org'         => [
                 'GET'    => 'view.org',
