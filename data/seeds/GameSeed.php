@@ -70,7 +70,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "fire",
             "title" => "FIRE!!!",
             "description" => "All about firefighters and firefighting theory. These are true heroes among us - maybe you will be one someday?",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -120,7 +120,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "happy-fish-face",
             "title" => "Happy Fish Face",
             "description" => "Find out how a fish feels! Get the scoop on water pollution and have fun doing it! Grab a net - we're cleaning up!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -133,7 +133,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "pedal-pusher",
             "title" => "Pedal Pusher",
             "description" => "Jump, flip and win points! Guide your bike through the terrain.",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -143,7 +143,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "salad-rain",
             "title" => "Salad Rain",
             "description" => "Be a Salad Chef!  Make tasty salads by following the recipes!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -153,7 +153,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "turtle-hurdle",
             "title" => "Turtle Hurdle",
             "description" => "Sea Turtles are at risk but you will guide yours to safety!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -163,7 +163,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "twirling-tower",
             "title" => "Twirling Tower",
             "description" => "Weather can change at any moment! Stay ahead of the tornado!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -173,7 +173,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "bloom-boom",
             "title" => "Bloom Boom",
             "description" => "Be a pollinating pilot! Direct your pollinators to get a field of flowers!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -183,7 +183,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "carbon-catcher",
             "title" => "Carbon Catcher",
             "description" => "Bubble, bubble, carbon is trouble! Clean up the air by converting emissions!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -193,7 +193,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "waterdrop",
             "title" => "Waterdrop",
             "description" => "Drip, drip drop! Water conservation is critical. Harness the power and score big!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -203,7 +203,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "reef-builder",
             "title" => "Reef Builder",
             "description" => "Create an ocean reef habitat for sea creatures and win big doing it!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -213,7 +213,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "rockin-room",
             "title" => "Rockin Room",
             "description" => "Rocks! Rooms! What more could you ask for?!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -226,7 +226,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "monarch",
             "title" => "Monarchs",
             "description" => "Monarch Butterflies are crucial for the environment yet they are endangered! This is your spot!",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
@@ -240,7 +240,7 @@ class GameSeed extends AbstractSeed
             "game_id" => "",
             "title" => "",
             "description" => "",
-            "coming_soon" => 0,
+            "coming_soon" => 1,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
             "deleted" => null
