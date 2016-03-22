@@ -6,13 +6,8 @@ use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
-use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
-
 
 /**
  * Interface OrganizationServiceInterface

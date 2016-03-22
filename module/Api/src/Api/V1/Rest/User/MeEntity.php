@@ -45,8 +45,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             $this->setToken($token);
         }
 
-        $this->getLinks()->add(new GameLink());
-
         if ($user instanceof SecurityUser) {
             $this->addOrganizations($user);
             foreach ($user->getGroupTypes() as $groupType) {
@@ -74,7 +72,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             parent::getArrayCopy(),
             [
                 'organizations' => $this->organizations,
-                'links' => $this->getLinks(),
                 'token' => $this->token
             ]
         );
