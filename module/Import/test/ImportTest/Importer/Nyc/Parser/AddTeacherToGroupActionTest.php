@@ -3,11 +3,9 @@
 namespace ImportTest\Importer\Nyc\Parser;
 
 
-use Application\Exception\NotFoundException;
 use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddTeacherToGroupAction;
-use Import\Importer\Nyc\Teachers\AddTeacherAction;
 use Import\Importer\Nyc\Teachers\Teacher;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
@@ -94,7 +92,7 @@ class AddTeacherToGroupActionTest extends TestCase
         $action = new AddTeacherToGroupAction($teacher, $this->userGroupService);
 
         $this->assertEquals(
-            'Adding The man chuck@manchuck.com to class [hist101] "History of the world"',
+            'Adding the_man chuck@manchuck.com to class [hist101] "History of the world"',
             $action->__toString(),
             'Add Teacher action reported incorrect command'
         );
@@ -107,7 +105,7 @@ class AddTeacherToGroupActionTest extends TestCase
 
         $this->assertEquals(10, $action->priority(), 'AddTeacherToGroupAction has incorrect priority');
         $this->userGroupService->shouldReceive('attachUserToGroup')
-            ->with($this->classRoomGroup, $this->teacherUser, 'The man')
+            ->with($this->classRoomGroup, $this->teacherUser, 'the_man')
             ->once();
 
         $action->execute();
