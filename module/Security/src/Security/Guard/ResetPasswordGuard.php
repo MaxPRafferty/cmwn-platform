@@ -20,11 +20,6 @@ class ResetPasswordGuard implements AuthenticationServiceAwareInterface
 
     use AuthenticationServiceAwareTrait;
 
-    /**
-     * @var AuthenticationServiceInterface
-     */
-    protected $authService;
-
     protected $listeners = [];
 
     /**
