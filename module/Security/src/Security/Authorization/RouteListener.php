@@ -156,7 +156,18 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         }
 
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
-        return in_array($routeName, $this->openRoutes);
+        if (in_array($routeName, $this->openRoutes)) {
+            return true;
+        }
+
+        // try regex match
+        foreach ($this->openRoutes as $allowed) {
+            if (preg_match($allowed, $routeName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
