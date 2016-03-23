@@ -117,4 +117,12 @@ class CsrfGuard extends Csrf
 
         return $session->hash;
     }
+
+    /**
+     * Get CSRF session token timeout
+     */
+    public function getTimeout()
+    {
+        return null;
+    }
 }

@@ -3,8 +3,12 @@
 namespace User;
 
 use Zend\Hydrator\HydratorInterface;
+use Zend\Stdlib\Extractor\ExtractionInterface;
 
-class UserHydrator implements HydratorInterface
+/**
+ * Class UserHydrator
+ */
+class UserHydrator implements HydratorInterface, ExtractionInterface
 {
     /**
      * @var null|UserInterface

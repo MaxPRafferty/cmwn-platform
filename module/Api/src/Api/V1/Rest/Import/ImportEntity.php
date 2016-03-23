@@ -2,7 +2,6 @@
 
 namespace Api\V1\Rest\Import;
 
-use Zend\Hydrator\HydrationInterface;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
@@ -29,7 +28,7 @@ class ImportEntity implements ArraySerializableInterface
      */
     public function getArrayCopy()
     {
-        return ['token' => $this->token];
+        return ['job_id' => $this->token];
     }
 
     /**

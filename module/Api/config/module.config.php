@@ -451,7 +451,7 @@ return array(
         'Api\\V1\\Rest\\Import\\Controller' => array(
             'listener' => 'Api\\V1\\Rest\\Import\\ImportResource',
             'route_name' => 'api.rest.import',
-            'route_identifier_name' => 'import_id',
+            'route_identifier_name' => 'job_id',
             'collection_name' => 'import',
             'entity_http_methods' => array(),
             'collection_http_methods' => array(
@@ -767,13 +767,13 @@ return array(
                 'is_collection' => true,
             ),
             'Api\\V1\\Rest\\Import\\ImportEntity' => array(
-                'entity_identifier_name' => 'token',
+                'entity_identifier_name' => 'job_id',
                 'route_name' => 'api.rest.import',
                 'route_identifier_name' => 'import_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
             ),
             'Api\\V1\\Rest\\Import\\ImportCollection' => array(
-                'entity_identifier_name' => 'token',
+                'entity_identifier_name' => 'job_id',
                 'route_name' => 'api.rest.import',
                 'route_identifier_name' => 'import_id',
                 'is_collection' => true,
