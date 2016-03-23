@@ -116,8 +116,7 @@ class Teacher implements UserAwareInterface
      */
     public function setRole($role)
     {
-        $this->role = $role;
-
+        $this->role = strtolower(str_replace(' ', '_', trim($role)));
         return $this;
     }
 
