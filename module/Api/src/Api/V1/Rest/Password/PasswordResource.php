@@ -35,7 +35,6 @@ class PasswordResource extends AbstractResourceListener
      *
      * @param  mixed $data
      * @return ApiProblem|mixed
-     * @todo make a validator so this code can be moved out of the controller
      */
     public function create($data)
     {
@@ -49,14 +48,8 @@ class PasswordResource extends AbstractResourceListener
             return new ApiProblem(401, 'Not Authorized');
         }
 
-        /** @var UserInterface $user */
-        $user = $this->getEvent()->getRouteParam('user');
-        if (!$securityUser->getUserId() === $user->getUserId()) {
-            return new ApiProblem(401, 'Not Authorized');
-        }
-
         $this->securityService->savePasswordToUser($securityUser, $data['password']);
         $this->authService->clearIdentity();
-        return new ApiProblem(200, 'Password Updated', 'Ok');
+        return new ApiProblem(200, 'Password Updated', null, 'Ok');
     }
 }

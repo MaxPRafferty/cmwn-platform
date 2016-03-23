@@ -111,7 +111,7 @@ return array(
             'api.rest.password' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/user/:user_id/password',
+                    'route' => '/password[/:user_id]',
                     'defaults' => array(
                         'controller' => 'Api\\V1\\Rest\\Password\\Controller',
                     ),
@@ -369,7 +369,7 @@ return array(
         'Api\\V1\\Rest\\Password\\Controller' => array(
             'listener' => 'Api\\V1\\Rest\\Password\\PasswordResource',
             'route_name' => 'api.rest.password',
-            'route_identifier_name' => 'password_id',
+            'route_identifier_name' => 'user_id',
             'collection_name' => 'password',
             'entity_http_methods' => array(
                 0 => 'GET',
@@ -719,15 +719,15 @@ return array(
                 'is_collection' => true,
             ),
             'Api\\V1\\Rest\\Password\\PasswordEntity' => array(
-                'entity_identifier_name' => 'id',
+                'entity_identifier_name' => 'user_id',
                 'route_name' => 'api.rest.password',
-                'route_identifier_name' => 'password_id',
+                'route_identifier_name' => 'user_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
             ),
             'Api\\V1\\Rest\\Password\\PasswordCollection' => array(
-                'entity_identifier_name' => 'id',
+                'entity_identifier_name' => 'user_id',
                 'route_name' => 'api.rest.password',
-                'route_identifier_name' => 'password_id',
+                'route_identifier_name' => 'user_id',
                 'is_collection' => true,
             ),
             'Api\\V1\\Rest\\GroupUsers\\GroupUsersEntity' => array(
@@ -1137,26 +1137,12 @@ return array(
                 'required' => true,
                 'validators' => array(
                     0 => array(
-                        "name" => "Security\\PasswordValidator",
-                        "options" => array(),
+                        'name' => 'Security\\PasswordValidator',
+                        'options' => array(),
                     ),
                 ),
                 'filters' => array(),
                 'name' => 'password',
-            ),
-            1 => array(
-                'required' => true,
-                'validators' => array(
-                    0 => array(
-                        'name' => 'Zend\\Validator\\Identical',
-                        'options' => array(
-                            'token' => 'password',
-                        ),
-                    ),
-                ),
-                'filters' => array(),
-                'name' => 'confirm',
-                'error_message' => 'Passwords do not match',
             ),
         ),
     ),
