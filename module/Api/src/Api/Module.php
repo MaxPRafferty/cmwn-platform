@@ -2,14 +2,11 @@
 
 namespace Api;
 
-use Api\Listeners\CsrfListener;
-use Api\Listeners\HalListenersAggregate;
 use Api\Listeners\ImportRouteListener;
 use Api\Listeners\ScopeListener;
 use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\MvcEvent;
 use ZF\Apigility\Provider\ApigilityProviderInterface;
-
 
 /**
  * Class Module

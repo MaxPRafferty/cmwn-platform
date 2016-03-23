@@ -6,6 +6,7 @@
 
 namespace Application;
 
+use Zend\EventManager\SharedEventManager;
 use Zend\Log\Logger;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
@@ -29,11 +30,12 @@ class Module implements ConfigProviderInterface
         $moduleRouteListener->attach($eventManager);
 
         /** @var Logger $logger */
-//        $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
+        $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
 
-//        Logger::registerErrorHandler($logger);
-//        Logger::registerExceptionHandler($logger);
-//        Logger::registerFatalErrorShutdownFunction($logger);
+        Logger::registerErrorHandler($logger);
+        Logger::registerExceptionHandler($logger);
+        Logger::registerFatalErrorShutdownFunction($logger);
+        $this->attachShared($mvcEvent);
     }
 
     /**
@@ -56,5 +58,21 @@ class Module implements ConfigProviderInterface
                 ],
             ],
         ];
+    }
+
+    /**
+     * Attaches Shared listeners
+     *
+     * @param MvcEvent $event
+     */
+    protected function attachShared(MvcEvent $event)
+    {
+        /** @var \Application\Listeners\ListenersAggregate $aggregate */
+        /** @var SharedEventManager $sharedEvents */
+        $service      = $event->getApplication()->getServiceManager();
+        $aggregate    = $service->get('Application\Listeners\ListenersAggregate');
+        $sharedEvents = $service->get('SharedEventManager');
+
+        $aggregate->attachShared($sharedEvents);
     }
 }

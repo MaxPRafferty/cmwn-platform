@@ -1,9 +1,0 @@
-<?php
-return array(
-    'db' => array(
-        'dsn' => 'mysql:dbname=cmwn;host=localhost',
-        'username' => 'cmwn_user',
-        'password' => 'cmwn_pass123$',
-        'port' => 3306,
-    ),
-);

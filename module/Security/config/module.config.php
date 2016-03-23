@@ -10,6 +10,7 @@ return [
         ],
 
         'invokables' => [
+            'Security\Guard\CsrfGuard'              => 'Security\Guard\CsrfGuard',
             'Security\Guard\XsrfGuard'              => 'Security\Guard\XsrfGuard',
             'Security\Guard\OriginGuard'            => 'Security\Guard\OriginGuard',
             'Security\Listeners\OrgServiceListener' => 'Security\Listeners\OrgServiceListener',
@@ -21,7 +22,6 @@ return [
             'Zend\Session\SessionManager'          => 'Security\Session\SessionManagerFactory',
             'Security\Service\SecurityService'     => 'Security\Service\SecurityServiceFactory',
             'Security\Service\SecurityOrgService'  => 'Security\Service\SecurityOrgServiceFactory',
-            'Security\Listeners\ListenersAggregate' => 'Security\Listeners\ListenersAggregateFactory',
 
             'Security\Authentication\AuthAdapter' => 'Security\Authentication\AuthAdapterFactory',
             'Security\Authorization\Rbac'         => 'Security\Authorization\RbacFactory',
@@ -44,13 +44,13 @@ return [
         ],
     ],
 
-    'security-listeners' => [
+    'shared-listeners' => [
         'Security\Listeners\OrgServiceListener',
         'Security\Authorization\RouteListener',
         'Security\Guard\OriginGuard',
         'Security\Guard\XsrfGuard',
         'Security\Guard\ResetPasswordGuard',
-//        'Api\Listeners\CsrfListener',``
+        'Security\Guard\CsrfGuard',
     ],
     
     'console' => [
