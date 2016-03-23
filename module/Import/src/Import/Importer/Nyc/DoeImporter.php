@@ -16,7 +16,6 @@ use Org\OrgAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
-use Zend\Log\LoggerInterface;
 use Zend\Log\LoggerAwareInterface;
 
 /**
@@ -51,11 +50,6 @@ class DoeImporter implements
      * @var DoeParser
      */
     protected $parser;
-
-    /**
-     * @var LoggerInterface;
-     */
-    protected $logger;
 
     /**
      * @var string
