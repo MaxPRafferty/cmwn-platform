@@ -5,16 +5,20 @@ use Group\GroupAwareInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\SecurityUser;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
-use ZF\MvcAuth\Identity\AuthenticatedIdentity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
  * Class ImportResource
  */
-class ImportResource extends AbstractResourceListener
+class ImportResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
 {
+    use AuthenticationServiceAwareTrait;
+
     /**
      * @var JobServiceInterface
      */
@@ -48,9 +52,9 @@ class ImportResource extends AbstractResourceListener
 
         $job->exchangeArray($this->getInputFilter()->getValues());
 
-        $user = $this->getIdentity();
-        if ($job instanceof NotificationAwareInterface && $user instanceof AuthenticatedIdentity) {
-            $job->setEmail($user->getAuthenticationIdentity()->getEmail());
+        $user = $this->getUser();
+        if ($job instanceof NotificationAwareInterface && $user instanceof SecurityUser) {
+            $job->setEmail($user->getEmail());
         }
 
         if ($job instanceof GroupAwareInterface) {
@@ -59,5 +63,14 @@ class ImportResource extends AbstractResourceListener
 
         $token = $this->jobService->sendJob($job);
         return new ImportEntity($token);
+    }
+
+    protected function getUser()
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            return null;
+        }
+
+        return $this->getAuthenticationService()->getIdentity();
     }
 }
