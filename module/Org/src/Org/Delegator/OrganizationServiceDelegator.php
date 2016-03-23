@@ -4,12 +4,12 @@ namespace Org\Delegator;
 
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
+use Application\Utils\ServiceTrait;
 use Org\Service\OrganizationService;
 use Org\Service\OrganizationServiceInterface;
 use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -24,6 +24,7 @@ use Zend\Paginator\Adapter\DbSelect;
 class OrganizationServiceDelegator implements OrganizationServiceInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
+    use ServiceTrait;
 
     protected $eventIdentifier = 'Org\Service\OrganizationServiceInterface';
 
@@ -172,14 +173,14 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     }
 
     /**
-     * @param null|PredicateInterface|array $where
+     * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where    = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where    = $this->createWhere($where);
         $event    = new Event(
             'fetch.all.orgs',
             $this->realService,

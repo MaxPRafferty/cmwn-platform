@@ -3,6 +3,7 @@
 namespace Asset\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\ServiceTrait;
 use Asset\Image;
 use Asset\ImageInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -19,6 +20,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class ImageService implements ImageServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var TableGateway
      */
@@ -37,7 +40,7 @@ class ImageService implements ImageServiceInterface
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
