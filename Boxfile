@@ -16,7 +16,7 @@ build:
     - 'rm -rf html'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
-    - 'composer install --no-interaction --no-dev'
+    - 'composer install --no-interaction --prefer-dist --no-dev'
   after_exec:
     - 'composer dump-autoload --optimize'
   lib_dirs:
