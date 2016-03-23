@@ -15,7 +15,11 @@ build:
     - 'rm Vagrantfile'
     - 'rm -rf public/img'
     - 'rm -rf html'
+<<<<<<< HEAD
 #    - 'rm -rf vendor'
+=======
+    - 'rm -rf vendor'
+>>>>>>> Removing vendor folder and turing on verbose
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
