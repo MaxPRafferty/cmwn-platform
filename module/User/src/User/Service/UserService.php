@@ -3,6 +3,7 @@
 namespace User\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\ServiceTrait;
 use Ramsey\Uuid\Uuid;
 use User\StaticUserFactory;
 use User\UserHydrator;
@@ -22,6 +23,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class UserService implements UserServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var TableGateway
      */
@@ -40,7 +43,7 @@ class UserService implements UserServiceInterface
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new UserHydrator($prototype), $prototype);
 
         if ($paginate) {
