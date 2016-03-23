@@ -16,10 +16,14 @@ build:
     - 'rm -rf public/img'
     - 'rm -rf html'
 <<<<<<< HEAD
+<<<<<<< HEAD
 #    - 'rm -rf vendor'
 =======
     - 'rm -rf vendor'
 >>>>>>> Removing vendor folder and turing on verbose
+=======
+#    - 'rm -rf vendor'
+>>>>>>> Duh I closed down console routes because im a mow-ron
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
