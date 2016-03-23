@@ -3,6 +3,7 @@
 namespace Game\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\ServiceTrait;
 use Game\Game;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -19,6 +20,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class GameService implements GameServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var TableGateway
      */
@@ -42,7 +45,7 @@ class GameService implements GameServiceInterface
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {

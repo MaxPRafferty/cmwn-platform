@@ -3,6 +3,7 @@
 namespace Group\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\ServiceTrait;
 use Group\Group;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
@@ -23,6 +24,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class GroupService implements GroupServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var TableGateway
      */
@@ -99,7 +102,7 @@ class GroupService implements GroupServiceInterface
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {

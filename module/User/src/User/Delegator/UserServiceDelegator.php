@@ -4,6 +4,7 @@ namespace User\Delegator;
 
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
+use Application\Utils\ServiceTrait;
 use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -21,7 +22,9 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInterface
 {
+    use ServiceTrait;
     use EventManagerAwareTrait;
+
     /**
      * @var array Adds the Importer interface the shared manager
      */
@@ -197,7 +200,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where    = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where    = $this->createWhere($where);
         $event    = new Event(
             'fetch.all.users',
             $this->realService,

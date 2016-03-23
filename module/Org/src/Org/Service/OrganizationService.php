@@ -3,6 +3,7 @@
 namespace Org\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\ServiceTrait;
 use Org\Organization;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
@@ -10,10 +11,7 @@ use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
@@ -25,6 +23,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class OrganizationService implements OrganizationServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var TableGateway
      */
@@ -40,14 +40,14 @@ class OrganizationService implements OrganizationServiceInterface
      *
      * Returns a pagination adapter by default
      *
-     * @param null|PredicateInterface|array $where
+     * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
@@ -73,14 +73,14 @@ class OrganizationService implements OrganizationServiceInterface
      * WHERE ug.user_id = '87512ab4-f039-11e5-96b2-0800274f2cef';
      *
      * @param string|UserInterface $user
-     * @param null|PredicateInterface|array $where
+     * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
      * @param bool $paginate
      * @param null $prototype
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
-        $where     = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where     = $this->createWhere($where);
         $userId    = $user instanceof UserInterface ? $user->getUserId() : $user;
         $select    = new Select();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);

@@ -4,6 +4,7 @@ namespace Asset\Delegator;
 
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
+use Application\Utils\ServiceTrait;
 use Asset\Service\ImageService;
 use Asset\Service\ImageServiceInterface;
 use Asset\ImageInterface;
@@ -20,6 +21,7 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class ImageServiceDelegator implements ImageServiceInterface
 {
+    use ServiceTrait;
     use EventManagerAwareTrait;
 
     /**
@@ -149,7 +151,7 @@ class ImageServiceDelegator implements ImageServiceInterface
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where    = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where    = $this->createWhere($where);
         $event    = new Event(
             'fetch.all.images',
             $this->realService,
