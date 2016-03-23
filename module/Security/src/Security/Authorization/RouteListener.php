@@ -7,7 +7,6 @@ use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
-use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
@@ -148,7 +147,11 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     protected function isRouteOpen(MvcEvent $event)
     {
         $request = $event->getRequest();
-        if ($request instanceof HttpRequest && $request->getMethod() === HttpRequest::METHOD_OPTIONS) {
+        if (!$request instanceof HttpRequest) {
+            return true;
+        }
+
+        if ($request->getMethod() === HttpRequest::METHOD_OPTIONS) {
             return true;
         }
 
