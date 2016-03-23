@@ -19,39 +19,4 @@ return [
         'module_map_cache_enabled' => true,
         'cache_dir' => 'data/cache/',
     ],
-
-    'service_manager' => [
-        'router' => [
-            'routes' => [
-                'home' => [
-                    'type' => 'Literal',
-                    'options' => [
-                        'route'    => '/',
-                        'defaults' => [
-                            'controller' => 'Application\Controller\Index',
-                            'action'     => 'index',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        'service_manager' => [
-            'abstract_factories' => [
-                'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-                'Zend\Db\Adapter\AdapterAbstractServiceFactory',
-                'Zend\Log\LoggerAbstractServiceFactory',
-                'Application\Utils\AbstractTableFactory'
-            ],
-        ],
-        'controllers' => [
-            'invokables' => [
-                'Application\Controller\Index' => 'Application\Controller\IndexController',
-            ],
-        ],
-        'view_manager' => [
-            'display_not_found_reason' => false,
-            'display_exceptions'       => false,
-            'doctype'                  => 'HTML5',
-        ],
-    ],
 ];

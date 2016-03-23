@@ -8,12 +8,19 @@
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
-        colors="false"
+        colors="true"
+        stopOnError="true"
+        stopOnFailure="true"
+        stopOnIncomplete="true"
+        stopOnSkipped="true"
+        stopOnRisky="true"
         timeoutForSmallTests="1"
         timeoutForMediumTests="10"
         timeoutForLargeTests="60">
     <php>
         <ini name="date.timezone" value="UTC"/>
+        <ini name="display_errors" value="true"/>
+        <ini name="error_reporting" value="E_ALL | E_STRICT | E_DEPRECATED"/>
         <const name="TEST_MODE" value="true"/>
     </php>
     <testsuites>

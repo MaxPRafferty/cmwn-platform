@@ -1,6 +1,6 @@
 <?php
 
-namespace Security\Listeners;
+namespace Application\Listeners;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -19,7 +19,7 @@ class ListenersAggregateFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('config');
-        $config = isset($config['security-listeners']) ? $config['security-listeners'] : [];
+        $config = isset($config['shared-listeners']) ? $config['shared-listeners'] : [];
 
         return new ListenersAggregate($serviceLocator, $config);
     }

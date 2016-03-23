@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Listeners;
+namespace Security\Guard;
 
 use Api\TokenEntityInterface;
 use Zend\EventManager\EventInterface;
@@ -15,7 +15,7 @@ use ZF\Rest\ResourceEvent;
 /**
  * Class CsrfListener
  */
-class CsrfListener extends Csrf
+class CsrfGuard extends Csrf
 {
     /**
      * @var array

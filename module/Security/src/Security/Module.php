@@ -147,26 +147,5 @@ class Module implements
                 }
             }
         }
-
-        $this->attachGuards($event);
-    }
-
-    /**
-     * Attaches all the guards for the routes
-     *
-     * @param MvcEvent $event
-     */
-    protected function attachGuards(MvcEvent $event)
-    {
-        $service = $event->getApplication()->getServiceManager();
-        $events  = $event->getApplication()->getEventManager();
-
-        /** @var \Security\Listeners\ListenersAggregate $aggregate */
-        $aggregate = $service->get('Security\Listeners\ListenersAggregate');
-
-        /** @var SharedEventManager $sharedEvents */
-        $sharedEvents = $service->get('SharedEventManager');
-
-        $aggregate->attachShared($sharedEvents);
     }
 }

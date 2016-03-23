@@ -1,14 +1,12 @@
 <?php
 
-namespace Security\Listeners;
+namespace Application\Listeners;
 
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ListenersAggregate
- *
- * ${CARET}
  */
 class ListenersAggregate
 {
@@ -22,8 +20,16 @@ class ListenersAggregate
      */
     public $config = [];
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
+    /**
+     * ListenersAggregate constructor.
+     * @param ServiceLocatorInterface $services
+     * @param array $config
+     */
     public function __construct(ServiceLocatorInterface $services, $config = [])
     {
         $this->services = $services;
