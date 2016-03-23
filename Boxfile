@@ -16,6 +16,7 @@ build:
     - 'rm -rf html'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
+    - 'composer remove'
     - 'composer install --no-interaction --prefer-dist --no-dev'
   after_exec:
     - 'composer dump-autoload --optimize'
