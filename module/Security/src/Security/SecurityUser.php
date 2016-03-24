@@ -65,11 +65,6 @@ class SecurityUser extends User
     /**
      * @var array
      */
-    protected $organizations = [];
-
-    /**
-     * @var array
-     */
     protected $groupTypes = [];
 
     /**
@@ -100,17 +95,6 @@ class SecurityUser extends User
         $this->code        = $array['code'];
         $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
         $this->super       = (bool) $array['super'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getArrayCopy()
-    {
-        $array                  = parent::getArrayCopy();
-        $array['organizations'] = array_values($this->getOrganizations());
-
-        return $array;
     }
 
     /**
@@ -184,22 +168,6 @@ class SecurityUser extends User
     public function isSuper()
     {
         return $this->super;
-    }
-
-    /**
-     * @param OrganizationInterface $org
-     */
-    public function addOrganization(OrganizationInterface $org)
-    {
-        $this->organizations[$org->getOrgId()] = $org;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrganizations()
-    {
-        return $this->organizations;
     }
 
     /**

@@ -7,6 +7,7 @@ use Group\GroupInterface;
 use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -179,4 +180,48 @@ class UserGroupService implements UserGroupServiceInterface
             $resultSet
         );
     }
+
+    /**
+     * Fetches organizations for a user
+     *
+     * SELECT
+     *   o.*
+     * FROM organizations o
+     *   LEFT JOIN groups g ON o.org_id = g.organization_id
+     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
+     * GROUP BY o.org_id
+     *
+     * @param Where|GroupInterface|string $user
+     * @return DbSelect
+     */
+    public function fetchOrganizationsForUser($user, $prototype = null)
+    {
+        $where = $this->createWhere($user);
+
+        if ($user instanceof UserInterface) {
+            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
+        }
+
+        if (is_string($user)) {
+            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
+        }
+
+        $select = new Select();
+        $select->columns(['o' => '*']);
+        $select->from(['o'  => 'organizations']);
+        $select->join(['g'  => 'groups'], 'o.org_id = g.organization_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->where($where);
+        $select->group('o.org_id');
+        $select->order('org_id ASC');
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        return new DbSelect(
+            $select,
+            $this->pivotTable->getAdapter(),
+            $resultSet
+        );
+    }
+
 }
