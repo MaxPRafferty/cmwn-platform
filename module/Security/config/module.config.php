@@ -162,6 +162,10 @@ return [
                     'permission' => 'remove.group.user',
                     'label'      => 'Remove user to group',
                 ],
+                [
+                    'permission' => 'view.group.users',
+                    'label'      => 'View users in a group',
+                ],
             ],
         ],
 
