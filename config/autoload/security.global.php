@@ -33,7 +33,7 @@ return [
                 'POST'  => 'update.password',
             ],
             'api.rest.group-users' => [
-                
+                'GET' => 'view.group.users',
             ],
             'api.rest.org-users'   => [],
             'api.rest.user-image'  => [],
