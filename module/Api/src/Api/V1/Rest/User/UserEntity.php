@@ -6,6 +6,7 @@ use Api\Links\ForgotLink;
 use Api\Links\GameLink;
 use Api\Links\ProfileLink;
 use Api\Links\UserImageLink;
+use Api\V1\Rest\Group\GroupCollection;
 use User\User;
 use User\UserInterface;
 use ZF\Hal\Link\LinkCollection;
@@ -29,13 +30,24 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
     protected $links;
 
     /**
+     * @var GroupCollection
+     */
+    protected $groups;
+
+    /**
      * @return mixed
      */
     public function getArrayCopy()
     {
+        $merge = ['links' => $this->getLinks()];
+
+        if ($this->groups !== null) {
+            $merge['groups'] = $this->groups;
+        }
+
         return array_merge(
             parent::getArrayCopy(),
-            ['links' => $this->getLinks()]
+            $merge
         );
     }
 
@@ -86,5 +98,13 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
         }
 
         return $this->links;
+    }
+
+    /**
+     * @param GroupCollection $groups
+     */
+    public function setGroups(GroupCollection $groups)
+    {
+        $this->groups = $groups;
     }
 }

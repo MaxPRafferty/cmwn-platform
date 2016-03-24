@@ -2,6 +2,7 @@
 
 namespace Group\Service;
 
+use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
 use User\UserInterface;
@@ -21,6 +22,8 @@ use Zend\Permissions\Acl\Role\RoleInterface;
  */
 class UserGroupService implements UserGroupServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var TableGateway
      */
@@ -93,7 +96,7 @@ class UserGroupService implements UserGroupServiceInterface
      */
     public function fetchUsersForGroup($group, $prototype = null)
     {
-        $where = ($group instanceof Where) ? $group : new Where();
+        $where = $this->createWhere($group);
 
         if ($group instanceof GroupInterface) {
             $where->addPredicate(new Operator('g.group_id', Operator::OP_EQ, $group->getGroupId()));
@@ -137,5 +140,43 @@ class UserGroupService implements UserGroupServiceInterface
         $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $orgId));
 
         return $this->fetchUsersForGroup($where, $prototype);
+    }
+
+
+    /**
+     * Finds all the groups for a user
+     *
+     * SELECT *
+     * FROM groups g
+     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'baz-bat'
+     *
+     * @param Where|GroupInterface|string $user
+     * @param object $prototype
+     * @return DbSelect
+     */
+    public function fetchGroupsForUser($user, $prototype = null)
+    {
+        $where = $this->createWhere($user);
+
+        if ($user instanceof UserInterface) {
+            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
+        }
+
+        if (is_string($user)) {
+            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
+        }
+
+        $select = new Select();
+        $select->from(['g'  => 'groups']);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->where($where);
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        return new DbSelect(
+            $select,
+            $this->pivotTable->getAdapter(),
+            $resultSet
+        );
     }
 }

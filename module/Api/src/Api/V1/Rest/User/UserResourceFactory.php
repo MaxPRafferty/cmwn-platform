@@ -19,6 +19,9 @@ class UserResourceFactory
     {
         /** @var UserServiceInterface $userService */
         $userService = $services->get('User\Service');
-        return new UserResource($userService);
+
+        /** @var \Group\Service\UserGroupServiceInterface $userGroupService */
+        $userGroupService = $services->get('Group\Service\UserGroupServiceInterface');
+        return new UserResource($userService, $userGroupService);
     }
 }

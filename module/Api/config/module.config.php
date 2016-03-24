@@ -1,5 +1,11 @@
 <?php
 return array(
+    'shared-listeners'=>[
+        'Api\Listeners\UserRouteListener',
+        'Api\Listeners\ImportRouteListener',
+        'Api\Listeners\ScopeListener',
+    ],
+
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
