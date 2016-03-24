@@ -105,7 +105,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         if (!array_key_exists($routeName, $this->routePerms)) {
-            return new ApiProblemResponse(new ApiProblem(401, 'Not Authorized'));
+            return new ApiProblemResponse(new ApiProblem(403, 'Not Authorized'));
         }
 
         $method     = $event->getRequest()->getMethod();
@@ -114,7 +114,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         $assertion  = $this->getAssertion($event, $role, $permission);
 
         if (!$this->rbac->isGranted(null, null, $assertion)) {
-            return new ApiProblemResponse(new ApiProblem(401, 'Not Authorized'));
+            return new ApiProblemResponse(new ApiProblem(403, 'Not Authorized'));
         }
 
         return null;
