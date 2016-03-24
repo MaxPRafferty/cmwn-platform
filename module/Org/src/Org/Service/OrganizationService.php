@@ -86,8 +86,7 @@ class OrganizationService implements OrganizationServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         $select->columns([Select::SQL_STAR], 'o');
-        $select->from(['o' => $this->orgTableGateway->getTable()]);
-        $select->join(['g'  => 'groups'], 'g.organization_id = o.org_id', [], Select::JOIN_INNER);
+        $select->from(['g'  => 'groups']);
         $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
         $where->addPredicate(new Operator(new Expression('ug.user_id'), '=', $userId));
         $select->where($where);

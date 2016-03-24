@@ -31,6 +31,15 @@ class GroupDelegator implements GroupServiceInterface
      */
     protected $realService;
 
+    /**
+     * @var string
+     */
+    protected $eventIdentifier = 'Group\Service\GroupServiceInterface';
+
+    /**
+     * GroupDelegator constructor.
+     * @param GroupService $service
+     */
     public function __construct(GroupService $service)
     {
         $this->realService = $service;
@@ -179,6 +188,35 @@ class GroupDelegator implements GroupServiceInterface
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'groups' => $return]
         );
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
+
+    /**
+     * @param GroupInterface|string|Where $user
+     * @param null $where
+     * @param bool $paginate
+     * @param null $prototype
+     * @return mixed|HydratingResultSet|DbSelect
+     */
+    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
+    {
+        $where = $this->createWhere($where);
+        $event    = new Event(
+            'fetch.user.groups',
+            $this->realService,
+            ['user' => $user, 'where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
+        );
+
+        $response = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
+        $event->setName('fetch.user.groups.post');
+        $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);
 
         return $return;
