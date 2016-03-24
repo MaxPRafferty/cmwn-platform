@@ -36,7 +36,6 @@ return [
             'delightful',
             'energetic',
             'epic',
-            'excited',
             'fabulous',
             'fancy',
             'fantastic',
