@@ -1,21 +1,23 @@
 <?php
 namespace Api\V1\Rest\User;
 
+use Group\Service\UserGroupServiceInterface;
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
 use Zend\Paginator\Adapter\DbSelect;
 use ZF\ApiProblem\ApiProblem;
-use ZF\MvcAuth\Identity\AuthenticatedIdentity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
  * Class UserResource
- *
- * @package Api\V1\Rest\User
  */
-class UserResource extends AbstractResourceListener
+class UserResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
 {
+    use AuthenticationServiceAwareTrait;
+
     /**
      * @var UserServiceInterface
      */
@@ -38,11 +40,12 @@ class UserResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        $data = (array) $data;
+        $data = (array)$data;
         unset($data['user_id']);
         $user = StaticUserFactory::createUser($data);
 
         $this->service->createUser($user);
+
         return new UserEntity($user->getArrayCopy());
     }
 
@@ -57,6 +60,7 @@ class UserResource extends AbstractResourceListener
         $user = $this->fetch($userId);
 
         $this->service->deleteUser($user);
+
         return new ApiProblem(200, 'User deleted', 'Ok');
     }
 
@@ -68,11 +72,8 @@ class UserResource extends AbstractResourceListener
      */
     public function fetch($userId)
     {
-        $user = $this->getEvent()->getRouteParam('user', false);
-        $loggedInUser = $this->getIdentity();
-        $loggedInUser = $loggedInUser instanceof AuthenticatedIdentity
-            ? $loggedInUser->getAuthenticationIdentity()
-            : $loggedInUser;
+        $user         = $this->getEvent()->getRouteParam('user', false);
+        $loggedInUser = $this->getAuthenticationService()->getIdentity();
 
         if ($loggedInUser instanceof UserInterface && $loggedInUser->getUserId() === $user->getUserId()) {
             return new MeEntity($loggedInUser);
@@ -99,6 +100,7 @@ class UserResource extends AbstractResourceListener
     {
         /** @var DbSelect $users */
         $users = $this->service->fetchAll(null, true, new UserEntity());
+
         return new UserCollection($users);
     }
 
@@ -120,6 +122,7 @@ class UserResource extends AbstractResourceListener
         }
 
         $this->service->updateUser($user);
+
         return $user;
     }
 }

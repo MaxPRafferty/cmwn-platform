@@ -6,9 +6,11 @@ use Group\GroupInterface;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
 use User\UserInterface;
+use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\Paginator\Adapter\DbSelect;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
 /**
@@ -147,6 +149,41 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         }
 
         $event = new Event('fetch.org.users.post', $this->realService, $eventParams);
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
+     * Finds all the groups for a user
+     *
+     * SELECT *
+     * FROM groups g
+     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'baz-bat'
+     *
+     * @param Where|GroupInterface|string $user
+     * @param object $prototype
+     * @return DbSelect
+     */
+    public function fetchGroupsForUser($user, $prototype = null)
+    {
+        $eventParams = ['user' => $user];
+        $event       = new Event('fetch.user.group', $this->realService, $eventParams);
+        if ($this->getEventManager()->trigger($event)->stopped()) {
+            return false;
+        }
+
+        try {
+            $return = $this->realService->fetchUsersForOrg($user, $prototype);
+        } catch (\Exception $attachException) {
+            $eventParams['exception'] = $attachException;
+            $event->setName('fetch.user.group.error');
+            $this->getEventManager()->trigger($event);
+
+            return false;
+        }
+
+        $event->setName('fetch.user.group.post');
         $this->getEventManager()->trigger($event);
         return $return;
     }
