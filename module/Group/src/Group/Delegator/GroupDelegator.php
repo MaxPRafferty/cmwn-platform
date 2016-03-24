@@ -4,6 +4,7 @@ namespace Group\Delegator;
 
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
+use Application\Utils\ServiceTrait;
 use Group\Service\GroupService;
 use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
@@ -23,6 +24,7 @@ use Zend\Paginator\Adapter\DbSelect;
 class GroupDelegator implements GroupServiceInterface
 {
     use EventManagerAwareTrait;
+    use ServiceTrait;
 
     /**
      * @var GroupService
@@ -159,7 +161,7 @@ class GroupDelegator implements GroupServiceInterface
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
-        $where    = !$where instanceof PredicateInterface ? new Where($where) : $where;
+        $where = $this->createWhere($where);
         $event    = new Event(
             'fetch.all.groups',
             $this->realService,
