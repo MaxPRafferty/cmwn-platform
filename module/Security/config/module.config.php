@@ -14,6 +14,7 @@ return [
             'Security\Guard\XsrfGuard'              => 'Security\Guard\XsrfGuard',
             'Security\Guard\OriginGuard'            => 'Security\Guard\OriginGuard',
             'Security\Listeners\OrgServiceListener' => 'Security\Listeners\OrgServiceListener',
+            'Security\Listeners\GroupServiceListener' => 'Security\Listeners\GroupServiceListener',
         ],
 
         'factories' => [
@@ -46,6 +47,7 @@ return [
 
     'shared-listeners' => [
         'Security\Listeners\OrgServiceListener',
+        'Security\Listeners\GroupServiceListener',
         'Security\Authorization\RouteListener',
         'Security\Guard\OriginGuard',
         'Security\Guard\XsrfGuard',
