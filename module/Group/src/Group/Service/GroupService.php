@@ -7,6 +7,7 @@ use Application\Utils\ServiceTrait;
 use Group\Group;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
@@ -120,6 +121,49 @@ class GroupService implements GroupServiceInterface
         return $resultSet;
     }
 
+    /**
+     * Finds all the groups for a user
+     *
+     * SELECT *
+     * FROM groups g
+     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'baz-bat'
+     *
+     * @param Where|GroupInterface|string $user
+     * @param object $prototype
+     * @return DbSelect
+     */
+    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
+    {
+        $where = $this->createWhere($where);
+
+        if ($user instanceof UserInterface) {
+            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
+        }
+
+        if (is_string($user)) {
+            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
+        }
+
+        $select = new Select();
+        $select->columns(['g' => '*']);
+        $select->from(['g'  => 'groups']);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->where($where);
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        if ($paginate) {
+            return new DbSelect(
+                $select,
+                $this->groupTableGateway->getAdapter(),
+                $resultSet
+            );
+        }
+
+        $results = $this->groupTableGateway->select($select);
+        $resultSet->initialize($results);
+        return $resultSet;
+    }
 
     /**
      * Saves a group
