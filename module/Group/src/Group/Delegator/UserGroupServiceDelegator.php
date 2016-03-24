@@ -3,6 +3,7 @@
 namespace Group\Delegator;
 
 use Group\GroupInterface;
+use Group\Service\SecurityUser;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
 use User\UserInterface;
@@ -174,7 +175,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         }
 
         try {
-            $return = $this->realService->fetchUsersForOrg($user, $prototype);
+            $return = $this->realService->fetchGroupsForUser($user, $prototype);
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.group.error');
@@ -184,6 +185,43 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         }
 
         $event->setName('fetch.user.group.post');
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
+     * Fetches organizations for a user
+     *
+     * SELECT
+     *   o.*
+     * FROM organizations o
+     *   LEFT JOIN groups g ON o.org_id = g.organization_id
+     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
+     * GROUP BY o.org_id
+     *
+     * @param Where|GroupInterface|string $user
+     * @return DbSelect
+     */
+    public function fetchOrganizationsForUser($user, $prototype = null)
+    {
+        $eventParams = ['user' => $user];
+        $event       = new Event('fetch.user.orgs', $this->realService, $eventParams);
+        if ($this->getEventManager()->trigger($event)->stopped()) {
+            return false;
+        }
+
+        try {
+            $return = $this->realService->fetchGroupsForUser($user, $prototype);
+        } catch (\Exception $attachException) {
+            $eventParams['exception'] = $attachException;
+            $event->setName('fetch.user.orgs.error');
+            $this->getEventManager()->trigger($event);
+
+            return false;
+        }
+
+        $event->setName('fetch.user.orgs.post');
         $this->getEventManager()->trigger($event);
         return $return;
     }

@@ -1,10 +1,11 @@
 <?php
 return array(
-    'shared-listeners'=>[
-        'Api\Listeners\UserRouteListener',
-        'Api\Listeners\ImportRouteListener',
-        'Api\Listeners\ScopeListener',
-    ],
+    'shared-listeners'=> array(
+        'Api\\Listeners\\UserRouteListener',
+        'Api\\Listeners\\UserGroupListener',
+        'Api\\Listeners\\ImportRouteListener',
+        'Api\\Listeners\\ScopeListener',
+    ),
 
     'service_manager' => array(
         'invokables' => array(
@@ -14,6 +15,7 @@ return array(
         'factories' => array(
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
             'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
+            'Api\\Listeners\\UserGroupListener' => 'Api\\Factory\\UserGroupListenerFactory',
             'Api\\Listeners\\GroupRouteListener' => 'Api\\Factory\\GroupRouteListenerFactory',
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',

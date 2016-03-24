@@ -2,15 +2,10 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\GameLink;
 use Api\Links\GroupLink;
-use Api\Links\OrgLink;
 use Api\TokenEntityInterface;
-use Api\V1\Rest\Org\OrgEntity;
 use Security\SecurityUser;
 use User\UserInterface;
-use ZF\Hal\Collection;
-use ZF\MvcAuth\Identity\IdentityInterface;
 
 /**
  * Class MeEntity
@@ -18,11 +13,6 @@ use ZF\MvcAuth\Identity\IdentityInterface;
  */
 class MeEntity extends UserEntity implements TokenEntityInterface
 {
-    /**
-     * @var Collection
-     */
-    protected $organizations;
-
     /**
      * @var string|null
      */
@@ -35,10 +25,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
      */
     public function __construct($user, $token = null)
     {
-        if ($user instanceof IdentityInterface) {
-            $user = $user->getAuthenticationIdentity();
-        }
-
         $userData = $user instanceof UserInterface ? $user->getArrayCopy() : $user;
 
         if ($token !== null) {
@@ -46,7 +32,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
         }
 
         if ($user instanceof SecurityUser) {
-            $this->addOrganizations($user);
             foreach ($user->getGroupTypes() as $groupType) {
                 $this->getLinks()->add(new GroupLink($groupType));
             }
@@ -70,25 +55,7 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     {
         return array_merge(
             parent::getArrayCopy(),
-            [
-                'organizations' => $this->organizations,
-                'token' => $this->token
-            ]
+            ['token' => $this->token]
         );
     }
-
-    /**
-     * @param SecurityUser $user
-     */
-    protected function addOrganizations(SecurityUser $user)
-    {
-        $orgs = [];
-        foreach ($user->getOrganizations() as $key => $org) {
-            $orgs[]  = new OrgEntity($org);
-            $this->getLinks()->add(new OrgLink($org));
-        }
-
-        $this->organizations = new Collection($orgs);
-    }
-
 }

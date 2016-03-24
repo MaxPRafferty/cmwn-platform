@@ -1,7 +1,6 @@
 <?php
 namespace Api\V1\Rest\User;
 
-use Group\Service\UserGroupServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use User\Service\UserServiceInterface;

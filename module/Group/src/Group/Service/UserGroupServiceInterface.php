@@ -4,7 +4,12 @@ namespace Group\Service;
 
 use Group\GroupInterface;
 use User\UserInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
+use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
@@ -79,4 +84,20 @@ interface UserGroupServiceInterface
      * @return DbSelect
      */
     public function fetchGroupsForUser($user, $prototype = null);
+
+    /**
+     * Fetches organizations for a user
+     *
+     * SELECT
+     *   o.*
+     * FROM organizations o
+     *   LEFT JOIN groups g ON o.org_id = g.organization_id
+     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
+     * GROUP BY o.org_id
+     *
+     * @param Where|GroupInterface|string $user
+     * @return DbSelect
+     */
+    public function fetchOrganizationsForUser($user, $prototype = null);
 }
