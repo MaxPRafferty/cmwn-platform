@@ -12,6 +12,7 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
@@ -30,6 +31,10 @@ class OrganizationService implements OrganizationServiceInterface
      */
     protected $orgTableGateway;
 
+    /**
+     * OrganizationService constructor.
+     * @param TableGateway $gateway
+     */
     public function __construct(TableGateway $gateway)
     {
         $this->orgTableGateway = $gateway;
@@ -196,5 +201,33 @@ class OrganizationService implements OrganizationServiceInterface
 
         $this->orgTableGateway->delete(['org_id' => $org->getOrgId()]);
         return true;
+    }
+
+    /**
+     * Fetches the type of groups that are in this organization
+     *
+     * @param $organization
+     * @return string[]
+     */
+    public function fetchGroupTypes($organization)
+    {
+        $orgId  = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
+        $where = $this->createWhere(['organization_id' => $orgId]);
+        $select = new Select();
+        $select->columns([new Expression('DISTINCT(type) AS type')]);
+        $select->from('groups');
+        $select->where($where);
+
+        $sql     = new Sql($this->orgTableGateway->getAdapter());
+        $stmt    = $sql->prepareStatementForSqlObject($select);
+        $results = $stmt->execute();
+
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
     }
 }
