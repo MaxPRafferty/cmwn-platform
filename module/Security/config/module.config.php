@@ -74,8 +74,8 @@ return [
     'cmwn-roles' => [
         'super' => [
             'entity_bits' => [
-                'group'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
-                'organization' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+                'group'        => -1,
+                'organization' => -1,
             ],
             'permissions' => [
                 [
@@ -106,8 +106,14 @@ return [
                     'permission' => 'create.user',
                     'label'      => 'Create a User',
                 ],
-                ['permission' => 'edit.user', 'label' => 'Edit a User'],
-                ['permission' => 'remove.user', 'label' => 'Delete a User'],
+                [
+                    'permission' => 'edit.user',
+                    'label'      => 'Edit a User'
+                ],
+                [
+                    'permission' => 'remove.user',
+                    'label'      => 'Delete a User'
+                ],
             ],
         ],
 
@@ -169,18 +175,6 @@ return [
             ],
         ],
 
-        'principal' => [
-            'siblings' => ['group_admin', 'admin'],
-        ],
-
-        'asstprincipal' => [
-            'siblings' => ['group_admin', 'admin'],
-        ],
-
-        'teacher' => [
-            'siblings' => 'group_admin',
-        ],
-
         'logged_in' => [
             'parents'     => ['group_admin'],
             'permissions' => [
@@ -202,8 +196,21 @@ return [
                 ],
             ],
         ],
+
         'guest'     => [
             'parents' => ['group_admin'],
+        ],
+
+        'principal' => [
+            'siblings' => ['group_admin', 'admin'],
+        ],
+
+        'asst_principal' => [
+            'siblings' => ['group_admin', 'admin'],
+        ],
+
+        'teacher' => [
+            'siblings' => 'group_admin',
         ],
     ],
 ];

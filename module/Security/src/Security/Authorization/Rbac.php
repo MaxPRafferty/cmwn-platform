@@ -126,6 +126,21 @@ class Rbac extends ZfRbac
     }
 
     /**
+     * Gets the label for a permission
+     *
+     * @param $permission
+     * @return string
+     */
+    public function getLabelForPermission($permission)
+    {
+        if (!isset($this->permissionLabels[$permission])) {
+            throw new \InvalidArgumentException('Invalid permission: ' . $permission);
+        }
+
+        return $this->permissionLabels[$permission];
+    }
+
+    /**
      * @param $role
      * @param $entity
      * @return int
