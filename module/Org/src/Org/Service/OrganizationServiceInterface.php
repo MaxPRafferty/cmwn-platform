@@ -81,4 +81,12 @@ interface OrganizationServiceInterface
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null);
+
+    /**
+     * Fetches the type of groups that are in this organization
+     *
+     * @param $organization
+     * @return string[]
+     */
+    public function fetchGroupTypes($organization);
 }
