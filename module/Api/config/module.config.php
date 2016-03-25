@@ -298,6 +298,7 @@ return array(
                 0 => 'page',
                 1 => 'per_page',
                 2 => 'type',
+                3 => 'parent',
             ),
             'page_size' => 25,
             'page_size_param' => 'per_page',
