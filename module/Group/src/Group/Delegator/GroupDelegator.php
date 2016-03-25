@@ -8,8 +8,6 @@ use Application\Utils\ServiceTrait;
 use Group\Service\GroupService;
 use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
-use User\User;
-use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Where;
@@ -222,5 +220,59 @@ class GroupDelegator implements GroupServiceInterface
         return $return;
     }
 
+    /**
+     * Fethes all the types of groups for the children
+     *
+     * Used for hal link building
+     *
+     * @param GroupInterface $group
+     * @return string[]
+     */
+    public function fetchChildTypes(GroupInterface $group)
+    {
+        $event    = new Event('fetch.child.group.types', $this->realService, ['group' => $group]);
+        $response = $this->getEventManager()->trigger($event);
 
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchChildTypes($group);
+
+        $event->setName('fetch.child.group.types.post');
+        $event->setParam('types', $return);
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
+
+    /**
+     * Fetches all the children groups for a given group
+     *
+     * @param GroupInterface $group
+     * @param null|PredicateInterface|array $where
+     * @param null|object $prototype
+     * @return DbSelect
+     */
+    public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null)
+    {
+        $where = $this->createWhere($where);
+        $event    = new Event(
+            'fetch.child.groups',
+            $this->realService,
+            ['group' => $group, 'where' => $where, 'prototype' => $prototype]
+        );
+
+        $response = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return   = $this->realService->fetchChildGroups($group, $where, $prototype);
+        $event->setName('fetch.child.groups.post');
+        $event->setParam('result', $return);
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
 }
