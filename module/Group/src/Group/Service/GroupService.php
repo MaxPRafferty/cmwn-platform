@@ -10,6 +10,7 @@ use Group\GroupInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
@@ -32,6 +33,11 @@ class GroupService implements GroupServiceInterface
      */
     protected $groupTableGateway;
 
+    /**
+     * GroupService constructor.
+     *
+     * @param TableGateway $gateway
+     */
     public function __construct(TableGateway $gateway)
     {
         $this->groupTableGateway = $gateway;
@@ -272,5 +278,65 @@ class GroupService implements GroupServiceInterface
 
         $this->groupTableGateway->delete(['group_id' => $group->getGroupId()]);
         return true;
+    }
+
+    /**
+     * Fethes all the types of groups for the children
+     *
+     * Used for hal link building
+     *
+     * @param GroupInterface $group
+     * @return string[]
+     */
+    public function fetchChildTypes(GroupInterface $group)
+    {
+        if (!$group->hasChildren()) {
+            return [];
+        }
+
+        $select = new Select();
+        $select->columns([new Expression('DISTINCT(type) AS type')]);
+        $select->from($this->groupTableGateway->getTable());
+        $where = new Where();
+
+        $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
+        $where->addPredicate(new Between('lft', ($group->getLeft() + 1), ($group->getRight() - 1)));
+
+        $select->where($where);
+
+        $results = $this->groupTableGateway->selectWith($select);
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
+    }
+
+    /**
+     * Fetches all the children groups for a given group
+     *
+     * @param GroupInterface $group
+     * @param null|PredicateInterface|array $where
+     * @param null|object $prototype
+     * @return DbSelect
+     */
+    public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null)
+    {
+        $where  = $this->createWhere($where);
+        $select = new Select();
+        $select->from($this->groupTableGateway->getTable());
+
+        $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
+        $where->addPredicate(new Between('lft', ($group->getLeft() + 1), ($group->getRight() - 1)));
+        $select->where($where);
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        return new DbSelect(
+            $select,
+            $this->groupTableGateway->getAdapter(),
+            $resultSet
+        );
     }
 }

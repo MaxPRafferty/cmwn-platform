@@ -4,13 +4,9 @@ namespace Group\Service;
 
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
-use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
-use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -88,4 +84,24 @@ interface GroupServiceInterface
      * @return DbSelect
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null);
+
+    /**
+     * Fethes all the types of groups for the children
+     *
+     * Used for hal link building
+     *
+     * @param GroupInterface $group
+     * @return string[]
+     */
+    public function fetchChildTypes(GroupInterface $group);
+
+    /**
+     * Fetches all the children groups for a given group
+     *
+     * @param GroupInterface $group
+     * @param null|PredicateInterface|array $where
+     * @param null|object $prototype
+     * @return DbSelect
+     */
+    public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null);
 }
