@@ -88,6 +88,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         /** @var SecurityUser $user */
         $user = $this->authService->getIdentity();
         if ($user->isSuper()) {
+            $user->setRole('super');
             return;
         }
 

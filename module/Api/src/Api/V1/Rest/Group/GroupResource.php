@@ -93,6 +93,10 @@ class GroupResource extends AbstractResourceListener
             $query['type'] = $params['type'];
         }
 
+        if (isset($params['org_id'])) {
+            $query['organization_id'] = $params['org_id'];
+        }
+
         if (!isset($params['parent'])) {
             return new GroupCollection($this->service->fetchAll($query, true, new GroupEntity()));
         }
