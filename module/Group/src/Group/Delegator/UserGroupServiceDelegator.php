@@ -212,7 +212,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         }
 
         try {
-            $return = $this->realService->fetchGroupsForUser($user, $prototype);
+            $return = $this->realService->fetchOrganizationsForUser($user, $prototype);
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.orgs.error');

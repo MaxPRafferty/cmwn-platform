@@ -150,6 +150,11 @@ return [
                     'permission' => 'edit.group',
                     'label'      => 'Edit a group',
                 ],
+                // TODO fix sibling copying permissions
+                [
+                    'permission' => 'read.group',
+                    'label'      => 'Read a group',
+                ],
                 [
                     'permission' => 'child.code',
                     'label'      => 'Send code to child',
@@ -157,6 +162,10 @@ return [
                 [
                     'permission' => 'add.group.user',
                     'label'      => 'Add user to group',
+                ],
+                [
+                    'permission' => 'view.org.users',
+                    'label'      => 'View the org users',
                 ],
                 [
                     'permission' => 'remove.group.user',
