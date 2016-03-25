@@ -107,6 +107,7 @@ return [
                     'label'      => 'Create a User',
                 ],
                 ['permission' => 'edit.user', 'label' => 'Edit a User'],
+                ['permission' => 'view.all.groups', 'label' => 'Edit a User'],
                 ['permission' => 'remove.user', 'label' => 'Delete a User'],
             ],
         ],

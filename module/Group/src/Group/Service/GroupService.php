@@ -14,6 +14,7 @@ use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -157,6 +158,8 @@ class GroupService implements GroupServiceInterface
         $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
         $select->where($where);
 
+        $sql = new Sql($this->groupTableGateway->getAdapter());
+        $stmt = $sql->prepareStatementForSqlObject($select);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         if ($paginate) {
             return new DbSelect(

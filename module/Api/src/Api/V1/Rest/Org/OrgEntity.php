@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\Org;
 
+use Api\Links\GroupLink;
 use Api\Links\OrgUserLink;
 use Api\ScopeAwareInterface;
 use Org\Organization;
