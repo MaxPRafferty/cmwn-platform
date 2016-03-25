@@ -163,7 +163,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
         // try regex match
         foreach ($this->openRoutes as $allowed) {
-            if (preg_match($allowed, $routeName)) {
+            if (preg_match("/" . $allowed . "/", $routeName)) {
                 return true;
             }
         }
