@@ -4,6 +4,7 @@ namespace Security\Service;
 
 use Group\GroupInterface;
 use Org\Organization;
+use Org\OrganizationInterface;
 use Security\SecurityUser;
 use User\UserInterface;
 use Zend\Db\Adapter\Adapter;
@@ -122,6 +123,48 @@ class SecurityOrgService
         $sql   = new Sql($this->adapter);
         $stmt  = $sql->prepareStatementForSqlObject($select);
         $results  = $stmt->execute();
+
+        $results->rewind();
+        $role = $results->current()['role'];
+        return $role;
+    }
+
+    /**
+     * Gets the role for the org
+     *
+     * SELECT ug.role AS role
+     * FROM groups g
+     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE g.organization_id = '27d713fe-f206-11e5-b2bc-209a2c42dc83'
+     *   AND ug.user_id = '6bfb2d84-f299-11e5-b53c-0800274f2cef'
+     * ORDER BY g.lft ASC
+     * LIMIT 1
+     *
+     * @param $user
+     * @param $org
+     * @thought Move to own service?
+     */
+    public function getRoleForOrg($org, $user)
+    {
+        $orgId  = $org instanceof OrganizationInterface ? $org->getOrgId() : $org;
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+
+        $select = new Select();
+        $select->columns(['role' => 'ug.role'], false);
+        $select->from(['g' => 'groups']);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->order('g.lft ASC');
+        $select->limit(1);
+
+        $where = new Where();
+
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
+        $where->addPredicate(new Operator('g.organization_id', '=', $orgId));
+
+        $select->where($where);
+        $sql     = new Sql($this->adapter);
+        $stmt    = $sql->prepareStatementForSqlObject($select);
+        $results = $stmt->execute();
 
         $results->rewind();
         $role = $results->current()['role'];

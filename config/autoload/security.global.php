@@ -35,7 +35,9 @@ return [
             'api.rest.group-users' => [
                 'GET' => 'view.group.users',
             ],
-            'api.rest.org-users'   => [],
+            'api.rest.org-users'   => [
+                'GET' => 'view.org.users',
+            ],
             'api.rest.user-image'  => [],
             'api.rest.import'      => [
                 'POST' => 'import',

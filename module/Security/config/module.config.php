@@ -159,6 +159,10 @@ return [
                     'label'      => 'Add user to group',
                 ],
                 [
+                    'permission' => 'view.org.users',
+                    'label'      => 'View the org users',
+                ],
+                [
                     'permission' => 'remove.group.user',
                     'label'      => 'Remove user to group',
                 ],
