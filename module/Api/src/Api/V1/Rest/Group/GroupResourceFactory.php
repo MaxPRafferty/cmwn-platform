@@ -3,6 +3,7 @@
 namespace Api\V1\Rest\Group;
 
 use Group\Service\GroupServiceInterface;
+use Org\Service\OrganizationServiceInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -19,6 +20,9 @@ class GroupResourceFactory
     {
         /** @var GroupServiceInterface $groupService */
         $groupService = $services->get('Group\Service');
-        return new GroupResource($groupService);
+
+        /** @var OrganizationServiceInterface $orgService */
+        $orgService = $services->get('Org\Service');
+        return new GroupResource($groupService, $orgService);
     }
 }

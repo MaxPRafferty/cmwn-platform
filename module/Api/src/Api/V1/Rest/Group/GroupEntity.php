@@ -5,6 +5,7 @@ use Api\Links\GroupUserLink;
 use Api\ScopeAwareInterface;
 use Group\Group;
 use Group\GroupInterface;
+use Org\Organization;
 use ZF\Hal\Link\LinkCollection;
 use ZF\Hal\Link\LinkCollectionAwareInterface;
 
@@ -20,6 +21,17 @@ class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareIn
     protected $links;
 
     /**
+     * @var array
+     */
+    protected $organization;
+
+    public function __construct(array $options = [], $organization = null)
+    {
+        $this->organization = $organization instanceof Organization ? $organization->getArrayCopy() : [];
+        parent::__construct($options);
+    }
+
+    /**
      * @return array
      */
     public function getArrayCopy()
@@ -30,6 +42,7 @@ class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareIn
         unset($array['depth']);
 
         $array['links'] = $this->getLinks();
+        $array['organization'] = $this->organization;
         return $array;
     }
 
