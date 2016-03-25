@@ -938,7 +938,7 @@ return array(
                 'description' => 'Organizations description',
             ),
             2 => array(
-                'required' => false,
+                'required' => true,
                 'validators' => array(
                     0 => array(
                         'name' => 'Zend\\Validator\\StringLength',
