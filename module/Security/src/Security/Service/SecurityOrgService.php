@@ -90,15 +90,14 @@ class SecurityOrgService
     /**
      * Gets the role from the group
      *
-     * SELECT ug.role
-     * FROM groups AS node,
-     *   groups AS parent
-     * LEFT JOIN user_groups ug ON ug.group_id = parent.group_id
-     * WHERE node.lft BETWEEN parent.lft AND parent.rgt
-     *   AND ug.user_id = 'f79b214a-ebba-11e5-86c6-0800274f2cef'
-     *   AND node.group_id = '4463c692-ebae-11e5-8d27-0800274f2cef'
-     * GROUP BY node.title
-     * ORDER BY node.lft;
+     * SELECT `ug`.role AS `role`, `node`.*
+     * FROM `groups` AS `parent`
+     *    INNER JOIN `groups` AS `node` ON `node`.`lft` BETWEEN `parent`.`lft` AND `parent`.`rgt`
+     *    LEFT OUTER JOIN `user_groups` AS `ug` ON `ug`.`group_id` = `node`.`group_id`
+     * WHERE `ug`.`user_id` = '6bfb2d84-f299-11e5-b53c-0800274f2cef'
+     *    AND `parent`.`group_id` = '27d713fe-f206-11e6-b2bc-209a2c42dc83'
+     * ORDER BY node.lft ASC
+     * LIMIT 1;
      *
      * @param $user
      * @param $group
@@ -113,11 +112,12 @@ class SecurityOrgService
         $select->columns(['role' => 'ug.role'], false);
         $select->from(['parent' => 'groups']);
         $select->join(['node' => 'groups'], 'node.lft BETWEEN parent.lft AND parent.rgt');
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = parent.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = node.group_id', [], Select::JOIN_LEFT_OUTER);
+        $select->order('node.lft ASC');
         $where = new Where();
 
         $where->addPredicate(new Operator('ug.user_id', '=', $userId));
-        $where->addPredicate(new Operator('node.group_id', '=', $groupId));
+        $where->addPredicate(new Operator('parent.group_id', '=', $groupId));
 
         $select->where($where);
         $sql   = new Sql($this->adapter);
