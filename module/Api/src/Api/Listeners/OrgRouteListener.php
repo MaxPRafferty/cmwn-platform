@@ -90,7 +90,7 @@ class OrgRouteListener implements ListenerAggregateInterface
 
         $types = $this->orgService->fetchGroupTypes($realEntity);
         foreach ($types as $type) {
-            $payload->getLinks()->add(new GroupLink($type));
+            $payload->getLinks()->add(new GroupLink($type, null, $realEntity->getOrgId()));
         }
     }
 }
