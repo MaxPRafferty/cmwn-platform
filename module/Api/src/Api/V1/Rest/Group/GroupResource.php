@@ -4,7 +4,7 @@ namespace Api\V1\Rest\Group;
 use Group\Group;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
-use Group\Service\UserGroupServiceInterface;
+use Org\Service\OrganizationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -20,13 +20,19 @@ class GroupResource extends AbstractResourceListener
     protected $service;
 
     /**
-     * GroupResource constructor.
-     *
-     * @param GroupServiceInterface $service
+     * @var OrganizationServiceInterface
      */
-    public function __construct(GroupServiceInterface $service)
+    protected $orgService;
+
+    /**
+     * GroupResource constructor.
+     * @param GroupServiceInterface $service
+     * @param OrganizationServiceInterface $orgService
+     */
+    public function __construct(GroupServiceInterface $service, OrganizationServiceInterface $orgService)
     {
-        $this->service = $service;
+        $this->service    = $service;
+        $this->orgService = $orgService;
     }
 
     /**
@@ -67,13 +73,11 @@ class GroupResource extends AbstractResourceListener
      */
     public function fetch($groupId)
     {
-        $group  = $this->getEvent()->getRouteParam('group', false);
+        $group = $this->getEvent()->getRouteParam('group', false);
+        $group = $group instanceof GroupInterface ? $this->service->fetchGroup($groupId) : $group;
 
-        if ($group instanceof GroupInterface) {
-            return new GroupEntity($group->getArrayCopy());
-        }
-
-        return new GroupEntity($this->service->fetchGroup($groupId)->getArrayCopy());
+        $org = $this->orgService->fetchOrganization($group->getOrganizationId());
+        return new GroupEntity($group->getArrayCopy(), $org);
     }
 
     /**
