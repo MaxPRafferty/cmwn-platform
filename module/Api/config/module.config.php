@@ -1,12 +1,11 @@
 <?php
 return array(
-    'shared-listeners'=> array(
-        'Api\\Listeners\\UserRouteListener',
-        'Api\\Listeners\\UserGroupListener',
-        'Api\\Listeners\\ImportRouteListener',
-        'Api\\Listeners\\ScopeListener',
+    'shared-listeners' => array(
+        0 => 'Api\\Listeners\\UserRouteListener',
+        1 => 'Api\\Listeners\\UserGroupListener',
+        2 => 'Api\\Listeners\\ImportRouteListener',
+        3 => 'Api\\Listeners\\ScopeListener',
     ),
-
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
@@ -817,6 +816,9 @@ return array(
         'Api\\V1\\Rest\\Password\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Password\\Validator',
         ),
+        'Api\\V1\\Rest\\Forgot\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Forgot\\Validator',
+        ),
     ),
     'input_filter_specs' => array(
         'Api\\V1\\Rest\\User\\Validator' => array(
@@ -1155,6 +1157,20 @@ return array(
                 ),
                 'filters' => array(),
                 'name' => 'password',
+            ),
+        ),
+        'Api\\V1\\Rest\\Forgot\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\EmailAddress',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'email',
+                'description' => 'Email address of user to reset',
             ),
         ),
     ),
