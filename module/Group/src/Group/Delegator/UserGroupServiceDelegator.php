@@ -225,4 +225,48 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $this->getEventManager()->trigger($event);
         return $return;
     }
+
+    public function fetchGroupTypesForUser($user)
+    {
+        $eventParams = ['user' => $user];
+        $event       = new Event('fetch.user.group.types', $this->realService, $eventParams);
+        if ($this->getEventManager()->trigger($event)->stopped()) {
+            return false;
+        }
+
+        try {
+            $return = $this->realService->fetchGroupTypesForUser($user);
+            $event->setName('fetch.user.group.types.post');
+            $event->setParam('types', $return);
+        } catch (\Exception $attachException) {
+            $eventParams['exception'] = $attachException;
+            $event->setName('fetch.user.group.types.error');
+            $return = false;
+        }
+
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    public function fetchOrgTypesForUser($user)
+    {
+        $eventParams = ['user' => $user];
+        $event       = new Event('fetch.user.org.types', $this->realService, $eventParams);
+        if ($this->getEventManager()->trigger($event)->stopped()) {
+            return false;
+        }
+
+        try {
+            $return = $this->realService->fetchGroupTypesForUser($user);
+            $event->setName('fetch.user.org.types.post');
+            $event->setParam('types', $return);
+        } catch (\Exception $attachException) {
+            $eventParams['exception'] = $attachException;
+            $event->setName('fetch.user.org.types.error');
+            $return = false;
+        }
+
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
 }

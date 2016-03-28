@@ -2,10 +2,13 @@
 
 namespace Api\Listeners;
 
+use Api\Links\GroupLink;
+use Api\Links\OrgLink;
 use Api\V1\Rest\Group\GroupCollection;
 use Api\V1\Rest\Group\GroupEntity;
 use Api\V1\Rest\Org\OrgCollection;
 use Api\V1\Rest\Org\OrgEntity;
+use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
 use Group\Service\UserGroupServiceInterface;
 use Zend\EventManager\Event;
@@ -52,6 +55,7 @@ class UserGroupListener
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderCollection', [$this, 'flagCollection'], 100);
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'attachGroup'], -1000);
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'attachOrgs'], -1000);
+        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'attachHal'], -1000);
     }
 
     /**
@@ -67,6 +71,36 @@ class UserGroupListener
     public function flagCollection()
     {
         $this->collection = true;
+    }
+
+    public function attachHal(Event $event)
+    {
+        if ($this->collection) {
+            return;
+        }
+
+        $entity  = $event->getParam('entity');
+        if (!$entity instanceof Entity) {
+            return;
+        }
+
+        $realEntity = $entity->entity;
+
+        if (!$realEntity instanceof MeEntity) {
+            return;
+        }
+
+        foreach ($this->userGroupService->fetchGroupTypesForUser($realEntity) as $type) {
+            $link = new GroupLink($type);
+            $link->setProps(['label' => 'My ' . $type]);
+            $realEntity->getLinks()->add($link);
+        }
+
+        foreach ($this->userGroupService->fetchOrgTypesForUser($realEntity) as $type) {
+            $link = new OrgLink($type);
+            $link->setProps(['label' => 'My ' . $type]);
+            $realEntity->getLinks()->add($link);
+        }
     }
 
     /**
