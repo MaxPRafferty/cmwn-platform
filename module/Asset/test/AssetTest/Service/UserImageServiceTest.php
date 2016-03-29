@@ -89,7 +89,7 @@ class UserImageServiceTest extends TestCase
 
                 $select = new Select();
                 $select->columns(['i' => '*'], false);
-                $select->from('user_images');
+                $select->from(['u' => 'user_images']);
                 $select->join(['i' => 'images'], 'i.image_id = u.image_id', [], Select::JOIN_LEFT);
 
                 $where = new Where();
@@ -123,7 +123,7 @@ class UserImageServiceTest extends TestCase
 
                 $select = new Select();
                 $select->columns(['i' => '*'], false);
-                $select->from('user_images');
+                $select->from(['u' => 'user_images']);
                 $select->join(['i' => 'images'], 'i.image_id = u.image_id', [], Select::JOIN_LEFT);
 
                 $where = new Where();
@@ -162,7 +162,7 @@ class UserImageServiceTest extends TestCase
 
                 $select = new Select();
                 $select->columns(['i' => '*'], false);
-                $select->from('user_images');
+                $select->from(['u' => 'user_images']);
                 $select->join(['i' => 'images'], 'i.image_id = u.image_id', [], Select::JOIN_LEFT);
 
                 $where = new Where();

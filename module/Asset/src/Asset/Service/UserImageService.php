@@ -68,8 +68,6 @@ class UserImageService implements UserImageServiceInterface
         $where->addPredicate(new Operator('u.user_id', '=', $userId));
         $select->where($where);
 
-        $sql = new Sql($this->imageTableGateway->getAdapter());
-        $stmt = $sql->prepareStatementForSqlObject($select);
         $rowset = $this->imageTableGateway->selectWith($select);
         $row    = $rowset->current();
         if (!$row) {
