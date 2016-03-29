@@ -1,7 +1,17 @@
-<h1>Import Failed!</h1>
+<h1>You’re Almost There! (Something Just Needs To Be Changed)</h1>
 
-<h4>These are the errors reported: </h4>
+<p>First, the Bad News: The information contained within your import was not uploaded.</p>
 
+<p>Now the Good News: This is totally fixable! Below is information detailing the errors found on your upload spreadsheet— please review, make the necessary corrections, and re-upload your spreadsheet again.</p
+
+<p>Once your import has been accepted, you’ll receive a confirmation email. Then you’re good to go!</p>
+
+<p>If you continue to receive this message and can’t resolve the issue, our customer service department will be delighted to assist you at 646.861.0571.</p>
+
+<p>Sincerely,</p>
+<p>The Change My World Now Team</p>
+
+<h4>Here are the errors we found:</h4>
 <ol>
 <?php foreach ($errors as $errorMsg): ?>
     <li><?= $errorMsg ?></li>
@@ -9,7 +19,7 @@
 </ol>
 
 <?php if (count($warnings) > 0): ?>
-<h4>The following warnings were also produced: </h4>
+<h4>Here are some warnings that you could fix:</h4>
     <ol>
         <?php foreach ($warnings as $warnMsg): ?>
             <li><?= $warnMsg ?></li>
