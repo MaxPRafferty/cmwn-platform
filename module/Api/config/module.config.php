@@ -1,12 +1,11 @@
 <?php
 return array(
-    'shared-listeners'=> array(
-        'Api\\Listeners\\UserRouteListener',
-        'Api\\Listeners\\UserGroupListener',
-        'Api\\Listeners\\ImportRouteListener',
-        'Api\\Listeners\\ScopeListener',
+    'shared-listeners' => array(
+        0 => 'Api\\Listeners\\UserRouteListener',
+        1 => 'Api\\Listeners\\UserGroupListener',
+        2 => 'Api\\Listeners\\ImportRouteListener',
+        3 => 'Api\\Listeners\\ScopeListener',
     ),
-
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
@@ -1076,18 +1075,10 @@ return array(
             ),
             1 => array(
                 'required' => true,
-                'validators' => array(
-                    0 => array(
-                        'name' => 'Zend\\Validator\\Uri',
-                        'options' => array(
-                            'allowRelative' => false,
-                        ),
-                    ),
-                ),
+                'validators' => array(),
                 'filters' => array(),
-                'name' => 'Url',
-                'description' => 'Url to the image',
-                'error_message' => 'Invalid URL',
+                'name' => 'url',
+                'description' => 'Url for the image',
             ),
         ),
         'Api\\V1\\Rest\\Import\\Validator' => array(
