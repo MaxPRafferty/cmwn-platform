@@ -21,7 +21,7 @@ class UserImageResourceFactory implements FactoryInterface
         /** @var \Asset\Service\ImageService $imageService */
         $imageService     = $serviceLocator->get('\Asset\Service\ImageService');
         /** @var \Asset\Service\UserImageServiceInterface $userImageService */
-        $userImageService = $serviceLocator->get('\Asset\Service\UserImageService');
+        $userImageService = $serviceLocator->get('Asset\Service\UserImageService');
 
         return new UserImageResource($imageService, $userImageService);
     }

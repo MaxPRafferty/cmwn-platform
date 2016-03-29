@@ -2,8 +2,10 @@
 
 namespace Asset\Delegator;
 
+use Asset\ImageInterface;
 use Asset\Service\UserImageService;
 use Asset\Service\UserImageServiceInterface;
+use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -30,8 +32,10 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
     }
 
     /**
-     * @param $image
-     * @param $user
+     * Saves an image to a user
+     *
+     * @param string|ImageInterface $image
+     * @param string|UserInterface $user
      * @return bool
      */
     public function saveImageToUser($image, $user)
@@ -43,7 +47,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
         }
 
         try {
-            $return = $this->realService->saveImageToUser($user, $image);
+            $return = $this->realService->saveImageToUser($image, $user);
             $event->setName('save.user.image.post');
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;

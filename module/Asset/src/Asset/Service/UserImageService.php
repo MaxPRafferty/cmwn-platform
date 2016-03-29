@@ -5,9 +5,11 @@ namespace Asset\Service;
 use Application\Exception\NotFoundException;
 use Asset\AssetNotApprovedException;
 use Asset\Image;
+use Asset\ImageInterface;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 
@@ -33,13 +35,13 @@ class UserImageService implements UserImageServiceInterface
     /**
      * Saves an image to a user
      *
-     * @param $image
-     * @param $user
+     * @param string|ImageInterface $image
+     * @param string|UserInterface $user
      * @return bool
      */
     public function saveImageToUser($image, $user)
     {
-        $imageId = $image instanceof Image ? $image->getImageId() : $image;
+        $imageId = $image instanceof ImageInterface ? $image->getImageId() : $image;
         $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
 
         $this->imageTableGateway->insert(['user_id' => $userId, 'image_id' => $imageId]);
@@ -59,13 +61,15 @@ class UserImageService implements UserImageServiceInterface
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $select = new Select();
         $select->columns(['i' => '*'], false);
-        $select->from($this->imageTableGateway->getTable());
+        $select->from(['u' => $this->imageTableGateway->getTable()]);
         $select->join(['i' => 'images'], 'i.image_id = u.image_id', [], Select::JOIN_LEFT);
 
         $where = new Where();
         $where->addPredicate(new Operator('u.user_id', '=', $userId));
         $select->where($where);
 
+        $sql = new Sql($this->imageTableGateway->getAdapter());
+        $stmt = $sql->prepareStatementForSqlObject($select);
         $rowset = $this->imageTableGateway->selectWith($select);
         $row    = $rowset->current();
         if (!$row) {

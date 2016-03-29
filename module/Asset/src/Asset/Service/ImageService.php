@@ -98,8 +98,6 @@ class ImageService implements ImageServiceInterface
         unset($data['is_moderated']);
         unset($data['deleted']);
 
-        $this->fetchImage($image->getImageId());
-
         $this->imageTableGateway->update(
             $data,
             ['image_id' => $image->getImageId()]

@@ -19,7 +19,7 @@ return [
                 'Asset\Delegator\ImageDelegatorFactory',
             ],
             'Asset\Service\UserImageService' => [
-                'Asset\Delegator\UserImageDelegatorFactory',
+                'Asset\Delegator\UserImageServiceDelegatorFactory',
             ],
         ],
     ],

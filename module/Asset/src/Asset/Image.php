@@ -41,6 +41,10 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
      */
     protected $moderated = false;
 
+    /**
+     * Image constructor.
+     * @param array|null $options
+     */
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -112,6 +116,34 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
     }
 
     /**
+     * @return boolean
+     */
+    public function isApproved()
+    {
+        return $this->moderated === static::IMAGE_APPROVED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRejected()
+    {
+        return $this->moderated === static::IMAGE_REJECTED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        if (!$this->isModerated()) {
+            return true;
+        }
+
+        return $this->dateDeleted !== null;
+    }
+
+    /**
      * @param boolean $moderated
      * @return Image
      */
@@ -175,12 +207,25 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
         return $this;
     }
 
-    public function isDeleted()
+    /**
+     * Transform a status to its value
+     *
+     * @param $status
+     * @return int
+     */
+    public static function statusToNumber($status)
     {
-        if (!$this->isModerated()) {
-            return true;
+        $statuses = [
+            static::IMAGE_APPROVED => 'approved',
+            static::IMAGE_PENDING  => 'pending',
+            static::IMAGE_REJECTED => 'rejected'
+        ];
+
+        $code = array_search($status, $statuses);
+        if ($code === false) {
+            throw new \InvalidArgumentException('Invalid status code: ' . $status);
         }
 
-        return $this->dateDeleted !== null;
+        return $code;
     }
 }
