@@ -93,6 +93,7 @@ class XsrfGuard extends Csrf
             time() + 60 * 120,
             '/',
             $event->getRequest()->getServer('HTTP_HOST'),
+            true,
             true
         );
 
