@@ -192,7 +192,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
                 default:
                     $this->addWarning(
                         sprintf(
-                            'Sheet with the name <b>"%s"</b> was found and will be ignored',
+                            'Sheet with the name "%s" was found and will be ignored',
                             $sheet->getTitle()
                         )
                     );
@@ -213,7 +213,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
             $this->getLogger()->debug('Checking for sheet: ' . $requiredSheet);
             if (!isset($foundSheets[$requiredSheet])) {
                 $this->addError(
-                    sprintf('Required sheet <b>"%s"</b> is missing', $requiredSheet)
+                    sprintf('Required sheet "%s" is missing', $requiredSheet)
                 );
             }
 

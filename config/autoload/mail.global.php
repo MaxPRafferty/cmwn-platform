@@ -1,4 +1,6 @@
 <?php
+
+
 $mailHost = getenv('MAIL_HOST')
     ? getenv('MAIL_HOST')
     : 'mailtrap.io';
@@ -14,6 +16,7 @@ $mailUser = getenv('MAIL_USERNAME')
 $mailPass = getenv('MAIL_PASSWORD')
     ? getenv('MAIL_PASSWORD')
     : '1014d39a5059ac';
+
 
 return [
     'acmailer_options' => [
