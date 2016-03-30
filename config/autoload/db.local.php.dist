@@ -1,0 +1,10 @@
+<?php
+
+return [
+    'db' => [
+        'dsn'            => 'mysql:dbname=cmwn;host=localhost',
+        'username'       => 'cmwn_user',
+        'password'       => 'cmwn_pass123$',
+        'database'       => 'cmwn'
+    ],
+];

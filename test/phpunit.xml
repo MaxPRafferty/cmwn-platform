@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.6/phpunit.xsd"
+        bootstrap="./Bootstrap.php"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        colors="true"
+        stopOnError="true"
+        stopOnFailure="true"
+        stopOnIncomplete="true"
+        stopOnSkipped="true"
+        stopOnRisky="true"
+        timeoutForSmallTests="1"
+        timeoutForMediumTests="10"
+        timeoutForLargeTests="60">
+    <php>
+        <ini name="date.timezone" value="UTC"/>
+        <ini name="display_errors" value="true"/>
+        <ini name="error_reporting" value="E_ALL | E_STRICT | E_DEPRECATED"/>
+        <const name="TEST_MODE" value="true"/>
+    </php>
+    <testsuites>
+        <testsuite name="CMWN Tests">
+            <directory>../module/*/test</directory>
+            <directory>./IntegrationTest</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>../module/*/src</directory>
+        </whitelist>
+    </filter>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+    </listeners>
+</phpunit>
