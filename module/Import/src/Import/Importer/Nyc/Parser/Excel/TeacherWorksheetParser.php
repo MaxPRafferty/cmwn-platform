@@ -110,7 +110,7 @@ class TeacherWorksheetParser extends AbstractExcelParser
             // Skip if empty only if the next row is not empty
             if ($this->isRowEmpty($row, 'A', 'H') && $iterator->valid()) {
                 $this->addWarning(
-                    'No data found between cells "A" and "H" Skipping this row',
+                    'No data found between cells <b>"A"</b> and <b>"H"</b> Skipping this row',
                     static::SHEET_NAME,
                     $rowNumber
                 );
@@ -127,7 +127,7 @@ class TeacherWorksheetParser extends AbstractExcelParser
 
             if (StaticValidator::execute($rowData['EMAIL'], 'EmailAddress') === false) {
                 $this->addError(
-                    sprintf('Teacher has invalid email "%s"', $rowData['EMAIL']),
+                    sprintf('Teacher has invalid email <b>"%s"</b>', $rowData['EMAIL']),
                     static::SHEET_NAME,
                     $rowNumber
                 );
@@ -193,7 +193,7 @@ class TeacherWorksheetParser extends AbstractExcelParser
 
         if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(
-                sprintf('Class ID "%s" was not found', $class),
+                sprintf('Class ID <b>"%s"</b> was not found', $class),
                 static::SHEET_NAME,
                 $rowNumber
             );

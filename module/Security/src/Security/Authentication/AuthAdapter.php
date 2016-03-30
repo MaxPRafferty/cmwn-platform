@@ -95,7 +95,6 @@ class AuthAdapter implements AdapterInterface
 
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
-//            $this->orgService->attachGroupTypesToUser($user);
             return new Result(Result::SUCCESS, $user);
         }
 
