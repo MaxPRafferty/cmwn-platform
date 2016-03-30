@@ -27,12 +27,12 @@ class Rbac extends ZfRbac
 
     /**
      * Rbac constructor.
-     * @param array $roles
+     * @param array $config
      */
-    public function __construct(array $roles)
+    public function __construct(array $config)
     {
-        array_walk($roles, [$this, 'addRoleFromConfig']);
-        array_walk($roles, [$this, 'copyPermissionsFromSibling']);
+        $this->permissionLabels = $config['permission_labels'];
+        array_walk($config['roles'], [$this, 'addRoleFromConfig']);
     }
 
     /**
@@ -50,26 +50,6 @@ class Rbac extends ZfRbac
         return parent::getRole('guest');
     }
 
-
-    /**
-     * Copies the permissions from each sibling role
-     *
-     * @param $roleConfig
-     * @param $roleName
-     */
-    public function copyPermissionsFromSibling($roleConfig, $roleName)
-    {
-        $role     = $this->getRole($roleName);
-        $siblings = array_key_exists('siblings', $roleConfig) ? $roleConfig['siblings'] : [];
-        $siblings = !is_array($siblings) ? [$siblings] : $siblings;
-        foreach ($siblings as $siblingRole) {
-            /** @var Role $sibling */
-            $sibling = $this->getRole($siblingRole);
-            $sibling->copyPermissionToRole($role);
-            $this->permissionBits[$roleName] = $this->permissionBits[$siblingRole];
-        }
-    }
-
     /**
      * Creates a role from a config
      *
@@ -78,51 +58,22 @@ class Rbac extends ZfRbac
      */
     public function addRoleFromConfig($roleConfig, $roleName)
     {
-        $role = new Role($roleName);
+        $default = [
+            'permissions' => [],
+            'entity_bits' => [],
+        ];
 
+        $roleConfig = array_merge($default, $roleConfig);
+
+        $role    = new Role($roleName);
         $parents = array_key_exists('parents', $roleConfig) ? $roleConfig['parents'] : [];
         $parents = !is_array($parents) ? [$parents] : $parents;
         $this->addRole($role, $parents);
-
-        if (array_key_exists('permissions', $roleConfig)) {
-            $this->addPermissionsToRole($role, $roleConfig['permissions']);
-        }
-
-        if (array_key_exists('entity_bits', $roleConfig)) {
-            $this->permissionBits[$roleName] = $roleConfig['entity_bits'];
-        }
-    }
-
-    /**
-     * Adds permissions to a role from a config and attaches a lable to a role
-     *
-     * @param RoleInterface $role
-     * @param array $permissions
-     */
-    public function addPermissionsToRole(RoleInterface $role, array $permissions)
-    {
-        foreach ($permissions as $permConfig) {
-            if (!is_array($permConfig)) {
-                $role->addPermission($permConfig);
-                continue;
-            }
-
-            $defaults = [
-                'permission' => null,
-                'label'      => null,
-            ];
-
-            $permConfig = array_merge($defaults, $permConfig);
-            $permission = $permConfig['permission'];
-            $label      = $permConfig['label'] === null ? $permission : $permConfig['label'];
-
-            if ($permission === null) {
-                throw new \RuntimeException('Invalid Permission in config');
-            }
-
+        foreach ($roleConfig['permissions'] as $permission) {
             $role->addPermission($permission);
-            $this->permissionLabels[$permission] = $label;
         }
+        
+        $this->permissionBits[$roleName] = $roleConfig['entity_bits'];
     }
 
     /**
