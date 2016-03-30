@@ -66,7 +66,7 @@ class Rbac extends ZfRbac
             /** @var Role $sibling */
             $sibling = $this->getRole($siblingRole);
             $sibling->copyPermissionToRole($role);
-            $this->permissionBits[$roleName] = $this->permissionBits[$siblingRole];
+//            $this->permissionBits[$roleName] = $this->permissionBits[$siblingRole];
         }
     }
 

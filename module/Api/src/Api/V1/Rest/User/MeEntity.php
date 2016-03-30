@@ -58,4 +58,9 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             ['token' => $this->token]
         );
     }
+
+    public function getEntityType()
+    {
+        return 'me';
+    }
 }

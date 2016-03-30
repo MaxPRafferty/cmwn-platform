@@ -76,6 +76,8 @@ return [
             'entity_bits' => [
                 'group'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
                 'organization' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+                'user'         => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+                'me'           => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
             ],
             'permissions' => [
                 [
@@ -116,6 +118,8 @@ return [
             'parents'     => ['super'],
             'entity_bits' => [
                 'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
+                'user'  => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
+                'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
             ],
             'permissions' => [
                 [
@@ -144,6 +148,8 @@ return [
         'group_admin' => [
             'entity_bits' => [
                 'group' => Rbac::SCOPE_UPDATE,
+                'user'  => Rbac::SCOPE_UPDATE,
+                'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
             ],
             'parents'     => ['admin'],
             'permissions' => [
@@ -180,18 +186,36 @@ return [
         ],
 
         'principal' => [
+            'entity_bits' => [
+                'group' => Rbac::SCOPE_UPDATE,
+                'user'  => Rbac::SCOPE_UPDATE,
+                'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+            ],
             'siblings' => ['group_admin', 'admin'],
         ],
 
         'asstprincipal' => [
+            'entity_bits' => [
+                'group' => Rbac::SCOPE_UPDATE,
+                'user'  => Rbac::SCOPE_UPDATE,
+                'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+            ],
             'siblings' => ['group_admin', 'admin'],
         ],
 
         'teacher' => [
+            'entity_bits' => [
+                'group' => Rbac::SCOPE_UPDATE,
+                'user'  => Rbac::SCOPE_UPDATE,
+                'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+            ],
             'siblings' => 'group_admin',
         ],
 
         'logged_in' => [
+            'entity_bits' => [
+                'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE | Rbac::SCOPE_REMOVE,
+            ],
             'parents'     => ['group_admin'],
             'permissions' => [
                 [
