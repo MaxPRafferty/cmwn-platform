@@ -102,7 +102,7 @@ abstract class AbstractExcelParser extends AbstractParser
             $ddbnnn = AbstractExcelParser::parseDdbnnn($dString);
         } catch (InvalidDdbnnException $badNumber) {
             $this->addError(
-                sprintf('Invalid <b>DDBNNN "%s"</b>', $dString),
+                sprintf('Invalid DDBNNN "%s"', $dString),
                 static::SHEET_NAME,
                 $rowNumber
             );
@@ -129,7 +129,7 @@ abstract class AbstractExcelParser extends AbstractParser
 
             if (array_key_exists($cell, $this->getRequiredFields()) && empty($cellValue)) {
                 $this->addError(
-                    sprintf('Missing <b>"%s"</b>', $field),
+                    sprintf('Missing "%s"', $field),
                     static::SHEET_NAME,
                     $rowNumber
                 );
@@ -172,11 +172,7 @@ abstract class AbstractExcelParser extends AbstractParser
                 if ($cellIterator->seek($colField)->current()->getFormattedValue() !== $title) {
                     $headerOk = false;
                     $this->addError(
-                        sprintf(
-                            'Column <b>"%s"</b> in the header is not labeled as <b>"%s"</b>',
-                            $colField,
-                            $title
-                        ),
+                        sprintf('Column "%s" in the header is not labeled as "%s"', $colField, $title),
                         static::SHEET_NAME,
                         1
                     );
@@ -184,7 +180,7 @@ abstract class AbstractExcelParser extends AbstractParser
             }
         } catch (\PHPExcel_Exception $badHeader) {
             $this->addError(
-                'Is missing one or more column(s) between <b>"A"</b> and <b>"D"</b>',
+                'Is missing one or more column(s) between "A" and "D"',
                 static::SHEET_NAME,
                 1
             );

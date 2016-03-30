@@ -84,8 +84,8 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     protected function addError($message, $sheet = null, $row = null)
     {
-        $rowString      = $row !== null ? 'Row: <b>' . $row . '</b> ': "";
-        $sheetString    = $sheet !== null ? 'Sheet <b>"' . $sheet . '"</b> ' : "";
+        $rowString      = $row !== null ? 'Row: ' . $row . ' ': "";
+        $sheetString    = $sheet !== null ? 'Sheet "' . $sheet . '" ' : "";
         $errorMessage   = sprintf('%s%s%s', $sheetString, $rowString, $message);
         self::$errors[] =  $errorMessage;
         $this->getLogger()->err($errorMessage);
@@ -100,8 +100,8 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
      */
     protected function addWarning($message, $sheet = null, $row = null)
     {
-        $rowString        = $row !== null ? 'Row: <b>' . $row . '</b> ' : "";
-        $sheetString      = $sheet !== null ? 'Sheet <b>"' . $sheet . '"</b> ' : "";
+        $rowString        = $row !== null ? 'Row: ' . $row . ' ' : "";
+        $sheetString      = $sheet !== null ? 'Sheet "' . $sheet . '" ' : "";
         $warningMessage   = sprintf('%s%s%s', $sheetString, $rowString, $message);
         self::$warnings[] =  $warningMessage;
         $this->getLogger()->warn($warningMessage);

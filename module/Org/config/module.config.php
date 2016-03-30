@@ -5,7 +5,7 @@ return [
         'aliases'    => [
             'Org\Service'                              => 'Org\Service\OrganizationService',
             'Organization\Service'                     => 'Org\Service\OrganizationService',
-            'Org\Service\OrganizationServiceInterface' => 'Org\Service\OrganizationService',
+            'Org\Service\OrganizationServiceInterface' => 'Org\Service\OrganizationServiceInterface',
         ],
         'invokables' => [
             'Org\Delegator\OrganizationDelegatorFactory' => 'Org\Delegator\OrganizationDelegatorFactory',

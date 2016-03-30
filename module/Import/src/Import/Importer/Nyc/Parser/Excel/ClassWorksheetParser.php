@@ -102,7 +102,7 @@ class ClassWorksheetParser extends AbstractExcelParser
             // Skip if empty only if the next row is not empty
             if ($this->isRowEmpty($row, 'A', 'C') && $iterator->valid()) {
                 $this->addWarning(
-                    'No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
+                    'No data found between cells "A" and "D" Skipping this row',
                     static::SHEET_NAME,
                     $rowNumber
                 );
@@ -203,7 +203,7 @@ class ClassWorksheetParser extends AbstractExcelParser
 
         $this->addError(
             sprintf(
-                'A subclass with the id <b>"%s"</b> was not found for Class [<b>%s</b>] "<b>%s</b>"',
+                'A subclass with the id "%s" was not found for Class [%s] "%s"',
                 $subClassId,
                 $classRoom->getClassRoomId(),
                 $classRoom->getTitle()
