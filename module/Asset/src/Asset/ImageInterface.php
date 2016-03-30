@@ -9,6 +9,18 @@ namespace Asset;
  */
 interface ImageInterface
 {
+    const IMAGE_APPROVED = 1;
+    const IMAGE_PENDING  = 0;
+    const IMAGE_REJECTED = -1;
+
+    /**
+     * Transform a status to its value
+     *
+     * @param $status
+     * @return int
+     */
+    public static function statusToNumber($status);
+
     /**
      * Exchange internal values from provided array
      *
@@ -28,6 +40,11 @@ interface ImageInterface
      * @return boolean
      */
     public function isModerated();
+
+    /**
+     * @return boolean
+     */
+    public function isApproved();
 
     /**
      * @param boolean $moderated
@@ -93,6 +110,11 @@ interface ImageInterface
      * @return bool
      */
     public function isDeleted();
+
+    /**
+     * @return bool
+     */
+    public function isRejected();
 
     /**
      * @return \DateTime|null

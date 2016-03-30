@@ -4,6 +4,7 @@ namespace Api\V1\Rest\Image;
 
 use Asset\Image;
 use Asset\Service\ImageServiceInterface;
+use Zend\Http\PhpEnvironment\Request;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -32,92 +33,28 @@ class ImageResource extends AbstractResourceListener
      *
      * @param  mixed $data
      * @return ApiProblem|mixed
+     * @todo cloudinary service
      */
     public function create($data)
     {
-        $data  = (array) $data;
-        $image = new Image($data);
+        //check header
+        /** @var Request $request */
+        $request   = $this->getEvent()->getRequest();
+        $content   = $request->getContent();
+        $signature = $request->getHeader('X-Cld-Signature')->getFieldValue();
+        $timestamp = $request->getHeader('X-Cld-Timestamp')->getFieldValue();
+        $secret    = getenv('CLOUDINARY_API_SECRET');
 
-        $this->service->saveNewImage($image);
-        return new ImageEntity($image->getArrayCopy());
-    }
+        if (!$signature === sha1($content . $timestamp . $secret)) {
+            return new ApiProblem(403, 'Not authorized');
+        }
+        
+        $imageId = $this->getInputFilter()->getValue('public_id');
+        $image   = $this->service->fetchImage($imageId);
+        $code    = $image::statusToNumber($this->getInputFilter()->getValue('moderation_status'));
 
-    /**
-     * Delete a resource
-     *
-     * @param  mixed $imageId
-     * @return ApiProblem|mixed
-     */
-    public function delete($imageId)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
-    }
-
-    /**
-     * Delete a collection, or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function deleteList($data)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for collections');
-    }
-
-    /**
-     * Fetch a resource
-     *
-     * @param  mixed $imageId
-     * @return ApiProblem|mixed
-     */
-    public function fetch($imageId)
-    {
-        return new ImageEntity($this->service->fetchImage($imageId)->getArrayCopy());
-    }
-
-    /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return ApiProblem|mixed
-     */
-    public function fetchAll($params = [])
-    {
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
-    }
-
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $imageId
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function patch($imageId, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
-    }
-
-    /**
-     * Replace a collection or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for collections');
-    }
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $imageId
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function update($imageId, $data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
+        $image->setModerated($code);
+        $this->service->saveImage($image);
+        return new ApiProblem(200, 'Ok');
     }
 }

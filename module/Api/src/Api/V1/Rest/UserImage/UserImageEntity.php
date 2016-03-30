@@ -1,6 +1,12 @@
 <?php
 namespace Api\V1\Rest\UserImage;
 
-class UserImageEntity
+use Asset\Image;
+
+/**
+ * Class UserImageEntity
+ */
+class UserImageEntity extends Image
 {
+
 }
