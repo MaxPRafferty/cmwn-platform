@@ -171,9 +171,9 @@ class DoeParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Classes" Row: 1 Column "B" in the header is not labeled as "TITLE"',
-            'Sheet "Teachers" Row: 1 Column "B" in the header is not labeled as "TYPE"',
-            'Sheet "Students" Row: 1 Column "C" in the header is not labeled as "FIRST NAME"',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"B"</b> in the header is not labeled as <b>"TITLE"</b>',
+            'Sheet <b>"Teachers"</b> Row: <b>1</b> Column <b>"B"</b> in the header is not labeled as <b>"TYPE"</b>',
+            'Sheet <b>"Students"</b> Row: <b>1</b> Column <b>"C"</b> in the header is not labeled as <b>"FIRST NAME"</b>',
         ];
 
         $this->assertTrue(
@@ -225,7 +225,7 @@ class DoeParserTest extends TestCase
         );
 
         $this->assertEquals(
-            ['Sheet with the name "Foo Bar" was found and will be ignored'],
+            ['Sheet with the name <b>"Foo Bar"</b> was found and will be ignored'],
             $parser->getWarnings(),
             'Doe Parser did not report warning for extra sheet'
         );
