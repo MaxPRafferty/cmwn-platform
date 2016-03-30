@@ -14,7 +14,7 @@ build:
     - 'rm Vagrantfile'
     - 'rm -rf public/img'
     - 'rm -rf html'
-    - 'rm -rf vendor'
+#    - 'rm -rf vendor'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
