@@ -15,6 +15,7 @@ return array(
     'Import',
     'Notice',
     'AcMailer',
+    'Forgot',
     'ZF\\ApiProblem',
     'ZF\\Configuration',
     'ZF\\OAuth2',

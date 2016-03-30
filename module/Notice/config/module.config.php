@@ -8,14 +8,15 @@ return [
     ],
 
     'service_manager' => [
-        'invokables' => [
-            'Notice\Listeners\ImportListener' => 'Notice\Listeners\ImportListener',
-            'Notice\Listeners\NewUserEmailListener' => 'Notice\Listeners\NewUserEmailListener',
+        'invokables'   => [
+            'Notice\Listeners\ImportListener'         => 'Notice\Listeners\ImportListener',
+            'Notice\Listeners\NewUserEmailListener'   => 'Notice\Listeners\NewUserEmailListener',
+            'Notice\Listeners\ForgotPasswordListener' => 'Notice\Listeners\ForgotPasswordListener',
         ],
         'initializers' => [
             'Notice\Factory\MailServiceAwareInitializer' => 'Notice\Factory\MailServiceAwareInitializer',
         ],
-        'factories' => [
+        'factories'    => [
             'Notice\NotifierListener' => 'Notice\Factory\NotifierListenerFactory',
         ],
     ],
@@ -23,7 +24,8 @@ return [
     'notify' => [
         'listeners' => [
             'Notice\Listeners\ImportListener',
-            'Notice\Listeners\NewUserEmailListener'
+            'Notice\Listeners\NewUserEmailListener',
+            'Notice\Listeners\ForgotPasswordListener',
         ],
     ],
 ];
