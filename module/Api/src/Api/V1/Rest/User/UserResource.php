@@ -39,7 +39,7 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
      */
     public function create($data)
     {
-        $data = (array)$data;
+        $data = $this->getInputFilter()->getValues();
         unset($data['user_id']);
         $user = StaticUserFactory::createUser($data);
 
@@ -67,7 +67,7 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
      * Fetch a resource
      *
      * @param  mixed $userId
-     * @return ApiProblem|mixed
+     * @return ApiProblem|UserEntity|UserInterface
      */
     public function fetch($userId)
     {
@@ -120,8 +120,8 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
             $user->__set($key, $value);
         }
 
-        $this->service->updateUser($user);
-
+        $saveUser = StaticUserFactory::createUser($user->getArrayCopy());
+        $this->service->updateUser($saveUser);
         return $user;
     }
 }
