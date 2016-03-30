@@ -10,7 +10,6 @@ use Asset\Service\ImageServiceInterface;
 use Asset\ImageInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Paginator\Adapter\DbSelect;

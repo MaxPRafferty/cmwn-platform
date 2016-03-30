@@ -266,9 +266,7 @@ return array(
             'route_name' => 'api.rest.image',
             'route_identifier_name' => 'image_id',
             'collection_name' => 'image',
-            'entity_http_methods' => array(
-                0 => 'GET',
-            ),
+            'entity_http_methods' => array(),
             'collection_http_methods' => array(
                 0 => 'POST',
             ),
@@ -450,8 +448,11 @@ return array(
             'collection_name' => 'user_image',
             'entity_http_methods' => array(
                 0 => 'POST',
+                1 => 'GET',
             ),
-            'collection_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
             'collection_query_whitelist' => array(),
             'page_size' => 25,
             'page_size_param' => null,
@@ -974,7 +975,7 @@ return array(
                 'required' => true,
                 'validators' => array(),
                 'filters' => array(),
-                'name' => 'image_id',
+                'name' => 'public_id',
                 'description' => 'The Image Id',
                 'error_message' => 'Invalid Image Id',
             ),
@@ -982,16 +983,37 @@ return array(
                 'required' => true,
                 'validators' => array(
                     0 => array(
-                        'name' => 'Zend\\Validator\\Uri',
+                        'name' => 'Zend\\Validator\\InArray',
                         'options' => array(
-                            'allowRelative' => false,
+                            'haystack' => array(
+                                0 => 'moderation',
+                            ),
                         ),
                     ),
                 ),
                 'filters' => array(),
-                'name' => 'url',
-                'description' => 'Url for the image',
-                'error_message' => 'Invalid URL',
+                'name' => 'notification_type',
+                'description' => 'Notification type',
+                'error_message' => 'Invalid Notification Type',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 'approved',
+                                1 => 'rejected',
+                                2 => 'pending',
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'moderation_status',
+                'description' => 'Moderation status',
+                'error_message' => 'Invalid Moderation status',
             ),
         ),
         'Api\\V1\\Rest\\Group\\Validator' => array(
@@ -1078,18 +1100,10 @@ return array(
             ),
             1 => array(
                 'required' => true,
-                'validators' => array(
-                    0 => array(
-                        'name' => 'Zend\\Validator\\Uri',
-                        'options' => array(
-                            'allowRelative' => false,
-                        ),
-                    ),
-                ),
+                'validators' => array(),
                 'filters' => array(),
-                'name' => 'Url',
-                'description' => 'Url to the image',
-                'error_message' => 'Invalid URL',
+                'name' => 'url',
+                'description' => 'Url for the image',
             ),
         ),
         'Api\\V1\\Rest\\Import\\Validator' => array(
