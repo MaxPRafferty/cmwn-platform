@@ -10,6 +10,7 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -224,4 +225,81 @@ class UserGroupService implements UserGroupServiceInterface
         );
     }
 
+    /**
+     * Gets the groups types for a user
+     *
+     * SELECT
+     * DISTINCT g.type
+     * FROM user_groups ug
+     *   LEFT JOIN groups g ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
+     *
+     * @param string|UserInterface $user
+     * @return $this
+     */
+    public function fetchGroupTypesForUser($user)
+    {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $select = new Select();
+        $select->columns([
+            new Expression('DISTINCT(g.type) AS type'),
+        ]);
+
+        $where = new Where();
+        $where->addPredicate(new Operator('user_id', '=', $userId));
+
+        $select->from(['ug' => 'user_groups']);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->where($where);
+        $select->limit(10);
+
+        $results = $this->pivotTable->selectWith($select);
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
+    }
+
+    /**
+     * Gets the org types for a user
+     *
+     * SELECT
+     * DISTINCT o.type
+     * FROM user_groups ug
+     *   LEFT JOIN groups g ON ug.group_id = g.group_id
+     *   LEFT JOIN organizations o ON o.org_id = g.organization_id
+     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
+     *
+     * @param string|UserInterface $user
+     * @return $this
+     */
+    public function fetchOrgTypesForUser($user)
+    {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $select = new Select();
+        $select->columns([
+            new Expression('DISTINCT(o.type) AS type'),
+        ]);
+
+        $where = new Where();
+        $where->addPredicate(new Operator('user_id', '=', $userId));
+
+        $select->from(['ug' => 'user_groups']);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['o'  => 'organizations'], 'o.org_id = g.organization_id', [], Select::JOIN_LEFT);
+        $select->where($where);
+        $select->limit(10);
+
+        $results = $this->pivotTable->selectWith($select);
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
+    }
 }

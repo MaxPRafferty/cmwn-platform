@@ -11,13 +11,14 @@ use ZF\Hal\Link\Link;
  */
 class OrgLink extends Link
 {
-    public function __construct(OrganizationInterface $org)
+    /**
+     * OrgLink constructor.
+     * @param string $org
+     */
+    public function __construct($org)
     {
-        parent::__construct(strtolower('org_' . $org->getType()));
-        $this->setRoute('api.rest.org', [], ['query' => ['type' => $org->getType()]]);
-
-        // TODO get the label for this type
-        $props = ['label' => 'My ' . $org->getType()];
-        $this->setProps($props);
+        $type = $org instanceof OrganizationInterface ? $org->getType() : $org;
+        parent::__construct(strtolower('org_' . $type));
+        $this->setRoute('api.rest.org', [], ['query' => ['type' => $type]]);
     }
 }

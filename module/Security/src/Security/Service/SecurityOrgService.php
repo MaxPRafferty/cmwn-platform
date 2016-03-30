@@ -3,7 +3,6 @@
 namespace Security\Service;
 
 use Group\GroupInterface;
-use Org\Organization;
 use Org\OrganizationInterface;
 use Security\SecurityUser;
 use User\UserInterface;
@@ -34,57 +33,6 @@ class SecurityOrgService
     public function __construct(Adapter $adapter)
     {
         $this->adapter = $adapter;
-    }
-
-    /**
-     * Attaches the group types to a logged in user
-     *
-     * SELECT
-     * DISTINCT g.type
-     * FROM groups g
-     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     *   AND g.organization_id IN ('6bb4900e-e605-11e5-8c29-0800274f2cef', '6bb41c82-e605-11e5-a7a7-0800274f2cef');
-     *
-     * @param SecurityUser $user
-     * @return $this
-     * @todo Cache
-     */
-    public function attachGroupTypesToUser(SecurityUser $user)
-    {
-        if ($user->isSuper()) {
-            return $this;
-        }
-
-        $orgIds = array_keys($user->getOrganizations());
-
-        if (empty($orgIds)) {
-            return $this;
-        }
-
-        $select = new Select();
-        $select->columns([
-            new Expression('DISTINCT(g.type) AS type'),
-        ]);
-
-        $where = new Where();
-        // FIXME When orgIds empty just continue;
-        $where->addPredicate(new In('organization_id', $orgIds));
-
-        $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
-        $select->where($where);
-        $select->limit(10);
-
-        $sql   = new Sql($this->adapter);
-        $stmt  = $sql->prepareStatementForSqlObject($select);
-        $types = $stmt->execute();
-
-        foreach ($types as $groupType) {
-            $user->addGroupType($groupType['type']);
-        }
-
-        return $this;
     }
 
     /**
