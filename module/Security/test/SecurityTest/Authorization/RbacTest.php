@@ -100,7 +100,7 @@ class RbacTest extends TestCase
             'Super Admin (group)'                => ['super', 'group', -1],
             'Super Admin (organization)'         => ['super', 'organization', -1],
             'Super Admin (user)'                 => ['super', 'user', -1],
-            'Super Admin (me)'                   => ['super', 'me', -1],
+            'Super Admin (me)'                   => ['super', 'me', 3],
             'Admin (group)'                      => ['admin', 'group', 6],
             'Admin (organization)'               => ['admin', 'organization', 0],
             'Admin (user)'                       => ['admin', 'user', 0],

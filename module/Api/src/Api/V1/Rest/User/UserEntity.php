@@ -6,6 +6,7 @@ use Api\Links\ForgotLink;
 use Api\Links\GameLink;
 use Api\Links\ProfileLink;
 use Api\Links\UserImageLink;
+use Api\ScopeAwareInterface;
 use User\User;
 use User\UserInterface;
 use ZF\Hal\Link\LinkCollection;
@@ -16,7 +17,7 @@ use ZF\Hal\Link\LinkCollectionAwareInterface;
  *
  * @package Api\V1\Rest\User
  */
-class UserEntity extends User implements UserInterface, LinkCollectionAwareInterface
+class UserEntity extends User implements UserInterface, LinkCollectionAwareInterface, ScopeAwareInterface
 {
     /**
      * @var string
@@ -86,5 +87,10 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
         }
 
         return $this->links;
+    }
+
+    public function getEntityType()
+    {
+        return 'user';
     }
 }

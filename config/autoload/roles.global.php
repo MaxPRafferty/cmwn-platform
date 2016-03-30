@@ -35,7 +35,7 @@ return [
                     'group'        => -1,
                     'organization' => -1,
                     'user'         => -1,
-                    'me'         => -1,
+                    'me'           => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
                     'create.org',
@@ -152,7 +152,7 @@ return [
 
             'logged_in' => [
                 'entity_bits' => [
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'parents'     => ['group_admin'],
                 'permissions' => [
