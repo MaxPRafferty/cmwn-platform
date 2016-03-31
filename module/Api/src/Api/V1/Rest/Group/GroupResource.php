@@ -69,7 +69,7 @@ class GroupResource extends AbstractResourceListener
      * Fetch a resource
      *
      * @param  mixed $groupId
-     * @return ApiProblem|mixed
+     * @return ApiProblem|GroupEntity
      */
     public function fetch($groupId)
     {
@@ -116,14 +116,10 @@ class GroupResource extends AbstractResourceListener
     public function update($groupId, $data)
     {
         $group = $this->fetch($groupId);
-        $data = $this->getInputFilter()->getValues();
+        $data  = $this->getInputFilter()->getValues();
 
-        $data['group_id'] = $groupId;
-        foreach ($data as $key => $value) {
-            $group->__set($key, $value);
-        }
-
-        $this->service->saveGroup($group);
+        $saveGroup = new Group(array_merge($group->getArrayCopy(), $data));
+        $this->service->saveGroup($saveGroup);
         return $group;
     }
 }
