@@ -310,9 +310,9 @@ class ClassWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedWarnings = [
-            'Sheet "Classes" Row: 4 No data found between cells "A" and "D" Skipping this row',
-            'Sheet "Classes" Row: 7 No data found between cells "A" and "D" Skipping this row',
-            'Sheet "Classes" Row: 9 No data found between cells "A" and "D" Skipping this row',
+            'Sheet <b>"Classes"</b> Row: <b>4</b> No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
+            'Sheet <b>"Classes"</b> Row: <b>7</b> No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
+            'Sheet <b>"Classes"</b> Row: <b>9</b> No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
         ];
 
         $this->assertFalse($parser->hasErrors(), 'Parser Reported errors for a good classes sheet');
@@ -334,7 +334,7 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Classes" Row: 2 Invalid DDBNNN "144Q1001"'];
+        $expectedErrors = ['Sheet <b>"Classes"</b> Row: <b>2</b> Invalid <b>DDBNNN "144Q1001"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -366,7 +366,7 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Classes" Row: 2 Missing "TITLE"'];
+        $expectedErrors = ['Sheet <b>"Classes"</b> Row: <b>2</b> Missing <b>"TITLE"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -398,7 +398,7 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Classes" Row: 2 Missing "OFF CLS"'];
+        $expectedErrors = ['Sheet <b>"Classes"</b> Row: <b>2</b> Missing <b>"OFF CLS"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -442,8 +442,8 @@ class ClassWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Classes" Row: 1 Column "A" in the header is not labeled as "DDBNNN"',
-            'Sheet "Classes" Row: 1 Is missing one or more column(s) between "A" and "D"',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"A"</b> in the header is not labeled as <b>"DDBNNN"</b>',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Is missing one or more column(s) between <b>"A"</b> and <b>"D"</b>',
         ];
 
         $this->assertTrue(
@@ -477,10 +477,10 @@ class ClassWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Classes" Row: 1 Column "A" in the header is not labeled as "DDBNNN"',
-            'Sheet "Classes" Row: 1 Column "B" in the header is not labeled as "TITLE"',
-            'Sheet "Classes" Row: 1 Column "C" in the header is not labeled as "OFF CLS"',
-            'Sheet "Classes" Row: 1 Column "D" in the header is not labeled as "SUB CLASSES"',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"A"</b> in the header is not labeled as <b>"DDBNNN"</b>',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"B"</b> in the header is not labeled as <b>"TITLE"</b>',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"C"</b> in the header is not labeled as <b>"OFF CLS"</b>',
+            'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"D"</b> in the header is not labeled as <b>"SUB CLASSES"</b>',
         ];
 
         $this->assertTrue(
@@ -514,15 +514,15 @@ class ClassWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Classes" A subclass with the id "8002" was not found for Class [001] "Lunch"',
-            'Sheet "Classes" A subclass with the id "8002" was not found for Class [102] "PreK"',
-            'Sheet "Classes" A subclass with the id "8002" was not found for Class [011] "Kindergarten"',
-            'Sheet "Classes" A subclass with the id "8002" was not found for Class [101] "First Grade"',
-            'Sheet "Classes" A subclass with the id "8003" was not found for Class [101] "First Grade"',
-            'Sheet "Classes" A subclass with the id "8002" was not found for Class [201] "Second Grade"',
-            'Sheet "Classes" A subclass with the id "8003" was not found for Class [201] "Second Grade"',
-            'Sheet "Classes" A subclass with the id "8002" was not found for Class [301] "Third Grade"',
-            'Sheet "Classes" A subclass with the id "8003" was not found for Class [301] "Third Grade"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>001</b>] "<b>Lunch</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>102</b>] "<b>PreK</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>011</b>] "<b>Kindergarten</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>101</b>] "<b>First Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>101</b>] "<b>First Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>201</b>] "<b>Second Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>201</b>] "<b>Second Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>301</b>] "<b>Third Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>301</b>] "<b>Third Grade</b>"',
         ];
 
         $this->assertTrue(

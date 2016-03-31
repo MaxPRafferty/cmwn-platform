@@ -88,6 +88,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         /** @var SecurityUser $user */
         $user = $this->authService->getIdentity();
         if ($user->isSuper()) {
+            $user->setRole('super');
             return;
         }
 
@@ -162,7 +163,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
         // try regex match
         foreach ($this->openRoutes as $allowed) {
-            if (preg_match($allowed, $routeName)) {
+            if (preg_match("/" . $allowed . "/", $routeName)) {
                 return true;
             }
         }
@@ -178,13 +179,20 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     protected function getRoleForGroup(MvcEvent $event)
     {
         $group = $event->getRouteMatch()->getParam('group_id', false);
-
-        if ($group === false) {
+        $orgId = $event->getRouteMatch()->getParam('org_id', false);
+        if ($group === false && $orgId === false) {
             return 'logged_in';
         }
 
         $identity  = $this->authService->getIdentity();
-        $foundRole = $this->orgService->getRoleForGroup($group, $identity);
+        $foundRole = false;
+
+        if ($group !== false) {
+            $foundRole = $this->orgService->getRoleForGroup($group, $identity);
+        } elseif ($orgId !== false) {
+            $foundRole = $this->orgService->getRoleForOrg($orgId, $identity);
+        }
+
         $foundRole = $foundRole === false ? 'logged_in' : $foundRole;
 
         if ($identity instanceof SecurityUser) {

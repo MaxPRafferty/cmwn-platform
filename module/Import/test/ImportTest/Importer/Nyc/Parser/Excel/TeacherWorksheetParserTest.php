@@ -156,8 +156,8 @@ class TeacherWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedWarnings = [
-            'Sheet "Teachers" Row: 5 No data found between cells "A" and "H" Skipping this row',
-            'Sheet "Teachers" Row: 7 No data found between cells "A" and "H" Skipping this row',
+            0 => 'Sheet <b>"Teachers"</b> Row: <b>5</b> No data found between cells <b>"A"</b> and <b>"H"</b> Skipping this row',
+            1 => 'Sheet <b>"Teachers"</b> Row: <b>7</b> No data found between cells <b>"A"</b> and <b>"H"</b> Skipping this row',
         ];
 
         $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
@@ -185,7 +185,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Teachers" Row: 2 Invalid DDBNNN "144Q1001"'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Invalid <b>DDBNNN "144Q1001"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -217,7 +217,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Teachers" Row: 2 Missing "FIRST NAME"'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Missing <b>"FIRST NAME"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -249,7 +249,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Teachers" Row: 2 Missing "LAST NAME"'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Missing <b>"LAST NAME"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -281,7 +281,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Teachers" Row: 2 Missing "EMAIL"'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Missing <b>"EMAIL"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -313,7 +313,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Teachers" Row: 2 Class ID "001" was not found'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Class ID <b>"001"</b> was not found'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -345,7 +345,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Teachers" Row: 2 Teacher has invalid email "foo-bar"'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Teacher has invalid email <b>"foo-bar"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),

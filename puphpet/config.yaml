@@ -19,13 +19,13 @@ vagrantfile:
                         check_guest_tools: 0
                         update_guest_tools: 0
                 machines:
-                    vflm_4j72qcf45uxm:
+                    vflm_tmgrv4lqrzoy:
                         id: cmwn
                         network:
                             private_network: 192.168.56.101
                             forwarded_port:
-                                vflmnfp_hmh5tmbb5dum:
-                                    host: '6759'
+                                vflmnfp_0gble5l0kk19:
+                                    host: '5327'
                                     guest: '22'
                                 vflmnfp_7cr5k517lwfr:
                                     host: '3307'
@@ -44,7 +44,7 @@ vagrantfile:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
         synced_folder:
-            vflsf_7ewhmx128bs2:
+            vflsf_dazrtbxe0fgj:
                 source: ./
                 target: /var/www
                 sync_type: nfs
@@ -95,7 +95,6 @@ server:
     packages:
         - vim
         - htop
-        - screen
 users_groups:
     install: '1'
     groups: {  }
@@ -115,7 +114,7 @@ cron:
     install: '1'
     jobs: {  }
 nginx:
-    install: '0'
+    install: '1'
     settings:
         default_vhost: 1
         proxy_buffer_size: 128k
@@ -126,18 +125,18 @@ nginx:
         names_hash_bucket_size: 128
     upstreams: {  }
     vhosts:
-        nxv_9o9dlj85zpin:
-            server_name: awesome.dev
+        nxv_dknvidu68fc0:
+            server_name: cmwn.dev
             server_aliases:
-                - www.awesome.dev
-            www_root: /var/www/awesome
+                - www.cmwn.dev
+            www_root: /var/www/public
             listen_port: '80'
             index_files:
                 - index.html
                 - index.htm
                 - index.php
             client_max_body_size: 1m
-            ssl: '0'
+            ssl: '1'
             ssl_cert: ''
             ssl_key: ''
             ssl_port: '443'
@@ -146,7 +145,7 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_22hkpmqpsbq2:
+                nxvl_t5z4j4mpz0ts:
                     location: /
                     autoindex: 'off'
                     internal: 'false'
@@ -159,7 +158,7 @@ nginx:
                     fastcgi_split_path: ''
                     proxy: ''
                     proxy_redirect: ''
-                nxvl_9ntqd0l14fig:
+                nxvl_c5soeaa6i468:
                     location: '~ \.php$'
                     autoindex: 'off'
                     internal: 'false'
@@ -179,7 +178,7 @@ nginx:
                     proxy_redirect: ''
     proxies: {  }
 apache:
-    install: '1'
+    install: '0'
     settings:
         version: 2.4
         user: www-data
@@ -192,12 +191,12 @@ apache:
         - proxy_fcgi
         - rewrite
     vhosts:
-        av_7edynlhpaiqg:
-            servername: api-local.changemyworldnow.com
+        av_s89b7iap2gct:
+            servername: awesome.dev
             serveraliases:
-                - api-local.changemyworldnow.com
-            docroot: /var/www/public
-            port: '443'
+                - www.awesome.dev
+            docroot: /var/www/awesome
+            port: '80'
             setenv:
                 - 'APP_ENV dev'
                 - 'DATABASE1_NAME cmwn'
@@ -209,7 +208,7 @@ apache:
             setenvif:
                 - 'Authorization "(.*)" HTTP_AUTHORIZATION=$1'
             custom_fragment: ''
-            ssl: '1'
+            ssl: '0'
             ssl_cert: ''
             ssl_key: ''
             ssl_chain: ''
@@ -217,8 +216,8 @@ apache:
             ssl_protocol: ''
             ssl_cipher: ''
             directories:
-                avd_wtbiy3xy17hz:
-                    path: /var/www/
+                avd_3rg1de52r665:
+                    path: /var/www/awesome
                     options:
                         - Indexes
                         - FollowSymlinks
@@ -229,7 +228,7 @@ apache:
                         - 'all granted'
                     custom_fragment: ''
                     files_match:
-                        avdfm_71fs5d3y3gwf:
+                        avdfm_w55pifkxz393:
                             path: \.php$
                             sethandler: 'proxy:fcgi://127.0.0.1:9000'
                             custom_fragment: ''
@@ -256,7 +255,7 @@ php:
     fpm_ini:
         error_log: /var/log/php-fpm.log
     fpm_pools:
-        phpfp_okgz33w59p3m:
+        phpfp_1by2ndy0n9qr:
             ini:
                 prefix: www
                 listen: '127.0.0.1:9000'
@@ -299,7 +298,7 @@ drush:
 ruby:
     install: '1'
     versions:
-        rv_krwn12t6mx7g:
+        rv_bf503nf3mwff:
             default: '1'
             bundler: '1'
             version: 1.9.3
@@ -339,15 +338,15 @@ mariadb:
         override_options: {  }
     adminer: 0
     users:
-        mariadbnu_iouabkjedn1u:
+        mariadbnu_719p665yr2g0:
             name: dbuser
             password: '123'
     databases:
-        mariadbnd_3no191l4zyh5:
+        mariadbnd_wmhjon1chuco:
             name: dbname
             sql: ''
     grants:
-        mariadbng_e05whirnh23a:
+        mariadbng_fc9is8r86yax:
             user: dbuser
             table: '*.*'
             privileges:
@@ -360,17 +359,17 @@ mysql:
         override_options: {  }
     adminer: 0
     users:
-        mysqlnu_i8lmzcdov7vo:
+        mysqlnu_xs6fw0d4nvga:
             name: cmwn_user
             password: cmwn_pass123$
     databases:
-        mysqlnd_001100ob99l2:
+        mysqlnd_4xhjc5l4yqfk:
             name: cmwn
             sql: ''
     grants:
-        mysqlng_pcyzth8xo0qy:
+        mysqlng_213csbtdw007:
             user: cmwn_user
-            table: '*.*'
+            table: 'cmwn.*'
             privileges:
                 - ALL
 postgresql:
@@ -433,7 +432,7 @@ elastic_search:
         version: 2.1.0
         java_install: true
     instances:
-        esi_ydwfv0xlfub0:
+        esi_8y9gbgeyj5n3:
             name: es-01
 solr:
     install: '0'

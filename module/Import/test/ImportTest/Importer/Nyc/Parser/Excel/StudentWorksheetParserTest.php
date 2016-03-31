@@ -118,8 +118,9 @@ class StudentWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedWarnings = [
-            'Sheet "Students" Row: 3 No data found between cells "A" and "AC" Skipping this row',
-            'Sheet "Students" Row: 6 No data found between cells "A" and "AC" Skipping this row',
+            0 => 'Sheet <b>"Students"</b> Row: <b>3</b> No data found between cells <b>"A"</b> and <b>"AC"</b> Skipping this row',
+            1 => 'Sheet <b>"Students"</b> Row: <b>6</b> No data found between cells <b>"A"</b> and <b>"AC"</b> Skipping this row',
+
         ];
 
         $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
@@ -147,7 +148,7 @@ class StudentWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet "Students" Row: 2 Invalid DDBNNN "144Q1001"'];
+        $expectedErrors = ['Sheet <b>"Students"</b> Row: <b>2</b> Invalid <b>DDBNNN "144Q1001"</b>'];
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -180,12 +181,12 @@ class StudentWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Students" Row: 2 Missing "LAST NAME"',
-            'Sheet "Students" Row: 2 Missing "FIRST NAME"',
-            'Sheet "Students" Row: 2 Missing "STUDENT ID"',
-            'Sheet "Students" Row: 2 Missing "BIRTH DT"',
-            'Sheet "Students" Row: 2 Missing "OFF CLS"',
-            'Sheet "Students" Row: 2 Invalid birthday ""',
+            0 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"LAST NAME"</b>',
+            1 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"FIRST NAME"</b>',
+            2 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"STUDENT ID"</b>',
+            3 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"BIRTH DT"</b>',
+            4 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"OFF CLS"</b>',
+            5 => 'Sheet <b>"Students"</b> Row: <b>2</b> Invalid birthday <b>""</b>',
         ];
 
         $this->assertTrue(
@@ -219,7 +220,7 @@ class StudentWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Students" Row: 2 Invalid birthday "foo-bar"',
+            'Sheet <b>"Students"</b> Row: <b>2</b> Invalid birthday <b>"foo-bar"</b>',
         ];
 
         $this->assertTrue(
@@ -256,7 +257,7 @@ class StudentWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = [
-            'Sheet "Students" Row: 4 A student with the id "foo-bar" appears more than once in this sheet',
+            'Sheet <b>"Students"</b> Row: <b>4</b> A student with the id <b>STUDENT ID - "foo-bar"</b> appears more than once in this sheet',
         ];
 
         $this->assertTrue(

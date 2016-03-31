@@ -2,8 +2,8 @@
 namespace Api\V1\Rest\Org;
 
 use Org\Organization;
+use Org\OrganizationInterface;
 use Org\Service\OrganizationServiceInterface;
-use Security\SecurityUser;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -66,6 +66,12 @@ class OrgResource extends AbstractResourceListener
      */
     public function fetch($orgId)
     {
+        $org = $this->getEvent()->getRouteParam('org', false);
+        
+        if ($org instanceof OrganizationInterface) {
+            return new OrgEntity($org->getArrayCopy());
+        }
+
         return new OrgEntity($this->service->fetchOrganization($orgId)->getArrayCopy());
     }
 

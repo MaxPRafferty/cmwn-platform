@@ -187,4 +187,14 @@ interface GroupInterface
      * @return string
      */
     public function setExternalId($externalId);
+
+    /**
+     * @return null|string
+     */
+    public function getParentId();
+
+    /**
+     * @param null|string $parentId
+     */
+    public function setParentId($parentId);
 }

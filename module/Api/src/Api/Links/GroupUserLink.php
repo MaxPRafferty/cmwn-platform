@@ -6,10 +6,14 @@ use Group\GroupInterface;
 use ZF\Hal\Link\Link;
 
 /**
- * Class GoupUserLink
+ * Class GroupUserLink
  */
 class GroupUserLink extends Link
 {
+    /**
+     * GroupUserLink constructor.
+     * @param string $group
+     */
     public function __construct($group)
     {
         $groupId = $group instanceof GroupInterface ? $group->getGroupId() : $group;

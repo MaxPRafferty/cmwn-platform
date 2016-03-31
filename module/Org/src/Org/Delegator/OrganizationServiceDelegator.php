@@ -202,4 +202,26 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
 
         return $return;
     }
+
+    /**
+     * Fetches the type of groups that are in this organization
+     *
+     * @param $organization
+     * @return string[]
+     */
+    public function fetchGroupTypes($organization)
+    {
+        $event    = new Event('fetch.org.group.types', $this->realService, ['organization' => $organization]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchGroupTypes($organization);
+        $event->setName('fetch.org.group.types.post');
+        $event->setParam('results', $return);
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
 }

@@ -2,7 +2,9 @@
 namespace Api\V1\Rest\Group;
 
 use Group\Group;
+use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
+use Org\Service\OrganizationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -18,12 +20,19 @@ class GroupResource extends AbstractResourceListener
     protected $service;
 
     /**
+     * @var OrganizationServiceInterface
+     */
+    protected $orgService;
+
+    /**
      * GroupResource constructor.
      * @param GroupServiceInterface $service
+     * @param OrganizationServiceInterface $orgService
      */
-    public function __construct(GroupServiceInterface $service)
+    public function __construct(GroupServiceInterface $service, OrganizationServiceInterface $orgService)
     {
-        $this->service = $service;
+        $this->service    = $service;
+        $this->orgService = $orgService;
     }
 
     /**
@@ -60,11 +69,21 @@ class GroupResource extends AbstractResourceListener
      * Fetch a resource
      *
      * @param  mixed $groupId
-     * @return ApiProblem|mixed
+     * @return ApiProblem|GroupEntity
      */
     public function fetch($groupId)
     {
-        return new GroupEntity($this->service->fetchGroup($groupId)->getArrayCopy());
+        $group = $this->getEvent()->getRouteParam('group', false);
+        $group = $group instanceof GroupInterface ? $this->service->fetchGroup($groupId) : $group;
+
+        $org = $this->orgService->fetchOrganization($group->getOrganizationId());
+
+        $parent = null;
+        if ($group->getParentId() !== null) {
+            $parent = $this->service->fetchGroup($group->getParentId());
+        }
+
+        return new GroupEntity($group->getArrayCopy(), $org, $parent);
     }
 
     /**
@@ -80,7 +99,16 @@ class GroupResource extends AbstractResourceListener
             $query['type'] = $params['type'];
         }
 
-        $groups = $this->service->fetchAll($query, true, new GroupEntity());
+        if (isset($params['org_id'])) {
+            $query['organization_id'] = $params['org_id'];
+        }
+
+        if (!isset($params['parent'])) {
+            return new GroupCollection($this->service->fetchAll($query, true, new GroupEntity()));
+        }
+
+        $parentGroup = $this->fetch($params['parent']);
+        $groups      = $this->service->fetchChildGroups($parentGroup, $query, new GroupEntity());
         return new GroupCollection($groups);
     }
 
@@ -94,14 +122,10 @@ class GroupResource extends AbstractResourceListener
     public function update($groupId, $data)
     {
         $group = $this->fetch($groupId);
-        $data = $this->getInputFilter()->getValues();
+        $data  = $this->getInputFilter()->getValues();
 
-        $data['group_id'] = $groupId;
-        foreach ($data as $key => $value) {
-            $group->__set($key, $value);
-        }
-
-        $this->service->saveGroup($group);
+        $saveGroup = new Group(array_merge($group->getArrayCopy(), $data));
+        $this->service->saveGroup($saveGroup);
         return $group;
     }
 }
