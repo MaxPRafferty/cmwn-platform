@@ -72,6 +72,15 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     protected $externalId;
 
+    /**
+     * @var null|string
+     */
+    protected $parentId;
+
+    /**
+     * Group constructor.
+     * @param array|null $options
+     */
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -79,6 +88,9 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
         }
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return (string) $this->getTitle();
@@ -105,7 +117,8 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'created'         => null,
             'updated'         => null,
             'deleted'         => null,
-            'external_id'     => null
+            'external_id'     => null,
+            'parent_id'       => null
         ];
 
         $array = array_merge($defaults, $array);
@@ -142,6 +155,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'created'         => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
             'updated'         => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
             'deleted'         => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
+            'parent_id'       => $this->getParentId(),
         ];
     }
 
@@ -355,5 +369,22 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @param null|string $parentId
+     */
+    public function setParentId($parentId)
+    {
+        $parentId = $parentId instanceof static ? $parentId->getGroupId() : $parentId;
+        $this->parentId = $parentId;
     }
 }

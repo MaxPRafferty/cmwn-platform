@@ -77,7 +77,13 @@ class GroupResource extends AbstractResourceListener
         $group = $group instanceof GroupInterface ? $this->service->fetchGroup($groupId) : $group;
 
         $org = $this->orgService->fetchOrganization($group->getOrganizationId());
-        return new GroupEntity($group->getArrayCopy(), $org);
+
+        $parent = null;
+        if ($group->getParentId() !== null) {
+            $parent = $this->service->fetchGroup($group->getParentId());
+        }
+
+        return new GroupEntity($group->getArrayCopy(), $org, $parent);
     }
 
     /**

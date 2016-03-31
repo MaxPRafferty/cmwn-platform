@@ -51,6 +51,9 @@ class GroupService implements GroupServiceInterface
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
     {
+        $child->setParentId($parent);
+        $this->saveGroup($child);
+
         // fetch the parent to get the latest left value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
 
