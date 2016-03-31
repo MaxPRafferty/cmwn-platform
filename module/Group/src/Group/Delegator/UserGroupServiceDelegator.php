@@ -3,7 +3,6 @@
 namespace Group\Delegator;
 
 use Group\GroupInterface;
-use Group\Service\SecurityUser;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
 use User\UserInterface;
@@ -257,7 +256,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         }
 
         try {
-            $return = $this->realService->fetchGroupTypesForUser($user);
+            $return = $this->realService->fetchOrgTypesForUser($user);
             $event->setName('fetch.user.org.types.post');
             $event->setParam('types', $return);
         } catch (\Exception $attachException) {
