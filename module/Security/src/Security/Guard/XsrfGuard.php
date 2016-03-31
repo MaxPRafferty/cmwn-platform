@@ -90,7 +90,7 @@ class XsrfGuard extends Csrf
         $cookie = new SetCookie(
             'XSRF-TOKEN',
             $this->getHashFromSession(),
-            time() + 60 * 120,
+            time() + 600,
             '/',
             $event->getRequest()->getServer('HTTP_HOST'),
             true,

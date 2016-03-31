@@ -21,6 +21,8 @@ class AuthenticationServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new AuthenticationService(new Session());
+        /** @var \Zend\Session\SessionManager $session */
+        $session = $serviceLocator->get('Zend\Session\SessionManager');
+        return new AuthenticationService(new Session(null, null, $session));
     }
 }
