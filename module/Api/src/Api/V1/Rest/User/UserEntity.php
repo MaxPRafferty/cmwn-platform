@@ -14,8 +14,6 @@ use ZF\Hal\Link\LinkCollectionAwareInterface;
 
 /**
  * Class UserEntity
- *
- * @package Api\V1\Rest\User
  */
 class UserEntity extends User implements UserInterface, LinkCollectionAwareInterface, ScopeAwareInterface
 {
