@@ -28,6 +28,7 @@ class NamesSeeds extends AbstractSeed
         $table = $this->table('names');
 
         foreach ($data as $names) {
+            $table->setData([]);
             try {
                 $table
                     ->insert($names)

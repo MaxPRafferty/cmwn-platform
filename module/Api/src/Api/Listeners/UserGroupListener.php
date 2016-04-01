@@ -17,12 +17,9 @@ use ZF\Hal\Entity;
 
 /**
  * Class UserGroupListener
- *
- * ${CARET}
  */
 class UserGroupListener
 {
-
     /**
      * @var array
      */

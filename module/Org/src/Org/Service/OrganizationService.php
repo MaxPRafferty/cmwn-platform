@@ -230,4 +230,25 @@ class OrganizationService implements OrganizationServiceInterface
         sort($types);
         return array_unique($types);
     }
+
+    /**
+     * Fetches all the types of organizations
+     *
+     * @return string[]
+     */
+    public function fetchOrgTypes()
+    {
+        $select = new Select();
+        $select->columns([new Expression('DISTINCT(type) AS type')]);
+        $select->from($this->orgTableGateway->getTable());
+
+        $results = $this->orgTableGateway->selectWith($select);
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
+    }
 }

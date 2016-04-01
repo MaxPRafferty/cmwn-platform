@@ -275,4 +275,25 @@ class GroupDelegator implements GroupServiceInterface
 
         return $return;
     }
+
+    /**
+     * Fetches all the types of groups
+     *
+     * @return string[]
+     */
+    public function fetchGroupTypes()
+    {
+        $event    = new Event('fetch.group.types', $this->realService);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchGroupTypes();
+        $event->setName('fetch.group.types.post');
+        $event->setParam('results', $return);
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
 }

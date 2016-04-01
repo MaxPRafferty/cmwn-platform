@@ -34,13 +34,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating max (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating max (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -58,13 +60,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating joni (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating joni (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -82,13 +86,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating chuck (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating chuck (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
-
+        
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -106,13 +112,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating cathy (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating cathy (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -130,13 +138,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating jasmine (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating jasmine (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -154,13 +164,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating adam (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating adam (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -178,13 +190,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating micha (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating micha (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -202,13 +216,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating gina (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating gina (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -226,13 +242,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating valerie (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating valerie (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -250,13 +268,15 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating Marilyn (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating Marilyn (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
 
+        $table->setData([]);
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -274,11 +294,12 @@ class SuperSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 1
             ])
-                ->save();
+                ->saveData();
         } catch (PDOException $exception) {
             $this->getOutput()->writeln(
-                'Got Exception When creating Marilyn (this might be ok): ' . $exception->getMessage()
+                'Got Exception When creating Marilyn (this might be ok): '
             );
+            $this->getOutput()->writeln($exception->getMessage());
         }
     }
 }
