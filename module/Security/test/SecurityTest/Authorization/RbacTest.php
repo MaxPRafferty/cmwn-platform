@@ -399,6 +399,7 @@ class RbacTest extends TestCase
                     'remove.group',
                     'remove.org',
                     'remove.user',
+                    'view.all.groups',
                     'view.all.orgs',
                     'view.org.users',
                     'add.group.user',

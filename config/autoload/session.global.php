@@ -1,7 +1,8 @@
 <?php
 $cacheHost = getenv('CACHE1_HOST');
 $cachePort = getenv('CACHE1_PORT');
-return [
+
+$config = [
     'session' => [
         'config'       => [
             'class'   => 'Zend\Session\Config\SessionConfig',
@@ -26,3 +27,10 @@ return [
         ],
     ],
 ];
+
+if (defined('TEST_MODE')) {
+    unset($config['session']['save_handler']);
+}
+
+return $config;
+
