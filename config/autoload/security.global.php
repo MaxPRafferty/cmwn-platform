@@ -42,6 +42,10 @@ return [
             'api.rest.import'      => [
                 'POST' => 'import',
             ],
+            'api.rest.user-name' => [
+                'GET'  => 'pick.username',
+                'POST' => 'pick.username',
+            ]
         ],
     ],
 ];

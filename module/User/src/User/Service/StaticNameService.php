@@ -2,6 +2,7 @@
 
 namespace User\Service;
 use User\UserName;
+use Zend\Math\Rand;
 
 /**
  * Class StaticNameService
@@ -106,8 +107,8 @@ class StaticNameService
      */
     public static function generateRandomName()
     {
-        $leftKey  = array_rand(static::$left, 1);
-        $rightKey = array_rand(static::$right, 1);
+        $leftKey  = Rand::getInteger(0, count(static::$left) - 1);
+        $rightKey = Rand::getInteger(0, count(static::$left) - 1);
 
         return new UserName(static::$left[$leftKey], static::$right[$rightKey]);
     }

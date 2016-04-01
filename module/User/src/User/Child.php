@@ -42,6 +42,20 @@ class Child extends User implements ChildInterface
     }
 
     /**
+     * Sets the generated name to allow children to change their name
+     * @param UserName $username
+     *
+     * @return $this
+     */
+    public function setGeneratedName(UserName $username)
+    {
+        $this->generatedName = $username;
+        $this->userName      = $username->userName;
+
+        return $this;
+    }
+
+    /**
      * @param string $userName
      * @return $this
      */

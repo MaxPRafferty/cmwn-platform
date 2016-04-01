@@ -190,6 +190,10 @@ class SecurityUser extends User
             return 'super';
         }
 
+        if ($this->getType() === static::TYPE_CHILD) {
+            return 'child';
+        }
+
         return $this->role;
     }
 

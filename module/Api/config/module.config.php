@@ -31,6 +31,7 @@ return array(
             'Api\\V1\\Rest\\OrgUsers\\OrgUsersResource' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersResourceFactory',
             'Api\\V1\\Rest\\UserImage\\UserImageResource' => 'Api\\V1\\Rest\\UserImage\\UserImageResourceFactory',
             'Api\\V1\\Rest\\Import\\ImportResource' => 'Api\\V1\\Rest\\Import\\ImportResourceFactory',
+            'Api\\V1\\Rest\\UserName\\UserNameResource' => 'Api\\V1\\Rest\\UserName\\UserNameResourceFactory',
         ),
     ),
     'router' => array(
@@ -161,6 +162,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.user-name' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user-name[/:user_name_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\UserName\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -179,6 +189,7 @@ return array(
             11 => 'api.rest.org-users',
             12 => 'api.rest.user-image',
             13 => 'api.rest.import',
+            14 => 'api.rest.user-name',
         ),
     ),
     'zf-rest' => array(
@@ -476,6 +487,28 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Import\\ImportCollection',
             'service_name' => 'Import',
         ),
+        'Api\\V1\\Rest\\UserName\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\UserName\\UserNameResource',
+            'route_name' => 'api.rest.user-name',
+            'route_identifier_name' => 'user_name_id',
+            'collection_name' => 'user_name',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\UserName\\UserNameEntity',
+            'collection_class' => 'Api\\V1\\Rest\\UserName\\UserNameCollection',
+            'service_name' => 'UserName',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -493,6 +526,7 @@ return array(
             'Api\\V1\\Rest\\OrgUsers\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UserImage\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Import\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\UserName\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -565,6 +599,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\UserName\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -623,6 +662,10 @@ return array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
                 2 => 'multipart/form-data',
+            ),
+            'Api\\V1\\Rest\\UserName\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
             ),
         ),
     ),
@@ -790,6 +833,18 @@ return array(
                 'route_identifier_name' => 'import_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\UserName\\UserNameEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.user-name',
+                'route_identifier_name' => 'user_name_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\UserName\\UserNameCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.user-name',
+                'route_identifier_name' => 'user_name_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -819,6 +874,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Forgot\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Forgot\\Validator',
+        ),
+        'Api\\V1\\Rest\\UserName\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\UserName\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1185,6 +1243,20 @@ return array(
                 'filters' => array(),
                 'name' => 'email',
                 'description' => 'Email address of user to reset',
+            ),
+        ),
+        'Api\\V1\\Rest\\UserName\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'User\\UserNameValidator',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'user_name',
+                'description' => 'The new Username selected',
             ),
         ),
     ),

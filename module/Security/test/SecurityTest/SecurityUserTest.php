@@ -4,6 +4,7 @@ namespace SecurityTest;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
+use User\UserInterface;
 
 class SecurityUserTest extends TestCase
 {
@@ -75,6 +76,27 @@ class SecurityUserTest extends TestCase
 
         $user = new SecurityUser($userData);
         $this->assertEquals(SecurityUser::CODE_VALID, $user->compareCode('some_code'));
+    }
+
+    public function testItShouldReturnChildForRoleAllTheTimeWhenUserIsChild()
+    {
+        $user = new SecurityUser();
+        $user->setType(UserInterface::TYPE_CHILD);
+
+        $this->assertEquals(
+            'child',
+            $user->getRole(),
+            'Security user did not return "child" for role when user is a child'
+        );
+
+        $user->setRole('admin');
+
+        $this->assertEquals(
+            'child',
+            $user->getRole(),
+            'Security user did not return "child" for role when role is set'
+        );
+
     }
 }
 

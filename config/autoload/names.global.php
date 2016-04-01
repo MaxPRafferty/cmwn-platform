@@ -127,7 +127,6 @@ return [
             'bluefish',
             'bluejay',
             'bobcat',
-            'bonobo',
             'buffalo',
             'bulldog',
             'butterfly',
