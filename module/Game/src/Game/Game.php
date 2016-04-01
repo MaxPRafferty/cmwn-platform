@@ -33,6 +33,11 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
     protected $description;
 
     /**
+     * @var bool
+     */
+    protected $comingSoon = false;
+
+    /**
      * Game constructor.
      * @param array|null $options
      */
@@ -58,6 +63,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
             'created'     => null,
             'updated'     => null,
             'deleted'     => null,
+            'coming_soon' => false,
         ];
 
         $array = array_merge($defaults, $array);
@@ -84,7 +90,24 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
             'created'     => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
             'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
             'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
+            'coming_soon' => $this->isComingSoon(),
         ];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isComingSoon()
+    {
+        return $this->comingSoon;
+    }
+
+    /**
+     * @param boolean $comingSoon
+     */
+    public function setComingSoon($comingSoon)
+    {
+        $this->comingSoon = $comingSoon;
     }
 
     /**
