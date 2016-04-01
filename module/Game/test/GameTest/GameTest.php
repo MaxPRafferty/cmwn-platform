@@ -20,7 +20,8 @@ class GameTest extends TestCase
             "description" => null,
             "created"     => null,
             "updated"     => null,
-            "deleted"     => null
+            "deleted"     => null,
+            "coming_soon" => true,
         ];
 
         $org = new Game();
@@ -38,7 +39,8 @@ class GameTest extends TestCase
             "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts, play games and find out why they are endangered.",
             "created"     => $date->format(\DateTime::ISO8601),
             "updated"     => $date->format(\DateTime::ISO8601),
-            "deleted"     => null
+            "deleted"     => null,
+            "coming_soon" => true,
         ];
 
         $org = new Game();
