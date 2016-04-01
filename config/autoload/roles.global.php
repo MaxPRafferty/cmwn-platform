@@ -16,6 +16,7 @@ return [
             'edit.org'           => 'Edit an Organization',
             'edit.user'          => 'Edit a User',
             'import'             => 'Import Data file',
+            'pick.username'      => 'Pick a new User Name',
             'read.group'         => 'View Group',
             'remove.child.group' => 'Remove a child group',
             'remove.group'       => 'Remove a group',
@@ -143,6 +144,21 @@ return [
                     'edit.group',
                     'read.group',
                     'remove.group.user',
+                    'update.password',
+                    'view.games',
+                    'view.group.users',
+                    'view.org',
+                ],
+            ],
+
+            'child' => [
+                'entity_bits' => [
+                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                ],
+                'permissions' => [
+                    'child.code',
+                    'pick.username',
+                    'read.group',
                     'update.password',
                     'view.games',
                     'view.group.users',
