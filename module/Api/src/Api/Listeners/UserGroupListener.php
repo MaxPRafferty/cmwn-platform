@@ -17,12 +17,9 @@ use ZF\Hal\Entity;
 
 /**
  * Class UserGroupListener
- *
- * ${CARET}
  */
 class UserGroupListener
 {
-
     /**
      * @var array
      */
@@ -92,13 +89,11 @@ class UserGroupListener
 
         foreach ($this->userGroupService->fetchGroupTypesForUser($realEntity) as $type) {
             $link = new GroupLink($type);
-            $link->setProps(['label' => 'My ' . $type]);
             $realEntity->getLinks()->add($link);
         }
 
         foreach ($this->userGroupService->fetchOrgTypesForUser($realEntity) as $type) {
             $link = new OrgLink($type);
-            $link->setProps(['label' => 'My ' . $type]);
             $realEntity->getLinks()->add($link);
         }
     }

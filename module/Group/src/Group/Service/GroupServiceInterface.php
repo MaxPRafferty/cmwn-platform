@@ -5,7 +5,9 @@ namespace Group\Service;
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -104,4 +106,11 @@ interface GroupServiceInterface
      * @return DbSelect
      */
     public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null);
+
+    /**
+     * Fetches all the types of groups
+     *
+     * @return string[]
+     */
+    public function fetchGroupTypes();
 }

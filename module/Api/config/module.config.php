@@ -5,6 +5,7 @@ return array(
         1 => 'Api\\Listeners\\UserGroupListener',
         2 => 'Api\\Listeners\\ImportRouteListener',
         3 => 'Api\\Listeners\\ScopeListener',
+        4 => 'Api\\Listeners\\SuperMeListener',
     ),
     'service_manager' => array(
         'invokables' => array(
@@ -17,6 +18,7 @@ return array(
             'Api\\Listeners\\UserGroupListener' => 'Api\\Factory\\UserGroupListenerFactory',
             'Api\\Listeners\\GroupRouteListener' => 'Api\\Factory\\GroupRouteListenerFactory',
             'Api\\Listeners\\OrgRouteListener' => 'Api\\Factory\\OrgRouteListenerFactory',
+            'Api\\Listeners\\SuperMeListener' => 'Api\\Factory\\SuperMeListenerFactory',
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
             'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',

@@ -345,4 +345,25 @@ class GroupService implements GroupServiceInterface
             $resultSet
         );
     }
+
+    /**
+     * Fetches all the types of groups
+     *
+     * @return string[]
+     */
+    public function fetchGroupTypes()
+    {
+        $select = new Select();
+        $select->columns([new Expression('DISTINCT(type) AS type')]);
+        $select->from($this->groupTableGateway->getTable());
+
+        $results = $this->groupTableGateway->selectWith($select);
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
+    }
 }

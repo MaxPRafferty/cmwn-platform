@@ -2,6 +2,7 @@
 
 namespace Api\Links;
 
+use Application\Utils\StaticType;
 use Group\GroupInterface;
 use ZF\Hal\Link\Link;
 
@@ -22,6 +23,8 @@ class GroupLink extends Link
         $type = $group instanceof GroupInterface ? $group->getType() : $group;
         parent::__construct(strtolower('group_' . $type));
         $query = ['type' => $type];
+
+        $this->setProps(['label' => StaticType::getLabelForType($type)]);
 
         if ($orgId !== null) {
             $query['org_id'] = $orgId;
