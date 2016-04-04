@@ -107,7 +107,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
      */
     public function setComingSoon($comingSoon)
     {
-        $this->comingSoon = $comingSoon;
+        $this->comingSoon =  (bool) $comingSoon;
     }
 
     /**
