@@ -2,6 +2,7 @@
 
 namespace Security\Authorization;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
@@ -9,6 +10,7 @@ use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -16,8 +18,9 @@ use ZF\ApiProblem\ApiProblemResponse;
 /**
  * Class RouteListener
  */
-class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface
+class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
     use RbacAwareTrait;
     use AuthenticationServiceAwareTrait;
 
@@ -82,6 +85,11 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         }
 
         if (!$this->authService->hasIdentity()) {
+            $routeName = $event->getRouteMatch()->getMatchedRouteName();
+            $this->getLogger()->alert(
+                sprintf('An attempt was made to access route [%s] with no identity', $routeName)
+            );
+
             return new ApiProblemResponse(new ApiProblem(401, 'Authentication failed'));
         }
 
@@ -106,6 +114,10 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         if (!array_key_exists($routeName, $this->routePerms)) {
+            $this->getLogger()->warn(
+                sprintf('New route [%s] has no permissions', $routeName)
+            );
+
             return new ApiProblemResponse(new ApiProblem(403, 'Not Authorized'));
         }
 
@@ -115,6 +127,10 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         $assertion  = $this->getAssertion($event, $role, $permission);
 
         if (!$this->rbac->isGranted(null, null, $assertion)) {
+            $this->getLogger()->alert(
+                sprintf('An attempt was made to access route [%s] was made', $routeName)
+            );
+
             return new ApiProblemResponse(new ApiProblem(403, 'Not Authorized'));
         }
 

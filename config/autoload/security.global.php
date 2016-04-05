@@ -6,7 +6,8 @@ return [
             'api.rest.token',
             'api.rest.login',
             'api.rest.forgot',
-            'api.rest.logout'
+            'api.rest.logout',
+            'api.rest.image',
         ],
         'route-permissions' => [
             'api.rest.user'        => [

@@ -5,10 +5,10 @@
  */
 
 return [
-    'router' => [
+    'router'          => [
         'routes' => [
             'home' => [
-                'type' => 'Literal',
+                'type'    => 'Literal',
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
@@ -20,19 +20,31 @@ return [
         ],
     ],
     'service_manager' => [
-        'initializers' => [
-            'Application\Service\LoggerAwareInitializer' => 'Application\Service\LoggerAwareInitializer',
+        'invokables'         => [
+            'Application\Listeners\ErrorListener' => 'Application\Listeners\ErrorListener',
         ],
-        'factories' => [
+        'initializers'       => [
+            'Application\Service\LoggerAwareInitializer' => 'Application\Service\LoggerAwareInitializer',
+
+        ],
+        'factories'          => [
             'Application\Listeners\ListenersAggregate' => 'Application\Listeners\ListenersAggregateFactory',
+            'Application\Log\Rollbar\Options'          => 'Application\Log\Rollbar\OptionsFactory',
+            'Application\Log\Rollbar\Notifier'         => 'Application\Log\Rollbar\NotifierFactory',
+            'Application\Log\Rollbar\Writer'           => 'Application\Log\Rollbar\WriterFactory',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Db\Adapter\AdapterAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
-            'Application\Utils\AbstractTableFactory'
+            'Application\Log\LoggerFactory',
+            'Application\Utils\AbstractTableFactory',
         ],
     ],
+
+    'shared-listeners' => [
+        'Application\Listeners\ErrorListener',
+    ],
+
     'controllers' => [
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
