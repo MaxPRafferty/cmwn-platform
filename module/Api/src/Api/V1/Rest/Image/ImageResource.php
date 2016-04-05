@@ -41,6 +41,7 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
      */
     public function create($data)
     {
+        $this->getLogger()->debug('Cloudinary webhook called');
         //check header
         /** @var Request $request */
         $request   = $this->getEvent()->getRequest();
