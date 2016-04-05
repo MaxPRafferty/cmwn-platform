@@ -3,9 +3,11 @@
 namespace Security\Guard;
 
 use Api\TokenEntityInterface;
+use Application\Utils\NoopLoggerAwareTrait;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Validator\Csrf;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -15,8 +17,10 @@ use ZF\Rest\ResourceEvent;
 /**
  * Class CsrfListener
  */
-class CsrfGuard extends Csrf
+class CsrfGuard extends Csrf implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @var array
      */
@@ -81,6 +85,11 @@ class CsrfGuard extends Csrf
         $token   = $header === false ? $request->getPost('_token', null) : $header->getFieldValue();
 
         if ($token !== $this->getHashFromSession()) {
+            $this->getLogger()->alert(
+                'Attempt to access the site with an invalid CSRF token',
+                ['actual_token' => $token, 'expected_token' => $this->getHashFromSession()]
+            );
+
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
         }
     }
