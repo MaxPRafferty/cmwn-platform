@@ -2,10 +2,11 @@
 
 namespace Api\V1\Rest\Image;
 
-use Asset\Image;
+use Application\Utils\NoopLoggerAwareTrait;
 use Asset\Service\ImageServiceInterface;
 use Zend\Http\Header\HeaderInterface;
 use Zend\Http\PhpEnvironment\Request;
+use Zend\Log\LoggerAwareInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -13,8 +14,10 @@ use ZF\Rest\AbstractResourceListener;
  * Class ImageResource
  * @package Api\V1\Rest\Image
  */
-class ImageResource extends AbstractResourceListener
+class ImageResource extends AbstractResourceListener implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @var ImageServiceInterface
      */
@@ -54,6 +57,11 @@ class ImageResource extends AbstractResourceListener
         $secret    = getenv('CLOUDINARY_API_SECRET');
         $check     = sha1($content . $timestamp . $secret);
         if ($signature !== $check) {
+            $this->getLogger()->alert(
+                'Invalid signature to webhook',
+                ['cld_signature' => $signature, 'cld_timestamp' => $timestamp]
+            );
+
             return new ApiProblem(403, 'Not authorized');
         }
         

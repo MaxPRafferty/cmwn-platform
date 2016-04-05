@@ -2,13 +2,18 @@
 
 namespace Application\Log\Rollbar;
 
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
+use User\UserInterface;
 use Zend\Log\Writer\AbstractWriter;
 
 /**
  * Class Writer
  */
-class Writer extends AbstractWriter
+class Writer extends AbstractWriter implements AuthenticationServiceAwareInterface
 {
+    use AuthenticationServiceAwareTrait;
+
     /**
      * \RollbarNotifier
      */
@@ -38,12 +43,40 @@ class Writer extends AbstractWriter
             $event['timestamp'] = $event['timestamp']->format(\DateTime::W3C);
         }
 
+        $this->rollbar->person_fn = [$this, 'getIdentity'];
         $extra = array_diff_key($event, ['message' =>'', 'priorityName' => '', 'priority' => 0]);
         $this->rollbar->report_message($event['message'], $event['priorityName'], $extra);
     }
 
+    /**
+     * Flushes to rollbar
+     */
     public function shutdown()
     {
         $this->rollbar->flush();
+    }
+
+    /**
+     * Attaches the logged in user information (if available)
+     *
+     * @return array
+     */
+    public function getIdentity()
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            return [];
+        }
+
+        $user = $this->getAuthenticationService()->getIdentity();
+
+        if (!$user instanceof UserInterface) {
+            return [];
+        }
+
+        return [
+            'id'       => $user->getUserId(),
+            'username' => $user->getUserName(),
+            'email'    => $user->getEmail()
+        ];
     }
 }
