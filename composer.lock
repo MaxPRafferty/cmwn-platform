@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b5b77f0c01903456e2e96d08efecc0fb",
-    "content-hash": "1cf9c4ee75b5c43c1ab0f0366140d291",
+    "hash": "2e4805240e8db25e480e9d50f96021ed",
+    "content-hash": "b25947fe8e604c56a0930cd670ed2096",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -643,6 +643,55 @@
                 "phinx"
             ],
             "time": "2016-03-07 14:09:22"
+        },
+        {
+            "name": "rollbar/rollbar",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rollbar/rollbar-php.git",
+                "reference": "05dd9b60cd746131a51d4414320522053b032b65"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/05dd9b60cd746131a51d4414320522053b032b65",
+                "reference": "05dd9b60cd746131a51d4414320522053b032b65",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.5.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/rollbar.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rollbar, Inc.",
+                    "email": "support@rollbar.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Monitors errors and exceptions and reports them to Rollbar",
+            "homepage": "http://github.com/rollbar/rollbar-php",
+            "keywords": [
+                "debugging",
+                "errors",
+                "exceptions",
+                "logging",
+                "monitoring"
+            ],
+            "time": "2015-12-04 22:39:26"
         },
         {
             "name": "rwoverdijk/assetmanager",
@@ -6101,6 +6150,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "rollbar/rollbar": 20,
         "zendframework/zftool": 20,
         "zendframework/zend-developer-tools": 20
     },

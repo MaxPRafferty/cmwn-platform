@@ -25,11 +25,14 @@ return [
         ],
         'factories' => [
             'Application\Listeners\ListenersAggregate' => 'Application\Listeners\ListenersAggregateFactory',
+            'Application\Log\Rollbar\Options' => 'Application\Log\Rollbar\OptionsFactory',
+            'Application\Log\Rollbar\Notifier' => 'Application\Log\Rollbar\NotifierFactory',
+            'Application\Log\Rollbar\Writer' => 'Application\Log\Rollbar\WriterFactory',
         ],
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Db\Adapter\AdapterAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
+            'Application\Log\LoggerFactory',
             'Application\Utils\AbstractTableFactory'
         ],
     ],
