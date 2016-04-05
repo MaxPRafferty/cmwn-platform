@@ -132,18 +132,6 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
     }
 
     /**
-     * @return bool
-     */
-    public function isDeleted()
-    {
-        if (!$this->isModerated()) {
-            return true;
-        }
-
-        return $this->dateDeleted !== null;
-    }
-
-    /**
      * @param boolean $moderated
      * @return Image
      */

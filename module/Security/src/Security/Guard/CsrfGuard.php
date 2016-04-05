@@ -24,8 +24,9 @@ class CsrfGuard extends Csrf
 
     /**
      * @var array
+     * @todo move to config and allow regex matches
      */
-    protected $allowedRoutes = ['api.rest.token', 'api.rest.logout', 'api.rest.forgot'];
+    protected $allowedRoutes = ['api.rest.token', 'api.rest.logout', 'api.rest.forgot', 'api.rest.image'];
 
     /**
      * @param SharedEventManagerInterface $events

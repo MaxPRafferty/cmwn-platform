@@ -4,6 +4,7 @@ namespace Api\V1\Rest\Image;
 
 use Asset\Image;
 use Asset\Service\ImageServiceInterface;
+use Zend\Http\Header\HeaderInterface;
 use Zend\Http\PhpEnvironment\Request;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -40,12 +41,19 @@ class ImageResource extends AbstractResourceListener
         //check header
         /** @var Request $request */
         $request   = $this->getEvent()->getRequest();
-        $content   = $request->getContent();
-        $signature = $request->getHeader('X-Cld-Signature')->getFieldValue();
-        $timestamp = $request->getHeader('X-Cld-Timestamp')->getFieldValue();
-        $secret    = getenv('CLOUDINARY_API_SECRET');
 
-        if (!$signature === sha1($content . $timestamp . $secret)) {
+        // TODO move to special guard
+        $content   = $request->getContent();
+
+        $sigHeader = $request->getHeader('X-Cld-Signature');
+        $signature = $sigHeader instanceof HeaderInterface ? $sigHeader->getFieldValue() : '';
+
+        $tsHeader  = $request->getHeader('X-Cld-Timestamp');
+        $timestamp = $tsHeader instanceof HeaderInterface ? $tsHeader->getFieldValue() : '';
+
+        $secret    = getenv('CLOUDINARY_API_SECRET');
+        $check     = sha1($content . $timestamp . $secret);
+        if ($signature !== $check) {
             return new ApiProblem(403, 'Not authorized');
         }
         
