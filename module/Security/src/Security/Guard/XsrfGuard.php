@@ -53,6 +53,15 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     }
 
     /**
+     * @return bool
+     */
+    protected function hasHash()
+    {
+        $session = $this->getSession();
+        return !$session->hash;
+    }
+
+    /**
      * Forces the session name
      *
      * @return string
@@ -97,15 +106,11 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
             return null;
         }
 
-        $cookie = $request->getCookie();
-        if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
-            return null;
-        }
-
+        $hash = $this->getHashFromSession();
         $cookie = new SetCookie(
             'XSRF-TOKEN',
-            $this->getHashFromSession(),
-            time() + 600,
+            $hash,
+            null,
             '/',
             $event->getRequest()->getServer('HTTP_HOST'),
             true,
@@ -148,7 +153,9 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     protected function verifyToken(Cookie $cookie)
     {
-        if ($cookie->offsetGet('XSRF-TOKEN') !== $this->getHashFromSession()) {
+        $cookieValue  = $cookie->offsetGet('XSRF-TOKEN');
+        $sessionValue = $this->getHashFromSession();
+        if ($cookieValue !== $sessionValue) {
             $this->getLogger()->alert(
                 'Attempt to access the site with an invalid XSRF token',
                 [
@@ -161,6 +168,14 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid Token'));
         }
 
+        return null;
+    }
+
+    /**
+     * Get CSRF session token timeout
+     */
+    public function getTimeout()
+    {
         return null;
     }
 }

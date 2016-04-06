@@ -10,7 +10,6 @@ $config = [
                 'name'            => 'CMWN',
                 'cookie_httponly' => true,
                 'cookie_secure'   => true,
-                'cookie_lifetime' => 600,
             ],
         ],
         'storage'      => 'Zend\Session\Storage\SessionArrayStorage',
@@ -18,7 +17,6 @@ $config = [
             'adapter' => [
                 'name'    => 'redis',
                 'options' => [
-                    'ttl'    => 600,
                     'server' => 'tcp://' . $cacheHost . ':' . $cachePort,
                 ],
             ],

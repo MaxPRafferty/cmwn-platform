@@ -29,6 +29,9 @@ return [
 
             'Security\Authentication\AuthenticationService' =>
                 'Security\Authentication\AuthenticationServiceFactory',
+
+            \Security\Listeners\ExpireAuthSessionListener::class =>
+                \Security\Factory\ExpireAuthSessionListenerFactory::class,
         ],
 
         'initializers' => [
@@ -53,6 +56,7 @@ return [
         'Security\Guard\XsrfGuard',
         'Security\Guard\ResetPasswordGuard',
         'Security\Guard\CsrfGuard',
+        \Security\Listeners\ExpireAuthSessionListener::class,
     ],
 
     'console' => [
