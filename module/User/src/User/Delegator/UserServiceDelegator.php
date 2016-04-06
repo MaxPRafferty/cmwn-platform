@@ -73,7 +73,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
 
             $this->getEventManager()->trigger($event);
 
-            return false;
+            throw $createException;
         }
     }
 

@@ -51,7 +51,8 @@ class ResetPasswordGuard implements AuthenticationServiceAwareInterface
 
     /**
      * @param MvcEvent $event
-     * @return mixed|void
+     *
+     * @throws ChangePasswordException
      */
     public function onDispatch(MvcEvent $event)
     {
@@ -76,11 +77,6 @@ class ResetPasswordGuard implements AuthenticationServiceAwareInterface
             return ;
         }
 
-        $event->setName(MvcEvent::EVENT_DISPATCH_ERROR);
-        $event->setError('Change Password');
-        $event->setParam('exception', new ChangePasswordException($user));
-
-        $application->getEventManager()->trigger($event);
-        return $event->getResult();
+        throw new ChangePasswordException($user);
     }
 }
