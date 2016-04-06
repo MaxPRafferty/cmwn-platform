@@ -24,15 +24,9 @@ vagrantfile:
                         network:
                             private_network: 192.168.56.101
                             forwarded_port:
-                                vflmnfp_0gble5l0kk19:
-                                    host: '5327'
+                                vflmnfp_7rqejb5ppzpt:
+                                    host: '8733'
                                     guest: '22'
-                                vflmnfp_7cr5k517lwfr:
-                                    host: '3307'
-                                    guest: '3306'
-                                vflmnfp_resque:
-                                    host: '8282'
-                                    guest: '8282'
                         hostname: cmwn.dev
                         memory: '2048'
                         cpus: '2'
@@ -109,7 +103,13 @@ locale:
         timezone: UTC
 firewall:
     install: '1'
-    rules: {  }
+    rules:
+        fr_pb9jiy61332d:
+            port:
+                - '6379'
+            priority: '100'
+            proto: tcp
+            action: accept
 cron:
     install: '1'
     jobs: {  }
@@ -183,7 +183,7 @@ apache:
         version: 2.4
         user: www-data
         group: www-data
-        default_vhost: true
+        default_vhost: false
         manage_user: false
         manage_group: false
         sendfile: 0
@@ -193,10 +193,8 @@ apache:
     vhosts:
         av_s89b7iap2gct:
             servername: api-local.changemyworldnow.com
-            serveraliases:
-                - api-local.changemyworldnow.com
             docroot: /var/www/public
-            port: '80'
+            port: '443'
             setenv:
                 - 'APP_ENV dev'
                 - 'DATABASE1_NAME cmwn'

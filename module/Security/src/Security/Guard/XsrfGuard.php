@@ -28,6 +28,12 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     protected $listeners = [];
 
     /**
+     * @var array
+     * @todo move to config and allow regex matches
+     */
+    protected $openRoutes = ['api.rest.token', 'api.rest.logout', 'api.rest.forgot', 'api.rest.image'];
+
+    /**
      * @param SharedEventManagerInterface $events
      */
     public function attachShared(SharedEventManagerInterface $events)
@@ -77,6 +83,10 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function onFinish(MvcEvent $event)
     {
+        if (!in_array($event->getRouteMatch()->getMatchedRouteName(), $this->openRoutes)) {
+            return null;
+        }
+
         $response = $event->getResponse();
 
         /** @var HttpRequest $request */
@@ -112,6 +122,10 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function onRoute(MvcEvent $event)
     {
+        if (in_array($event->getRouteMatch()->getMatchedRouteName(), $this->openRoutes)) {
+            return null;
+        }
+
         $response = $event->getResponse();
 
         /** @var HttpRequest $request */
@@ -137,7 +151,11 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
         if ($cookie->offsetGet('XSRF-TOKEN') !== $this->getHashFromSession()) {
             $this->getLogger()->alert(
                 'Attempt to access the site with an invalid XSRF token',
-                ['actual_token' => $cookie->offsetGet('XSRF-TOKEN'), 'expected_token' => $this->getHashFromSession()]
+                [
+                    'actual_token'   => $cookie->offsetGet('XSRF-TOKEN'),
+                    'expected_token' => $this->getHashFromSession(),
+                    'cookie'         => $_COOKIE
+                ]
             );
 
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid Token'));

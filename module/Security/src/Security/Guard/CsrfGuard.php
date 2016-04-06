@@ -87,7 +87,11 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
         if ($token !== $this->getHashFromSession()) {
             $this->getLogger()->alert(
                 'Attempt to access the site with an invalid CSRF token',
-                ['actual_token' => $token, 'expected_token' => $this->getHashFromSession()]
+                [
+                    'actual_token'   => $token,
+                    'expected_token' => $this->getHashFromSession(),
+                    'cookie'         => $_COOKIE
+                ]
             );
 
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));

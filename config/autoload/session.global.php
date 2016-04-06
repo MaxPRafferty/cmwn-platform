@@ -18,6 +18,7 @@ $config = [
             'adapter' => [
                 'name'    => 'redis',
                 'options' => [
+                    'ttl'    => 600,
                     'server' => 'tcp://' . $cacheHost . ':' . $cachePort,
                 ],
             ],
