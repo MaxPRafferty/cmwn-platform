@@ -23,8 +23,8 @@ class ChangePasswordException extends \Exception
     public function __construct(ChangePasswordUser $user, $message = null, $code = null, \Exception $previous = null)
     {
         $this->user = $user;
-        $code       = 403;
-        $message    = $message === null ? 'Reset password' : $message;
+        $code       = 401;
+        $message    = $message === null ? 'RESET_PASSWORD' : $message;
         parent::__construct($message, $code, $previous);
     }
 

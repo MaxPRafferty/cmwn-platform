@@ -71,7 +71,6 @@ class ResetPasswordGuard implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $application    = $event->getApplication();
         $user = $this->authService->getIdentity();
         if (!$user instanceof ChangePasswordUser) {
             return ;
