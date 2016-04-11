@@ -5,6 +5,8 @@ namespace Security\Listeners;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerAwareTrait;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
 use ZF\ApiProblem\ApiProblem;
@@ -13,9 +15,10 @@ use ZF\ApiProblem\ApiProblemResponse;
 /**
  * Class ExpireAuthSessionListener
  */
-class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface
+class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
     use AuthenticationServiceAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * How many seconds to keep an authenticated session active
@@ -74,28 +77,28 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface
         // Do nothing if not logged in
         if (!$this->getAuthenticationService()->hasIdentity()) {
             $this->container->offsetUnset('last_seen');
+            $this->getLogger()->debug('[esl] No user currently logged in');
             return;
         }
 
-        $currentTime = strtotime('now');
-        $lastSeen    = $this->container->offsetExists('last_seen')
-            ? $this->container->offsetGet('last_seen')
-            : $currentTime;
+        $currentTime = $lastSeen = strtotime('now');
+        if ($this->container->offsetExists('last_seen')) {
+            $this->getLogger()->debug('[esl] Last seen set on session');
+            $lastSeen = $this->container->offsetGet('last_seen');
+        }
 
+        $this->getLogger()->debug('');
         $diff = $currentTime - $lastSeen;
 
         $this->container->offsetSet('last_seen', $lastSeen);
         if ($diff > static::AUTH_TIMEOUT) {
             $this->getAuthenticationService()->clearIdentity();
+            $this->getLogger()->info(
+                '[esl] User session expired',
+                ['current_time' => $currentTime, 'last_seen' => $lastSeen]
+            );
             return new ApiProblemResponse(new ApiProblem(401, 'Expired'));
         }
     }
 }
-
-// 3371b7bd3edeb996fa3169ea15b6f0d2-da230e4727dee392bab6338ce8e2e282
-// 3371b7bd3edeb996fa3169ea15b6f0d2-da230e4727dee392bab6338ce8e2e282
-// 3371b7bd3edeb996fa3169ea15b6f0d2-da230e4727dee392bab6338ce8e2e282
-
-// 5a123354acb54d19ef0a0aec69f39b34-40296be49040e8866050566e60786fac
-// f977202caf9304f470154ae85d7529cc-eef9ebc4b811d19a7d39b979b57960a6
 
