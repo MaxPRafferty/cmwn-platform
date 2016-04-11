@@ -49,7 +49,7 @@ class ChangePasswordListener implements ListenerAggregateInterface
             return;
         }
 
-        $event->setResult(new ApiProblemResponse(new ApiProblem(401, 'Change Password')));
+        $event->setResult(new ApiProblemResponse(new ApiProblem(401, $exception->getMessage())));
         $event->setError(false);
     }
 }
