@@ -6,6 +6,7 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
+use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -23,11 +24,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     use NoopLoggerAwareTrait;
     use RbacAwareTrait;
     use AuthenticationServiceAwareTrait;
-
-    /**
-     * @var array
-     */
-    protected $openRoutes = [];
+    use OpenRouteTrait;
 
     /**
      * @var array|mixed
@@ -51,7 +48,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         array $config,
         SecurityOrgService $orgService
     ) {
-        $this->openRoutes  = isset($config['open-routes']) ? $config['open-routes'] : [];
+        $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
         $this->routePerms  = isset($config['route-permissions']) ? $config['route-permissions'] : [];
         $this->orgService  = $orgService;
     }
@@ -61,7 +58,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], 10000);
     }
 
     /**
@@ -78,16 +75,16 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param MvcEvent $event
      * @return void|ApiProblemResponse
      */
-    public function onRoute(MvcEvent $event)
+    public function onDispatch(MvcEvent $event)
     {
-        if ($this->isRouteOpen($event)) {
+        if ($this->isRouteUnRestricted($event)) {
             return;
         }
 
         if (!$this->authService->hasIdentity()) {
             $routeName = $event->getRouteMatch()->getMatchedRouteName();
             $this->getLogger()->alert(
-                sprintf('An attempt was made to access route [%s] with no identity', $routeName)
+                sprintf('An attempt was made to access restricted route [%s] when not logged in', $routeName)
             );
 
             return new ApiProblemResponse(new ApiProblem(401, 'Authentication failed'));
@@ -95,6 +92,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
         /** @var SecurityUser $user */
         $user = $this->authService->getIdentity();
+
         if ($user->isSuper()) {
             $user->setRole('super');
             return;
@@ -156,12 +154,12 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     }
 
     /**
-     * Checks if the route is allowed to be accessed openly
+     * Checks if the route is restricted
      *
      * @param MvcEvent $event
      * @return bool
      */
-    protected function isRouteOpen(MvcEvent $event)
+    protected function isRouteUnRestricted(MvcEvent $event)
     {
         $request = $event->getRequest();
         if (!$request instanceof HttpRequest) {
@@ -172,19 +170,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
             return true;
         }
 
-        $routeName = $event->getRouteMatch()->getMatchedRouteName();
-        if (in_array($routeName, $this->openRoutes)) {
-            return true;
-        }
-
-        // try regex match
-        foreach ($this->openRoutes as $allowed) {
-            if (preg_match("/" . $allowed . "/", $routeName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isRouteOpen($event);
     }
 
     /**

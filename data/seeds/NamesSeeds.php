@@ -33,9 +33,15 @@ class NamesSeeds extends AbstractSeed
                 $table
                     ->insert($names)
                     ->save();
-            } catch (\PDOException $insertException) {
-                // noop
+            } catch (\PDOException $exception) {
+                if ($exception->getCode() != 23000) {
+                    $this->getOutput()->writeLn(
+                        'Got Exception When inserting name: ' . $exception->getMessage()
+                    );
+                }
             }
+
+            $table->setData([]);
         }
     }
 }

@@ -69,5 +69,4 @@ class UserNameResource extends AbstractResourceListener implements Authenticatio
         $userName = StaticNameService::generateRandomName();
         return new UserNameEntity($userName->userName);
     }
-
 }

@@ -59,6 +59,7 @@
     "zfcampus/zf-apigility-admin": "~1.4.1",
     "zfcampus/zf-apigility-admin-ui": "~1.2.2",
     "zfcampus/zf-deploy": "~1.0",
-    "fzaninotto/faker": "~1.5"
+    "fzaninotto/faker": "~1.5",
+    "zendframework/zend-test": "~2.6"
   }
 }

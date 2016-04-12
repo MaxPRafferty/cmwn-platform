@@ -50,4 +50,21 @@ return [
             'Application\Controller\Index' => 'Application\Controller\IndexController',
         ],
     ],
+
+    'view_manager' => [
+        'display_not_found_reason' => true,
+        'display_exceptions'       => true,
+        'doctype'                  => 'HTML5',
+        'not_found_template'       => 'error/404',
+        'exception_template'       => 'error/index',
+        'template_map' => [
+            'layout/layout'           => realpath(__DIR__ . '/../view/layout/layout.phtml'),
+            'application/index/index' => realpath(__DIR__ . '/../view/application/index/index.phtml'),
+            'error/404'               => realpath(__DIR__ . '/../view/error/404.phtml'),
+            'error/index'             => realpath(__DIR__ . '/../view/error/index.phtml'),
+        ],
+        'template_path_stack' => [
+            realpath(__DIR__ . '/../view'),
+        ],
+    ],
 ];
