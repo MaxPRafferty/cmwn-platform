@@ -37,7 +37,7 @@ return [
                     'group'        => -1,
                     'organization' => -1,
                     'user'         => -1,
-                    'me'           => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'           => -1,
                 ],
                 'permissions' => [
                     'create.org',

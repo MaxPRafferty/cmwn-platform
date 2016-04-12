@@ -31,7 +31,13 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      * @var array
      * @todo move to config and allow regex matches
      */
-    protected $openRoutes = ['api.rest.token', 'api.rest.logout', 'api.rest.forgot', 'api.rest.image'];
+    protected $openRoutes = [
+        'api.rest.token',
+        'api.rest.login',
+        'api.rest.forgot',
+        'api.rest.logout',
+        'api.rest.image',
+    ];
 
     /**
      * @param SharedEventManagerInterface $events
@@ -92,14 +98,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function onFinish(MvcEvent $event)
     {
-        if (!in_array($event->getRouteMatch()->getMatchedRouteName(), $this->openRoutes)) {
-            return null;
-        }
-
         $response = $event->getResponse();
-
-        /** @var HttpRequest $request */
-        $request  = $event->getRequest();
 
         // Coming in from the console
         if (!$response instanceof HttpResponse) {
@@ -107,16 +106,14 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
         }
 
         $hash = $this->getHashFromSession();
-        $cookie = new SetCookie(
-            'XSRF-TOKEN',
-            $hash,
-            null,
-            '/',
-            $event->getRequest()->getServer('HTTP_HOST'),
-            true,
-            true
-        );
+        $cookie = new SetCookie();
 
+        $cookie->setName('XSRF-TOKEN');
+        $cookie->setValue($hash);
+        $cookie->setPath('/');
+        $cookie->setSecure(true);
+        $cookie->setHttponly(true);
+        $cookie->setDomain('.changemyworldnow.com');
         $response->getHeaders()->addHeader($cookie);
         return null;
     }
