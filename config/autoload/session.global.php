@@ -10,6 +10,7 @@ $config = [
                 'name'            => 'CMWN',
                 'cookie_httponly' => true,
                 'cookie_secure'   => true,
+                'cookie_domain'   => '.changemyworldnow.com',
             ],
         ],
         'storage'      => 'Zend\Session\Storage\SessionArrayStorage',
