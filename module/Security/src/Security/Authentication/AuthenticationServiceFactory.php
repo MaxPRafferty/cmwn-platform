@@ -2,7 +2,6 @@
 
 namespace Security\Authentication;
 
-use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\Session;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

@@ -4,15 +4,16 @@ namespace Security\Guard;
 
 use Api\TokenEntityInterface;
 use Application\Utils\NoopLoggerAwareTrait;
+use Security\OpenRouteTrait;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Mvc\MvcEvent;
 use Zend\Validator\Csrf;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 use ZF\Hal\Entity;
-use ZF\Rest\ResourceEvent;
 
 /**
  * Class CsrfListener
@@ -20,6 +21,7 @@ use ZF\Rest\ResourceEvent;
 class CsrfGuard extends Csrf implements LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
+    use OpenRouteTrait;
 
     /**
      * @var array
@@ -27,10 +29,15 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     protected $listeners = [];
 
     /**
-     * @var array
-     * @todo move to config and allow regex matches
+     * XsrfGuard constructor.
+     *
+     * @param array $config
      */
-    protected $allowedRoutes = ['api.rest.token', 'api.rest.logout', 'api.rest.forgot', 'api.rest.image'];
+    public function __construct(array $config)
+    {
+        $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
+        parent::__construct();
+    }
 
     /**
      * @param SharedEventManagerInterface $events
@@ -38,7 +45,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'onRender']);
-        $this->listeners[] = $events->attach('ZF\Rest\ResourceInterface', '*', [$this, 'checkToken'], 1000);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'checkToken'], 200);
     }
 
     /**
@@ -46,9 +53,8 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-        foreach ($this->listeners as $listener) {
-            $manager->detach('ZF\Hal\Plugin\Hal', $listener);
-        }
+        $manager->detach('ZF\Hal\Plugin\Hal', $this->listeners[0]);
+        $manager->detach('*', $this->listeners[1]);
     }
 
     /**
@@ -70,12 +76,12 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     }
 
     /**
-     * @param ResourceEvent $event
+     * @param MvcEvent $event
      * @return null|ApiProblemResponse
      */
-    public function checkToken(ResourceEvent $event)
+    public function checkToken(MvcEvent $event)
     {
-        if (in_array($event->getRouteMatch()->getMatchedRouteName(), $this->allowedRoutes)) {
+        if ($this->isRouteOpen($event)) {
             return null;
         }
 

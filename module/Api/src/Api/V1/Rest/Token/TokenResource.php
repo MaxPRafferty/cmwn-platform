@@ -33,7 +33,7 @@ class TokenResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         if ($this->authService->hasIdentity() && !$this->authService->getIdentity() instanceof GuestIdentity) {
-            return new MeEntity($this->authService->getIdentity(), md5('foo'));
+            return new MeEntity($this->authService->getIdentity());
         }
 
         return new TokenEntity([]);

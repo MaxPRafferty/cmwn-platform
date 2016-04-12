@@ -14,6 +14,10 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class ExpireAuthSessionListener
+ *
+ * Soft Session expiration
+ *
+ * The reason
  */
 class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
@@ -77,13 +81,11 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
         // Do nothing if not logged in
         if (!$this->getAuthenticationService()->hasIdentity()) {
             $this->container->offsetUnset('last_seen');
-            $this->getLogger()->debug('[esl] No user currently logged in');
             return;
         }
 
         $currentTime = $lastSeen = strtotime('now');
         if ($this->container->offsetExists('last_seen')) {
-            $this->getLogger()->debug('[esl] Last seen set on session');
             $lastSeen = $this->container->offsetGet('last_seen');
         }
 
@@ -94,9 +96,10 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
         if ($diff > static::AUTH_TIMEOUT) {
             $this->getAuthenticationService()->clearIdentity();
             $this->getLogger()->info(
-                '[esl] User session expired',
+                'User session expired',
                 ['current_time' => $currentTime, 'last_seen' => $lastSeen]
             );
+            $this->container->offsetUnset('last_seen');
             return new ApiProblemResponse(new ApiProblem(401, 'Expired'));
         }
     }

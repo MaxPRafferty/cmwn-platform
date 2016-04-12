@@ -3,6 +3,7 @@
 namespace Security\Guard;
 
 use Application\Utils\NoopLoggerAwareTrait;
+use Security\OpenRouteTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Header\Cookie;
 use Zend\Http\Header\SetCookie;
@@ -24,20 +25,20 @@ use ZF\ApiProblem\ApiProblemResponse;
 class XsrfGuard extends Csrf implements LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
+    use OpenRouteTrait;
 
     protected $listeners = [];
 
     /**
-     * @var array
-     * @todo move to config and allow regex matches
+     * XsrfGuard constructor.
+     *
+     * @param array $config
      */
-    protected $openRoutes = [
-        'api.rest.token',
-        'api.rest.login',
-        'api.rest.forgot',
-        'api.rest.logout',
-        'api.rest.image',
-    ];
+    public function __construct(array $config)
+    {
+        $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
+        parent::__construct();
+    }
 
     /**
      * @param SharedEventManagerInterface $events
@@ -45,7 +46,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 210);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], -10000);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], -500);
     }
 
     /**
@@ -124,19 +125,12 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function onRoute(MvcEvent $event)
     {
-        if (in_array($event->getRouteMatch()->getMatchedRouteName(), $this->openRoutes)) {
+        if ($this->isRouteOpen($event)) {
             return null;
         }
-
-        $response = $event->getResponse();
 
         /** @var HttpRequest $request */
         $request  = $event->getRequest();
-
-        // Coming in from the console
-        if (!$response instanceof HttpResponse) {
-            return null;
-        }
 
         $cookie = $request->getCookie();
         if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
