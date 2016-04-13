@@ -40,8 +40,6 @@ class Module implements ApigilityProviderInterface, ConfigProviderInterface, Aut
         $app      = $event->getApplication();
         $services = $app->getServiceManager();
 
-        $app->getEventManager()->attach($services->get('Api\Listeners\ChangePasswordListener'));
-        $app->getEventManager()->attach($services->get('Api\Listeners\GroupRouteListener'));
         $app->getEventManager()->attach($services->get('Api\Listeners\OrgRouteListener'));
     }
 }

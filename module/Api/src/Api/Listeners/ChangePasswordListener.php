@@ -2,10 +2,10 @@
 
 namespace Api\Listeners;
 
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -15,23 +15,30 @@ use ZF\ApiProblem\ApiProblemResponse;
  *
  * @package Api\Listeners
  */
-class ChangePasswordListener implements ListenerAggregateInterface
+class ChangePasswordListener implements AuthenticationServiceAwareInterface
 {
-    use ListenerAggregateTrait;
+    use AuthenticationServiceAwareTrait;
+
+    protected $listeners = [];
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
+     * @param SharedEventManagerInterface $events
      */
-    public function attach(EventManagerInterface $events)
+    public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], -PHP_INT_MAX);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], 150);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], 150);
+    }
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach('*', $listener);
+        }
     }
 
     /**
@@ -49,7 +56,19 @@ class ChangePasswordListener implements ListenerAggregateInterface
             return;
         }
 
-        $event->setResult(new ApiProblemResponse(new ApiProblem(401, 'Change Password')));
+        $event->setResult(new ApiProblem(401, $exception->getMessage()));
         $event->setError(false);
+    }
+
+    public function onDispatch(MvcEvent $event)
+    {
+        try {
+            $this->getAuthenticationService()->getIdentity();
+            return;
+        } catch (ChangePasswordException $changePassword){
+
+        }
+
+        return new ApiProblemResponse(new ApiProblem(401, $changePassword->getMessage()));
     }
 }

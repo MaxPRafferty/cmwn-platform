@@ -28,6 +28,7 @@ class OriginGuard implements LoggerAwareInterface
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'attachCors'], PHP_INT_MAX);
         $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], PHP_INT_MAX);
         $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'attachCors'], PHP_INT_MAX);
     }
@@ -62,11 +63,9 @@ class OriginGuard implements LoggerAwareInterface
 
         // THOUGHT Config?
         if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {
-            $this->getLogger()->debug('Setting Access-Control-Allow-Origin from header');
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', $origin);
         } else {
-            $this->getLogger()->debug('Setting Access-Control-Allow-Origin to default');
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'));
         }

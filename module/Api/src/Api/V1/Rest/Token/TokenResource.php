@@ -2,9 +2,9 @@
 namespace Api\V1\Rest\Token;
 
 use Api\V1\Rest\User\MeEntity;
+use Security\Exception\ChangePasswordException;
 use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
-use ZF\MvcAuth\Identity\GuestIdentity;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -32,10 +32,16 @@ class TokenResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        if ($this->authService->hasIdentity() && !$this->authService->getIdentity() instanceof GuestIdentity) {
-            return new MeEntity($this->authService->getIdentity());
+        if (!$this->authService->hasIdentity()) {
+            return new TokenEntity([]);
         }
 
-        return new TokenEntity([]);
+        try {
+            $identity = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $identity = $changePassword->getUser();
+        }
+
+        return new MeEntity($identity);
     }
 }

@@ -4,6 +4,7 @@ namespace Api\Listeners;
 
 use Api\ScopeAwareInterface;
 use Security\Authorization\Rbac;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\EventManager\EventInterface;
@@ -82,8 +83,13 @@ class ScopeListener
             return $this->role;
         }
 
-        $user = $this->authService->getIdentity();
         $role = 'guest';
+        try {
+            $user = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+
         if ($user instanceof SecurityUser) {
             $role = $user->getRole();
         }

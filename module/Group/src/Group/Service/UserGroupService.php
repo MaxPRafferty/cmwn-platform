@@ -109,8 +109,8 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select = new Select();
         $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', [], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', ['user_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
@@ -170,7 +170,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select = new Select();
         $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['ug_role' => 'role'], Select::JOIN_LEFT);
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
@@ -210,8 +210,8 @@ class UserGroupService implements UserGroupServiceInterface
         $select = new Select();
         $select->columns(['o' => '*']);
         $select->from(['o'  => 'organizations']);
-        $select->join(['g'  => 'groups'], 'o.org_id = g.organization_id', [], Select::JOIN_LEFT);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'o.org_id = g.organization_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['ug_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
         $select->group('o.org_id');
         $select->order('org_id ASC');
@@ -248,10 +248,11 @@ class UserGroupService implements UserGroupServiceInterface
         $where->addPredicate(new Operator('user_id', '=', $userId));
 
         $select->from(['ug' => 'user_groups']);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
         $select->limit(10);
 
+        // GOOD
         $results = $this->pivotTable->selectWith($select);
         $types   = [];
         foreach ($results as $row) {
@@ -287,8 +288,8 @@ class UserGroupService implements UserGroupServiceInterface
         $where->addPredicate(new Operator('user_id', '=', $userId));
 
         $select->from(['ug' => 'user_groups']);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
-        $select->join(['o'  => 'organizations'], 'o.org_id = g.organization_id', [], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['o'  => 'organizations'], 'o.org_id = g.organization_id', ['real_org_id' => 'org_id'], Select::JOIN_LEFT);
         $select->where($where);
         $select->limit(10);
 

@@ -67,7 +67,7 @@ class TestHelper
      */
     public static function getTestDbAdapter()
     {
-        $phinxConfig = include_once __DIR__ . '/../../config';
+        $phinxConfig = include_once __DIR__ . '/../../config/phinx.php';
         $envConfig   = $phinxConfig['environments']['test'];
 
         // Map phinx to zf2

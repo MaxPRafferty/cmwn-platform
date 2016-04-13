@@ -7,6 +7,7 @@ use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
@@ -71,6 +72,12 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
             return null;
         }
 
-        return $this->getAuthenticationService()->getIdentity();
+        try {
+            $identity = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $identity = $changePassword->getUser();
+        }
+
+        return $identity;
     }
 }

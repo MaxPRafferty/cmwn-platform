@@ -230,7 +230,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.group.types', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
-            return false;
+            return [];
         }
 
         try {
@@ -240,7 +240,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.group.types.error');
-            $return = false;
+            $return = [];
         }
 
         $this->getEventManager()->trigger($event);
@@ -252,7 +252,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.org.types', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
-            return false;
+            return [];
         }
 
         try {
@@ -262,7 +262,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.org.types.error');
-            $return = false;
+            $return = [];
         }
 
         $this->getEventManager()->trigger($event);

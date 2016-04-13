@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\UserAssertion;
+use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -94,7 +95,13 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $assertion = new UserAssertion($this->authService->getIdentity());
+        try {
+            $identity = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $identity = $changePassword->getUser();
+        }
+
+        $assertion = new UserAssertion($identity);
         $assertion->setUser($user);
         $event->setParam('assertion', $assertion);
     }

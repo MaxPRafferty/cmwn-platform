@@ -26,7 +26,7 @@ class NamesSeeds extends AbstractSeed
             $pos                 = strtolower($value['position']);
             if (array_search($value['name'], $nameList['user-names'][$pos]) === false) {
                 $this->getOutput()->writeln(sprintf('The name "%s" is no longer in the list', $name));
-                array_push($namesToRemove, ['name' => $name, 'position' => 'LEFT']);
+                array_push($namesToRemove, ['name' => $name, 'position' => strtoupper($pos)]);
             }
         }
 

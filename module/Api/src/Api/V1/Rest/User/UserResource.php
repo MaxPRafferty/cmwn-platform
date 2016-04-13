@@ -3,6 +3,7 @@ namespace Api\V1\Rest\User;
 
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
@@ -72,7 +73,11 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
     public function fetch($userId)
     {
         $user         = $this->getEvent()->getRouteParam('user', false);
-        $loggedInUser = $this->getAuthenticationService()->getIdentity();
+        try {
+            $loggedInUser = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $loggedInUser = $changePassword->getUser();
+        }
 
         if ($loggedInUser instanceof UserInterface && $loggedInUser->getUserId() === $user->getUserId()) {
             return new MeEntity($loggedInUser);

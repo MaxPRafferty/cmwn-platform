@@ -1,12 +1,14 @@
 <?php
 return array(
     'shared-listeners' => array(
-        0 => 'Api\\Listeners\\UserRouteListener',
-        1 => 'Api\\Listeners\\UserGroupListener',
-        2 => 'Api\\Listeners\\ImportRouteListener',
-        3 => 'Api\\Listeners\\ScopeListener',
-        4 => 'Api\\Listeners\\SuperMeListener',
-        5 => 'Api\\Listeners\\UserImageListener',
+        0 => \Api\Listeners\UserRouteListener::class,
+        1 => \Api\Listeners\UserGroupListener::class,
+        2 => \Api\Listeners\ImportRouteListener::class,
+        3 => \Api\Listeners\ScopeListener::class,
+        4 => \Api\Listeners\SuperMeListener::class,
+        5 => \Api\Listeners\UserImageListener::class,
+        6 => \Api\Listeners\ChangePasswordListener::class,
+        7 => \Api\Listeners\GroupRouteListener::class,
     ),
     'service_manager' => array(
         'invokables' => array(
@@ -639,6 +641,14 @@ return array(
                 'entity_identifier_name' => 'user_id',
                 'route_name' => 'api.rest.user',
                 'route_identifier_name' => 'user_id',
+                'max_depth' => 2,
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\User\\MeEntity' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.user',
+                'route_identifier_name' => 'user_id',
+                'max_depth' => 2,
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
             ),
             'Api\\V1\\Rest\\User\\UserCollection' => array(

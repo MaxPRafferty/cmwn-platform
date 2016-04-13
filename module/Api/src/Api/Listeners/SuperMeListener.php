@@ -11,6 +11,7 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -143,8 +144,13 @@ class SuperMeListener implements AuthenticationServiceAwareInterface, RbacAwareI
             return false;
         }
 
-        /** @var SecurityUser $authIdentity */
-        $authIdentity = $this->getAuthenticationService()->getIdentity();
-        return $this->getRbac()->isGranted($authIdentity->getRole(), $permission);
+        try {
+            /** @var SecurityUser $authIdentity */
+            $authIdentity = $this->getAuthenticationService()->getIdentity();
+
+            return $this->getRbac()->isGranted($authIdentity->getRole(), $permission);
+        } catch (ChangePasswordException $changePassword) {
+            return false;
+        }
     }
 }

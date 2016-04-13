@@ -4,6 +4,7 @@ namespace Application\Log\Rollbar;
 
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Exception\ChangePasswordException;
 use User\UserInterface;
 use Zend\Log\Writer\AbstractWriter;
 
@@ -67,7 +68,11 @@ class Writer extends AbstractWriter implements AuthenticationServiceAwareInterfa
             return [];
         }
 
-        $user = $this->getAuthenticationService()->getIdentity();
+        try {
+            $user = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
 
         if (!$user instanceof UserInterface) {
             return [];
