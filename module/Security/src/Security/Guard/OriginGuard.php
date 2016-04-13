@@ -2,10 +2,12 @@
 
 namespace Security\Guard;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -15,8 +17,10 @@ use Zend\Mvc\MvcEvent;
  *
  * @package Security\Guard
  */
-class OriginGuard
+class OriginGuard implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     protected $listeners = [];
 
     /**
@@ -58,9 +62,11 @@ class OriginGuard
 
         // THOUGHT Config?
         if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {
+            $this->getLogger()->debug('Setting Access-Control-Allow-Origin from header');
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', $origin);
         } else {
+            $this->getLogger()->debug('Setting Access-Control-Allow-Origin to default');
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', 'https://' . $request->getServer('HTTP_HOST'));
         }
