@@ -28,8 +28,8 @@ class OriginGuard implements LoggerAwareInterface
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], 200);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'attachCors'], 200);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], PHP_INT_MAX);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'attachCors'], PHP_INT_MAX);
     }
 
     /**
