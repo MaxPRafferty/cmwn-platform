@@ -25,6 +25,7 @@ class OriginGuard
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], 200);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'attachCors'], 200);
     }
 
     /**
