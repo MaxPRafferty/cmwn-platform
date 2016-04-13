@@ -92,6 +92,7 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
         $this->getLogger()->debug('');
         $diff = $currentTime - $lastSeen;
 
+        $this->getLogger()->debug(sprintf('User Currently logged in for %s seconds', $diff));
         $this->container->offsetSet('last_seen', $lastSeen);
         if ($diff > static::AUTH_TIMEOUT) {
             $this->getAuthenticationService()->clearIdentity();
