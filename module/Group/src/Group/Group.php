@@ -5,6 +5,7 @@ namespace Group;
 use Application\Utils\Date\DateCreatedTrait;
 use Application\Utils\Date\DateDeletedTrait;
 use Application\Utils\Date\DateUpdatedTrait;
+use Application\Utils\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
 use Application\Utils\SoftDeleteInterface;
 use Org\OrganizationInterface;
@@ -21,6 +22,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     use DateUpdatedTrait;
     use DateDeletedTrait;
     use PropertiesTrait;
+    use MetaDataTrait;
 
     /**
      * @var string
@@ -41,11 +43,6 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      * @var string
      */
     protected $description;
-
-    /**
-     * @var array
-     */
-    protected $meta = [];
 
     /**
      * @var int
@@ -234,25 +231,6 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     public function setDescription($description)
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMeta()
-    {
-        return $this->meta;
-    }
-
-    /**
-     * @param array $meta
-     * @return Group
-     */
-    public function setMeta($meta)
-    {
-        $this->meta = $meta;
 
         return $this;
     }
