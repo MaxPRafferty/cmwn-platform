@@ -11,9 +11,11 @@ use Api\V1\Rest\Org\OrgEntity;
 use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
 use Group\Service\UserGroupServiceInterface;
+use Org\Service\OrganizationServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
+use ZF\Hal\Plugin\Hal;
 
 /**
  * Class UserGroupListener
@@ -36,12 +38,20 @@ class UserGroupListener
     protected $collection = false;
 
     /**
-     * UserGroupListener constructor.
-     * @param UserGroupServiceInterface $userGroupService
+     * @var OrganizationServiceInterface
      */
-    public function __construct(UserGroupServiceInterface $userGroupService)
+    protected $orgService;
+
+    /**
+     * UserGroupListener constructor.
+     *
+     * @param UserGroupServiceInterface    $userGroupService
+     * @param OrganizationServiceInterface $orgService
+     */
+    public function __construct(UserGroupServiceInterface $userGroupService, OrganizationServiceInterface $orgService)
     {
         $this->userGroupService = $userGroupService;
+        $this->orgService       = $orgService;
     }
 
     /**
@@ -52,7 +62,6 @@ class UserGroupListener
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderCollection', [$this, 'flagCollection'], 100);
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'attachGroup'], -1000);
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'attachOrgs'], -1000);
-        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'attachHal'], -1000);
     }
 
     /**
@@ -68,34 +77,6 @@ class UserGroupListener
     public function flagCollection()
     {
         $this->collection = true;
-    }
-
-    public function attachHal(Event $event)
-    {
-        if ($this->collection) {
-            return;
-        }
-
-        $entity  = $event->getParam('entity');
-        if (!$entity instanceof Entity) {
-            return;
-        }
-
-        $realEntity = $entity->entity;
-
-        if (!$realEntity instanceof MeEntity) {
-            return;
-        }
-
-        foreach ($this->userGroupService->fetchGroupTypesForUser($realEntity) as $type) {
-            $link = new GroupLink($type);
-            $realEntity->getLinks()->add($link);
-        }
-
-        foreach ($this->userGroupService->fetchOrgTypesForUser($realEntity) as $type) {
-            $link = new OrgLink($type);
-            $realEntity->getLinks()->add($link);
-        }
     }
 
     /**
@@ -125,6 +106,7 @@ class UserGroupListener
         $groups  = new GroupCollection($this->userGroupService->fetchGroupsForUser($realEntity, new GroupEntity()));
         $groups->setItemCountPerPage(10);
         $renderedGroups = [];
+
         /** @var GroupEntity[] $groups */
         foreach ($groups as $group) {
             $entityToRender = new Entity($group->getArrayCopy());
@@ -133,6 +115,7 @@ class UserGroupListener
 
         $payload['_embedded']['groups'] = $renderedGroups;
     }
+
     /**
      * @param Event $event
      */
@@ -160,13 +143,46 @@ class UserGroupListener
         $orgs  = new OrgCollection($this->userGroupService->fetchOrganizationsForUser($realEntity, new OrgEntity()));
         $orgs->setItemCountPerPage(10);
         $renderedGroups = [];
+        $orgTypes       = [];
+        $groupTypes     = [];
         /** @var OrgEntity[] $orgs */
         foreach ($orgs as $org) {
             $entityToRender   = new Entity($org->getArrayCopy());
             $hal->injectSelfLink($entity, 'api.rest.org', 'org_id');
             $renderedGroups[] = $hal->renderEntity($entityToRender);
+            $orgTypes[$org->getType()] = $org->getType();
+            $groupTypes = array_merge($groupTypes, $this->orgService->fetchGroupTypes($org));
         }
 
         $payload['_embedded']['organizations'] = $renderedGroups;
+
+        $this->attachHalLinks($hal, $payload, $orgTypes, $groupTypes);
+    }
+
+    protected function attachHalLinks(Hal $hal, \ArrayObject $payload, array $orgTypes, array $groupTypes)
+    {
+        foreach ($orgTypes as $orgType) {
+            $link = new OrgLink($orgType);
+
+            if (array_key_exists($link->getRelation(), $payload['_links'])) {
+                continue;
+            }
+
+            $payload['_links'][$link->getRelation()] = $hal->getLinkCollectionExtractor()
+                ->getLinkExtractor()
+                ->extract($link);
+        }
+
+        foreach ($groupTypes as $groupType) {
+            $link = new GroupLink($groupType);
+            
+            if (array_key_exists($link->getRelation(), $payload['_links'])) {
+                continue;
+            }
+
+            $payload['_links'][$link->getRelation()] = $hal->getLinkCollectionExtractor()
+                ->getLinkExtractor()
+                ->extract($link);
+        }
     }
 }

@@ -158,11 +158,9 @@ class GroupService implements GroupServiceInterface
         $select = new Select();
         $select->columns(['g' => '*']);
         $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['role' => 'role'], Select::JOIN_LEFT);
         $select->where($where);
 
-        $sql = new Sql($this->groupTableGateway->getAdapter());
-        $stmt = $sql->prepareStatementForSqlObject($select);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         if ($paginate) {
             return new DbSelect(

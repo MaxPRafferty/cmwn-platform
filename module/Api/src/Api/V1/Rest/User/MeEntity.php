@@ -2,9 +2,7 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\GroupLink;
 use Api\TokenEntityInterface;
-use Security\SecurityUser;
 use User\UserInterface;
 
 /**
@@ -29,12 +27,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
 
         if ($token !== null) {
             $this->setToken($token);
-        }
-
-        if ($user instanceof SecurityUser) {
-            foreach ($user->getGroupTypes() as $groupType) {
-                $this->getLinks()->add(new GroupLink($groupType));
-            }
         }
 
         parent::__construct($userData);
