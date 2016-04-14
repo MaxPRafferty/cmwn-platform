@@ -5,7 +5,6 @@ namespace Api\V1\Rest\UserName;
 use Api\V1\Rest\User\MeEntity;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
-use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use User\Child;
 use User\Service\StaticNameService;
@@ -43,11 +42,7 @@ class UserNameResource extends AbstractResourceListener implements Authenticatio
     public function create($data)
     {
         /** @var SecurityUser $loggedInUser */
-        try {
-            $loggedInUser = $this->getAuthenticationService()->getIdentity();
-        } catch (ChangePasswordException $changePassword) {
-            $loggedInUser = $changePassword->getUser();
-        }
+        $loggedInUser = $this->getAuthenticationService()->getIdentity();
 
         if ($loggedInUser->getType() !== UserInterface::TYPE_CHILD) {
             return new ApiProblem(405, 'The POST method has not been defined');
