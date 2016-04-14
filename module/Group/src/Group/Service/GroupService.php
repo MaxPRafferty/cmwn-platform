@@ -14,7 +14,6 @@ use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -54,51 +53,51 @@ class GroupService implements GroupServiceInterface
         $child->setParentId($parent);
         $this->saveGroup($child);
 
-        // fetch the parent to get the latest left value
+        // fetch the parent to get the latest head value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
 
-        // if the left for the parent is 0, then both are not in the tree so make them a tree
-        if ($parent->getLeft() < 1) {
+        // if the head for the parent is 0, then both are not in the tree so make them a tree
+        if ($parent->getHead() < 1) {
             $this->groupTableGateway->update(
-                ['lft' => 1, 'rgt' => 4],
+                ['head' => 1, 'tail' => 4],
                 ['group_id' => $parent->getGroupId()]
             );
 
             $this->groupTableGateway->update(
-                ['lft' => 2, 'rgt' => 3],
+                ['head' => 2, 'tail' => 3],
                 ['group_id' => $child->getGroupId()]
             );
 
             return true;
         }
 
-        // UPDATE group SET rgt = rgt + 2 WHERE rgt > @lft AND org_id = @org_id
-        // UPDATE group SET lft = lft + 2 WHERE lft > @lft AND org_id = @org_id
+        // UPDATE group SET tail = tail + 2 WHERE tail > @head AND org_id = @org_id
+        // UPDATE group SET head = head + 2 WHERE head > @head AND org_id = @org_id
 
         // TODO create transaction
         $where = new Where();
-        $where->addPredicate(new Operator('rgt', Operator::OP_GT, $parent->getLeft()));
+        $where->addPredicate(new Operator('tail', Operator::OP_GT, $parent->getHead()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $this->groupTableGateway->update(
-            ['rgt' => new Expression("rgt + 2")],
+            ['tail' => new Expression("tail + 2")],
             $where
         );
 
         $where = new Where();
-        $where->addPredicate(new Operator('lft', Operator::OP_GT, $parent->getLeft()));
+        $where->addPredicate(new Operator('head', Operator::OP_GT, $parent->getHead()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
         $this->groupTableGateway->update(
-            ['lft' => new Expression('lft + 2')],
+            ['head' => new Expression('head + 2')],
             $where
         );
 
-        // UPDATE group SET rgt = $parent->getLeft() + 1, rgt = $parent->getLeft() + 2 WHERE group_id = $child->getGroupid()
+        // UPDATE group SET tail = $parent->getHead() + 1, tail = $parent->getHead() + 2 WHERE group_id = $child->getGroupid()
 
         $where = new Where();
         $where->addPredicate(new Operator('group_id', Operator::OP_EQ, $child->getGroupId()));
         $this->groupTableGateway->update(
-            ['lft' => $parent->getLeft() + 1, 'rgt' => $parent->getLeft() + 2],
+            ['head' => $parent->getHead() + 1, 'tail' => $parent->getHead() + 2],
             $where
         );
 
@@ -191,11 +190,8 @@ class GroupService implements GroupServiceInterface
         $data = $group->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
-        $data['lft'] = $group->getLeft();
-        $data['rgt'] = $group->getRight();
+        $data['tail'] = $group->getTail();
 
-        unset($data['left']);
-        unset($data['right']);
         unset($data['depth']);
         unset($data['deleted']);
 
@@ -304,7 +300,7 @@ class GroupService implements GroupServiceInterface
         $where = new Where();
 
         $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
-        $where->addPredicate(new Between('lft', ($group->getLeft() + 1), ($group->getRight() - 1)));
+        $where->addPredicate(new Between('head', ($group->getHead() + 1), ($group->getTail() - 1)));
 
         $select->where($where);
 
@@ -333,7 +329,7 @@ class GroupService implements GroupServiceInterface
         $select->from($this->groupTableGateway->getTable());
 
         $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
-        $where->addPredicate(new Between('lft', ($group->getLeft() + 1), ($group->getRight() - 1)));
+        $where->addPredicate(new Between('head', ($group->getHead() + 1), ($group->getTail() - 1)));
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);

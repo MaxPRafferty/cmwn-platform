@@ -97,7 +97,7 @@ class DevSeed extends AbstractSeed
         }
 
         $org   = $this->table('organizations');
-        $orgId = (string) \Ramsey\Uuid\Uuid::uuid1();
+        $orgId = '9ee13654-0288-11e6-a70a-0800274f2cef';
         try {
             $org->insert([
                 'org_id'      => $orgId,
@@ -117,7 +117,7 @@ class DevSeed extends AbstractSeed
         }
 
         $group   = $this->table('groups');
-        $schoolId = (string) \Ramsey\Uuid\Uuid::uuid1();
+        $schoolId = '9ee14a04-0288-11e6-8625-0800274f2cef';
         try {
             $group->insert([
                 'group_id'        => $schoolId,
@@ -125,8 +125,8 @@ class DevSeed extends AbstractSeed
                 'title'           => 'Ginas school',
                 'description'     => null,
                 'meta'            => '[]',
-                'lft'             => 1,
-                'rgt'             => 4,
+                'head'             => 1,
+                'tail'             => 4,
                 'created'         => $date->format("Y-m-d H:i:s"),
                 'updated'         => $date->format("Y-m-d H:i:s"),
                 'type'            => 'school'
@@ -140,7 +140,7 @@ class DevSeed extends AbstractSeed
         }
 
         $group->setData([]);
-        $classId = (string) \Ramsey\Uuid\Uuid::uuid1();
+        $classId = '9ee15bf2-0288-11e6-8b6b-0800274f2cef';
         try {
             $group->insert([
                 'group_id'        => $classId,
@@ -148,8 +148,8 @@ class DevSeed extends AbstractSeed
                 'title'           => 'Ginas Class',
                 'description'     => null,
                 'meta'            => '[]',
-                'lft'             => 2,
-                'rgt'             => 3,
+                'head'            => 2,
+                'tail'            => 3,
                 'parent_id'       => $schoolId,
                 'created'         => $date->format("Y-m-d H:i:s"),
                 'updated'         => $date->format("Y-m-d H:i:s"),

@@ -47,12 +47,12 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     /**
      * @var int
      */
-    protected $left = 1;
+    protected $head = 1;
 
     /**
      * @var int
      */
-    protected $right = 2;
+    protected $tail = 2;
 
     /**
      * @var int
@@ -108,8 +108,8 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'description'     => null,
             'type'            => null,
             'meta'            => [],
-            'left'            => null,
-            'right'           => null,
+            'head'            => null,
+            'tail'            => null,
             'depth'           => null,
             'created'         => null,
             'updated'         => null,
@@ -119,9 +119,6 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
         ];
 
         $array = array_merge($defaults, $array);
-
-        $array['left'] = isset($array['lft']) ? $array['lft'] : $array['left'];
-        $array['right'] = isset($array['rgt']) ? $array['rgt'] : $array['right'];
 
         foreach ($array as $key => $value) {
             $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
@@ -145,8 +142,8 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'description'     => $this->getDescription(),
             'type'            => $this->getType(),
             'meta'            => $this->getMeta(),
-            'left'            => $this->getLeft(),
-            'right'           => $this->getRight(),
+            'head'            => $this->getHead(),
+            'tail'            => $this->getTail(),
             'depth'           => $this->getDepth(),
             'external_id'     => $this->getExternalId(),
             'created'         => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
@@ -238,36 +235,38 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     /**
      * @return int
      */
-    public function getLeft()
+    public function getHead()
     {
-        return $this->left;
+        return $this->head;
     }
 
     /**
-     * @param int $left
+     * @param int $head
+     *
      * @return Group
      */
-    public function setLeft($left)
+    public function setHead($head)
     {
-        $this->left = abs($left);
+        $this->head = abs($head);
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getRight()
+    public function getTail()
     {
-        return $this->right;
+        return $this->tail;
     }
 
     /**
-     * @param int $right
+     * @param int $tail
+     *
      * @return Group
      */
-    public function setRight($right)
+    public function setTail($tail)
     {
-        $this->right = abs($right);
+        $this->tail = abs($tail);
         return $this;
     }
 
@@ -313,7 +312,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     public function isRoot()
     {
-        return $this->left === 1;
+        return $this->head === 1;
     }
 
     /**
@@ -321,11 +320,11 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     public function hasChildren()
     {
-        if ($this->left === 0 || $this->right === 0) {
+        if ($this->head === 0 || $this->tail === 0) {
             return false;
         }
 
-        return $this->left !== ($this->right - 1);
+        return $this->head !== ($this->tail - 1);
     }
 
     /**

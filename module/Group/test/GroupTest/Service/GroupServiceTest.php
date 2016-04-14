@@ -109,11 +109,7 @@ class GroupServiceTest extends TestCase
 
                 $expected = $newGroup->getArrayCopy();
                 $expected['meta'] = '[]';
-                $expected['lft']  = $newGroup->getLeft();
-                $expected['rgt']  = $newGroup->getRight();
                 unset($expected['depth']);
-                unset($expected['left']);
-                unset($expected['right']);
                 unset($expected['deleted']);
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
@@ -133,8 +129,8 @@ class GroupServiceTest extends TestCase
             'description'     => 'My Awesome group',
             'type'            => 'school',
             'meta'            => [],
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'           => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -153,11 +149,7 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals(['group_id' => $group->getGroupId()], $where);
                 $expected = $group->getArrayCopy();
                 $expected['meta'] = '[]';
-                $expected['lft']  = $group->getLeft();
-                $expected['rgt']  = $group->getRight();
                 unset($expected['deleted']);
-                unset($expected['left']);
-                unset($expected['right']);
                 unset($expected['depth']);
                 $this->assertArrayNotHasKey('deleted', $data);
 
@@ -177,8 +169,8 @@ class GroupServiceTest extends TestCase
             'description'     => 'My Awesome group',
             'type'            => 'school',
             'meta'            => [],
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'           => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -203,8 +195,8 @@ class GroupServiceTest extends TestCase
             'description'     => 'My Awesome group',
             'type'            => 'school',
             'meta'            => [],
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'           => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -260,8 +252,8 @@ class GroupServiceTest extends TestCase
             'description'     => 'My Awesome group',
             'type'            => 'school',
             'meta'            => [],
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'           => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -294,8 +286,8 @@ class GroupServiceTest extends TestCase
             'description'     => 'My Awesome group',
             'type'            => 'school',
             'meta'            => [],
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'           => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -322,9 +314,9 @@ class GroupServiceTest extends TestCase
     {
         $this->markTestSkipped('Change GroupService interface to have create and save');
         $parent = new Group([
-            'group_id'        => 'parent',
-            'left'            => 0,
-            'right'           => 0,
+            'group_id' => 'parent',
+            'head'     => 0,
+            'tail'     => 0,
         ]);
 
         $child = new Group();
@@ -333,11 +325,7 @@ class GroupServiceTest extends TestCase
         $data = $child->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
-        $data['lft'] = $child->getLeft();
-        $data['rgt'] = $child->getRight();
 
-        unset($data['left']);
-        unset($data['right']);
         unset($data['depth']);
         unset($data['deleted']);
 
@@ -364,14 +352,14 @@ class GroupServiceTest extends TestCase
 
         $this->tableGateway->shouldReceive('update')
             ->with(
-                ['lft' => 1, 'rgt' => 4],
+                ['head' => 1, 'tail' => 4],
                 ['group_id' => 'parent']
             )
             ->once();
 
         $this->tableGateway->shouldReceive('update')
             ->with(
-                ['lft' => 2, 'rgt' => 3],
+                ['head' => 2, 'tail' => 3],
                 ['group_id' => 'child']
             )
             ->once();
@@ -385,8 +373,8 @@ class GroupServiceTest extends TestCase
         $parent = new Group([
             'group_id'        => 'parent',
             'organization_id' => 'org',
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'           => 2,
         ]);
 
         $child = new Group();
@@ -402,11 +390,11 @@ class GroupServiceTest extends TestCase
             ->andReturnUsing(function ($actualSet, $actualWhere) {
 
                 $expectedWhere = new Where();
-                $expectedWhere->addPredicate(new Operator('rgt', '>', 1));
+                $expectedWhere->addPredicate(new Operator('tail', '>', 1));
                 $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['rgt' => new Expression('rgt + 2')], $actualSet);
+                $this->assertEquals(['tail' => new Expression('tail + 2')], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
@@ -417,12 +405,12 @@ class GroupServiceTest extends TestCase
             ->andReturnUsing(function ($actualSet, $actualWhere) {
 
                 $expectedWhere = new Where();
-                $expectedWhere->addPredicate(new Operator('lft', '>', 1));
+                $expectedWhere->addPredicate(new Operator('head', '>', 1));
                 $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
                 $expectedWhere->addPredicate(new Operator('group_id', '!=', 'parent'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['lft' => new Expression('lft + 2')], $actualSet);
+                $this->assertEquals(['head' => new Expression('head + 2')], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
@@ -435,7 +423,7 @@ class GroupServiceTest extends TestCase
                 $expectedWhere->addPredicate(new Operator('group_id', '=', 'child'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['lft' => 2, 'rgt' => 3], $actualSet);
+                $this->assertEquals(['head' => 2, 'tail' => 3], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })

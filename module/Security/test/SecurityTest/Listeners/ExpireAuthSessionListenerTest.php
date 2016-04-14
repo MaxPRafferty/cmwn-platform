@@ -18,9 +18,13 @@ class ExpireAuthSessionListenerTest extends TestCase
      */
     public function setUpContainer()
     {
+        $this->markTestIncomplete('Not Set up');
         $manager     = new SessionManager();
         $this->container = new Container('expire_test', $manager);
     }
 
+    public function testItShouldExpireSession()
+    {
 
+    }
 }

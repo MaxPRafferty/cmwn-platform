@@ -22,8 +22,8 @@ class GroupTest extends TestCase
             'description'     => null,
             'type'            => null,
             'meta'            => [],
-            'left'            => 0,
-            'right'           => 0,
+            'head'            => 0,
+            'tail'            => 0,
             'depth'           => 0,
             'created'         => null,
             'updated'         => null,
@@ -48,8 +48,8 @@ class GroupTest extends TestCase
             'description'     => 'My Awesome group',
             'type'            => 'school',
             'meta'            => [],
-            'left'            => 1,
-            'right'           => 2,
+            'head'            => 1,
+            'tail'            => 2,
             'depth'           => 3,
             'created'         => $date->format(\DateTime::ISO8601),
             'updated'         => $date->format(\DateTime::ISO8601),
@@ -69,37 +69,37 @@ class GroupTest extends TestCase
         $group = new Group();
         $this->assertEquals(
             1,
-            $group->getLeft(),
-            'Left value for group must be set to 1'
+            $group->getHead(),
+            'Head value for group must be set to 1'
         );
 
         $this->assertEquals(
             2,
-            $group->getRight(),
-            'Right value for group must be set to 2'
+            $group->getTail(),
+            'Tail value for group must be set to 2'
         );
 
         $this->assertTrue(
             $group->isRoot(),
-            'Group must be root when left value is 1'
+            'Group must be root when head value is 1'
         );
 
         $this->assertFalse(
             $group->hasChildren(),
-            'Group must not have children when right value is 1 greater than left'
+            'Group must not have children when tail value is 1 greater than head'
         );
 
 
-        $group->setRight(4);
+        $group->setTail(4);
         $this->assertTrue(
             $group->hasChildren(),
-            'Group must report children when right is not 1 greater than left'
+            'Group must report children when tail is not 1 greater than head'
         );
 
-        $group->setLeft(3);
+        $group->setHead(3);
         $this->assertFalse(
             $group->isRoot(),
-            'Group must not be root when left value not 1'
+            'Group must not be root when head value not 1'
         );
     }
 
