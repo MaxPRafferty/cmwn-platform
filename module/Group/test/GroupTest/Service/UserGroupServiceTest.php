@@ -163,8 +163,8 @@ class UserGroupServiceTest extends TestCase
 
         $select = new Select();
         $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', [], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', ['user_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
 
         $this->assertEquals(
@@ -193,8 +193,8 @@ class UserGroupServiceTest extends TestCase
 
         $select = new Select();
         $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', [], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', ['user_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
 
         $this->assertEquals(
@@ -223,8 +223,8 @@ class UserGroupServiceTest extends TestCase
 
         $select = new Select();
         $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', [], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', ['user_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
 
         $this->assertEquals(
@@ -254,8 +254,8 @@ class UserGroupServiceTest extends TestCase
 
         $select = new Select();
         $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', [], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', ['user_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
         $select->where($where);
 
         $this->assertEquals(

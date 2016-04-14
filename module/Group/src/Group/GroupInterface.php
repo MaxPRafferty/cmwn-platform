@@ -84,24 +84,24 @@ interface GroupInterface
     /**
      * @return int
      */
-    public function getLeft();
+    public function getHead();
 
     /**
      * @param int $left
      * @return Group
      */
-    public function setLeft($left);
+    public function setHead($left);
 
     /**
      * @return int
      */
-    public function getRight();
+    public function getTail();
 
     /**
      * @param int $right
      * @return Group
      */
-    public function setRight($right);
+    public function setTail($right);
 
     /**
      * @return int
