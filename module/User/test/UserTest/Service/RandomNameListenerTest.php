@@ -105,7 +105,7 @@ class RandomNameListenerTest extends TestCase
             'User name has not changed'
         );
 
-        $this->assertRegExp('/[a-z]+_[a-z]+\d{3}/', $userName->userName, 'Number was not appended to user name');
+        $this->assertRegExp('/[a-z]+\-[a-z]+\d{3}/', $userName->userName, 'Number was not appended to user name');
     }
 
     public function testItShouldReserveRandomNameMoreThanAThousand()
@@ -150,7 +150,7 @@ class RandomNameListenerTest extends TestCase
             'User name has not changed'
         );
 
-        $this->assertRegExp('/[a-z]+_[a-z]+\d{4}/', $userName->userName, 'Number was not appended to user name');
+        $this->assertRegExp('/[a-z]+\-[a-z]+\d{4}/', $userName->userName, 'Number was not appended to user name');
     }
 
     public function testItShouldDoNothingWhenPassedAdult()
