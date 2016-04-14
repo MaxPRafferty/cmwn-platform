@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\User;
 
+use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
 use User\UserInterface;
 
@@ -28,6 +29,8 @@ class MeEntity extends UserEntity implements TokenEntityInterface
         if ($token !== null) {
             $this->setToken($token);
         }
+
+        $this->getLinks()->add(new UserNameLink());
 
         parent::__construct($userData);
     }
