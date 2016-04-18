@@ -12,6 +12,7 @@ use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class UserRouteListener
@@ -32,12 +33,18 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
     protected $listeners = [];
 
     /**
+     * @var UserAssertion
+     */
+    protected $assertion;
+
+    /**
      * UserRouteListener constructor.
      * @param UserServiceInterface $userService
      */
-    public function __construct(UserServiceInterface $userService)
+    public function __construct(UserServiceInterface $userService, UserAssertion $assertion)
     {
         $this->userService = $userService;
+        $this->assertion   = $assertion;
     }
 
     /**
@@ -78,7 +85,7 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
         try {
             $user = $this->userService->fetchUser($userId);
         } catch (NotFoundException $notFound) {
-            return new ApiProblem(404, 'User not found');
+            return new ApiProblemResponse(new ApiProblem(404, 'User not found'));
         }
 
         $route->setParam('user', $user);
@@ -87,7 +94,8 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
     }
 
     /**
-     * @param MvcEvent $event
+     * @param MvcEvent      $event
+     * @param UserInterface $user
      */
     protected function addAssertion(MvcEvent $event, UserInterface $user)
     {
@@ -101,8 +109,9 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
             $identity = $changePassword->getUser();
         }
 
-        $assertion = new UserAssertion($identity);
-        $assertion->setUser($user);
+        $assertion = clone $this->assertion;
+        $assertion->setActiveUser($identity);
+        $assertion->setRequestedUser($user);
         $event->setParam('assertion', $assertion);
     }
 }

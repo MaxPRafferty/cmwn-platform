@@ -27,12 +27,20 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     protected $realService;
 
     /**
+     * @var array
+     */
+    protected $eventIdentifier = [
+        UserGroupServiceInterface::class,
+        UserGroupService::class
+    ];
+
+    /**
      * UserGroupServiceDelegator constructor.
      * @param UserGroupService $realService
      */
     public function __construct(UserGroupService $realService)
     {
-        $this->realService = $realService;
+        $this->realService     = $realService;
     }
 
     /**

@@ -3,23 +3,23 @@
 return [
     'service_manager' => [
         'aliases'    => [
-            'Image\Service'      => 'Asset\Service\ImageService',
-            'User\Image\Service' => 'Asset\Service\UserImageService',
+            'Image\Service'      => \Asset\Service\ImageService::class,
+            'User\Image\Service' => \Asset\Service\UserImageService::class,
         ],
         'invokables' => [
-            'Asset\Delegator\ImageDelegatorFactory'            => 'Asset\Delegator\ImageDelegatorFactory',
-            'Asset\Delegator\UserImageServiceDelegatorFactory' => 'Asset\Delegator\UserImageServiceDelegatorFactory',
+            \Asset\Delegator\ImageDelegatorFactory::class            => \Asset\Delegator\ImageDelegatorFactory::class,
+            \Asset\Delegator\UserImageServiceDelegatorFactory::class => \Asset\Delegator\UserImageServiceDelegatorFactory::class,
         ],
         'factories'  => [
-            'Asset\Service\ImageService'     => 'Asset\Service\ImageServiceFactory',
-            'Asset\Service\UserImageService' => 'Asset\Service\UserImageServiceFactory',
+            \Asset\Service\ImageService::class     => \Asset\Service\ImageServiceFactory::class,
+            \Asset\Service\UserImageService::class => \Asset\Service\UserImageServiceFactory::class,
         ],
         'delegators' => [
-            'Asset\Service\ImageService'     => [
-                'Asset\Delegator\ImageDelegatorFactory',
+            \Asset\Service\ImageService::class     => [
+                \Asset\Delegator\ImageDelegatorFactory::class,
             ],
-            'Asset\Service\UserImageService' => [
-                'Asset\Delegator\UserImageServiceDelegatorFactory',
+            \Asset\Service\UserImageService::class => [
+                \Asset\Delegator\UserImageServiceDelegatorFactory::class,
             ],
         ],
     ],

@@ -2,19 +2,20 @@
 
 return [
     'service_manager' => [
-        'aliases' => [
-            'User\Service' => 'User\Service\UserService',
+        'aliases'    => [
+            'User\Service'                            => \User\Service\UserService::class,
+            \User\Service\UserServiceInterface::class => \User\Service\UserService::class,
         ],
         'invokables' => [
-            'User\Delegator\UserDelegatorFactory'
+            \User\Delegator\UserDelegatorFactory::class,
         ],
-        'factories' => [
-            'User\Service\UserService' => 'User\Service\UserServiceFactory',
-            'User\ServiceRandom\NameListener' =>'User\Service\RandomNameListenerFactory',
+        'factories'  => [
+            \User\Service\UserService::class        => \User\Service\UserServiceFactory::class,
+            \User\Service\RandomNameListener::class => \User\Service\RandomNameListenerFactory::class,
         ],
         'delegators' => [
-            'User\Service\UserService' => [
-                'User\Delegator\UserDelegatorFactory'
+            \User\Service\UserService::class => [
+                \User\Delegator\UserDelegatorFactory::class,
             ],
         ],
     ],

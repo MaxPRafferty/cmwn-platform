@@ -21,33 +21,36 @@ return [
     ],
     'service_manager' => [
         'invokables'         => [
-            'Application\Listeners\ErrorListener' => 'Application\Listeners\ErrorListener',
+            \Application\Listeners\ErrorListener::class => \Application\Listeners\ErrorListener::class,
         ],
         'initializers'       => [
-            'Application\Service\LoggerAwareInitializer' => 'Application\Service\LoggerAwareInitializer',
-
+            \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
+            
         ],
         'factories'          => [
-            'Application\Listeners\ListenersAggregate' => 'Application\Listeners\ListenersAggregateFactory',
-            'Application\Log\Rollbar\Options'          => 'Application\Log\Rollbar\OptionsFactory',
-            'Application\Log\Rollbar\Notifier'         => 'Application\Log\Rollbar\NotifierFactory',
-            'Application\Log\Rollbar\Writer'           => 'Application\Log\Rollbar\WriterFactory',
+            \Application\Listeners\ListenersAggregate::class => \Application\Listeners\ListenersAggregateFactory::class,
+            \Application\Log\Rollbar\Options::class          => \Application\Log\Rollbar\OptionsFactory::class,
+            'Application\Log\Rollbar\Notifier'               => \Application\Log\Rollbar\NotifierFactory::class,
+            \Application\Log\Rollbar\Writer::class           => \Application\Log\Rollbar\WriterFactory::class,
         ],
         'abstract_factories' => [
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Db\Adapter\AdapterAbstractServiceFactory',
-            'Application\Log\LoggerFactory',
-            'Application\Utils\AbstractTableFactory',
+            \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
+            \Zend\Db\Adapter\AdapterAbstractServiceFactory::class,
+            \Application\Log\LoggerFactory::class,
+            \Application\Utils\AbstractTableFactory::class,
         ],
     ],
 
     'shared-listeners' => [
-        'Application\Listeners\ErrorListener',
+        \Application\Listeners\ErrorListener::class,
     ],
 
     'controllers' => [
+        'aliases' => [
+            \Application\Controller\IndexController::class => '\Application\Controller\Index'
+        ],
         'invokables' => [
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Index' => \Application\Controller\IndexController::class,
         ],
     ],
 

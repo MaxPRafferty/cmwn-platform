@@ -2,34 +2,49 @@
 use \Security\Authorization\Rbac;
 
 return [
-
     'cmwn-roles' => [
         'permission_labels' => [
-            'add.group.user'     => 'Add user to group',
-            'adult.code'         => 'Send adult reset code',
-            'child.code'         => 'Send child reset code',
+
+            // user
+            'create.user'        => 'Create a user',
+            'view.user.adult'    => 'View an Adults Information',
+            'view.user.child'    => 'View a child\'s Information',
+            'edit.user.adult'    => 'Edit an Adult',
+            'edit.user.child'    => 'Edit a Child',
+            'pick.username'      => 'Pick a new User Name',
+            'update.password'    => 'Update profile password',
+            'remove.user.adult'  => 'Delete a child user',
+            'remove.user.child'  => 'Delete an adult user',
+
+            // group
             'create.child.group' => 'Create a sub group',
             'create.group'       => 'Create a group',
-            'create.org'         => 'Create an Organization',
-            'create.user'        => 'Create a user',
+            'view.group'         => 'View Group',
+            'view.all.groups'    => 'View all Groups',
             'edit.group'         => 'Edit a Group',
-            'edit.org'           => 'Edit an Organization',
-            'edit.user'          => 'Edit a User',
             'import'             => 'Import Data file',
-            'pick.username'      => 'Pick a new User Name',
-            'read.group'         => 'View Group',
             'remove.child.group' => 'Remove a child group',
             'remove.group'       => 'Remove a group',
+
+            // user group
+            'add.group.user'     => 'Add user to group',
             'remove.group.user'  => 'Remove user from group',
-            'remove.org'         => 'Remove an Organization',
-            'remove.user'        => 'Delete a user',
-            'update.password'    => 'Update profile password',
-            'view.all.groups'    => 'View all Groups',
-            'view.all.orgs'      => 'View all Organizations',
-            'view.games'         => 'View all Games',
             'view.group.users'   => 'View Group users',
+
+            // organizations
+            'create.org'         => 'Create an Organization',
+            'view.all.orgs'      => 'View all Organizations',
             'view.org'           => 'View an Organization',
             'view.org.users'     => 'View all users in an organization',
+            'edit.org'           => 'Edit an Organization',
+            'remove.org'         => 'Remove an Organization',
+
+            // game
+            'view.games'         => 'View all Games',
+
+            // misc
+            'adult.code'         => 'Send adult reset code',
+            'child.code'         => 'Send child reset code',
         ],
         'roles'             => [
             'super' => [
@@ -106,6 +121,9 @@ return [
                     'view.games',
                     'view.group.users',
                     'view.org',
+                    'view.user.child',
+                    'edit.user.child',
+                    'remove.user.child',
                 ],
             ],
 
@@ -150,6 +168,27 @@ return [
                     'view.games',
                     'view.group.users',
                     'view.org',
+                    'view.user.child',
+                ],
+            ],
+
+            'neighbor.adult' => [
+                'entity_bits' => [],
+                'permissions' => [
+                    'view.user.adult',
+                    'view.user.adult',
+                ],
+            ],
+
+            'me' => [
+                'entity_bits' => [],
+                'permissions' => [
+                    'view.user.adult',
+                    'view.user.child',
+                    'edit.user.adult',
+                    'edit.user.child',
+                    'remove.user.adult',
+                    'remove.user.child',
                 ],
             ],
 
@@ -165,6 +204,23 @@ return [
                     'view.games',
                     'view.group.users',
                     'view.org',
+                ],
+            ],
+
+            'student' => [
+                'entity_bits' => [
+                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                ],
+                'permissions' => [
+                    'child.code',
+                    'pick.username',
+                    'read.group',
+                    'update.password',
+                    'view.games',
+                    'view.group.users',
+                    'view.org',
+                    'view.user.adult',
+                    'view.user.child',
                 ],
             ],
 

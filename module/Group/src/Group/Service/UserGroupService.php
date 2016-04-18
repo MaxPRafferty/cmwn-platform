@@ -10,7 +10,6 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -253,8 +252,6 @@ class UserGroupService implements UserGroupServiceInterface
         $select->where($where);
         $select->limit(10);
 
-        $sql = new Sql($this->pivotTable->getAdapter());
-        $stmt = $sql->prepareStatementForSqlObject($select);
         $results = $this->pivotTable->selectWith($select);
         $types   = [];
         foreach ($results as $row) {

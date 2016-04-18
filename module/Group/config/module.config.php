@@ -3,24 +3,24 @@
 return [
     'service_manager' => [
         'aliases'    => [
-            'Group\Service'                           => 'Group\Service\GroupService',
-            'Group\GroupService'                      => 'Group\Service\GroupService',
-            'Group\Service\UserGroupServiceInterface' => 'Group\Service\UserGroupService',
+            'Group\Service'                                 => \Group\Service\GroupService::class,
+            'Group\GroupService'                            => \Group\Service\GroupService::class,
+            \Group\Service\UserGroupServiceInterface::class => \Group\Service\UserGroupService::class,
         ],
         'invokables' => [
-            'Group\Delegator\GroupDelegatorFactory'            => 'Group\Delegator\GroupDelegatorFactory',
-            'Group\Delegator\UserGroupServiceDelegatorFactory' => 'Group\Delegator\UserGroupServiceDelegatorFactory',
+            \Group\Delegator\GroupDelegatorFactory::class            => \Group\Delegator\GroupDelegatorFactory::class,
+            \Group\Delegator\UserGroupServiceDelegatorFactory::class => \Group\Delegator\UserGroupServiceDelegatorFactory::class,
         ],
         'factories'  => [
-            'Group\Service\GroupService'     => 'Group\Service\GroupServiceFactory',
-            'Group\Service\UserGroupService' => 'Group\Service\UserGroupServiceFactory',
+            \Group\Service\GroupService::class     => \Group\Service\GroupServiceFactory::class,
+            \Group\Service\UserGroupService::class => \Group\Service\UserGroupServiceFactory::class,
         ],
         'delegators' => [
-            'Group\Service\GroupService'     => [
-                'Group\Delegator\GroupDelegatorFactory',
+            \Group\Service\GroupService::class     => [
+                \Group\Delegator\GroupDelegatorFactory::class,
             ],
-            'Group\Service\UserGroupService' => [
-                'Group\Delegator\UserGroupServiceDelegatorFactory',
+            \Group\Service\UserGroupService::class => [
+                \Group\Delegator\UserGroupServiceDelegatorFactory::class,
             ],
         ],
     ],

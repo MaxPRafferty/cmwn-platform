@@ -2,6 +2,7 @@
 
 namespace Security\Authorization\Assertions;
 
+use Group\Service\UserGroupServiceInterface;
 use Security\Authorization\AssertionInterface;
 use Security\Authorization\AssertionTrait;
 use User\UserInterface;
@@ -17,28 +18,42 @@ class UserAssertion implements AssertionInterface
     /**
      * @var UserInterface
      */
-    protected $loggedInUser;
+    protected $activeUser;
 
     /**
      * @var UserInterface
      */
-    protected $checkUser;
+    protected $requestedUser;
+
+    /**
+     * @var UserGroupServiceInterface
+     */
+    protected $userGroupService;
 
     /**
      * UserAssertion constructor.
-     * @param UserInterface $user
+     *
+     * @param UserGroupServiceInterface $userGroupService
      */
-    public function __construct(UserInterface $user)
+    public function __construct(UserGroupServiceInterface $userGroupService)
     {
-        $this->loggedInUser = $user;
+        $this->userGroupService = $userGroupService;
     }
 
     /**
      * @param UserInterface $user
      */
-    public function setUser(UserInterface $user)
+    public function setActiveUser(UserInterface $user)
     {
-        $this->checkUser = $user;
+        $this->activeUser = $user;
+    }
+
+    /**
+     * @param UserInterface $user
+     */
+    public function setRequestedUser(UserInterface $user)
+    {
+        $this->requestedUser = $user;
     }
 
     /**
@@ -49,14 +64,17 @@ class UserAssertion implements AssertionInterface
      */
     public function assert(Rbac $rbac)
     {
-        if (!$this->checkUser) {
+        if (!$this->requestedUser) {
             return false;
         }
 
-        if ($this->checkUser->getUserId() === $this->loggedInUser->getUserId()) {
-            return true;
+        $role = ($this->requestedUser->getUserId() === $this->activeUser->getUserId()) ? 'me' : 'guest';
+        if ($this->requestedUser->getUserId() !== $this->activeUser->getUserId()) {
+            $role = $this->userGroupService->fetchRoleToUser($this->activeUser, $this->requestedUser);
         }
 
-        return $rbac->isGranted($this->role, $this->permission);
+        //attach requested user type to permission
+        $permission = $this->permission . '.' . strtolower($this->requestedUser->getType());
+        return $rbac->isGranted($role, $permission);
     }
 }

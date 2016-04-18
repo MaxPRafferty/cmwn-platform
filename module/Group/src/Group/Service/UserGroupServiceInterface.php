@@ -4,9 +4,6 @@ namespace Group\Service;
 
 use Group\GroupInterface;
 use User\UserInterface;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Permissions\Acl\Role\RoleInterface;
