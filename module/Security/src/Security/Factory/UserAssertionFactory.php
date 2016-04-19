@@ -2,8 +2,8 @@
 
 namespace Security\Factory;
 
-use Group\Service\UserGroupServiceInterface;
 use Security\Authorization\Assertions\UserAssertion;
+use Security\Service\SecurityGroupServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -21,8 +21,8 @@ class UserAssertionFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get(UserGroupServiceInterface::class);
-        return new UserAssertion($userGroupService);
+        /** @var SecurityGroupServiceInterface $securityGroupService */
+        $securityGroupService = $serviceLocator->get(SecurityGroupServiceInterface::class);
+        return new UserAssertion($securityGroupService);
     }
 }

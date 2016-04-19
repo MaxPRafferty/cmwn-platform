@@ -5,6 +5,7 @@ namespace Security\Authorization\Assertions;
 use Group\Service\UserGroupServiceInterface;
 use Security\Authorization\AssertionInterface;
 use Security\Authorization\AssertionTrait;
+use Security\Service\SecurityGroupServiceInterface;
 use User\UserInterface;
 use Zend\Permissions\Rbac\Rbac;
 
@@ -26,18 +27,18 @@ class UserAssertion implements AssertionInterface
     protected $requestedUser;
 
     /**
-     * @var UserGroupServiceInterface
+     * @var SecurityGroupServiceInterface
      */
-    protected $userGroupService;
+    protected $securityGroupService;
 
     /**
      * UserAssertion constructor.
      *
-     * @param UserGroupServiceInterface $userGroupService
+     * @param SecurityGroupServiceInterface $securityGroupService
      */
-    public function __construct(UserGroupServiceInterface $userGroupService)
+    public function __construct(SecurityGroupServiceInterface $securityGroupService)
     {
-        $this->userGroupService = $userGroupService;
+        $this->securityGroupService = $securityGroupService;
     }
 
     /**
@@ -70,7 +71,7 @@ class UserAssertion implements AssertionInterface
 
         $role = ($this->requestedUser->getUserId() === $this->activeUser->getUserId()) ? 'me' : 'guest';
         if ($this->requestedUser->getUserId() !== $this->activeUser->getUserId()) {
-            $role = $this->userGroupService->fetchRoleToUser($this->activeUser, $this->requestedUser);
+            $role = $this->securityGroupService->fetchRelationshipRole($this->activeUser, $this->requestedUser);
         }
 
         //attach requested user type to permission

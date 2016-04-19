@@ -55,8 +55,9 @@ class SecurityGroupService implements SecurityGroupServiceInterface
 
         $this->activeUser    = $activeUser;
         $this->requestedUser = $requestedUser;
-        $activeUserId        = $activeUser->getUserId();
-        $requestedUserId     = $requestedUser->getUserId();
+
+        $activeUserId    = $activeUser->getUserId();
+        $requestedUserId = $requestedUser->getUserId();
 
         $select = new Select();
         $select->columns(['active_role' => 'active_user.role'], false);
@@ -74,7 +75,10 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         $select->join(
             ['active_group' => 'groups'],
             'active_user.group_id = active_group.group_id',
-            ['active_head' => 'head', 'active_tail' => 'tail'],
+            [
+                'active_head' => 'head',
+                'active_tail' => 'tail'
+            ],
             Select::JOIN_LEFT
         );
 
@@ -82,7 +86,11 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         $select->join(
             ['active_parent_group' => 'groups'],
             'active_parent_group.group_id = active_group.parent_id',
-            ['active_parent_head' => 'head', 'active_parent_tail' => 'tail'],
+            [
+                'active_parent_head'  => 'head',
+                'active_parent_tail'  => 'tail',
+                'active_parent_group' => 'group_id',
+            ],
             Select::JOIN_LEFT
         );
 
@@ -90,7 +98,11 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         $select->join(
             ['requested_group' => 'groups'],
             'requested_user.group_id = requested_group.group_id',
-            ['requested_head' => 'head', 'requested_tail' => 'tail'],
+            [
+                'requested_head' => 'head',
+                'requested_tail' => 'tail',
+                'requested_group' => 'group_id'
+            ],
             Select::JOIN_LEFT
         );
 
@@ -98,7 +110,11 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         $select->join(
             ['requested_parent_group' => 'groups'],
             'requested_parent_group.group_id = requested_group.parent_id',
-            ['requested_parent_head' => 'head', 'requested_parent_tail' => 'tail'],
+            [
+                'requested_parent_head'  => 'head',
+                'requested_parent_tail'  => 'tail',
+                'requested_parent_group' => 'group_id',
+            ],
             Select::JOIN_LEFT
         );
 
@@ -122,23 +138,46 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         }
 
         $results->rewind();
-        return $this->marshalRole($results->current());
-    }
+        $row = $results->current();
 
-    protected function marshalRole(\ArrayObject $row)
-    {
-        return $this->isSameType() ? $this->marshalRoleForSameTypes($row) : $this->marshalRoleForDifferentTypes($row);
+        $result = new \stdClass();
+
+        $result->active_role = $row->active_role;
+        $result->active_head = (int) $row->active_head;
+        $result->active_tail = (int) $row->active_tail;
+        $result->active_parent = new \stdClass();
+        $result->active_parent->head = (int) $row->active_parent_head;
+        $result->active_parent->tail = (int) $row->active_parent_tail;
+
+        $result->requested_head = (int) $row->requested_head;
+        $result->requested_tail = (int) $row->requested_tail;
+        $result->requested_parent = new \stdClass();
+        $result->requested_parent->head = (int) $row->requested_parent_head;
+        $result->requested_parent->tail = (int) $row->requested_parent_tail;
+
+        return $this->marshalRole($result);
     }
 
     /**
-     * @return bool
+     * Figures out the comparing role for the active user
+     *
+     * @param \stdClass $row
+     * @return string
      */
-    protected function isSameType()
+    protected function marshalRole(\stdClass $row)
     {
-        return $this->activeUser->getType() === $this->requestedUser->getType();
+        return $this->isActiveSameTypeAsRequested()
+            ? $this->marshalRoleForSameTypes($row)
+            : $this->marshalRoleForDifferentTypes($row);
     }
 
-    protected function marshalRoleForDifferentTypes(\ArrayObject $row)
+    /**
+     * Different cases when the two users are different
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    protected function marshalRoleForDifferentTypes(\stdClass $row)
     {
         // Active and requested are in the same group
         if ($this->isSameNode($row)) {
@@ -146,58 +185,103 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         }
 
         // requested group is child of active group
-        if ($row->requested_head > $row->active_head && $row->requested_tail < $row->active_tail) {
+        if ($this->isRequestedInChildNodeOfActive($row)) {
             return $row->active_role;
         }
 
-        if ($this->activeUser->getType() !== UserInterface::TYPE_CHILD) {
-            return 'guest';
-        }
-
-        // if the users are outside the network, then it is guest
-        if (!$this->isInSameNetwork($row)) {
-            return 'guest';
-        }
-
-        return $row->active_role;
-    }
-
-    protected function marshalRoleForSameTypes(\ArrayObject $row)
-    {
-        $networkHead = $row->active_parent_head === null ? (int) $row->active_head : (int) $row->active_parent_head;
-        $networkTail = $row->active_parent_tail === null ? (int) $row->active_tail : (int) $row->active_parent_tail;
-
-        // if the users are outside the network, then it is guest
-        if (($row->requested_head < $networkHead) && ($row->requested_head > $networkTail)) {
-            return 'guest';
-        }
-
         if ($this->activeUser->getType() === UserInterface::TYPE_ADULT) {
-            return 'neighbor.adult';
+            return 'guest';
         }
 
-        return $row->active_role;
+        return $this->isActiveInChildNodeOfRequested($row) ? $row->active_role : 'guest';
     }
 
-    protected function isInSameNetwork(\ArrayObject $row)
+    /**
+     * Figures out the role if the 2 users are the same type
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    protected function marshalRoleForSameTypes(\stdClass $row)
     {
-        $networkHead = $row->active_parent_head === null ? (int) $row->active_head : (int) $row->active_parent_head;
-        $networkTail = $row->active_parent_tail === null ? (int) $row->active_tail : (int) $row->active_parent_tail;
+        // if the users are outside the network, then it is guest
+        if (!$this->isActiveInSameNetworkAsRequested($row)) {
+            return 'guest';
+        }
 
-        $nodeHead    = (int) $row->active_head;
-        $nodeTail    = (int) $row->active_tail;
+        // children in the same network always have the same relationship
+        if ($this->activeUser->getType() === UserInterface::TYPE_CHILD) {
+            return $row->active_role;
+        }
 
-        return ($nodeHead > $networkHead) && ($nodeTail < $networkTail);
+        return 'neighbor.adult';
     }
 
-    protected function isSameNode(\ArrayObject $row)
+    /**
+     * Quick helper to check the requested and active are the same type
+     *
+     * @return bool
+     */
+    protected function isActiveSameTypeAsRequested()
     {
-        $requestedHead = (int) $row->requested_head;
-        $requestedTail = (int) $row->requested_tail;
+        return $this->activeUser->getType() === $this->requestedUser->getType();
+    }
 
-        $activeHead    = (int) $row->active_head;
-        $activeTail    = (int) $row->active_tail;
+    /**
+     * @param \stdClass $row
+     * @return bool
+     */
+    protected function isRequestedInSameNetworkAsActive(\stdClass $row)
+    {
+        return ($row->requested_head > $row->active_head) && ($row->requested_tail < $row->active_tail);
+    }
 
-        return ($activeHead === $requestedHead) && ($activeTail === $requestedTail);
+    /**
+     * @param \stdClass $row
+     * @return bool
+     */
+    protected function isActiveInSameNetworkAsRequested(\stdClass $row)
+    {
+        //requested is in the root group
+        if ($row->requested_parent->head === 0) {
+            return ($row->active_head >= $row->requested_head)
+                && ($row->active_tail <= $row->requested_tail);
+        }
+
+        return ($row->active_head >= $row->requested_parent->head)
+            && ($row->active_tail <= $row->requested_parent->tail);
+    }
+
+    /**
+     * Checks if the two users are in the same network node
+     *
+     * @param \stdClass $row
+     * @return bool
+     */
+    protected function isSameNode(\stdClass $row)
+    {
+        return ($row->active_head === $row->requested_head) && ($row->active_tail === $row->requested_tail);
+    }
+
+    /**
+     * Checks if the active user is a child of the requested user
+     *
+     * @param \stdClass $row
+     * @return bool
+     */
+    protected function isActiveInChildNodeOfRequested(\stdClass $row)
+    {
+        return ($row->active_head > $row->requested_head) && ($row->active_tail < $row->requested_tail);
+    }
+
+    /**
+     * Checks if the active user is a child of the requested user
+     *
+     * @param \stdClass $row
+     * @return bool
+     */
+    protected function isRequestedInChildNodeOfActive(\stdClass $row)
+    {
+        return ($row->requested_head > $row->active_head) && ($row->requested_tail < $row->active_tail);
     }
 }

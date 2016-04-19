@@ -55,13 +55,18 @@ class SecurityGroupServiceTest extends TestCase
     public function relationshipsDataProvider()
     {
         return [
-
-            'Math Student to English Teacher' => [
-                'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'guest'
+            'English Teacher to Principal' => [
+                'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
+                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
+                'expectedRole'  => 'neighbor.adult'
             ],
-            
+
+            'Math Teacher to Principal' => [
+                'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
+                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
+                'expectedRole'  => 'neighbor.adult'
+            ],
+
             // English Student
             'English Teacher to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
