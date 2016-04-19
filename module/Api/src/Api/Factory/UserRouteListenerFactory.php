@@ -3,6 +3,7 @@
 namespace Api\Factory;
 
 use Api\Listeners\UserRouteListener;
+use Security\Authorization\Assertions\UserAssertion;
 use User\Service\UserServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -22,8 +23,10 @@ class UserRouteListenerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get('User\Service');
+        $userService = $serviceLocator->get(UserServiceInterface::class);
 
-        return new UserRouteListener($userService);
+        /** @var UserAssertion $userGroupService */
+        $userAssertion = $serviceLocator->get(UserAssertion::class);
+        return new UserRouteListener($userService, $userAssertion);
     }
 }

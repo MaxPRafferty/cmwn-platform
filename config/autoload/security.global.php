@@ -13,7 +13,7 @@ return [
             'api.rest.user'        => [
                 'GET'   => 'view.user',
                 'POST'  => 'create.user',
-                'PUT'   => 'update.user',
+                'PUT'   => 'edit.user',
             ],
             'api.rest.org'         => [
                 'GET'    => 'view.org',

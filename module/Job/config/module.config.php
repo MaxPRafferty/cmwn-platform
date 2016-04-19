@@ -2,20 +2,20 @@
 
 return [
     'service_manager' => [
-        'aliases' => [
-            'Job\Service' => 'Job\Service\JobService'
+        'aliases'    => [
+            'Job\Service' => \Job\Service\JobService::class,
         ],
-        'factories' => [
-            'Job\Processor\JobRunner' => 'Job\Processor\JobRunnerFactory',
+        'factories'  => [
+            \Job\Processor\JobRunner::class => \Job\Processor\JobRunnerFactory::class,
         ],
         'invokables' => [
-            'Job\Service\JobService' => 'Job\Service\JobService',
+            \Job\Service\JobService::class => \Job\Service\JobService::class,
         ],
     ],
 
     'controllers' => [
         'factories' => [
-            'Job\Controller' => 'Job\Controller\WorkerControllerFactory',
+            'Job\Controller' => \Job\Controller\WorkerControllerFactory::class,
         ],
     ],
 

@@ -3,6 +3,7 @@
 namespace IntegrationTest;
 
 use Zend\Db\Adapter\Adapter;
+use Zend\Mvc\MvcEvent;
 use ZF\Apigility\Application;
 use Zend\ServiceManager\ServiceManager;
 
@@ -38,11 +39,26 @@ class TestHelper
         }
 
         static::$serviceManager = Application::init(static::getApplicationConfig())->getServiceManager();
-        static::$serviceManager->setAllowOverride(true);
-        static::injectTestAdapter();
         return static::$serviceManager;
     }
 
+    public static function getTestDbConfig()
+    {
+        $phinxConfig = include __DIR__ . '/../../config/phinx.php';
+        $envConfig   = $phinxConfig['environments']['test'];
+
+        // Map phinx to zf2
+        return [
+            'driver'   => 'Pdo',
+            'dsn'      => 'mysql:dbname=' . $envConfig['name'] . ';host=' . $envConfig['host'],
+            'database' => $envConfig['name'],
+            'username' => $envConfig['user'],
+            'password' => $envConfig['pass'],
+            'driver_options' => [
+                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+            ],
+        ];
+    }
     /**
      * @return string[]
      */
@@ -53,36 +69,14 @@ class TestHelper
         $appConfig['module_listener_options']['config_cache_enabled'] = false;
         $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
 
-        return $appConfig;
-    }
-
-    public static function injectTestAdapter()
-    {
-        $adapter = static::getTestDbAdapter();
-        static::getServiceManager()->setService('Zend\Db\Adapter\Adapter', $adapter);
-    }
-
-    /**
-     * @return Adapter
-     */
-    public static function getTestDbAdapter()
-    {
-        $phinxConfig = include_once __DIR__ . '/../../config/phinx.php';
-        $envConfig   = $phinxConfig['environments']['test'];
-
-        // Map phinx to zf2
-        $zf2Config   = [
-            'driver'   => 'Pdo',
-            'dsn'      => 'mysql:dbname=' . $envConfig['name'] . ';host=' . $envConfig['host'],
-            'database' => $envConfig['name'],
-            'username' => $envConfig['user'],
-            'password' => $envConfig['pass'],
-            'driver_options' => [
-                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-            ],
+        $appConfig['service_manager'] = [
+            'invokables' => [
+                'InjectTestAdapter' => InjectTestAdapterListener::class
+            ]
         ];
 
-        return new Adapter($zf2Config);
+        $appConfig['listeners'] = ['InjectTestAdapter'];
+        return $appConfig;
     }
 
     /**

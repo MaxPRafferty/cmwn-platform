@@ -3,7 +3,10 @@
 return [
     'service_manager' => [
         'aliases' => [
-            'authentication' => 'Security\Authentication\AuthenticationService',
+            'authentication' =>
+                \Security\Authentication\AuthenticationService::class,
+
+            \Security\Service\SecurityGroupServiceInterface::class => \Security\Service\SecurityGroupService::class,
         ],
 
         'invokables' => [
@@ -22,11 +25,17 @@ return [
             \Security\Authentication\AuthAdapter::class  => \Security\Authentication\AuthAdapterFactory::class,
             \Security\Authorization\Rbac::class          => \Security\Authorization\RbacFactory::class,
 
-            'Security\Authentication\AuthenticationService' =>
+            \Security\Service\SecurityGroupService::class =>
+                \Security\Service\SecurityGroupServiceFactory::class,
+
+            \Security\Authentication\AuthenticationService::class =>
                 \Security\Authentication\AuthenticationServiceFactory::class,
 
             \Security\Listeners\ExpireAuthSessionListener::class =>
                 \Security\Factory\ExpireAuthSessionListenerFactory::class,
+
+            \Security\Authorization\Assertions\UserAssertion::class =>
+                \Security\Factory\UserAssertionFactory::class,
         ],
 
         'initializers' => [

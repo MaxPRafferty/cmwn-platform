@@ -112,7 +112,7 @@ class Module implements
 
         $container = new Container('initialized');
 
-        // This sets the user agennt and remote addr on the 1st request to the application
+        // This sets the user agent and remote address on the 1st request to the application
 
         if (!isset($container->init)) {
             $serviceManager = $event->getApplication()->getServiceManager();

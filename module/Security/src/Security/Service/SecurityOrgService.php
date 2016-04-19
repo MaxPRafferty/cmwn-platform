@@ -59,9 +59,9 @@ class SecurityOrgService
         $select = new Select();
         $select->columns(['role' => 'ug.role'], false);
         $select->from(['parent' => 'groups']);
-        $select->join(['node' => 'groups'], 'node.lft BETWEEN parent.lft AND parent.rgt');
+        $select->join(['node' => 'groups'], 'node.head BETWEEN parent.head AND parent.tail');
         $select->join(['ug' => 'user_groups'], 'ug.group_id = node.group_id', [], Select::JOIN_LEFT_OUTER);
-        $select->order('node.lft ASC');
+        $select->order('node.head ASC');
         $where = new Where();
 
         $where->addPredicate(new Operator('ug.user_id', '=', $userId));
@@ -101,7 +101,7 @@ class SecurityOrgService
         $select->columns(['role' => 'ug.role'], false);
         $select->from(['g' => 'groups']);
         $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
-        $select->order('g.lft ASC');
+        $select->order('g.head ASC');
         $select->limit(1);
 
         $where = new Where();
