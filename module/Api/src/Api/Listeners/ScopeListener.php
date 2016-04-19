@@ -3,10 +3,14 @@
 namespace Api\Listeners;
 
 use Api\ScopeAwareInterface;
-use Security\Authorization\Rbac;
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Authorization\RbacAwareInterface;
+use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Security\Service\SecurityGroupServiceInterface;
+use User\UserInterface;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
@@ -14,29 +18,25 @@ use ZF\Hal\Entity;
 /**
  * Class ScopeListener
  */
-class ScopeListener
+class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInterface
 {
+    use AuthenticationServiceAwareTrait;
+    use RbacAwareTrait;
+
     protected $listeners = [];
 
     /**
-     * @var Rbac
+     * @var SecurityGroupServiceInterface
      */
-    protected $rbac;
+    protected $securityGroupService;
 
     /**
-     * @var AuthenticationServiceInterface
+     * ScopeListener constructor.
+     * @param SecurityGroupServiceInterface $securityGroupService
      */
-    protected $authService;
-
-    /**
-     * @var string
-     */
-    protected $role;
-
-    public function __construct(Rbac $rbac, AuthenticationServiceInterface $authService)
+    public function __construct(SecurityGroupServiceInterface $securityGroupService)
     {
-        $this->rbac        = $rbac;
-        $this->authService = $authService;
+        $this->securityGroupService = $securityGroupService;
     }
 
     /**
@@ -62,39 +62,45 @@ class ScopeListener
      */
     public function onRender(EventInterface $event)
     {
+        // Should never be able to load a scope object
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            return;
+        }
+
         $entity  = $event->getParam('entity');
         $payload = $event->getParam('payload');
-        $role    = $this->getRole();
         if (!$entity instanceof Entity) {
             return;
         }
 
-        if ($entity->entity instanceof ScopeAwareInterface) {
-            $payload['scope'] =$this->rbac->getScopeForEntity($role, $entity->entity->getEntityType());
+        if (!$entity->entity instanceof ScopeAwareInterface) {
+            return;
         }
+
+        $role    = $this->getRole($entity);
+        $payload['scope'] =$this->rbac->getScopeForEntity($role, $entity->entity->getEntityType());
     }
 
     /**
      * @return string
      */
-    protected function getRole()
+    protected function getRole(Entity $entity)
     {
-        if ($this->role !== null) {
-            return $this->role;
-        }
-
-        $role = 'guest';
         try {
             $user = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePassword) {
             $user = $changePassword->getUser();
         }
 
-        if ($user instanceof SecurityUser) {
-            $role = $user->getRole();
+        $realEntity = $entity->entity;
+        if ($realEntity instanceof UserInterface) {
+            return $this->securityGroupService->fetchRelationshipRole($user, $realEntity);
         }
 
-        $this->role = $role;
-        return $this->role;
+        if ($user instanceof SecurityUser) {
+            return $user->getRole();
+        }
+
+        return 'logged_in';
     }
 }

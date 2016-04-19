@@ -102,8 +102,8 @@ return [
 
             'principal' => [
                 'entity_bits' => [
-                    'group' => Rbac::SCOPE_UPDATE,
-                    'user'  => Rbac::SCOPE_UPDATE,
+                    'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'user'  => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
@@ -121,6 +121,7 @@ return [
                     'view.games',
                     'view.group.users',
                     'view.org',
+                    'view.org.users',
                     'view.user.child',
                     'edit.user.child',
                     'remove.user.child',
