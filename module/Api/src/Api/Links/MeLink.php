@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Api\Links;
-
 
 use User\UserInterface;
 use ZF\Hal\Link\Link;

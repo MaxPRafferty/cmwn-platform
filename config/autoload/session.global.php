@@ -23,7 +23,6 @@ $config = [
             ],
         ],
         'validators'   => [
-            'Zend\Session\Validator\HttpUserAgent',
         ],
     ],
 ];

@@ -45,6 +45,12 @@ class RandomNameListener
             'save.new.user',
             [$this, 'reserveRandomName']
         );
+
+        $this->listeners[] = $manager->attach(
+            UserServiceDelegator::class,
+            'save.user',
+            [$this, 'reserveRandomName']
+        );
     }
 
     /**
@@ -65,6 +71,10 @@ class RandomNameListener
     {
         $child = $event->getParam('user', null);
         if (!$child instanceof Child) {
+            return;
+        }
+
+        if (!$child->isNameGenerated()) {
             return;
         }
 

@@ -3,19 +3,19 @@
 return [
     'service_manager' => [
         'aliases'    => [
-            'Org\Service'                              => 'Org\Service\OrganizationService',
-            'Organization\Service'                     => 'Org\Service\OrganizationService',
-            'Org\Service\OrganizationServiceInterface' => 'Org\Service\OrganizationService',
+            'Org\Service'                                    => \Org\Service\OrganizationService::class,
+            'Organization\Service'                           => \Org\Service\OrganizationService::class,
+            \Org\Service\OrganizationServiceInterface::class => \Org\Service\OrganizationService::class,
         ],
         'invokables' => [
-            'Org\Delegator\OrganizationDelegatorFactory' => 'Org\Delegator\OrganizationDelegatorFactory',
+            \Org\Delegator\OrganizationDelegatorFactory::class => \Org\Delegator\OrganizationDelegatorFactory::class,
         ],
         'factories'  => [
-            'Org\Service\OrganizationService' => 'Org\Service\OrganizationServiceFactory',
+            \Org\Service\OrganizationService::class => \Org\Service\OrganizationServiceFactory::class,
         ],
         'delegators' => [
-            'Org\Service\OrganizationService' => [
-                'Org\Delegator\OrganizationDelegatorFactory',
+            \Org\Service\OrganizationService::class => [
+                \Org\Delegator\OrganizationDelegatorFactory::class,
             ],
         ],
     ],

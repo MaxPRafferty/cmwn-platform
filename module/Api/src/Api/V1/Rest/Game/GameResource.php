@@ -27,50 +27,6 @@ class GameResource extends AbstractResourceListener
     }
 
     /**
-     * Create a resource
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function create($data)
-    {
-        return new ApiProblem(405, 'The POST method has not been defined');
-    }
-
-    /**
-     * Delete a resource
-     *
-     * @param  mixed $id
-     * @return ApiProblem|mixed
-     */
-    public function delete($id)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
-    }
-
-    /**
-     * Delete a collection, or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function deleteList($data)
-    {
-        return new ApiProblem(405, 'The DELETE method has not been defined for collections');
-    }
-
-    /**
-     * Fetch a resource
-     *
-     * @param  mixed $gameId
-     * @return ApiProblem|mixed
-     */
-    public function fetch($gameId)
-    {
-        return new GameEntity($this->service->fetchGame($gameId)->getArrayCopy());
-    }
-
-    /**
      * Fetch all or a subset of resources
      *
      * @param  array $params
@@ -81,40 +37,5 @@ class GameResource extends AbstractResourceListener
         /** @var DbSelect $games */
         $games = $this->service->fetchAll(null, true, new GameEntity());
         return new GameCollection($games);
-    }
-
-    /**
-     * Patch (partial in-place update) a resource
-     *
-     * @param  mixed $gameId
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function patch($gameId, $data)
-    {
-        return new ApiProblem(405, 'The PATCH method has not been defined for individual resources');
-    }
-
-    /**
-     * Replace a collection or members of a collection
-     *
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function replaceList($data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for collections');
-    }
-
-    /**
-     * Update a resource
-     *
-     * @param  mixed $gameId
-     * @param  mixed $data
-     * @return ApiProblem|mixed
-     */
-    public function update($gameId, $data)
-    {
-        return new ApiProblem(405, 'The PUT method has not been defined for individual resources');
     }
 }

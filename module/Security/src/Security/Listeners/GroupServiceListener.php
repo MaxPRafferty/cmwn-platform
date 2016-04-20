@@ -8,6 +8,7 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -61,7 +62,12 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
         }
 
         /** @var SecurityUser $user */
-        $user = $this->getAuthenticationService()->getIdentity();
+        try {
+            $user = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+        
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.groups')) {
             return;
         }

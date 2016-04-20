@@ -2,10 +2,12 @@
 
 namespace Security\Guard;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -15,8 +17,10 @@ use Zend\Mvc\MvcEvent;
  *
  * @package Security\Guard
  */
-class OriginGuard
+class OriginGuard implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     protected $listeners = [];
 
     /**
@@ -24,7 +28,9 @@ class OriginGuard
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], 200);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'attachCors'], PHP_INT_MAX);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], PHP_INT_MAX);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'attachCors'], PHP_INT_MAX);
     }
 
     /**

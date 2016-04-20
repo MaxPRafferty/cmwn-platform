@@ -365,10 +365,18 @@ mysql:
         mysqlnd_4xhjc5l4yqfk:
             name: cmwn
             sql: ''
+        mysqlnd_test_db_create:
+            name: cmwn_test
+            sql: ''
     grants:
         mysqlng_213csbtdw007:
             user: cmwn_user
             table: 'cmwn.*'
+            privileges:
+                - ALL
+        mysqlng_test_db_grant:
+            user: cmwn_user
+            table: 'cmwn_test.*'
             privileges:
                 - ALL
 postgresql:

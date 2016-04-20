@@ -3,7 +3,7 @@
 namespace Api\Factory;
 
 use Api\Listeners\ScopeListener;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Security\Service\SecurityGroupServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -21,12 +21,8 @@ class ScopeListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Security\Authorization\Rbac $rbac */
-        $rbac        = $serviceLocator->get('Security\Authorization\Rbac');
-
-        /** @var AuthenticationServiceInterface $authService */
-        $authService = $serviceLocator->get('Security\Authentication\AuthenticationService');
-
-        return new ScopeListener($rbac, $authService);
+        /** @var SecurityGroupServiceInterface $groupService */
+        $groupService = $serviceLocator->get(SecurityGroupServiceInterface::class);
+        return new ScopeListener($groupService);
     }
 }

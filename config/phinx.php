@@ -6,9 +6,9 @@ $dbUser = getenv('DATABASE1_USER');
 $dbPass = getenv('DATABASE1_PASS');
 
 $config = [
-    'paths' => [
+    'paths'        => [
         'migrations' => realpath(__DIR__ . '/../data/migrations'),
-        'seeds' => realpath(__DIR__ . '/../data/seeds'),
+        'seeds'      => realpath(__DIR__ . '/../data/seeds'),
     ],
     'environments' => [
         'default_migration_table' => 'phinxlog',
@@ -18,16 +18,23 @@ $config = [
             'host'    => $dbHost,
             'name'    => $dbName,
             'user'    => $dbUser,
-            'pass'    => $dbPass
+            'pass'    => $dbPass,
         ],
         'dev'                     => [
             'adapter' => 'mysql',
             'host'    => 'localhost',
             'name'    => 'cmwn',
             'user'    => 'cmwn_user',
-            'pass'    => 'cmwn_pass123$'
-        ]
-    ]
+            'pass'    => 'cmwn_pass123$',
+        ],
+        'test'                    => [
+            'adapter' => 'mysql',
+            'host'    => 'localhost',
+            'name'    => 'cmwn_test',
+            'user'    => 'cmwn_user',
+            'pass'    => 'cmwn_pass123$',
+        ],
+    ],
 ];
 
 return $config;

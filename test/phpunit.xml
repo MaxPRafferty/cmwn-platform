@@ -9,11 +9,11 @@
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
         colors="true"
-        stopOnError="true"
+        stopOnError="false"
         stopOnFailure="false"
         stopOnIncomplete="false"
         stopOnSkipped="false"
-        stopOnRisky="true"
+        stopOnRisky="false"
         timeoutForSmallTests="1"
         timeoutForMediumTests="10"
         timeoutForLargeTests="60">
@@ -35,6 +35,6 @@
         </whitelist>
     </filter>
     <listeners>
-        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
     </listeners>
 </phpunit>

@@ -1,12 +1,14 @@
 <?php
 return array(
     'shared-listeners' => array(
-        0 => 'Api\\Listeners\\UserRouteListener',
-        1 => 'Api\\Listeners\\UserGroupListener',
-        2 => 'Api\\Listeners\\ImportRouteListener',
-        3 => 'Api\\Listeners\\ScopeListener',
-        4 => 'Api\\Listeners\\SuperMeListener',
-        5 => 'Api\\Listeners\\UserImageListener',
+        0 => \Api\Listeners\UserRouteListener::class,
+        1 => \Api\Listeners\UserGroupListener::class,
+        2 => \Api\Listeners\ImportRouteListener::class,
+        3 => \Api\Listeners\ScopeListener::class,
+        4 => \Api\Listeners\SuperMeListener::class,
+        5 => \Api\Listeners\UserImageListener::class,
+        6 => \Api\Listeners\ChangePasswordListener::class,
+        7 => \Api\Listeners\GroupRouteListener::class,
     ),
     'service_manager' => array(
         'invokables' => array(
@@ -204,7 +206,6 @@ return array(
             'collection_name' => 'user',
             'entity_http_methods' => array(
                 0 => 'GET',
-                1 => 'PATCH',
                 2 => 'PUT',
                 3 => 'DELETE',
             ),
@@ -218,11 +219,6 @@ return array(
                 2 => 'per_page',
                 3 => 'deleted',
                 4 => 'username',
-                5 => 'email',
-                6 => 'first_name',
-                7 => 'last_name',
-                8 => 'middle_name',
-                9 => 'gender',
             ),
             'page_size' => 100,
             'page_size_param' => 'per_page',
@@ -260,9 +256,7 @@ return array(
             'route_name' => 'api.rest.game',
             'route_identifier_name' => 'game_id',
             'collection_name' => 'game',
-            'entity_http_methods' => array(
-                0 => 'GET',
-            ),
+            'entity_http_methods' => array(),
             'collection_http_methods' => array(
                 0 => 'GET',
             ),
@@ -299,7 +293,6 @@ return array(
             'collection_name' => 'group',
             'entity_http_methods' => array(
                 0 => 'GET',
-                1 => 'PATCH',
                 2 => 'PUT',
                 3 => 'DELETE',
             ),
@@ -373,14 +366,8 @@ return array(
             'route_name' => 'api.rest.forgot',
             'route_identifier_name' => 'forgot_id',
             'collection_name' => 'forgot',
-            'entity_http_methods' => array(
-                0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ),
+            'entity_http_methods' => array(),
             'collection_http_methods' => array(
-                0 => 'GET',
                 1 => 'POST',
             ),
             'collection_query_whitelist' => array(),
@@ -395,14 +382,8 @@ return array(
             'route_name' => 'api.rest.password',
             'route_identifier_name' => 'user_id',
             'collection_name' => 'password',
-            'entity_http_methods' => array(
-                0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ),
+            'entity_http_methods' => array(),
             'collection_http_methods' => array(
-                0 => 'GET',
                 1 => 'POST',
             ),
             'collection_query_whitelist' => array(),
@@ -419,14 +400,8 @@ return array(
             'collection_name' => 'group_users',
             'entity_http_methods' => array(
                 0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
             ),
-            'collection_http_methods' => array(
-                0 => 'GET',
-                1 => 'POST',
-            ),
+            'collection_http_methods' => array(),
             'collection_query_whitelist' => array(),
             'page_size' => 100,
             'page_size_param' => null,
@@ -441,14 +416,8 @@ return array(
             'collection_name' => 'org_users',
             'entity_http_methods' => array(
                 0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
             ),
-            'collection_http_methods' => array(
-                0 => 'GET',
-                1 => 'POST',
-            ),
+            'collection_http_methods' => array(),
             'collection_query_whitelist' => array(),
             'page_size' => 100,
             'page_size_param' => null,
@@ -465,9 +434,7 @@ return array(
                 0 => 'POST',
                 1 => 'GET',
             ),
-            'collection_http_methods' => array(
-                0 => 'GET',
-            ),
+            'collection_http_methods' => array(),
             'collection_query_whitelist' => array(),
             'page_size' => 100,
             'page_size_param' => null,
@@ -496,12 +463,7 @@ return array(
             'route_name' => 'api.rest.user-name',
             'route_identifier_name' => 'user_name_id',
             'collection_name' => 'user_name',
-            'entity_http_methods' => array(
-                0 => 'GET',
-                1 => 'PATCH',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ),
+            'entity_http_methods' => array(),
             'collection_http_methods' => array(
                 0 => 'GET',
                 1 => 'POST',
@@ -679,6 +641,14 @@ return array(
                 'entity_identifier_name' => 'user_id',
                 'route_name' => 'api.rest.user',
                 'route_identifier_name' => 'user_id',
+                'max_depth' => 2,
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\User\\MeEntity' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.user',
+                'route_identifier_name' => 'user_id',
+                'max_depth' => 2,
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
             ),
             'Api\\V1\\Rest\\User\\UserCollection' => array(
