@@ -1477,6 +1477,46 @@
                 <field name="external_id" xsi:nil="true"/>
             </row>
             <row>
+                <field name="user_id">other_student</field>
+                <field name="username">other_student</field>
+                <field name="email">other_student@manchuck.com</field>
+                <field name="code" xsi:nil="true"/>
+                <field name="type">CHILD</field>
+                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
+                <field name="first_name">Chuck</field>
+                <field name="middle_name">C</field>
+                <field name="last_name">Reeves</field>
+                <field name="gender">M</field>
+                <field name="meta" xsi:nil="true"/>
+                <field name="birthdate">2016-04-15 11:51:42</field>
+                <field name="created">0000-00-00 00:00:00</field>
+                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="code_expires" xsi:nil="true"/>
+                <field name="super">0</field>
+                <field name="external_id" xsi:nil="true"/>
+            </row>
+            <row>
+                <field name="user_id">other_principal</field>
+                <field name="username">other_principal</field>
+                <field name="email">other_principal@manchuck.com</field>
+                <field name="code" xsi:nil="true"/>
+                <field name="type">ADULT</field>
+                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
+                <field name="first_name">Max</field>
+                <field name="middle_name">C</field>
+                <field name="last_name">Rafferty</field>
+                <field name="gender">M</field>
+                <field name="meta" xsi:nil="true"/>
+                <field name="birthdate">2016-04-15 11:51:42</field>
+                <field name="created">0000-00-00 00:00:00</field>
+                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="code_expires" xsi:nil="true"/>
+                <field name="super">0</field>
+                <field name="external_id" xsi:nil="true"/>
+            </row>
+            <row>
                 <field name="user_id">principal</field>
                 <field name="username">principal</field>
                 <field name="email">principal@ginasink.com</field>
@@ -1522,6 +1562,16 @@
                 <field name="user_id">other_teacher</field>
                 <field name="group_id">other_math</field>
                 <field name="role">teacher</field>
+            </row>
+            <row>
+                <field name="user_id">other_student</field>
+                <field name="group_id">other_math</field>
+                <field name="role">student</field>
+            </row>
+            <row>
+                <field name="user_id">other_principal</field>
+                <field name="group_id">other_school</field>
+                <field name="role">principal</field>
             </row>
             <row>
                 <field name="user_id">principal</field>

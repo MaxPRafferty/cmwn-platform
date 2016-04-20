@@ -153,11 +153,12 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Finds all the users for an organization
      *
-     * SELECT *
-     * FROM users u
-     * LEFT JOIN user_groups ug ON ug.user_id = u.user_id
-     * LEFT JOIN groups g ON ug.group_id = g.group_id
-     * WHERE g.organization_id = 'foo-bar'
+     * SELECT u.*
+     * FROM groups g
+     *   LEFT OUTER JOIN user_groups AS ug ON ug.group_id = g.group_id
+     *   LEFT OUTER JOIN users AS u ON ug.user_id = u.user_id
+     * WHERE g.organization_id = 'district'
+     * GROUP BY u.user_id;
      *
      * @param $organization
      * @param null $prototype
@@ -168,8 +169,34 @@ class UserGroupService implements UserGroupServiceInterface
         $orgId = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
         $where = new Where();
         $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $orgId));
+        
+        $select = new Select(['g'  => 'groups']);
+        $select->columns(['group_id']);
 
-        return $this->fetchUsersForGroup($where, $prototype);
+        $select->join(
+            ['ug' => 'user_groups'],
+            'ug.group_id = g.group_id',
+            ['user_group_id' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->join(
+            ['u' => 'users'],
+            'ug.user_id = u.user_id',
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->where($where);
+        $select->group('u.user_id');
+
+        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        return new DbSelect(
+            $select,
+            $this->pivotTable->getAdapter(),
+            $resultSet
+        );
     }
 
 

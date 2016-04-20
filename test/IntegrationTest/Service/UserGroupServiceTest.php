@@ -42,7 +42,7 @@ class UserGroupServiceTest extends TestCase
     /**
      * @dataProvider groupUsersDataProvider
      */
-    public function testItShouldReturnAllUsersDescendingDown($groupId, $organizationId, array $expectedIds)
+    public function testItShouldReturnAllUsersForGroupDescendingDown($groupId, $organizationId, array $expectedIds)
     {
         $group = new Group();
         $group->setGroupId($groupId);
@@ -60,6 +60,53 @@ class UserGroupServiceTest extends TestCase
         sort($expectedIds);
 
         $this->assertSame($expectedIds, $actualIds, 'Service did not return the correct users from the database');
+    }
+
+    /**
+     * @dataProvider orgUsersDataProvider
+     */
+    public function testItShouldReturnAllUsersForOrg($organizationId, array $expectedIds)
+    {
+        $userPage  = new Paginator($this->userGroupService->fetchUsersForOrg($organizationId));
+        $actualIds = [];
+        /** @var UserInterface $user */
+        foreach ($userPage as $user) {
+            $this->assertInstanceOf(UserInterface::class, $user);
+            array_push($actualIds, $user->getUserId());
+        }
+
+        sort($actualIds);
+        sort($expectedIds);
+
+        $this->assertSame($expectedIds, $actualIds, 'Service did not return the correct users from the database');
+    }
+
+    /**
+     * @return array
+     */
+    public function orgUsersDataProvider()
+    {
+        return [
+            'Gina\'s District' => [
+                'organization_id'   => 'district',
+                'expected_user_ids' => [
+                    'math_teacher',
+                    'math_student',
+                    'english_teacher',
+                    'english_student',
+                    'principal',
+                ],
+            ],
+
+            'MANCHUCK\'s District' => [
+                'organization_id'   => 'manchuck',
+                'expected_user_ids' => [
+                    'other_teacher',
+                    'other_student',
+                    'other_principal',
+                ],
+            ],
+        ];
     }
 
     /**
