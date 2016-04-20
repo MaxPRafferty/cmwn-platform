@@ -96,7 +96,6 @@ class RandomNameListener
         }
 
         $userName->setValues($wordValues['LEFT'], $wordValues['RIGHT']);
-        $child->setEmail($child->getUserName() . '@changemyworldnow.com');
         $this->gateway->update(
             ['count' => new Expression('count + 1')],
             ['name' => [$userName->left, $userName->right]]
