@@ -106,11 +106,11 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     }
 
     /**
-     * @param GroupInterface|string|\Zend\Db\Sql\Where $group
+     * @param GroupInterface|\Zend\Db\Sql\Where $group
      * @param null $prototype
      * @return bool
      */
-    public function fetchUsersForGroup($group, $prototype = null)
+    public function fetchUsersForGroup(GroupInterface $group, $prototype = null)
     {
         $eventParams = ['group' => $group];
         $event       = new Event('fetch.group.users', $this->realService, $eventParams);

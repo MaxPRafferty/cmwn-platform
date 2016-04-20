@@ -11,6 +11,7 @@ use User\UserInterface;
 
 /**
  * Exception UserGroupServiceTest
+ * @group IntegrationTest
  */
 class SecurityGroupServiceTest extends TestCase
 {

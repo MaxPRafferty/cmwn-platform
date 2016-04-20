@@ -5,11 +5,14 @@ namespace Group\Service;
 use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
+use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -85,35 +88,61 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Finds all the users for a group
      *
-     * SELECT *
-     * FROM users u
-     * LEFT JOIN user_groups ug ON ug.user_id = u.user_id
-     * LEFT JOIN groups g ON ug.group_id = g.group_id
-     * WHERE g.group_id = 'baz-bat'
+     * SELECT u.*
+     * FROM groups g
+     *   LEFT JOIN groups AS active_group ON active_group.group_id = 'school'
+     *   LEFT OUTER JOIN user_groups AS ug ON ug.group_id = g.group_id
+     *   LEFT OUTER JOIN users AS u ON ug.user_id = u.user_id
+     * WHERE g.head BETWEEN active_group.head AND active_group.tail
+     *   AND g.organization_id = 'district'
      *
      * @param Where|GroupInterface|string $group
      * @param object $prototype
      * @return DbSelect
      */
-    public function fetchUsersForGroup($group, $prototype = null)
+    public function fetchUsersForGroup(GroupInterface $group, $prototype = null)
     {
-        $where = $this->createWhere($group);
+        $where = $this->createWhere([]);
+        $where->addPredicate(new Between(
+            'g.head',
+            new Expression('active_group.head'),
+            new Expression('active_group.tail')
+        ));
 
-        if ($group instanceof GroupInterface) {
-            $where->addPredicate(new Operator('g.group_id', Operator::OP_EQ, $group->getGroupId()));
-        }
+        $where->addPredicate(new Operator(
+            'g.organization_id',
+            '=',
+            $group->getOrganizationId()
+        ));
 
-        if (is_string($group)) {
-            $where->addPredicate(new Operator('g.group_id', Operator::OP_EQ, $group));
-        }
+        $select = new Select(['g'  => 'groups']);
+        $select->columns(['group_id']);
+        $select->join(
+            ['active_group' => 'groups'],
+            new Expression('active_group.group_id = ?', $group->getGroupId()),
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
 
-        $select = new Select();
-        $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', ['user_group_id' => 'group_id'], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', ['real_group_id' => 'group_id'], Select::JOIN_LEFT);
+        $select->join(
+            ['ug' => 'user_groups'],
+            'ug.group_id = g.group_id',
+            ['user_group_id' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->join(
+            ['u' => 'users'],
+            'ug.user_id = u.user_id',
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
+
         $select->where($where);
+        $select->group('u.user_id');
 
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
             $select,
             $this->pivotTable->getAdapter(),

@@ -48,7 +48,7 @@ interface UserGroupServiceInterface
      * @param object $prototype
      * @return DbSelect
      */
-    public function fetchUsersForGroup($group, $prototype = null);
+    public function fetchUsersForGroup(GroupInterface $group, $prototype = null);
 
     /**
      * Finds all the users for an organization
