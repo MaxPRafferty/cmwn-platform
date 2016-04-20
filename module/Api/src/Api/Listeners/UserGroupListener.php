@@ -106,14 +106,16 @@ class UserGroupListener
         $groups  = new GroupCollection($this->userGroupService->fetchGroupsForUser($realEntity, new GroupEntity()));
         $groups->setItemCountPerPage(10);
         $renderedGroups = [];
-
+        $groupTypes     = [];
         /** @var GroupEntity[] $groups */
         foreach ($groups as $group) {
             $entityToRender = new Entity($group->getArrayCopy());
             $renderedGroups[] = $hal->renderEntity($entityToRender);
+            array_push($groupTypes, $group->getType());
         }
 
         $payload['_embedded']['groups'] = $renderedGroups;
+        $this->attachGroupHalLinks($hal, $payload, $groupTypes);
     }
 
     /**
@@ -144,22 +146,20 @@ class UserGroupListener
         $orgs->setItemCountPerPage(10);
         $renderedGroups = [];
         $orgTypes       = [];
-        $groupTypes     = [];
         /** @var OrgEntity[] $orgs */
         foreach ($orgs as $org) {
             $entityToRender   = new Entity($org->getArrayCopy());
             $hal->injectSelfLink($entity, 'api.rest.org', 'org_id');
             $renderedGroups[] = $hal->renderEntity($entityToRender);
             $orgTypes[$org->getType()] = $org->getType();
-            $groupTypes = array_merge($groupTypes, $this->orgService->fetchGroupTypes($org));
         }
 
         $payload['_embedded']['organizations'] = $renderedGroups;
 
-        $this->attachHalLinks($hal, $payload, $orgTypes, $groupTypes);
+        $this->attachOrgHalLinks($hal, $payload, $orgTypes);
     }
 
-    protected function attachHalLinks(Hal $hal, \ArrayObject $payload, array $orgTypes, array $groupTypes)
+    protected function attachOrgHalLinks(Hal $hal, \ArrayObject $payload, array $orgTypes)
     {
         foreach ($orgTypes as $orgType) {
             $link = new OrgLink($orgType);
@@ -172,10 +172,13 @@ class UserGroupListener
                 ->getLinkExtractor()
                 ->extract($link);
         }
+    }
 
+    protected function attachGroupHalLinks(Hal $hal, \ArrayObject $payload, array $groupTypes)
+    {
         foreach ($groupTypes as $groupType) {
             $link = new GroupLink($groupType);
-            
+
             if (array_key_exists($link->getRelation(), $payload['_links'])) {
                 continue;
             }
