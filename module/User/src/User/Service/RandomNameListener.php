@@ -45,6 +45,12 @@ class RandomNameListener
             'save.new.user',
             [$this, 'reserveRandomName']
         );
+
+        $this->listeners[] = $manager->attach(
+            UserServiceDelegator::class,
+            'save.user',
+            [$this, 'reserveRandomName']
+        );
     }
 
     /**
@@ -68,6 +74,10 @@ class RandomNameListener
             return;
         }
 
+        if (!$child->isNameGenerated()) {
+            return;
+        }
+
         $child->getUserName();
         $userName = $child->getGeneratedName();
         $results  = $this->gateway->select(['name' => [$userName->left, $userName->right]]);
@@ -86,6 +96,7 @@ class RandomNameListener
         }
 
         $userName->setValues($wordValues['LEFT'], $wordValues['RIGHT']);
+        $child->setEmail($child->getUserName() . '@changemyworldnow.com');
         $this->gateway->update(
             ['count' => new Expression('count + 1')],
             ['name' => [$userName->left, $userName->right]]
