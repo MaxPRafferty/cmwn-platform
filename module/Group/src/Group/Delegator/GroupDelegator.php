@@ -45,8 +45,13 @@ class GroupDelegator implements GroupServiceInterface
 
     protected function attachDefaultListeners()
     {
-        $hideListener = new HideDeletedEntitiesListener(['fetch.all.groups'], ['fetch.group.post']);
+        $hideListener = new HideDeletedEntitiesListener(
+            ['fetch.all.groups', 'fetch.user.groups'],
+            ['fetch.group.post']
+        );
+
         $hideListener->setEntityParamKey('group');
+        $hideListener->setDeletedField('g.deleted');
 
         $this->getEventManager()->attach($hideListener);
     }
@@ -212,7 +217,7 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
+        $return   = $this->realService->fetchAllForUser($user, $event->getParam('where'), $paginate, $prototype);
         $event->setName('fetch.user.groups.post');
         $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);

@@ -133,10 +133,14 @@ class GroupService implements GroupServiceInterface
     /**
      * Finds all the groups for a user
      *
-     * SELECT *
-     * FROM groups g
-     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'baz-bat'
+     * SELECT ug.user_id AS active_user_id,
+     *   active_group.group_id AS active_group_id,
+     *   g.*
+     * FROM user_groups AS ug
+     *   LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
+     *   LEFT OUTER JOIN groups AS g ON g.head BETWEEN active_group.head AND active_group.tail
+     * WHERE ug.user_id = 'principal'
+     *   AND g.organization_id = active_group.organization_id
      *
      * @param Where|GroupInterface|string $user
      * @param object $prototype
@@ -144,22 +148,30 @@ class GroupService implements GroupServiceInterface
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
-        $where = $this->createWhere($where);
+        $where  = $this->createWhere($where);
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
 
-        if ($user instanceof UserInterface) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
-        }
+        $select = new Select(['ug' => 'user_groups']);
+        $select->columns([]);
+        $select->join(
+            ['active_group' => 'groups'],
+            'active_group.group_id = ug.group_id',
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
 
-        if (is_string($user)) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
-        }
+        $select->join(
+            ['g' => 'groups'],
+            new Expression('g.head BETWEEN active_group.head AND active_group.tail'),
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
 
-        $select = new Select();
-        $select->columns(['g' => '*']);
-        $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['role' => 'role'], Select::JOIN_LEFT);
+        $where->addPredicate(new Operator('g.organization_id', '=', new Expression('active_group.organization_id')));
         $select->where($where);
 
+        $prototype = $prototype === null ? new Group() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         if ($paginate) {
             return new DbSelect(
