@@ -4,6 +4,8 @@ namespace Api\V1\Rest\Org;
 use Org\Organization;
 use Org\OrganizationInterface;
 use Org\Service\OrganizationServiceInterface;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Where;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -83,9 +85,9 @@ class OrgResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        $query = [];
+        $query = new Where(); // TODO create filter spec
         if (isset($params['type'])) {
-            $query['type'] = $params['type'];
+            $query->addPredicate(new Operator('o.type', '=', $params['type']));
         }
 
         $orgs = $this->service->fetchAll($query, true, new OrgEntity());

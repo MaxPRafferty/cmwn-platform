@@ -25,7 +25,7 @@ return [
                 'GET'   => 'view.games',
             ],
             'api.rest.group'       => [
-                'GET'    => 'read.group',
+                'GET'    => 'view.group',
                 'POST'   => 'create.group',
                 'PUT'    => 'edit.group',
                 'DELETE' => 'remote.group',

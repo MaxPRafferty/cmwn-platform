@@ -194,7 +194,9 @@ return [
             ],
 
             'me' => [
-                'entity_bits' => [],
+                'entity_bits' => [
+                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                ],
                 'permissions' => [
                     'edit.user.adult',
                     'edit.user.child',
