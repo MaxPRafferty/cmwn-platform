@@ -201,8 +201,11 @@ return [
             ],
 
             'neighbor.adult' => [
-                'entity_bits' => [],
+                'entity_bits' => [
+                    'adult' => Rbac::SCOPE_REMOVE,
+                ],
                 'permissions' => [
+                    'remove.user.adult',
                     'view.user.adult',
                 ],
             ],
