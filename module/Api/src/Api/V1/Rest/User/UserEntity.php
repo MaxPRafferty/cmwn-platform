@@ -102,8 +102,11 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
         return $this->links;
     }
 
+    /**
+     * @return mixed
+     */
     public function getEntityType()
     {
-        return 'user';
+        return strtolower($this->getType());
     }
 }
