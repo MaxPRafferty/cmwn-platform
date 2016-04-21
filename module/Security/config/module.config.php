@@ -25,6 +25,8 @@ return [
             \Security\Authentication\AuthAdapter::class  => \Security\Authentication\AuthAdapterFactory::class,
             \Security\Authorization\Rbac::class          => \Security\Authorization\RbacFactory::class,
 
+            \Security\Listeners\UserServiceListener::class => \Security\Factory\UserServiceListenerFactory::class,
+
             \Security\Service\SecurityGroupService::class =>
                 \Security\Service\SecurityGroupServiceFactory::class,
 
@@ -60,6 +62,7 @@ return [
         \Security\Guard\XsrfGuard::class,
         \Security\Guard\CsrfGuard::class,
         \Security\Listeners\ExpireAuthSessionListener::class,
+        \Security\Listeners\UserServiceListener::class
     ],
 
     'console' => [

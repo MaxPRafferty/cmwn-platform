@@ -5,7 +5,6 @@ namespace Group\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
-use Group\Service\GroupService;
 use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -25,7 +24,7 @@ class GroupDelegator implements GroupServiceInterface
     use ServiceTrait;
 
     /**
-     * @var GroupService
+     * @var GroupServiceInterface
      */
     protected $realService;
 
@@ -36,9 +35,9 @@ class GroupDelegator implements GroupServiceInterface
 
     /**
      * GroupDelegator constructor.
-     * @param GroupService $service
+     * @param GroupServiceInterface $service
      */
-    public function __construct(GroupService $service)
+    public function __construct(GroupServiceInterface $service)
     {
         $this->realService = $service;
     }

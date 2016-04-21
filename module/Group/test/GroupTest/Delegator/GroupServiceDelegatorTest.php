@@ -41,7 +41,7 @@ class GroupServiceDelegatorTest extends TestCase
      */
     public function setUpService()
     {
-        $this->groupService = \Mockery::mock('\Group\Service\GroupService');
+        $this->groupService = \Mockery::mock(GroupServiceInterface::class);
     }
 
     /**

@@ -75,7 +75,12 @@ class UserAssertion implements AssertionInterface
         }
 
         //attach requested user type to permission
-        $permission = $this->permission . '.' . strtolower($this->requestedUser->getType());
-        return $rbac->isGranted($role, $permission);
+        foreach ($this->permission as $permission) {
+            if ($rbac->isGranted($role, $permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

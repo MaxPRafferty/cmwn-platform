@@ -5,6 +5,7 @@ namespace UserTest\Delegator;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Delegator\UserServiceDelegator;
+use User\Service\UserServiceInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 
@@ -53,6 +54,7 @@ class UserServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('save.user');
         $this->delegator->getEventManager()->clearListeners('fetch.user.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.users');
+        $this->delegator->getEventManager()->getSharedManager()->clearListeners(UserServiceInterface::class);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

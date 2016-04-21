@@ -11,7 +11,7 @@ return [
         ],
         'route-permissions' => [
             'api.rest.user'        => [
-                'GET'   => 'view.user',
+                'GET'   => ['view.user.adult', 'view.user.child'],
                 'POST'  => 'create.user',
                 'PUT'   => 'edit.user',
             ],

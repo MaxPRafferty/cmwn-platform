@@ -6,13 +6,11 @@ use Zend\Permissions\Rbac\RoleInterface;
 
 /**
  * Class AssertionTrait
- *
- * ${CARET}
  */
 trait AssertionTrait
 {
     /**
-     * @var string
+     * @var string[]
      */
     protected $permission;
 
@@ -24,7 +22,7 @@ trait AssertionTrait
     /**
      * @param $permission
      */
-    public function setPermission($permission)
+    public function setPermission(array $permission)
     {
         $this->permission = $permission;
     }
