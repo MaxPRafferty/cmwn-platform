@@ -169,6 +169,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.all.users',
                 ],
 
                 'denied' => [
@@ -211,6 +212,7 @@ class RbacTest extends TestCase
                     'remove.user.adult',
                     'view.all.groups',
                     'view.all.orgs',
+                    'view.all.users',
                 ],
             ],
 
@@ -249,6 +251,7 @@ class RbacTest extends TestCase
                     'remove.user.adult',
                     'view.all.groups',
                     'view.all.orgs',
+                    'view.all.users',
                 ],
             ],
 
@@ -287,6 +290,7 @@ class RbacTest extends TestCase
                     'remove.user.adult',
                     'view.all.groups',
                     'view.all.orgs',
+                    'view.all.users',
                 ],
             ],
 
@@ -325,6 +329,7 @@ class RbacTest extends TestCase
                     'remove.user.adult',
                     'view.all.groups',
                     'view.all.orgs',
+                    'view.all.users',
                 ],
             ],
             'Teacher' => [
@@ -362,6 +367,7 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.org.users',
+                    'view.all.users',
                 ],
             ],
 
@@ -372,6 +378,8 @@ class RbacTest extends TestCase
                     'view.games',
                     'view.group',
                     'view.org',
+                    'view.user.adult',
+                    'view.user.child',
                 ],
 
                 'denied' => [
@@ -398,8 +406,7 @@ class RbacTest extends TestCase
                     'view.all.orgs',
                     'view.group.users',
                     'view.org.users',
-                    'view.user.adult',
-                    'view.user.child',
+                    'view.all.users',
                 ],
             ],
 
@@ -438,6 +445,7 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.org.users',
+                    'view.all.users',
                 ],
             ],
 
@@ -476,6 +484,7 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.org.users',
+                    'view.all.users',
                 ],
             ],
 
@@ -515,6 +524,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.all.users',
                 ],
             ],
         ];

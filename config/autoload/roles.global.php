@@ -4,6 +4,8 @@ use \Security\Authorization\Rbac;
 return [
     'cmwn-roles' => [
         'permission_labels' => [
+            // super
+            'view.all.users'     => 'View all users',
 
             // user
             'create.user'        => 'Create a user',
@@ -65,6 +67,7 @@ return [
                     'remove.user.adult',
                     'view.all.groups',
                     'view.all.orgs',
+                    'view.all.users',
                 ],
             ],
 
@@ -251,6 +254,8 @@ return [
                     'view.games',
                     'view.group',
                     'view.org',
+                    'view.user.adult',
+                    'view.user.child',
                 ],
             ],
 

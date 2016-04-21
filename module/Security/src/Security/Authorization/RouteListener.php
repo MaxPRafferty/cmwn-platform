@@ -121,7 +121,8 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         }
 
         $method     = $event->getRequest()->getMethod();
-        $permission = isset($this->routePerms[$routeName][$method]) ? $this->routePerms[$routeName][$method] : null;
+        $permission = isset($this->routePerms[$routeName][$method]) ? $this->routePerms[$routeName][$method] : [null];
+        $permission = !is_array($permission) ? [$permission] : $permission;
         $role       = $user->getRole();
         $assertion  = $this->getAssertion($event, $role, $permission);
 
@@ -142,7 +143,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param $permission
      * @return AssertionInterface
      */
-    protected function getAssertion(MvcEvent $event, $role, $permission)
+    protected function getAssertion(MvcEvent $event, $role, array $permission)
     {
         $assertion  = $event->getParam('assertion', new DefaultAssertion());
 
