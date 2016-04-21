@@ -97,31 +97,22 @@ interface UserGroupServiceInterface
     public function fetchOrganizationsForUser($user, $prototype = null);
 
     /**
-     * Gets the groups types for a user
+     * SELECT ug.user_id AS active_user_id,
+     *   active_group.group_id AS active_group_id,
+     *   ug2.user_id AS sub_user_id,
+     *   u.*
+     * FROM user_groups AS ug
+     *   LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
+     *   LEFT OUTER JOIN groups AS g ON g.head BETWEEN active_group.head AND active_group.tail
+     *   LEFT OUTER JOIN user_groups AS ug2 ON ug2.group_id = g.group_id
+     *   LEFT JOIN users AS u ON u.user_id = ug2.user_id
+     * WHERE ug.user_id = 'principal'
+     *   AND g.organization_id = active_group.organization_id;
      *
-     * SELECT
-     * DISTINCT g.type
-     * FROM user_groups ug
-     *   LEFT JOIN groups g ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     *
-     * @param string|UserInterface $user
-     * @return $this
+     * @param $user
+     * @param $where
+     * @param null $prototype
+     * @return DbSelect
      */
-    public function fetchGroupTypesForUser($user);
-
-    /**
-     * Gets the org types for a user
-     *
-     * SELECT
-     * DISTINCT o.type
-     * FROM user_groups ug
-     *   LEFT JOIN groups g ON ug.group_id = g.group_id
-     *   LEFT JOIN organizations o ON o.org_id = g.organization_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     *
-     * @param string|UserInterface $user
-     * @return $this
-     */
-    public function fetchOrgTypesForUser($user);
+    public function fetchAllUsersForUser($user, $where = null, $prototype = null);
 }

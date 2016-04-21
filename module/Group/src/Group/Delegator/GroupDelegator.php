@@ -5,7 +5,6 @@ namespace Group\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
-use Group\Service\GroupService;
 use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -25,7 +24,7 @@ class GroupDelegator implements GroupServiceInterface
     use ServiceTrait;
 
     /**
-     * @var GroupService
+     * @var GroupServiceInterface
      */
     protected $realService;
 
@@ -36,17 +35,22 @@ class GroupDelegator implements GroupServiceInterface
 
     /**
      * GroupDelegator constructor.
-     * @param GroupService $service
+     * @param GroupServiceInterface $service
      */
-    public function __construct(GroupService $service)
+    public function __construct(GroupServiceInterface $service)
     {
         $this->realService = $service;
     }
 
     protected function attachDefaultListeners()
     {
-        $hideListener = new HideDeletedEntitiesListener(['fetch.all.groups'], ['fetch.group.post']);
+        $hideListener = new HideDeletedEntitiesListener(
+            ['fetch.all.groups', 'fetch.user.groups'],
+            ['fetch.group.post']
+        );
+
         $hideListener->setEntityParamKey('group');
+        $hideListener->setDeletedField('g.deleted');
 
         $this->getEventManager()->attach($hideListener);
     }
@@ -212,7 +216,7 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
+        $return   = $this->realService->fetchAllForUser($user, $event->getParam('where'), $paginate, $prototype);
         $event->setName('fetch.user.groups.post');
         $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);

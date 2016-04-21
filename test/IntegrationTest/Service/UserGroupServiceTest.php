@@ -82,6 +82,76 @@ class UserGroupServiceTest extends TestCase
     }
 
     /**
+     * @dataProvider userRelationshipProvider
+     */
+    public function testItShouldFetchAllUsersThatUserHasRelationshipWith($user, array $expectedIds)
+    {
+        $userPage = new Paginator($this->userGroupService->fetchAllUsersForUser($user));
+        $actualIds = [];
+        /** @var UserInterface $user */
+        foreach ($userPage as $user) {
+            $this->assertInstanceOf(UserInterface::class, $user);
+            array_push($actualIds, $user->getUserId());
+        }
+
+        sort($actualIds);
+        sort($expectedIds);
+
+        $this->assertSame($expectedIds, $actualIds, 'Service did not return the correct users from the database');
+    }
+
+    /**
+     * @return array
+     */
+    public function userRelationshipProvider()
+    {
+        return [
+            'Principal' => [
+                'user'              => 'principal',
+                'expected_user_ids' => [
+                    'math_teacher',
+                    'math_student',
+                    'english_teacher',
+                    'english_student',
+                    'principal',
+                ],
+            ],
+
+            'English Teacher' => [
+                'user'              => 'english_teacher',
+                'expected_user_ids' => [
+                    'english_teacher',
+                    'english_student',
+                ],
+            ],
+
+            'Math Teacher' => [
+                'user'              => 'math_teacher',
+                'expected_user_ids' => [
+                    'math_teacher',
+                    'math_student',
+                ],
+            ],
+
+            'English Student' => [
+                'user'              => 'english_student',
+                'expected_user_ids' => [
+                    'english_teacher',
+                    'english_student',
+                ],
+            ],
+
+            'Math Student' => [
+                'user'              => 'math_student',
+                'expected_user_ids' => [
+                    'math_teacher',
+                    'math_student',
+                ],
+            ],
+        ];
+    }
+    
+    /**
      * @return array
      */
     public function orgUsersDataProvider()

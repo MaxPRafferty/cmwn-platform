@@ -6,10 +6,12 @@ return [
             'Group\Service'                                 => \Group\Service\GroupService::class,
             'Group\GroupService'                            => \Group\Service\GroupService::class,
             \Group\Service\UserGroupServiceInterface::class => \Group\Service\UserGroupService::class,
+            \Group\Service\GroupServiceInterface::class     => \Group\Service\GroupService::class,
         ],
         'invokables' => [
             \Group\Delegator\GroupDelegatorFactory::class            => \Group\Delegator\GroupDelegatorFactory::class,
-            \Group\Delegator\UserGroupServiceDelegatorFactory::class => \Group\Delegator\UserGroupServiceDelegatorFactory::class,
+            \Group\Delegator\UserGroupServiceDelegatorFactory::class =>
+                \Group\Delegator\UserGroupServiceDelegatorFactory::class,
         ],
         'factories'  => [
             \Group\Service\GroupService::class     => \Group\Service\GroupServiceFactory::class,

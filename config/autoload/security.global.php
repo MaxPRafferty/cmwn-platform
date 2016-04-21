@@ -11,7 +11,7 @@ return [
         ],
         'route-permissions' => [
             'api.rest.user'        => [
-                'GET'   => 'view.user',
+                'GET'   => ['view.user.adult', 'view.user.child'],
                 'POST'  => 'create.user',
                 'PUT'   => 'edit.user',
             ],
@@ -25,7 +25,7 @@ return [
                 'GET'   => 'view.games',
             ],
             'api.rest.group'       => [
-                'GET'    => 'read.group',
+                'GET'    => 'view.group',
                 'POST'   => 'create.group',
                 'PUT'    => 'edit.group',
                 'DELETE' => 'remote.group',

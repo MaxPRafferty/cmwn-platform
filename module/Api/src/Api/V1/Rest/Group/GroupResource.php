@@ -74,7 +74,7 @@ class GroupResource extends AbstractResourceListener
     public function fetch($groupId)
     {
         $group = $this->getEvent()->getRouteParam('group', false);
-        $group = $group instanceof GroupInterface ? $this->service->fetchGroup($groupId) : $group;
+        $group = !$group instanceof GroupInterface ? $this->service->fetchGroup($groupId) : $group;
 
         $org = $this->orgService->fetchOrganization($group->getOrganizationId());
 
@@ -96,11 +96,11 @@ class GroupResource extends AbstractResourceListener
     {
         $query  = [];
         if (isset($params['type'])) {
-            $query['type'] = $params['type'];
+            $query['g.type'] = $params['type'];
         }
 
         if (isset($params['org_id'])) {
-            $query['organization_id'] = $params['org_id'];
+            $query['g.organization_id'] = $params['org_id'];
         }
 
         if (!isset($params['parent'])) {

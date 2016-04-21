@@ -233,44 +233,31 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         return $return;
     }
 
-    public function fetchGroupTypesForUser($user)
+    /**
+     * Fetchs all the
+     * @param $user
+     * @param null $where
+     * @param null $prototype
+     * @return bool|DbSelect
+     */
+    public function fetchAllUsersForUser($user, $where = null, $prototype = null)
     {
-        $eventParams = ['user' => $user];
-        $event       = new Event('fetch.user.group.types', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
-            return [];
+        $eventParams = ['user' => $user, 'where' => $where, 'prototype' => $prototype];
+        $event       = new Event('fetch.all.user.users', $this->realService, $eventParams);
+        $response    = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
         }
 
         try {
-            $return = $this->realService->fetchGroupTypesForUser($user);
-            $event->setName('fetch.user.group.types.post');
-            $event->setParam('types', $return);
+            $return = $this->realService->fetchAllUsersForUser($user, $where, $prototype);
+            $event->setParam('result', $return);
+            $event->setName('fetch.all.user.users');
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
-            $event->setName('fetch.user.group.types.error');
-            $return = [];
-        }
-
-        $this->getEventManager()->trigger($event);
-        return $return;
-    }
-
-    public function fetchOrgTypesForUser($user)
-    {
-        $eventParams = ['user' => $user];
-        $event       = new Event('fetch.user.org.types', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
-            return [];
-        }
-
-        try {
-            $return = $this->realService->fetchOrgTypesForUser($user);
-            $event->setName('fetch.user.org.types.post');
-            $event->setParam('types', $return);
-        } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
-            $event->setName('fetch.user.org.types.error');
-            $return = [];
+            $event->setName('fetch.all.user.users.error');
+            $this->getEventManager()->trigger($event);
+            return false;
         }
 
         $this->getEventManager()->trigger($event);
