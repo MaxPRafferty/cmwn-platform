@@ -21,10 +21,10 @@ class UserNameTest extends TestCase
         $userName = new UserName('foo', 'bar');
 
         $userName->setValues(1, 1);
-        $this->assertEquals('foo_bar002', $userName->userName);
+        $this->assertEquals('foo-bar002', $userName->userName);
 
         $userName->setValues(5, 8);
-        $this->assertEquals('foo_bar013', $userName->userName);
+        $this->assertEquals('foo-bar013', $userName->userName);
     }
 
     /**
@@ -35,7 +35,7 @@ class UserNameTest extends TestCase
         $userName = new UserName('foo', 'bar');
 
         $userName->setValues(0, 0);
-        $this->assertEquals('foo_bar002', $userName->userName);
+        $this->assertEquals('foo-bar002', $userName->userName);
     }
 
     /**
