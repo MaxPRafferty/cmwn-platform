@@ -34,6 +34,9 @@ class AddTeacherToGroupAction implements ActionInterface
         $this->userGroupService = $userGroupService;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         $group = $this->teacher->getClassRoom()->getGroup();

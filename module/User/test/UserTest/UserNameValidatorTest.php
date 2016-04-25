@@ -7,10 +7,16 @@ use User\UserName;
 use User\UserNameValidator;
 
 /**
- * Exception UserNameValidatorTest
+ * Test UserNameValidatorTest
+ *
+ * @group User
+ * @group Validator
  */
 class UserNameValidatorTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldValidateCorrectly()
     {
         $userName = new UserName('awesome', 'otter');

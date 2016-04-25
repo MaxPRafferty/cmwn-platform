@@ -8,7 +8,7 @@ use Import\ParserInterface;
 use Zend\Log\LoggerAwareInterface;
 
 /**
- * Class AbstractProcesser
+ * Class AbstractParser
  */
 abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
 {

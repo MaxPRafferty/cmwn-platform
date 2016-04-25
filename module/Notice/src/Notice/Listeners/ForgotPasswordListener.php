@@ -5,10 +5,10 @@ namespace Notice\Listeners;
 use AcMailer\Service\MailServiceAwareTrait;
 use Forgot\Service\ForgotServiceInterface;
 use Notice\EmailModel\ForgotEmailModel;
-use Notice\EmailModel\NewUserModel;
+
 use Notice\NoticeInterface;
 use User\Child;
-use User\Service\UserServiceInterface;
+
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -53,18 +53,18 @@ class ForgotPasswordListener implements NoticeInterface
      * Send out a notice about the import
      *
      * @param Event $event
-     * @return void
+     * @return null
      */
     public function notify(Event $event)
     {
         $user = $event->getParam('user');
 
         if (!$user instanceof UserInterface) {
-            return;
+            return null;
         }
 
         if ($user instanceof Child) {
-            return;
+            return null;
         }
 
         $this->getMailService()->getMessage()->setTo($user->getEmail());
@@ -74,5 +74,6 @@ class ForgotPasswordListener implements NoticeInterface
         );
 
         $this->getMailService()->send();
+        return null;
     }
 }

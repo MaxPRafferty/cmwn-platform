@@ -26,5 +26,4 @@ class OrganizationServiceFactory implements FactoryInterface
         $tableGateway = $serviceLocator->get('OrganizationsTable');
         return new OrganizationService($tableGateway);
     }
-
 }

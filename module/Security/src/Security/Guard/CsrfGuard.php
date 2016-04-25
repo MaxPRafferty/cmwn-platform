@@ -78,6 +78,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     /**
      * @param MvcEvent $event
      * @return null|ApiProblemResponse
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function checkToken(MvcEvent $event)
     {
@@ -102,6 +103,8 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
 
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
         }
+        
+        return null;
     }
 
     /**

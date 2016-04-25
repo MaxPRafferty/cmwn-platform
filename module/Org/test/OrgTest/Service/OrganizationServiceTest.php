@@ -11,7 +11,9 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
 /**
  * Test OrganizationServiceTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Organization
+ * @group Service
+ * @group OrganizationService
  */
 class OrganizationServiceTest extends TestCase
 {
@@ -47,6 +49,9 @@ class OrganizationServiceTest extends TestCase
         $this->organizationService = new OrganizationService($this->tableGateway);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
     {
         $this->tableGateway
@@ -57,6 +62,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
     {
         $this->tableGateway
@@ -71,6 +79,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
     {
         $expectedWhere = new Where();
@@ -88,6 +99,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveNewOrg()
     {
         $newOrg = new Organization();
@@ -117,6 +131,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertTrue($this->organizationService->createOrganization($newOrg));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldUpdateExistingOrg()
     {
         $orgData = [
@@ -153,6 +170,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertTrue($this->organizationService->updateOrganization($org));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchOrgById()
     {
         $orgData = [
@@ -174,6 +194,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertInstanceOf('Org\Organization', $this->organizationService->fetchOrganization($orgData['org_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenOrgIsNotFound()
     {
         $this->setExpectedException(
@@ -189,6 +212,9 @@ class OrganizationServiceTest extends TestCase
         $this->organizationService->fetchOrganization('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteByDefault()
     {
         $orgData = [
@@ -218,6 +244,9 @@ class OrganizationServiceTest extends TestCase
         $this->assertTrue($this->organizationService->deleteOrganization($org));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteWhenForced()
     {
         $orgData = [

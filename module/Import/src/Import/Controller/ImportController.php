@@ -17,7 +17,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ImportController
- * @codeCoverageIgnore
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ImportController extends ConsoleController implements LoggerAwareInterface
 {
@@ -66,6 +66,9 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
         return parent::onDispatch($event);
     }
 
+    /**
+     * Imports an Excel Sheet into the system
+     */
     public function importAction()
     {
         try {

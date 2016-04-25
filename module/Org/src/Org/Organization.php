@@ -44,6 +44,10 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
      */
     protected $type;
 
+    /**
+     * Organization constructor.
+     * @param array|null $options
+     */
     public function __construct(array $options = null)
     {
         if (is_array($options)) {

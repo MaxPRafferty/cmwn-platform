@@ -5,7 +5,7 @@ namespace Security\Authorization;
 /**
  * Trait RbacAwareTrait
  *
- * ${CARET}
+ * Trait to help a class be aware of the RBAC
  */
 trait RbacAwareTrait
 {
@@ -14,6 +14,9 @@ trait RbacAwareTrait
      */
     protected $rbac;
 
+    /**
+     * @param Rbac $rbac
+     */
     public function setRbac(Rbac $rbac)
     {
         $this->rbac = $rbac;

@@ -8,9 +8,9 @@ use User\Child;
 use User\Service\StaticNameService;
 
 /**
- * Test AdultTest
+ * Test ChildTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
  */
 class ChildTest extends TestCase
 {
@@ -25,6 +25,9 @@ class ChildTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldExtractAndHydrateWithNulls()
     {
         $name = StaticNameService::generateRandomName();
@@ -51,6 +54,9 @@ class ChildTest extends TestCase
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
@@ -78,6 +84,9 @@ class ChildTest extends TestCase
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldGenerateRandomNameWhenUserNameIsNotSet()
     {
         $child = new Child();
@@ -87,9 +96,11 @@ class ChildTest extends TestCase
         $this->assertNotEmpty($child->getUserName());
         $this->assertNotNull($child->getGeneratedName());
         $this->assertTrue($child->isNameGenerated());
-
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportNameNotGeneratedWhenSet()
     {
         $child = new Child();
@@ -99,6 +110,9 @@ class ChildTest extends TestCase
         $this->assertNull($child->getGeneratedName());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotChangeTheUserNameAfterItHasBeenSet()
     {
         $child = new Child();

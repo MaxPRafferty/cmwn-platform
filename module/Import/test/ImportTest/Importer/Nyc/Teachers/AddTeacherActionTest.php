@@ -10,7 +10,15 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
 /**
- * Exception AddTeacherActionTest
+ * Test AddTeacherActionTest
+ *
+ * @group Teacher
+ * @group User
+ * @group Action
+ * @group Import
+ * @group NycImport
+ * @group UserService
+ * @group Service
  */
 class AddTeacherActionTest extends TestCase
 {
@@ -57,6 +65,9 @@ class AddTeacherActionTest extends TestCase
         return $teacher;
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectAction()
     {
         $teacher = $this->getGoodTeacher();
@@ -69,6 +80,9 @@ class AddTeacherActionTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveTeacherToDataBase()
     {
         $teacher = $this->getGoodTeacher();
@@ -93,7 +107,7 @@ class AddTeacherActionTest extends TestCase
                 $this->assertEquals(
                     'Reeves',
                     $user->getLastName(),
-                    'Action did not map last name correcrtly'
+                    'Action did not map last name correctly'
                 );
 
                 $this->assertEquals(

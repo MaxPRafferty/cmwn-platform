@@ -138,7 +138,17 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         }
 
         $results->rewind();
-        $row = $results->current();
+        return $this->marshalRole($results->current());
+    }
+
+    /**
+     * Figures out the comparing role for the active user
+     *
+     * @param \ArrayObject $row
+     * @return string
+     */
+    protected function marshalRole(\ArrayObject $row)
+    {
 
         $result = new \stdClass();
 
@@ -155,20 +165,9 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         $result->requested_parent->head = (int) $row->requested_parent_head;
         $result->requested_parent->tail = (int) $row->requested_parent_tail;
 
-        return $this->marshalRole($result);
-    }
-
-    /**
-     * Figures out the comparing role for the active user
-     *
-     * @param \stdClass $row
-     * @return string
-     */
-    protected function marshalRole(\stdClass $row)
-    {
         return $this->isActiveSameTypeAsRequested()
-            ? $this->marshalRoleForSameTypes($row)
-            : $this->marshalRoleForDifferentTypes($row);
+            ? $this->marshalRoleForSameTypes($result)
+            : $this->marshalRoleForDifferentTypes($result);
     }
 
     /**

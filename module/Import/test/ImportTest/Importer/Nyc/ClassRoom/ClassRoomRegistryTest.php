@@ -10,9 +10,13 @@ use Import\Importer\Nyc\Exception\InvalidClassRoomException;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Exception ClassRoomRegistryTest
+ * Test ClassRoomRegistryTest
  *
- * ${CARET}
+ * @group Registry
+ * @group Import
+ * @group ClassRoom
+ * @group Group
+ * @group NycImport
  */
 class ClassRoomRegistryTest extends TestCase
 {
@@ -43,6 +47,9 @@ class ClassRoomRegistryTest extends TestCase
         $this->registry = new ClassRoomRegistry($this->groupService);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldLookInLocalRegistryBeforeQueryingTheDatabase()
     {
         $classroom = new ClassRoom('History of the world', 'hist101');
@@ -53,6 +60,9 @@ class ClassRoomRegistryTest extends TestCase
         $this->assertTrue($this->registry->offsetExists('hist101'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldConvertGroupToClassRoomWhenSearching()
     {
         $group = new Group();
@@ -71,6 +81,9 @@ class ClassRoomRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldAttachGroupToExistingGroupWhenAddingClassRoom()
     {
         $classRoom = new ClassRoom('History of the world', 'hist101');
@@ -92,6 +105,9 @@ class ClassRoomRegistryTest extends TestCase
         $this->assertSame($group, $classRoom->getGroup(), 'Registry did not attach group');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnFalseWhenDbLookFailsToFindClass()
     {
         $this->groupService->shouldReceive('fetchGroupByExternalId')
@@ -99,9 +115,12 @@ class ClassRoomRegistryTest extends TestCase
             ->andThrow(new NotFoundException())
             ->once();
 
-        $this->assertfalse($this->registry->offsetExists('hist101'));
+        $this->assertFalse($this->registry->offsetExists('hist101'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldUseIdFromClassRoomForOffsetSet()
     {
         $classroom = new ClassRoom('History of the world', 'hist101');
@@ -112,6 +131,9 @@ class ClassRoomRegistryTest extends TestCase
         $this->assertSame($classroom, $this->registry->offsetGet('hist101'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnNullWhenNotSet()
     {
         $this->groupService->shouldReceive('fetchGroupByExternalId')
@@ -122,16 +144,22 @@ class ClassRoomRegistryTest extends TestCase
         $this->assertNull($this->registry->offsetGet('hist101'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowBadMethodCallExceptionOnUnset()
     {
         $this->setExpectedException(
-            \BadmethodCallException::class,
+            \BadMethodCallException::class,
             'Cannot unset values from the Classroom Registry'
         );
 
         $this->registry->offsetUnset('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotAddBadClassrooms()
     {
         $classRoom = new ClassRoom('', '');

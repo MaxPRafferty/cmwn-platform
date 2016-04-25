@@ -35,6 +35,9 @@ class AddStudentAction implements ActionInterface
         $this->student     = $student;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return sprintf(

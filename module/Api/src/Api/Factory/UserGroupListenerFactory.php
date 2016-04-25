@@ -3,6 +3,7 @@
 namespace Api\Factory;
 
 use Api\Listeners\UserGroupListener;
+use Group\Service\UserGroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -22,11 +23,11 @@ class UserGroupListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Group\Service\UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get('Group\Service\UserGroupServiceInterface');
-
+        /** @var UserGroupServiceInterface $userGroupService */
         /** @var OrganizationServiceInterface $orgService */
-        $orgService    = $serviceLocator->get('Org\Service\OrganizationServiceInterface');
+        $userGroupService = $serviceLocator->get(UserGroupServiceInterface::class);
+        $orgService       = $serviceLocator->get(OrganizationServiceInterface::class);
+
         return new UserGroupListener($userGroupService, $orgService);
     }
 }

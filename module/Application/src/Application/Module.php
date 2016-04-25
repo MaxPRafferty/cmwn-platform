@@ -6,6 +6,7 @@
 
 namespace Application;
 
+use Application\Listeners\ListenersAggregate;
 use Application\Utils\StaticType;
 use Zend\EventManager\SharedEventManager;
 use Zend\Log\Logger;
@@ -74,7 +75,7 @@ class Module implements ConfigProviderInterface
         /** @var \Application\Listeners\ListenersAggregate $aggregate */
         /** @var SharedEventManager $sharedEvents */
         $service      = $event->getApplication()->getServiceManager();
-        $aggregate    = $service->get('Application\Listeners\ListenersAggregate');
+        $aggregate    = $service->get(ListenersAggregate::class);
         $sharedEvents = $service->get('SharedEventManager');
 
         $aggregate->attachShared($sharedEvents);

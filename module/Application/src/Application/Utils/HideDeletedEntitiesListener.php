@@ -13,8 +13,7 @@ use Zend\EventManager\ListenerAggregateTrait;
 /**
  * Class HideDeletedEntityListener
  *
- * @todo Allow some entitys to be able to see deleted entitys
- * @todo Make this class more genric
+ * @todo Allow some entities to be able to see deleted entities
  */
 class HideDeletedEntitiesListener implements ListenerAggregateInterface
 {
@@ -55,6 +54,7 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
      *
      * @param array $whereEvents
      * @param array $entityEvents
+     * @param null $table
      */
     public function __construct(array $whereEvents, array $entityEvents, $table = null)
     {
@@ -115,6 +115,9 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     protected function getDeletedField()
     {
         if ($this->table !== null) {

@@ -2,6 +2,11 @@
 
 namespace User;
 
+/**
+ * Interface UserInterface
+ *
+ * Defines what is needed for a user
+ */
 interface UserInterface
 {
     const TYPE_ADULT = 'ADULT';

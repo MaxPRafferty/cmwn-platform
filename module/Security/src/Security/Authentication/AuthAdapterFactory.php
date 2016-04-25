@@ -3,7 +3,7 @@
 namespace Security\Authentication;
 
 use Security\Service\SecurityOrgService;
-use Security\Service\SecurityService;
+use Security\Service\SecurityServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -21,11 +21,10 @@ class AuthAdapterFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var SecurityService $securityService */
-        $securityService = $serviceLocator->get('Security\Service\SecurityService');
-
+        /** @var SecurityServiceInterface $securityService */
         /** @var SecurityOrgService $orgService */
-        $orgService   = $serviceLocator->get('Security\Service\SecurityOrgService');
+        $securityService = $serviceLocator->get(SecurityServiceInterface::class);
+        $orgService      = $serviceLocator->get(SecurityOrgService::class);
         return new AuthAdapter($securityService, $orgService);
     }
 }

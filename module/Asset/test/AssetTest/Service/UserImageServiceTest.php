@@ -14,6 +14,16 @@ use Zend\Db\Sql\Where;
 
 /**
  * Exception UserImageServiceTest
+ * @group Asset
+ * @group Image
+ * @group User
+ * @group Service
+ * @group UserImageService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserImageServiceTest extends TestCase
 {
@@ -49,6 +59,9 @@ class UserImageServiceTest extends TestCase
         $this->service = new UserImageService($this->tableGateway);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveImageToUserWithIds()
     {
         $this->tableGateway->shouldReceive('insert')
@@ -61,6 +74,9 @@ class UserImageServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveImageToUserWithObjects()
     {
         $image = new Image();
@@ -79,6 +95,9 @@ class UserImageServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchImageUsingId()
     {
         $expectedImage = new Image();
@@ -114,6 +133,9 @@ class UserImageServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenImageNotApproved()
     {
         $expectedImage = new Image();
@@ -140,7 +162,7 @@ class UserImageServiceTest extends TestCase
             });
 
         try {
-            $actualImage = $this->service->fetchImageForUser('foo');
+            $this->service->fetchImageForUser('foo');
         } catch (AssetNotApprovedException $actualException) {
 
             $this->assertEquals(
@@ -154,6 +176,9 @@ class UserImageServiceTest extends TestCase
         $this->fail('User Image Service did not throw exception');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenImageNotFound()
     {
         $this->tableGateway->shouldReceive('selectWith')

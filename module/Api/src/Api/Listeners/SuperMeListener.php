@@ -42,6 +42,11 @@ class SuperMeListener implements AuthenticationServiceAwareInterface, RbacAwareI
      */
     protected $groupService;
 
+    /**
+     * SuperMeListener constructor.
+     * @param OrganizationServiceInterface $orgService
+     * @param GroupServiceInterface $groupService
+     */
     public function __construct(OrganizationServiceInterface $orgService, GroupServiceInterface $groupService)
     {
         $this->groupService = $groupService;

@@ -10,9 +10,13 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
 
 /**
- * Exception StudentRegistryTest
+ * Test StudentRegistryTest
  *
- * ${CARET}
+ * @group Student
+ * @group Registry
+ * @group User
+ * @group Import
+ * @group NycImport
  */
 class StudentRegistryTest extends TestCase
 {
@@ -59,6 +63,9 @@ class StudentRegistryTest extends TestCase
         return $student;
     }
 
+    /**
+     * @test
+     */
     public function testItShouldShouldLookInLocalStorageBeforeQueryingTheDatabase()
     {
         $student = $this->getGoodStudent();
@@ -68,6 +75,9 @@ class StudentRegistryTest extends TestCase
         $this->assertSame($student, $this->registry->offsetGet('foo-bar'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldConvertGroupToClassRoomWhenSearching()
     {
         $user = new Child();
@@ -86,6 +96,9 @@ class StudentRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldAttachUserWhenAddingExistingStudent()
     {
         $user = new Child();
@@ -105,22 +118,31 @@ class StudentRegistryTest extends TestCase
         $this->assertSame($user, $student->getUser(), 'User was not attached to student');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnFalseAndNullWhenUserNotFoundAndStudentNotSet()
     {
         $this->assertFalse($this->registry->offsetExists('foo'));
         $this->assertNull($this->registry->offsetGet('foo'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowBadMethodCallExceptionOnUnset()
     {
         $this->setExpectedException(
-            \BadmethodCallException::class,
+            \BadMethodCallException::class,
             'Cannot unset values from the Student Registry'
         );
 
         $this->registry->offsetUnset('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenAddingBadStudent()
     {
         $student = new Student();

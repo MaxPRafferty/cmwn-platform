@@ -66,16 +66,17 @@ class RandomNameListener
 
     /**
      * @param Event $event
+     * @return null
      */
     public function reserveRandomName(Event $event)
     {
         $child = $event->getParam('user', null);
         if (!$child instanceof Child) {
-            return;
+            return null;
         }
 
         if (!$child->isNameGenerated()) {
-            return;
+            return null;
         }
 
         $child->getUserName();
@@ -83,7 +84,7 @@ class RandomNameListener
         $results  = $this->gateway->select(['name' => [$userName->left, $userName->right]]);
 
         if ($results->count() < 2) {
-            return;
+            return null;
         }
 
         $wordValues = [
@@ -100,5 +101,7 @@ class RandomNameListener
             ['count' => new Expression('count + 1')],
             ['name' => [$userName->left, $userName->right]]
         );
+
+        return null;
     }
 }

@@ -9,7 +9,6 @@ use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Class SecurityService
- * @package Security\Service
  */
 class SecurityService implements SecurityServiceInterface
 {
@@ -18,6 +17,10 @@ class SecurityService implements SecurityServiceInterface
      */
     protected $gateway;
 
+    /**
+     * SecurityService constructor.
+     * @param TableGateway $gateway
+     */
     public function __construct(TableGateway $gateway)
     {
         $this->gateway = $gateway;
@@ -32,8 +35,8 @@ class SecurityService implements SecurityServiceInterface
      */
     public function fetchUserByEmail($email)
     {
-        $rowset = $this->gateway->select(['email' => $email]);
-        $row    = $rowset->current();
+        $rowSet = $this->gateway->select(['email' => $email]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
         }
@@ -50,8 +53,8 @@ class SecurityService implements SecurityServiceInterface
      */
     public function fetchUserByUserName($username)
     {
-        $rowset = $this->gateway->select(['username' => $username]);
-        $row    = $rowset->current();
+        $rowSet = $this->gateway->select(['username' => $username]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
         }

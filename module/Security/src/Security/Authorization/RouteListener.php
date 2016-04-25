@@ -6,7 +6,7 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
-use Security\Exception\ChangePasswordException;
+
 use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
@@ -37,6 +37,9 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     protected $orgService;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -79,7 +82,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     public function onDispatch(MvcEvent $event)
     {
         if ($this->isRouteUnRestricted($event)) {
-            return;
+            return null;
         }
 
         if (!$this->authService->hasIdentity()) {
@@ -96,7 +99,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
         if ($user->isSuper()) {
             $user->setRole('super');
-            return;
+            return null;
         }
 
         $user->setRole($this->getRoleForGroup($event));

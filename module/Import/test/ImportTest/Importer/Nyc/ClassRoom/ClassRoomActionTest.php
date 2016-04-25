@@ -8,9 +8,14 @@ use Import\Importer\Nyc\ClassRoom\AddClassRoomAction;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Exception ClassRoomActionTest
+ * Test ClassRoomActionTest
  *
- * ${CARET}
+ * @group Import
+ * @group Group
+ * @group ClassRoom
+ * @group NycImport
+ * @group Service
+ * @group GroupService
  */
 class ClassRoomActionTest extends TestCase
 {
@@ -27,6 +32,9 @@ class ClassRoomActionTest extends TestCase
         $this->groupService = \Mockery::mock('\Group\Service\GroupService');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectName()
     {
         $classRoom = new ClassRoom('History of the world', 'hist101', ['hist001']);
@@ -45,6 +53,9 @@ class ClassRoomActionTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveClassRoomAndSetGroup()
     {
         $classRoom = new ClassRoom('History of the world', 'hist101', ['hist001']);
@@ -63,7 +74,7 @@ class ClassRoomActionTest extends TestCase
                 $this->assertEquals(
                     'hist101',
                     $group->getExternalId(),
-                    'ClassRoomAction did not use the classroom Id for the gorup external id'
+                    'ClassRoomAction did not use the classroom Id for the group external id'
                 );
 
                 $this->assertEquals(
@@ -75,7 +86,7 @@ class ClassRoomActionTest extends TestCase
                 $this->assertEquals(
                     ['sub_class_rooms' => ['hist001']],
                     $group->getMeta(),
-                    'ClassRoomAction did not set the sub classes to metat data correctly'
+                    'ClassRoomAction did not set the sub classes to meta data correctly'
                 );
 
                 $group->setExternalId('foo-bar');

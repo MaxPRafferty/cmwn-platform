@@ -11,10 +11,13 @@ use Zend\Validator\Exception;
  */
 class UserNameValidator extends AbstractValidator
 {
-    const INVLAID = 'usernameInvalid';
+    const INVALID = 'usernameInvalid';
 
+    /**
+     * @var string[]
+     */
     protected $messageTemplates = [
-        self::INVLAID => 'Invalid username "%value%"',
+        self::INVALID => 'Invalid username "%value%"',
     ];
 
     /**
@@ -37,7 +40,7 @@ class UserNameValidator extends AbstractValidator
         }
 
         if (!StaticNameService::validateGeneratedName($value)) {
-            $this->error(static::INVLAID);
+            $this->error(static::INVALID);
             return false;
         }
 

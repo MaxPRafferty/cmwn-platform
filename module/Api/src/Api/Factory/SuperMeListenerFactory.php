@@ -21,10 +21,9 @@ class SuperMeListenerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var GroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get('Group\Service');
-
         /** @var OrganizationServiceInterface $orgService */
-        $orgService   = $serviceLocator->get('Organization\Service');
+        $groupService = $serviceLocator->get(GroupServiceInterface::class);
+        $orgService   = $serviceLocator->get(OrganizationServiceInterface::class);
 
         return new SuperMeListener($orgService, $groupService);
     }

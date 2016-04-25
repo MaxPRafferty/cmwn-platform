@@ -3,6 +3,7 @@
 namespace Api\Factory;
 
 use Api\Listeners\OrgRouteListener;
+use Org\Service\OrganizationServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -20,7 +21,7 @@ class OrgRouteListenerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var \Org\Service\OrganizationServiceInterface $orgService */
-        $orgService = $serviceLocator->get('Org\Service\OrganizationService');
+        $orgService = $serviceLocator->get(OrganizationServiceInterface::class);
         return new OrgRouteListener($orgService);
     }
 }

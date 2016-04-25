@@ -37,6 +37,9 @@ class ImageServiceDelegator implements ImageServiceInterface
         $this->realService = $service;
     }
 
+    /**
+     * Attaches the HideDeleteEntitiesListener
+     */
     protected function attachDefaultListeners()
     {
         $hideListener = new HideDeletedEntitiesListener(['fetch.all.images'], ['fetch.image.post']);

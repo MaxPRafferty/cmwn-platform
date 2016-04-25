@@ -44,6 +44,9 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $this->realService     = $realService;
     }
 
+    /**
+     * Attaches the HideDeleteEntitiesListener
+     */
     protected function attachDefaultListeners()
     {
         $hideListener = new HideDeletedEntitiesListener(
@@ -213,15 +216,8 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     /**
      * Fetches organizations for a user
      *
-     * SELECT
-     *   o.*
-     * FROM organizations o
-     *   LEFT JOIN groups g ON o.org_id = g.organization_id
-     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     * GROUP BY o.org_id
-     *
      * @param Where|GroupInterface|string $user
+     * @param mixed $prototype
      * @return DbSelect
      */
     public function fetchOrganizationsForUser($user, $prototype = null)
@@ -248,7 +244,8 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     }
 
     /**
-     * Fetchs all the
+     * Fetches all the Users a user has a relationship with
+     *
      * @param $user
      * @param null $where
      * @param null $prototype

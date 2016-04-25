@@ -21,6 +21,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class OrganizationService
  * @package Org\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OrganizationService implements OrganizationServiceInterface
 {
@@ -181,8 +182,8 @@ class OrganizationService implements OrganizationServiceInterface
      */
     public function fetchOrganization($orgId)
     {
-        $rowset = $this->orgTableGateway->select(['org_id' => $orgId]);
-        $row    = $rowset->current();
+        $rowSet = $this->orgTableGateway->select(['org_id' => $orgId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Organization not Found");
         }

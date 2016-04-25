@@ -41,7 +41,7 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
      */
     public function create($data)
     {
-        $this->getLogger()->debug('Cloudinary webhook called');
+        $this->getLogger()->debug('Cloudinary web hook called');
         //check header
         /** @var Request $request */
         $request   = $this->getEvent()->getRequest();
@@ -59,7 +59,7 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
         $check     = sha1($content . $timestamp . $secret);
         if ($signature !== $check) {
             $this->getLogger()->alert(
-                'Invalid signature to webhook',
+                'Invalid signature to web hook',
                 ['cld_signature' => $signature, 'cld_timestamp' => $timestamp]
             );
 

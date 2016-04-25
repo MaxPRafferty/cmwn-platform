@@ -7,9 +7,11 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
 
 /**
- * Exception ImportNotiferTest
+ * Test ImportNotiferTest
  *
- * ${CARET}
+ * @group Import
+ * @group Notice
+ * @group Mail
  */
 class ImportNotiferTest extends TestCase
 {
@@ -38,7 +40,6 @@ class ImportNotiferTest extends TestCase
      */
     public function setUpMessage()
     {
-        /** @var \Mockery\MockInterface|\Zend\Mail\Message $this->message */
         $this->message = \Mockery::mock('\Zend\Mail\Message');
         
     }
@@ -74,6 +75,9 @@ class ImportNotiferTest extends TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSendErrorMessageWhenFailed()
     {
         $this->message->shouldReceive('setTo')
@@ -113,6 +117,9 @@ class ImportNotiferTest extends TestCase
         $this->assertFalse($event->propagationIsStopped(), 'Listener should not stop propagation');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSendErrorMessageWhenComplete()
     {
         $this->message->shouldReceive('setTo')

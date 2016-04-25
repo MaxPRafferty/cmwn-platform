@@ -6,7 +6,12 @@ return [
             'authentication' =>
                 \Security\Authentication\AuthenticationService::class,
 
-            \Security\Service\SecurityGroupServiceInterface::class => \Security\Service\SecurityGroupService::class,
+            \Security\Service\SecurityGroupServiceInterface::class     => \Security\Service\SecurityGroupService::class,
+            \Zend\Authentication\AuthenticationServiceInterface::class =>
+                \Security\Authentication\AuthenticationService::class,
+            \Security\Service\SecurityServiceInterface::class          => \Security\Service\SecurityService::class,
+            \Zend\Authentication\AuthenticationService::class          =>
+                \Security\Authentication\AuthenticationService::class,
         ],
 
         'invokables' => [
@@ -62,7 +67,7 @@ return [
         \Security\Guard\XsrfGuard::class,
         \Security\Guard\CsrfGuard::class,
         \Security\Listeners\ExpireAuthSessionListener::class,
-        \Security\Listeners\UserServiceListener::class
+        \Security\Listeners\UserServiceListener::class,
     ],
 
     'console' => [

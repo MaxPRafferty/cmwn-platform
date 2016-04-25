@@ -4,8 +4,6 @@ namespace Job;
 
 /**
  * Interface JobInterface
- *
- * ${CARET}
  */
 interface JobInterface
 {
@@ -22,7 +20,7 @@ interface JobInterface
     public function getArrayCopy();
 
     /**
-     * Returns the argumet values back to the object
+     * Returns the arguement values back to the object
      *
      * @param array $data
      * @return mixed

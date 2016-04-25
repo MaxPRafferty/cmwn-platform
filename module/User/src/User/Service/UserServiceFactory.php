@@ -26,5 +26,4 @@ class UserServiceFactory implements FactoryInterface
         $tableGateway = $serviceLocator->get('UsersTable');
         return new UserService($tableGateway);
     }
-
 }

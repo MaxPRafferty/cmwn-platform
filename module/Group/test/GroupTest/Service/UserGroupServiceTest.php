@@ -7,20 +7,17 @@ use Group\Service\UserGroupService;
 use Org\Organization;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
-use User\UserHydrator;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\Between;
-use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
-use Zend\Hydrator\ArraySerializable;
-use Zend\Paginator\Adapter\DbSelect;
+
+
 use Zend\Permissions\Acl\Role\GenericRole;
 
 /**
  * Class UserGroupServiceTest
- * @package GroupTest\Service
+ *
+ * @group Group
+ * @group User
+ * @group Service
+ * @group UserGroupService
  */
 class UserGroupServiceTest extends TestCase
 {
@@ -84,6 +81,9 @@ class UserGroupServiceTest extends TestCase
         $this->group->setGroupId('bazbat');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldAttachUserToGroupWithRoleAsString()
     {
         $this->tableGateway->shouldReceive('insert')
@@ -102,6 +102,9 @@ class UserGroupServiceTest extends TestCase
         $this->groupService->attachUserToGroup($this->group, $this->user, 'teacher');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldAttachUserToGroupWithRoleInterface()
     {
         $role = new GenericRole('teacher');
@@ -121,6 +124,9 @@ class UserGroupServiceTest extends TestCase
         $this->groupService->attachUserToGroup($this->group, $this->user, $role);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenRoleIsInvalidType()
     {
         $this->setExpectedException(
@@ -134,6 +140,9 @@ class UserGroupServiceTest extends TestCase
         $this->groupService->attachUserToGroup($this->group, $this->user, []);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldDetachUserToGroupWithRoleAsString()
     {
         $this->tableGateway->shouldReceive('delete')
@@ -151,6 +160,9 @@ class UserGroupServiceTest extends TestCase
         $this->groupService->detachUserFromGroup($this->group, $this->user);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchUsersForGroupUsingGroup()
     {
         $result = $this->groupService->fetchUsersForGroup($this->group);
@@ -162,6 +174,9 @@ class UserGroupServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchAllUsersForOrganizationUsingOrganizationId()
     {
         $result = $this->groupService->fetchUsersForOrg('fizzbuzz');
@@ -172,7 +187,10 @@ class UserGroupServiceTest extends TestCase
             'Group Service did not return Paginator adapter'
         );
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldFetchAllUsersForOrganizationUsingOrganization()
     {
         $org = new Organization();

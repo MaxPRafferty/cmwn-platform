@@ -11,11 +11,12 @@ use Zend\View\Model\ViewModel;
 
 /**
  * Class IndexController
- *
- * @codeCoverageIgnore
  */
 class IndexController extends AbstractActionController
 {
+    /**
+     * @return \Zend\Http\Response|ViewModel
+     */
     public function indexAction()
     {
         if (class_exists('\ZF\Apigility\Admin\Module', false)) {

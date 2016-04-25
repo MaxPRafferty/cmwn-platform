@@ -11,7 +11,13 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
 /**
  * Test UserServiceTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
+ * @group Service
+ * @group UserService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class UserServiceTest extends TestCase
 {
@@ -47,6 +53,9 @@ class UserServiceTest extends TestCase
         $this->userService = new UserService($this->tableGateway);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
     {
         $this->tableGateway
@@ -57,6 +66,9 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
     {
         $this->tableGateway
@@ -71,6 +83,9 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
     {
         $expectedWhere = new Where();
@@ -87,6 +102,9 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveNewUser()
     {
         $newUser = new Adult();
@@ -120,6 +138,9 @@ class UserServiceTest extends TestCase
         $this->assertTrue($this->userService->createUser($newUser));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldUpdateExistingUser()
     {
         $userData = [
@@ -163,6 +184,9 @@ class UserServiceTest extends TestCase
         $this->assertTrue($this->userService->updateUser($user));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchUserById()
     {
         $userData = [
@@ -189,6 +213,9 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('User\Adult', $this->userService->fetchUser($userData['user_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchUserByExternalId()
     {
         $userData = [
@@ -216,6 +243,9 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByExternalId($userData['external_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchUserByEmail()
     {
         $userData = [
@@ -243,6 +273,9 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByEmail($userData['email']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFound()
     {
         $this->setExpectedException(
@@ -258,6 +291,9 @@ class UserServiceTest extends TestCase
         $this->userService->fetchUser('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByExternalId()
     {
         $this->setExpectedException(
@@ -272,7 +308,10 @@ class UserServiceTest extends TestCase
 
         $this->userService->fetchUserByExternalId('foo');
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByEmail()
     {
         $this->setExpectedException(
@@ -288,6 +327,9 @@ class UserServiceTest extends TestCase
         $this->userService->fetchUserByEmail('foo@example.com');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteByDefault()
     {
         $userData = [
@@ -321,6 +363,9 @@ class UserServiceTest extends TestCase
         $this->assertTrue($this->userService->deleteUser($user));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteWhenForced()
     {
         $userData = [

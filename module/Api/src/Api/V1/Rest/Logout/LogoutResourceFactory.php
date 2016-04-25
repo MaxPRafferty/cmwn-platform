@@ -21,7 +21,7 @@ class LogoutResourceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var AuthenticationService $authService */
-        $authService = $serviceLocator->get('Security\Authentication\AuthenticationService');
+        $authService = $serviceLocator->get(AuthenticationService::class);
         return new LogoutResource($authService);
     }
 }

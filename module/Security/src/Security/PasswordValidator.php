@@ -7,6 +7,11 @@ use Zend\Validator\Exception;
 use Zend\Validator\Regex;
 use Zend\Validator\ValidatorInterface;
 
+/**
+ * Class PasswordValidator
+ *
+ * Validates a password that is passed in
+ */
 class PasswordValidator extends Regex implements ValidatorInterface
 {
     /**
@@ -18,6 +23,9 @@ class PasswordValidator extends Regex implements ValidatorInterface
         self::ERROROUS  => "There was an internal error while using the pattern '%pattern%'",
     ];
 
+    /**
+     * PasswordValidator constructor.
+     */
     public function __construct()
     {
         parent::__construct($this->getPattern());

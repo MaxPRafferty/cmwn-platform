@@ -19,6 +19,9 @@ class ChangePasswordListener implements AuthenticationServiceAwareInterface
 {
     use AuthenticationServiceAwareTrait;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -60,12 +63,17 @@ class ChangePasswordListener implements AuthenticationServiceAwareInterface
         $event->setError(false);
     }
 
-    public function onDispatch(MvcEvent $event)
+    /**
+     * Short Circuits an API Problem Response if the user needs to change password
+     *
+     * @return void|ApiProblemResponse
+     */
+    public function onDispatch()
     {
         try {
             $this->getAuthenticationService()->getIdentity();
-            return;
-        } catch (ChangePasswordException $changePassword){
+            return null;
+        } catch (ChangePasswordException $changePassword) {
 
         }
 

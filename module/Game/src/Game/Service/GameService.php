@@ -9,7 +9,7 @@ use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
+
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
@@ -72,8 +72,8 @@ class GameService implements GameServiceInterface
      */
     public function fetchGame($groupId)
     {
-        $rowset = $this->gameTableGateway->select(['game_id' => $groupId]);
-        $row    = $rowset->current();
+        $rowSet = $this->gameTableGateway->select(['game_id' => $groupId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Game not Found");
         }

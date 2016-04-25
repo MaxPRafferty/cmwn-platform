@@ -2,6 +2,7 @@
 
 namespace ImportTest\Importer\Nyc\Parser\Excel;
 
+use Import\ActionInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Students\AddStudentAction;
 use Import\Importer\Nyc\Students\Student;
@@ -9,11 +10,20 @@ use User\Service\UserServiceInterface;
 
 /**
  * Class StudentParserSetup
+ *
+ * Helper to set up tests for the student parse
  */
 class StudentParserSetup
 {
-    protected $actions = [];
+    /**
+     * @var \SplPriorityQueue|ActionInterface[]
+     */
+    protected $actions;
 
+    /**
+     * @param UserServiceInterface $userService
+     * @return \SplPriorityQueue
+     */
     public function getExpectedGoodActions(UserServiceInterface $userService)
     {
         $this->actions = new \SplPriorityQueue();
@@ -26,6 +36,10 @@ class StudentParserSetup
         return $this->actions;
     }
 
+    /**
+     * @param UserServiceInterface $userService
+     * @return \SplPriorityQueue
+     */
     public function getExpectedGoodActionsForBlanks(UserServiceInterface $userService)
     {
         $this->actions = new \SplPriorityQueue();

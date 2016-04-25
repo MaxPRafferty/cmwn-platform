@@ -6,9 +6,19 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use User\UserInterface;
 
+/**
+ * Test SecurityUserTest
+ *
+ * @group Security
+ * @group User
+ * @group Authentication
+ * @group Authorization
+ */
 class SecurityUserTest extends TestCase
 {
-
+    /**
+     * @test
+     */
     public function testItShouldCompareCorrectPasswordAndSetSomeData()
     {
         $date     = new \DateTime();
@@ -30,6 +40,9 @@ class SecurityUserTest extends TestCase
         $this->assertTrue($user->comparePassword('foobar'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFailCodeWhenPastExpiration()
     {
         $date     = new \DateTime("yesterday");
@@ -46,6 +59,9 @@ class SecurityUserTest extends TestCase
         $this->assertEquals(SecurityUser::CODE_EXPIRED, $user->compareCode('some_code'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFailCodeWhenThereIsAMisMatch()
     {
         $date     = new \DateTime("yesterday");
@@ -62,6 +78,9 @@ class SecurityUserTest extends TestCase
         $this->assertEquals(SecurityUser::CODE_INVALID, $user->compareCode('not the code'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldPassCode()
     {
         $date     = new \DateTime("tomorrow");
@@ -78,6 +97,9 @@ class SecurityUserTest extends TestCase
         $this->assertEquals(SecurityUser::CODE_VALID, $user->compareCode('some_code'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnChildForRoleAllTheTimeWhenUserIsChild()
     {
         $user = new SecurityUser();
@@ -99,4 +121,3 @@ class SecurityUserTest extends TestCase
 
     }
 }
-

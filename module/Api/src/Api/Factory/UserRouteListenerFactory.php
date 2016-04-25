@@ -23,9 +23,8 @@ class UserRouteListenerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-
-        /** @var UserAssertion $userGroupService */
+        /** @var UserAssertion $userAssertion */
+        $userService   = $serviceLocator->get(UserServiceInterface::class);
         $userAssertion = $serviceLocator->get(UserAssertion::class);
         return new UserRouteListener($userService, $userAssertion);
     }

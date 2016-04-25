@@ -2,6 +2,8 @@
 
 namespace Security\Controller;
 
+use Security\Service\SecurityServiceInterface;
+use User\Service\UserServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -25,9 +27,13 @@ class UserControllerFactory implements FactoryInterface
             ? $serviceLocator->getServiceLocator()
             : $serviceLocator;
 
+        /** @var SecurityServiceInterface $securityService */
+        /** @var UserServiceInterface $userService */
+        $securityService = $serviceLocator->get(SecurityServiceInterface::class);
+        $userService     = $serviceLocator->get(UserServiceInterface::class);
         return new UserController(
-            $serviceLocator->get('Security\Service\SecurityService'),
-            $serviceLocator->get('User\Service')
+            $securityService,
+            $userService
         );
     }
 }

@@ -23,12 +23,20 @@ class AddStudentToGroupAction implements ActionInterface
      */
     protected $userGroupService;
 
+    /**
+     * AddStudentToGroupAction constructor.
+     * @param Student $student
+     * @param UserGroupServiceInterface $userGroupService
+     */
     public function __construct(Student $student, UserGroupServiceInterface $userGroupService)
     {
         $this->student          = $student;
         $this->userGroupService = $userGroupService;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return sprintf(

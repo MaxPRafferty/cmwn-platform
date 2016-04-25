@@ -9,6 +9,11 @@ use ZF\ContentNegotiation\ViewModel;
  */
 class ImportFailedModel extends ViewModel
 {
+    /**
+     * ImportFailedModel constructor.
+     * @param array $variables
+     * @param array $options
+     */
     public function __construct(array $variables, $options = [])
     {
         if (!isset($variables['errors'])) {

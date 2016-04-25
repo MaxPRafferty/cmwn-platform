@@ -4,9 +4,15 @@ namespace Application\Utils;
 
 /**
  * Class StaticType
+ *
+ * A List of types for Organizations and Groups.  Ensures that
+ * arbitrary data is not passed in forcing bugs in the FE
  */
 class StaticType
 {
+    /**
+     * @var array
+     */
     protected static $types = [];
 
     /**

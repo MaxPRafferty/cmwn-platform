@@ -10,6 +10,11 @@ use Application\Utils\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
+/**
+ * Class Game
+ *
+ * Game Model
+ */
 class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInterface
 {
     use DateCreatedTrait;
@@ -166,6 +171,4 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
 
         return $this;
     }
-
-
 }

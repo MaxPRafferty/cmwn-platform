@@ -7,10 +7,13 @@ use Security\ChangePasswordUser;
 /**
  * Class ChangePasswordException
  *
- * @package Security\Exception
+ * Exception that is thrown when the User Needs to change their password
  */
 class ChangePasswordException extends \Exception
 {
+    /**
+     * @var ChangePasswordUser
+     */
     protected $user;
 
     /**

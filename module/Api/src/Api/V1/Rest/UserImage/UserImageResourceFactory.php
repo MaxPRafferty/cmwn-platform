@@ -2,6 +2,8 @@
 
 namespace Api\V1\Rest\UserImage;
 
+use Asset\Service\ImageServiceInterface;
+use Asset\Service\UserImageServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -18,10 +20,10 @@ class UserImageResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Asset\Service\ImageService $imageService */
-        $imageService     = $serviceLocator->get('\Asset\Service\ImageService');
-        /** @var \Asset\Service\UserImageServiceInterface $userImageService */
-        $userImageService = $serviceLocator->get('Asset\Service\UserImageService');
+        /** @var ImageServiceInterface $imageService */
+        /** @var UserImageServiceInterface $userImageService */
+        $imageService     = $serviceLocator->get(ImageServiceInterface::class);
+        $userImageService = $serviceLocator->get(UserImageServiceInterface::class);
 
         return new UserImageResource($imageService, $userImageService);
     }

@@ -13,7 +13,10 @@ use Zend\EventManager\Event;
 /**
  * Test CheckUserListenerTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
+ * @group UserService
+ * @group Service
+ * @group Validator
  */
 class CheckUserListenerTest extends TestCase
 {
@@ -44,6 +47,9 @@ class CheckUserListenerTest extends TestCase
         $this->user->setUserId(md5('foobar'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotThrowExceptionWhenUserIsOk()
     {
         $this->user->setEmail('chuck@manchuck.com');
@@ -77,6 +83,9 @@ class CheckUserListenerTest extends TestCase
         $this->assertFalse($event->propagationIsStopped());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenUserHadDuplicateEmailOrName()
     {
         $this->user->setEmail('chuck@manchuck.com');
@@ -106,17 +115,18 @@ class CheckUserListenerTest extends TestCase
 
         $listener = new CheckUserListener();
         $this->assertFalse($event->propagationIsStopped());
-        $thrown = false;
         try {
             $listener->checkUniqueFields($event);
         } catch (DuplicateEntryException $dupeUser) {
-            $thrown = true;
             $this->assertEquals('Invalid user', $dupeUser->getMessage());
         }
 
         $this->assertTrue($event->propagationIsStopped());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldDoNothingWhenUserServiceNotSet()
     {
         $event = new Event();
@@ -131,6 +141,9 @@ class CheckUserListenerTest extends TestCase
         $this->assertFalse($event->propagationIsStopped());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldDoNothingWhenUserNotSet()
     {
         $event = new Event();
@@ -144,5 +157,4 @@ class CheckUserListenerTest extends TestCase
         $listener->checkUniqueFields($event);
         $this->assertFalse($event->propagationIsStopped());
     }
-
 }

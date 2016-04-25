@@ -2,6 +2,7 @@
 
 namespace Asset\Service;
 
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -19,8 +20,8 @@ class UserImageServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Zend\Db\Adapter\Adapter $adapter */
-        $adapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
+        /** @var Adapter $adapter */
+        $adapter = $serviceLocator->get(Adapter::class);
         return new UserImageService(
             new TableGateway('user_images', $adapter)
         );

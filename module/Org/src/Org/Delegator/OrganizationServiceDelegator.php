@@ -10,6 +10,7 @@ use Org\Service\OrganizationServiceInterface;
 use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -26,6 +27,9 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     use EventManagerAwareTrait;
     use ServiceTrait;
 
+    /**
+     * @var string
+     */
     protected $eventIdentifier = 'Org\Service\OrganizationServiceInterface';
 
     /**

@@ -1,6 +1,7 @@
 <?php
 namespace Api\V1\Rest\Forgot;
 
+use Forgot\Service\ForgotServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -18,7 +19,7 @@ class ForgotResourceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var \Forgot\Service\ForgotServiceInterface $forgotService */
-        $forgotService = $serviceLocator->get('Forgot\Service\ForgotService');
+        $forgotService = $serviceLocator->get(ForgotServiceInterface::class);
         return new ForgotResource($forgotService);
     }
 }

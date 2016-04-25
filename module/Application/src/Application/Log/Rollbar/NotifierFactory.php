@@ -20,7 +20,7 @@ class NotifierFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var Options $options */
-        $options = $serviceLocator->get('Application\Log\Rollbar\Options');
+        $options = $serviceLocator->get(Options::class);
         return new \RollbarNotifier($options->toArray());
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Forgot\Service;
 
+use Security\Service\SecurityServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ForgotServiceFactory
- * @codeCoverageIgnore
  */
 class ForgotServiceFactory implements FactoryInterface
 {
@@ -19,8 +19,8 @@ class ForgotServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Security\Service\SecurityServiceInterface $service */
-        $service = $serviceLocator->get('Security\Service\SecurityService');
+        /** @var SecurityServiceInterface $service */
+        $service = $serviceLocator->get(SecurityServiceInterface::class);
         return new ForgotService($service);
     }
 }

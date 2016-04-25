@@ -2,13 +2,16 @@
 
 namespace ForgotTest\Service;
 
-use Application\Exception\NotFoundException;
 use Forgot\Service\ForgotService;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 
 /**
- * Exception ForgotServiceTest
+ * Test ForgotServiceTest
+ *
+ * @group Forgot
+ * @group Service
+ * @group ForgotService
  */
 class ForgotServiceTest extends TestCase
 {
@@ -38,6 +41,9 @@ class ForgotServiceTest extends TestCase
         $this->forgotService = new ForgotService($this->securityService);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveCodeWhenUserFound()
     {
         $user = new SecurityUser();

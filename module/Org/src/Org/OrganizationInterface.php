@@ -102,7 +102,7 @@ interface OrganizationInterface
     /**
      * An Arbitray type
      *
-     * Useful for seprating out schools, musems or other types
+     * Useful for separating out schools, clubs or other types
      *
      * @return string
      */

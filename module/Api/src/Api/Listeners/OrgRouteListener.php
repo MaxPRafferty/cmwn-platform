@@ -15,6 +15,8 @@ use ZF\Hal\Entity;
 
 /**
  * Class OrgRouteListener
+ *
+ * @TODO Make this a shared listener
  */
 class OrgRouteListener implements ListenerAggregateInterface
 {
@@ -52,6 +54,10 @@ class OrgRouteListener implements ListenerAggregateInterface
     }
 
     /**
+     * Injects the Organization into the route params when org_id is set on the route
+     *
+     * Will quickly 404 to save on other calls
+     *
      * @param MvcEvent $event
      * @return null|ApiProblem
      */
@@ -74,6 +80,11 @@ class OrgRouteListener implements ListenerAggregateInterface
         return null;
     }
 
+    /**
+     * Injects the group type hal links when a organization is going to be rendered
+     *
+     * @param MvcEvent $event
+     */
     public function onRender(MvcEvent $event)
     {
         $payload = $event->getViewModel()->getVariable('payload');

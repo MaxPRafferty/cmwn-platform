@@ -10,6 +10,9 @@ use Zend\EventManager\Event;
 
 /**
  * Test ForgotPasswordListenerTest
+ *
+ * @group Notice
+ * @group Mail
  */
 class ForgotPasswordListenerTest extends TestCase
 {
@@ -33,7 +36,6 @@ class ForgotPasswordListenerTest extends TestCase
      */
     public function setUpMessage()
     {
-        /** @var \Mockery\MockInterface|\Zend\Mail\Message $this->message */
         $this->message = \Mockery::mock('\Zend\Mail\Message');
 
     }
@@ -57,6 +59,9 @@ class ForgotPasswordListenerTest extends TestCase
         $this->listener->setMailService($this->mailService);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSendMessageOnPost()
     {
         $user = new SecurityUser();
@@ -100,6 +105,9 @@ class ForgotPasswordListenerTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotSendMessageWhenUserIsChild()
     {
         $user = new Child();
@@ -123,6 +131,9 @@ class ForgotPasswordListenerTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotSendMessageWhenUserIsNotAUser()
     {
 

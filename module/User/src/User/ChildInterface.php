@@ -1,9 +1,12 @@
 <?php
 
-
 namespace User;
 
-
+/**
+ * Interface ChildInterface
+ *
+ * Defines what is needed for a child
+ */
 interface ChildInterface extends UserInterface
 {
 

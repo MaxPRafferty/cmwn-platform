@@ -4,11 +4,11 @@ namespace Security\Service;
 
 use Group\GroupInterface;
 use Org\OrganizationInterface;
-use Security\SecurityUser;
+
 use User\UserInterface;
 use Zend\Db\Adapter\Adapter;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\In;
+
+
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;

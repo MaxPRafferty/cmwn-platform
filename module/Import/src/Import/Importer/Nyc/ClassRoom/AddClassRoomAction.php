@@ -40,6 +40,9 @@ class AddClassRoomAction implements ActionInterface, OrgAwareInterface
         $this->classRoom    = $classRoom;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return sprintf(

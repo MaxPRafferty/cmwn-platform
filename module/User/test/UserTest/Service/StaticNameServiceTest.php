@@ -10,7 +10,10 @@ use User\UserName;
 /**
  * Test StaticNameServiceTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
+ * @group Service
+ * @group RandomName
+ * @group RandomNameService
  */
 class StaticNameServiceTest extends TestCase
 {
@@ -25,6 +28,9 @@ class StaticNameServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenListMissingKeys()
     {
         $leftThrown  = false;
@@ -46,6 +52,9 @@ class StaticNameServiceTest extends TestCase
         $this->assertTrue($leftThrown && $rightThrown);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenKeysAreNotArrays()
     {
         $leftThrown  = false;
@@ -67,6 +76,9 @@ class StaticNameServiceTest extends TestCase
         $this->assertTrue($leftThrown && $rightThrown);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenSelectingWrongPosition()
     {
         $this->setExpectedException(
@@ -78,7 +90,7 @@ class StaticNameServiceTest extends TestCase
     }
 
     /**
-     * @covers  User\Service\StaticNameService::seedNames
+     * @test
      */
     public function testItShouldGenerateRandomNameAndNameShouldBeValidated()
     {
@@ -87,6 +99,9 @@ class StaticNameServiceTest extends TestCase
         $this->assertTrue(StaticNameService::validateGeneratedName($generatedName), 'Generated Username is not valid');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldValidateFailureWhenGeneratedNameHasBadLeft()
     {
         $generatedName = StaticNameService::generateRandomName();
@@ -94,6 +109,9 @@ class StaticNameServiceTest extends TestCase
         $this->assertFalse(StaticNameService::validateGeneratedName($userName));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldValidateFailureWhenGeneratedNameHasBadRight()
     {
         $generatedName = StaticNameService::generateRandomName();

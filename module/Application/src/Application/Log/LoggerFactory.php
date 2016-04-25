@@ -2,6 +2,7 @@
 
 namespace Application\Log;
 
+use Application\Log\Rollbar\Writer;
 use Interop\Container\ContainerInterface;
 use Zend\Log\LoggerAbstractServiceFactory;
 
@@ -17,8 +18,8 @@ class LoggerFactory extends LoggerAbstractServiceFactory
     {
         $logger = parent::__invoke($container, $requestedName, $options);
 
-        /** @var \Application\Log\Rollbar\Writer $writer */
-        $writer = $container->get('Application\Log\Rollbar\Writer');
+        /** @var Writer $writer */
+        $writer = $container->get(Writer::class);
         $logger->addWriter($writer);
         return $logger;
     }

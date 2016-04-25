@@ -8,10 +8,13 @@ use \PHPUnit_Framework_TestCase as TestCase;
 /**
  * Test OrganizationTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Organization
  */
 class OrganizationTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldExtractAndHydrateWithNulls()
     {
         $expected = [
@@ -30,6 +33,9 @@ class OrganizationTest extends TestCase
         $this->assertEquals($expected, $org->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
