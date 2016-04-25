@@ -2,6 +2,7 @@
 
 namespace Group\Delegator;
 
+use Application\Utils\HideDeletedEntitiesListener;
 use Group\GroupInterface;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
@@ -41,6 +42,19 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     public function __construct(UserGroupService $realService)
     {
         $this->realService     = $realService;
+    }
+
+    protected function attachDefaultListeners()
+    {
+        $hideListener = new HideDeletedEntitiesListener(
+            ['fetch.group.users', 'fetch.org.users', 'fetch.all.user.users'],
+            []
+        );
+
+        $hideListener->setEntityParamKey('item');
+        $hideListener->setDeletedField('u.deleted');
+
+        $this->getEventManager()->attach($hideListener);
     }
 
     /**

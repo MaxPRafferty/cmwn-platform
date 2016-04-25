@@ -53,7 +53,8 @@ return [
                 'entity_bits' => [
                     'group'        => -1,
                     'organization' => -1,
-                    'user'         => -1,
+                    'adult'        => -1,
+                    'child'        => -1,
                     'me'           => -1,
                 ],
                 'permissions' => [
@@ -76,6 +77,8 @@ return [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'adult' => Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
                     'adult.code',
@@ -84,6 +87,7 @@ return [
                     'import',
                     'remove.child.group',
                     'view.org.users',
+                    'remove.user.adult',
                 ],
             ],
 
@@ -91,6 +95,8 @@ return [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'adult' => Rbac::SCOPE_REMOVE,
                 ],
                 'parents'     => ['admin'],
                 'permissions' => [
@@ -100,6 +106,7 @@ return [
                     'edit.user.child',
                     'remove.group.user',
                     'remove.user.child',
+                    'remove.user.adult',
                     'view.group',
                     'view.group.users',
                     'view.org.users',
@@ -111,7 +118,8 @@ return [
             'principal' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'user'  => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'adult' => Rbac::SCOPE_REMOVE,
+                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
@@ -125,6 +133,7 @@ return [
                     'import',
                     'remove.child.group',
                     'remove.group.user',
+                    'remove.user.adult',
                     'remove.user.child',
                     'update.password',
                     'view.games',
@@ -140,7 +149,8 @@ return [
             'asst_principal' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
-                    'user'  => Rbac::SCOPE_UPDATE,
+                    'adult' => Rbac::SCOPE_REMOVE,
+                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
@@ -163,13 +173,14 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'remove.user.adult',
                 ],
             ],
 
             'teacher' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
-                    'user'  => Rbac::SCOPE_UPDATE,
+                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
@@ -190,8 +201,11 @@ return [
             ],
 
             'neighbor.adult' => [
-                'entity_bits' => [],
+                'entity_bits' => [
+                    'adult' => Rbac::SCOPE_REMOVE,
+                ],
                 'permissions' => [
+                    'remove.user.adult',
                     'view.user.adult',
                 ],
             ],
