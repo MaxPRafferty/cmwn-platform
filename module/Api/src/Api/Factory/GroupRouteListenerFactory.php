@@ -23,8 +23,7 @@ class GroupRouteListenerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var GroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get('Group\Service\GroupService');
-
+        $groupService = $serviceLocator->get(GroupServiceInterface::class);
         return new GroupRouteListener($groupService);
     }
 }

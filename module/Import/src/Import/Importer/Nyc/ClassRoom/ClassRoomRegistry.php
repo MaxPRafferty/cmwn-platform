@@ -156,6 +156,7 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
 
     /**
      * Just here to statisfiy the interface
+     *
      * @param mixed $offset
      * @throws BadMethodCallException
      */

@@ -13,9 +13,17 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
 /**
- * Exception TeacherWorksheetParserTest
- *
- * ${CARET}
+ * Test TeacherWorksheetParserTest
+ * @group Teacher
+ * @group User
+ * @group NycImport
+ * @group Group
+ * @group Registry
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class TeacherWorksheetParserTest extends TestCase
 {
@@ -86,7 +94,10 @@ class TeacherWorksheetParserTest extends TestCase
         AbstractParser::clear();
         return new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldCreateCorrectActionsForTeacher()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet.xlsx');
@@ -111,6 +122,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCreateCorrectActionsForSomeExistingTeachers()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet.xlsx');
@@ -145,6 +159,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCreateCorrectActionsForTeacherWithWarnings()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet_with_warnings.xlsx');
@@ -155,10 +172,12 @@ class TeacherWorksheetParserTest extends TestCase
 
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedWarnings = [
             0 => 'Sheet <b>"Teachers"</b> Row: <b>5</b> No data found between cells <b>"A"</b> and <b>"H"</b> Skipping this row',
             1 => 'Sheet <b>"Teachers"</b> Row: <b>7</b> No data found between cells <b>"A"</b> and <b>"H"</b> Skipping this row',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
         $this->assertEmpty($parser->getErrors(), 'Teacher Processor is Reporting errors');
@@ -178,6 +197,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWithInvalidDdbnnn()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_invalid_ddbnnn.xlsx');
@@ -210,6 +232,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenTeacherMissingFirstName()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_missing_first_name.xlsx');
@@ -242,6 +267,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenTeacherMissingLastName()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_missing_last_name.xlsx');
@@ -274,6 +302,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenTeacherMissingEmail()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_missing_email.xlsx');
@@ -306,6 +337,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenTeacherHasInvalidClass()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_invalid_class.xlsx');
@@ -338,6 +372,9 @@ class TeacherWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenTeacherHasInvalidEmail()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_invalid_email.xlsx');

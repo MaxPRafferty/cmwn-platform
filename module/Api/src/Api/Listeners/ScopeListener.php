@@ -23,6 +23,9 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
     use AuthenticationServiceAwareTrait;
     use RbacAwareTrait;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -82,6 +85,9 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
     }
 
     /**
+     * Gets the role that the user currently has
+     *
+     * @param Entity $entity
      * @return string
      */
     protected function getRole(Entity $entity)

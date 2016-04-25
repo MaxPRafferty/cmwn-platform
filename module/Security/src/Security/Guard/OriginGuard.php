@@ -21,6 +21,9 @@ class OriginGuard implements LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**

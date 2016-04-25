@@ -17,6 +17,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class GroupServiceDelegator
  * @package Group\Delegator
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupDelegator implements GroupServiceInterface
 {
@@ -42,6 +43,9 @@ class GroupDelegator implements GroupServiceInterface
         $this->realService = $service;
     }
 
+    /**
+     * Attaches the HideDeletedEntitiesListener
+     */
     protected function attachDefaultListeners()
     {
         $hideListener = new HideDeletedEntitiesListener(
@@ -225,12 +229,13 @@ class GroupDelegator implements GroupServiceInterface
     }
 
     /**
-     * Fethes all the types of groups for the children
+     * Fetches all the types of groups for the children
      *
      * Used for hal link building
      *
      * @param GroupInterface $group
      * @return string[]
+     * @deprecated
      */
     public function fetchChildTypes(GroupInterface $group)
     {

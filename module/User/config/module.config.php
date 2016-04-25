@@ -19,4 +19,8 @@ return [
             ],
         ],
     ],
+
+    'shared-listeners' => [
+        \User\Service\RandomNameListener::class
+    ]
 ];

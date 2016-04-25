@@ -8,11 +8,14 @@ use User\Adult;
 /**
  * Test AdultTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
  */
 class AdultTest extends TestCase
 {
-    public function testItShouldExtractAndhydrateWithNulls()
+    /**
+     * @test
+     */
+    public function testItShouldExtractAndHydrateWithNulls()
     {
         $expected = [
             'user_id'     => '',
@@ -37,6 +40,9 @@ class AdultTest extends TestCase
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
@@ -64,6 +70,9 @@ class AdultTest extends TestCase
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldChangeUserNameForAdults()
     {
         $adult = new Adult();

@@ -11,8 +11,9 @@ use Zend\EventManager\Event;
 
 /**
  * Test GroupServiceDelegatorTest
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Group
+ * @group Delegator
+ * @group GroupService
  */
 class GroupServiceDelegatorTest extends TestCase
 {
@@ -81,6 +82,9 @@ class GroupServiceDelegatorTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallSaveGroup()
     {
         $this->groupService->shouldReceive('saveGroup')
@@ -110,6 +114,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallSaveGroupWhenEventPrevents()
     {
         $this->groupService->shouldReceive('saveGroup')
@@ -134,6 +141,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchGroup()
     {
         $this->groupService->shouldReceive('fetchGroup')
@@ -165,6 +175,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchGroupByExternalId()
     {
         $this->groupService->shouldReceive('fetchGroupByExternalId')
@@ -196,6 +209,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchGroupAndReturnEventResult()
     {
         $this->groupService->shouldReceive('fetchGroup')
@@ -224,6 +240,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteGroup()
     {
         $this->groupService->shouldReceive('deleteGroup')
@@ -255,6 +274,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallDeleteGroupAndReturnEventResult()
     {
         $this->groupService->shouldReceive('deleteGroup')
@@ -283,6 +305,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAll()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);
@@ -315,6 +340,9 @@ class GroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAllWhenEventStops()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);

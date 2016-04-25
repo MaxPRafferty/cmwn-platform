@@ -4,6 +4,7 @@ return [
     'service_manager' => [
         'aliases'    => [
             'Job\Service' => \Job\Service\JobService::class,
+            \Job\Service\JobServiceInterface::class => \Job\Service\JobService::class,
         ],
         'factories'  => [
             \Job\Processor\JobRunner::class => \Job\Processor\JobRunnerFactory::class,

@@ -7,10 +7,17 @@ use Zend\Session\Container;
 use Zend\Session\SessionManager;
 
 /**
- * Exception ExpireAuthSessionListenerTest
+ * Test ExpireAuthSessionListenerTest
+ *
+ * @group Security
+ * @group Session
+ * @group Authentication
  */
 class ExpireAuthSessionListenerTest extends TestCase
 {
+    /**
+     * @var Container
+     */
     protected $container;
 
     /**
@@ -19,12 +26,15 @@ class ExpireAuthSessionListenerTest extends TestCase
     public function setUpContainer()
     {
         $this->markTestIncomplete('Not Set up');
-        $manager     = new SessionManager();
+        $manager         = new SessionManager();
         $this->container = new Container('expire_test', $manager);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldExpireSession()
     {
-
+        $this->markTestIncomplete('Not Implementated');
     }
 }

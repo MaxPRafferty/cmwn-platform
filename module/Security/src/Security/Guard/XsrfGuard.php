@@ -27,6 +27,9 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     use NoopLoggerAwareTrait;
     use OpenRouteTrait;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -136,11 +139,14 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
         if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
             return $this->verifyToken($cookie);
         }
+        
+        return null;
     }
 
     /**
      * @param Cookie $cookie
      * @return null|ApiProblemResponse
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function verifyToken(Cookie $cookie)
     {

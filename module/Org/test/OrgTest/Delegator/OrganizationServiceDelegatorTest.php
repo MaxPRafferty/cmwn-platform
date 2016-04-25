@@ -9,11 +9,13 @@ use Org\Delegator\OrganizationServiceDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 
-
 /**
  * Test OrganizationServiceDelegatorTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Organization
+ * @group Delegator
+ * @group OrganizationService
+ * @group Service
  */
 class OrganizationServiceDelegatorTest extends TestCase
 {
@@ -81,6 +83,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallCreateOrganization()
     {
         $this->orgService->shouldReceive('createOrganization')
@@ -109,6 +114,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallUpdateOrganization()
     {
         $this->orgService->shouldReceive('updateOrganization')
@@ -137,6 +145,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallCreateOrganizationWhenEventPrevents()
     {
         $this->orgService->shouldReceive('createOrganization')
@@ -161,6 +172,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchOrg()
     {
         $this->orgService->shouldReceive('fetchOrganization')
@@ -192,6 +206,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchOrgAndReturnEventResult()
     {
         $this->orgService->shouldReceive('fetchOrg')
@@ -220,6 +237,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteOrg()
     {
         $this->orgService->shouldReceive('deleteOrganization')
@@ -251,6 +271,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallDeleteOrgAndReturnEventResult()
     {
         $this->orgService->shouldReceive('deleteOrg')
@@ -279,6 +302,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAll()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);
@@ -311,6 +337,9 @@ class OrganizationServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAllWhenEventStops()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);

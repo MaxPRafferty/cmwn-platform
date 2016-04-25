@@ -4,11 +4,12 @@ namespace IntegrationTest;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\File\ClassFileLocator;
-use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceManager;
 
 /**
  * Class ServiceManagerTest
+ * @group IntegrationTest
+ * @group ServiceManager
  */
 class ServiceManagerTest extends TestCase
 {

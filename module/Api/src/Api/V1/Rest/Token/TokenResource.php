@@ -19,6 +19,10 @@ class TokenResource extends AbstractResourceListener
      */
     protected $authService;
 
+    /**
+     * TokenResource constructor.
+     * @param AuthenticationServiceInterface $authService
+     */
     public function __construct(AuthenticationServiceInterface $authService)
     {
         $this->authService = $authService;

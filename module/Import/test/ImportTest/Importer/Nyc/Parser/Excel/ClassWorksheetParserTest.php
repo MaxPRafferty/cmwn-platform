@@ -13,7 +13,18 @@ use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Exception ClassWorksheetParserTest
+ * Test ClassWorksheetParserTest
+ *
+ * @group Import
+ * @group NycImport
+ * @group Group
+ * @group ClassRoom
+ * @group Excel
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ClassWorksheetParserTest extends TestCase
 {
@@ -230,6 +241,9 @@ class ClassWorksheetParserTest extends TestCase
         return $actions;
     }
 
+    /**
+     * Helper to check the registry is correct
+     */
     protected function checkRegistry()
     {
         foreach ($this->getExpectedClassrooms() as $classId => $classroom) {
@@ -270,6 +284,9 @@ class ClassWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldItShouldStoreClassesInTheRegistryAndCreateAddActions()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_good_sheet.xlsx');
@@ -286,6 +303,9 @@ class ClassWorksheetParserTest extends TestCase
         $this->checkAddActions($parser);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldItShouldStoreClassesInTheRegistryAndCreateMixedActions()
     {
         $this->registry->addClassroom(new ClassRoom('Second Grade', '201', ['8001', '8002', '8003'], new Group()));
@@ -302,6 +322,9 @@ class ClassWorksheetParserTest extends TestCase
         $this->checkMixedActions($parser);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldWarnOnEmptyLineAndStillCreateAddActions()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_good_sheet_with_empty_line.xlsx');
@@ -309,11 +332,13 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedWarnings = [
             'Sheet <b>"Classes"</b> Row: <b>4</b> No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
             'Sheet <b>"Classes"</b> Row: <b>7</b> No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
             'Sheet <b>"Classes"</b> Row: <b>9</b> No data found between cells <b>"A"</b> and <b>"D"</b> Skipping this row',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertFalse($parser->hasErrors(), 'Parser Reported errors for a good classes sheet');
         $this->assertEmpty($parser->getErrors(), 'Parser has errors reported for a good classes sheet');
@@ -327,6 +352,9 @@ class ClassWorksheetParserTest extends TestCase
         $this->checkRegistry();
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWithInvalidDdbnnn()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_invalid_ddbnnn.xlsx');
@@ -359,6 +387,9 @@ class ClassWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenClassMissingTitle()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_missing_title.xlsx');
@@ -391,6 +422,9 @@ class ClassWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenClassMissingId()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_missing_class_id.xlsx');
@@ -423,6 +457,9 @@ class ClassWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenMissingSheet()
     {
         $this->setExpectedException(
@@ -433,6 +470,9 @@ class ClassWorksheetParserTest extends TestCase
         $this->getParser(new \PHPExcel_Worksheet(new \PHPExcel()));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWithEmptyWorksheet()
     {
         $excel = new \PHPExcel();
@@ -441,10 +481,12 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedErrors = [
             'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"A"</b> in the header is not labeled as <b>"DDBNNN"</b>',
             'Sheet <b>"Classes"</b> Row: <b>1</b> Is missing one or more column(s) between <b>"A"</b> and <b>"D"</b>',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -469,19 +511,24 @@ class ClassWorksheetParserTest extends TestCase
         );
     }
 
-    public function testItShouldReportErrorWithBadHeadeHeaderLables()
+    /**
+     * @test
+     */
+    public function testItShouldReportErrorWithBadHeaderHeaderLabels()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_bad_header.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedErrors = [
             'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"A"</b> in the header is not labeled as <b>"DDBNNN"</b>',
             'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"B"</b> in the header is not labeled as <b>"TITLE"</b>',
             'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"C"</b> in the header is not labeled as <b>"OFF CLS"</b>',
             'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"D"</b> in the header is not labeled as <b>"SUB CLASSES"</b>',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -506,6 +553,9 @@ class ClassWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenSubClassNotFound()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_missing_subclass.xlsx');
@@ -513,6 +563,7 @@ class ClassWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedErrors = [
             'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>001</b>] "<b>Lunch</b>"',
             'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>102</b>] "<b>PreK</b>"',
@@ -524,6 +575,7 @@ class ClassWorksheetParserTest extends TestCase
             'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>301</b>] "<b>Third Grade</b>"',
             'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>301</b>] "<b>Third Grade</b>"',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertTrue(
             $parser->hasErrors(),

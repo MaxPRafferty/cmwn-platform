@@ -72,16 +72,14 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
     }
 
     /**
-     * @param MvcEvent $event
-     *
      * @return void|ApiProblemResponse
      */
-    public function onRoute(MvcEvent $event)
+    public function onRoute()
     {
         // Do nothing if not logged in
         if (!$this->getAuthenticationService()->hasIdentity()) {
             $this->container->offsetUnset('last_seen');
-            return;
+            return null;
         }
 
         $currentTime = $lastSeen = strtotime('now');
@@ -102,6 +100,7 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
             $this->container->offsetUnset('last_seen');
             return new ApiProblemResponse(new ApiProblem(401, 'Expired'));
         }
+        
+        return null;
     }
 }
-

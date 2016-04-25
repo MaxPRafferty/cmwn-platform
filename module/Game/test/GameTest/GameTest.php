@@ -8,10 +8,15 @@ use \PHPUnit_Framework_TestCase as TestCase;
 /**
  * Test GameTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Game
  */
 class GameTest extends TestCase
 {
+    /**
+     * Tests the game works fine when passed an empty array
+     *
+     * @test
+     */
     public function testItShouldExtractAndHydrateWithNulls()
     {
         $expected = [
@@ -29,6 +34,9 @@ class GameTest extends TestCase
         $this->assertEquals($expected, $org->getArrayCopy());
     }
 
+    /**
+     * Tests the data is hydrated to the game when passed data
+     */
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
@@ -36,7 +44,7 @@ class GameTest extends TestCase
         $expected = [
             "game_id"     => "sea-turtle",
             "title"       => "Sea Turtle",
-            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts, play games and find out why they are endangered.",
+            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts",
             "created"     => $date->format(\DateTime::ISO8601),
             "updated"     => $date->format(\DateTime::ISO8601),
             "deleted"     => null,

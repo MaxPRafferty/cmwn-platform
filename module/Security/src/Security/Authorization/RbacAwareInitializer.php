@@ -25,8 +25,8 @@ class RbacAwareInitializer implements InitializerInterface
             return;
         }
 
-        /** @var \Security\Authorization\Rbac $rbac */
-        $rbac = $serviceLocator->get('Security\Authorization\Rbac');
+        /** @var Rbac $rbac */
+        $rbac = $serviceLocator->get(Rbac::class);
         $instance->setRbac($rbac);
     }
 }

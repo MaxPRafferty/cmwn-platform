@@ -21,6 +21,8 @@ class SessionManagerFactory implements FactoryInterface
      *
      * @param ServiceLocatorInterface $service
      * @return SessionManager
+     * @todo break up
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function createService(ServiceLocatorInterface $service)
     {

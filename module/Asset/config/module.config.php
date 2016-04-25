@@ -3,12 +3,15 @@
 return [
     'service_manager' => [
         'aliases'    => [
-            'Image\Service'      => \Asset\Service\ImageService::class,
-            'User\Image\Service' => \Asset\Service\UserImageService::class,
+            'Image\Service'                                 => \Asset\Service\ImageService::class,
+            'User\Image\Service'                            => \Asset\Service\UserImageService::class,
+            \Asset\Service\UserImageServiceInterface::class => \Asset\Service\UserImageService::class,
+            \Asset\Service\ImageServiceInterface::class     => \Asset\Service\ImageService::class,
         ],
         'invokables' => [
             \Asset\Delegator\ImageDelegatorFactory::class            => \Asset\Delegator\ImageDelegatorFactory::class,
-            \Asset\Delegator\UserImageServiceDelegatorFactory::class => \Asset\Delegator\UserImageServiceDelegatorFactory::class,
+            \Asset\Delegator\UserImageServiceDelegatorFactory::class =>
+                \Asset\Delegator\UserImageServiceDelegatorFactory::class,
         ],
         'factories'  => [
             \Asset\Service\ImageService::class     => \Asset\Service\ImageServiceFactory::class,

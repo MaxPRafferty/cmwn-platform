@@ -18,6 +18,8 @@ use Security\Service\SecurityServiceInterface;
 
 /**
  * Class DoePreProcessor
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DoeParser extends AbstractParser implements NotificationAwareInterface
 {
@@ -235,6 +237,9 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
         }
     }
 
+    /**
+     * Adds the actions for the teacher and student code
+     */
     protected function addCodeActions()
     {
         foreach ($this->teacherRegistry as $teacher) {
@@ -277,7 +282,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
         foreach ($this->classRegistry as $classRoom) {
             if ($classRoom->isNew()) {
                 $this->getLogger()->debug(sprintf('Adding class %s to school', $classRoom->getTitle()));
-                $this->addAction(new AddClassToSchooAction($this->school, $classRoom, $this->groupService));
+                $this->addAction(new AddClassToSchoolAction($this->school, $classRoom, $this->groupService));
             }
         }
     }

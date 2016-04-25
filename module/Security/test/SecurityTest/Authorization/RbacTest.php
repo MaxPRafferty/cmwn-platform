@@ -7,9 +7,16 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Rbac;
 
 /**
- * Exception RbacTest
+ * Test RbacTest
  *
- * ${CARET}
+ * @group Security
+ * @group Authorization
+ * @group Rbac
+ * @group User
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RbacTest extends TestCase
 {
@@ -29,7 +36,7 @@ class RbacTest extends TestCase
     public function setUpRbac()
     {
         // pull rbac from the config since we are test the real config not the fake one
-        $this->rbac = TestHelper::getServiceManager()->get('Security\Authorization\Rbac');
+        $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 
     /**

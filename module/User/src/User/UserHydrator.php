@@ -15,6 +15,10 @@ class UserHydrator implements HydratorInterface, ExtractionInterface
      */
     protected $prototype;
 
+    /**
+     * UserHydrator constructor.
+     * @param null $prototype
+     */
     public function __construct($prototype = null)
     {
         if ($prototype === null) {

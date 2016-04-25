@@ -2,7 +2,6 @@
 
 namespace Security\Authorization\Assertions;
 
-use Group\Service\UserGroupServiceInterface;
 use Security\Authorization\AssertionInterface;
 use Security\Authorization\AssertionTrait;
 use Security\Service\SecurityGroupServiceInterface;

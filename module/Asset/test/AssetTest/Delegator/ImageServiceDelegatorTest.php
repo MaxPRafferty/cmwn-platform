@@ -11,7 +11,14 @@ use Zend\EventManager\Event;
 /**
  * Test ImageServiceDelegatorTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Image
+ * @group Delegator
+ * @group Asset
+ * @group ImageDelegator
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ImageServiceDelegatorTest extends TestCase
 {
@@ -77,6 +84,9 @@ class ImageServiceDelegatorTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallSaveImage()
     {
         $this->imageService->shouldReceive('saveImage')
@@ -106,6 +116,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallSaveNewImage()
     {
         $this->imageService->shouldReceive('saveNewImage')
@@ -135,6 +148,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallSaveImageWhenEventPrevents()
     {
         $this->imageService->shouldReceive('saveImage')
@@ -159,6 +175,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallSaveNewImageWhenEventPrevents()
     {
         $this->imageService->shouldReceive('saveNewImage')
@@ -183,6 +202,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchImage()
     {
         $this->imageService->shouldReceive('fetchImage')
@@ -214,6 +236,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchImageAndReturnEventResult()
     {
         $this->imageService->shouldReceive('fetchImage')
@@ -242,6 +267,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteImage()
     {
         $this->imageService->shouldReceive('deleteImage')
@@ -273,6 +301,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallDeleteImageAndReturnEventResult()
     {
         $this->imageService->shouldReceive('deleteImage')
@@ -301,6 +332,9 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAll()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);
@@ -333,7 +367,10 @@ class ImageServiceDelegatorTest extends TestCase
         );
     }
 
-    public function testItShouldCallFetchAllWhenEventStops()
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchAllWhenEventStops()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);
         $this->imageService->shouldReceive('fetchAll')

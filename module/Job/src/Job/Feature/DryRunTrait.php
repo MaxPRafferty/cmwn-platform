@@ -35,5 +35,4 @@ trait DryRunTrait
     {
         return $this->dryRun;
     }
-
 }

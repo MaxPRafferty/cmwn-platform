@@ -8,7 +8,7 @@ use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
 use Security\Service\SecurityOrgService;
-use Security\Service\SecurityService;
+use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Exception\RuntimeException;
 use Zend\Authentication\Result;
@@ -24,7 +24,7 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
     use NoopLoggerAwareTrait;
     
     /**
-     * @var SecurityService
+     * @var SecurityServiceInterface
      */
     protected $service;
 
@@ -45,9 +45,11 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
 
     /**
      * AuthAdapter constructor.
-     * @param SecurityService $service
+     *
+     * @param SecurityServiceInterface $service
+     * @param SecurityOrgService $orgService
      */
-    public function __construct(SecurityService $service, SecurityOrgService $orgService)
+    public function __construct(SecurityServiceInterface $service, SecurityOrgService $orgService)
     {
         $this->service    = $service;
         $this->orgService = $orgService;

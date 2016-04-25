@@ -2,6 +2,11 @@
 
 namespace User;
 
+/**
+ * Class StaticUserFactory
+ *
+ * Creates a user from an array.  Helps out with hydration mainly
+ */
 class StaticUserFactory
 {
     /**

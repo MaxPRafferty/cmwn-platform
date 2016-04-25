@@ -13,7 +13,7 @@ use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Astract Class that helps all users
+ * Abstract Class that helps all users
  *
  * @package User
  * @property string $userId
@@ -26,7 +26,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     use MetaDataTrait;
     use PropertiesTrait;
 
-    //  This by no means is a stab at the LGBT commumnity, currently DOE only has male and female
+    //  This by no means is a stab at the LGBT community, currently DOE only has male and female
     const GENDER_MALE   = 'Male';
     const GENDER_FEMALE = 'Female';
 
@@ -75,6 +75,10 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
      */
     protected $externalId;
 
+    /**
+     * User constructor.
+     * @param array|null $options
+     */
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -324,5 +328,4 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
         $this->gender = $gender;
         return $this;
     }
-
 }

@@ -9,12 +9,18 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Predicate as Where;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Json\Json;
 
 /**
  * Test GroupServiceTest
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Group
+ * @group Service
+ * @group GroupService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupServiceTest extends TestCase
 {
@@ -50,6 +56,9 @@ class GroupServiceTest extends TestCase
         $this->groupService = new GroupService($this->tableGateway);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
     {
         $this->tableGateway
@@ -60,6 +69,9 @@ class GroupServiceTest extends TestCase
         $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
     {
         $this->tableGateway
@@ -74,6 +86,9 @@ class GroupServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
     {
         $expectedWhere = new Where();
@@ -91,6 +106,9 @@ class GroupServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveNewGroup()
     {
         $newGroup = new Group();
@@ -120,6 +138,9 @@ class GroupServiceTest extends TestCase
         $this->assertTrue($this->groupService->saveGroup($newGroup));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldUpdateExistingGroup()
     {
         $groupData = [
@@ -160,6 +181,9 @@ class GroupServiceTest extends TestCase
         $this->assertTrue($this->groupService->saveGroup($group));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchGroupById()
     {
         $groupData = [
@@ -186,6 +210,9 @@ class GroupServiceTest extends TestCase
         $this->assertInstanceOf('Group\Group', $this->groupService->fetchGroup($groupData['group_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchGroupByExternalIdId()
     {
         $groupData = [
@@ -213,6 +240,9 @@ class GroupServiceTest extends TestCase
         $this->assertInstanceOf('Group\Group', $this->groupService->fetchGroupByExternalId($groupData['external_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFound()
     {
         $this->setExpectedException(
@@ -228,6 +258,9 @@ class GroupServiceTest extends TestCase
         $this->groupService->fetchGroup('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFoundByExternalId()
     {
         $this->setExpectedException(
@@ -243,6 +276,9 @@ class GroupServiceTest extends TestCase
         $this->groupService->fetchGroupByExternalId('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteByDefault()
     {
         $groupData = [
@@ -277,6 +313,9 @@ class GroupServiceTest extends TestCase
         $this->assertTrue($this->groupService->deleteGroup($group));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteWhenForced()
     {
         $groupData = [
@@ -310,6 +349,9 @@ class GroupServiceTest extends TestCase
         $this->assertTrue($this->groupService->deleteGroup($group, false));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldRebuildTreeWhenChildAddedForNewTree()
     {
         $this->markTestSkipped('Change GroupService interface to have create and save');
@@ -367,6 +409,9 @@ class GroupServiceTest extends TestCase
         $this->groupService->addChildToGroup($parent, $child);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldRebuildTreeWhenChildAddedForExistingTree()
     {
         $this->markTestSkipped('Change GroupService interface to have create and save');
@@ -402,7 +447,7 @@ class GroupServiceTest extends TestCase
             ->ordered();
 
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($actualSet, $actualWhere) {
+            ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
 
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('head', '>', 1));
@@ -418,7 +463,7 @@ class GroupServiceTest extends TestCase
             ->ordered();
 
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($actualSet, $actualWhere) {
+            ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('group_id', '=', 'child'));
 

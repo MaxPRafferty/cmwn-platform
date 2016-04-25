@@ -20,7 +20,7 @@ class ImportResourceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $services)
     {
         /** @var JobServiceInterface $jobService */
-        $jobService = $services->get('Job\Service');
+        $jobService = $services->get(JobServiceInterface::class);
         return new ImportResource($jobService, $services);
     }
 }

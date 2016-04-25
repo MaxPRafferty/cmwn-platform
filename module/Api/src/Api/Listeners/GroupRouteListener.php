@@ -16,6 +16,9 @@ use ZF\Hal\Entity;
  */
 class GroupRouteListener
 {
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**

@@ -6,6 +6,11 @@ use Zend\Stdlib\AbstractOptions;
 
 /**
  * Class Options
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Options extends AbstractOptions
 {
@@ -47,7 +52,7 @@ class Options extends AbstractOptions
     protected $branch = 'master';
 
     /**
-     * @var bool record full stacktraces for PHP errors. default: true
+     * @var bool record full stack traces for PHP errors. default: true
      */
     protected $captureErrorBacktraces = true;
 
@@ -59,7 +64,7 @@ class Options extends AbstractOptions
     /**
      * @var array Associative array mapping error numbers to sample rates
      */
-    protected $errorSampleRates = array();
+    protected $errorSampleRates = [];
 
     /**
      * @var string Either "blocking" (default) or "agent". "blocking" uses curl to send
@@ -93,10 +98,10 @@ class Options extends AbstractOptions
      *            Required: 'id', optional: 'username', 'email'. All values are strings.
      * @todo Replace array by object
      */
-    protected $person = array();
+    protected $person = [];
 
     /**
-     * @vara callable Function reference (string, etc. - anything that
+     * @var callable Function reference (string, etc. - anything that
      *                [call_user_func()](http://php.net/call_user_func) can handle) returning
      *                an array like the one for 'person'
      */
@@ -110,12 +115,12 @@ class Options extends AbstractOptions
     /**
      * @var array Array of field names to scrub out of POST
      *
-     * Values will be replaced with astrickses. If overridiing, make sure to list all fields you want to scrub,
+     * Values will be replaced with *. If overriding, make sure to list all fields you want to scrub,
      * not just fields you want to add to the default. Param names are converted
      * to lowercase before comparing against the scrub list.
      * default: ('passwd', 'password', 'secret', 'confirm_password', 'password_confirmation')
      */
-    protected $scrubFields = array('passwd', 'password', 'secret', 'confirm_password', 'password_confirmation');
+    protected $scrubFields = ['passwd', 'password', 'secret', 'confirm_password', 'password_confirmation'];
 
     /**
      * @var bool Whether to shift function names in stack traces down one frame, so that the

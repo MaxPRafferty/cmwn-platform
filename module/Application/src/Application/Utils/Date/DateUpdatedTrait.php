@@ -2,14 +2,16 @@
 
 namespace Application\Utils\Date;
 
-
 /**
  * Trait DateUpdatedTrait
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * Trait to help a class define a date updated property
  */
 trait DateUpdatedTrait
 {
+    /**
+     * @var \DateTime
+     */
     protected $dateUpdated;
 
     /**

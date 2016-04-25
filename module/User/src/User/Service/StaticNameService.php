@@ -1,6 +1,7 @@
 <?php
 
 namespace User\Service;
+
 use User\UserName;
 use Zend\Math\Rand;
 

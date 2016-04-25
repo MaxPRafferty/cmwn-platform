@@ -18,7 +18,7 @@ class OrgResourceFactory
     public function __invoke(ServiceLocatorInterface $services)
     {
         /** @var OrganizationServiceInterface $orgService */
-        $orgService = $services->get('Org\Service');
+        $orgService = $services->get(OrganizationServiceInterface::class);
         return new OrgResource($orgService);
     }
 }

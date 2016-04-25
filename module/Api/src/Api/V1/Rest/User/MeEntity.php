@@ -51,6 +51,9 @@ class MeEntity extends UserEntity implements TokenEntityInterface
         );
     }
 
+    /**
+     * @return string
+     */
     public function getEntityType()
     {
         return 'me';

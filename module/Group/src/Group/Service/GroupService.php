@@ -23,6 +23,8 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class GroupService
  * @package Group\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupService implements GroupServiceInterface
 {
@@ -92,8 +94,6 @@ class GroupService implements GroupServiceInterface
             $where
         );
 
-        // UPDATE group SET tail = $parent->getHead() + 1, tail = $parent->getHead() + 2 WHERE group_id = $child->getGroupid()
-
         $where = new Where();
         $where->addPredicate(new Operator('group_id', Operator::OP_EQ, $child->getGroupId()));
         $this->groupTableGateway->update(
@@ -133,17 +133,10 @@ class GroupService implements GroupServiceInterface
     /**
      * Finds all the groups for a user
      *
-     * SELECT ug.user_id AS active_user_id,
-     *   active_group.group_id AS active_group_id,
-     *   g.*
-     * FROM user_groups AS ug
-     *   LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
-     *   LEFT OUTER JOIN groups AS g ON g.head BETWEEN active_group.head AND active_group.tail
-     * WHERE ug.user_id = 'principal'
-     *   AND g.organization_id = active_group.organization_id
-     *
-     * @param Where|GroupInterface|string $user
+     * @param UserInterface|string $user
+     * @param Where|GroupInterface|string $where
      * @param object $prototype
+     * @param bool $paginate
      * @return DbSelect
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
@@ -237,8 +230,8 @@ class GroupService implements GroupServiceInterface
      */
     public function fetchGroup($groupId)
     {
-        $rowset = $this->groupTableGateway->select(['group_id' => $groupId]);
-        $row    = $rowset->current();
+        $rowSet = $this->groupTableGateway->select(['group_id' => $groupId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");
         }
@@ -255,8 +248,8 @@ class GroupService implements GroupServiceInterface
      */
     public function fetchGroupByExternalId($externalId)
     {
-        $rowset = $this->groupTableGateway->select(['external_id' => $externalId]);
-        $row    = $rowset->current();
+        $rowSet = $this->groupTableGateway->select(['external_id' => $externalId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");
         }
@@ -293,12 +286,13 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fethes all the types of groups for the children
+     * Fetches all the types of groups for the children
      *
      * Used for hal link building
      *
      * @param GroupInterface $group
      * @return string[]
+     * @deprecated
      */
     public function fetchChildTypes(GroupInterface $group)
     {

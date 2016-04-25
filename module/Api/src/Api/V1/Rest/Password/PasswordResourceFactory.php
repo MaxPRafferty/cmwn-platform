@@ -1,6 +1,8 @@
 <?php
 namespace Api\V1\Rest\Password;
 
+use Security\Authentication\AuthenticationService;
+use Security\Service\SecurityServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -19,10 +21,10 @@ class PasswordResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Zend\Authentication\AuthenticationService $authService */
-        $authService = $serviceLocator->get('Security\Authentication\AuthenticationService');
-        /** @var \Security\Service\SecurityService $securityService */
-        $securityService = $serviceLocator->get('\Security\Service\SecurityService');
+        /** @var AuthenticationService $authService */
+        /** @var SecurityServiceInterface $securityService */
+        $authService     = $serviceLocator->get(AuthenticationService::class);
+        $securityService = $serviceLocator->get(SecurityServiceInterface::class);
         return new PasswordResource($authService, $securityService);
     }
 }

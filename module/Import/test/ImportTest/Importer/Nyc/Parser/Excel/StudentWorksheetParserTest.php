@@ -12,6 +12,18 @@ use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Test StudentWorksheetParserTest
+ *
+ * @group Student
+ * @group User
+ * @group Import
+ * @group Excel
+ * @group Registry
+ * @group NycImport
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StudentWorksheetParserTest extends TestCase
 {
@@ -83,6 +95,9 @@ class StudentWorksheetParserTest extends TestCase
         return new StudentWorksheetParser($sheet, $this->registry, $this->classRegistry);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCreateCorrectActionsForStudent()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_good_sheet.xlsx');
@@ -107,6 +122,9 @@ class StudentWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCreateCorrectActionsForStudentWithWarnings()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_good_sheet_with_blanks.xlsx');
@@ -117,11 +135,12 @@ class StudentWorksheetParserTest extends TestCase
 
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedWarnings = [
             0 => 'Sheet <b>"Students"</b> Row: <b>3</b> No data found between cells <b>"A"</b> and <b>"AC"</b> Skipping this row',
             1 => 'Sheet <b>"Students"</b> Row: <b>6</b> No data found between cells <b>"A"</b> and <b>"AC"</b> Skipping this row',
-
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertFalse($parser->hasErrors(), 'Processor should not have errors on good file');
         $this->assertEmpty($parser->getErrors(), 'Student Processor is Reporting errors');
@@ -141,6 +160,9 @@ class StudentWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWithInvalidDdbnnn()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_invalid_ddbnnn.xlsx');
@@ -173,6 +195,9 @@ class StudentWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenStudentMissingRequiredFields()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_missing_required_fields.xlsx');
@@ -212,6 +237,9 @@ class StudentWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenStudentHasInvalidBirthday()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_invalid_birthday.xlsx');
@@ -246,6 +274,9 @@ class StudentWorksheetParserTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldErrorWhenTwoStudentsHaveTheSameId()
     {
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_duplicate_id.xlsx');
@@ -256,9 +287,11 @@ class StudentWorksheetParserTest extends TestCase
 
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedErrors = [
             'Sheet <b>"Students"</b> Row: <b>4</b> A student with the id <b>STUDENT ID - "foo-bar"</b> appears more than once in this sheet',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertTrue(
             $parser->hasErrors(),

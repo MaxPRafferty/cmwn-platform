@@ -6,12 +6,16 @@ use Import\Importer\Nyc\Parser\Excel\AbstractExcelParser;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Exception AbstractParserTest
+ * Test AbstractParserTest
  *
- * ${CARET}
+ * @group Import
+ * @group NycImport
  */
 class AbstractExcelParserTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldReturnValueObjectWhenValid()
     {
         $dString = '02B001';
@@ -25,6 +29,8 @@ class AbstractExcelParserTest extends TestCase
 
     /**
      * @dataProvider badDdbnnnProvider
+     * @param string $dString
+     * @test
      */
     public function testItShouldThrowExceptionOnBadNumber($dString)
     {

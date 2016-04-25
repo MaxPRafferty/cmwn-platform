@@ -21,7 +21,7 @@ class SecurityOrgServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $services)
     {
         /** @var Adapter $adapter */
-        $adapter   = $services->get('Zend\Db\Adapter\Adapter');
+        $adapter   = $services->get(Adapter::class);
         return new SecurityOrgService($adapter);
     }
 }

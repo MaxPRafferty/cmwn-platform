@@ -6,6 +6,11 @@ use User\Service\UserServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * Class UserNameResourceFactory
+ *
+ * Creates a UserNameResource
+ */
 class UserNameResourceFactory implements FactoryInterface
 {
     /**
@@ -18,7 +23,7 @@ class UserNameResourceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get('User\Service');
+        $userService = $serviceLocator->get(UserServiceInterface::class);
         return new UserNameResource($userService);
     }
 }

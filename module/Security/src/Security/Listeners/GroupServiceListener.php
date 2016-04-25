@@ -69,7 +69,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
         }
         
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.groups')) {
-            return;
+            return null;
         }
 
         $event->stopPropagation(true);

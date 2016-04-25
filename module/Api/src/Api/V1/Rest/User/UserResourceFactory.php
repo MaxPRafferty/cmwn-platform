@@ -18,7 +18,7 @@ class UserResourceFactory
     public function __invoke(ServiceLocatorInterface $services)
     {
         /** @var UserServiceInterface $userService */
-        $userService = $services->get('User\Service');
+        $userService = $services->get(UserServiceInterface::class);
 
         return new UserResource($userService);
     }

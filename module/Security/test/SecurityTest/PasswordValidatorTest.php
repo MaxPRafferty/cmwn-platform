@@ -6,11 +6,19 @@ namespace SecurityTest;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\PasswordValidator;
 
+/**
+ * Test PasswordValidatorTest
+ *
+ * @group Security
+ * @group Validator
+ * @group Authentication
+ */
 class PasswordValidatorTest extends TestCase
 {
-
     /**
      * @dataProvider validPasswords
+     * @param $password
+     * @test
      */
     public function testItShouldPassWithStrongPassword($password)
     {
@@ -20,13 +28,18 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider invalidPasswords
+     * @param $password
+     * @test
      */
-    public function testItShouldFaileWithWeakPassword($password)
+    public function testItShouldFailsWithWeakPassword($password)
     {
         $validator = new PasswordValidator();
         $this->assertFalse($validator->isValid($password));
     }
 
+    /**
+     * @return array
+     */
     public function validPasswords()
     {
         return [
@@ -36,6 +49,9 @@ class PasswordValidatorTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function invalidPasswords()
     {
         return [

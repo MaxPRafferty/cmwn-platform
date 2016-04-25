@@ -10,6 +10,10 @@ use ZF\Hal\Link\Link;
  */
 class OrgUserLink extends Link
 {
+    /**
+     * OrgUserLink constructor.
+     * @param string $org
+     */
     public function __construct($org)
     {
         $orgId = $org instanceof OrganizationInterface ? $org->getOrgId() : $org;

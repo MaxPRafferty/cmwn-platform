@@ -24,6 +24,11 @@ class LoginResource extends AbstractResourceListener
      */
     protected $adapter;
 
+    /**
+     * LoginResource constructor.
+     * @param AuthenticationService $authService
+     * @param AuthAdapter $adapter
+     */
     public function __construct(AuthenticationService $authService, AuthAdapter $adapter)
     {
         $this->authService = $authService;

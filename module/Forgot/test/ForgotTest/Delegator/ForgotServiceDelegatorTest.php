@@ -9,7 +9,12 @@ use Security\SecurityUser;
 use Zend\EventManager\Event;
 
 /**
- * Exception ForgotServiceDelegatorTest
+ * Test ForgotServiceDelegatorTest
+ *
+ * @group Forgot
+ * @group Service
+ * @group ForgotService
+ * @group Delegator
  */
 class ForgotServiceDelegatorTest extends TestCase
 {
@@ -63,6 +68,9 @@ class ForgotServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallSaveForgotPasswordWhenNullCode()
     {
         $user = new SecurityUser();
@@ -100,6 +108,9 @@ class ForgotServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallSaveForgotPasswordWhenCode()
     {
         $user = new SecurityUser();
@@ -137,6 +148,9 @@ class ForgotServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallForgotPasswordWhenEventStops()
     {
         $user = new SecurityUser();
@@ -167,6 +181,9 @@ class ForgotServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallErrorEventWhenNotFoundExceptionThrown()
     {
         $user = new SecurityUser();
@@ -205,6 +222,9 @@ class ForgotServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallErrorEventWhenExceptionThrown()
     {
         $user = new SecurityUser();

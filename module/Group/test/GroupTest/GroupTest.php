@@ -7,12 +7,15 @@ use Org\Organization;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Test GameTest
+ * Test GroupTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Group
  */
 class GroupTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldExtractAndHydrateWithNulls()
     {
         $expected = [
@@ -37,6 +40,9 @@ class GroupTest extends TestCase
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
@@ -64,6 +70,9 @@ class GroupTest extends TestCase
         $this->assertEquals($expected, $adult->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportRoot()
     {
         $group = new Group();
@@ -103,6 +112,9 @@ class GroupTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSetOrgIdWhenOrganizationPassed()
     {
         $group = new Group();

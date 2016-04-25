@@ -14,6 +14,11 @@ use User\UserName;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
+/**
+ * Class UserNameResource
+ *
+ * Resource for allowing children to change their username
+ */
 class UserNameResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
 {
     use AuthenticationServiceAwareTrait;
@@ -64,7 +69,7 @@ class UserNameResource extends AbstractResourceListener implements Authenticatio
      * @param  array $params
      * @return ApiProblem|mixed
      */
-    public function fetchAll($params = array())
+    public function fetchAll($params = [])
     {
         $userName = StaticNameService::generateRandomName();
         return new UserNameEntity($userName->userName);

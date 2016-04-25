@@ -10,12 +10,18 @@ use User\Adult;
 use User\Child;
 
 /**
- * Exception StudentTest
+ * Test StudentTest
  *
- * ${CARET}
+ * @group Student
+ * @group User
+ * @group Import
+ * @group NycImport
  */
 class StudentTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldValidateOnGoodStudent()
     {
         $student = new Student();
@@ -35,6 +41,9 @@ class StudentTest extends TestCase
         $this->assertTrue($student->hasClassAssigned(), 'The student should now report as having a classroom assigned');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenTryingToSetAdultAsUser()
     {
         $this->setExpectedException(InvalidStudentException::class);

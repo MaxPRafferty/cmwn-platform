@@ -39,7 +39,9 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
 
     /**
      * UserRouteListener constructor.
+     *
      * @param UserServiceInterface $userService
+     * @param UserAssertion $assertion
      */
     public function __construct(UserServiceInterface $userService, UserAssertion $assertion)
     {

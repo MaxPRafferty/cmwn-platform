@@ -82,7 +82,7 @@ class UserServiceListener implements RbacAwareInterface, AuthenticationServiceAw
         }
 
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.users')) {
-            return;
+            return null;
         }
 
         $event->stopPropagation(true);

@@ -35,6 +35,7 @@ class ClassRoom
      * @param $title
      * @param $classRoomId
      * @param array $subClasses
+     * @param GroupInterface|null $group
      */
     public function __construct($title, $classRoomId, array $subClasses = [], GroupInterface $group = null)
     {

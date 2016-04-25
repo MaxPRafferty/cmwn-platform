@@ -4,14 +4,11 @@ namespace Security;
 
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\Console\Request as ConsoleRequest;
-use Zend\EventManager\SharedEventManager;
+
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\Session\Container;
-use ZF\MvcAuth\MvcAuthEvent;
 
 /**
  * Core Classes for Cmwn
@@ -30,8 +27,8 @@ class Module implements
      * The banner is shown in the console window, when the user supplies invalid command-line parameters or invokes
      * the application with no parameters.
      *
-     * The method is called with active Zend\Console\Adapter\AdapterInterface that can be used to directly access Console and send
-     * output.
+     * The method is called with active Zend\Console\Adapter\AdapterInterface that can be used to
+     * directly access Console and send output.
      *
      * @param AdapterInterface $console
      * @return string|null

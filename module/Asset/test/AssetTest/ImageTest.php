@@ -8,10 +8,14 @@ use \PHPUnit_Framework_TestCase as TestCase;
 /**
  * Test ImageTest
  *
- * @author Chuck 'MANCHUCK' Reeves <chuck@manchuck.com>
+ * @group Image
+ * @group Asset
  */
 class ImageTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldExtractAndHydrateWithNulls()
     {
         $expected = [
@@ -29,6 +33,9 @@ class ImageTest extends TestCase
         $this->assertEquals($expected, $image->getArrayCopy());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldHydrateData()
     {
         $date = new \DateTime();
@@ -48,11 +55,12 @@ class ImageTest extends TestCase
 
         $this->assertEquals($expected, $image->getArrayCopy());
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldTakeModerationStatusOverIsModerated()
     {
-        $date = new \DateTime();
-
         $expected = [
             'is_moderated'      => true,
             'moderation_status' => false,
@@ -64,10 +72,11 @@ class ImageTest extends TestCase
         $this->assertFalse($image->isModerated());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldTakeModerationStatusOverModerated()
     {
-        $date = new \DateTime();
-
         $expected = [
             'moderated'         => true,
             'moderation_status' => false,

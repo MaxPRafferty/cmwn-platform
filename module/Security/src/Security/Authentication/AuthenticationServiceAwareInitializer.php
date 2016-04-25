@@ -27,7 +27,7 @@ class AuthenticationServiceAwareInitializer implements InitializerInterface
         }
 
         /** @var AuthenticationServiceInterface $authService */
-        $authService = $serviceLocator->get('Security\Authentication\AuthenticationService');
+        $authService = $serviceLocator->get(AuthenticationServiceInterface::class);
         $instance->setAuthenticationService($authService);
     }
 }

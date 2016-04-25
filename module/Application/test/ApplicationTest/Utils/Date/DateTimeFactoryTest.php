@@ -6,11 +6,15 @@ use Application\Utils\Date\DateTimeFactory;
 
 /**
  * Class DateTimeFactoryTest
- * @package ApplicationTest\Utils\Date
+ * @group Application
+ * @group Utils
+ * @group Date
  */
 class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @test
+     */
     public function testItShouldCreateDateTimeFromDateString()
     {
         $expectedDate = new \DateTimeImmutable();
@@ -19,6 +23,9 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedDate->format("Y-m-d H:i:s"), $testDate->format("Y-m-d H:i:s"));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCreateDateTimeFromTimeStamp()
     {
         $expectedDate = new \DateTimeImmutable('1982-05-13 23:43:00');
@@ -27,6 +34,9 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedDate->format("Y-m-d H:i:s"), $testDate->format("Y-m-d H:i:s"));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldChangeTimeZoneToBeUTC()
     {
         $expectedDate = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
@@ -36,6 +46,9 @@ class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedDate->format("Y-m-d H:i:s"), $testDate->format("Y-m-d H:i:s"));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnNullWhenPassedNull()
     {
         $this->assertNull(DateTimeFactory::factory(null));

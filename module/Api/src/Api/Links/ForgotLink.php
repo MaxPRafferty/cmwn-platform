@@ -10,6 +10,9 @@ use ZF\Hal\Link\Link;
  */
 class ForgotLink extends Link
 {
+    /**
+     * ForgotLink constructor.
+     */
     public function __construct()
     {
         parent::__construct('forgot');

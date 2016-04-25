@@ -5,6 +5,11 @@ namespace Api\V1\Rest\UserName;
 use Zend\Stdlib\ArraySerializableInterface;
 use ZF\Hal\Entity;
 
+/**
+ * Class UserNameEntity
+ *
+ * Hal Link for the Username
+ */
 class UserNameEntity extends Entity
 {
     /**

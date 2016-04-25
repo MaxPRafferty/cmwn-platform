@@ -48,8 +48,8 @@ class Module implements
      * The banner is shown in the console window, when the user supplies invalid command-line parameters or invokes
      * the application with no parameters.
      *
-     * The method is called with active Zend\Console\Adapter\AdapterInterface that can be used to directly access Console and send
-     * output.
+     * The method is called with active Zend\Console\Adapter\AdapterInterface that can be used to directly
+     * access Console and send output.
      *
      * @param AdapterInterface $console
      * @return string|null
@@ -102,6 +102,4 @@ class Module implements
 
         \Resque::setBackend($backend);
     }
-
-
 }

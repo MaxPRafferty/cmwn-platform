@@ -19,10 +19,9 @@ class GroupResourceFactory
     public function __invoke(ServiceLocatorInterface $services)
     {
         /** @var GroupServiceInterface $groupService */
-        $groupService = $services->get('Group\Service');
-
         /** @var OrganizationServiceInterface $orgService */
-        $orgService = $services->get('Org\Service');
+        $groupService = $services->get(GroupServiceInterface::class);
+        $orgService   = $services->get(OrganizationServiceInterface::class);
         return new GroupResource($groupService, $orgService);
     }
 }

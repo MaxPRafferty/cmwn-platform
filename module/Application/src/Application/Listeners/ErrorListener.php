@@ -14,6 +14,9 @@ class ErrorListener implements LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -44,6 +47,9 @@ class ErrorListener implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param MvcEvent $mvcEvent
+     */
     public function dispatchError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
@@ -53,6 +59,9 @@ class ErrorListener implements LoggerAwareInterface
         );
     }
 
+    /**
+     * @param MvcEvent $mvcEvent
+     */
     public function renderError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
@@ -62,6 +71,10 @@ class ErrorListener implements LoggerAwareInterface
         );
     }
 
+    /**
+     * @param MvcEvent $mvcEvent
+     * @return \Exception|mixed
+     */
     protected function getException(MvcEvent $mvcEvent)
     {
         $exception = $mvcEvent->getParam('exception');

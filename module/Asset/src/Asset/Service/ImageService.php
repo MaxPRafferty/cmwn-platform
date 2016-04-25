@@ -26,6 +26,10 @@ class ImageService implements ImageServiceInterface
      */
     protected $imageTableGateway;
 
+    /**
+     * ImageService constructor.
+     * @param TableGateway $gateway
+     */
     public function __construct(TableGateway $gateway)
     {
         $this->imageTableGateway = $gateway;
@@ -115,8 +119,8 @@ class ImageService implements ImageServiceInterface
      */
     public function fetchImage($imageId)
     {
-        $rowset = $this->imageTableGateway->select(['image_id' => $imageId]);
-        $row    = $rowset->current();
+        $rowSet = $this->imageTableGateway->select(['image_id' => $imageId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Image not Found");
         }

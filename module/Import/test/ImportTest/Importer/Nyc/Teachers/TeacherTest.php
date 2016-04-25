@@ -10,12 +10,18 @@ use User\Adult;
 use User\Child;
 
 /**
- * Exception TeacherTest
+ * Test TeacherTest
  *
- * @todo expand tests
+ * @group Import
+ * @group User
+ * @group Teacher
+ * @group NycImport
  */
 class TeacherTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testItShouldValidateOnCorrectTeacher()
     {
         $teacher = new Teacher();
@@ -36,6 +42,9 @@ class TeacherTest extends TestCase
         $this->assertTrue($teacher->hasClassAssigned(), 'The teacher should now report as having a classroom assigned');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenTryingToSetChildAsUser()
     {
         $this->setExpectedException(InvalidTeacherException::class);

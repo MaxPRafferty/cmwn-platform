@@ -7,8 +7,6 @@ use Zend\Log\LoggerInterface;
 
 /**
  * Trait NoopLoggerAwareTrait
- *
- * ${CARET}
  */
 trait NoopLoggerAwareTrait
 {

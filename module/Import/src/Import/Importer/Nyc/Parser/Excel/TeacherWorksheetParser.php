@@ -86,6 +86,8 @@ class TeacherWorksheetParser extends AbstractExcelParser
 
     /**
      * PreProcess a file
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @todo Break up ?
      */
     public function preProcess()
     {

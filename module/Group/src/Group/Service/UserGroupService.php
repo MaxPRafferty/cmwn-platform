@@ -22,6 +22,7 @@ use Zend\Permissions\Acl\Role\RoleInterface;
  * Service to manage attaching users to groups
  *
  * @package Group\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserGroupService implements UserGroupServiceInterface
 {
@@ -239,15 +240,8 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Fetches organizations for a user
      *
-     * SELECT
-     *   o.*
-     * FROM organizations o
-     *   LEFT JOIN groups g ON o.org_id = g.organization_id
-     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     * GROUP BY o.org_id
-     *
-     * @param Where|GroupInterface|string $user
+     * @param Where|UserInterface|string $user
+     * @param bool $prototype
      * @return DbSelect
      */
     public function fetchOrganizationsForUser($user, $prototype = null)

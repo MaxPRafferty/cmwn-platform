@@ -15,8 +15,8 @@ class GroupLink extends Link
     /**
      * GroupLink constructor.
      * @param string $group
-     * @param string $parent
-     * @todo add organization_id param
+     * @param null $parent
+     * @param null $orgId
      */
     public function __construct($group, $parent = null, $orgId = null)
     {

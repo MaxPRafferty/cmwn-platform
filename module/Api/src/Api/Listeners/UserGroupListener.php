@@ -8,7 +8,6 @@ use Api\V1\Rest\Group\GroupCollection;
 use Api\V1\Rest\Group\GroupEntity;
 use Api\V1\Rest\Org\OrgCollection;
 use Api\V1\Rest\Org\OrgEntity;
-use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
 use Group\Service\UserGroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
@@ -19,6 +18,9 @@ use ZF\Hal\Plugin\Hal;
 
 /**
  * Class UserGroupListener
+ *
+ * @todo Breakup into smaller classes
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserGroupListener
 {
@@ -74,6 +76,11 @@ class UserGroupListener
         }
     }
 
+    /**
+     * Flags that we are rendering a collection
+     *
+     * Attach group skips when we are rendering a collection of users
+     */
     public function flagCollection()
     {
         $this->collection = true;
@@ -159,6 +166,13 @@ class UserGroupListener
         $this->attachOrgHalLinks($hal, $payload, $orgTypes);
     }
 
+    /**
+     * Attaches the Org Hal Links
+     *
+     * @param Hal $hal
+     * @param \ArrayObject $payload
+     * @param array $orgTypes
+     */
     protected function attachOrgHalLinks(Hal $hal, \ArrayObject $payload, array $orgTypes)
     {
         foreach ($orgTypes as $orgType) {
@@ -174,6 +188,11 @@ class UserGroupListener
         }
     }
 
+    /**
+     * @param Hal $hal
+     * @param \ArrayObject $payload
+     * @param array $groupTypes
+     */
     protected function attachGroupHalLinks(Hal $hal, \ArrayObject $payload, array $groupTypes)
     {
         foreach ($groupTypes as $groupType) {

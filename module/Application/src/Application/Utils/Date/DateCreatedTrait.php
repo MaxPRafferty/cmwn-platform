@@ -5,10 +5,13 @@ namespace Application\Utils\Date;
 /**
  * Trait DateCreatedTrait
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * Trait to help define a property for date created
  */
 trait DateCreatedTrait
 {
+    /**
+     * @var \DateTime
+     */
     protected $dateCreated;
 
     /**

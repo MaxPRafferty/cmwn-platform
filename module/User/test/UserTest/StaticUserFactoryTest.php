@@ -9,10 +9,14 @@ use User\UserInterface;
 /**
  * Test StaticUserFactoryTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
+ * @group Hydrator
  */
 class StaticUserFactoryTest extends TestCase
 {
+    /**
+     * @var array
+     */
     protected $userData = [];
 
     /**
@@ -37,6 +41,9 @@ class StaticUserFactoryTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnAdultWhenAdultIsPassedInArray()
     {
         $user = StaticUserFactory::createUser($this->userData);
@@ -44,6 +51,9 @@ class StaticUserFactoryTest extends TestCase
         $this->assertEquals($this->userData['username'], $user->getUserName());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnAdultWhenDataIsArrayObject()
     {
         $user = StaticUserFactory::createUser(new \ArrayObject($this->userData));
@@ -51,6 +61,9 @@ class StaticUserFactoryTest extends TestCase
         $this->assertEquals($this->userData['username'], $user->getUserName());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnAdultWhenAdultIsPassedAsParameter()
     {
         unset($this->userData['type']);
@@ -59,7 +72,10 @@ class StaticUserFactoryTest extends TestCase
         $this->assertInstanceOf('User\Adult', $user);
         $this->assertEquals($this->userData['username'], $user->getUserName());
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldReturnChildWhenChildIsPassedInArray()
     {
         $this->userData['type'] = UserInterface::TYPE_CHILD;
@@ -68,6 +84,9 @@ class StaticUserFactoryTest extends TestCase
         $this->assertEquals($this->userData['username'], $user->getUserName());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnChildWhenChildIsPassedIAsParameter()
     {
         unset($this->userData['type']);
@@ -77,6 +96,9 @@ class StaticUserFactoryTest extends TestCase
         $this->assertEquals($this->userData['username'], $user->getUserName());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenInvalidTypePassedInArray()
     {
         $this->setExpectedException(
@@ -87,6 +109,9 @@ class StaticUserFactoryTest extends TestCase
         StaticUserFactory::createUser(['type' => 'foo']);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenInvalidTypePassedAsParameter()
     {
         $this->setExpectedException(
@@ -97,6 +122,9 @@ class StaticUserFactoryTest extends TestCase
         StaticUserFactory::createUser([], 'foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenDataIsInvalid()
     {
         $this->setExpectedException(

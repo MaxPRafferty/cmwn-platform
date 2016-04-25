@@ -19,6 +19,7 @@ use Zend\Paginator\Adapter\DbSelect;
  * Class UserService
  *
  * @package User\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserService implements UserServiceInterface
 {
@@ -29,6 +30,10 @@ class UserService implements UserServiceInterface
      */
     protected $userTableGateway;
 
+    /**
+     * UserService constructor.
+     * @param TableGateway $gateway
+     */
     public function __construct(TableGateway $gateway)
     {
         $this->userTableGateway = $gateway;
@@ -125,8 +130,8 @@ class UserService implements UserServiceInterface
      */
     public function fetchUser($userId)
     {
-        $rowset = $this->userTableGateway->select(['user_id' => $userId]);
-        $row    = $rowset->current();
+        $rowSet = $this->userTableGateway->select(['user_id' => $userId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
         }
@@ -143,8 +148,8 @@ class UserService implements UserServiceInterface
      */
     public function fetchUserByExternalId($externalId)
     {
-        $rowset = $this->userTableGateway->select(['external_id' => $externalId]);
-        $row    = $rowset->current();
+        $rowSet = $this->userTableGateway->select(['external_id' => $externalId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
         }
@@ -161,8 +166,8 @@ class UserService implements UserServiceInterface
      */
     public function fetchUserByEmail($email)
     {
-        $rowset = $this->userTableGateway->select(['email' => $email]);
-        $row    = $rowset->current();
+        $rowSet = $this->userTableGateway->select(['email' => $email]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
         }
