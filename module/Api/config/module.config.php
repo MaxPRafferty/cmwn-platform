@@ -39,6 +39,7 @@ return array(
             'Api\\V1\\Rest\\Import\\ImportResource' => 'Api\\V1\\Rest\\Import\\ImportResourceFactory',
             'Api\\V1\\Rest\\UserName\\UserNameResource' => 'Api\\V1\\Rest\\UserName\\UserNameResourceFactory',
             'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
+            'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
         ),
     ),
     'router' => array(
@@ -187,6 +188,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.flip-user' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/flip[/:flip_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\FlipUser\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -207,6 +217,7 @@ return array(
             13 => 'api.rest.import',
             14 => 'api.rest.user-name',
             15 => 'api.rest.flip',
+            16 => 'api.rest.flip-user',
         ),
     ),
     'zf-rest' => array(
@@ -504,6 +515,25 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Flip\\FlipCollection',
             'service_name' => 'Flip',
         ),
+        'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResource',
+            'route_name' => 'api.rest.flip-user',
+            'route_identifier_name' => 'flip_id',
+            'collection_name' => 'flip_user',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => '100',
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\FlipUser\\FlipUserEntity',
+            'collection_class' => 'Api\\V1\\Rest\\FlipUser\\FlipUserCollection',
+            'service_name' => 'FlipUser',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -523,6 +553,7 @@ return array(
             'Api\\V1\\Rest\\Import\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UserName\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Flip\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\FlipUser\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -605,6 +636,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -669,6 +705,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Flip\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\FlipUser\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -870,6 +910,18 @@ return array(
                 'route_identifier_name' => 'flip_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\FlipUser\\FlipUserEntity' => array(
+                'entity_identifier_name' => 'flip_id',
+                'route_name' => 'api.rest.flip-user',
+                'route_identifier_name' => 'flip_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\FlipUser\\FlipUserCollection' => array(
+                'entity_identifier_name' => 'flip_id',
+                'route_name' => 'api.rest.flip-user',
+                'route_identifier_name' => 'flip_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -902,6 +954,9 @@ return array(
         ),
         'Api\\V1\\Rest\\UserName\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\UserName\\Validator',
+        ),
+        'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\FlipUser\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1282,6 +1337,15 @@ return array(
                 'filters' => array(),
                 'name' => 'user_name',
                 'description' => 'The new Username selected',
+            ),
+        ),
+        'Api\\V1\\Rest\\FlipUser\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'flip_id',
+                'description' => 'The Id of the flip the user has earned',
             ),
         ),
     ),

@@ -13,6 +13,10 @@ return [
             'api.rest.flip'        => [
                 'GET' => 'view.flip',
             ],
+            'api.rest.flip-user' => [
+                'GET'  => 'view.user.flip',
+                'POST' => 'create.user.flip',
+            ],
             'api.rest.user'        => [
                 'GET'  => ['view.user.adult', 'view.user.child'],
                 'POST' => 'create.user',
