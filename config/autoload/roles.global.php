@@ -74,6 +74,8 @@ return [
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -259,6 +261,7 @@ return [
                     'pick.username',
                     'update.password',
                     'view.games',
+                    'view.flip',
                     'view.group',
                     'view.group.users',
                     'view.org',
