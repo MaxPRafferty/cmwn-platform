@@ -9,7 +9,7 @@ use Flip\EarnedFlipInterface;
 use Flip\FlipInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -50,7 +50,9 @@ class FlipUserService implements FlipUserServiceInterface
         $where  = $this->createWhere($where);
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 
-        $select = new Select(['u' => 'users']);
+        $select = new Select(['f' => 'flips']);
+
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $select->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', $userId),
@@ -58,16 +60,10 @@ class FlipUserService implements FlipUserServiceInterface
             Select::JOIN_LEFT
         );
 
-        $select->join(
-            ['f' => 'flips'],
-            'f.flip_id = uf.flip_id',
-            ['*'],
-            Select::JOIN_LEFT
-        );
 
         $select->where($where);
 
-        $prototype = $prototype instanceof EarnedFlipInterface ? new EarnedFlip() : $prototype;
+        $prototype = !$prototype instanceof EarnedFlipInterface ? new EarnedFlip() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,

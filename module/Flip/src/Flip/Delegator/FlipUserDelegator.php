@@ -82,9 +82,8 @@ class FlipUserDelegator implements FlipUserServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchEarnedFlipsForUser($user, $flip);
+        $return   = $this->realService->attachFlipToUser($user, $flip);
         $event->setName('attach.flip.post');
-        $event->setParam('flips', $return);
         $this->getEventManager()->trigger($event);
 
         return $return;

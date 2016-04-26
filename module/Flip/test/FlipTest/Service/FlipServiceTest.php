@@ -2,10 +2,13 @@
 
 namespace FlipTest\Service;
 
+use Application\Exception\NotFoundException;
 use Flip\Flip;
 use Flip\Service\FlipService;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Hydrator\ArraySerializable;
@@ -82,11 +85,12 @@ class FlipServiceTest extends TestCase
     {
         /** @var \Mockery\MockInterface|\Flip\FlipInterface $prototype */
         $prototype = \Mockery::mock('\Flip\FlipInterface');
-        
+        $where     = new Where();
+        $where->addPredicate(new Operator('foo', '=', 'bar'));
 
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         $expectedSelect    = new Select('flips');
-        $expectedSelect->where(new Where());
+        $expectedSelect->where($where);
 
         $expectedAdapter   = new DbSelect(
             $expectedSelect,
@@ -96,8 +100,53 @@ class FlipServiceTest extends TestCase
 
         $this->assertEquals(
             $expectedAdapter,
-            $this->flipService->fetchAll(),
+            $this->flipService->fetchAll($where, $prototype),
             'Flip Service did not return correct adapter'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchFlipById()
+    {
+        $flipData = [
+            'flip_id'     => 'foo-bar',
+            'title'       => 'Manchuck Flip',
+            'description' => 'The Best Flip to earn',
+        ];
+
+        $result = new ResultSet();
+        $result->initialize([$flipData]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['flip_id' => $flipData['flip_id']])
+            ->andReturn($result);
+
+        $actualFlip = $this->flipService->fetchFlipById($flipData['flip_id']);
+        $this->assertInstanceOf(
+            Flip::class,
+            $actualFlip,
+            'Flip service did not return back a flip'
+        );
+
+        $this->assertEquals(new Flip($flipData), $actualFlip, 'Flip returned was not correctly');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenFlipNotFound()
+    {
+        $this->setExpectedException(
+            NotFoundException::class,
+            'Flip not Found'
+        );
+
+        $result = new ResultSet();
+        $result->initialize([]);
+        $this->tableGateway->shouldReceive('select')
+            ->andReturn($result);
+
+        $this->flipService->fetchFlipById('foo-bar');
     }
 }
