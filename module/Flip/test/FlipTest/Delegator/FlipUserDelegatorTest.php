@@ -10,6 +10,10 @@ use Zend\EventManager\Event;
 /**
  * Test FlipUserDelegatorTest
  *
+ * @group Flip
+ * @group User
+ * @group Service
+ * @group Delegator
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

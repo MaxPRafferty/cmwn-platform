@@ -17,6 +17,8 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Test FlipServiceTest
  *
+ * @group Flip
+ * @group Service
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

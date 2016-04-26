@@ -8,6 +8,8 @@ use \PHPUnit_Framework_TestCase as TestCase;
 /**
  * Test EarnedFlipTest
  *
+ * @group User
+ * @group Flip
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
