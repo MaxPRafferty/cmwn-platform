@@ -49,7 +49,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 210);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], -500);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
     }
 
     /**
