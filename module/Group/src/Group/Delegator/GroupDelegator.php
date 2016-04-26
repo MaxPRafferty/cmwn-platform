@@ -63,6 +63,7 @@ class GroupDelegator implements GroupServiceInterface
      * @param GroupInterface $parent
      * @param GroupInterface $child
      * @return bool
+     * @fixme This is not following the contributing standard
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
     {
