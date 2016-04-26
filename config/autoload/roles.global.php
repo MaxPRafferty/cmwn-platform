@@ -232,6 +232,7 @@ return [
                     'child.code',
                     'pick.username',
                     'update.password',
+                    'view.flip',
                     'view.games',
                     'view.group',
                     'view.group.users',
