@@ -5,12 +5,13 @@ namespace Group\Service;
 use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
+use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -21,6 +22,7 @@ use Zend\Permissions\Acl\Role\RoleInterface;
  * Service to manage attaching users to groups
  *
  * @package Group\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserGroupService implements UserGroupServiceInterface
 {
@@ -86,35 +88,61 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Finds all the users for a group
      *
-     * SELECT *
-     * FROM users u
-     * LEFT JOIN user_groups ug ON ug.user_id = u.user_id
-     * LEFT JOIN groups g ON ug.group_id = g.group_id
-     * WHERE g.group_id = 'baz-bat'
+     * SELECT u.*
+     * FROM groups g
+     *   LEFT JOIN groups AS active_group ON active_group.group_id = 'school'
+     *   LEFT OUTER JOIN user_groups AS ug ON ug.group_id = g.group_id
+     *   LEFT OUTER JOIN users AS u ON ug.user_id = u.user_id
+     * WHERE g.head BETWEEN active_group.head AND active_group.tail
+     *   AND g.organization_id = 'district'
      *
      * @param Where|GroupInterface|string $group
      * @param object $prototype
      * @return DbSelect
      */
-    public function fetchUsersForGroup($group, $prototype = null)
+    public function fetchUsersForGroup(GroupInterface $group, $prototype = null)
     {
-        $where = $this->createWhere($group);
+        $where = $this->createWhere([]);
+        $where->addPredicate(new Between(
+            'g.head',
+            new Expression('active_group.head'),
+            new Expression('active_group.tail')
+        ));
 
-        if ($group instanceof GroupInterface) {
-            $where->addPredicate(new Operator('g.group_id', Operator::OP_EQ, $group->getGroupId()));
-        }
+        $where->addPredicate(new Operator(
+            'g.organization_id',
+            '=',
+            $group->getOrganizationId()
+        ));
 
-        if (is_string($group)) {
-            $where->addPredicate(new Operator('g.group_id', Operator::OP_EQ, $group));
-        }
+        $select = new Select(['g'  => 'groups']);
+        $select->columns(['group_id']);
+        $select->join(
+            ['active_group' => 'groups'],
+            new Expression('active_group.group_id = ?', $group->getGroupId()),
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
 
-        $select = new Select();
-        $select->from(['u'  => 'users']);
-        $select->join(['ug' => 'user_groups'], 'ug.user_id = u.user_id', [], Select::JOIN_LEFT);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select->join(
+            ['ug' => 'user_groups'],
+            'ug.group_id = g.group_id',
+            ['user_group_id' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->join(
+            ['u' => 'users'],
+            'ug.user_id = u.user_id',
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
+
         $select->where($where);
+        $select->group('u.user_id');
 
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
             $select,
             $this->pivotTable->getAdapter(),
@@ -125,11 +153,12 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Finds all the users for an organization
      *
-     * SELECT *
-     * FROM users u
-     * LEFT JOIN user_groups ug ON ug.user_id = u.user_id
-     * LEFT JOIN groups g ON ug.group_id = g.group_id
-     * WHERE g.organization_id = 'foo-bar'
+     * SELECT u.*
+     * FROM groups g
+     *   LEFT OUTER JOIN user_groups AS ug ON ug.group_id = g.group_id
+     *   LEFT OUTER JOIN users AS u ON ug.user_id = u.user_id
+     * WHERE g.organization_id = 'district'
+     * GROUP BY u.user_id;
      *
      * @param $organization
      * @param null $prototype
@@ -140,8 +169,34 @@ class UserGroupService implements UserGroupServiceInterface
         $orgId = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
         $where = new Where();
         $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $orgId));
+        
+        $select = new Select(['g'  => 'groups']);
+        $select->columns(['group_id']);
 
-        return $this->fetchUsersForGroup($where, $prototype);
+        $select->join(
+            ['ug' => 'user_groups'],
+            'ug.group_id = g.group_id',
+            ['user_group_id' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->join(
+            ['u' => 'users'],
+            'ug.user_id = u.user_id',
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->where($where);
+        $select->group('u.user_id');
+
+        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        return new DbSelect(
+            $select,
+            $this->pivotTable->getAdapter(),
+            $resultSet
+        );
     }
 
 
@@ -171,7 +226,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select = new Select();
         $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['ug_role' => 'role'], Select::JOIN_LEFT);
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
@@ -185,15 +240,8 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Fetches organizations for a user
      *
-     * SELECT
-     *   o.*
-     * FROM organizations o
-     *   LEFT JOIN groups g ON o.org_id = g.organization_id
-     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     * GROUP BY o.org_id
-     *
-     * @param Where|GroupInterface|string $user
+     * @param Where|UserInterface|string $user
+     * @param bool $prototype
      * @return DbSelect
      */
     public function fetchOrganizationsForUser($user, $prototype = null)
@@ -211,8 +259,20 @@ class UserGroupService implements UserGroupServiceInterface
         $select = new Select();
         $select->columns(['o' => '*']);
         $select->from(['o'  => 'organizations']);
-        $select->join(['g'  => 'groups'], 'o.org_id = g.organization_id', [], Select::JOIN_LEFT);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $select->join(
+            ['g' => 'groups'],
+            'o.org_id = g.organization_id',
+            ['real_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        $select->join(
+            ['ug' => 'user_groups'],
+            'ug.group_id = g.group_id',
+            ['ug_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
         $select->where($where);
         $select->group('o.org_id');
         $select->order('org_id ASC');
@@ -226,80 +286,70 @@ class UserGroupService implements UserGroupServiceInterface
     }
 
     /**
-     * Gets the groups types for a user
+     * SELECT ug.user_id AS active_user_id,
+     *   active_group.group_id AS active_group_id,
+     *   ug2.user_id AS sub_user_id,
+     *   u.*
+     * FROM user_groups AS ug
+     *   LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
+     *   LEFT OUTER JOIN groups AS g ON g.head BETWEEN active_group.head AND active_group.tail
+     *   LEFT OUTER JOIN user_groups AS ug2 ON ug2.group_id = g.group_id
+     *   LEFT JOIN users AS u ON u.user_id = ug2.user_id
+     * WHERE ug.user_id = 'principal'
+     *   AND g.organization_id = active_group.organization_id;
      *
-     * SELECT
-     * DISTINCT g.type
-     * FROM user_groups ug
-     *   LEFT JOIN groups g ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     *
-     * @param string|UserInterface $user
-     * @return $this
+     * @param $user
+     * @param $where
+     * @param null $prototype
+     * @return DbSelect
      */
-    public function fetchGroupTypesForUser($user)
+    public function fetchAllUsersForUser($user, $where = null, $prototype = null)
     {
+        $where  = $this->createWhere($where);
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $select = new Select();
-        $select->columns([
-            new Expression('DISTINCT(g.type) AS type'),
-        ]);
 
-        $where = new Where();
-        $where->addPredicate(new Operator('user_id', '=', $userId));
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
+        $where->addPredicate(new Operator('g.organization_id', '=', new Expression('active_group.organization_id')));
 
-        $select->from(['ug' => 'user_groups']);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
+        $select = new Select(['ug' => 'user_groups']);
+        $select->columns(['real_user_id' => 'user_id']);
+        $select->join(
+            ['active_group' => 'groups'],
+            'active_group.group_id = ug.group_id',
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        $select->join(
+            ['g' => 'groups'],
+            'g.head BETWEEN active_group.head AND active_group.tail',
+            ['user_group_id' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        $select->join(
+            ['ug2' => 'user_groups'],
+            'ug2.group_id = g.group_id',
+            ['sub_user_id' => 'user_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+
+        $select->join(
+            ['u' => 'users'],
+            'u.user_id = ug2.user_id',
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
+
         $select->where($where);
-        $select->limit(10);
 
-        $results = $this->pivotTable->selectWith($select);
-        $types   = [];
-        foreach ($results as $row) {
-            $types[] = $row['type'];
-        }
-
-        sort($types);
-        return array_unique($types);
-    }
-
-    /**
-     * Gets the org types for a user
-     *
-     * SELECT
-     * DISTINCT o.type
-     * FROM user_groups ug
-     *   LEFT JOIN groups g ON ug.group_id = g.group_id
-     *   LEFT JOIN organizations o ON o.org_id = g.organization_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     *
-     * @param string|UserInterface $user
-     * @return $this
-     */
-    public function fetchOrgTypesForUser($user)
-    {
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $select = new Select();
-        $select->columns([
-            new Expression('DISTINCT(o.type) AS type'),
-        ]);
-
-        $where = new Where();
-        $where->addPredicate(new Operator('user_id', '=', $userId));
-
-        $select->from(['ug' => 'user_groups']);
-        $select->join(['g'  => 'groups'], 'g.group_id = ug.group_id', [], Select::JOIN_LEFT);
-        $select->join(['o'  => 'organizations'], 'o.org_id = g.organization_id', [], Select::JOIN_LEFT);
-        $select->where($where);
-        $select->limit(10);
-
-        $results = $this->pivotTable->selectWith($select);
-        $types   = [];
-        foreach ($results as $row) {
-            $types[] = $row['type'];
-        }
-
-        sort($types);
-        return array_unique($types);
+        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        return new DbSelect(
+            $select,
+            $this->pivotTable->getAdapter(),
+            $resultSet
+        );
     }
 }

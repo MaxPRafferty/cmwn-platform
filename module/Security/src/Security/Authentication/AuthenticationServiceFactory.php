@@ -2,10 +2,10 @@
 
 namespace Security\Authentication;
 
-use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\Session;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\SessionManager;
 
 /**
  * Class CmwnAuthenticationServiceFactory
@@ -21,6 +21,8 @@ class AuthenticationServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new AuthenticationService(new Session());
+        /** @var SessionManager $session */
+        $session = $serviceLocator->get(SessionManager::class);
+        return new AuthenticationService(new Session(null, null, $session));
     }
 }

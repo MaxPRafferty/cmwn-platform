@@ -22,9 +22,10 @@ class ClassWorksheetParser extends AbstractExcelParser
     protected $classRegistry;
 
     /**
-     * ClassesParser constructor.
+     * ClassWorksheetParser constructor.
      *
      * @param WorkSheet $worksheet
+     * @param ClassRoomRegistry $classRoomRegistry
      * @throws InvalidWorksheetException
      */
     public function __construct(WorkSheet $worksheet, ClassRoomRegistry $classRoomRegistry)
@@ -136,6 +137,10 @@ class ClassWorksheetParser extends AbstractExcelParser
         $this->buildActions();
     }
 
+    /**
+     * Creates the actions for this worksheet
+     *
+     */
     protected function buildActions()
     {
         $this->getLogger()->info('Building Actions for classroom');

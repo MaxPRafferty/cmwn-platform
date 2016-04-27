@@ -22,7 +22,7 @@ class ClassRoomRegistryFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var GroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get('Group\GroupService');
+        $groupService = $serviceLocator->get(GroupServiceInterface::class);
         return new ClassRoomRegistry($groupService);
     }
 }

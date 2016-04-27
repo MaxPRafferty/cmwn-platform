@@ -23,6 +23,12 @@ class DefaultAssertion implements AssertionInterface
      */
     public function assert(Rbac $rbac)
     {
-        return $rbac->isGranted($this->role, $this->permission);
+        foreach ($this->permission as $permission) {
+            if ($rbac->isGranted($this->role, $permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -10,9 +10,13 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
 /**
- * Exception TeacherRegistryTest
+ * Test TeacherRegistryTest
  *
- * ${CARET}
+ * @group User
+ * @group Teacher
+ * @group Import
+ * @group NycImport
+ * @group Registry
  */
 class TeacherRegistryTest extends TestCase
 {
@@ -59,6 +63,10 @@ class TeacherRegistryTest extends TestCase
         return $teacher;
     }
 
+    /**
+     * @throws InvalidTeacherException
+     * @test
+     */
     public function testItShouldShouldLookInLocalStorageBeforeQueryingTheDatabase()
     {
         $teacher = $this->getGoodTeacher();
@@ -68,6 +76,9 @@ class TeacherRegistryTest extends TestCase
         $this->assertSame($teacher, $this->registry->offsetGet('chuck@manchuck.com'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldConvertGroupToClassRoomWhenSearching()
     {
         $user = new Adult();
@@ -85,6 +96,10 @@ class TeacherRegistryTest extends TestCase
         );
     }
 
+    /**
+     * @throws InvalidTeacherException
+     * @test
+     */
     public function testItShouldAttachUserWhenAddingExistingTeacher()
     {
         $user = new Adult();
@@ -104,22 +119,31 @@ class TeacherRegistryTest extends TestCase
         $this->assertSame($user, $teacher->getUser(), 'User was not attached to teacher');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnFalseAndNullWhenUserNotFoundAndTeacherNotSet()
     {
         $this->assertFalse($this->registry->offsetExists('foo'));
         $this->assertNull($this->registry->offsetGet('foo'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowBadMethodCallExceptionOnUnset()
     {
         $this->setExpectedException(
-            \BadmethodCallException::class,
+            \BadMethodCallException::class,
             'Cannot unset values from the Teacher Registry'
         );
 
         $this->registry->offsetUnset('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenAddingBadTeacher()
     {
         $teacher = new Teacher();

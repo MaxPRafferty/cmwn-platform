@@ -6,11 +6,13 @@ use Application\Exception\NotFoundException;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\UserAssertion;
+use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class UserRouteListener
@@ -31,12 +33,20 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
     protected $listeners = [];
 
     /**
-     * UserRouteListener constructor.
-     * @param UserServiceInterface $userService
+     * @var UserAssertion
      */
-    public function __construct(UserServiceInterface $userService)
+    protected $assertion;
+
+    /**
+     * UserRouteListener constructor.
+     *
+     * @param UserServiceInterface $userService
+     * @param UserAssertion $assertion
+     */
+    public function __construct(UserServiceInterface $userService, UserAssertion $assertion)
     {
         $this->userService = $userService;
+        $this->assertion   = $assertion;
     }
 
     /**
@@ -77,7 +87,7 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
         try {
             $user = $this->userService->fetchUser($userId);
         } catch (NotFoundException $notFound) {
-            return new ApiProblem(404, 'User not found');
+            return new ApiProblemResponse(new ApiProblem(404, 'User not found'));
         }
 
         $route->setParam('user', $user);
@@ -86,7 +96,8 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
     }
 
     /**
-     * @param MvcEvent $event
+     * @param MvcEvent      $event
+     * @param UserInterface $user
      */
     protected function addAssertion(MvcEvent $event, UserInterface $user)
     {
@@ -94,8 +105,15 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $assertion = new UserAssertion($this->authService->getIdentity());
-        $assertion->setUser($user);
+        try {
+            $identity = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $identity = $changePassword->getUser();
+        }
+
+        $assertion = clone $this->assertion;
+        $assertion->setActiveUser($identity);
+        $assertion->setRequestedUser($user);
         $event->setParam('assertion', $assertion);
     }
 }

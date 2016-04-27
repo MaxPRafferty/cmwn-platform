@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\Password;
 
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Security\Service\SecurityServiceInterface;
-use User\UserInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -24,6 +24,11 @@ class PasswordResource extends AbstractResourceListener
      */
     protected $securityService;
 
+    /**
+     * PasswordResource constructor.
+     * @param AuthenticationServiceInterface $authService
+     * @param SecurityServiceInterface $securityService
+     */
     public function __construct(AuthenticationServiceInterface $authService, SecurityServiceInterface $securityService)
     {
         $this->authService     = $authService;
@@ -43,7 +48,12 @@ class PasswordResource extends AbstractResourceListener
             return new ApiProblem(401, 'Not Authorized');
         }
 
-        $securityUser = $this->authService->getIdentity();
+        try {
+            $securityUser = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $securityUser = $changePassword->getUser();
+        }
+        
         if (!$securityUser instanceof SecurityUser) {
             return new ApiProblem(401, 'Not Authorized');
         }

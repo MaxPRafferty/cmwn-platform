@@ -8,9 +8,14 @@ use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
 
 /**
- * Exception XsrfGuardTest
+ * Test XsrfGuardTest
  *
- * ${CARET}
+ * @group Security
+ * @group Authentication
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class XsrfGuardTest extends TestCase
 {
@@ -29,7 +34,6 @@ class XsrfGuardTest extends TestCase
      */
     public function setUpManager()
     {
-        $_SESSION = [];
         Container::setDefaultManager(null);
         $config = new StandardConfig([
             'storage' => 'Zend\\Session\\Storage\\ArrayStorage',
@@ -39,8 +43,11 @@ class XsrfGuardTest extends TestCase
         $this->container = new Container('Default', $manager);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotFail()
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('Not Implemented');
     }
 }

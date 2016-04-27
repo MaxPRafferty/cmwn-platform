@@ -7,17 +7,15 @@ use Zend\Permissions\Rbac\RoleInterface;
 
 /**
  * Interface AssertionInterface
- *
- * ${CARET}
  */
 interface AssertionInterface extends ZfAssert
 {
     /**
-     * Sets the permission requested
+     * Sets the permissions requested
      *
-     * @param string $permission
+     * @param string[] $permissions
      */
-    public function setPermission($permission);
+    public function setPermission(array $permissions);
 
     /**
      * Sets role to use

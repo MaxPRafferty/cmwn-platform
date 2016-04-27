@@ -4,14 +4,11 @@ namespace Security;
 
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\Console\Request as ConsoleRequest;
-use Zend\EventManager\SharedEventManager;
+
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\Session\Container;
-use ZF\MvcAuth\MvcAuthEvent;
 
 /**
  * Core Classes for Cmwn
@@ -30,8 +27,8 @@ class Module implements
      * The banner is shown in the console window, when the user supplies invalid command-line parameters or invokes
      * the application with no parameters.
      *
-     * The method is called with active Zend\Console\Adapter\AdapterInterface that can be used to directly access Console and send
-     * output.
+     * The method is called with active Zend\Console\Adapter\AdapterInterface that can be used to
+     * directly access Console and send output.
      *
      * @param AdapterInterface $console
      * @return string|null
@@ -90,62 +87,5 @@ class Module implements
                 ],
             ],
         ];
-    }
-
-    /**
-     * Registers the session and attaches guards
-     *
-     * @param MvcEvent $event
-     */
-    public function onBootstrap(MvcEvent $event)
-    {
-        if ($event->getRequest() instanceof ConsoleRequest) {
-            return;
-        }
-
-        /** @var \Zend\Session\SessionManager $session */
-        $session = $event->getApplication()
-            ->getServiceManager()
-            ->get('Zend\Session\SessionManager');
-
-        $session->start();
-
-        $container = new Container('initialized');
-
-        // This sets the user agennt and remote addr on the 1st request to the application
-
-        if (!isset($container->init)) {
-            $serviceManager = $event->getApplication()->getServiceManager();
-            $request        = $serviceManager->get('Request');
-
-            $container->init          = 1;
-            $container->remoteAddr    = $request->getServer()->get('REMOTE_ADDR');
-            $container->httpUserAgent = $request->getServer()->get('HTTP_USER_AGENT');
-
-            $config = $serviceManager->get('Config');
-            if (!isset($config['session'])) {
-                return;
-            }
-
-            $sessionConfig = $config['session'];
-            if (isset($sessionConfig['validators'])) {
-                $chain   = $session->getValidatorChain();
-
-                foreach ($sessionConfig['validators'] as $validator) {
-                    switch ($validator) {
-                        case 'Zend\Session\Validator\HttpUserAgent':
-                            $validator = new $validator($container->httpUserAgent);
-                            break;
-                        case 'Zend\Session\Validator\RemoteAddr':
-                            $validator  = new $validator($container->remoteAddr);
-                            break;
-                        default:
-                            $validator = new $validator();
-                    }
-
-                    $chain->attach('session.validate', [$validator, 'isValid']);
-                }
-            }
-        }
     }
 }

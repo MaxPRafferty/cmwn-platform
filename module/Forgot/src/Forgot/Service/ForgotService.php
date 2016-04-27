@@ -2,7 +2,6 @@
 
 namespace Forgot\Service;
 
-use Application\Exception\NotFoundException;
 use Application\Utils\NoopLoggerAwareTrait;
 use Security\Service\SecurityServiceInterface;
 use User\UserInterface;

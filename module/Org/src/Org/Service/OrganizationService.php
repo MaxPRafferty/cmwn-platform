@@ -21,6 +21,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class OrganizationService
  * @package Org\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OrganizationService implements OrganizationServiceInterface
 {
@@ -71,11 +72,14 @@ class OrganizationService implements OrganizationServiceInterface
     }
 
     /**
-     * SELECT o.*
-     * FROM organizations o
-     *   INNER JOIN groups AS g ON g.organization_id = o.org_id
-     *   LEFT JOIN user_groups AS ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = '87512ab4-f039-11e5-96b2-0800274f2cef';
+     * SELECT o.*,
+     *  ug.group_id AS user_group_id,
+     *  g.group_id AS real_group_id
+     * FROM groups g
+     *   LEFT JOIN user_groups AS ug ON ug.user_id = :where2
+     *   LEFT JOIN organizations AS o ON o.org_id = g.organization_id
+     * WHERE (o.type = :where1 AND o.deleted IS NULL)
+     * GROUP BY o.org_id;
      *
      * @param string|UserInterface $user
      * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
@@ -87,15 +91,27 @@ class OrganizationService implements OrganizationServiceInterface
     {
         $where     = $this->createWhere($where);
         $userId    = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $select    = new Select();
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $select    = new Select(['ug'  => 'user_groups']);
 
-        $select->columns([Select::SQL_STAR], 'o');
-        $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
-        $where->addPredicate(new Operator(new Expression('ug.user_id'), '=', $userId));
+        $select->columns(['user_group_id' => 'group_id']);
+        $select->join(
+            ['g' => 'groups'],
+            'g.group_id = ug.group_id',
+            ['real_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        $select->join(
+            ['o' => 'organizations'],
+            'o.org_id = g.organization_id',
+            ['*'],
+            Select::JOIN_LEFT
+        );
+
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
         $select->where($where);
-
+        $select->group('o.org_id');
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         if ($paginate) {
             return new DbSelect(
                 $select,
@@ -166,8 +182,8 @@ class OrganizationService implements OrganizationServiceInterface
      */
     public function fetchOrganization($orgId)
     {
-        $rowset = $this->orgTableGateway->select(['org_id' => $orgId]);
-        $row    = $rowset->current();
+        $rowSet = $this->orgTableGateway->select(['org_id' => $orgId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Organization not Found");
         }
@@ -222,6 +238,27 @@ class OrganizationService implements OrganizationServiceInterface
         $stmt    = $sql->prepareStatementForSqlObject($select);
         $results = $stmt->execute();
 
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
+    }
+
+    /**
+     * Fetches all the types of organizations
+     *
+     * @return string[]
+     */
+    public function fetchOrgTypes()
+    {
+        $select = new Select();
+        $select->columns([new Expression('DISTINCT(type) AS type')]);
+        $select->from($this->orgTableGateway->getTable());
+
+        $results = $this->orgTableGateway->selectWith($select);
         $types   = [];
         foreach ($results as $row) {
             $types[] = $row['type'];

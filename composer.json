@@ -45,11 +45,13 @@
     "acelaya/zf2-acmailer": "~5.0",
     "phpoffice/phpexcel": "~1.8",
     "robmorgan/phinx": "*",
-    "chrisboulton/php-resque": "~1.2"
+    "chrisboulton/php-resque": "~1.2",
+    "rollbar/rollbar": "dev-master@dev"
   },
   "require-dev": {
     "mockery/mockery": "0.9.*",
     "phpunit/phpunit": "~4.0",
+    "phpunit/dbunit": "~2.0",
     "zfcampus/zf-development-mode": "~2.0",
     "squizlabs/php_codesniffer": "2.5.1",
     "phpmd/phpmd": "2.3.2",
@@ -58,6 +60,7 @@
     "zfcampus/zf-apigility-admin": "~1.4.1",
     "zfcampus/zf-apigility-admin-ui": "~1.2.2",
     "zfcampus/zf-deploy": "~1.0",
-    "fzaninotto/faker": "~1.5"
+    "fzaninotto/faker": "~1.5",
+    "zendframework/zend-test": "~2.6"
   }
 }

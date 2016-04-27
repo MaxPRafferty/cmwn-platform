@@ -7,9 +7,12 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
 /**
- * Exception AddCodeToUserActionTest
+ * Test AddCodeToUserActionTest
  *
- * ${CARET}
+ * @group Action
+ * @group Import
+ * @group User
+ * @group NycImport
  */
 class AddCodeToUserActionTest extends TestCase
 {
@@ -54,6 +57,9 @@ class AddCodeToUserActionTest extends TestCase
         $this->securityService = \Mockery::mock('\Security\Service\SecurityServiceInterface');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectAction()
     {
         $action = new AddCodeToUserAction($this->userAware, $this->securityService, 'foo_bar');
@@ -64,6 +70,9 @@ class AddCodeToUserActionTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveCodeToUser()
     {
         $this->securityService->shouldReceive('saveCodeToUser')
@@ -75,4 +84,3 @@ class AddCodeToUserActionTest extends TestCase
         $action->execute();
     }
 }
-

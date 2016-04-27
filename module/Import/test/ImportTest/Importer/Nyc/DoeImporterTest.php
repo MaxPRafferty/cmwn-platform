@@ -9,8 +9,14 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
 
 /**
- * Class NycDoeImporterTest
- * @package ImportTest\Importer
+ * Test NycDoeImporterTest
+ *
+ * @group Import
+ * @group Excel
+ * @group User
+ * @group Group
+ * @group Action
+ * @group NycImport
  */
 class DoeImporterTest extends TestCase
 {
@@ -101,6 +107,9 @@ class DoeImporterTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldPassAlongFileInExchangeArray()
     {
         $this->groupService->shouldReceive('fetchGroup')
@@ -124,8 +133,8 @@ class DoeImporterTest extends TestCase
         $this->importer->exchangeArray([
             'type'         => 'Import\Importer\Nyc\DoeImporter',
             'file'         => $fileName,
-            'teacher_code' => 'tcode',
-            'student_code' => 'scode',
+            'teacher_code' => 'tCode',
+            'student_code' => 'sCode',
             'school'       => 'school',
             'email'        => 'chuck@manchuck.com',
         ]);
@@ -134,8 +143,8 @@ class DoeImporterTest extends TestCase
             [
                 'type'         => 'Import\Importer\Nyc\DoeImporter',
                 'file'         => $fileName,
-                'teacher_code' => 'tcode',
-                'student_code' => 'scode',
+                'teacher_code' => 'tCode',
+                'student_code' => 'sCode',
                 'school'       => $this->school->getGroupId(),
                 'email'        => 'chuck@manchuck.com',
             ],
@@ -143,6 +152,9 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSetFileNameUsingFiles()
     {
         $fileName = '/path/to/file.xsls';
@@ -162,6 +174,9 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldExecuteActions()
     {
 
@@ -212,6 +227,9 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotExecuteActionsWhenParserProducesErrors()
     {
         $fileName = '/path/to/file.xsls';
@@ -245,6 +263,9 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotExecuteActionsWhenEventStops()
     {
         $fileName = '/path/to/file.xsls';
@@ -271,6 +292,9 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotExecuteActionsWhenParserInDryRun()
     {
         $fileName = '/path/to/file.xsls';
@@ -321,6 +345,9 @@ class DoeImporterTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldPassOrgIdToActionWhenActionOrgAware()
     {
         $fileName = '/path/to/file.xsls';

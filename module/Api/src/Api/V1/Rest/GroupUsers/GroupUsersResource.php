@@ -2,7 +2,9 @@
 namespace Api\V1\Rest\GroupUsers;
 
 use Api\V1\Rest\User\UserEntity;
+use Group\GroupInterface;
 use Group\Service\UserGroupServiceInterface;
+use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -31,6 +33,11 @@ class GroupUsersResource extends AbstractResourceListener
      */
     public function fetch($groupId)
     {
-        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($groupId, new UserEntity()));
+        $group = $this->getEvent()->getRouteParam('group');
+        if (!$group instanceof GroupInterface) {
+            return new ApiProblem(421, 'Routing error');
+        }
+
+        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, new UserEntity()));
     }
 }

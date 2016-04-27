@@ -10,8 +10,10 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
 
 /**
  * Test ImageServiceTest
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Image
+ * @group Asset
+ * @group Service
+ * @group ImageService
  */
 class ImageServiceTest extends TestCase
 {
@@ -47,6 +49,9 @@ class ImageServiceTest extends TestCase
         $this->imageService = new ImageService($this->tableGateway);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
     {
         $this->tableGateway
@@ -57,6 +62,9 @@ class ImageServiceTest extends TestCase
         $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
     {
         $this->tableGateway
@@ -71,6 +79,9 @@ class ImageServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
     {
         $expectedWhere = new Where();
@@ -88,6 +99,9 @@ class ImageServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveNewImage()
     {
         $newImage = new Image();
@@ -116,10 +130,13 @@ class ImageServiceTest extends TestCase
         $this->assertTrue($this->imageService->saveNewImage($newImage));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldUpdateExistingImage()
     {
         $imageData = [
-            'image_id'     => 'abcdefghijklmnop',
+            'image_id'     => 'image_id',
             'url'          => 'http://www.manchuck.com',
             'is_moderated' => true,
             'type'         => 'image/png',
@@ -151,10 +168,13 @@ class ImageServiceTest extends TestCase
         $this->assertTrue($this->imageService->saveImage($image));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchImageById()
     {
         $imageData = [
-            'image_id'     => 'abcdefghijklmnop',
+            'image_id'     => 'image_id',
             'url'          => 'http://www.manchuck.com',
             'is_moderated' => true,
             'type'         => 'image/png',
@@ -172,6 +192,9 @@ class ImageServiceTest extends TestCase
         $this->assertInstanceOf('Asset\Image', $this->imageService->fetchImage($imageData['image_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenImageIsNotFound()
     {
         $this->setExpectedException(
@@ -187,10 +210,13 @@ class ImageServiceTest extends TestCase
         $this->imageService->fetchImage('foo');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteByDefault()
     {
         $imageData = [
-            'image_id'     => 'abcdefghijklmnop',
+            'image_id'     => 'image_id',
             'url'          => 'http://www.manchuck.com',
             'is_moderated' => true,
             'type'         => 'image/png',
@@ -216,10 +242,13 @@ class ImageServiceTest extends TestCase
         $this->assertTrue($this->imageService->deleteImage($image));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteWhenForced()
     {
         $imageData = [
-            'image_id'     => 'abcdefghijklmnop',
+            'image_id'     => 'image_id',
             'url'          => 'http://www.manchuck.com',
             'is_moderated' => true,
             'type'         => 'image/png',

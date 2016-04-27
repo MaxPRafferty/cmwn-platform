@@ -249,15 +249,18 @@ class GameSeed extends AbstractSeed
 
         $table = $this->table('games');
         foreach ($games as $game) {
-            $this->execute('DELETE FROM games WHERE game_id = "' . $game['game_id'] . '"');
             try {
                 $table
                     ->insert($game)
                     ->save();
-            } catch (\PDOException $insertException) {
-                $this->getOutput()->writeln('We got an exception but it should be ok since we are inserting');
-                $this->getOutput()->writeln($insertException->getMessage());
+            } catch (\PDOException $exception) {
+                if ($exception->getCode() != 23000) {
+                    $this->getOutput()->writeLn(
+                        'Got Exception When inserting game: ' . $exception->getMessage()
+                    );
+                }
             }
+            $table->setData([]);
         }
     }
 }

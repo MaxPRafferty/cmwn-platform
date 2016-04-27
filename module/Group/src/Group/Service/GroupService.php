@@ -14,7 +14,6 @@ use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -24,6 +23,8 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class GroupService
  * @package Group\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupService implements GroupServiceInterface
 {
@@ -54,51 +55,49 @@ class GroupService implements GroupServiceInterface
         $child->setParentId($parent);
         $this->saveGroup($child);
 
-        // fetch the parent to get the latest left value
+        // fetch the parent to get the latest head value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
 
-        // if the left for the parent is 0, then both are not in the tree so make them a tree
-        if ($parent->getLeft() < 1) {
+        // if the head for the parent is 0, then both are not in the tree so make them a tree
+        if ($parent->getHead() < 1) {
             $this->groupTableGateway->update(
-                ['lft' => 1, 'rgt' => 4],
+                ['head' => 1, 'tail' => 4],
                 ['group_id' => $parent->getGroupId()]
             );
 
             $this->groupTableGateway->update(
-                ['lft' => 2, 'rgt' => 3],
+                ['head' => 2, 'tail' => 3],
                 ['group_id' => $child->getGroupId()]
             );
 
             return true;
         }
 
-        // UPDATE group SET rgt = rgt + 2 WHERE rgt > @lft AND org_id = @org_id
-        // UPDATE group SET lft = lft + 2 WHERE lft > @lft AND org_id = @org_id
+        // UPDATE group SET tail = tail + 2 WHERE tail > @head AND org_id = @org_id
+        // UPDATE group SET head = head + 2 WHERE head > @head AND org_id = @org_id
 
         // TODO create transaction
         $where = new Where();
-        $where->addPredicate(new Operator('rgt', Operator::OP_GT, $parent->getLeft()));
+        $where->addPredicate(new Operator('tail', Operator::OP_GT, $parent->getHead()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $this->groupTableGateway->update(
-            ['rgt' => new Expression("rgt + 2")],
+            ['tail' => new Expression("tail + 2")],
             $where
         );
 
         $where = new Where();
-        $where->addPredicate(new Operator('lft', Operator::OP_GT, $parent->getLeft()));
+        $where->addPredicate(new Operator('head', Operator::OP_GT, $parent->getHead()));
         $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
         $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
         $this->groupTableGateway->update(
-            ['lft' => new Expression('lft + 2')],
+            ['head' => new Expression('head + 2')],
             $where
         );
-
-        // UPDATE group SET rgt = $parent->getLeft() + 1, rgt = $parent->getLeft() + 2 WHERE group_id = $child->getGroupid()
 
         $where = new Where();
         $where->addPredicate(new Operator('group_id', Operator::OP_EQ, $child->getGroupId()));
         $this->groupTableGateway->update(
-            ['lft' => $parent->getLeft() + 1, 'rgt' => $parent->getLeft() + 2],
+            ['head' => $parent->getHead() + 1, 'tail' => $parent->getHead() + 2],
             $where
         );
 
@@ -134,35 +133,38 @@ class GroupService implements GroupServiceInterface
     /**
      * Finds all the groups for a user
      *
-     * SELECT *
-     * FROM groups g
-     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'baz-bat'
-     *
-     * @param Where|GroupInterface|string $user
+     * @param UserInterface|string $user
+     * @param Where|GroupInterface|string $where
      * @param object $prototype
+     * @param bool $paginate
      * @return DbSelect
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
-        $where = $this->createWhere($where);
+        $where  = $this->createWhere($where);
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
 
-        if ($user instanceof UserInterface) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
-        }
+        $select = new Select(['ug' => 'user_groups']);
+        $select->columns([]);
+        $select->join(
+            ['active_group' => 'groups'],
+            'active_group.group_id = ug.group_id',
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
 
-        if (is_string($user)) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
-        }
+        $select->join(
+            ['g' => 'groups'],
+            new Expression('g.head BETWEEN active_group.head AND active_group.tail'),
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
 
-        $select = new Select();
-        $select->columns(['g' => '*']);
-        $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', [], Select::JOIN_LEFT);
+        $where->addPredicate(new Operator('g.organization_id', '=', new Expression('active_group.organization_id')));
         $select->where($where);
 
-        $sql = new Sql($this->groupTableGateway->getAdapter());
-        $stmt = $sql->prepareStatementForSqlObject($select);
+        $prototype = $prototype === null ? new Group() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         if ($paginate) {
             return new DbSelect(
@@ -193,11 +195,8 @@ class GroupService implements GroupServiceInterface
         $data = $group->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
-        $data['lft'] = $group->getLeft();
-        $data['rgt'] = $group->getRight();
+        $data['tail'] = $group->getTail();
 
-        unset($data['left']);
-        unset($data['right']);
         unset($data['depth']);
         unset($data['deleted']);
 
@@ -231,8 +230,8 @@ class GroupService implements GroupServiceInterface
      */
     public function fetchGroup($groupId)
     {
-        $rowset = $this->groupTableGateway->select(['group_id' => $groupId]);
-        $row    = $rowset->current();
+        $rowSet = $this->groupTableGateway->select(['group_id' => $groupId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");
         }
@@ -249,8 +248,8 @@ class GroupService implements GroupServiceInterface
      */
     public function fetchGroupByExternalId($externalId)
     {
-        $rowset = $this->groupTableGateway->select(['external_id' => $externalId]);
-        $row    = $rowset->current();
+        $rowSet = $this->groupTableGateway->select(['external_id' => $externalId]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");
         }
@@ -287,12 +286,13 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fethes all the types of groups for the children
+     * Fetches all the types of groups for the children
      *
      * Used for hal link building
      *
      * @param GroupInterface $group
      * @return string[]
+     * @deprecated
      */
     public function fetchChildTypes(GroupInterface $group)
     {
@@ -306,7 +306,7 @@ class GroupService implements GroupServiceInterface
         $where = new Where();
 
         $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
-        $where->addPredicate(new Between('lft', ($group->getLeft() + 1), ($group->getRight() - 1)));
+        $where->addPredicate(new Between('head', ($group->getHead() + 1), ($group->getTail() - 1)));
 
         $select->where($where);
 
@@ -335,7 +335,7 @@ class GroupService implements GroupServiceInterface
         $select->from($this->groupTableGateway->getTable());
 
         $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
-        $where->addPredicate(new Between('lft', ($group->getLeft() + 1), ($group->getRight() - 1)));
+        $where->addPredicate(new Between('head', ($group->getHead() + 1), ($group->getTail() - 1)));
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
@@ -344,5 +344,26 @@ class GroupService implements GroupServiceInterface
             $this->groupTableGateway->getAdapter(),
             $resultSet
         );
+    }
+
+    /**
+     * Fetches all the types of groups
+     *
+     * @return string[]
+     */
+    public function fetchGroupTypes()
+    {
+        $select = new Select();
+        $select->columns([new Expression('DISTINCT(type) AS type')]);
+        $select->from($this->groupTableGateway->getTable());
+
+        $results = $this->groupTableGateway->selectWith($select);
+        $types   = [];
+        foreach ($results as $row) {
+            $types[] = $row['type'];
+        }
+
+        sort($types);
+        return array_unique($types);
     }
 }

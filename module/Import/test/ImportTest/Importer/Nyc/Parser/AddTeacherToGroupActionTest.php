@@ -2,7 +2,6 @@
 
 namespace ImportTest\Importer\Nyc\Parser;
 
-
 use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddTeacherToGroupAction;
@@ -11,9 +10,14 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
 /**
- * Exception AddTeacherToGroupActionTest
+ * Test AddTeacherToGroupActionTest
  *
- * ${CARET}
+ * @group Import
+ * @group User
+ * @group Group
+ * @group ClassRoom
+ * @group NycImport
+ * @group Action
  */
 class AddTeacherToGroupActionTest extends TestCase
 {
@@ -86,6 +90,9 @@ class AddTeacherToGroupActionTest extends TestCase
         return $teacher;
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectAction()
     {
         $teacher = $this->getGoodTeacher();
@@ -98,6 +105,9 @@ class AddTeacherToGroupActionTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldExecuteAction()
     {
         $teacher = $this->getGoodTeacher();

@@ -9,7 +9,8 @@ use User\UserInterface;
 /**
  * Test TypeValidatorTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
+ * @group Validator
  */
 class TypeValidatorTest extends TestCase
 {
@@ -26,6 +27,9 @@ class TypeValidatorTest extends TestCase
         $this->validator = new TypeValidator();
     }
 
+    /**
+     * @test
+     */
     public function testItShouldPassWhenAdultIsPassedAndUsernamePassed()
     {
         $this->assertTrue(
@@ -36,6 +40,9 @@ class TypeValidatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFailWhenChildIsPassedAndNoBirthdatePassed()
     {
         $this->assertFalse(
@@ -46,6 +53,9 @@ class TypeValidatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFailWhenAdultIsPassedAndUserNameIsMissing()
     {
         $this->assertFalse(
@@ -56,6 +66,9 @@ class TypeValidatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldPassWhenChildIsPassedAndBirthdatePassed()
     {
         $this->assertTrue(
@@ -66,6 +79,9 @@ class TypeValidatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFailWhenInvalidTypePassed()
     {
         $this->assertFalse(
@@ -75,5 +91,4 @@ class TypeValidatorTest extends TestCase
             )
         );
     }
-
 }

@@ -38,7 +38,10 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface, Bo
     }
 
     /**
-     * Listen to the bootstrap event
+     * Listen to the bootstrap event and attach the listener
+     *
+     * This is no in the shared-listeners config since we only want to attach these
+     * outside the context of testing
      *
      * @param EventInterface $event
      * @return array
@@ -50,8 +53,8 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface, Bo
         }
 
         /** @var MvcEvent $event */
-        /** @var \Notice\NotifierListener $listener */
-        $listener = $event->getApplication()->getServiceManager()->get('Notice\NotifierListener');
+        /** @var NotifierListener $listener */
+        $listener = $event->getApplication()->getServiceManager()->get(NotifierListener::class);
         /** @var SharedEventManager $sharedEvents */
         $sharedEvents = $event->getApplication()->getServiceManager()->get('SharedEventManager');
         $listener->attachShared($sharedEvents);

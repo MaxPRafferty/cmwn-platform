@@ -6,9 +6,7 @@ use Api\Links\GroupLink;
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Hal\Entity;
@@ -16,9 +14,12 @@ use ZF\Hal\Entity;
 /**
  * Class GroupRouteListener
  */
-class GroupRouteListener implements ListenerAggregateInterface
+class GroupRouteListener
 {
-    use ListenerAggregateTrait;
+    /**
+     * @var array
+     */
+    protected $listeners = [];
 
     /**
      * @var GroupServiceInterface
@@ -36,20 +37,22 @@ class GroupRouteListener implements ListenerAggregateInterface
     }
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
-     * @todo Make this part of the shared listener
+     * @param SharedEventManagerInterface $events
      */
-    public function attach(EventManagerInterface $events)
+    public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER, [$this, 'onRender'], 1000);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_RENDER, [$this, 'onRender'], 1000);
+    }
+
+    /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach('*', $listener);
+        }
     }
 
     /**

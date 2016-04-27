@@ -10,7 +10,6 @@ use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -28,27 +27,40 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     /**
      * @var array Adds the Importer interface the shared manager
      */
-    protected $eventIdentifier = ['User\Service\UserServiceInterface'];
+    protected $eventIdentifier = [UserServiceInterface::class];
 
     /**
      * @var UserService
      */
     protected $realService;
 
+    /**
+     * UserServiceDelegator constructor.
+     * @param UserService $service
+     */
     public function __construct(UserService $service)
     {
         $this->realService = $service;
     }
 
+    /**
+     *
+     */
     protected function attachDefaultListeners()
     {
         $hideListener = new HideDeletedEntitiesListener(['fetch.all.users'], ['fetch.user.post']);
         $hideListener->setEntityParamKey('user');
+        $hideListener->setDeletedField('u.deleted');
 
         $this->getEventManager()->attach(new CheckUserListener());
         $this->getEventManager()->attach($hideListener);
     }
 
+    /**
+     * @param UserInterface $user
+     * @return bool|mixed
+     * @throws \Exception
+     */
     public function createUser(UserInterface $user)
     {
         $event    = new Event('save.new.user', $this->realService, ['user' => $user]);
@@ -73,10 +85,14 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
 
             $this->getEventManager()->trigger($event);
 
-            return false;
+            throw $createException;
         }
     }
 
+    /**
+     * @param UserInterface $user
+     * @return bool|mixed
+     */
     public function updateUser(UserInterface $user)
     {
         $event    = new Event('save.user', $this->realService, ['user' => $user]);

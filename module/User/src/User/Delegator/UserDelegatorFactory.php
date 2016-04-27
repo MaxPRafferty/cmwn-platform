@@ -31,5 +31,4 @@ class UserDelegatorFactory implements DelegatorFactoryInterface
         $delegator   = new UserServiceDelegator($userService);
         return $delegator;
     }
-
 }

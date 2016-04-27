@@ -5,13 +5,21 @@ namespace UserTest\Delegator;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Delegator\UserServiceDelegator;
+use User\Service\UserServiceInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 
 /**
  * Test UserServiceDelegatorTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group User
+ * @group Service
+ * @group UserService
+ * @group Delegator
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class UserServiceDelegatorTest extends TestCase
 {
@@ -53,6 +61,7 @@ class UserServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('save.user');
         $this->delegator->getEventManager()->clearListeners('fetch.user.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.users');
+        $this->delegator->getEventManager()->getSharedManager()->clearListeners(UserServiceInterface::class);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
@@ -79,6 +88,9 @@ class UserServiceDelegatorTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallCreateUser()
     {
         $this->userService->shouldReceive('createUser')
@@ -108,6 +120,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallUpdateUser()
     {
         $this->userService->shouldReceive('updateUser')
@@ -137,6 +152,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallCreateUserWhenEventPrevents()
     {
         $this->userService->shouldReceive('createUser')
@@ -161,6 +179,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallUpdateUserWhenEventPrevents()
     {
         $this->userService->shouldReceive('UpdateUser')
@@ -185,6 +206,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchUser()
     {
         $this->userService->shouldReceive('fetchUser')
@@ -215,7 +239,10 @@ class UserServiceDelegatorTest extends TestCase
             $this->calledEvents[1]
         );
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldCallFetchUserByExternalId()
     {
         $this->userService->shouldReceive('fetchUserByExternalId')
@@ -246,8 +273,11 @@ class UserServiceDelegatorTest extends TestCase
             $this->calledEvents[1]
         );
     }
-    
-    public function testItShouldCallfetchUserByEmail()
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchUserByEmail()
     {
         $this->userService->shouldReceive('fetchUserByEmail')
             ->with($this->user->getEmail())
@@ -278,6 +308,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchUserAndReturnEventResult()
     {
         $this->userService->shouldReceive('fetchUser')
@@ -305,7 +338,10 @@ class UserServiceDelegatorTest extends TestCase
             $this->calledEvents[0]
         );
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteUser()
     {
         $this->userService->shouldReceive('deleteUser')
@@ -337,6 +373,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallDeleteUserAndReturnEventResult()
     {
         $this->userService->shouldReceive('deleteUser')
@@ -365,6 +404,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAll()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);
@@ -397,6 +439,9 @@ class UserServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAllWhenEventStops()
     {
         $result = new \ArrayIterator([['foo' => 'bar']]);

@@ -2,7 +2,6 @@
 
 namespace Api\V1\Rest\Org;
 
-use Api\Links\GroupLink;
 use Api\Links\OrgUserLink;
 use Api\ScopeAwareInterface;
 use Org\Organization;
@@ -39,6 +38,9 @@ class OrgEntity extends Organization implements ScopeAwareInterface, LinkCollect
         parent::__construct($options);
     }
 
+    /**
+     * @return mixed
+     */
     public function getArrayCopy()
     {
         return array_merge(

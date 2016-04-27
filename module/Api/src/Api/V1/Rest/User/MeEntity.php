@@ -2,9 +2,8 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\GroupLink;
+use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
-use Security\SecurityUser;
 use User\UserInterface;
 
 /**
@@ -31,11 +30,7 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             $this->setToken($token);
         }
 
-        if ($user instanceof SecurityUser) {
-            foreach ($user->getGroupTypes() as $groupType) {
-                $this->getLinks()->add(new GroupLink($groupType));
-            }
-        }
+        $this->getLinks()->add(new UserNameLink());
 
         parent::__construct($userData);
     }
@@ -57,5 +52,13 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             parent::getArrayCopy(),
             ['token' => $this->token]
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityType()
+    {
+        return 'me';
     }
 }

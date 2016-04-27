@@ -12,6 +12,15 @@ use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Test DoeParserTest
+ *
+ * @group Import
+ * @group ClassRoom
+ * @group Teacher
+ * @group Student
+ * @group Group
+ * @group User
+ * @group NycImport
+ * @group Excel
  */
 class DoeParserTest extends TestCase
 {
@@ -149,6 +158,7 @@ class DoeParserTest extends TestCase
 
     /**
      * @dataProvider missingSheets
+     * @param $fileName
      */
     public function testItShouldNotCallParsersWhenSheetsNotFound($fileName)
     {
@@ -163,18 +173,23 @@ class DoeParserTest extends TestCase
         $this->assertFalse($parser->hasWarnings(), 'Doe Parser is reporting warnings');
         $this->assertEmpty($parser->getWarnings(), 'Doe Parser has warnings');
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldMergeErrorsAndWarningsFromParsers()
     {
         $parser = $this->getParser();
         $parser->setFileName(__DIR__ . '/_files/error_sheet.xlsx');
         $parser->preProcess();
 
+        // @codingStandardsIgnoreStart
         $expectedErrors = [
             'Sheet <b>"Classes"</b> Row: <b>1</b> Column <b>"B"</b> in the header is not labeled as <b>"TITLE"</b>',
             'Sheet <b>"Teachers"</b> Row: <b>1</b> Column <b>"B"</b> in the header is not labeled as <b>"TYPE"</b>',
             'Sheet <b>"Students"</b> Row: <b>1</b> Column <b>"C"</b> in the header is not labeled as <b>"FIRST NAME"</b>',
         ];
+        // @codingStandardsIgnoreEnd
 
         $this->assertTrue(
             $parser->hasErrors(),
@@ -187,7 +202,10 @@ class DoeParserTest extends TestCase
             'Doe Parser did not merge errors from parsers'
         );
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldMergeActionsFromParsers()
     {
         $parser = $this->getParser();
@@ -208,6 +226,9 @@ class DoeParserTest extends TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testItShouldMergeActionsFromParsersAndReportWarningForExtraSheet()
     {
         $parser = $this->getParser();
@@ -233,6 +254,9 @@ class DoeParserTest extends TestCase
         $this->assertEquals(11, count($parser->getActions()), 'Parser did not merge actions');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenFileNameNotSet()
     {
         $this->setExpectedException(\RuntimeException::class);

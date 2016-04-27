@@ -35,6 +35,9 @@ class AddTeacherAction implements ActionInterface
         $this->teacher     = $teacher;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return sprintf(

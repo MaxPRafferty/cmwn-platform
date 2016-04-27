@@ -18,7 +18,7 @@ class ImageResourceFactory
     public function __invoke(ServiceLocatorInterface $services)
     {
         /** @var ImageServiceInterface $imageService */
-        $imageService = $services->get('Image\Service');
+        $imageService = $services->get(ImageServiceInterface::class);
         return new ImageResource($imageService);
     }
 }

@@ -58,6 +58,9 @@ class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
         return $this->logger;
     }
 
+    /**
+     * @param string $message
+     */
     public function log($message)
     {
         $this->getLogger()->debug($message);
@@ -71,7 +74,7 @@ class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
         $queues = $this->queues();
         if (!is_array($queues)) {
             $this->getLogger()->alert('No Queues defined, quitting');
-            return;
+            return null;
         }
 
         foreach ($this->queues() as $queue) {

@@ -8,6 +8,7 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -20,6 +21,9 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
     use RbacAwareTrait;
     use AuthenticationServiceAwareTrait;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -46,7 +50,7 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
 
     /**
      * @param Event $event
-     * @return \Zend\Db\ResultSet\HydratingResultSet|\Zend\Paginator\Adapter\DbSelect
+     * @return \Zend\Db\ResultSet\HydratingResultSet|\Zend\Paginator\Adapter\DbSelect|null
      * @throws NotAuthorizedException
      */
     public function fetchAll(Event $event)
@@ -56,9 +60,14 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
         }
 
         /** @var SecurityUser $user */
-        $user = $this->getAuthenticationService()->getIdentity();
+        try {
+            $user = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.orgs')) {
-            return;
+            return null;
         }
 
         $event->stopPropagation(true);

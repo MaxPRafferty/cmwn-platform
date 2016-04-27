@@ -12,15 +12,28 @@ use Zend\Validator\ValidatorInterface;
  */
 class TypeValidator extends InArray implements ValidatorInterface
 {
+    /**
+     * Field for required birthday
+     */
     const BIRTHDATE_REQUIRED = 'birthdateRequired';
+
+    /**
+     * Field for required username
+     */
     const USERNAME_REQUIRED  = 'usernameRequired';
 
+    /**
+     * @var string[]
+     */
     protected $messageTemplates = [
         self::BIRTHDATE_REQUIRED => 'Birthdate is required when user type is child',
         self::USERNAME_REQUIRED  => 'Username is required when user type is adult',
         self::NOT_IN_ARRAY       => 'Invalid Type'
     ];
 
+    /**
+     * @var string[]
+     */
     protected $haystack = [
         UserInterface::TYPE_CHILD,
         UserInterface::TYPE_ADULT
@@ -55,6 +68,10 @@ class TypeValidator extends InArray implements ValidatorInterface
         return false;
     }
 
+    /**
+     * @param $context
+     * @return bool
+     */
     protected function validateAdult($context)
     {
         $username = isset($context['username']) ? $context['username'] : null;
@@ -67,6 +84,10 @@ class TypeValidator extends InArray implements ValidatorInterface
         return true;
     }
 
+    /**
+     * @param $context
+     * @return bool
+     */
     protected function validateChild($context)
     {
         $birthdate = isset($context['birthdate']) ? $context['birthdate'] : null;

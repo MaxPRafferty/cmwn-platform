@@ -52,24 +52,26 @@ class ImportListener implements NoticeInterface
      * Send out a notice about the import
      *
      * @param Event $event
-     * @return void
+     * @return null
      */
     public function notify(Event $event)
     {
         $parser = $event->getTarget();
         if (!$parser instanceof ParserInterface) {
-            return;
+            return null;
         }
 
         if (strpos($event->getName(), 'error') !== false) {
             $this->notifyError($parser);
-            return;
+            return null;
         }
 
         if (strpos($event->getName(), 'complete') !== false) {
             $this->notifySuccess($parser);
-            return;
+            return null;
         }
+
+        return null;
     }
 
     /**
@@ -77,12 +79,12 @@ class ImportListener implements NoticeInterface
      *
      * @param ParserInterface $parser
      * @throws \AcMailer\Exception\MailException
-     * @return void
+     * @return null
      */
     protected function notifyError(ParserInterface $parser)
     {
         if (!$parser instanceof NotificationAwareInterface) {
-            return;
+            return null;
         }
 
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
@@ -92,6 +94,7 @@ class ImportListener implements NoticeInterface
         );
 
         $this->getMailService()->send();
+        return null;
     }
 
     /**
@@ -99,12 +102,12 @@ class ImportListener implements NoticeInterface
      *
      * @param ParserInterface $parser
      * @throws \AcMailer\Exception\MailException
-     * @return void
+     * @return null
      */
     protected function notifySuccess(ParserInterface $parser)
     {
         if (!$parser instanceof NotificationAwareInterface) {
-            return;
+            return null;
         }
 
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
@@ -115,5 +118,6 @@ class ImportListener implements NoticeInterface
         );
 
         $this->getMailService()->send();
+        return null;
     }
 }

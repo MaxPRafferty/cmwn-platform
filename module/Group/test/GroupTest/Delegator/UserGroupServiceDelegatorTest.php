@@ -4,7 +4,6 @@ namespace GroupTest\Delegator;
 
 use Application\Exception\NotFoundException;
 use Group\Delegator\UserGroupServiceDelegator;
-use Mockery\Matcher\Not;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use User\Adult;
@@ -13,7 +12,14 @@ use Zend\EventManager\Event;
 
 /**
  * Class UserGroupServiceDelegatorTest
- * @package GroupTest\Delegator
+ * @group User
+ * @group Group
+ * @group Delegator
+ * @group UserGroupService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class UserGroupServiceDelegatorTest extends TestCase
 {
@@ -93,6 +99,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         $this->user->setUserId('foobar');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallAttachUser()
     {
         $this->groupService->shouldReceive('attachUserToGroup')
@@ -119,7 +128,10 @@ class UserGroupServiceDelegatorTest extends TestCase
             $this->calledEvents[1]
         );
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldNotCallAttachUserWhenEventStopped()
     {
         $this->delegator->getEventManager()->attach('attach.user', function (Event $event) {
@@ -143,6 +155,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallAttachPostWhenThereIsAnError()
     {
         $testException = new \Exception();
@@ -177,6 +192,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallDetachUser()
     {
         $this->groupService->shouldReceive('detachUserFromGroup')
@@ -205,7 +223,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
-
+    /**
+     * @test
+     */
     public function testItShouldCallFetchUsersForGroup()
     {
         $this->groupService->shouldReceive('fetchUsersForGroup')
@@ -236,6 +256,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldCallFetchUsersForOrg()
     {
         $this->groupService->shouldReceive('fetchUsersForOrg')
@@ -266,6 +289,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchUsersForGroupWhenEventStops()
     {
         $this->groupService->shouldReceive('fetchUsersForGroup')
@@ -289,6 +315,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchUsersForOrgWhenEventStops()
     {
         $this->groupService->shouldReceive('fetchUsersForOrg')
@@ -312,6 +341,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchUsersPostForGroupErrorHappens()
     {
         $exception = new NotFoundException();
@@ -343,6 +375,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchUsersPostForOrgWhenErrorHappens()
     {
         $exception = new NotFoundException();
@@ -373,6 +408,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallDetachUserWhenEventStopped()
     {
         $this->delegator->getEventManager()->attach('detach.user', function (Event $event) {
@@ -396,6 +434,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldNotCallDetachPostWhenThereIsAnError()
     {
         $testException = new \Exception();

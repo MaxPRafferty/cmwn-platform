@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Api\Listeners\OrgRouteListener;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
@@ -35,13 +36,14 @@ class Module implements ApigilityProviderInterface, ConfigProviderInterface, Aut
         ];
     }
 
+    /**
+     * @param MvcEvent $event
+     */
     public function onBootstrap(MvcEvent $event)
     {
         $app      = $event->getApplication();
         $services = $app->getServiceManager();
 
-        $app->getEventManager()->attach($services->get('Api\Listeners\ChangePasswordListener'));
-        $app->getEventManager()->attach($services->get('Api\Listeners\GroupRouteListener'));
-        $app->getEventManager()->attach($services->get('Api\Listeners\OrgRouteListener'));
+        $app->getEventManager()->attach($services->get(OrgRouteListener::class));
     }
 }

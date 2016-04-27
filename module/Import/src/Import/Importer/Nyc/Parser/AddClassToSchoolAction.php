@@ -8,9 +8,9 @@ use Import\ActionInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 
 /**
- * Class AddClassToSchooAction
+ * Class AddClassToSchoolAction
  */
-class AddClassToSchooAction implements ActionInterface
+class AddClassToSchoolAction implements ActionInterface
 {
     /**
      * @var GroupServiceInterface
@@ -28,7 +28,8 @@ class AddClassToSchooAction implements ActionInterface
     protected $classRoom;
 
     /**
-     * AddClassToSchooAction constructor.
+     * AddClassToSchoolAction constructor.
+     *
      * @param GroupInterface $school
      * @param ClassRoom $classRoom
      * @param GroupServiceInterface $groupService
@@ -40,6 +41,9 @@ class AddClassToSchooAction implements ActionInterface
         $this->classRoom    = $classRoom;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return sprintf(
@@ -68,6 +72,4 @@ class AddClassToSchooAction implements ActionInterface
     {
         return 1;
     }
-
-
 }

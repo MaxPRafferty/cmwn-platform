@@ -4,14 +4,14 @@ namespace Security;
 
 use Application\Utils\Date\DateTimeFactory;
 use Group\GroupInterface;
-use Org\OrganizationInterface;
+
 use User\User;
 
 /**
  * Class SecurityUser
  *
  * A security user, is a user that is logged in.   This user can be saved to the database
- * however not all the security will be saved.  To Save the passowrd, code and super flag,
+ * however not all the security will be saved.  To Save the password, code and super flag,
  * use the security service
  *
  * @package Security
@@ -188,6 +188,10 @@ class SecurityUser extends User
     {
         if ($this->isSuper()) {
             return 'super';
+        }
+
+        if ($this->getType() === static::TYPE_CHILD) {
+            return 'child';
         }
 
         return $this->role;

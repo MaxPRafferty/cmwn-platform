@@ -9,8 +9,9 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
 
 /**
  * Test GameServiceTest
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Game
+ * @group Service
+ * @group GameService
  */
 class GameServiceTest extends TestCase
 {
@@ -46,6 +47,11 @@ class GameServiceTest extends TestCase
         $this->gameService = new GameService($this->tableGateway);
     }
 
+    /**
+     * Tests the service returns a pagination adapter by default
+     *
+     * @test
+     */
     public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
     {
         $this->tableGateway
@@ -56,6 +62,11 @@ class GameServiceTest extends TestCase
         $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
     }
 
+    /**
+     * Tests the service returns an iterator when asked
+     *
+     * @test
+     */
     public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
     {
         $this->tableGateway
@@ -70,6 +81,9 @@ class GameServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
     {
         $expectedWhere = new Where();
@@ -87,12 +101,15 @@ class GameServiceTest extends TestCase
         $this->assertInstanceOf('\Iterator', $result);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchGameById()
     {
         $gameData = [
             "game_id"     => "sea-turtle",
             "title"       => "Sea Turtle",
-            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts, play games and find out why they are endangered.",
+            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts",
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
@@ -107,6 +124,9 @@ class GameServiceTest extends TestCase
         $this->assertInstanceOf('Game\Game', $this->gameService->fetchGame($gameData['game_id']));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenGameIsNotFound()
     {
         $this->setExpectedException(

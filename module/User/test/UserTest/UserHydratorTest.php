@@ -10,10 +10,14 @@ use User\UserHydrator;
 /**
  * Test UserHydratorTest
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @group Hydrator
+ * @group User
  */
 class UserHydratorTest extends TestCase
 {
+    /**
+     * @var array
+     */
     protected $userData = [];
 
     /**
@@ -40,6 +44,9 @@ class UserHydratorTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     */
     public function testItShouldHydrateUsingTypeWhenPrototypeNotSet()
     {
         $hydrator = new UserHydrator();
@@ -47,6 +54,9 @@ class UserHydratorTest extends TestCase
         $this->assertInstanceOf('User\Adult', $user);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldUsePrototypeWhenSet()
     {
         $hydrator = new UserHydrator(new Child());
@@ -54,6 +64,9 @@ class UserHydratorTest extends TestCase
         $this->assertInstanceOf('User\Child', $user);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldExtractUser()
     {
         $user     = new Adult($this->userData);
@@ -61,15 +74,21 @@ class UserHydratorTest extends TestCase
         $this->assertEquals($this->userData, $hydrator->extract($user));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenNonUserPassedAsPrototype()
     {
         $this->setExpectedException(
             '\InvalidArgumentException',
             'This Hydrator can only hydrate Users'
         );
-        $hydrator = new UserHydrator(new \stdClass());
+        new UserHydrator(new \stdClass());
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenTryingToExtractNonUser()
     {
         $this->setExpectedException(

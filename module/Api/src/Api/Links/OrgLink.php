@@ -2,6 +2,7 @@
 
 namespace Api\Links;
 
+use Application\Utils\StaticType;
 use Org\OrganizationInterface;
 use ZF\Hal\Link\Link;
 
@@ -19,6 +20,7 @@ class OrgLink extends Link
     {
         $type = $org instanceof OrganizationInterface ? $org->getType() : $org;
         parent::__construct(strtolower('org_' . $type));
+        $this->setProps(['label' => StaticType::getLabelForType($type)]);
         $this->setRoute('api.rest.org', [], ['query' => ['type' => $type]]);
     }
 }

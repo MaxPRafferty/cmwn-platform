@@ -24,15 +24,9 @@ vagrantfile:
                         network:
                             private_network: 192.168.56.101
                             forwarded_port:
-                                vflmnfp_0gble5l0kk19:
-                                    host: '5327'
+                                vflmnfp_7rqejb5ppzpt:
+                                    host: '8733'
                                     guest: '22'
-                                vflmnfp_7cr5k517lwfr:
-                                    host: '3307'
-                                    guest: '3306'
-                                vflmnfp_resque:
-                                    host: '8282'
-                                    guest: '8282'
                         hostname: cmwn.dev
                         memory: '2048'
                         cpus: '2'
@@ -109,12 +103,18 @@ locale:
         timezone: UTC
 firewall:
     install: '1'
-    rules: {  }
+    rules:
+        fr_pb9jiy61332d:
+            port:
+                - '6379'
+            priority: '100'
+            proto: tcp
+            action: accept
 cron:
     install: '1'
     jobs: {  }
 nginx:
-    install: '1'
+    install: '0'
     settings:
         default_vhost: 1
         proxy_buffer_size: 128k
@@ -178,12 +178,12 @@ nginx:
                     proxy_redirect: ''
     proxies: {  }
 apache:
-    install: '0'
+    install: '1'
     settings:
         version: 2.4
         user: www-data
         group: www-data
-        default_vhost: true
+        default_vhost: false
         manage_user: false
         manage_group: false
         sendfile: 0
@@ -192,11 +192,9 @@ apache:
         - rewrite
     vhosts:
         av_s89b7iap2gct:
-            servername: awesome.dev
-            serveraliases:
-                - www.awesome.dev
-            docroot: /var/www/awesome
-            port: '80'
+            servername: api-local.changemyworldnow.com
+            docroot: /var/www/public
+            port: '443'
             setenv:
                 - 'APP_ENV dev'
                 - 'DATABASE1_NAME cmwn'
@@ -205,10 +203,11 @@ apache:
                 - 'DATABASE1_PASS cmwn_pass123$'
                 - 'CACHE1_HOST 127.0.0.1'
                 - 'CACHE1_PORT 6379'
+                - 'CLOUDINARY_API_SECRET 2L-FIP5z0S29nBLHpOGnLabmdJE'
             setenvif:
                 - 'Authorization "(.*)" HTTP_AUTHORIZATION=$1'
             custom_fragment: ''
-            ssl: '0'
+            ssl: '1'
             ssl_cert: ''
             ssl_key: ''
             ssl_chain: ''
@@ -217,7 +216,7 @@ apache:
             ssl_cipher: ''
             directories:
                 avd_3rg1de52r665:
-                    path: /var/www/awesome
+                    path: /var/www/public
                     options:
                         - Indexes
                         - FollowSymlinks
@@ -366,10 +365,18 @@ mysql:
         mysqlnd_4xhjc5l4yqfk:
             name: cmwn
             sql: ''
+        mysqlnd_test_db_create:
+            name: cmwn_test
+            sql: ''
     grants:
         mysqlng_213csbtdw007:
             user: cmwn_user
             table: 'cmwn.*'
+            privileges:
+                - ALL
+        mysqlng_test_db_grant:
+            user: cmwn_user
+            table: 'cmwn_test.*'
             privileges:
                 - ALL
 postgresql:

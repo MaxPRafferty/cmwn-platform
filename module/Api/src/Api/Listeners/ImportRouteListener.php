@@ -8,6 +8,7 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -84,8 +85,13 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
             return $this->role;
         }
 
-        $user = $this->authService->getIdentity();
         $role = 'guest';
+        try {
+            $user = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+
         if ($user instanceof SecurityUser) {
             $role = $user->getRole();
         }

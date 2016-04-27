@@ -7,6 +7,7 @@ use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
@@ -14,6 +15,8 @@ use ZF\Rest\AbstractResourceListener;
 
 /**
  * Class ImportResource
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ImportResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
 {
@@ -29,6 +32,11 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
      */
     protected $services;
 
+    /**
+     * ImportResource constructor.
+     * @param JobServiceInterface $jobService
+     * @param ServiceLocatorInterface $services
+     */
     public function __construct(JobServiceInterface $jobService, ServiceLocatorInterface $services)
     {
         $this->jobService = $jobService;
@@ -65,12 +73,21 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
         return new ImportEntity($token);
     }
 
+    /**
+     * @return mixed|null|\Security\ChangePasswordUser
+     */
     protected function getUser()
     {
         if (!$this->getAuthenticationService()->hasIdentity()) {
             return null;
         }
 
-        return $this->getAuthenticationService()->getIdentity();
+        try {
+            $identity = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $identity = $changePassword->getUser();
+        }
+
+        return $identity;
     }
 }

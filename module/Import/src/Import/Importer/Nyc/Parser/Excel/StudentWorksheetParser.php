@@ -12,6 +12,7 @@ use \PHPExcel_Worksheet as WorkSheet;
 
 /**
  * Class StudentWorksheetParser
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StudentWorksheetParser extends AbstractExcelParser
 {
@@ -198,17 +199,17 @@ class StudentWorksheetParser extends AbstractExcelParser
      */
     protected function getStudentFromRow($rowData, $rowNumber)
     {
-        $bdayString = isset($rowData['BIRTH DT']) ? $rowData['BIRTH DT'] : null;
+        $bDayString = isset($rowData['BIRTH DT']) ? $rowData['BIRTH DT'] : null;
 
         try {
-            $birthday = $bdayString !== null ? new \DateTime($bdayString) : null;
+            $birthday = $bDayString !== null ? new \DateTime($bDayString) : null;
         } catch (\Exception $exception) {
             $birthday = null;
         }
 
         if ($birthday === null) {
             $this->addError(
-                sprintf('Invalid birthday <b>"%s"</b>', $bdayString),
+                sprintf('Invalid birthday <b>"%s"</b>', $bDayString),
                 static::SHEET_NAME,
                 $rowNumber
             );

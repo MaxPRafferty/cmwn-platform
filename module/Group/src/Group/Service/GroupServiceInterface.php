@@ -4,8 +4,11 @@ namespace Group\Service;
 
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+
 use Zend\Db\Sql\Predicate\PredicateInterface;
+
 use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -53,7 +56,7 @@ interface GroupServiceInterface
 
     /**
      * Fetches on group from the DB by using the external id
-     * 
+     *
      * @param $externalId
      * @return GroupInterface
      * @throws NotFoundException
@@ -79,14 +82,16 @@ interface GroupServiceInterface
      * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
      * WHERE ug.user_id = 'baz-bat'
      *
-     * @param Where|GroupInterface|string $user
+     * @param UserInterface|string $user
+     * @param Where|GroupInterface|string $where
+     * @param bool $paginate
      * @param object $prototype
      * @return DbSelect
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null);
 
     /**
-     * Fethes all the types of groups for the children
+     * Fetches all the types of groups for the children
      *
      * Used for hal link building
      *
@@ -104,4 +109,11 @@ interface GroupServiceInterface
      * @return DbSelect
      */
     public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null);
+
+    /**
+     * Fetches all the types of groups
+     *
+     * @return string[]
+     */
+    public function fetchGroupTypes();
 }

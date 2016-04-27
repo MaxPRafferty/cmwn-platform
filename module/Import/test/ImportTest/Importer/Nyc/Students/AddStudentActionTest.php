@@ -8,9 +8,16 @@ use Import\Importer\Nyc\Students\StudentRegistry;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
 
-
 /**
- * Exception AddStudentActionTest
+ * Test AddStudentActionTest
+ *
+ * @group Import
+ * @group User
+ * @group Student
+ * @group NycImport
+ * @group Action
+ * @group Service
+ * @group UserService
  */
 class AddStudentActionTest extends TestCase
 {
@@ -53,7 +60,10 @@ class AddStudentActionTest extends TestCase
 
         return $student;
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectName()
     {
         $student = $this->getGoodStudent();
@@ -66,6 +76,9 @@ class AddStudentActionTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveStudentToDataBase()
     {
         $student = $this->getGoodStudent();
@@ -90,7 +103,7 @@ class AddStudentActionTest extends TestCase
                 $this->assertEquals(
                     'Reeves',
                     $user->getLastName(),
-                    'Action did not map last name correcrtly'
+                    'Action did not map last name correctly'
                 );
 
                 return true;

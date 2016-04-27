@@ -3,24 +3,28 @@
 namespace Security\Authentication;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\NoopLoggerAwareTrait;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
 use Security\Service\SecurityOrgService;
-use Security\Service\SecurityService;
+use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Exception\RuntimeException;
 use Zend\Authentication\Result;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Validator\StaticValidator;
 
 /**
  * Class AuthAdapter
  * @package Security\Authentication
  */
-class AuthAdapter implements AdapterInterface
+class AuthAdapter implements AdapterInterface, LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+    
     /**
-     * @var SecurityService
+     * @var SecurityServiceInterface
      */
     protected $service;
 
@@ -41,9 +45,11 @@ class AuthAdapter implements AdapterInterface
 
     /**
      * AuthAdapter constructor.
-     * @param SecurityService $service
+     *
+     * @param SecurityServiceInterface $service
+     * @param SecurityOrgService $orgService
      */
-    public function __construct(SecurityService $service, SecurityOrgService $orgService)
+    public function __construct(SecurityServiceInterface $service, SecurityOrgService $orgService)
     {
         $this->service    = $service;
         $this->orgService = $orgService;
@@ -90,19 +96,35 @@ class AuthAdapter implements AdapterInterface
                 $user = $this->service->fetchUserByUserName($this->userId);
             }
         } catch (NotFoundException $notFound) {
+            $this->getLogger()->alert(
+                'Login attempt with non-existent user',
+                ['user_id' => $this->userId]
+            );
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
         }
 
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
+            $this->getLogger()->notice(
+                'Successful user login',
+                ['user_id' => $this->userId]
+            );
             return new Result(Result::SUCCESS, $user);
         }
 
         switch ($user->compareCode($this->password)) {
             case $user::CODE_EXPIRED:
+                $this->getLogger()->warn(
+                    'Code Expired for user',
+                    ['user_id' => $this->userId]
+                );
                 return new Result(Result::FAILURE_UNCATEGORIZED, new GuestUser());
 
             case $user::CODE_INVALID:
+                $this->getLogger()->alert(
+                    'Invalid password/code supplied for user',
+                    ['user_id' => $this->userId]
+                );
                 return new Result(Result::FAILURE_CREDENTIAL_INVALID, new GuestUser());
 
             case $user::CODE_VALID:
@@ -112,6 +134,7 @@ class AuthAdapter implements AdapterInterface
                 );
         }
 
+        $this->getLogger()->emerg('THIS IS THE BAD! THIS IS VERY BAD', ['user_id' => $this->userId]);
         // @codeCoverageIgnoreStart
         // Hard to get here unless a new code status is added
         return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, new GuestUser());

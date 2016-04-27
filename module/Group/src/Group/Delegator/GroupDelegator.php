@@ -5,7 +5,6 @@ namespace Group\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
-use Group\Service\GroupService;
 use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -18,6 +17,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class GroupServiceDelegator
  * @package Group\Delegator
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupDelegator implements GroupServiceInterface
 {
@@ -25,7 +25,7 @@ class GroupDelegator implements GroupServiceInterface
     use ServiceTrait;
 
     /**
-     * @var GroupService
+     * @var GroupServiceInterface
      */
     protected $realService;
 
@@ -36,17 +36,25 @@ class GroupDelegator implements GroupServiceInterface
 
     /**
      * GroupDelegator constructor.
-     * @param GroupService $service
+     * @param GroupServiceInterface $service
      */
-    public function __construct(GroupService $service)
+    public function __construct(GroupServiceInterface $service)
     {
         $this->realService = $service;
     }
 
+    /**
+     * Attaches the HideDeletedEntitiesListener
+     */
     protected function attachDefaultListeners()
     {
-        $hideListener = new HideDeletedEntitiesListener(['fetch.all.groups'], ['fetch.group.post']);
+        $hideListener = new HideDeletedEntitiesListener(
+            ['fetch.all.groups', 'fetch.user.groups'],
+            ['fetch.group.post']
+        );
+
         $hideListener->setEntityParamKey('group');
+        $hideListener->setDeletedField('g.deleted');
 
         $this->getEventManager()->attach($hideListener);
     }
@@ -212,7 +220,7 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
+        $return   = $this->realService->fetchAllForUser($user, $event->getParam('where'), $paginate, $prototype);
         $event->setName('fetch.user.groups.post');
         $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);
@@ -221,12 +229,13 @@ class GroupDelegator implements GroupServiceInterface
     }
 
     /**
-     * Fethes all the types of groups for the children
+     * Fetches all the types of groups for the children
      *
      * Used for hal link building
      *
      * @param GroupInterface $group
      * @return string[]
+     * @deprecated
      */
     public function fetchChildTypes(GroupInterface $group)
     {
@@ -273,6 +282,27 @@ class GroupDelegator implements GroupServiceInterface
         $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);
 
+        return $return;
+    }
+
+    /**
+     * Fetches all the types of groups
+     *
+     * @return string[]
+     */
+    public function fetchGroupTypes()
+    {
+        $event    = new Event('fetch.group.types', $this->realService);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchGroupTypes();
+        $event->setName('fetch.group.types.post');
+        $event->setParam('results', $return);
+        $this->getEventManager()->trigger($event);
         return $return;
     }
 }

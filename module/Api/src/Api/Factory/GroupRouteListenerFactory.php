@@ -3,6 +3,7 @@
 namespace Api\Factory;
 
 use Api\Listeners\GroupRouteListener;
+use Group\Service\GroupServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -21,6 +22,8 @@ class GroupRouteListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new GroupRouteListener($serviceLocator->get('Group\Service\GroupService'));
+        /** @var GroupServiceInterface $groupService */
+        $groupService = $serviceLocator->get(GroupServiceInterface::class);
+        return new GroupRouteListener($groupService);
     }
 }

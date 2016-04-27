@@ -4,15 +4,19 @@ namespace ImportTest\Importer\Nyc\Parser;
 
 use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
-use Import\Importer\Nyc\Parser\AddClassToSchooAction;
+use Import\Importer\Nyc\Parser\AddClassToSchoolAction;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Exception AddClassToSchooActionTest
+ * Test AddClassToSchoolActionTest
  *
- * ${CARET}
+ * @group Import
+ * @group NycImport
+ * @group Action
+ * @group ClassRoom
+ * @group Group
  */
-class AddClassToSchooActionTest extends TestCase
+class AddClassToSchoolActionTest extends TestCase
 {
     /**
      * @var \Mockery\MockInterface|\Group\Service\GroupServiceInterface
@@ -69,23 +73,29 @@ class AddClassToSchooActionTest extends TestCase
         $this->school->setTitle('MANCHUCK School of Rock');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectCommand()
     {
-        $action = new AddClassToSchooAction($this->school, $this->classRoom, $this->groupService);
+        $action = new AddClassToSchoolAction($this->school, $this->classRoom, $this->groupService);
         $this->assertEquals(
             'Adding class room "History of the world" to school "MANCHUCK School of Rock"',
             $action->__toString(),
-            'AddClassToSchooAction is not reporting correct command'
+            'AddClassToSchoolAction is not reporting correct command'
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldAddChildToGroup()
     {
         $this->groupService->shouldReceive('addChildToGroup')
             ->once()
             ->with($this->school, $this->classRoomGroup);
 
-        $action = new AddClassToSchooAction($this->school, $this->classRoom, $this->groupService);
+        $action = new AddClassToSchoolAction($this->school, $this->classRoom, $this->groupService);
         $this->assertEquals(1, $action->priority(), 'AddClassToSchoolAction has incorrect priority');
         $action->execute();
     }

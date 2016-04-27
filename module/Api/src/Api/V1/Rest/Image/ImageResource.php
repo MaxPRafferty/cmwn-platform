@@ -2,9 +2,11 @@
 
 namespace Api\V1\Rest\Image;
 
-use Asset\Image;
+use Application\Utils\NoopLoggerAwareTrait;
 use Asset\Service\ImageServiceInterface;
+use Zend\Http\Header\HeaderInterface;
 use Zend\Http\PhpEnvironment\Request;
+use Zend\Log\LoggerAwareInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -12,8 +14,10 @@ use ZF\Rest\AbstractResourceListener;
  * Class ImageResource
  * @package Api\V1\Rest\Image
  */
-class ImageResource extends AbstractResourceListener
+class ImageResource extends AbstractResourceListener implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @var ImageServiceInterface
      */
@@ -37,15 +41,28 @@ class ImageResource extends AbstractResourceListener
      */
     public function create($data)
     {
+        $this->getLogger()->debug('Cloudinary web hook called');
         //check header
         /** @var Request $request */
         $request   = $this->getEvent()->getRequest();
-        $content   = $request->getContent();
-        $signature = $request->getHeader('X-Cld-Signature')->getFieldValue();
-        $timestamp = $request->getHeader('X-Cld-Timestamp')->getFieldValue();
-        $secret    = getenv('CLOUDINARY_API_SECRET');
 
-        if (!$signature === sha1($content . $timestamp . $secret)) {
+        // TODO move to special guard
+        $content   = $request->getContent();
+
+        $sigHeader = $request->getHeader('X-Cld-Signature');
+        $signature = $sigHeader instanceof HeaderInterface ? $sigHeader->getFieldValue() : '';
+
+        $tsHeader  = $request->getHeader('X-Cld-Timestamp');
+        $timestamp = $tsHeader instanceof HeaderInterface ? $tsHeader->getFieldValue() : '';
+
+        $secret    = getenv('CLOUDINARY_API_SECRET');
+        $check     = sha1($content . $timestamp . $secret);
+        if ($signature !== $check) {
+            $this->getLogger()->alert(
+                'Invalid signature to web hook',
+                ['cld_signature' => $signature, 'cld_timestamp' => $timestamp]
+            );
+
             return new ApiProblem(403, 'Not authorized');
         }
         

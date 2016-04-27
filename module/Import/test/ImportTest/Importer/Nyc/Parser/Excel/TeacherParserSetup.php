@@ -9,6 +9,8 @@ use User\Service\UserServiceInterface;
 
 /**
  * Class TeacherParserSetup
+ *
+ * Helper to set up expectations for the teacher parser
  */
 class TeacherParserSetup
 {

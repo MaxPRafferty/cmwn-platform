@@ -89,4 +89,11 @@ interface OrganizationServiceInterface
      * @return string[]
      */
     public function fetchGroupTypes($organization);
+
+    /**
+     * Fetches all the types of organizations
+     *
+     * @return string[]
+     */
+    public function fetchOrgTypes();
 }

@@ -17,8 +17,6 @@ use Zend\Validator\StringLength;
 
 /**
  * Class UserController
- * @package Security\Controller
- * @codeCoverageIgnore
  */
 class UserController extends AbstractConsoleController
 {
@@ -32,6 +30,11 @@ class UserController extends AbstractConsoleController
      */
     protected $userService;
 
+    /**
+     * UserController constructor.
+     * @param SecurityServiceInterface $service
+     * @param UserServiceInterface $userService
+     */
     public function __construct(
         SecurityServiceInterface $service,
         UserServiceInterface $userService
@@ -40,6 +43,9 @@ class UserController extends AbstractConsoleController
         $this->userService     = $userService;
     }
 
+    /**
+     * Creates a new super user
+     */
     public function createUserAction()
     {
         $request = $this->getRequest();
@@ -150,5 +156,7 @@ class UserController extends AbstractConsoleController
 
             return $password;
         }
+        
+        return null;
     }
 }

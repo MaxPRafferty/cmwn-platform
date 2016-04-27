@@ -6,12 +6,18 @@ use Import\Importer\Nyc\Parser\ClassIdValidator;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * Exception ClassIdValidatorTest
+ * Test ClassIdValidatorTest
+ *
+ * @group Validator
+ * @group ClassRoom
+ * @group Group
  */
 class ClassIdValidatorTest extends TestCase
 {
     /**
      * @dataProvider validClassIdProvider
+     * @param $classId
+     * @test
      */
     public function testItShouldValidateClassId($classId)
     {
@@ -21,6 +27,8 @@ class ClassIdValidatorTest extends TestCase
 
     /**
      * @dataProvider validSubClassIdProvider
+     * @param $classId
+     * @test
      */
     public function testItShouldValidateSubClassId($classId)
     {
@@ -30,6 +38,8 @@ class ClassIdValidatorTest extends TestCase
 
     /**
      * @dataProvider invalidClassIdProvider
+     * @param $classId
+     * @test
      */
     public function testItShouldFailInvalidClassId($classId)
     {
@@ -39,6 +49,8 @@ class ClassIdValidatorTest extends TestCase
 
     /**
      * @dataProvider invalidSubClassIdProvider
+     * @param $classId
+     * @test
      */
     public function testItShouldFailInvalidSubClassId($classId)
     {

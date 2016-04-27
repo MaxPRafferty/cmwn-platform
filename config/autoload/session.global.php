@@ -1,27 +1,35 @@
 <?php
 $cacheHost = getenv('CACHE1_HOST');
 $cachePort = getenv('CACHE1_PORT');
-return [
+
+$config = [
     'session' => [
-        'config' => [
-            'class' => 'Zend\Session\Config\SessionConfig',
+        'config'       => [
+            'class'   => 'Zend\Session\Config\SessionConfig',
             'options' => [
-                'name'            => 'cmwn',
+                'name'            => 'CMWN',
                 'cookie_httponly' => true,
-                'cookie_secure'   => true
+                'cookie_secure'   => true,
+                'cookie_domain'   => '.changemyworldnow.com',
             ],
         ],
-        'storage' => 'Zend\Session\Storage\SessionArrayStorage',
+        'storage'      => 'Zend\Session\Storage\SessionArrayStorage',
         'save_handler' => [
             'adapter' => [
-                'name' => 'redis',
+                'name'    => 'redis',
                 'options' => [
                     'server' => 'tcp://' . $cacheHost . ':' . $cachePort,
                 ],
             ],
         ],
-        'validators' => [
-            'Zend\Session\Validator\HttpUserAgent',
+        'validators'   => [
         ],
     ],
 ];
+
+if (defined('TEST_MODE')) {
+    unset($config['session']['save_handler']);
+}
+
+return $config;
+

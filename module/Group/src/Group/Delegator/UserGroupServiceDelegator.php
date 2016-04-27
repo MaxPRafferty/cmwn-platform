@@ -2,8 +2,8 @@
 
 namespace Group\Delegator;
 
+use Application\Utils\HideDeletedEntitiesListener;
 use Group\GroupInterface;
-use Group\Service\SecurityUser;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
 use User\UserInterface;
@@ -28,12 +28,36 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     protected $realService;
 
     /**
+     * @var array
+     */
+    protected $eventIdentifier = [
+        UserGroupServiceInterface::class,
+        UserGroupService::class
+    ];
+
+    /**
      * UserGroupServiceDelegator constructor.
      * @param UserGroupService $realService
      */
     public function __construct(UserGroupService $realService)
     {
-        $this->realService = $realService;
+        $this->realService     = $realService;
+    }
+
+    /**
+     * Attaches the HideDeleteEntitiesListener
+     */
+    protected function attachDefaultListeners()
+    {
+        $hideListener = new HideDeletedEntitiesListener(
+            ['fetch.group.users', 'fetch.org.users', 'fetch.all.user.users'],
+            []
+        );
+
+        $hideListener->setEntityParamKey('item');
+        $hideListener->setDeletedField('u.deleted');
+
+        $this->getEventManager()->attach($hideListener);
     }
 
     /**
@@ -99,11 +123,11 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     }
 
     /**
-     * @param GroupInterface|string|\Zend\Db\Sql\Where $group
+     * @param GroupInterface|\Zend\Db\Sql\Where $group
      * @param null $prototype
      * @return bool
      */
-    public function fetchUsersForGroup($group, $prototype = null)
+    public function fetchUsersForGroup(GroupInterface $group, $prototype = null)
     {
         $eventParams = ['group' => $group];
         $event       = new Event('fetch.group.users', $this->realService, $eventParams);
@@ -192,15 +216,8 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     /**
      * Fetches organizations for a user
      *
-     * SELECT
-     *   o.*
-     * FROM organizations o
-     *   LEFT JOIN groups g ON o.org_id = g.organization_id
-     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'b4e9147a-e60a-11e5-b8ea-0800274f2cef'
-     * GROUP BY o.org_id
-     *
      * @param Where|GroupInterface|string $user
+     * @param mixed $prototype
      * @return DbSelect
      */
     public function fetchOrganizationsForUser($user, $prototype = null)
@@ -226,44 +243,32 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         return $return;
     }
 
-    public function fetchGroupTypesForUser($user)
+    /**
+     * Fetches all the Users a user has a relationship with
+     *
+     * @param $user
+     * @param null $where
+     * @param null $prototype
+     * @return bool|DbSelect
+     */
+    public function fetchAllUsersForUser($user, $where = null, $prototype = null)
     {
-        $eventParams = ['user' => $user];
-        $event       = new Event('fetch.user.group.types', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
-            return false;
+        $eventParams = ['user' => $user, 'where' => $where, 'prototype' => $prototype];
+        $event       = new Event('fetch.all.user.users', $this->realService, $eventParams);
+        $response    = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
         }
 
         try {
-            $return = $this->realService->fetchGroupTypesForUser($user);
-            $event->setName('fetch.user.group.types.post');
-            $event->setParam('types', $return);
+            $return = $this->realService->fetchAllUsersForUser($user, $where, $prototype);
+            $event->setParam('result', $return);
+            $event->setName('fetch.all.user.users');
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
-            $event->setName('fetch.user.group.types.error');
-            $return = false;
-        }
-
-        $this->getEventManager()->trigger($event);
-        return $return;
-    }
-
-    public function fetchOrgTypesForUser($user)
-    {
-        $eventParams = ['user' => $user];
-        $event       = new Event('fetch.user.org.types', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+            $event->setName('fetch.all.user.users.error');
+            $this->getEventManager()->trigger($event);
             return false;
-        }
-
-        try {
-            $return = $this->realService->fetchGroupTypesForUser($user);
-            $event->setName('fetch.user.org.types.post');
-            $event->setParam('types', $return);
-        } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
-            $event->setName('fetch.user.org.types.error');
-            $return = false;
         }
 
         $this->getEventManager()->trigger($event);

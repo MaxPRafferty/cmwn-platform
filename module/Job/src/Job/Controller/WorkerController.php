@@ -59,6 +59,9 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
         return $this->logger;
     }
 
+    /**
+     * Waits for something to get popped into the Queue
+     */
     public function workAction()
     {
         $request = $this->getRequest();

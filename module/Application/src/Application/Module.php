@@ -6,6 +6,8 @@
 
 namespace Application;
 
+use Application\Listeners\ListenersAggregate;
+use Application\Utils\StaticType;
 use Zend\EventManager\SharedEventManager;
 use Zend\Log\Logger;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -36,6 +38,9 @@ class Module implements ConfigProviderInterface
         Logger::registerExceptionHandler($logger);
         Logger::registerFatalErrorShutdownFunction($logger);
         $this->attachShared($mvcEvent);
+
+        $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');
+        StaticType::setTypes(isset($config['cmwn-types']) ? $config['cmwn-types'] : []);
     }
 
     /**
@@ -70,7 +75,7 @@ class Module implements ConfigProviderInterface
         /** @var \Application\Listeners\ListenersAggregate $aggregate */
         /** @var SharedEventManager $sharedEvents */
         $service      = $event->getApplication()->getServiceManager();
-        $aggregate    = $service->get('Application\Listeners\ListenersAggregate');
+        $aggregate    = $service->get(ListenersAggregate::class);
         $sharedEvents = $service->get('SharedEventManager');
 
         $aggregate->attachShared($sharedEvents);

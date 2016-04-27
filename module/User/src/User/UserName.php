@@ -12,7 +12,7 @@ namespace User;
  */
 class UserName
 {
-    const SEPARATOR = '_';
+    const SEPARATOR = '-';
 
     /**
      * @var string

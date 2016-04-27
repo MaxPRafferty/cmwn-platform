@@ -2,11 +2,14 @@
 
 namespace Security\Guard;
 
+use Application\Utils\NoopLoggerAwareTrait;
+use Security\OpenRouteTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Header\Cookie;
 use Zend\Http\Header\SetCookie;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Validator\Csrf;
 use ZF\ApiProblem\ApiProblem;
@@ -19,16 +22,34 @@ use ZF\ApiProblem\ApiProblemResponse;
  *
  * @package Security\Guard
  */
-class XsrfGuard extends Csrf
+class XsrfGuard extends Csrf implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+    use OpenRouteTrait;
+
+    /**
+     * @var array
+     */
     protected $listeners = [];
+
+    /**
+     * XsrfGuard constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
+        parent::__construct();
+    }
 
     /**
      * @param SharedEventManagerInterface $events
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'setCookie'], 210);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 210);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], -500);
     }
 
     /**
@@ -39,6 +60,15 @@ class XsrfGuard extends Csrf
         foreach ($this->listeners as $listener) {
             $events->detach('*', $listener);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasHash()
+    {
+        $session = $this->getSession();
+        return !$session->hash;
     }
 
     /**
@@ -70,47 +100,79 @@ class XsrfGuard extends Csrf
      * @param MvcEvent $event
      * @return null|void|ApiProblemResponse
      */
-    public function setCookie(MvcEvent $event)
+    public function onFinish(MvcEvent $event)
     {
         $response = $event->getResponse();
-
-        /** @var HttpRequest $request */
-        $request  = $event->getRequest();
 
         // Coming in from the console
         if (!$response instanceof HttpResponse) {
             return null;
         }
 
+        $hash = $this->getHashFromSession();
+        $cookie = new SetCookie();
+
+        $cookie->setName('XSRF-TOKEN');
+        $cookie->setValue($hash);
+        $cookie->setPath('/');
+        $cookie->setSecure(true);
+        $cookie->setHttponly(true);
+        $cookie->setDomain('.changemyworldnow.com');
+        $response->getHeaders()->addHeader($cookie);
+        return null;
+    }
+
+    /**
+     * @param MvcEvent $event
+     * @return null|void|ApiProblemResponse
+     */
+    public function onRoute(MvcEvent $event)
+    {
+        if ($this->isRouteOpen($event)) {
+            return null;
+        }
+
+        /** @var HttpRequest $request */
+        $request  = $event->getRequest();
+
         $cookie = $request->getCookie();
         if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
             return $this->verifyToken($cookie);
         }
-
-        $cookie = new SetCookie(
-            'XSRF-TOKEN',
-            $this->getHashFromSession(),
-            time() + 60 * 120,
-            '/',
-            $event->getRequest()->getServer('HTTP_HOST'),
-            true,
-            true
-        );
-
-        $response->getHeaders()->addHeader($cookie);
+        
         return null;
     }
 
     /**
      * @param Cookie $cookie
      * @return null|ApiProblemResponse
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function verifyToken(Cookie $cookie)
     {
-        if ($cookie->offsetGet('XSRF-TOKEN') !== $this->getHashFromSession()) {
+        $cookieValue  = $cookie->offsetGet('XSRF-TOKEN');
+        $sessionValue = $this->getHashFromSession();
+        if ($cookieValue !== $sessionValue) {
+            $this->getLogger()->alert(
+                'Attempt to access the site with an invalid XSRF token',
+                [
+                    'actual_token'   => $cookie->offsetGet('XSRF-TOKEN'),
+                    'expected_token' => $this->getHashFromSession(),
+                    'cookie'         => $_COOKIE
+                ]
+            );
+
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid Token'));
         }
 
+        return null;
+    }
+
+    /**
+     * Get CSRF session token timeout
+     */
+    public function getTimeout()
+    {
         return null;
     }
 }

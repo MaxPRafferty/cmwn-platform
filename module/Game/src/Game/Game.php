@@ -10,6 +10,11 @@ use Application\Utils\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
+/**
+ * Class Game
+ *
+ * Game Model
+ */
 class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInterface
 {
     use DateCreatedTrait;
@@ -31,6 +36,11 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
      * @var string
      */
     protected $description;
+
+    /**
+     * @var bool
+     */
+    protected $comingSoon = false;
 
     /**
      * Game constructor.
@@ -58,6 +68,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
             'created'     => null,
             'updated'     => null,
             'deleted'     => null,
+            'coming_soon' => false,
         ];
 
         $array = array_merge($defaults, $array);
@@ -84,7 +95,24 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
             'created'     => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
             'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
             'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
+            'coming_soon' => $this->isComingSoon(),
         ];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isComingSoon()
+    {
+        return $this->comingSoon;
+    }
+
+    /**
+     * @param boolean $comingSoon
+     */
+    public function setComingSoon($comingSoon)
+    {
+        $this->comingSoon =  (bool) $comingSoon;
     }
 
     /**
@@ -143,6 +171,4 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
 
         return $this;
     }
-
-
 }

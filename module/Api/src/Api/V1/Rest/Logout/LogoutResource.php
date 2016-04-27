@@ -9,7 +9,7 @@ use ZF\Rest\AbstractResourceListener;
 /**
  * Class LogoutResource
  *
- * @package Api\V1\Rest\Logout
+ * Resource for logging a user out
  */
 class LogoutResource extends AbstractResourceListener
 {
@@ -18,6 +18,10 @@ class LogoutResource extends AbstractResourceListener
      */
     protected $authService;
 
+    /**
+     * LogoutResource constructor.
+     * @param AuthenticationService $authService
+     */
     public function __construct(AuthenticationService $authService)
     {
         $this->authService = $authService;

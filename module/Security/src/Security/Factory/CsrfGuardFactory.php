@@ -1,25 +1,28 @@
 <?php
 
-namespace Security\Guard;
+namespace Security\Factory;
 
+use Security\Guard\CsrfGuard;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Creates a Reset Password Guard
- *
- * @package Security\Guard
+ * Class CsrfGuardFactory
  */
-class ResetPasswordGuardFactory implements FactoryInterface
+class CsrfGuardFactory implements FactoryInterface
 {
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
+     *
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new ResetPasswordGuard($serviceLocator->get('authentication'));
+        $config = $serviceLocator->get('config');
+        $config = isset($config['cmwn-security']) ? $config['cmwn-security'] : [];
+
+        return new CsrfGuard($config);
     }
 }

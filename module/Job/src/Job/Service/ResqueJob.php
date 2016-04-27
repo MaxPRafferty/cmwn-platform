@@ -125,7 +125,7 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
         $job->exchangeArray($this->getArguments());
 
         /** @var JobRunner $runner */
-        $runner = $this->services->get('Job\Processor\JobRunner');
+        $runner = $this->services->get(JobRunner::class);
         $runner->setLogger($this->getLogger());
         try {
             $runner->setJob($serviceName, $job->getArrayCopy());

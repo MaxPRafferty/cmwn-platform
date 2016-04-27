@@ -31,5 +31,4 @@ class OrganizationDelegatorFactory implements DelegatorFactoryInterface
         $delegator   = new OrganizationServiceDelegator($orgService);
         return $delegator;
     }
-
 }

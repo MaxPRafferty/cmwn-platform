@@ -2,7 +2,6 @@
 
 namespace Application\Utils\Date;
 
-
 /**
  * Trait DateDeletedTrait
  *

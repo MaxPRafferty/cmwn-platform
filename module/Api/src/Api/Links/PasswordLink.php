@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Api\Links;
 
 use User\UserInterface;
@@ -8,11 +7,13 @@ use ZF\Hal\Link\Link;
 
 /**
  * Class PasswordLink
- *
- * @package Api\Links
  */
 class PasswordLink extends Link
 {
+    /**
+     * PasswordLink constructor.
+     * @param string $userId
+     */
     public function __construct($userId)
     {
         $userId = $userId instanceof UserInterface ? $userId->getUserId() : $userId;

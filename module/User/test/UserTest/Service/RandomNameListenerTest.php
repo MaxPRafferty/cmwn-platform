@@ -5,16 +5,17 @@ namespace UserTest\Service;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Child;
-use User\Delegator\UserServiceDelegator;
 use User\Service\RandomNameListener;
 use User\UserInterface;
 use Zend\Db\Sql\Expression;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\SharedEventManager;
 
 /**
- * Exception RandomNameListenerTest
+ * Test RandomNameListenerTest
+ *
+ * @group User
+ * @group Service
+ * @group RandomNameService
  */
 class RandomNameListenerTest extends TestCase
 {
@@ -63,6 +64,9 @@ class RandomNameListenerTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReserveRandomNameLessThanAThousand()
     {
         $user     = new Child();
@@ -97,7 +101,7 @@ class RandomNameListenerTest extends TestCase
 
         $event = $this->getEvent($user);
         $this->assertEmpty($this->listener->reserveRandomName($event));
-        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propagation');
 
         $this->assertNotEquals(
             $beforeRunName,
@@ -105,9 +109,12 @@ class RandomNameListenerTest extends TestCase
             'User name has not changed'
         );
 
-        $this->assertRegExp('/[a-z]+_[a-z]+\d{3}/', $userName->userName, 'Number was not appended to user name');
+        $this->assertRegExp('/[a-z]+\-[a-z]+\d{3}/', $userName->userName, 'Number was not appended to user name');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReserveRandomNameMoreThanAThousand()
     {
         $user     = new Child();
@@ -142,7 +149,7 @@ class RandomNameListenerTest extends TestCase
 
         $event = $this->getEvent($user);
         $this->assertEmpty($this->listener->reserveRandomName($event));
-        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propagation');
 
         $this->assertNotEquals(
             $beforeRunName,
@@ -150,9 +157,12 @@ class RandomNameListenerTest extends TestCase
             'User name has not changed'
         );
 
-        $this->assertRegExp('/[a-z]+_[a-z]+\d{4}/', $userName->userName, 'Number was not appended to user name');
+        $this->assertRegExp('/[a-z]+\-[a-z]+\d{4}/', $userName->userName, 'Number was not appended to user name');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldDoNothingWhenPassedAdult()
     {
         $this->tableGateway->shouldNotReceive('select');
@@ -162,9 +172,12 @@ class RandomNameListenerTest extends TestCase
 
         $event = $this->getEvent($user);
         $this->assertEmpty($this->listener->reserveRandomName($event));
-        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propagation');
     }
-    
+
+    /**
+     * @test
+     */
     public function testItShouldDoNothingWhenNoNamesReturned()
     {
         $user     = new Child();
@@ -183,7 +196,7 @@ class RandomNameListenerTest extends TestCase
 
         $event = $this->getEvent($user);
         $this->assertEmpty($this->listener->reserveRandomName($event));
-        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propegation');
+        $this->assertFalse($event->propagationIsStopped(), 'Listener must not stop propagation');
 
         $this->assertEquals(
             $beforeRunName,

@@ -9,12 +9,16 @@ use Asset\ImageInterface;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Class UserImageService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserImageService implements UserImageServiceInterface
 {
@@ -68,8 +72,9 @@ class UserImageService implements UserImageServiceInterface
         $where->addPredicate(new Operator('u.user_id', '=', $userId));
         $select->where($where);
 
-        $rowset = $this->imageTableGateway->selectWith($select);
-        $row    = $rowset->current();
+        $rowSet = $this->imageTableGateway->selectWith($select);
+        /** @var \ArrayObject|null $row */
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Image not Found for user");
         }

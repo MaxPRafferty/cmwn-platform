@@ -2,13 +2,17 @@
 
 namespace Security\Authorization;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
+
+use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -16,15 +20,12 @@ use ZF\ApiProblem\ApiProblemResponse;
 /**
  * Class RouteListener
  */
-class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface
+class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
     use RbacAwareTrait;
     use AuthenticationServiceAwareTrait;
-
-    /**
-     * @var array
-     */
-    protected $openRoutes = [];
+    use OpenRouteTrait;
 
     /**
      * @var array|mixed
@@ -36,6 +37,9 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     protected $orgService;
 
+    /**
+     * @var array
+     */
     protected $listeners = [];
 
     /**
@@ -48,7 +52,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         array $config,
         SecurityOrgService $orgService
     ) {
-        $this->openRoutes  = isset($config['open-routes']) ? $config['open-routes'] : [];
+        $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
         $this->routePerms  = isset($config['route-permissions']) ? $config['route-permissions'] : [];
         $this->orgService  = $orgService;
     }
@@ -58,7 +62,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
     }
 
     /**
@@ -75,21 +79,27 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param MvcEvent $event
      * @return void|ApiProblemResponse
      */
-    public function onRoute(MvcEvent $event)
+    public function onDispatch(MvcEvent $event)
     {
-        if ($this->isRouteOpen($event)) {
-            return;
+        if ($this->isRouteUnRestricted($event)) {
+            return null;
         }
 
         if (!$this->authService->hasIdentity()) {
+            $routeName = $event->getRouteMatch()->getMatchedRouteName();
+            $this->getLogger()->alert(
+                sprintf('An attempt was made to access restricted route [%s] when not logged in', $routeName)
+            );
+
             return new ApiProblemResponse(new ApiProblem(401, 'Authentication failed'));
         }
 
         /** @var SecurityUser $user */
         $user = $this->authService->getIdentity();
+
         if ($user->isSuper()) {
             $user->setRole('super');
-            return;
+            return null;
         }
 
         $user->setRole($this->getRoleForGroup($event));
@@ -106,15 +116,24 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         if (!array_key_exists($routeName, $this->routePerms)) {
+            $this->getLogger()->warn(
+                sprintf('New route [%s] has no permissions', $routeName)
+            );
+
             return new ApiProblemResponse(new ApiProblem(403, 'Not Authorized'));
         }
 
         $method     = $event->getRequest()->getMethod();
-        $permission = isset($this->routePerms[$routeName][$method]) ? $this->routePerms[$routeName][$method] : null;
+        $permission = isset($this->routePerms[$routeName][$method]) ? $this->routePerms[$routeName][$method] : [null];
+        $permission = !is_array($permission) ? [$permission] : $permission;
         $role       = $user->getRole();
         $assertion  = $this->getAssertion($event, $role, $permission);
 
         if (!$this->rbac->isGranted(null, null, $assertion)) {
+            $this->getLogger()->alert(
+                sprintf('An attempt was made to access route [%s] was made', $routeName)
+            );
+
             return new ApiProblemResponse(new ApiProblem(403, 'Not Authorized'));
         }
 
@@ -127,7 +146,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param $permission
      * @return AssertionInterface
      */
-    protected function getAssertion(MvcEvent $event, $role, $permission)
+    protected function getAssertion(MvcEvent $event, $role, array $permission)
     {
         $assertion  = $event->getParam('assertion', new DefaultAssertion());
 
@@ -140,12 +159,12 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     }
 
     /**
-     * Checks if the route is allowed to be accessed openly
+     * Checks if the route is restricted
      *
      * @param MvcEvent $event
      * @return bool
      */
-    protected function isRouteOpen(MvcEvent $event)
+    protected function isRouteUnRestricted(MvcEvent $event)
     {
         $request = $event->getRequest();
         if (!$request instanceof HttpRequest) {
@@ -156,19 +175,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
             return true;
         }
 
-        $routeName = $event->getRouteMatch()->getMatchedRouteName();
-        if (in_array($routeName, $this->openRoutes)) {
-            return true;
-        }
-
-        // try regex match
-        foreach ($this->openRoutes as $allowed) {
-            if (preg_match("/" . $allowed . "/", $routeName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isRouteOpen($event);
     }
 
     /**

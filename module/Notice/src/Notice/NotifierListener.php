@@ -22,6 +22,11 @@ class NotifierListener
      */
     protected $listenerConfig = [];
 
+    /**
+     * NotifierListener constructor.
+     * @param ServiceLocatorInterface $services
+     * @param array $listeners
+     */
     public function __construct(ServiceLocatorInterface $services, array $listeners)
     {
         $this->services       = $services;

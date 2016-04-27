@@ -7,6 +7,15 @@ use Security\SecurityUser;
 use Security\Service\SecurityService;
 use User\Adult;
 
+/**
+ * Test SecurityServiceTest
+ *
+ * @group Security
+ * @group User
+ * @group Service
+ * @group SecurityService
+ * @group Authentication
+ */
 class SecurityServiceTest extends TestCase
 {
     /**
@@ -41,13 +50,16 @@ class SecurityServiceTest extends TestCase
         $this->securityService = new SecurityService($this->tableGateway);
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSavePasswordWhenPassedAUser()
     {
         $user = new Adult();
         $user->setUserId('abcdef');
 
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($actualSet, $actualWhere)  use (&$user){
+            ->andReturnUsing(function ($actualSet, $actualWhere) use (&$user) {
                 $this->assertArrayHasKey('password', $actualSet);
                 $this->assertNotEquals('foobar', $actualSet['password']);
 
@@ -60,10 +72,13 @@ class SecurityServiceTest extends TestCase
         $this->assertTrue($this->securityService->savePasswordToUser($user, 'foobar'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSavePasswordWhenPassedAUserId()
     {
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($actualSet, $actualWhere)  use (&$user) {
+            ->andReturnUsing(function ($actualSet, $actualWhere) use (&$user) {
                 $this->assertArrayHasKey('password', $actualSet);
                 $this->assertNotEquals('foobar', $actualSet['password']);
 
@@ -76,6 +91,9 @@ class SecurityServiceTest extends TestCase
         $this->assertTrue($this->securityService->savePasswordToUser('abcdef', 'foobar'));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchTheUserByEmail()
     {
         $userData = [
@@ -97,6 +115,9 @@ class SecurityServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldFetchTheUserByUserName()
     {
         $userData = [
@@ -118,6 +139,9 @@ class SecurityServiceTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenUserNotFoundByUserName()
     {
         $this->setExpectedException(
@@ -132,6 +156,9 @@ class SecurityServiceTest extends TestCase
         $this->securityService->fetchUserByUserName('manchuck');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenUserNotFoundByUserEmail()
     {
         $this->setExpectedException(
@@ -147,6 +174,9 @@ class SecurityServiceTest extends TestCase
         $this->securityService->fetchUserByEmail('chuck@manchuck.com');
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveSuperBitToUser()
     {
         $this->tableGateway->shouldReceive('update')
@@ -163,6 +193,9 @@ class SecurityServiceTest extends TestCase
         $this->assertTrue($this->securityService->setSuper('abcdef', true));
     }
 
+    /**
+     * @test
+     */
     public function testItShouldRemoveSuperBitToUser()
     {
         $this->tableGateway->shouldReceive('update')

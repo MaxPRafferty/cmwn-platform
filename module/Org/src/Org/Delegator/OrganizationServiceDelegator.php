@@ -10,6 +10,7 @@ use Org\Service\OrganizationServiceInterface;
 use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -26,6 +27,9 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     use EventManagerAwareTrait;
     use ServiceTrait;
 
+    /**
+     * @var string
+     */
     protected $eventIdentifier = 'Org\Service\OrganizationServiceInterface';
 
     /**
@@ -220,6 +224,27 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
 
         $return = $this->realService->fetchGroupTypes($organization);
         $event->setName('fetch.org.group.types.post');
+        $event->setParam('results', $return);
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
+     * Fetches all the types of organizations
+     *
+     * @return string[]
+     */
+    public function fetchOrgTypes()
+    {
+        $event    = new Event('fetch.org.types', $this->realService);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchOrgTypes();
+        $event->setName('fetch.org.types.post');
         $event->setParam('results', $return);
         $this->getEventManager()->trigger($event);
         return $return;

@@ -10,9 +10,13 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
 
 /**
- * Exception AddStudentToGroupTest
+ * Test AddStudentToGroupTest
  *
- * ${CARET}
+ * @group Import
+ * @group User
+ * @group Action
+ * @group Group
+ * @group ClassRoom
  */
 class AddStudentToGroupActionTest extends TestCase
 {
@@ -85,6 +89,9 @@ class AddStudentToGroupActionTest extends TestCase
         return $student;
     }
 
+    /**
+     * @test
+     */
     public function testItShouldReportCorrectAction()
     {
         $action = new AddStudentToGroupAction($this->getGoodStudent(), $this->userGroupService);
@@ -96,6 +103,9 @@ class AddStudentToGroupActionTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testItShouldSaveStudentToGroup()
     {
         $this->userGroupService->shouldReceive('attachUserToGroup')
