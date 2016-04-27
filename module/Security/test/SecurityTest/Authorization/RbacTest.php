@@ -183,16 +183,19 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.games',
+                    'view.flip',
                     'view.group',
                     'view.group.users',
                     'view.org',
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.user.flip',
                     'view.all.users',
                 ],
 
                 'denied' => [
+                    'create.user.flip',
                     'pick.username',
                 ],
             ],
@@ -225,6 +228,7 @@ class RbacTest extends TestCase
                 'denied' => [
                     'create.org',
                     'create.user',
+                    'create.user.flip',
                     'edit.org',
                     'edit.user.adult',
                     'pick.username',
@@ -233,6 +237,8 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -272,6 +278,9 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -311,6 +320,9 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -350,6 +362,9 @@ class RbacTest extends TestCase
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
             'Teacher' => [
@@ -388,6 +403,9 @@ class RbacTest extends TestCase
                     'view.all.orgs',
                     'view.org.users',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -427,6 +445,9 @@ class RbacTest extends TestCase
                     'view.group.users',
                     'view.org.users',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -466,6 +487,9 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.child',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -481,6 +505,8 @@ class RbacTest extends TestCase
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'create.user.flip',
+                    'view.flip',
                 ],
 
                 'denied' => [
@@ -505,6 +531,7 @@ class RbacTest extends TestCase
                     'view.all.orgs',
                     'view.org.users',
                     'view.all.users',
+                    'view.user.flip',
                 ],
             ],
 
@@ -520,6 +547,7 @@ class RbacTest extends TestCase
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'view.flip',
                 ],
 
                 'denied' => [
@@ -544,6 +572,8 @@ class RbacTest extends TestCase
                     'view.all.orgs',
                     'view.org.users',
                     'view.all.users',
+                    'view.user.flip',
+                    'create.user.flip',
                 ],
             ],
 
@@ -584,6 +614,10 @@ class RbacTest extends TestCase
                     'view.user.adult',
                     'view.user.child',
                     'view.all.users',
+                    'create.user.flip',
+                    'view.flip',
+                    'view.user.flip',
+
                 ],
             ],
         ];

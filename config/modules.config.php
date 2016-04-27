@@ -11,6 +11,7 @@ return array(
     'Game',
     'Asset',
     'Group',
+    'Flip',
     'Job',
     'Import',
     'Notice',

@@ -11,4 +11,10 @@
  * credentials from accidentally being committed into version control.
  */
 
-return array();
+return [
+    'cmwn-security' => [
+        'open-routes' => [
+            'zf-apigility',
+        ],
+    ],
+];

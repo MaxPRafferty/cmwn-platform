@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\User;
 
+use Api\Links\FlipLink;
 use Api\Links\ForgotLink;
 use Api\Links\GameLink;
 use Api\Links\PasswordLink;
@@ -77,6 +78,7 @@ class UserEntity extends User implements UserInterface, LinkCollectionAwareInter
             $this->getLinks()->add(new GameLink());
             $this->getLinks()->add(new ProfileLink($userId));
             $this->getLinks()->add(new UserImageLink($userId));
+            $this->getLinks()->add(new FlipLink());
             $this->getLinks()->add(
                 $this instanceof MeEntity
                     ? new PasswordLink($userId)

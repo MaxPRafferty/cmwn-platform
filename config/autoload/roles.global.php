@@ -18,6 +18,11 @@ return [
             'remove.user.adult'  => 'Delete a child user',
             'remove.user.child'  => 'Delete an adult user',
 
+            // Flip
+            'create.user.flip'   => 'Earn a flip',
+            'view.flip'          => 'View flip information',
+            'view.user.flip'     => 'View Flips for a user',
+
             // group
             'create.child.group' => 'Create a sub group',
             'create.group'       => 'Create a group',
@@ -69,6 +74,8 @@ return [
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'view.flip',
+                    'view.user.flip',
                 ],
             ],
 
@@ -215,12 +222,14 @@ return [
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'create.user.flip',
                     'edit.user.adult',
                     'edit.user.child',
                     'remove.user.adult',
                     'remove.user.child',
                     'view.user.adult',
                     'view.user.child',
+                    'view.user.flip',
                 ],
             ],
 
@@ -230,8 +239,10 @@ return [
                 ],
                 'permissions' => [
                     'child.code',
+                    'create.user.flip',
                     'pick.username',
                     'update.password',
+                    'view.flip',
                     'view.games',
                     'view.group',
                     'view.group.users',
@@ -250,6 +261,7 @@ return [
                     'pick.username',
                     'update.password',
                     'view.games',
+                    'view.flip',
                     'view.group',
                     'view.group.users',
                     'view.org',
