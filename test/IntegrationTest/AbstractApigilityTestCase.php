@@ -4,16 +4,16 @@ namespace IntegrationTest;
 
 use Security\Authentication\AuthAdapter;
 use Security\Guard\CsrfGuard;
-use Security\SecurityUser;
-use User\Service\UserServiceInterface;
 use Zend\Authentication\AuthenticationService;
-use Zend\EventManager\EventManagerAwareInterface;
+use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
 use ZF\ContentNegotiation\Request;
 use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
 
 /**
  * Class AbstractApigilityTestCase
+ *
+ * @method Request getRequest()
  */
 abstract class AbstractApigilityTestCase extends TestCase
 {
@@ -71,13 +71,11 @@ abstract class AbstractApigilityTestCase extends TestCase
     }
 
     /**
-     * @before
+     * @after
      */
-    public function setUpRequestForApigility()
+    public function logOutUser()
     {
-        /** @var Request $request */
-        $request = $this->getRequest();
-        $request->getHeaders()->addHeaderLine('Accept: ' . $this->acceptType);
+        $this->getAuthService()->clearIdentity();
     }
 
     /**
@@ -89,9 +87,9 @@ abstract class AbstractApigilityTestCase extends TestCase
         $xsrfGuard = TestHelper::getServiceManager()->get(CsrfGuard::class);
         $xsrfGuard->getSession()->offsetSet('hash', 'foobar');
 
-        /** @var Request $request */
-        $request = $this->getRequest();
-        $request->getHeaders()->addHeaderLine('X-CSRF: foobar');
+        $this->getRequest()
+            ->getHeaders()
+            ->addHeaderLine('X-CSRF: foobar');
     }
 
     /**
@@ -108,5 +106,41 @@ abstract class AbstractApigilityTestCase extends TestCase
         $adapter->setUserIdentifier($userName);
 
         $this->getAuthService()->authenticate($adapter);
+    }
+
+    /**
+     * @param $url
+     * @param string $method
+     * @param array $params
+     */
+    public function dispatch($url, $method = 'GET', $params = [])
+    {
+        $this->url($url, $method, $params);
+
+        if (!empty($params)) {
+            $this->getRequest()->getHeaders()->addHeaderLine('Content-Type: application/json');
+            $params = !empty($params) ? Json::encode($params) : $params;
+            $this->getRequest()->setContent($params);
+        }
+
+        $this->getRequest()
+            ->getHeaders()
+            ->addHeaderLine('Accept: ' . $this->acceptType)
+            ->addHeaderLine('Origin: https://unit-test.changemyworldnow.com');
+
+        $this->getApplication()->run();
+        $this->assertCorrectCorsHeaders();
+    }
+
+    /**
+     * Helps check that all the CORS headers are set
+     */
+    public function assertCorrectCorsHeaders()
+    {
+        $this->assertResponseHeaderContains('Access-Control-Allow-Credentials', 'true');
+        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', 'https://unit-test.changemyworldnow.com');
+        $this->assertResponseHeaderContains('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE');
+        $this->assertResponseHeaderContains('Access-Control-Allow-Headers', 'Origin, Content-Type, X-CSRF');
+        $this->assertResponseHeaderContains('Access-Control-Max-Age', '28800');
     }
 }

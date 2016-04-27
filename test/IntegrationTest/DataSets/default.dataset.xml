@@ -9,8 +9,8 @@
                 <field name="title">Gina's District</field>
                 <field name="description" xsi:nil="true"/>
                 <field name="meta" xsi:nil="true"/>
-                <field name="created">2016-04-15 19:17:28</field>
-                <field name="updated">0000-00-00 00:00:00</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="type">district</field>
             </row>
@@ -19,8 +19,8 @@
                 <field name="title">MANCHUCK'S district</field>
                 <field name="description" xsi:nil="true"/>
                 <field name="meta" xsi:nil="true"/>
-                <field name="created">2016-04-15 19:17:03</field>
-                <field name="updated">0000-00-00 00:00:00</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="type">district</field>
             </row>
@@ -1392,8 +1392,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:58:15</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-18 15:04:38</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1412,8 +1412,8 @@
                 <field name="gender">M</field>
                 <field name="meta">[]</field>
                 <field name="birthdate">2016-04-15 00:00:00</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-18 14:34:16</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1432,8 +1432,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:50:47</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:27</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1452,8 +1452,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:50:05</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:28</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1472,8 +1472,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:51:42</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1492,8 +1492,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:51:42</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1512,8 +1512,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:51:42</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1532,8 +1532,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:49:08</field>
-                <field name="created">2016-04-27 10:48:06</field>
-                <field name="updated">2016-04-27 14:48:10</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
