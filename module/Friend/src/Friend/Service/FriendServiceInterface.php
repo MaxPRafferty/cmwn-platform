@@ -39,4 +39,22 @@ interface FriendServiceInterface
      * @return bool
      */
     public function detachFriendFromUser($user, $friend);
+
+    /**
+     * Fetches a friend for a user
+     *
+     * SELECT
+     *   u.*,
+     *   uf.friend_id AS user_friend_id
+     * FROM user_friends AS uf
+     *   LEFT JOIN users AS u ON u.user_id = uf.user_id
+     * WHERE uf.friend_id = :friend_id
+     *   AND uf.user_id = :user_id;
+     *
+     * @param $user
+     * @param $friend
+     * @param null $prototype
+     * @return object|UserInterface
+     */
+    public function fetchFriendForUser($user, $friend, $prototype = null);
 }

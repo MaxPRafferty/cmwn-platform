@@ -129,4 +129,44 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         $this->getEventManager()->trigger($event);
         return $return;
     }
+
+    /**
+     * Fetches a friend for a user
+     *
+     * SELECT
+     *   u.*,
+     *   uf.friend_id AS user_friend_id
+     * FROM user_friends AS uf
+     *   LEFT JOIN users AS u ON u.user_id = uf.user_id
+     * WHERE uf.friend_id = :friend_id
+     *   AND uf.user_id = :user_id;
+     *
+     * @param $user
+     * @param $friend
+     * @param null $prototype
+     * @throws \Exception
+     * @return object|UserInterface
+     */
+    public function fetchFriendForUser($user, $friend, $prototype = null)
+    {
+        $eventParams = ['user' => $user, 'friend' => $friend, 'prototype' => $prototype];
+        $event       = new Event('fetch.friend', $this->realService, $eventParams);
+        $response    = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        try {
+            $return = $this->realService->fetchFriendForUser($user, $friend, $prototype);
+            $event->setName('fetch.friend.post');
+        } catch (\Exception $exception) {
+            $eventParams['exception'] = $exception;
+            $event->setName('fetch.friend.error');
+            $this->getEventManager()->trigger($event);
+            throw $exception;
+        }
+
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
 }

@@ -3,11 +3,14 @@
 namespace Friend\Service;
 
 use Application\Utils\ServiceTrait;
+use Friend\NotFriendsException;
 use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -96,5 +99,62 @@ class FriendService implements FriendServiceInterface
 
         $this->tableGateway->delete(['user_id' => $userId, 'friend_id' => $friendId]);
         return true;
+    }
+
+    /**
+     * Fetches a friend for a user
+     *
+     * SELECT
+     *   u.*,
+     *   uf.friend_id AS user_friend_id
+     * FROM user_friends AS uf
+     *   LEFT JOIN users AS u ON u.user_id = uf.user_id
+     * WHERE (uf.friend_id = :friend_id OR uf.user_id = :friend_id)
+     *   AND (uf.user_id = :user_id OR uf.friend_id = :user_id);
+     *
+     * @param $user
+     * @param $friend
+     * @param null $prototype
+     * @return object|UserInterface
+     */
+    public function fetchFriendForUser($user, $friend, $prototype = null)
+    {
+        $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
+
+        $select = new Select(['uf' => 'user_friends']);
+        $select->columns(['user_friend_id' => 'friend_id']);
+        $select->join(
+            ['u' => 'users'],
+            new Expression('u.user_id = uf.user_id'),
+            ['*'],
+            Select::JOIN_LEFT
+        );
+
+        $where = $this->createWhere([]);
+
+        $firstOr = new PredicateSet();
+        $firstOr->orPredicate(new Operator('uf.friend_id', '=', $friendId));
+        $firstOr->orPredicate(new Operator('uf.user_id', '=', $friendId));
+
+        $secondOr = new PredicateSet();
+        $secondOr->orPredicate(new Operator('uf.friend_id', '=', $userId));
+        $secondOr->orPredicate(new Operator('uf.user_id', '=', $userId));
+
+        $where->addPredicate($firstOr);
+        $where->addPredicate($secondOr);
+        $select->where($where);
+
+        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        /** @var \Iterator|\Countable $results */
+        $results   = $this->tableGateway->selectWith($select);
+
+        if ($results->count() < 1) {
+            throw new NotFriendsException();
+        }
+
+        $results->rewind();
+        $row = $results->current();
+        return $hydrator->hydrate($row, $prototype);
     }
 }
