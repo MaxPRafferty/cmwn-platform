@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\Friend;
 
+use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
 use User\UserInterface;
 use ZF\ApiProblem\ApiProblem;
@@ -47,6 +48,7 @@ class FriendResource extends AbstractResourceListener
     {
         $friendId = $this->getInputFilter()->getValue('friend_id');
         $this->friendService->attachFriendToUser($this->getUser(), $friendId);
+        return $this->fetch($friendId);
     }
 
     /**
@@ -74,7 +76,11 @@ class FriendResource extends AbstractResourceListener
      */
     public function fetch($friendId)
     {
-        return new ApiProblem(405, 'The GET method has not been defined for individual resources');
+        try {
+            return $this->friendService->fetchFriendForUser($this->getUser(), $friendId, new FriendEntity());
+        } catch (NotFriendsException $notFriends) {
+            return new ApiProblem($notFriends->getCode(), $notFriends->getMessage());
+        }
     }
 
     /**

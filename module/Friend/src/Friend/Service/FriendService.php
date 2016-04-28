@@ -7,7 +7,7 @@ use Friend\NotFriendsException;
 use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Expression;
+use \Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Predicate\PredicateSet;
@@ -53,13 +53,15 @@ class FriendService implements FriendServiceInterface
 
         $select = new Select(['u' => 'users']);
         $select->join(
-            ['friends' => 'user_friends'],
-            new Expression('friends.user_id = ?', $userId),
+            ['uf' => 'user_friends'],
+            new Expression('uf.user_id = ? OR uf.friend_id = ?', [$userId, $userId]),
             ['friend_id' => 'friend_id'],
             Select::JOIN_LEFT
         );
 
+        $where->addPredicate(new Expression('u.user_id = uf.user_id'));
         $select->where($where);
+        
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -115,6 +117,7 @@ class FriendService implements FriendServiceInterface
      * @param $user
      * @param $friend
      * @param null $prototype
+     * @throws NotFriendsException
      * @return object|UserInterface
      */
     public function fetchFriendForUser($user, $friend, $prototype = null)
@@ -155,6 +158,6 @@ class FriendService implements FriendServiceInterface
 
         $results->rewind();
         $row = $results->current();
-        return $hydrator->hydrate($row, $prototype);
+        return $hydrator->hydrate($row->getArrayCopy(), $prototype);
     }
 }

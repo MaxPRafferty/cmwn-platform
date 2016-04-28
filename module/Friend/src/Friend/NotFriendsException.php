@@ -11,7 +11,7 @@ use Exception;
  *
  * @link https://www.flickr.com/photos/gladiolabean/6291666746
  */
-class NotFriendsException extends \RuntimeException
+class NotFriendsException extends \Exception
 {
     /**
      * Construct the exception. Note: The message is NOT binary safe.
@@ -21,7 +21,7 @@ class NotFriendsException extends \RuntimeException
      * @param Exception $previous [optional] The previous exception used for the exception chaining. Since 5.3.0
      * @since 5.1.0
      */
-    public function __construct($message, $code, Exception $previous)
+    public function __construct($message = null, $code = null, Exception $previous = null)
     {
         parent::__construct('Not Friends', 421, $previous);
     }
