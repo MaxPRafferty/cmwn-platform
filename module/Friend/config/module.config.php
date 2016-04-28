@@ -1,5 +1,11 @@
 <?php
 return [
+    'validators' => [
+        'factories'  => [
+            \Friend\AttachFriendValidator::class => \Friend\AttachFriendValidatorFactory::class,
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             \Friend\Service\FriendServiceInterface::class => \Friend\Service\FriendService::class,
