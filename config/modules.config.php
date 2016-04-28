@@ -4,12 +4,13 @@
  *
  * The previous config file has been stored in ./config/modules.config.old
  */
-return array(
+return [
     'Application',
     'User',
     'Org',
     'Game',
     'Asset',
+    'Friend',
     'Group',
     'Flip',
     'Job',
@@ -26,4 +27,4 @@ return array(
     'ZF\\Versioning',
     'Api',
     'Security',
-);
+];

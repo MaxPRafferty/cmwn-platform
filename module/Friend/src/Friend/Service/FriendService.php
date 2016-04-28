@@ -16,7 +16,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class FriendService
  */
-class FriendService
+class FriendService implements FriendServiceInterface
 {
     use ServiceTrait;
 

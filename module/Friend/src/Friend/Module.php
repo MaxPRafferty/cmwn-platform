@@ -1,12 +1,12 @@
 <?php
 
-namespace User;
+namespace Friend;
 
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
 /**
- * Core Classes for User
+ * Core Classes for Friend
  */
 class Module implements ConfigProviderInterface, AutoloaderProviderInterface
 {
