@@ -117,7 +117,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         }
 
         try {
-            $return = $this->realService->detachFriendToUser($user, $friend);
+            $return = $this->realService->detachFriendFromUser($user, $friend);
             $event->setName('detach.friend.post');
         } catch (\Exception $exception) {
             $eventParams['exception'] = $exception;

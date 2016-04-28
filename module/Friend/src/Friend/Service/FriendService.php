@@ -106,13 +106,11 @@ class FriendService implements FriendServiceInterface
     /**
      * Fetches a friend for a user
      *
-     * SELECT
-     *   u.*,
-     *   uf.friend_id AS user_friend_id
+     * SELECT *
      * FROM user_friends AS uf
-     *   LEFT JOIN users AS u ON u.user_id = uf.user_id
-     * WHERE (uf.friend_id = :friend_id OR uf.user_id = :friend_id)
-     *   AND (uf.user_id = :user_id OR uf.friend_id = :user_id);
+     *    LEFT JOIN users AS u ON u.user_id = :friend_id
+     * WHERE (uf.user_id = :user_id OR uf.friend_id = :user_id)
+     *   AND (uf.user_id = :friend_id OR uf.friend_id = :friend_id)
      *
      * @param $user
      * @param $friend
@@ -125,11 +123,14 @@ class FriendService implements FriendServiceInterface
         $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
         $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
 
+        if ($userId == $friendId) {
+            throw new NotFriendsException();
+        }
         $select = new Select(['uf' => 'user_friends']);
         $select->columns(['user_friend_id' => 'friend_id']);
         $select->join(
             ['u' => 'users'],
-            new Expression('u.user_id = uf.user_id'),
+            new Expression('u.user_id = ?', $friendId),
             ['*'],
             Select::JOIN_LEFT
         );
@@ -137,12 +138,12 @@ class FriendService implements FriendServiceInterface
         $where = $this->createWhere([]);
 
         $firstOr = new PredicateSet();
-        $firstOr->orPredicate(new Operator('uf.friend_id', '=', $friendId));
-        $firstOr->orPredicate(new Operator('uf.user_id', '=', $friendId));
+        $firstOr->orPredicate(new Operator('uf.friend_id', '=', $userId));
+        $firstOr->orPredicate(new Operator('uf.user_id', '=', $userId));
 
         $secondOr = new PredicateSet();
-        $secondOr->orPredicate(new Operator('uf.friend_id', '=', $userId));
-        $secondOr->orPredicate(new Operator('uf.user_id', '=', $userId));
+        $secondOr->orPredicate(new Operator('uf.friend_id', '=', $friendId));
+        $secondOr->orPredicate(new Operator('uf.user_id', '=', $friendId));
 
         $where->addPredicate($firstOr);
         $where->addPredicate($secondOr);

@@ -65,7 +65,7 @@ class FriendResource extends AbstractResourceListener
         }
 
         $this->friendService->detachFriendFromUser($this->getUser(), $friend);
-        return $friend;
+        return true;
     }
 
     /**
