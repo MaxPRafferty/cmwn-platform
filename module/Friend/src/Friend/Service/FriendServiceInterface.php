@@ -2,6 +2,8 @@
 
 namespace Friend\Service;
 
+use Friend\FriendInterface;
+use Friend\NotFriendsException;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Paginator\Adapter\DbSelect;
@@ -57,4 +59,6 @@ interface FriendServiceInterface
      * @return object|UserInterface
      */
     public function fetchFriendForUser($user, $friend, $prototype = null);
+
+    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend);
 }

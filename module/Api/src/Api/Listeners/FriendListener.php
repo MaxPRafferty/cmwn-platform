@@ -3,7 +3,8 @@
 namespace Api\Listeners;
 
 use Api\Links\FriendLink;
-use Api\V1\Rest\User\UserEntity;
+use Friend\FriendInterface;
+use Friend\Service\FriendServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use User\UserInterface;
@@ -22,9 +23,19 @@ class FriendListener implements AuthenticationServiceAwareInterface
     use AuthenticationServiceAwareTrait;
 
     /**
+     * @var FriendServiceInterface
+     */
+    protected $friendService;
+
+    /**
      * @var array
      */
     protected $listeners = [];
+
+    public function __construct(FriendServiceInterface $friendService)
+    {
+        $this->friendService = $friendService;
+    }
 
     /**
      * @param SharedEventManagerInterface $events
@@ -33,6 +44,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
     {
         $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_ROUTE, [$this, 'onRoute'], -649);
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'onRender']);
+        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'onRender']);
     }
 
     /**
@@ -42,6 +54,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
     {
         $events->detach('Zend\Mvc\Application', $this->listeners[0]);
         $events->detach('ZF\Hal\Plugin\Hal', $this->listeners[1]);
+        $events->detach('ZF\Rest\Controller', $this->listeners[2]);
     }
 
     /**
@@ -72,6 +85,9 @@ class FriendListener implements AuthenticationServiceAwareInterface
         $dataContainer->setBodyParam('user_id', $userId);
     }
 
+    /**
+     * @param Event $event
+     */
     public function onRender(Event $event)
     {
         // Should never be able to load a scope object
@@ -91,12 +107,21 @@ class FriendListener implements AuthenticationServiceAwareInterface
         }
 
         $realEntity = $entity->entity;
-        if (!$realEntity instanceof UserEntity) {
+        if (!$realEntity instanceof FriendInterface) {
             return;
         }
 
-        if ($realEntity->getType() === UserInterface::TYPE_CHILD) {
-            $realEntity->getLinks()->add(new FriendLink($authUser->getUserId(), $realEntity->getUserId()));
+        $payload = $event->getParam('payload');
+        if ($event->getName() === 'renderEntity.post') {
+            $payload['friend_status'] = $realEntity->getFriendStatus();
+            return;
+        }
+
+        $status = $this->friendService->fetchFriendStatusForUser($authUser, $realEntity);
+        $realEntity->setFriendStatus($status);
+
+        if ($status === FriendInterface::FRIEND) {
+            $entity->getLinks()->add(new FriendLink($authUser->getUserId(), $realEntity->getUserId()));
         }
     }
 }

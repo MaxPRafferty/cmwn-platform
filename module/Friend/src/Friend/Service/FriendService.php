@@ -3,6 +3,7 @@
 namespace Friend\Service;
 
 use Application\Utils\ServiceTrait;
+use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use User\UserHydrator;
 use User\UserInterface;
@@ -83,7 +84,13 @@ class FriendService implements FriendServiceInterface
         $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
         $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
 
-        $this->tableGateway->insert(['user_id' => $userId, 'friend_id' => $friendId]);
+        // TODO check if there is a pending request and update
+        $this->tableGateway->insert([
+            'user_id' => $userId,
+            'friend_id' => $friendId,
+            'status' => FriendInterface::PENDING
+        ]);
+
         return true;
     }
 
@@ -123,11 +130,8 @@ class FriendService implements FriendServiceInterface
         $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
         $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
 
-        if ($userId == $friendId) {
-            throw new NotFriendsException();
-        }
         $select = new Select(['uf' => 'user_friends']);
-        $select->columns(['user_friend_id' => 'friend_id']);
+        $select->columns(['user_friend_id' => 'friend_id', 'friend_status' => 'status']);
         $select->join(
             ['u' => 'users'],
             new Expression('u.user_id = ?', $friendId),
@@ -149,7 +153,7 @@ class FriendService implements FriendServiceInterface
         $where->addPredicate($secondOr);
         $select->where($where);
 
-        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $hydrator  = !$prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         /** @var \Iterator|\Countable $results */
         $results   = $this->tableGateway->selectWith($select);
 
@@ -160,5 +164,20 @@ class FriendService implements FriendServiceInterface
         $results->rewind();
         $row = $results->current();
         return $hydrator->hydrate($row->getArrayCopy(), $prototype);
+    }
+
+    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
+    {
+        if ($user->getType() === UserInterface::TYPE_ADULT || $friend->getType() === UserInterface::TYPE_ADULT) {
+            return FriendInterface::CANT_FRIEND;
+        }
+
+        try {
+            $result = $this->fetchFriendForUser($user, $friend, new \ArrayObject());
+        } catch (NotFriendsException $notFriends) {
+            return FriendInterface::CAN_FRIEND;
+        }
+
+        return $result->offsetGet('friend_status');
     }
 }

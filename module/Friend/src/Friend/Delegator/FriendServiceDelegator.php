@@ -169,4 +169,9 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         $this->getEventManager()->trigger($event);
         return $return;
     }
+
+    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
+    {
+        return $this->realService->fetchFriendStatusForUser($user, $friend);
+    }
 }

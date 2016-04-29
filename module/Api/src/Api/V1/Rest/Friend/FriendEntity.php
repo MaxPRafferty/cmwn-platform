@@ -2,15 +2,18 @@
 
 namespace Api\V1\Rest\Friend;
 
-use Api\V1\Rest\User\UserEntity;
+use Friend\FriendInterface;
+use Friend\FriendTrait;
 use User\User;
 use User\UserInterface;
 
 /**
  * Class FriendEntity
  */
-class FriendEntity extends User implements UserInterface
+class FriendEntity extends User implements UserInterface, FriendInterface
 {
+    use FriendTrait;
+    
     /**
      * @var string
      */

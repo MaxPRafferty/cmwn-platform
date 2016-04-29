@@ -10,14 +10,11 @@ return array(
         6 => 'Api\\Listeners\\ChangePasswordListener',
         7 => 'Api\\Listeners\\GroupRouteListener',
         8 => 'Api\\Listeners\\FriendListener',
-        9 => 'Api\\Listeners\\FriendRouteListener',
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
             'Api\\Listeners\\ImportRouteListener' => 'Api\\Listeners\\ImportRouteListener',
-            'Api\\Listeners\\FriendListener' => 'Api\\Listeners\\FriendListener',
-            'Api\\Listeners\\FriendRouteListener' => 'Api\\Listeners\\FriendRouteListener',
         ),
         'factories' => array(
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
@@ -45,6 +42,7 @@ return array(
             'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
             'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
             'Api\\V1\\Rest\\Friend\\FriendResource' => 'Api\\V1\\Rest\\Friend\\FriendResourceFactory',
+            'Api\\Listeners\\FriendListener' => \Api\Factory\FriendListenerFactory::class,
         ),
     ),
     'router' => array(

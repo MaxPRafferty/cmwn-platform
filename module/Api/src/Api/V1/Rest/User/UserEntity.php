@@ -9,6 +9,8 @@ use Api\Links\PasswordLink;
 use Api\Links\ProfileLink;
 use Api\Links\UserImageLink;
 use Api\ScopeAwareInterface;
+use Friend\FriendInterface;
+use Friend\FriendTrait;
 use User\User;
 use User\UserInterface;
 use ZF\Hal\Link\LinkCollection;
@@ -17,8 +19,14 @@ use ZF\Hal\Link\LinkCollectionAwareInterface;
 /**
  * Class UserEntity
  */
-class UserEntity extends User implements UserInterface, LinkCollectionAwareInterface, ScopeAwareInterface
+class UserEntity extends User implements
+    UserInterface,
+    LinkCollectionAwareInterface,
+    ScopeAwareInterface,
+    FriendInterface
 {
+    use FriendTrait;
+
     /**
      * @var string
      */
