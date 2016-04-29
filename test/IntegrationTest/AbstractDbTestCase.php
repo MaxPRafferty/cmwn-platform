@@ -2,21 +2,22 @@
 
 namespace IntegrationTest;
 
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 use PHPUnit_Extensions_Database_TestCase as TestCase;
 
 /**
  * Class AbstractDbTestCase
- *
- * ${CARET}
  */
 abstract class AbstractDbTestCase extends TestCase
 {
-    // only instantiate pdo once for test clean-up/fixture load
+    /**
+     * @var null
+     */
     static private $pdo = null;
 
-    // only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
+    /**
+     * @var null
+     */
     private $conn = null;
 
     /**

@@ -16,6 +16,7 @@ use Zend\Mvc\MvcEvent;
  * Adds the CORS headers to all requests
  *
  * @package Security\Guard
+ * @thought Make this a listener not really guarding anything
  */
 class OriginGuard implements LoggerAwareInterface
 {
@@ -62,7 +63,7 @@ class OriginGuard implements LoggerAwareInterface
 
         /** @var Response $response */
         $response = $event->getResponse();
-        $origin = $request->getServer('HTTP_ORIGIN', '');
+        $origin   = $request->getHeader('Origin')->getFieldValue();
 
         // THOUGHT Config?
         if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {

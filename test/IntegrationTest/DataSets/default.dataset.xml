@@ -1,6 +1,30 @@
 <?xml version="1.0"?>
 <mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <database name="cmwn">
+    <database name="cmwn_test">
+        <table_data name="flips">
+        </table_data>
+        <table_data name="organizations">
+            <row>
+                <field name="org_id">district</field>
+                <field name="title">Gina's District</field>
+                <field name="description" xsi:nil="true"/>
+                <field name="meta" xsi:nil="true"/>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="type">district</field>
+            </row>
+            <row>
+                <field name="org_id">manchuck</field>
+                <field name="title">MANCHUCK'S district</field>
+                <field name="description" xsi:nil="true"/>
+                <field name="meta" xsi:nil="true"/>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="type">district</field>
+            </row>
+        </table_data>
         <table_data name="games">
             <row>
                 <field name="game_id">animal-id</field>
@@ -221,28 +245,6 @@
                 <field name="coming_soon">1</field>
             </row>
         </table_data>
-        <table_data name="organizations">
-            <row>
-                <field name="org_id">district</field>
-                <field name="title">Gina's District</field>
-                <field name="description" xsi:nil="true"/>
-                <field name="meta" xsi:nil="true"/>
-                <field name="created">2016-04-15 19:17:28</field>
-                <field name="updated">0000-00-00 00:00:00</field>
-                <field name="deleted" xsi:nil="true"/>
-                <field name="type">district</field>
-            </row>
-            <row>
-                <field name="org_id">manchuck</field>
-                <field name="title">MANCHUCK'S district</field>
-                <field name="description" xsi:nil="true"/>
-                <field name="meta" xsi:nil="true"/>
-                <field name="created">2016-04-15 19:17:03</field>
-                <field name="updated">0000-00-00 00:00:00</field>
-                <field name="deleted" xsi:nil="true"/>
-                <field name="type">district</field>
-            </row>
-        </table_data>
         <table_data name="groups">
             <row>
                 <field name="group_id">other_school</field>
@@ -324,7 +326,6 @@
                 <field name="parent_id">other_school</field>
                 <field name="depth">1</field>
             </row>
-
         </table_data>
         <table_data name="images">
         </table_data>
@@ -1375,6 +1376,8 @@
                 <field name="count">1</field>
             </row>
         </table_data>
+        <table_data name="user_flips">
+        </table_data>
         <table_data name="users">
             <row>
                 <field name="user_id">english_student</field>
@@ -1389,8 +1392,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:58:15</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-18 15:04:38</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1409,8 +1412,8 @@
                 <field name="gender">M</field>
                 <field name="meta">[]</field>
                 <field name="birthdate">2016-04-15 00:00:00</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-18 14:34:16</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1429,8 +1432,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:50:47</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:27</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1449,48 +1452,8 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:50:05</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:28</field>
-                <field name="deleted" xsi:nil="true"/>
-                <field name="code_expires" xsi:nil="true"/>
-                <field name="super">0</field>
-                <field name="external_id" xsi:nil="true"/>
-            </row>
-            <row>
-                <field name="user_id">other_teacher</field>
-                <field name="username">other_teacher</field>
-                <field name="email">other_teacher@manchuck.com</field>
-                <field name="code" xsi:nil="true"/>
-                <field name="type">ADULT</field>
-                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
-                <field name="first_name">Josh</field>
-                <field name="middle_name">C</field>
-                <field name="last_name">Savino</field>
-                <field name="gender">M</field>
-                <field name="meta" xsi:nil="true"/>
-                <field name="birthdate">2016-04-15 11:51:42</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:29</field>
-                <field name="deleted" xsi:nil="true"/>
-                <field name="code_expires" xsi:nil="true"/>
-                <field name="super">0</field>
-                <field name="external_id" xsi:nil="true"/>
-            </row>
-            <row>
-                <field name="user_id">other_student</field>
-                <field name="username">other_student</field>
-                <field name="email">other_student@manchuck.com</field>
-                <field name="code" xsi:nil="true"/>
-                <field name="type">CHILD</field>
-                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
-                <field name="first_name">Chuck</field>
-                <field name="middle_name">C</field>
-                <field name="last_name">Reeves</field>
-                <field name="gender">M</field>
-                <field name="meta" xsi:nil="true"/>
-                <field name="birthdate">2016-04-15 11:51:42</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1509,8 +1472,48 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:51:42</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:29</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="code_expires" xsi:nil="true"/>
+                <field name="super">0</field>
+                <field name="external_id" xsi:nil="true"/>
+            </row>
+            <row>
+                <field name="user_id">other_student</field>
+                <field name="username">other_student</field>
+                <field name="email">other_student@manchuck.com</field>
+                <field name="code" xsi:nil="true"/>
+                <field name="type">CHILD</field>
+                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
+                <field name="first_name">Chuck</field>
+                <field name="middle_name">C</field>
+                <field name="last_name">Reeves</field>
+                <field name="gender">M</field>
+                <field name="meta" xsi:nil="true"/>
+                <field name="birthdate">2016-04-15 11:51:42</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="code_expires" xsi:nil="true"/>
+                <field name="super">0</field>
+                <field name="external_id" xsi:nil="true"/>
+            </row>
+            <row>
+                <field name="user_id">other_teacher</field>
+                <field name="username">other_teacher</field>
+                <field name="email">other_teacher@manchuck.com</field>
+                <field name="code" xsi:nil="true"/>
+                <field name="type">ADULT</field>
+                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
+                <field name="first_name">Josh</field>
+                <field name="middle_name">C</field>
+                <field name="last_name">Savino</field>
+                <field name="gender">M</field>
+                <field name="meta" xsi:nil="true"/>
+                <field name="birthdate">2016-04-15 11:51:42</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
@@ -1529,11 +1532,31 @@
                 <field name="gender">M</field>
                 <field name="meta" xsi:nil="true"/>
                 <field name="birthdate">2016-04-15 11:49:08</field>
-                <field name="created">0000-00-00 00:00:00</field>
-                <field name="updated">2016-04-15 18:49:30</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
                 <field name="deleted" xsi:nil="true"/>
                 <field name="code_expires" xsi:nil="true"/>
                 <field name="super">0</field>
+                <field name="external_id" xsi:nil="true"/>
+            </row>
+            <row>
+                <field name="user_id">super_user</field>
+                <field name="username">super_user</field>
+                <field name="email">super@ginasink.com</field>
+                <field name="code" xsi:nil="true"/>
+                <field name="type">ADULT</field>
+                <field name="password">$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.</field>
+                <field name="first_name">Joni</field>
+                <field name="middle_name" xsi:nil="true"/>
+                <field name="last_name">Albers</field>
+                <field name="gender">F</field>
+                <field name="meta" xsi:nil="true"/>
+                <field name="birthdate">2016-04-27 10:48:42</field>
+                <field name="created">2016-04-27 10:48:44</field>
+                <field name="updated">2016-04-27 10:48:46</field>
+                <field name="deleted" xsi:nil="true"/>
+                <field name="code_expires" xsi:nil="true"/>
+                <field name="super">1</field>
                 <field name="external_id" xsi:nil="true"/>
             </row>
         </table_data>
