@@ -8,6 +8,7 @@ return [
             'api.rest.forgot',
             'api.rest.logout',
             'api.rest.image',
+            'api.rest.friend' // FIXME this is not open
         ],
         'route-permissions' => [
             'api.rest.flip'        => [
