@@ -1,14 +1,13 @@
-box: wercker/php
+box: php
 services:
-  - wercker/mysql
-  - wercker/redis
+  - mysql
+  - redis
 build:
   steps:
     - script:
         name: Install extensions
         code: |-
-          pecl install memcache
-          pecl install SQLite
+          pecl install redis
     - script:
         name: install dependencies
         code: |-
