@@ -4,7 +4,6 @@ namespace IntegrationTest\Service;
 
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use Security\Service\SecurityGroupServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
@@ -19,16 +18,6 @@ class SecurityGroupServiceTest extends TestCase
      * @var SecurityGroupServiceInterface
      */
     protected $userGroupService;
-
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
-    protected function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet(__DIR__ . '/../DataSets/default.dataset.xml');
-    }
 
     /**
      * @before

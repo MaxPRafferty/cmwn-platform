@@ -11,11 +11,6 @@ use PHPUnit_Extensions_Database_DataSet_MysqlXmlDataSet as MysqlDataSet;
 trait DbUnitConnectionTrait
 {
     /**
-     * @var \PDO
-     */
-    static private $pdo = null;
-
-    /**
      * @var TestConnection
      */
     private $conn = null;
@@ -27,12 +22,7 @@ trait DbUnitConnectionTrait
     {
         if ($this->conn === null) {
             $config = TestHelper::getTestDbConfig();
-
-            if (self::$pdo == null) {
-                self::$pdo = new \PDO($config['dsn'], $config['username'], $config['password']);
-            }
-
-            $this->conn = new TestConnection(self::$pdo, $config['datbase']);
+            $this->conn = new TestConnection(TestHelper::getPdoConnection(), $config['datbase']);
         }
 
         return $this->conn;

@@ -3,7 +3,6 @@
 namespace IntegrationTest;
 
 use Zend\Db\Adapter\Adapter;
-use Zend\Mvc\MvcEvent;
 use ZF\Apigility\Application;
 use Zend\ServiceManager\ServiceManager;
 
@@ -19,6 +18,11 @@ class TestHelper
      * @var ServiceManager
      */
     protected static $serviceManager;
+
+    /**
+     * @var \PDO
+     */
+    protected static $pdo;
 
     /**
      * @return bool
@@ -42,6 +46,9 @@ class TestHelper
         return static::$serviceManager;
     }
 
+    /**
+     * @return array
+     */
     public static function getTestDbConfig()
     {
         $phinxConfig = include __DIR__ . '/../../config/phinx.php';
@@ -107,5 +114,21 @@ class TestHelper
 
         unset($routes['zf-apigility']);
         return $routes;
+    }
+
+    /**
+     * @return \PDO
+     */
+    public static function getPdoConnection()
+    {
+        if (static::$pdo === null) {
+            /** @var Adapter $adapter */
+            $adapter = static::getServiceManager()->get(Adapter::class);
+            $connection = $adapter->getDriver()->getConnection();
+            $connection->connect();
+            static::$pdo = $connection->getResource();
+        }
+
+        return static::$pdo;
     }
 }
