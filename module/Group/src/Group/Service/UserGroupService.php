@@ -336,10 +336,9 @@ class UserGroupService implements UserGroupServiceInterface
         $select->join(
             ['uf' => 'user_friends'],
             new Expression(
-                'uf.user_id = ? OR uf.friend_id = ?',
-                [$userId, $userId]
+                'uf.user_id = ug.user_id OR uf.friend_id = ug.user_id'
             ),
-            ['friend_id' => 'friend_id'],
+            ['uf_friend_id' => 'friend_id', 'uf_user_id' => 'user_id', 'uf_status' => 'status'],
             Select::JOIN_LEFT_OUTER
         );
         

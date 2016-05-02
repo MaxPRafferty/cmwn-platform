@@ -57,7 +57,10 @@ return [
             'api.rest.friend' => [
                 'GET'  => 'can.friend',
                 'POST' => 'can.friend'
-            ]
+            ],
+            'api.rest.suggest' => [
+                'GET'  => 'can.friend',
+            ],
         ],
     ],
 ];

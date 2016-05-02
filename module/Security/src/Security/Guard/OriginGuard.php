@@ -4,6 +4,7 @@ namespace Security\Guard;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Http\Header\HeaderInterface;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Console\Request as ConsoleRequest;
@@ -32,9 +33,26 @@ class OriginGuard implements LoggerAwareInterface
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'attachCors'], PHP_INT_MAX);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'attachCors'], PHP_INT_MAX);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'attachCors'], PHP_INT_MAX);
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH,
+            [$this, 'attachCors'],
+            PHP_INT_MAX
+        );
+
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_FINISH,
+            [$this, 'attachCors'],
+            PHP_INT_MAX
+        );
+
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH_ERROR,
+            [$this, 'attachCors'],
+            PHP_INT_MAX
+        );
     }
 
     /**
@@ -43,7 +61,7 @@ class OriginGuard implements LoggerAwareInterface
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('*', $listener);
+            $events->detach('Zend\Mvc\Application', $listener);
         }
     }
 
@@ -63,7 +81,9 @@ class OriginGuard implements LoggerAwareInterface
 
         /** @var Response $response */
         $response = $event->getResponse();
-        $origin   = $request->getHeader('Origin')->getFieldValue();
+        $origin   = $request->getHeader('Origin') instanceof HeaderInterface
+            ? $request->getHeader('Origin')->getFieldValue()
+            : null;
 
         // THOUGHT Config?
         if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {

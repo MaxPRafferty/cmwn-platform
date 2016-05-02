@@ -123,7 +123,6 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'english_student',
                 'expected_user_ids' => [
                     'english_teacher',
-                    'math_student', // in reality these 2 students cannot be friends
                 ],
             ],
 
@@ -131,7 +130,6 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'math_student',
                 'expected_user_ids' => [
                     'math_teacher',
-                    'english_student', // in reality these 2 students cannot be friends
                 ],
             ],
         ];
