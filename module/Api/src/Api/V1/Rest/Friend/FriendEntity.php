@@ -27,7 +27,8 @@ class FriendEntity extends User implements UserInterface, FriendInterface
     public function getArrayCopy()
     {
         $array = parent::getArrayCopy();
-        $array['friend_id'] = $this->getUserId();
+        $array['friend_id']     = $this->getUserId();
+        $array['friend_status'] = $this->getFriendStatus();
         unset($array['user_id']);
         return $array;
     }

@@ -54,17 +54,26 @@ class FriendService implements FriendServiceInterface
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
 
-        $select = new Select(['u' => 'users']);
+        $select = new Select(['uf' => 'user_friends']);
+        $select->columns(['uf_user_id' => 'user_id', 'uf_friend_id' => 'friend_id', 'uf_status' => 'status']);
         $select->join(
-            ['uf' => 'user_friends'],
-            new Expression('uf.user_id = ? OR uf.friend_id = ?', [$userId, $userId]),
-            ['friend_id' => 'friend_id'],
+            ['u' => 'users'],
+            new Expression('u.user_id = uf.friend_id OR u.user_id = uf.user_id'),
+            ['*'],
             Select::JOIN_LEFT
         );
 
-        $where->addPredicate(new Expression('u.user_id = uf.user_id'));
+        $where = $this->createWhere([]);
+
+        $firstOr = new PredicateSet();
+        $firstOr->orPredicate(new Operator('uf.friend_id', '=', $userId));
+        $firstOr->orPredicate(new Operator('uf.user_id', '=', $userId));
+
+        $where->addPredicate($firstOr);
+        $where->addPredicate(new Operator('u.user_id', '!=', $userId));
+
         $select->where($where);
-        
+
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -161,7 +170,8 @@ class FriendService implements FriendServiceInterface
     public function fetchFriendForUser($user, $friend, $prototype = null, $status = null)
     {
         $select   = $this->createSelectForFriendsList($user, $friend);
-        $hydrator = !$prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $prototype = null === $prototype ? new \ArrayObject() : $prototype;
+        $hydrator = new ArraySerializable();
         /** @var \Iterator|\Countable $results */
         $results  = $this->tableGateway->selectWith($select);
 
@@ -208,7 +218,7 @@ class FriendService implements FriendServiceInterface
         $select->columns(['uf_user_id' => 'user_id', 'uf_friend_id' => 'friend_id', 'uf_status' => 'status']);
         $select->join(
             ['u' => 'users'],
-            new Expression('u.user_id = ?', $friendId),
+            new Expression('u.user_id = uf.friend_id OR u.user_id = uf.user_id'),
             ['*'],
             Select::JOIN_LEFT
         );
@@ -225,6 +235,7 @@ class FriendService implements FriendServiceInterface
 
         $where->addPredicate($firstOr);
         $where->addPredicate($secondOr);
+        $where->addPredicate(new Operator('u.user_id', '!=', $userId));
         $select->where($where);
 
         return $select;

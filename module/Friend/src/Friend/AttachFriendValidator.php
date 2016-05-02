@@ -5,6 +5,7 @@ namespace Friend;
 use Application\Exception\NotFoundException;
 use Friend\Service\FriendServiceInterface;
 use User\Service\UserServiceInterface;
+use User\UserInterface;
 use Zend\Validator\AbstractValidator;
 use Zend\Validator\Exception;
 use Zend\Validator\ValidatorInterface;
@@ -17,6 +18,7 @@ class AttachFriendValidator extends AbstractValidator implements ValidatorInterf
     const INVALID_USER    = 'invalidUser';
     const INVALID_FRIEND  = 'invalidFriend';
     const ALREADY_FRIENDS = 'alreadyFriends';
+    const CANT_FRIEND     = 'cantFriend';
 
     /**
      * @var string[]
@@ -25,6 +27,7 @@ class AttachFriendValidator extends AbstractValidator implements ValidatorInterf
         self::INVALID_USER    => 'Invalid user_id "%value%"',
         self::INVALID_FRIEND  => 'Invalid friend_id "%value%"',
         self::ALREADY_FRIENDS => 'Users are already Friends',
+        self::CANT_FRIEND     => 'These users cannot be friends',
     ];
 
     /**
@@ -83,13 +86,24 @@ class AttachFriendValidator extends AbstractValidator implements ValidatorInterf
             return false;
         }
 
+        // both users need to be children
+
+        if ($user->getType() !== $friend->getType() && $user->getType() !== UserInterface::TYPE_CHILD) {
+            $this->error(static::CANT_FRIEND);
+            return false;
+        }
         // check if users are friends already
         try {
-            $this->friendService->fetchFriendForUser($user, $friend);
-            $this->error(static::ALREADY_FRIENDS);
-            return false;
+            $status = $this->friendService->fetchFriendForUser($user, $friend, new \ArrayObject());
+
         } catch (NotFriendsException $notFriends) {
             // this is good
+            return true;
+        }
+
+        if ($status['uf_status'] !== FriendInterface::PENDING) {
+            $this->error(static::ALREADY_FRIENDS);
+            return false;
         }
 
         return true;
