@@ -87,15 +87,14 @@ class AttachFriendValidator extends AbstractValidator implements ValidatorInterf
         }
 
         // both users need to be children
-
-        if ($user->getType() !== $friend->getType() && $user->getType() !== UserInterface::TYPE_CHILD) {
+        if ($user->getType() !== $friend->getType()) {
             $this->error(static::CANT_FRIEND);
             return false;
         }
+
         // check if users are friends already
         try {
             $status = $this->friendService->fetchFriendForUser($user, $friend, new \ArrayObject());
-
         } catch (NotFriendsException $notFriends) {
             // this is good
             return true;

@@ -157,4 +157,37 @@ class FriendResourceTest extends TestCase
         $this->assertEquals($this->friend->getUserId(), $body['friend_id']);
         $this->assertEquals(FriendInterface::FRIEND, $body['friend_status']);
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotAllowAdultToFriendChild()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+        $this->dispatch('/user/english_teacher/friend', 'POST', ['friend_id' => $this->friend->getUserId()]);
+        $this->assertResponseStatusCode(422);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotAllowChildToFriendAdult()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+        $this->dispatch('/user/english_student/friend', 'POST', ['friend_id' => 'english_teacher']);
+        $this->assertResponseStatusCode(422);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotAllowAdultToFriendAdult()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('math_teacher');
+        $this->dispatch('/user/math_teacher/friend', 'POST', ['friend_id' => 'english_teacher']);
+        $this->assertResponseStatusCode(403);
+    }
 }

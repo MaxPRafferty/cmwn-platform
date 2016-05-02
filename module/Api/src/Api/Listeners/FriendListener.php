@@ -7,6 +7,7 @@ use Friend\FriendInterface;
 use Friend\Service\FriendServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Authorization\Assertions\DefaultAssertion;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -72,6 +73,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return null;
         }
 
+        $event->setParam('assertion', new DefaultAssertion());
         if ($request->getMethod() !== HttpRequest::METHOD_POST) {
             return null;
         }
@@ -83,6 +85,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
         $userId = $event->getRouteMatch()->getParam('user_id', false);
         $dataContainer->setBodyParam('user_id', $userId);
+
     }
 
     /**
