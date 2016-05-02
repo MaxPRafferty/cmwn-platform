@@ -17,6 +17,7 @@ return [
             'update.password'    => 'Update profile password',
             'remove.user.adult'  => 'Delete a child user',
             'remove.user.child'  => 'Delete an adult user',
+            'can.friend'         => 'Can friend users',
 
             // Flip
             'create.user.flip'   => 'Earn a flip',
@@ -238,6 +239,7 @@ return [
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'can.friend',
                     'child.code',
                     'create.user.flip',
                     'pick.username',
@@ -257,6 +259,7 @@ return [
                     'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'can.friend',
                     'child.code',
                     'pick.username',
                     'update.password',

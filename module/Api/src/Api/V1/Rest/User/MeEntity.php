@@ -36,6 +36,26 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
+     * Me Entities cannot friend themselves
+     *
+     * @return bool
+     */
+    public function canFriend()
+    {
+        return false;
+    }
+
+    /**
+     * Me Entities cannot friend themselves
+     *
+     * @return string
+     */
+    public function getFriendStatus()
+    {
+        return static::CANT_FRIEND;
+    }
+
+    /**
      * @param $token
      */
     public function setToken($token)

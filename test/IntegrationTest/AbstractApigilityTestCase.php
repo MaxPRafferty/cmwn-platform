@@ -41,7 +41,6 @@ abstract class AbstractApigilityTestCase extends TestCase
         $this->getDatabaseTester()->setSetUpOperation($this->getSetUpOperation());
         $this->getDatabaseTester()->setDataSet($this->getDataSet());
         $this->getDatabaseTester()->onSetUp();
-
     }
     
     /**

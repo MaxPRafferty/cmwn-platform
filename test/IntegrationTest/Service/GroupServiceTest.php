@@ -6,7 +6,6 @@ use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Where;
 use Zend\Paginator\Paginator;
@@ -22,16 +21,6 @@ class GroupServiceTest extends TestCase
      * @var GroupServiceInterface
      */
     protected $groupService;
-
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
-    protected function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet(__DIR__ . '/../DataSets/default.dataset.xml');
-    }
 
     /**
      * @before

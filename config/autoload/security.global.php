@@ -8,7 +8,6 @@ return [
             'api.rest.forgot',
             'api.rest.logout',
             'api.rest.image',
-            'api.rest.friend' // FIXME this is not open
         ],
         'route-permissions' => [
             'api.rest.flip'        => [
@@ -55,6 +54,10 @@ return [
                 'GET'  => 'pick.username',
                 'POST' => 'pick.username',
             ],
+            'api.rest.friend' => [
+                'GET'  => 'can.friend',
+                'POST' => 'can.friend'
+            ]
         ],
     ],
 ];

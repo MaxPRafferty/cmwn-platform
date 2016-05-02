@@ -6,7 +6,6 @@ use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use IntegrationTest\TestHelper;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use User\UserInterface;
 use Zend\Paginator\Paginator;
 
@@ -20,16 +19,6 @@ class UserGroupServiceTest extends TestCase
      * @var UserGroupServiceInterface
      */
     protected $userGroupService;
-
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
-    protected function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet(__DIR__ . '/../DataSets/default.dataset.xml');
-    }
 
     /**
      * @before
@@ -59,7 +48,7 @@ class UserGroupServiceTest extends TestCase
         sort($actualIds);
         sort($expectedIds);
 
-        $this->assertSame($expectedIds, $actualIds, 'Service did not return the correct users from the database');
+        $this->assertEquals($expectedIds, $actualIds, 'Service did not return the correct users from the database');
     }
 
     /**
@@ -78,7 +67,7 @@ class UserGroupServiceTest extends TestCase
         sort($actualIds);
         sort($expectedIds);
 
-        $this->assertSame($expectedIds, $actualIds, 'Service did not return the correct users from the database');
+        $this->assertEquals($expectedIds, $actualIds, 'Service did not return the correct users from the database');
     }
 
     /**
@@ -97,7 +86,7 @@ class UserGroupServiceTest extends TestCase
         sort($actualIds);
         sort($expectedIds);
 
-        $this->assertSame($expectedIds, $actualIds, 'Service did not return the correct users from the database');
+        $this->assertEquals($expectedIds, $actualIds, 'Service did not return the correct users from the database');
     }
 
     /**
@@ -113,14 +102,12 @@ class UserGroupServiceTest extends TestCase
                     'math_student',
                     'english_teacher',
                     'english_student',
-                    'principal',
                 ],
             ],
 
             'English Teacher' => [
                 'user'              => 'english_teacher',
                 'expected_user_ids' => [
-                    'english_teacher',
                     'english_student',
                 ],
             ],
@@ -128,7 +115,6 @@ class UserGroupServiceTest extends TestCase
             'Math Teacher' => [
                 'user'              => 'math_teacher',
                 'expected_user_ids' => [
-                    'math_teacher',
                     'math_student',
                 ],
             ],
@@ -137,7 +123,7 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'english_student',
                 'expected_user_ids' => [
                     'english_teacher',
-                    'english_student',
+                    'math_student', // in reality these 2 students cannot be friends
                 ],
             ],
 
@@ -145,7 +131,7 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'math_student',
                 'expected_user_ids' => [
                     'math_teacher',
-                    'math_student',
+                    'english_student', // in reality these 2 students cannot be friends
                 ],
             ],
         ];
