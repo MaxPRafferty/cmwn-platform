@@ -3,6 +3,8 @@
 namespace Api\Listeners;
 
 use Api\Links\FriendLink;
+use Api\Links\SuggestLink;
+use Api\V1\Rest\User\MeEntity;
 use Friend\FriendInterface;
 use Friend\Service\FriendServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
@@ -122,6 +124,10 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
         $status = $this->friendService->fetchFriendStatusForUser($authUser, $realEntity);
         $realEntity->setFriendStatus($status);
+
+        if ($realEntity instanceof MeEntity && $realEntity->getType() === UserInterface::TYPE_CHILD) {
+            $entity->getLinks()->add(new SuggestLink($authUser->getUserId()));
+        }
 
         if ($status === FriendInterface::FRIEND) {
             $entity->getLinks()->add(new FriendLink($authUser->getUserId(), $realEntity->getUserId()));
