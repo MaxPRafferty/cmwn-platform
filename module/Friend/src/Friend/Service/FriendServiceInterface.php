@@ -45,20 +45,27 @@ interface FriendServiceInterface
     /**
      * Fetches a friend for a user
      *
-     * SELECT
-     *   u.*,
-     *   uf.friend_id AS user_friend_id
+     * SELECT *
      * FROM user_friends AS uf
-     *   LEFT JOIN users AS u ON u.user_id = uf.user_id
-     * WHERE uf.friend_id = :friend_id
-     *   AND uf.user_id = :user_id;
+     *    LEFT JOIN users AS u ON u.user_id = :friend_id
+     * WHERE (uf.user_id = :user_id OR uf.friend_id = :user_id)
+     *   AND (uf.user_id = :friend_id OR uf.friend_id = :friend_id)
      *
-     * @param $user
-     * @param $friend
-     * @param null $prototype
+     * @param UserInterface|string $user
+     * @param UserInterface|string $friend
+     * @param null|object $prototype
+     * @param null|string status
+     * @throws NotFriendsException
      * @return object|UserInterface
      */
     public function fetchFriendForUser($user, $friend, $prototype = null);
 
+    /**
+     * Fetches the current friend status of a user
+     *
+     * @param UserInterface $user
+     * @param UserInterface $friend
+     * @return string
+     */
     public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend);
 }

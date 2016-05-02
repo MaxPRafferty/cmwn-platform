@@ -170,8 +170,35 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         return $return;
     }
 
+    /**
+     * Fetches the current friend status of a user
+     *
+     * @param UserInterface $user
+     * @param UserInterface $friend
+     * @throws \Exception
+     * @return string
+     */
     public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
     {
-        return $this->realService->fetchFriendStatusForUser($user, $friend);
+        $eventParams = ['user' => $user, 'friend' => $friend];
+        $event       = new Event('fetch.friend.status', $this->realService, $eventParams);
+        $response    = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        try {
+            $return = $this->realService->fetchFriendStatusForUser($user, $friend);
+            $event->setName('fetch.friend.status.post');
+            $event->setParam('status', $return);
+        } catch (\Exception $exception) {
+            $eventParams['exception'] = $exception;
+            $event->setName('fetch.friend.status.error');
+            $this->getEventManager()->trigger($event);
+            throw $exception;
+        }
+
+        $this->getEventManager()->trigger($event);
+        return $return;
     }
 }

@@ -1561,11 +1561,6 @@
             </row>
         </table_data>
         <table_data name="user_friends">
-            <row>
-                <field name="user_id">english_student</field>
-                <field name="friend_id">math_student</field>
-                <field name="status">PENDING</field>
-            </row>
         </table_data>
         <table_data name="user_groups">
             <row>
