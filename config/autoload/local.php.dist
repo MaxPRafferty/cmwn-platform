@@ -17,4 +17,15 @@ return [
             'zf-apigility',
         ],
     ],
+
+    'asset_manager' => [
+        'caching' => [
+            'default' => [
+                'cache'   => 'AssetManager\\Cache\\FilePathCache',
+                'options' => [
+                    'dir' => __DIR__ . '/../../public',
+                ],
+            ],
+        ],
+    ],
 ];

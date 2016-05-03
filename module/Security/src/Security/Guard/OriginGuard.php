@@ -63,7 +63,7 @@ class OriginGuard implements LoggerAwareInterface
 
         /** @var Response $response */
         $response = $event->getResponse();
-        $origin   = $request->getHeader('Origin')->getFieldValue();
+        $origin   = $request->getHeader('Origin') !== false ? $request->getHeader('Origin')->getFieldValue() : null;
 
         // THOUGHT Config?
         if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {
