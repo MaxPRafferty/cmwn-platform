@@ -42,7 +42,8 @@ return array(
             'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
             'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
             'Api\\V1\\Rest\\Friend\\FriendResource' => 'Api\\V1\\Rest\\Friend\\FriendResourceFactory',
-            'Api\\Listeners\\FriendListener' => \Api\Factory\FriendListenerFactory::class,
+            'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
+            'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
         ),
     ),
     'router' => array(
@@ -209,6 +210,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.suggest' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/suggest[/:suggest_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Suggest\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -231,6 +241,7 @@ return array(
             15 => 'api.rest.flip',
             16 => 'api.rest.flip-user',
             17 => 'api.rest.friend',
+            18 => 'api.rest.suggest',
         ),
     ),
     'zf-rest' => array(
@@ -567,6 +578,22 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Friend\\FriendCollection',
             'service_name' => 'friend',
         ),
+        'Api\\V1\\Rest\\Suggest\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Suggest\\SuggestResource',
+            'route_name' => 'api.rest.suggest',
+            'route_identifier_name' => 'suggest_id',
+            'collection_name' => 'suggest',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => '100',
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Suggest\\SuggestEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestCollection',
+            'service_name' => 'Suggest',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -588,6 +615,7 @@ return array(
             'Api\\V1\\Rest\\Flip\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\FlipUser\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Friend\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Suggest\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -680,6 +708,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Suggest\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -752,6 +785,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Friend\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Suggest\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -975,6 +1012,18 @@ return array(
                 'entity_identifier_name' => 'friend_id',
                 'route_name' => 'api.rest.friend',
                 'route_identifier_name' => 'friend_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Suggest\\SuggestEntity' => array(
+                'entity_identifier_name' => 'suggest_id',
+                'route_name' => 'api.rest.suggest',
+                'route_identifier_name' => 'suggest_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Suggest\\SuggestCollection' => array(
+                'entity_identifier_name' => 'suggest_id',
+                'route_name' => 'api.rest.suggest',
+                'route_identifier_name' => 'suggest_id',
                 'is_collection' => true,
             ),
         ),
