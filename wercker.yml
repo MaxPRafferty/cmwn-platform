@@ -1,18 +1,8 @@
-box: wercker/php
+box: php
 services:
-  - wercker/mysql
-  - wercker/redis
+   - mysql
 build:
-  steps:
-    - script:
-        name: Install extensions
-        code: |-
-          pecl install memcache
-          pecl install SQLite
-    - script:
-        name: install dependencies
-        code: |-
-            composer install --no-interaction
-    - script:
-        name: PHPUnit integration tests
-        code: phpunit --configuration test/phpunit.xml
+   steps:
+     - script:
+         name: env
+         code: env
