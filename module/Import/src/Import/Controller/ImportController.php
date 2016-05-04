@@ -96,7 +96,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
             }
 
             if ($job instanceof DryRunInterface) {
-                $job->setDryRun($request->getParam('dry-run'));
+                $job->setDryRun($request->getParam('dry-run', false));
             }
 
             $job->exchangeArray([

@@ -7,7 +7,7 @@ $mailHost = getenv('MAIL_HOST')
 
 $mailPort = getenv('MAIL_PORT')
     ? getenv('MAIL_PORT')
-    : 25;
+    : 2525;
 
 $mailUser = getenv('MAIL_USERNAME')
     ? getenv('MAIL_USERNAME')
