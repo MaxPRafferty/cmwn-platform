@@ -1,6 +1,0 @@
-<?php
-return [
-    'job_runner' => [
-        'php_path' => '/usr/bin/php',
-    ],
-];
