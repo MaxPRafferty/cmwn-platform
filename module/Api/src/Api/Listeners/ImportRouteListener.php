@@ -10,6 +10,7 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
+use Security\Service\SecurityOrgService;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
@@ -34,6 +35,20 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
     protected $role;
 
     /**
+     * @var SecurityOrgService
+     */
+    protected $orgService;
+
+    /**
+     * ImportRouteListener constructor.
+     * @param SecurityOrgService $orgService
+     */
+    public function __construct(SecurityOrgService $orgService)
+    {
+        $this->orgService = $orgService;
+    }
+
+    /**
      * @param SharedEventManagerInterface $events
      */
     public function attachShared(SharedEventManagerInterface $events)
@@ -56,6 +71,10 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
      */
     public function onRender(Event $event)
     {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            return;
+        }
+
         $entity  = $event->getParam('entity');
         if (!$entity instanceof Entity) {
             return;
@@ -71,32 +90,15 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
             return;
         }
 
-        if ($this->getRbac()->isGranted($this->getRole(), 'import')) {
-            $realEntity->getLinks()->add(new ImportLink($realEntity));
-        }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getRole()
-    {
-        if ($this->role !== null) {
-            return $this->role;
-        }
-
-        $role = 'guest';
         try {
             $user = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePassword) {
             $user = $changePassword->getUser();
         }
 
-        if ($user instanceof SecurityUser) {
-            $role = $user->getRole();
+        $role = $user->isSuper() ? $user->getRole() : $this->orgService->getRoleForGroup($realEntity, $user);
+        if ($this->getRbac()->isGranted($role, 'import')) {
+            $realEntity->getLinks()->add(new ImportLink($realEntity));
         }
-
-        $this->role = $role;
-        return $this->role;
     }
 }

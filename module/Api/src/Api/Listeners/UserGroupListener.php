@@ -116,7 +116,7 @@ class UserGroupListener
         $groupTypes     = [];
         /** @var GroupEntity[] $groups */
         foreach ($groups as $group) {
-            $entityToRender = new Entity($group->getArrayCopy());
+            $entityToRender = new Entity($group);
             $renderedGroups[] = $hal->renderEntity($entityToRender);
             array_push($groupTypes, $group->getType());
         }
