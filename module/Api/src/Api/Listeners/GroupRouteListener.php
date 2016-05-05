@@ -7,6 +7,7 @@ use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Hal\Entity;
@@ -41,8 +42,8 @@ class GroupRouteListener
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_RENDER, [$this, 'onRender'], 1000);
+        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_RENDER, [$this, 'onRender'], 1000);
     }
 
     /**
@@ -61,6 +62,15 @@ class GroupRouteListener
      */
     public function onRoute(MvcEvent $event)
     {
+        $request = $event->getRequest();
+        if (!$request instanceof Request) {
+            return ;
+        }
+
+        if ($request->getMethod() === Request::METHOD_OPTIONS) {
+            return;
+        }
+
         $route   = $event->getRouteMatch();
         $groupId = $route->getParam('group_id', false);
 
