@@ -10,6 +10,7 @@ use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -77,6 +78,15 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
      */
     public function onRoute(MvcEvent $event)
     {
+        $request = $event->getRequest();
+        if (!$request instanceof Request) {
+            return null;
+        }
+
+        if ($request->getMethod() === Request::METHOD_OPTIONS) {
+            return null;
+        }
+
         $route  = $event->getRouteMatch();
         $userId = $route->getParam('user_id', false);
 

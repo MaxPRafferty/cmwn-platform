@@ -9,6 +9,7 @@ use Org\Service\OrganizationServiceInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
+use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Hal\Entity;
@@ -63,6 +64,15 @@ class OrgRouteListener implements ListenerAggregateInterface
      */
     public function onRoute(MvcEvent $event)
     {
+        $request = $event->getRequest();
+        if (!$request instanceof Request) {
+            return null;
+        }
+
+        if ($request->getMethod() === Request::METHOD_OPTIONS) {
+            return null;
+        }
+
         $route   = $event->getRouteMatch();
         $orgId = $route->getParam('org_id', false);
 

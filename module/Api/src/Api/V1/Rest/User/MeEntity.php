@@ -2,8 +2,10 @@
 
 namespace Api\V1\Rest\User;
 
+use Api\Links\UserFlipLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
+use User\Service\UserServiceInterface;
 use User\UserInterface;
 
 /**
@@ -33,6 +35,19 @@ class MeEntity extends UserEntity implements TokenEntityInterface
         $this->getLinks()->add(new UserNameLink());
 
         parent::__construct($userData);
+    }
+
+    /**
+     * @param string $userId
+     * @return \User\User
+     */
+    public function setUserId($userId)
+    {
+        if (empty($this->userId) && !empty($userId) && $this->getType() === UserInterface::TYPE_CHILD) {
+            $this->getLinks()->add(new UserFlipLink($this->getUserId()));
+        }
+
+        return parent::setUserId($userId);
     }
 
     /**
