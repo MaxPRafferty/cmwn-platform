@@ -1,6 +1,17 @@
 <?php
 
 return [
+    'validators' => [
+        'invokables' => [
+            \Security\PasswordValidator::class => \Security\PasswordValidator::class,
+        ],
+        'initializers' => [
+            \Security\Authentication\AuthenticationServiceAwareInitializer::class =>
+                \Security\Authentication\AuthenticationServiceAwareInitializer::class,
+
+            \Security\Authorization\RbacAwareInitializer::class => \Security\Authorization\RbacAwareInitializer::class,
+        ],
+    ],
     'service_manager' => [
         'aliases' => [
             'authentication' =>
