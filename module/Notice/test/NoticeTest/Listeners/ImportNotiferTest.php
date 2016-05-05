@@ -2,9 +2,11 @@
 
 namespace NoticeTest\Listeners;
 
+use Notice\EmailModel\ImportSuccessModel;
 use Notice\Listeners\ImportListener;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
+use Zend\Log\Logger;
 
 /**
  * Test ImportNotiferTest
@@ -59,7 +61,7 @@ class ImportNotiferTest extends TestCase
      */
     public function setUpListener()
     {
-        $this->listener = new ImportListener();
+        $this->listener = new ImportListener(new ImportSuccessModel([]));
         $this->listener->setMailService($this->mailService);
     }
 

@@ -76,7 +76,8 @@ class FlipUserServiceTest extends TestCase
         );
 
         $expectedSelect->where($where);
-
+        $expectedSelect->group('f.flip_id');
+        $expectedSelect->order(['uf.earned', 'f.title']);
         $expectedAdapter   = new DbSelect(
             $expectedSelect,
             $this->tableGateway->getAdapter(),
@@ -103,6 +104,8 @@ class FlipUserServiceTest extends TestCase
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         $expectedSelect    = new Select(['f' => 'flips']);
         $expectedWhere     = new Where();
+        $expectedSelect->group('f.flip_id');
+        $expectedSelect->order(['uf.earned', 'f.title']);
 
         $expectedWhere->addPredicate(new Operator('foo', '=', 'bar'));
         $expectedWhere->addPredicate(new Expression('f.flip_id = uf.flip_id'));
