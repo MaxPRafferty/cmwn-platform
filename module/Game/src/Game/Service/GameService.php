@@ -48,9 +48,12 @@ class GameService implements GameServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
-            $select    = new Select($this->gameTableGateway->getTable());
+            $select    = new Select(['g' => $this->gameTableGateway->getTable()]);
             $select->where($where);
             $select->order(['g.title']);
+
+            $sql = new \Zend\Db\Sql\Sql($this->gameTableGateway->getAdapter());
+            $stmt = $sql->buildSqlString($select);
             return new DbSelect(
                 $select,
                 $this->gameTableGateway->getAdapter(),
