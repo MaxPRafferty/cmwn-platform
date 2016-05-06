@@ -251,6 +251,69 @@ class UserResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @ticket CORE-652
+     */
+    public function testItShouldReturnLatestImageForUserForMe()
+    {
+        $this->logInUser('english_student');
+        $this->injectValidCsrfToken();
+        $this->dispatch('/user/english_student');
+
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertNotRedirect();
+
+        $body = $this->getResponse()->getContent();
+
+        try {
+            $decoded = Json::decode($body, Json::TYPE_ARRAY);
+        } catch (\Exception $jsonException) {
+            $this->fail('Error Decoding Response');
+            return;
+        }
+
+        $this->assertArrayHasKey('_embedded', $decoded);
+        $this->assertArrayHasKey('image', $decoded['_embedded']);
+        $this->assertArrayHasKey('image_id', $decoded['_embedded']['image']);
+        
+        $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $decoded['_embedded']['image']['image_id']);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-652
+     */
+    public function testItShouldReturnLastApprovedImageWhenOtherUserViewing()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+        $this->dispatch('/user/english_student');
+
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertNotRedirect();
+
+        $body = $this->getResponse()->getContent();
+
+        try {
+            $decoded = Json::decode($body, Json::TYPE_ARRAY);
+        } catch (\Exception $jsonException) {
+            $this->fail('Error Decoding Response');
+            return;
+        }
+
+        $this->assertArrayHasKey('_embedded', $decoded);
+        $this->assertArrayHasKey('image', $decoded['_embedded']);
+        $this->assertArrayHasKey('image_id', $decoded['_embedded']['image']);
+
+        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $decoded['_embedded']['image']['image_id']);
+    }
+
+
+    /**
      * @param $userId
      * @return \User\UserInterface
      */

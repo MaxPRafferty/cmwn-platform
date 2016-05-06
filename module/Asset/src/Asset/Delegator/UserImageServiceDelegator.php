@@ -63,21 +63,21 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
      * @param $user
      * @return \Asset\Image|bool
      */
-    public function fetchImageForUser($user)
+    public function fetchImageForUser($user, $approvedOnly = true)
     {
-        $eventParams = ['user' => $user];
+        $eventParams = ['user' => $user, 'approved_only' => $approvedOnly];
         $event       = new Event('fetch.user.image', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
             return false;
         }
 
         try {
-            $return = $this->realService->fetchImageForUser($user);
+            $return = $this->realService->fetchImageForUser($user, $approvedOnly);
             $event->setName('fetch.user.image.post');
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.image.error');
-            $return = false;
+            throw $attachException;
         }
 
         $this->getEventManager()->trigger($event);
