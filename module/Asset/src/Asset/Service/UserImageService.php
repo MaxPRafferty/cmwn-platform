@@ -71,14 +71,12 @@ class UserImageService implements UserImageServiceInterface
         $where = new Where();
         $where->addPredicate(new Operator('u.user_id', '=', $userId));
         if ($approvedOnly) {
-            $where->addPredicate(new Operator('i.moderated', '=', 1));
+            $where->addPredicate(new Operator('i.moderation_status', '=', 1));
         }
 
         $select->where($where);
         $select->order('i.created DESC');
 
-        $sql = new \Zend\Db\Sql\Sql($this->imageTableGateway->getAdapter());
-        $stmt = $sql->buildSqlString($select);
         $rowSet = $this->imageTableGateway->selectWith($select);
         /** @var \ArrayObject|null $row */
         $row    = $rowSet->current();

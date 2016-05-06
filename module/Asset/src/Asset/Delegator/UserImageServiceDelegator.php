@@ -77,7 +77,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.image.error');
-            $return = false;
+            throw $attachException;
         }
 
         $this->getEventManager()->trigger($event);
