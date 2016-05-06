@@ -5,7 +5,6 @@ namespace Api\V1\Rest\User;
 use Api\Links\UserFlipLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
-use User\Service\UserServiceInterface;
 use User\UserInterface;
 
 /**
@@ -37,18 +36,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
         parent::__construct($userData);
     }
 
-    /**
-     * @param string $userId
-     * @return \User\User
-     */
-    public function setUserId($userId)
-    {
-        if (empty($this->userId) && !empty($userId) && $this->getType() === UserInterface::TYPE_CHILD) {
-            $this->getLinks()->add(new UserFlipLink($this->getUserId()));
-        }
-
-        return parent::setUserId($userId);
-    }
 
     /**
      * Me Entities cannot friend themselves
@@ -87,6 +74,19 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             parent::getArrayCopy(),
             ['token' => $this->token]
         );
+    }
+
+    /**
+     * @return \ZF\Hal\Link\LinkCollection
+     */
+    public function getLinks()
+    {
+        $links = parent::getLinks();
+        if (!$links->has('user_flips') && !empty($this->userId) && $this->getType() === UserInterface::TYPE_CHILD) {
+            $links->add(new UserFlipLink($this->getUserId()));
+        }
+
+        return $links;
     }
 
     /**
