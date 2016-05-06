@@ -29,6 +29,7 @@ return [
             \Security\Guard\OriginGuard::class              => \Security\Guard\OriginGuard::class,
             \Security\Listeners\OrgServiceListener::class   => \Security\Listeners\OrgServiceListener::class,
             \Security\Listeners\GroupServiceListener::class => \Security\Listeners\GroupServiceListener::class,
+            \Security\Listeners\UpdateSession::class        => \Security\Listeners\UpdateSession::class,
         ],
 
         'factories' => [
@@ -69,7 +70,7 @@ return [
             'Security\Controller\User' => 'Security\Controller\UserControllerFactory',
         ],
     ],
-
+//
     'shared-listeners' => [
         \Security\Listeners\OrgServiceListener::class,
         \Security\Listeners\GroupServiceListener::class,
@@ -79,6 +80,7 @@ return [
         \Security\Guard\CsrfGuard::class,
         \Security\Listeners\ExpireAuthSessionListener::class,
         \Security\Listeners\UserServiceListener::class,
+        \Security\Listeners\UpdateSession::class,
     ],
 
     'console' => [
