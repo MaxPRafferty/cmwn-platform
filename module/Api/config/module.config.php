@@ -14,9 +14,9 @@ return array(
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
-            'Api\\Listeners\\ImportRouteListener' => 'Api\\Listeners\\ImportRouteListener',
         ),
         'factories' => array(
+            'Api\\Listeners\\ImportRouteListener' => \Api\Factory\ImportRouteListenerFactory::class,
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
             'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
             'Api\\Listeners\\UserGroupListener' => 'Api\\Factory\\UserGroupListenerFactory',
