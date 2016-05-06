@@ -51,8 +51,9 @@ class UserService implements UserServiceInterface
         $resultSet = new HydratingResultSet(new UserHydrator($prototype), $prototype);
 
         if ($paginate) {
-            $select    = new Select($this->userTableGateway->getTable());
+            $select    = new Select(['u' => $this->userTableGateway->getTable()]);
             $select->where($where);
+            $select->order(['u.first_name', 'u.last_name']);
             return new DbSelect(
                 $select,
                 $this->userTableGateway->getAdapter(),

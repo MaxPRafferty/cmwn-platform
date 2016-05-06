@@ -64,9 +64,9 @@ class FlipServiceTest extends TestCase
     public function testItShouldReturnPaginatorAdapterForAllFlipsWithNoWhereAndPrototype()
     {
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new Flip());
-        $expectedSelect    = new Select('flips');
+        $expectedSelect    = new Select(['f' => 'flips']);
         $expectedSelect->where(new Where());
-
+        $expectedSelect->order(['f.title']);
         $expectedAdapter   = new DbSelect(
             $expectedSelect,
             $this->tableGateway->getAdapter(),
@@ -91,8 +91,9 @@ class FlipServiceTest extends TestCase
         $where->addPredicate(new Operator('foo', '=', 'bar'));
 
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        $expectedSelect    = new Select('flips');
+        $expectedSelect    = new Select(['f' => 'flips']);
         $expectedSelect->where($where);
+        $expectedSelect->order(['f.title']);
 
         $expectedAdapter   = new DbSelect(
             $expectedSelect,

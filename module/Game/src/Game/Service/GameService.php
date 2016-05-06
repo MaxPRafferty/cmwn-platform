@@ -50,6 +50,7 @@ class GameService implements GameServiceInterface
         if ($paginate) {
             $select    = new Select($this->gameTableGateway->getTable());
             $select->where($where);
+            $select->order(['g.title']);
             return new DbSelect(
                 $select,
                 $this->gameTableGateway->getAdapter(),

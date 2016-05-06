@@ -48,8 +48,9 @@ class FlipService implements FlipServiceInterface
         $where     = $this->createWhere($where);
         $prototype = null === $prototype ? new Flip() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        $select    = new Select($this->flipTableGateway->getTable());
+        $select    = new Select(['f' => $this->flipTableGateway->getTable()]);
         $select->where($where);
+        $select->order(['f.title']);
         return new DbSelect(
             $select,
             $this->flipTableGateway->getAdapter(),

@@ -3,6 +3,7 @@
 namespace Notice\Listeners;
 
 use AcMailer\Service\MailServiceAwareTrait;
+use Application\Utils\NoopLoggerAwareTrait;
 use Import\ImporterInterface;
 use Import\ParserInterface;
 use Notice\EmailModel\ImportFailedModel;
@@ -12,7 +13,6 @@ use Notice\NotificationAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
 
 /**
  * Class ImportNotifer
@@ -20,7 +20,7 @@ use Zend\Log\LoggerAwareTrait;
 class ImportListener implements NoticeInterface, LoggerAwareInterface
 {
     use MailServiceAwareTrait;
-    use LoggerAwareTrait;
+    use NoopLoggerAwareTrait;
 
     /**
      * @var \Zend\Stdlib\CallbackHandler[]

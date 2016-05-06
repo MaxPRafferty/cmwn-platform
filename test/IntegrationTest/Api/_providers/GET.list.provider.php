@@ -71,6 +71,7 @@ return [
             'math_teacher',
             'english_student',
             'english_teacher',
+            'principal',
         ],
     ],
 ];

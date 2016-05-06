@@ -73,7 +73,7 @@ class FriendService implements FriendServiceInterface
         $where->addPredicate(new Operator('u.user_id', '!=', $userId));
 
         $select->where($where);
-
+        $select->order(['u.first_name', 'u.last_name']);
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -237,6 +237,7 @@ class FriendService implements FriendServiceInterface
         $where->addPredicate($secondOr);
         $where->addPredicate(new Operator('u.user_id', '!=', $userId));
         $select->where($where);
+        $select->order(['u.first_name', 'u.last_name']);
 
         return $select;
     }

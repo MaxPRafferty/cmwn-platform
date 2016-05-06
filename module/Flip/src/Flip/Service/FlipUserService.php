@@ -60,8 +60,9 @@ class FlipUserService implements FlipUserServiceInterface
             Select::JOIN_LEFT
         );
 
-
         $select->where($where);
+        $select->group('f.flip_id');
+        $select->order(['uf.earned', 'f.title']);
 
         $prototype = !$prototype instanceof EarnedFlipInterface ? new EarnedFlip() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);

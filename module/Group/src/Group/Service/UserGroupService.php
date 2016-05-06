@@ -140,7 +140,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->group('u.user_id');
-
+        $select->order(['u.first_name', 'u.last_name']);
         $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -189,7 +189,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->group('u.user_id');
-
+        $select->order(['u.first_name', 'u.last_name']);
         $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -228,7 +228,7 @@ class UserGroupService implements UserGroupServiceInterface
         $select->from(['g'  => 'groups']);
         $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['ug_role' => 'role'], Select::JOIN_LEFT);
         $select->where($where);
-
+        $select->order(['g.title']);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,
@@ -270,8 +270,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->group('o.org_id');
-        $select->order('org_id ASC');
-
+        $select->order('o.title ASC');
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,
@@ -354,8 +353,9 @@ class UserGroupService implements UserGroupServiceInterface
         $select->where($where);
         $select->group(['u.user_id']);
         $select->having(new Operator('u.user_id', '!=', $userId));
+        $select->order(['u.first_name', 'u.last_name']);
 
-        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
             $select,

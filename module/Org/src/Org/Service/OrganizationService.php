@@ -59,6 +59,7 @@ class OrganizationService implements OrganizationServiceInterface
         if ($paginate) {
             $select    = new Select(['o' => $this->orgTableGateway->getTable()]);
             $select->where($where);
+            $select->order(['o.title']);
             return new DbSelect(
                 $select,
                 $this->orgTableGateway->getAdapter(),
@@ -111,6 +112,7 @@ class OrganizationService implements OrganizationServiceInterface
         $where->addPredicate(new Operator('ug.user_id', '=', $userId));
         $select->where($where);
         $select->group('o.org_id');
+        $select->order(['o.title']);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         if ($paginate) {
             return new DbSelect(
