@@ -60,7 +60,7 @@ class UserImageService implements UserImageServiceInterface
      * @throws AssetNotApprovedException
      * @throws NotFoundException
      */
-    public function fetchImageForUser($user)
+    public function fetchImageForUser($user, $approvedOnly = true)
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $select = new Select();
@@ -70,8 +70,15 @@ class UserImageService implements UserImageServiceInterface
 
         $where = new Where();
         $where->addPredicate(new Operator('u.user_id', '=', $userId));
-        $select->where($where);
+        if ($approvedOnly) {
+            $where->addPredicate(new Operator('i.moderated', '=', 1));
+        }
 
+        $select->where($where);
+        $select->order('i.created DESC');
+
+        $sql = new \Zend\Db\Sql\Sql($this->imageTableGateway->getAdapter());
+        $stmt = $sql->buildSqlString($select);
         $rowSet = $this->imageTableGateway->selectWith($select);
         /** @var \ArrayObject|null $row */
         $row    = $rowSet->current();
@@ -79,12 +86,6 @@ class UserImageService implements UserImageServiceInterface
             throw new NotFoundException("Image not Found for user");
         }
 
-        $image = new Image($row->getArrayCopy());
-        
-        if (!$image->isModerated()) {
-            throw new AssetNotApprovedException($image);
-        }
-
-        return $image;
+        return new Image($row->getArrayCopy());
     }
 }

@@ -27,9 +27,10 @@ interface UserImageServiceInterface
      * Fetches an image for a user
      *
      * @param $user
+     * @param $where
      * @return Image
      * @throws AssetNotApprovedException
      * @throws NotFoundException
      */
-    public function fetchImageForUser($user);
+    public function fetchImageForUser($user, $where = null);
 }
