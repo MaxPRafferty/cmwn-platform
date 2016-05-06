@@ -16,7 +16,7 @@ class UserFlipLink extends Link
      */
     public function __construct($userId = null)
     {
-        parent::__construct('user_flips');
+        parent::__construct('user_flip');
         $this->setRoute('api.rest.flip-user', ['user_id' => $userId]);
     }
 }
