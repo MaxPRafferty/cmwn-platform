@@ -52,8 +52,6 @@ class GameService implements GameServiceInterface
             $select->where($where);
             $select->order(['g.title']);
 
-            $sql = new \Zend\Db\Sql\Sql($this->gameTableGateway->getAdapter());
-            $stmt = $sql->buildSqlString($select);
             return new DbSelect(
                 $select,
                 $this->gameTableGateway->getAdapter(),
