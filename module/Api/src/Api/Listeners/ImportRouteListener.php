@@ -68,6 +68,7 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
 
     /**
      * @param Event $event
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function onRender(Event $event)
     {

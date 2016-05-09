@@ -27,5 +27,4 @@ class FlipUserDelegatorFactory implements DelegatorFactoryInterface
         $flipService = call_user_func($callback);
         return  new FlipUserDelegator($flipService);
     }
-
 }

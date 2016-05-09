@@ -20,6 +20,7 @@ use ZF\Hal\Entity;
 
 /**
  * Class FriendRouteListener
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FriendListener implements AuthenticationServiceAwareInterface
 {

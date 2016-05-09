@@ -59,7 +59,7 @@ class UserImageListener
      * @param Event $event
      */
     public function attachImage(Event $event)
-    {   
+    {
         $entity  = $event->getParam('entity');
         if (!$entity instanceof Entity) {
             return;

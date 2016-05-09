@@ -1,8 +1,27 @@
 box: php
 services:
-   - mysql
+  - id: mysql
+    env:
+      MYSQL_ROOT_USERNAME: cmwn_pass123$
+      MYSQL_ROOT_PASSWORD: cmwn_user
+      MYSQL_DATABASE: cmwn_test
 build:
-   steps:
-     - script:
-         name: env
-         code: env
+  services:
+    - id: mysql
+      env:
+        MYSQL_ROOT_USERNAME: cmwn_pass123$
+        MYSQL_ROOT_PASSWORD: cmwn_user
+        MYSQL_DATABASE: cmwn_test
+  steps:
+    - script:
+      name: install composer
+      code: curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+   - script:
+      name: install dependencies
+      code: composer install --no-interaction
+    - script:
+      name: PHPCS Check
+      code: php vendor/bin/phpcs
+    - script:
+      name: PHPMD
+      code: php vendor/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
