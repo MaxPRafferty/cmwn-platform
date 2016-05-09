@@ -312,5 +312,32 @@ class SuperSeed extends AbstractSeed
                 );
             }
         }
+
+        $table->setData([]);
+        try {
+            $table->insert([
+                'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
+                'username'   => 'bzatta',
+                'email'      => 'bruno@ginasink.com',
+                'code'       => null,
+                'type'       => 'ADULT',
+                'password'   => password_hash('business', PASSWORD_DEFAULT),
+                'first_name' => 'Bruno',
+                'last_name'  => 'Zatta',
+                'gender'     => 'male',
+                'meta'       => '[]',
+                'birthdate'  => null,
+                'created'    => $date->format("Y-m-d H:i:s"),
+                'updated'    => $date->format("Y-m-d H:i:s"),
+                'super'      => 1
+            ])
+                ->saveData();
+        } catch (PDOException $exception) {
+            if ($exception->getCode() != 23000) {
+                $this->getOutput()->writeLn(
+                    'Got Exception When inserting Bruno: ' . $exception->getMessage()
+                );
+            }
+        }
     }
 }
