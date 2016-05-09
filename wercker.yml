@@ -16,7 +16,7 @@ build:
     - script:
       name: install composer
       code: curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
-   - script:
+    - script:
       name: install dependencies
       code: composer install --no-interaction
     - script:
