@@ -10,7 +10,16 @@ use User\UserInterface;
 
 /**
  * Exception UserGroupServiceTest
+ *
+ * @group Security
+ * @group Group
+ * @group UserGroup
  * @group IntegrationTest
+ * @group DB
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SecurityGroupServiceTest extends TestCase
 {

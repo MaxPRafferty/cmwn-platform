@@ -11,7 +11,15 @@ use Zend\Paginator\Paginator;
 
 /**
  * Test UserGroupServiceTest
+ *
+ * @group Friend
  * @group IntegrationTest
+ * @group FriendService
+ * @group DB
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class UserGroupServiceTest extends TestCase
 {

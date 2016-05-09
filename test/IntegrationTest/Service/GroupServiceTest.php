@@ -13,7 +13,14 @@ use Zend\Paginator\Paginator;
 /**
  * Exception GroupServiceTest
  *
- * ${CARET}
+ * @group Group
+ * @group IntegrationTest
+ * @group GroupService
+ * @group DB
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupServiceTest extends TestCase
 {

@@ -16,6 +16,7 @@ use Zend\Paginator\Paginator;
  * @group Friend
  * @group IntegrationTest
  * @group FriendService
+ * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

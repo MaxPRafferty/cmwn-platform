@@ -21,8 +21,8 @@ trait DbUnitConnectionTrait
     public function getConnection()
     {
         if ($this->conn === null) {
-            $config = TestHelper::getTestDbConfig();
-            $this->conn = new TestConnection(TestHelper::getPdoConnection(), $config['datbase']);
+            $config     = TestHelper::getTestDbConfig();
+            $this->conn = new TestConnection(TestHelper::getPdoConnection(), $config['database']);
         }
 
         return $this->conn;

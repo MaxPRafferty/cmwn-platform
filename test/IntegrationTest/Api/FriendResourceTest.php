@@ -12,7 +12,11 @@ use Zend\Json\Json;
 
 /**
  * Test FriendResourceTest
- *
+ * 
+ * @group Friend
+ * @group IntegrationTest
+ * @group FriendService
+ * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

@@ -12,10 +12,10 @@ use Zend\Json\Json;
 /**
  * Test UserResourceTest
  *
- * @group Integration
- * @group UserIntegration
- * @group API
  * @group User
+ * @group IntegrationTest
+ * @group UserService
+ * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
