@@ -1,15 +1,17 @@
+box:
+  id: cmwn/platform-api
+  username: $DOCKER_USER
+  password: $DOCKER_PASS
+  tag: latest
+
+services:
+  - id: mysql
+    env:
+      MYSQL_ROOT_USERNAME: cmwn_user
+      MYSQL_ROOT_PASSWORD: cmwn_pass123$
+      MYSQL_DATABASE: cmwn_test
+
 build:
-  box:
-   id: cmwn/platform-api
-   username: $DOCKER_USER
-   password: $DOCKER_PASS
-   tag: latest
-  services:
-    - id: mysql
-      env:
-        MYSQL_ROOT_USERNAME: cmwn_user
-        MYSQL_ROOT_PASSWORD: cmwn_pass123$
-        MYSQL_DATABASE: cmwn_test
   steps:
     - script:
       name: ENV Sanity
