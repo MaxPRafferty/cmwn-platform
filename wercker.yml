@@ -15,6 +15,11 @@ services:
 
 build:
   steps:
+    - reinoud/service-check@0.2.1:
+      service: mysql
+      port: "3306"  # numbers must be in quotes or they get evaluated to 'false'
+      timeout: "10" # in seconds (optional)
+      interval: "1" # in seconds (optional)
     - script:
       name: ENV Sanity
       code: env
