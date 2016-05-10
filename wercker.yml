@@ -11,6 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: cmwn_pass123$
       MYSQL_DATABASE: cmwn_test
 
+
 build:
   steps:
     - script:
