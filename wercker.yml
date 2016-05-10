@@ -13,7 +13,7 @@ services:
 
 build:
   steps:
-    - script:pi
+    - script:
       name: ENV Sanity
       code: env
     - script:
