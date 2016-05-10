@@ -36,11 +36,13 @@ $config = [
         'test'                    => [
             'adapter' => 'mysql',
             'host'    => $testHost,
-            'name'    => 'cmwn_test',
-            'user'    => 'cmwn_user',
-            'pass'    => 'cmwn_pass123$',
+            'name'    => $testName,
+            'user'    => $testUser,
+            'pass'    => $testPass,
         ],
     ],
 ];
 
+var_dump($config);
+die();
 return $config;
