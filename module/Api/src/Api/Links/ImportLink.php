@@ -19,6 +19,7 @@ class ImportLink extends Link
         $groupId = $group instanceof GroupInterface ? $group->getGroupId() : $group;
 
         parent::__construct('import');
+        $this->setProps(['label' => 'Import Users']);
         $this->setRoute('api.rest.import', ['group_id' => $groupId]);
     }
 }
