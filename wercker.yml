@@ -13,7 +13,7 @@ services:
 
 build:
   steps:
-    - script:
+    - script:pi
       name: ENV Sanity
       code: env
     - script:
@@ -21,7 +21,7 @@ build:
       code: php -i
     - script:
       name: ping sanity
-      code: ping -c 2 $MYSQL_PORT_3306_TCP_ADDR
+      code: ping -c 2 $MYSQL_SERVER_PORT_3306_TCP_ADDR
     - script:
       name: MYSQL Sanity
-      code: mysql -u $MYSQL_ENV_MYSQL_ROOT_USERNAME --password=$MYSQL_ENV_MYSQL_ROOT_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
+      code: mysql -u $MYSQL_SERVER_ENV_MYSQL_ROOT_USERNAME --password=$MYSQL_SERVER_ENV_MYSQL_ROOT_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_SERVER_PORT_3306_TCP_ADDR
