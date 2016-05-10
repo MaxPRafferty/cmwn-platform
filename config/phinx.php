@@ -43,6 +43,4 @@ $config = [
     ],
 ];
 
-var_dump($config);
-die();
 return $config;
