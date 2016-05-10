@@ -28,4 +28,4 @@ build:
       code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
     - script:
       name: PHPUNIT
-      code:  php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --testdox
+      code:  php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure
