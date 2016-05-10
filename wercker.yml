@@ -8,8 +8,6 @@ services:
   - id: mariadb
     env:
       MYSQL_ROOT_USERNAME: cmwn_user
-      MYSQL_ROOT_PASSWORD: cmwn_pass123$
-      MYSQL_DATABASE: cmwn_test
 
 build:
   steps:
