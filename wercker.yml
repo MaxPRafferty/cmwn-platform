@@ -4,12 +4,12 @@ box:
   password: $DOCKER_PASS
   tag: latest
 
-services:
-  - id: mariadb
-    env:
-      MYSQL_ROOT_USERNAME: cmwn_user
-
 build:
+  services:
+    - id: mariadb
+      env:
+        MYSQL_ROOT_USERNAME: cmwn_user
+
   steps:
     - script:
       name: ENV Sanity
