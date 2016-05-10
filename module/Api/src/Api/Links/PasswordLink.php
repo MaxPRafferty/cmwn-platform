@@ -18,6 +18,7 @@ class PasswordLink extends Link
     {
         $userId = $userId instanceof UserInterface ? $userId->getUserId() : $userId;
         parent::__construct('password');
+        $this->setProps(['label' => 'Change Password']);
         $this->setRoute('api.rest.password', ['user_id' => $userId]);
     }
 }

@@ -19,6 +19,7 @@ class OrgUserLink extends Link
         $orgId = $org instanceof OrganizationInterface ? $org->getOrgId() : $org;
 
         parent::__construct('org_users');
+        $this->setProps(['label' => 'District Users']);
         $this->setRoute('api.rest.org-users', ['org_id' => $orgId]);
     }
 }
