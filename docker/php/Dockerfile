@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng12-dev \
-    && apt-get install git -y -q \
+    && apt-get install git mysql-client -y -q \
     && git clone --depth=1 -b php7 https://github.com/phpredis/phpredis.git /usr/src/php/ext/redis \
     && docker-php-ext-install iconv mcrypt \
     && docker-php-ext-install pdo \

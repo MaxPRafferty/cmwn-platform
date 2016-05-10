@@ -65,7 +65,7 @@ To create all the tables follow these steps:
 ```
 $ vagrant ssh
 $ cd /var/www
-$ php phinx migrate -c config/phinx.php -e dev
+$ php vendor/bin/phinx migrate -c config/phinx.php -e dev
 ```
 
 #### DB Seeding
