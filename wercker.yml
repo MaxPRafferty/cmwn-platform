@@ -1,37 +1,22 @@
 build:
+  box:
+   id: cmwn/platform-api
+   username: $DOCKER_USER
+   password: $DOCKER_PASS
+   tag: latest
   services:
     - id: mysql
       env:
         MYSQL_ROOT_USERNAME: cmwn_user
         MYSQL_ROOT_PASSWORD: cmwn_pass123$
         MYSQL_DATABASE: cmwn_test
-  box:
-    - id: cmwn/platform-api
-      username: $DOCKER_USER
-      password: $DOCKER_PASS
-      tag: latest
-    - steps:
-      - script:
-        name: ENV Sanity
-        code: env
-      - script:
-        name: PHP Sanity
-        code: php -i
-      - script:
-        name: MYSQL Sanity
-        code: mysql -u $MYSQL_ENV_MYSQL_ROOT_USERNAME --password=$MYSQL_ENV_MYSQL_ROOT_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
-#      - script:
-#        name: install dependencies
-#        code: composer install --no-interaction
-#      - script:
-#        name: Setup test DB
-#        code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
-#      - script:
-#        name: PHPCS Check
-#        code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
-#      - script:
-#        name: PHPMD
-#        code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
-#      - script:
-#        name: PHPUNIT
-#        code:  php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure
+  steps:
+    - script:
+      name: ENV Sanity
+      code: env
+    - script:
+      name: PHP Sanity
+      code: php -i
+    - script:
+      name: MYSQL Sanity
+      code: mysql -u $MYSQL_ENV_MYSQL_ROOT_USERNAME --password=$MYSQL_ENV_MYSQL_ROOT_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
