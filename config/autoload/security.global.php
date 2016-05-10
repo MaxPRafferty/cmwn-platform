@@ -7,6 +7,7 @@ return [
             'api.rest.login',
             'api.rest.forgot',
             'api.rest.logout',
+            'api.rest.image',
         ],
         'route-permissions' => [
             'api.rest.flip'        => [
@@ -46,10 +47,6 @@ return [
                 'GET' => 'view.org.users',
             ],
             'api.rest.user-image'  => [
-                'GET'  => 'attach.profile.image',
-                'POST' => 'attach.profile.image',
-            ],
-            'api.rest.image'       => [
                 'GET'  => 'attach.profile.image',
                 'POST' => 'attach.profile.image',
             ],
