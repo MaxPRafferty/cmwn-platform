@@ -5,7 +5,7 @@ box:
   tag: latest
 
 services:
-  - id: mysql
+  - id: mysql/mysql-server
     env:
       MYSQL_ROOT_USERNAME: cmwn_user
       MYSQL_ROOT_PASSWORD: cmwn_pass123$
