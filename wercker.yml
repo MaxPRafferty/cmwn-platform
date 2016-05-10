@@ -17,6 +17,7 @@ build:
     - script:
       name: PHP Sanity
       code: php -i
+  internal/shell:
     - script:
       name: MYSQL Sanity
       code: mysql -u $MYSQL_ENV_MYSQL_ROOT_USERNAME --password=$MYSQL_ENV_MYSQL_ROOT_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
