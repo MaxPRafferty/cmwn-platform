@@ -3,11 +3,9 @@ box:
   username: $DOCKER_USER
   password: $DOCKER_PASS
   tag: latest
-  entrypoint: /bin/bash -c
 
 services:
   - id: mysql/mysql-server
-    entrypoint: /bin/bash -c
     env:
       MYSQL_ROOT_USERNAME: cmwn_user
       MYSQL_ROOT_PASSWORD: cmwn_pass123$
