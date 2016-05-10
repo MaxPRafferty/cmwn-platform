@@ -7,8 +7,8 @@ build:
   services:
     - id: mysql
       env:
-        MYSQL_ROOT_USERNAME: cmwn_pass123$
-        MYSQL_ROOT_PASSWORD: cmwn_user
+        MYSQL_ROOT_USERNAME: cmwn_user
+        MYSQL_ROOT_PASSWORD: cmwn_pass123$
         MYSQL_DATABASE: cmwn_test
   steps:
     - script:
@@ -17,6 +17,9 @@ build:
     - script:
       name: PHP Sanity
       code: php -i
+    - script:
+      name: Setup test DB
+      code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: install dependencies
       code: composer install --no-interaction
