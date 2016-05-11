@@ -6,7 +6,7 @@ box:
 
 build:
   services:
-    - id: mysql
+    - id: mysql:5.6
       env:
         MYSQL_ROOT_PASSWORD: cmwn_pass123
         MYSQL_DATABASE: cmwn_test
@@ -19,11 +19,11 @@ build:
     - script:
       name: PHP Sanity
       code: php -i
-    - script:
-      name: MYSQL Sanity
-      code: |-
-        sleep 10
-        mysql --user=$MYSQL_ENV_MYSQL_USER --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
+#    - script:
+#      name: MYSQL Sanity
+#      code: |-
+#        sleep 10
+#        mysql --user=$MYSQL_ENV_MYSQL_USER --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
     - script:
       name: install dependencies
       code: composer install --no-interaction
@@ -38,4 +38,4 @@ build:
       code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
     - script:
       name: PHPUNIT
-      code:  php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure
+      code: php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
