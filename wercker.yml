@@ -22,7 +22,7 @@ build:
     - script:
       name: MYSQL Sanity
       code: |-
-        sleep 2
+        sleep 15
         mysql --user=$MYSQL_ENV_MYSQL_USER --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
 #    - script:
 #      name: install dependencies
