@@ -70,7 +70,7 @@ return [
             'Security\Controller\User' => 'Security\Controller\UserControllerFactory',
         ],
     ],
-//
+
     'shared-listeners' => [
         \Security\Listeners\OrgServiceListener::class,
         \Security\Listeners\GroupServiceListener::class,
