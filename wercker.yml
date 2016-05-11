@@ -5,12 +5,6 @@ box:
   tag: latest
 
 build:
-  services:
-    - id: mysql
-      env:
-        MYSQL_ROOT_USERNAME: cmwn_user
-        MYSQL_ROOT_PASSWORD: cmwn_pass123$
-        MYSQL_DATABASE: cmwn_test
   steps:
     - script:
       name: ENV Sanity
@@ -19,11 +13,10 @@ build:
       name: PHP Sanity
       code: php -i
     - script:
-      name: MYSQL Sanity
-      code: mysql --user="$MYSQL_ENV_MYSQL_ROOT_USERNAME" --password="$MYSQL_ENV_MYSQL_ROOT_PASSWORD" --execute="SHOW DATABASES" --host="$MYSQL_PORT_3306_TCP_ADDR"
-    - script:
-      name: install dependencies
+      name: Install dependencies
       code: composer install --no-interaction
+check:
+  steps:
     - script:
       name: Setup test DB
       code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
