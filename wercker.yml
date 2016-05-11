@@ -11,6 +11,7 @@ build:
         MYSQL_USERNAME: cmwn_user
         MYSQL_PASSWORD: cmwn_pass123$
         MYSQL_DATABASE: cmwn_test
+        MYSQL_RANDOM_ROOT_PASSWORD: yes
   steps:
     - script:
       name: ENV Sanity
