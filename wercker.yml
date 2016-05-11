@@ -4,7 +4,7 @@ box:
   password: $DOCKER_PASS
   tag: latest
 
-check:
+build:
   services:
     - id: mysql
       env:
@@ -18,12 +18,13 @@ check:
     - script:
       name: PHP Sanity
       code: php -i
-#    - script:
-#      name: MYSQL Sanity
-#      code: mysql --user="$MYSQL_ENV_MYSQL_ROOT_USERNAME" --password="$MYSQL_ENV_MYSQL_ROOT_PASSWORD" --execute="SHOW DATABASES" --host="$MYSQL_PORT_3306_TCP_ADDR"
     - script:
       name: install dependencies
       code: composer install --no-interaction
+check:
+#    - script:
+#      name: MYSQL Sanity
+#      code: mysql --user="$MYSQL_ENV_MYSQL_ROOT_USERNAME" --password="$MYSQL_ENV_MYSQL_ROOT_PASSWORD" --execute="SHOW DATABASES" --host="$MYSQL_PORT_3306_TCP_ADDR"
 #    - script:
 #      name: Setup test DB
 #      code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
