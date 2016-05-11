@@ -21,7 +21,7 @@ build:
       code: php -i
     - script:
       name: MYSQL Sanity
-      code: mysql --user="$MYSQL_ENV_MYSQL_USERNAME" --password="$MYSQL_ENV_MYSQL_PASSWORD" --execute="SHOW DATABASES" --host="$MYSQL_PORT_3306_TCP_ADDR"
+      code: mysql --user=$MYSQL_ENV_MYSQL_USERNAME --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
     - script:
       name: install dependencies
       code: composer install --no-interaction
