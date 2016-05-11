@@ -17,6 +17,7 @@ class UserFlipLink extends Link
     public function __construct($userId = null)
     {
         parent::__construct('user_flip');
+        $this->setProps(['label' => 'My Earned Flips']);
         $this->setRoute('api.rest.flip-user', ['user_id' => $userId]);
     }
 }

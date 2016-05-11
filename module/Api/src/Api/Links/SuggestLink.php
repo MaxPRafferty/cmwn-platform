@@ -16,6 +16,7 @@ class SuggestLink extends Link
     public function __construct($userId)
     {
         parent::__construct('suggested_friends');
+        $this->setProps(['label' => 'Suggested Friends']);
         $this->setRoute('api.rest.suggest', ['user_id' => $userId], ['reuse_matched_params' => false]);
     }
 }

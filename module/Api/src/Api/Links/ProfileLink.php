@@ -20,7 +20,9 @@ class ProfileLink extends Link
     public function __construct($userId)
     {
         $userId = $userId instanceof UserInterface ? $userId->getUserId() : $userId;
+        $userName = $userId instanceof UserInterface ? $userId->getUserName() : null;
         parent::__construct('profile');
+        $this->setProps(['label' => trim($userName . ' Profile')]);
         $this->setRoute('api.rest.user', ['user_id' => $userId]);
     }
 }
