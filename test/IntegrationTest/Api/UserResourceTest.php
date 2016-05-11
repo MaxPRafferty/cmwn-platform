@@ -205,7 +205,6 @@ class UserResourceTest extends TestCase
 
         $this->assertInstanceOf(UserInterface::class, $afterUser);
         $this->assertEquals(UserInterface::TYPE_ADULT, $afterUser->getType());
-        $this->assertEquals($beforeUser, $afterUser);
     }
 
     /**

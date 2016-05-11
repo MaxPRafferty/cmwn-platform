@@ -53,7 +53,9 @@ class UserEntity extends User implements
      */
     protected function setType($type)
     {
-        $this->type = $type;
+        if ($this->type === null && !empty($type)) {
+            $this->type = $type;
+        }
     }
 
     /**
