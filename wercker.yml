@@ -31,7 +31,7 @@ build:
       name: Setup test DB
       code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
 check:
-  stepd:
+  steps:
     - script:
       name: PHPCS Check
       code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
