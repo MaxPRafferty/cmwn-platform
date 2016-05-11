@@ -4,7 +4,7 @@ box:
   password: $DOCKER_PASS
   tag: latest
 
-build:
+check:
   services:
     - id: mysql
       env:
