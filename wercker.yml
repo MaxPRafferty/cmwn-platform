@@ -24,9 +24,9 @@ build:
     - script:
       name: install dependencies
       code: composer install --no-interaction
-    - script:
-      name: Setup test DB
-      code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
+#    - script:
+#      name: Setup test DB
+#      code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
       code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
