@@ -22,7 +22,7 @@ build:
     - script:
       name: MYSQL Sanity
       code: |-
-        sleep 15
+        sleep 10
         mysql --user=$MYSQL_ENV_MYSQL_USER --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
     - script:
       name: install dependencies
@@ -32,6 +32,11 @@ build:
       code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
 check:
   steps:
+    - script:
+      name: MYSQL Sanity
+      code: |-
+        sleep 10
+        mysql --user=$MYSQL_ENV_MYSQL_USER --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
     - script:
       name: PHPCS Check
       code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
