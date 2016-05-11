@@ -30,12 +30,14 @@ build:
     - script:
       name: Setup test DB
       code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
-#    - script:
-#      name: PHPCS Check
-#      code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
-#    - script:
-#      name: PHPMD
-#      code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
-#    - script:
-#      name: PHPUNIT
-#      code:  php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure
+check:
+  stepd:
+    - script:
+      name: PHPCS Check
+      code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
+    - script:
+      name: PHPMD
+      code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
+    - script:
+      name: PHPUNIT
+      code:  php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure
