@@ -5,7 +5,7 @@ return [
     'cmwn-roles' => [
         'permission_labels' => [
             // super
-            'view.all.users'     => 'View all users',
+            'view.all.users'       => 'View all users',
 
             // user
             'create.user'        => 'Create a user',
@@ -25,34 +25,35 @@ return [
             'view.user.flip'     => 'View Flips for a user',
 
             // group
-            'create.child.group' => 'Create a sub group',
-            'create.group'       => 'Create a group',
-            'view.group'         => 'View Group',
-            'view.all.groups'    => 'View all Groups',
-            'edit.group'         => 'Edit a Group',
-            'import'             => 'Import Data file',
-            'remove.child.group' => 'Remove a child group',
-            'remove.group'       => 'Remove a group',
+            'create.child.group'   => 'Create a sub group',
+            'create.group'         => 'Create a group',
+            'view.group'           => 'View Group',
+            'view.all.groups'      => 'View all Groups',
+            'edit.group'           => 'Edit a Group',
+            'import'               => 'Import Data file',
+            'remove.child.group'   => 'Remove a child group',
+            'remove.group'         => 'Remove a group',
 
             // user group
-            'add.group.user'     => 'Add user to group',
-            'remove.group.user'  => 'Remove user from group',
-            'view.group.users'   => 'View Group users',
+            'add.group.user'       => 'Add user to group',
+            'remove.group.user'    => 'Remove user from group',
+            'view.group.users'     => 'View Group users',
 
             // organizations
-            'create.org'         => 'Create an Organization',
-            'view.all.orgs'      => 'View all Organizations',
-            'view.org'           => 'View an Organization',
-            'view.org.users'     => 'View all users in an organization',
-            'edit.org'           => 'Edit an Organization',
-            'remove.org'         => 'Remove an Organization',
+            'create.org'           => 'Create an Organization',
+            'view.all.orgs'        => 'View all Organizations',
+            'view.org'             => 'View an Organization',
+            'view.org.users'       => 'View all users in an organization',
+            'edit.org'             => 'Edit an Organization',
+            'remove.org'           => 'Remove an Organization',
 
             // game
-            'view.games'         => 'View all Games',
+            'view.games'           => 'View all Games',
 
             // misc
-            'adult.code'         => 'Send adult reset code',
-            'child.code'         => 'Send child reset code',
+            'adult.code'           => 'Send adult reset code',
+            'child.code'           => 'Send child reset code',
+            'attach.profile.image' => 'Upload a profile image',
         ],
         'roles'             => [
             'super' => [
@@ -96,6 +97,7 @@ return [
                     'remove.child.group',
                     'view.org.users',
                     'remove.user.adult',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -120,6 +122,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -151,6 +154,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -182,6 +186,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'remove.user.adult',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -205,6 +210,7 @@ return [
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -220,7 +226,7 @@ return [
 
             'me' => [
                 'entity_bits' => [
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
                     'create.user.flip',
@@ -231,14 +237,16 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
+                    'attach.profile.image',
                 ],
             ],
 
             'child' => [
                 'entity_bits' => [
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'attach.profile.image',
                     'can.friend',
                     'child.code',
                     'create.user.flip',
@@ -256,7 +264,7 @@ return [
 
             'student' => [
                 'entity_bits' => [
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
                     'can.friend',
@@ -270,6 +278,7 @@ return [
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -285,6 +294,7 @@ return [
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'attach.profile.image',
                 ],
             ],
 

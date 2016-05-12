@@ -163,6 +163,7 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
+                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -206,6 +207,7 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
+                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -248,6 +250,7 @@ class RbacTest extends TestCase
                 'role'    => 'group_admin',
                 'allowed' => [
                     'add.group.user',
+                    'attach.profile.image',
                     'child.code',
                     'edit.group',
                     'edit.user.child',
@@ -292,6 +295,7 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
+                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -335,6 +339,7 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
+                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -376,6 +381,7 @@ class RbacTest extends TestCase
                 'role'    => 'teacher',
                 'allowed' => [
                     'add.group.user',
+                    'attach.profile.image',
                     'child.code',
                     'edit.group',
                     'edit.user.child',
@@ -418,6 +424,7 @@ class RbacTest extends TestCase
             'Logged In' => [
                 'role'    => 'logged_in',
                 'allowed' => [
+                    'attach.profile.image',
                     'update.password',
                     'view.games',
                     'view.group',
@@ -469,6 +476,7 @@ class RbacTest extends TestCase
                     'can.friend',
                     'add.group.user',
                     'adult.code',
+                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -504,6 +512,7 @@ class RbacTest extends TestCase
             'Child' => [
                 'role'    => 'child',
                 'allowed' => [
+                    'attach.profile.image',
                     'can.friend',
                     'child.code',
                     'pick.username',
@@ -548,6 +557,7 @@ class RbacTest extends TestCase
                 'role'    => 'student',
                 'allowed' => [
                     'can.friend',
+                    'attach.profile.image',
                     'child.code',
                     'pick.username',
                     'update.password',
@@ -597,6 +607,7 @@ class RbacTest extends TestCase
                     'add.group.user',
                     'adult.code',
                     'can.friend',
+                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
