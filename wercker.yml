@@ -6,7 +6,7 @@ box:
 
 build:
   services:
-    - id: mysql:5.6
+    - id: mysql:5.5
       env:
         MYSQL_ROOT_PASSWORD: cmwn_pass123
         MYSQL_DATABASE: cmwn_test
@@ -36,6 +36,9 @@ build:
     - script:
       name: PHPMD
       code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
+    - script:
+      name: sleep
+      code: sleep 10
     - script:
       name: PHPUNIT
       code: php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never

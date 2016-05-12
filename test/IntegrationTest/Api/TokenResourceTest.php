@@ -8,6 +8,9 @@ use Zend\Json\Json;
 /**
  * Test TokenResourceTest
  *
+ * @group Token
+ * @group API
+ * @group User
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -17,6 +20,7 @@ class TokenResourceTest extends TestCase
 {
     /**
      * @test
+     * @ticket CORE-681
      */
     public function testItShouldReturnDefaultHalLinksWhenNotLoggedIn()
     {
