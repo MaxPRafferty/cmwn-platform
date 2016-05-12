@@ -16,7 +16,7 @@ return array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
         ),
         'factories' => array(
-            'Api\\Listeners\\ImportRouteListener' => \Api\Factory\ImportRouteListenerFactory::class,
+            'Api\\Listeners\\ImportRouteListener' => 'Api\\Factory\\ImportRouteListenerFactory',
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
             'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
             'Api\\Listeners\\UserGroupListener' => 'Api\\Factory\\UserGroupListenerFactory',
@@ -44,6 +44,7 @@ return array(
             'Api\\V1\\Rest\\Friend\\FriendResource' => 'Api\\V1\\Rest\\Friend\\FriendResourceFactory',
             'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
+            'Api\\V1\\Rest\\Reset\\ResetResource' => 'Api\\V1\\Rest\\Reset\\ResetResourceFactory',
         ),
     ),
     'router' => array(
@@ -219,6 +220,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.reset' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/reset[/:reset_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Reset\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -242,6 +252,7 @@ return array(
             16 => 'api.rest.flip-user',
             17 => 'api.rest.friend',
             18 => 'api.rest.suggest',
+            19 => 'api.rest.reset',
         ),
     ),
     'zf-rest' => array(
@@ -594,6 +605,22 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestCollection',
             'service_name' => 'Suggest',
         ),
+        'Api\\V1\\Rest\\Reset\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Reset\\ResetResource',
+            'route_name' => 'api.rest.reset',
+            'route_identifier_name' => 'reset_id',
+            'collection_name' => 'reset',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Reset\\ResetEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Reset\\ResetCollection',
+            'service_name' => 'Reset',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -616,6 +643,7 @@ return array(
             'Api\\V1\\Rest\\FlipUser\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Friend\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Suggest\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Reset\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -713,6 +741,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Reset\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -789,6 +822,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Suggest\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Reset\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1026,6 +1063,18 @@ return array(
                 'route_identifier_name' => 'suggest_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Reset\\ResetEntity' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.reset',
+                'route_identifier_name' => 'reset_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Reset\\ResetCollection' => array(
+                'entity_identifier_name' => 'user_id',
+                'route_name' => 'api.rest.reset',
+                'route_identifier_name' => 'reset_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -1064,6 +1113,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Friend\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Friend\\Validator',
+        ),
+        'Api\\V1\\Rest\\Reset\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Reset\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1421,15 +1473,10 @@ return array(
         'Api\\V1\\Rest\\Forgot\\Validator' => array(
             0 => array(
                 'required' => true,
-                'validators' => array(
-                    0 => array(
-                        'name' => 'Zend\\Validator\\EmailAddress',
-                        'options' => array(),
-                    ),
-                ),
+                'validators' => array(),
                 'filters' => array(),
                 'name' => 'email',
-                'description' => 'Email address of user to reset',
+                'description' => 'Email address or User Name of user to reset',
             ),
         ),
         'Api\\V1\\Rest\\UserName\\Validator' => array(
@@ -1474,6 +1521,22 @@ return array(
                 'filters' => array(),
                 'name' => 'user_id',
                 'description' => 'The user_id',
+            ),
+        ),
+        'Api\\V1\\Rest\\Reset\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\Regex',
+                        'options' => array(
+                            'pattern' => '/^([a-zA-Z])[a-zA-Z0-9]{7,}$/',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'code',
+                'description' => 'The temporary code to use',
             ),
         ),
     ),

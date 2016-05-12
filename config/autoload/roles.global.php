@@ -219,6 +219,7 @@ return [
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
                 ],

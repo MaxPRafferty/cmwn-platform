@@ -1,15 +1,15 @@
 <?php
-
-namespace Api\V1\Rest\Forgot;
+namespace Api\V1\Rest\Reset;
 
 use Forgot\Service\ForgotServiceInterface;
+use User\UserInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class ForgotResource
+ * Class ResetResource
  */
-class ForgotResource extends AbstractResourceListener
+class ResetResource extends AbstractResourceListener
 {
     /**
      * @var ForgotServiceInterface
@@ -17,7 +17,8 @@ class ForgotResource extends AbstractResourceListener
     protected $forgotService;
 
     /**
-     * ForgotResource constructor.
+     * ResetResource constructor.
+     *
      * @param ForgotServiceInterface $forgotService
      */
     public function __construct(ForgotServiceInterface $forgotService)
@@ -33,8 +34,10 @@ class ForgotResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        $email = $this->getInputFilter()->getValue('email');
-        $this->forgotService->saveForgotPassword($email);
+        /** @var UserInterface $user */
+        $user = $this->getEvent()->getRouteParam('user');
+        $code = $this->getInputFilter()->getValue('code');
+        $this->forgotService->saveForgotPassword($user->getUserName(), $code);
         return new ApiProblem(201, 'Ok');
     }
 }
