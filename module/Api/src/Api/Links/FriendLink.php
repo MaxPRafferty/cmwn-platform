@@ -13,7 +13,7 @@ class FriendLink extends Link
      * FriendLink constructor.
      * @param string $userId
      */
-    public function __construct($userId, $friendId)
+    public function __construct($userId, $friendId = null)
     {
         parent::__construct('friend');
         $this->setProps(['label' => 'My Friends']);
