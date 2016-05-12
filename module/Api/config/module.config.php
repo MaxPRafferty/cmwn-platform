@@ -10,12 +10,14 @@ return array(
         6 => 'Api\\Listeners\\ChangePasswordListener',
         7 => 'Api\\Listeners\\GroupRouteListener',
         8 => 'Api\\Listeners\\FriendListener',
+        9 => \Api\Listeners\ResetHalLinkListener::class,
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
         ),
         'factories' => array(
+            \Api\Listeners\ResetHalLinkListener::class => \Api\Factory\ResetHalLinkListenerFactory::class,
             'Api\\Listeners\\ImportRouteListener' => 'Api\\Factory\\ImportRouteListenerFactory',
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
             'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
