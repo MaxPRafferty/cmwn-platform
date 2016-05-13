@@ -14,16 +14,6 @@ build:
         MYSQL_PASSWORD: cmwn_pass
   steps:
     - script:
-      name: ENV Sanity
-      code: env
-    - script:
-      name: PHP Sanity
-      code: php -i
-    - script:
-      name: MYSQL Sanity
-      code: |-
-        mysql --user=root --password=cmwn_pass123 --execute="set global max_allowed_packet=64*1024*1024;" --host=$MYSQL_PORT_3306_TCP_ADDR
-    - script:
       name: install dependencies
       code: composer install --no-interaction
     - script:
