@@ -16,4 +16,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-CMD ["/usr/local/bin/php -v"]
+ENTRYPOINT ["php", "-S", "0.0.0.0:80"]
+
+CMD ["-t", "/var/www/html"]

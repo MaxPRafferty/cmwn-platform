@@ -19,11 +19,10 @@ build:
     - script:
       name: PHP Sanity
       code: php -i
-#    - script:
-#      name: MYSQL Sanity
-#      code: |-
-#        sleep 10
-#        mysql --user=$MYSQL_ENV_MYSQL_USER --password=$MYSQL_ENV_MYSQL_PASSWORD --execute="SHOW DATABASES" --host=$MYSQL_PORT_3306_TCP_ADDR
+    - script:
+      name: MYSQL Sanity
+      code: |-
+        mysql --user=root --password=cmwn_pass123 --execute="set global max_allowed_packet=64*1024*1024;" --host=$MYSQL_PORT_3306_TCP_ADDR
     - script:
       name: install dependencies
       code: composer install --no-interaction
@@ -37,8 +36,7 @@ build:
       name: PHPMD
       code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
     - script:
-      name: sleep
-      code: sleep 10
-    - script:
       name: PHPUNIT
-      code: php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
+      code: |-
+        export USE_ZEND_ALLOC=0
+        php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
