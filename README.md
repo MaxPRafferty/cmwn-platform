@@ -1,6 +1,9 @@
 Change My World Now API 
 =======================
 
+[![wercker status](https://app.wercker.com/status/971cb383ce3b1f71f539b9e090ccb362/m "wercker status")](https://app.wercker.com/project/bykey/971cb383ce3b1f71f539b9e090ccb362)
+
+
 Requirements
 ------------
 
@@ -30,10 +33,10 @@ When the machine comes up, you can ssh to it with the standard ssh forward agent
 vagrant ssh
 ```
 
-The web root is inside the shared directory, which is at `/vagrant`. Once you've ssh'd into the box, you need to cd:
+The web root is inside the shared directory, which is at `/var/www`. Once you've ssh'd into the box, you need to cd:
 
 ```
-cd /vagrant
+cd /var/www
 ```
 
 For vagrant documentation, please refer to [vagrantup.com](https://www.vagrantup.com/)
@@ -62,7 +65,7 @@ To create all the tables follow these steps:
 ```
 $ vagrant ssh
 $ cd /var/www
-$ php public/index.php phinx migrate -e zf2
+$ php vendor/bin/phinx migrate -c config/phinx.php -e dev
 ```
 
 #### DB Seeding
@@ -72,6 +75,6 @@ Currently only games and user name candidates will be seeded.  To run the seed:
 ```
 $ vagrant ssh
 $ cd /var/www
-$ php vendor/bin/phinx seed:run -c config/seed.phinx.yml 
+$ php vendor/bin/phinx seed:run -c config/phinx.php
 ```
 

@@ -3,6 +3,7 @@
 namespace Notice\Listeners;
 
 use AcMailer\Service\MailServiceAwareTrait;
+use Application\Utils\NoopLoggerAwareTrait;
 use Import\ImporterInterface;
 use Import\ParserInterface;
 use Notice\EmailModel\ImportFailedModel;
@@ -11,18 +12,34 @@ use Notice\NoticeInterface;
 use Notice\NotificationAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Log\LoggerAwareInterface;
 
 /**
  * Class ImportNotifer
  */
-class ImportListener implements NoticeInterface
+class ImportListener implements NoticeInterface, LoggerAwareInterface
 {
     use MailServiceAwareTrait;
+    use NoopLoggerAwareTrait;
 
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
     protected $listeners = [];
+
+    /**
+     * @var ImportSuccessModel
+     */
+    protected $successModel;
+
+    /**
+     * ImportListener constructor.
+     * @param ImportSuccessModel $model
+     */
+    public function __construct(ImportSuccessModel $model)
+    {
+        $this->successModel = $model;
+    }
 
     /**
      * @param SharedEventManagerInterface $manager
@@ -61,12 +78,15 @@ class ImportListener implements NoticeInterface
             return null;
         }
 
+        $this->getLogger()->info('Notfication for event: ' . $event->getName());
         if (strpos($event->getName(), 'error') !== false) {
+            $this->getLogger()->info('Notifying Error');
             $this->notifyError($parser);
             return null;
         }
 
         if (strpos($event->getName(), 'complete') !== false) {
+            $this->getLogger()->info('Notifying Success');
             $this->notifySuccess($parser);
             return null;
         }
@@ -113,9 +133,8 @@ class ImportListener implements NoticeInterface
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
         $this->getMailService()->getMessage()->setSubject('User import Success');
 
-        $this->getMailService()->setTemplate(
-            new ImportSuccessModel(['warnings' => $parser->getWarnings()])
-        );
+        $this->successModel->setVariable('warnings', $parser->getWarnings());
+        $this->getMailService()->setTemplate($this->successModel);
 
         $this->getMailService()->send();
         return null;

@@ -1,0 +1,32 @@
+box:
+  id: cmwn/platform-api
+  username: manchuck
+  password: dMAAAHaWCshQYay8HKWAcNH7r
+  tag: latest
+
+build:
+  services:
+    - id: mysql:5.5
+      env:
+        MYSQL_ROOT_PASSWORD: cmwn_pass123
+        MYSQL_DATABASE: cmwn_test
+        MYSQL_USER: cmwn_user
+        MYSQL_PASSWORD: cmwn_pass
+  steps:
+    - script:
+      name: install dependencies
+      code: composer install --no-interaction
+    - script:
+      name: Setup test DB
+      code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
+    - script:
+      name: PHPCS Check
+      code: php $PWD/vendor/squizlabs/php_codesniffer/scripts/phpcs
+    - script:
+      name: PHPMD
+      code: php $PWD/vendor/phpmd/phpmd/src/bin/phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
+    - script:
+      name: PHPUNIT
+      code: |-
+        export USE_ZEND_ALLOC=0
+        php $PWD/vendor/phpunit/phpunit/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never

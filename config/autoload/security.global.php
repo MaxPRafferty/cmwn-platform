@@ -10,10 +10,17 @@ return [
             'api.rest.image',
         ],
         'route-permissions' => [
+            'api.rest.flip'        => [
+                'GET' => 'view.flip',
+            ],
+            'api.rest.flip-user' => [
+                'GET'  => 'view.user.flip',
+                'POST' => 'create.user.flip',
+            ],
             'api.rest.user'        => [
                 'GET'   => ['view.user.adult', 'view.user.child'],
                 'POST'  => 'create.user',
-                'PUT'   => 'edit.user',
+                'PUT'   => ['edit.user.child', 'edit.user.adult'],
             ],
             'api.rest.org'         => [
                 'GET'    => 'view.org',
@@ -22,7 +29,7 @@ return [
                 'DELETE' => 'delete.org',
             ],
             'api.rest.game'        => [
-                'GET'   => 'view.games',
+                'GET' => 'view.games',
             ],
             'api.rest.group'       => [
                 'GET'    => 'view.group',
@@ -31,7 +38,7 @@ return [
                 'DELETE' => 'remote.group',
             ],
             'api.rest.password'    => [
-                'POST'  => 'update.password',
+                'POST' => 'update.password',
             ],
             'api.rest.group-users' => [
                 'GET' => 'view.group.users',
@@ -39,14 +46,24 @@ return [
             'api.rest.org-users'   => [
                 'GET' => 'view.org.users',
             ],
-            'api.rest.user-image'  => [],
+            'api.rest.user-image'  => [
+                'GET'  => 'attach.profile.image',
+                'POST' => 'attach.profile.image',
+            ],
             'api.rest.import'      => [
                 'POST' => 'import',
             ],
-            'api.rest.user-name' => [
+            'api.rest.user-name'   => [
                 'GET'  => 'pick.username',
                 'POST' => 'pick.username',
-            ]
+            ],
+            'api.rest.friend' => [
+                'GET'  => 'can.friend',
+                'POST' => 'can.friend'
+            ],
+            'api.rest.suggest' => [
+                'GET'  => 'can.friend',
+            ],
         ],
     ],
 ];

@@ -16,3 +16,8 @@ data/cache/*
 !data/cache/.gitkeep
 .vagrant
 ~*.xlsx
+public/apigility-ui
+_builds
+_projects
+_steps
+_cache

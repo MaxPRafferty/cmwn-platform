@@ -11,6 +11,8 @@ use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
 use User\Service\UserServiceInterface;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
@@ -82,6 +84,9 @@ class UserServiceListener implements RbacAwareInterface, AuthenticationServiceAw
         }
 
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.users')) {
+            /** @var Where $where */
+            $where = $event->getParam('where');
+            $where->addPredicate(new Operator('u.user_id', '!=', $user->getUserId()));
             return null;
         }
 

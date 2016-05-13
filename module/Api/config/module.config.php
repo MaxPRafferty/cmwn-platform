@@ -1,21 +1,22 @@
 <?php
 return array(
     'shared-listeners' => array(
-        0 => \Api\Listeners\UserRouteListener::class,
-        1 => \Api\Listeners\UserGroupListener::class,
-        2 => \Api\Listeners\ImportRouteListener::class,
-        3 => \Api\Listeners\ScopeListener::class,
-        4 => \Api\Listeners\SuperMeListener::class,
-        5 => \Api\Listeners\UserImageListener::class,
-        6 => \Api\Listeners\ChangePasswordListener::class,
-        7 => \Api\Listeners\GroupRouteListener::class,
+        0 => 'Api\\Listeners\\UserRouteListener',
+        1 => 'Api\\Listeners\\UserGroupListener',
+        2 => 'Api\\Listeners\\ImportRouteListener',
+        3 => 'Api\\Listeners\\ScopeListener',
+        4 => 'Api\\Listeners\\SuperMeListener',
+        5 => 'Api\\Listeners\\UserImageListener',
+        6 => 'Api\\Listeners\\ChangePasswordListener',
+        7 => 'Api\\Listeners\\GroupRouteListener',
+        8 => 'Api\\Listeners\\FriendListener',
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
-            'Api\\Listeners\\ImportRouteListener' => 'Api\\Listeners\\ImportRouteListener',
         ),
         'factories' => array(
+            'Api\\Listeners\\ImportRouteListener' => \Api\Factory\ImportRouteListenerFactory::class,
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
             'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
             'Api\\Listeners\\UserGroupListener' => 'Api\\Factory\\UserGroupListenerFactory',
@@ -38,6 +39,11 @@ return array(
             'Api\\V1\\Rest\\UserImage\\UserImageResource' => 'Api\\V1\\Rest\\UserImage\\UserImageResourceFactory',
             'Api\\V1\\Rest\\Import\\ImportResource' => 'Api\\V1\\Rest\\Import\\ImportResourceFactory',
             'Api\\V1\\Rest\\UserName\\UserNameResource' => 'Api\\V1\\Rest\\UserName\\UserNameResourceFactory',
+            'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
+            'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
+            'Api\\V1\\Rest\\Friend\\FriendResource' => 'Api\\V1\\Rest\\Friend\\FriendResourceFactory',
+            'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
+            'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
         ),
     ),
     'router' => array(
@@ -177,6 +183,42 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.flip' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/flip[/:flip_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Flip\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.flip-user' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/flip[/:flip_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\FlipUser\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.friend' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/friend[/:friend_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Friend\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.suggest' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/suggest[/:suggest_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Suggest\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -196,6 +238,10 @@ return array(
             12 => 'api.rest.user-image',
             13 => 'api.rest.import',
             14 => 'api.rest.user-name',
+            15 => 'api.rest.flip',
+            16 => 'api.rest.flip-user',
+            17 => 'api.rest.friend',
+            18 => 'api.rest.suggest',
         ),
     ),
     'zf-rest' => array(
@@ -475,6 +521,79 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\UserName\\UserNameCollection',
             'service_name' => 'UserName',
         ),
+        'Api\\V1\\Rest\\Flip\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Flip\\FlipResource',
+            'route_name' => 'api.rest.flip',
+            'route_identifier_name' => 'flip_id',
+            'collection_name' => 'flip',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => '100',
+            'page_size_param' => 'page',
+            'entity_class' => 'Api\\V1\\Rest\\Flip\\FlipEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Flip\\FlipCollection',
+            'service_name' => 'Flip',
+        ),
+        'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResource',
+            'route_name' => 'api.rest.flip-user',
+            'route_identifier_name' => 'flip_id',
+            'collection_name' => 'flip_user',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => '100',
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\FlipUser\\FlipUserEntity',
+            'collection_class' => 'Api\\V1\\Rest\\FlipUser\\FlipUserCollection',
+            'service_name' => 'FlipUser',
+        ),
+        'Api\\V1\\Rest\\Friend\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Friend\\FriendResource',
+            'route_name' => 'api.rest.friend',
+            'route_identifier_name' => 'friend_id',
+            'collection_name' => 'friend',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Friend\\FriendEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Friend\\FriendCollection',
+            'service_name' => 'friend',
+        ),
+        'Api\\V1\\Rest\\Suggest\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Suggest\\SuggestResource',
+            'route_name' => 'api.rest.suggest',
+            'route_identifier_name' => 'suggest_id',
+            'collection_name' => 'suggest',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => '100',
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Suggest\\SuggestEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestCollection',
+            'service_name' => 'Suggest',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -493,6 +612,10 @@ return array(
             'Api\\V1\\Rest\\UserImage\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Import\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UserName\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Flip\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\FlipUser\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Friend\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Suggest\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -570,6 +693,26 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Flip\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Friend\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Suggest\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -630,6 +773,22 @@ return array(
                 2 => 'multipart/form-data',
             ),
             'Api\\V1\\Rest\\UserName\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Flip\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Friend\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Suggest\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -819,6 +978,54 @@ return array(
                 'route_identifier_name' => 'user_name_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Flip\\FlipEntity' => array(
+                'entity_identifier_name' => 'flip_id',
+                'route_name' => 'api.rest.flip',
+                'route_identifier_name' => 'flip_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Flip\\FlipCollection' => array(
+                'entity_identifier_name' => 'flip_id',
+                'route_name' => 'api.rest.flip',
+                'route_identifier_name' => 'flip_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\FlipUser\\FlipUserEntity' => array(
+                'entity_identifier_name' => 'flip_id',
+                'route_name' => 'api.rest.flip-user',
+                'route_identifier_name' => 'flip_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\FlipUser\\FlipUserCollection' => array(
+                'entity_identifier_name' => 'flip_id',
+                'route_name' => 'api.rest.flip-user',
+                'route_identifier_name' => 'flip_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Friend\\FriendEntity' => array(
+                'entity_identifier_name' => 'friend_id',
+                'route_name' => 'api.rest.friend',
+                'route_identifier_name' => 'friend_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Friend\\FriendCollection' => array(
+                'entity_identifier_name' => 'friend_id',
+                'route_name' => 'api.rest.friend',
+                'route_identifier_name' => 'friend_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Suggest\\SuggestEntity' => array(
+                'entity_identifier_name' => 'suggest_id',
+                'route_name' => 'api.rest.suggest',
+                'route_identifier_name' => 'suggest_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Suggest\\SuggestCollection' => array(
+                'entity_identifier_name' => 'suggest_id',
+                'route_name' => 'api.rest.suggest',
+                'route_identifier_name' => 'suggest_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -851,6 +1058,12 @@ return array(
         ),
         'Api\\V1\\Rest\\UserName\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\UserName\\Validator',
+        ),
+        'Api\\V1\\Rest\\FlipUser\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\FlipUser\\Validator',
+        ),
+        'Api\\V1\\Rest\\Friend\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Friend\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1231,6 +1444,36 @@ return array(
                 'filters' => array(),
                 'name' => 'user_name',
                 'description' => 'The new Username selected',
+            ),
+        ),
+        'Api\\V1\\Rest\\FlipUser\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'flip_id',
+                'description' => 'The Id of the flip the user has earned',
+            ),
+        ),
+        'Api\\V1\\Rest\\Friend\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Friend\\AttachFriendValidator',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'friend_id',
+                'description' => 'The user Id of the person to friend',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'user_id',
+                'description' => 'The user_id',
             ),
         ),
     ),

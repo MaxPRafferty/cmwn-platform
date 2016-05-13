@@ -2,6 +2,11 @@
 
 use Phinx\Seed\AbstractSeed;
 
+/**
+ * Class GameSeed
+ * @codingStandardsIgnoreStart
+ * @SuppressWarnings(PHPMD)
+ */
 class GameSeed extends AbstractSeed
 {
     /**

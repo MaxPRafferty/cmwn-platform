@@ -140,7 +140,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->group('u.user_id');
-
+        $select->order(['u.first_name', 'u.last_name']);
         $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -189,7 +189,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->group('u.user_id');
-
+        $select->order(['u.first_name', 'u.last_name']);
         $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
@@ -228,7 +228,7 @@ class UserGroupService implements UserGroupServiceInterface
         $select->from(['g'  => 'groups']);
         $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['ug_role' => 'role'], Select::JOIN_LEFT);
         $select->where($where);
-
+        $select->order(['g.title']);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,
@@ -248,13 +248,8 @@ class UserGroupService implements UserGroupServiceInterface
     {
         $where = $this->createWhere($user);
 
-        if ($user instanceof UserInterface) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
-        }
-
-        if (is_string($user)) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
-        }
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $userId));
 
         $select = new Select();
         $select->columns(['o' => '*']);
@@ -275,8 +270,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->group('o.org_id');
-        $select->order('org_id ASC');
-
+        $select->order('o.title ASC');
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,
@@ -289,14 +283,18 @@ class UserGroupService implements UserGroupServiceInterface
      * SELECT ug.user_id AS active_user_id,
      *   active_group.group_id AS active_group_id,
      *   ug2.user_id AS sub_user_id,
+     *   uf.friend_id as friend_id,
      *   u.*
      * FROM user_groups AS ug
      *   LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
      *   LEFT OUTER JOIN groups AS g ON g.head BETWEEN active_group.head AND active_group.tail
      *   LEFT OUTER JOIN user_groups AS ug2 ON ug2.group_id = g.group_id
-     *   LEFT JOIN users AS u ON u.user_id = ug2.user_id
-     * WHERE ug.user_id = 'principal'
-     *   AND g.organization_id = active_group.organization_id;
+     *   LEFT OUTER JOIN user_friends AS uf ON uf.user_id = 'english_student'
+     *   LEFT JOIN users AS u ON u.user_id = ug2.user_id OR u.user_id = uf.friend_id OR u.user_id = uf.user_id
+     * WHERE ug.user_id = 'english_student'
+     *   AND g.organization_id = active_group.organization_id
+     * GROUP BY u.user_id
+     * HAVING u.user_id != :user_id;
      *
      * @param $user
      * @param $where
@@ -334,17 +332,30 @@ class UserGroupService implements UserGroupServiceInterface
             Select::JOIN_LEFT_OUTER
         );
 
-
+        $select->join(
+            ['uf' => 'user_friends'],
+            new Expression(
+                'uf.user_id = ug.user_id OR uf.friend_id = ug.user_id'
+            ),
+            ['uf_friend_id' => 'friend_id', 'uf_user_id' => 'user_id', 'uf_status' => 'status'],
+            Select::JOIN_LEFT_OUTER
+        );
+        
         $select->join(
             ['u' => 'users'],
-            'u.user_id = ug2.user_id',
+            new Expression(
+                'u.user_id = ug2.user_id OR u.user_id = uf.friend_id OR u.user_id = uf.user_id'
+            ),
             ['*'],
             Select::JOIN_LEFT_OUTER
         );
 
         $select->where($where);
+        $select->group(['u.user_id']);
+        $select->having(new Operator('u.user_id', '!=', $userId));
+        $select->order(['u.first_name', 'u.last_name']);
 
-        $hydrator = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
+        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
             $select,

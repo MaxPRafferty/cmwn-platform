@@ -1,6 +1,17 @@
 <?php
 
 return [
+    'validators' => [
+        'invokables' => [
+            \Security\PasswordValidator::class => \Security\PasswordValidator::class,
+        ],
+        'initializers' => [
+            \Security\Authentication\AuthenticationServiceAwareInitializer::class =>
+                \Security\Authentication\AuthenticationServiceAwareInitializer::class,
+
+            \Security\Authorization\RbacAwareInitializer::class => \Security\Authorization\RbacAwareInitializer::class,
+        ],
+    ],
     'service_manager' => [
         'aliases' => [
             'authentication' =>
@@ -18,6 +29,7 @@ return [
             \Security\Guard\OriginGuard::class              => \Security\Guard\OriginGuard::class,
             \Security\Listeners\OrgServiceListener::class   => \Security\Listeners\OrgServiceListener::class,
             \Security\Listeners\GroupServiceListener::class => \Security\Listeners\GroupServiceListener::class,
+            \Security\Listeners\UpdateSession::class        => \Security\Listeners\UpdateSession::class,
         ],
 
         'factories' => [
@@ -68,6 +80,7 @@ return [
         \Security\Guard\CsrfGuard::class,
         \Security\Listeners\ExpireAuthSessionListener::class,
         \Security\Listeners\UserServiceListener::class,
+        \Security\Listeners\UpdateSession::class,
     ],
 
     'console' => [

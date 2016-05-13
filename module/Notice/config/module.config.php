@@ -9,7 +9,7 @@ return [
 
     'service_manager' => [
         'invokables'   => [
-            \Notice\Listeners\ImportListener::class         => \Notice\Listeners\ImportListener::class,
+
             \Notice\Listeners\NewUserEmailListener::class   => \Notice\Listeners\NewUserEmailListener::class,
             \Notice\Listeners\ForgotPasswordListener::class => \Notice\Listeners\ForgotPasswordListener::class,
         ],
@@ -17,7 +17,8 @@ return [
             \Notice\Factory\MailServiceAwareInitializer::class => \Notice\Factory\MailServiceAwareInitializer::class,
         ],
         'factories'    => [
-            \Notice\NotifierListener::class => \Notice\Factory\NotifierListenerFactory::class,
+            \Notice\NotifierListener::class         => \Notice\Factory\NotifierListenerFactory::class,
+            \Notice\Listeners\ImportListener::class => \Notice\Factory\ImportListenerFactory::class,
         ],
     ],
 

@@ -6,7 +6,6 @@ use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Where;
 use Zend\Paginator\Paginator;
@@ -14,7 +13,14 @@ use Zend\Paginator\Paginator;
 /**
  * Exception GroupServiceTest
  *
- * ${CARET}
+ * @group Group
+ * @group IntegrationTest
+ * @group GroupService
+ * @group DB
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupServiceTest extends TestCase
 {
@@ -22,16 +28,6 @@ class GroupServiceTest extends TestCase
      * @var GroupServiceInterface
      */
     protected $groupService;
-
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
-    protected function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet(__DIR__ . '/../DataSets/default.dataset.xml');
-    }
 
     /**
      * @before

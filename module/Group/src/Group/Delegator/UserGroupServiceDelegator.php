@@ -268,7 +268,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.all.user.users.error');
             $this->getEventManager()->trigger($event);
-            return false;
+            return false; //FIXME throw exception again
         }
 
         $this->getEventManager()->trigger($event);

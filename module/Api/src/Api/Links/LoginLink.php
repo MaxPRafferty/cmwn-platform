@@ -17,6 +17,7 @@ class LoginLink extends Link
     public function __construct()
     {
         parent::__construct('login');
+        $this->setProps(['label' => 'Login']);
         $this->setRoute('api.rest.login');
     }
 }

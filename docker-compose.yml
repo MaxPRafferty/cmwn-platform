@@ -1,0 +1,28 @@
+phpserver:
+  build: ./docker/php
+  volumes:
+    - ./:/var/www/
+  links:
+    - mysqlserver
+    - redis
+
+mysqlserver:
+  image: mysql
+  environment:
+    MYSQL_DATABASE: cmwn
+    MYSQL_ROOT_PASSWORD: root123$$
+    MYSQL_USER: cmwn_user
+    MYSQL_PASSWORD: cmwn_pass123$$
+  volumes:
+    - /var/lib/mysql
+
+redis:
+  image: redis
+
+nginx:
+  build: ./docker/nginx
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+    - phpserver

@@ -3,6 +3,7 @@
 namespace Api\Listeners;
 
 use Api\V1\Rest\Image\ImageEntity;
+use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
 use Asset\Service\UserImageServiceInterface;
 use Zend\EventManager\Event;
@@ -75,7 +76,7 @@ class UserImageListener
         /** @var \ZF\Hal\Plugin\Hal $hal */
         $hal     = $event->getTarget();
         try {
-            $image = $this->userImageService->fetchImageForUser($realEntity);
+            $image = $this->userImageService->fetchImageForUser($realEntity, !$realEntity instanceof MeEntity);
         } catch (\Exception $imageException) {
             return;
         }

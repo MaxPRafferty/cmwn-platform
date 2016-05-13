@@ -116,8 +116,9 @@ class GroupService implements GroupServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
-            $select    = new Select($this->groupTableGateway->getTable());
+            $select    = new Select(['g' => $this->groupTableGateway->getTable()]);
             $select->where($where);
+            $select->order(['g.title']);
             return new DbSelect(
                 $select,
                 $this->groupTableGateway->getAdapter(),
@@ -163,6 +164,7 @@ class GroupService implements GroupServiceInterface
 
         $where->addPredicate(new Operator('g.organization_id', '=', new Expression('active_group.organization_id')));
         $select->where($where);
+        $select->order(['g.title']);
 
         $prototype = $prototype === null ? new Group() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
@@ -302,13 +304,14 @@ class GroupService implements GroupServiceInterface
 
         $select = new Select();
         $select->columns([new Expression('DISTINCT(type) AS type')]);
-        $select->from($this->groupTableGateway->getTable());
+        $select->from(['g' => $this->groupTableGateway->getTable()]);
         $where = new Where();
 
         $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
         $where->addPredicate(new Between('head', ($group->getHead() + 1), ($group->getTail() - 1)));
 
         $select->where($where);
+        $select->order(['g.title']);
 
         $results = $this->groupTableGateway->selectWith($select);
         $types   = [];
