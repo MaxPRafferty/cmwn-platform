@@ -15,7 +15,7 @@ build:
   steps:
     - script:
       name: install dependencies
-      code: composer install --no-interaction
+      code: composer install --no-interaction --cache-dire=$WERCKER_CACHE_DIR/composer
     - script:
       name: Setup test DB
       code: php $PWD/vendor/robmorgan/phinx/bin/phinx migrate -c $PWD/config/phinx.php -e test
