@@ -194,4 +194,16 @@ class FriendResourceTest extends TestCase
         $this->dispatch('/user/math_teacher/friend', 'POST', ['friend_id' => 'english_teacher']);
         $this->assertResponseStatusCode(403);
     }
+
+    /**
+     * @test
+     * @ticket CORE-558
+     */
+    public function testItShouldAllowChildToAccessFriendEnpoint()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+        $this->dispatch('/user/english_student/friend');
+        $this->assertResponseStatusCode(200);
+    }
 }

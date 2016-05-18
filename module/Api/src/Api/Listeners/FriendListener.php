@@ -36,6 +36,11 @@ class FriendListener implements AuthenticationServiceAwareInterface
      */
     protected $listeners = [];
 
+    /**
+     * FriendListener constructor.
+     *
+     * @param FriendServiceInterface $friendService
+     */
     public function __construct(FriendServiceInterface $friendService)
     {
         $this->friendService = $friendService;
@@ -72,7 +77,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return null;
         }
 
-        if ($event->getRouteMatch()->getMatchedRouteName() !== 'api.rest.friend') {
+        if (!in_array($event->getRouteMatch()->getMatchedRouteName(), ['api.rest.friend', 'api.rest.suggest'])) {
             return null;
         }
 
@@ -88,7 +93,6 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
         $userId = $event->getRouteMatch()->getParam('user_id', false);
         $dataContainer->setBodyParam('user_id', $userId);
-
     }
 
     /**
