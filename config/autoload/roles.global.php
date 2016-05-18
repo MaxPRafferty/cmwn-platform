@@ -85,7 +85,7 @@ return [
                 'parents'     => ['super'],
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'    => Rbac::SCOPE_UPDATE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
@@ -104,7 +104,7 @@ return [
             'group_admin' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'    => Rbac::SCOPE_UPDATE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
@@ -131,7 +131,7 @@ return [
                     'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'adult' => Rbac::SCOPE_REMOVE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'    => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -163,7 +163,7 @@ return [
                     'group' => Rbac::SCOPE_UPDATE,
                     'adult' => Rbac::SCOPE_REMOVE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'    => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -194,7 +194,7 @@ return [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'me'    => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'    => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -226,7 +226,7 @@ return [
 
             'me' => [
                 'entity_bits' => [
-                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'create.user.flip',
@@ -243,7 +243,7 @@ return [
 
             'child' => [
                 'entity_bits' => [
-                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'attach.profile.image',
@@ -264,7 +264,7 @@ return [
 
             'student' => [
                 'entity_bits' => [
-                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'can.friend',
@@ -284,7 +284,7 @@ return [
 
             'logged_in' => [
                 'entity_bits' => [
-                    'me' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'parents'     => ['group_admin'],
                 'permissions' => [
