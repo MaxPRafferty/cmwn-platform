@@ -2,7 +2,6 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\UserFlipLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
 use User\UserInterface;
@@ -74,19 +73,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             parent::getArrayCopy(),
             ['token' => $this->token]
         );
-    }
-
-    /**
-     * @return \ZF\Hal\Link\LinkCollection
-     */
-    public function getLinks()
-    {
-        $links = parent::getLinks();
-        if (!$links->has('user_flips') && !empty($this->userId) && $this->getType() === UserInterface::TYPE_CHILD) {
-            $links->add(new UserFlipLink($this->getUserId()));
-        }
-
-        return $links;
     }
 
     /**

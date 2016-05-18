@@ -7,6 +7,8 @@ use Api\Links\ForgotLink;
 use Api\Links\GameLink;
 use Api\Links\PasswordLink;
 use Api\Links\ProfileLink;
+use Api\Links\ResetLink;
+use Api\Links\UserFlipLink;
 use Api\Links\UserImageLink;
 use Api\ScopeAwareInterface;
 use Friend\FriendInterface;
@@ -79,27 +81,6 @@ class UserEntity extends User implements
     }
 
     /**
-     * @param string $userId
-     * @return User
-     */
-    public function setUserId($userId)
-    {
-        if (empty($this->userId) && !empty($userId)) {
-            $this->getLinks()->add(new GameLink());
-            $this->getLinks()->add(new ProfileLink($userId));
-            $this->getLinks()->add(new UserImageLink($userId));
-            $this->getLinks()->add(new FlipLink());
-            $this->getLinks()->add(
-                $this instanceof MeEntity
-                    ? new PasswordLink($userId)
-                    : new ForgotLink()
-            );
-        }
-
-        return parent::setUserId($userId);
-    }
-
-    /**
      * Get link collection
      *
      * @return LinkCollection
@@ -108,9 +89,9 @@ class UserEntity extends User implements
     {
         if (!$this->links instanceof LinkCollection) {
             $this->setLinks(new LinkCollection());
-
         }
 
+        $this->injectLinks($this->links);
         return $this->links;
     }
 
@@ -120,5 +101,39 @@ class UserEntity extends User implements
     public function getEntityType()
     {
         return strtolower($this->getType());
+    }
+
+    /**
+     * @param LinkCollection $links
+     */
+    protected function injectLinks(LinkCollection $links)
+    {
+        if (!$links->has('game')) {
+            $links->add(new GameLink());
+        }
+
+        if (!$links->has('flip')) {
+            $links->add(new FlipLink());
+        }
+
+        if (!$links->has('profile') && !empty($this->getUserId())) {
+            $links->add(new ProfileLink($this->getUserId()));
+        }
+
+        if (!$links->has('user_image') && !empty($this->getUserId())) {
+            $links->add(new UserImageLink($this->getUserId()));
+        }
+
+        if (!$links->has('forgot') && $this->getType() === static::TYPE_ADULT) {
+            $links->add(new ForgotLink());
+        }
+
+        if (!$links->has('user_flips') && $this->getType() === static::TYPE_CHILD) {
+            $links->add(new UserFlipLink($this->getUserId()));
+        }
+
+        if (!$links->has('password') && $this->getType() === static::TYPE_CHILD) {
+            $links->add(new PasswordLink($this->getUserId()));
+        }
     }
 }
