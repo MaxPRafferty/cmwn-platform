@@ -1,7 +1,7 @@
 box:
   id: cmwn/platform-api
-  username: manchuck
-  password: dMAAAHaWCshQYay8HKWAcNH7r
+  username: $DOCKER_USER
+  password: $DOCKER_PASS
   tag: latest
 
 build:
@@ -20,15 +20,19 @@ build:
         composer install --no-interaction --no-dev
     - script:
       name: Setup test DB
-      code: php phinx migrate -c $PWD/config/phinx.php -e test
+      code: phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
-      code: php phpcs
+      code: phpcs --standard=PSR2 -p --no-colors module
     - script:
       name: PHPMD
-      code: php phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
+      code: phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
     - script:
       name: PHPUNIT
       code: |-
         export USE_ZEND_ALLOC=0
-        php phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
+        phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
+package:
+  steps:
+    - script:
+      name: Build Deployment

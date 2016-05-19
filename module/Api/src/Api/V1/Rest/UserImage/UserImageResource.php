@@ -70,7 +70,6 @@ class UserImageResource extends AbstractResourceListener
             if ($image === false) {
                 return new ApiProblem(404, 'Not Found');
             }
-
         } catch (AssetNotApprovedException $notApproved) {
             return new ApiProblem(404, 'Not Found');
         }

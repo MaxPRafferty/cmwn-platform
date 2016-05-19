@@ -44,7 +44,6 @@ class Rbac extends ZfRbac
         try {
             return parent::getRole($objectOrName);
         } catch (InvalidArgumentException $notFound) {
-
         }
 
         return parent::getRole('guest');

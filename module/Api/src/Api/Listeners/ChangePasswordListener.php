@@ -91,7 +91,6 @@ class ChangePasswordListener implements AuthenticationServiceAwareInterface
             $this->getAuthenticationService()->getIdentity();
             return null;
         } catch (ChangePasswordException $changePassword) {
-
         }
 
         return new ApiProblemResponse(new ApiProblem(401, $changePassword->getMessage()));

@@ -7,7 +7,7 @@ COPY composer.json /root/.composer/composer.json
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libmcrypt-dev \
-    && apt-get install git mysql-client -y -q \
+    && apt-get install git -y -q \
     && git clone --depth=1 -b php7 https://github.com/phpredis/phpredis.git /usr/src/php/ext/redis \
     && docker-php-ext-install iconv mcrypt \
     && docker-php-ext-install pdo \
@@ -16,8 +16,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install redis \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && cd /root/.composer/ \
-    && composer global install --optimize-autoloader
+    && composer global install --optimize-autoloader -vvv
 
-ENTRYPOINT ["php", "-S", "0.0.0.0:80"]
-
-CMD ["-t", "/var/www/html"]
+CMD ["/usr/local/bin/php -v"]

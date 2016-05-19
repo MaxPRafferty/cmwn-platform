@@ -92,7 +92,6 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
         try {
             return $this->groupService->fetchGroupByExternalId($classRoomId);
         } catch (NotFoundException $groupNotFound) {
-
         }
         return false;
     }
