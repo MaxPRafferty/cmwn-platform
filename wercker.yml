@@ -32,7 +32,3 @@ build:
       code: |-
         export USE_ZEND_ALLOC=0
         phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
-package:
-  steps:
-    - script:
-      name: Build Deployment
