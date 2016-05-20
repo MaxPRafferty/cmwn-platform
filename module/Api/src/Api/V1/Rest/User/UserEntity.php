@@ -108,7 +108,6 @@ class UserEntity extends User implements
     {
         if (!$this->links instanceof LinkCollection) {
             $this->setLinks(new LinkCollection());
-
         }
 
         return $this->links;

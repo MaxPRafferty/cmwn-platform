@@ -77,7 +77,6 @@ class TeacherRegistry implements ArrayAccess, IteratorAggregate
         try {
             return $this->userService->fetchUserByEmail($email);
         } catch (NotFoundException $notFound) {
-
         }
 
         return false;
