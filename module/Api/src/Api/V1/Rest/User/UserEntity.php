@@ -108,14 +108,6 @@ class UserEntity extends User implements
      */
     protected function injectLinks(LinkCollection $links)
     {
-        if (!$links->has('game')) {
-            $links->add(new GameLink());
-        }
-
-        if (!$links->has('flip')) {
-            $links->add(new FlipLink());
-        }
-
         if (!$links->has('profile') && !empty($this->getUserId())) {
             $links->add(new ProfileLink($this->getUserId()));
         }
@@ -130,10 +122,6 @@ class UserEntity extends User implements
 
         if (!$links->has('user_flips') && $this->getType() === static::TYPE_CHILD) {
             $links->add(new UserFlipLink($this->getUserId()));
-        }
-
-        if (!$links->has('password') && $this->getType() === static::TYPE_CHILD) {
-            $links->add(new PasswordLink($this->getUserId()));
         }
     }
 }

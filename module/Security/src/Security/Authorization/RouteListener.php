@@ -6,7 +6,6 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
-
 use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
