@@ -229,6 +229,7 @@ return [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
+                    'update.password',
                     'create.user.flip',
                     'edit.user.adult',
                     'edit.user.child',
