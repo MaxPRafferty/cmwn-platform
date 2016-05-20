@@ -3,7 +3,6 @@ box:
   username: $DOCKER_USER
   password: $DOCKER_PASS
   tag: latest
-
 build:
   services:
     - id: mysql:5.5
@@ -17,7 +16,8 @@ build:
       name: install dependencies
       code: |-
         export COMPOSER_CACHE_DIR=$WERCKER_CACHE_DIR/composer
-        composer install --no-interaction --no-dev
+        export COMPOSER_BIN_DIR=$WERCKER_CACHE_DIR/bin
+        composer install --no-interaction --no-dev --prefer-dist
     - script:
       name: Setup test DB
       code: phinx migrate -c $PWD/config/phinx.php -e test
@@ -32,3 +32,8 @@ build:
       code: |-
         export USE_ZEND_ALLOC=0
         phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
+package:
+  steps:
+    - script:
+      name: Creating package
+      code: ls -al
