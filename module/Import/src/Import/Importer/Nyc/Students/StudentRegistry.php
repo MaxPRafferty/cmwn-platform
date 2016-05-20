@@ -79,7 +79,6 @@ class StudentRegistry implements ArrayAccess, IteratorAggregate
         try {
             return $this->userService->fetchUserByExternalId($externalId);
         } catch (NotFoundException $notFound) {
-
         }
 
         return false;

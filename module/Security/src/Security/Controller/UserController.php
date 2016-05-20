@@ -82,7 +82,6 @@ class UserController extends AbstractConsoleController
         $validator = new EmailAddress();
         do {
             $email = Line::prompt('Email: ');
-
         } while (!$validator->isValid($email));
         return $email;
     }

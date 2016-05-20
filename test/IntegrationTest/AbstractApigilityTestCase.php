@@ -2,8 +2,8 @@
 
 namespace IntegrationTest;
 
-use Security\Authentication\AuthAdapter;
 use Security\Guard\CsrfGuard;
+use Security\Service\SecurityService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
@@ -98,21 +98,20 @@ abstract class AbstractApigilityTestCase extends TestCase
      */
     public function logInUser($userName, $forceRole = null)
     {
-        /** @var AuthAdapter $adapter */
-        $adapter = TestHelper::getServiceManager()->get(AuthAdapter::class);
+        /** @var SecurityService $userService */
+        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
 
-        $adapter->setPassword('business');
-        $adapter->setUserIdentifier($userName);
-
-        $this->getAuthService()->authenticate($adapter);
+        $user = $userService->fetchUserByUserName($userName);
+        $this->getAuthService()->getStorage()->write($user);
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @param string $method
      * @param array $params
+     * @param bool $isXmlHttpRequest
      */
-    public function dispatch($url, $method = 'GET', $params = [])
+    public function dispatch($url, $method = 'GET', $params = [], $isXmlHttpRequest = false)
     {
         $this->url($url, $method, $params);
 
@@ -129,6 +128,28 @@ abstract class AbstractApigilityTestCase extends TestCase
 
         $this->getApplication()->run();
         $this->assertCorrectCorsHeaders();
+    }
+
+    /**
+     * Assert response status code
+     *
+     * @param int $code
+     */
+    public function assertResponseStatusCode($code)
+    {
+        $match = $this->getResponseStatusCode();
+
+        $this->assertEquals(
+            $code,
+            $match,
+            sprintf(
+                'Failed asserting response code "%s", actual status code is "%s"'
+                . PHP_EOL . 'RESPONSE BODY:' . PHP_EOL .  '%s',
+                $code,
+                $match,
+                $this->getResponse()->getContent()
+            )
+        );
     }
 
     /**

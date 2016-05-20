@@ -10,5 +10,5 @@
     <rule ref="PSR2"/>
 
     <!-- Paths to check -->
-    <file>module</file>
+    <file>./module</file>
 </ruleset>

@@ -77,12 +77,11 @@ class TestHelper
         $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
 
         $appConfig['service_manager'] = [
-            'invokables' => [
-                'InjectTestAdapter' => InjectTestAdapterListener::class
+            'initializers' => [
+                'InjectTestAdapter' => InjectTestAdapterInitializer::class
             ]
         ];
 
-        $appConfig['listeners'] = ['InjectTestAdapter'];
         return $appConfig;
     }
 
@@ -122,11 +121,13 @@ class TestHelper
     public static function getPdoConnection()
     {
         if (static::$pdo === null) {
-            /** @var Adapter $adapter */
-            $adapter = static::getServiceManager()->get(Adapter::class);
-            $connection = $adapter->getDriver()->getConnection();
-            $connection->connect();
-            static::$pdo = $connection->getResource();
+            $config      = static::getTestDbConfig();
+            static::$pdo = new \PDO(
+                $config['dsn'],
+                $config['username'],
+                $config['password'],
+                $config['driver_options']
+            );
         }
 
         return static::$pdo;
