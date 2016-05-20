@@ -10,10 +10,12 @@ return array(
         6 => 'Api\\Listeners\\ChangePasswordListener',
         7 => 'Api\\Listeners\\GroupRouteListener',
         8 => 'Api\\Listeners\\FriendListener',
+        9 => \Api\Listeners\TemplateLinkListener::class,
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
+            \Api\Listeners\TemplateLinkListener::class => \Api\Listeners\TemplateLinkListener::class,
         ),
         'factories' => array(
             'Api\\Listeners\\ImportRouteListener' => \Api\Factory\ImportRouteListenerFactory::class,
