@@ -2,12 +2,15 @@
 
 namespace Api\V1\Rest\User;
 
+use Api\Links\FlipLink;
 use Api\Links\FriendLink;
-use Api\Links\UserFlipLink;
+use Api\Links\GameLink;
+use Api\Links\PasswordLink;
 use Api\Links\UserLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
 use User\UserInterface;
+use ZF\Hal\Link\LinkCollection;
 
 /**
  * Class MeEntity
@@ -77,34 +80,47 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * @return \ZF\Hal\Link\LinkCollection
+     * @param LinkCollection $links
      */
-    public function getLinks()
+    protected function injectLinks(LinkCollection $links)
     {
-        $links = parent::getLinks();
+        parent::injectLinks($links);
 
         if (!$links->has('user')) {
             $links->add(new UserLink());
         }
 
-        // TODO move to check permissions?
+        if (!$links->has('games')) {
+            $links->add(new GameLink());
+        }
+
+        if (!$links->has('flip')) {
+            $links->add(new FlipLink());
+        }
+
+        if (!$links->has('password') && !empty($this->getUserId())) {
+            $links->add(new PasswordLink($this->getUserId()));
+        }
+
+        $this->injectChildLinks($links);
+    }
+
+    /**
+     * @param LinkCollection $links
+     */
+    protected function injectChildLinks(LinkCollection $links)
+    {
         if ($this->getType() !== UserInterface::TYPE_CHILD) {
-            return $links;
+            return;
         }
 
         if (!$links->has('user_name')) {
             $links->add(new UserNameLink());
         }
 
-        if (!$links->has('user_flips') && !empty($this->userId)) {
-            $links->add(new UserFlipLink($this->getUserId()));
-        }
-
-        if (!$links->has('user_flips') && !empty($this->userId)) {
+        if (!$links->has('friend') && !empty($this->getUserId())) {
             $links->add(new FriendLink($this->getUserId()));
         }
-
-        return $links;
     }
 
     /**

@@ -9,6 +9,7 @@ use Asset\Service\UserImageServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
+use ZF\Hal\Plugin\Hal;
 
 /**
  * Class UserImageListener
@@ -42,7 +43,7 @@ class UserImageListener
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'attachImage'], -1000);
+        $this->listeners[] = $events->attach(Hal::class, 'renderEntity.post', [$this, 'attachImage'], -1000);
     }
 
     /**
@@ -51,7 +52,7 @@ class UserImageListener
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('ZF\Hal\Plugin\Hal', $listener);
+            $events->detach(Hal::class, $listener);
         }
     }
 
