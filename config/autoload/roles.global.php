@@ -78,6 +78,8 @@ return [
                     'view.all.users',
                     'view.flip',
                     'view.user.flip',
+                    'adult.code',
+                    'child.code',
                 ],
             ],
 
@@ -219,6 +221,7 @@ return [
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
                 ],

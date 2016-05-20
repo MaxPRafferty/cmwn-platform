@@ -10,17 +10,20 @@ return [
             'api.rest.image',
         ],
         'route-permissions' => [
+            'api.rest.reset'       => [
+                'POST' => ['adult.code', 'child.code'],
+            ],
             'api.rest.flip'        => [
                 'GET' => 'view.flip',
             ],
-            'api.rest.flip-user' => [
+            'api.rest.flip-user'   => [
                 'GET'  => 'view.user.flip',
                 'POST' => 'create.user.flip',
             ],
             'api.rest.user'        => [
-                'GET'   => ['view.user.adult', 'view.user.child'],
-                'POST'  => 'create.user',
-                'PUT'   => ['edit.user.child', 'edit.user.adult'],
+                'GET'  => ['view.user.adult', 'view.user.child'],
+                'POST' => 'create.user',
+                'PUT'  => ['edit.user.child', 'edit.user.adult'],
             ],
             'api.rest.org'         => [
                 'GET'    => 'view.org',
@@ -57,12 +60,12 @@ return [
                 'GET'  => 'pick.username',
                 'POST' => 'pick.username',
             ],
-            'api.rest.friend' => [
+            'api.rest.friend'      => [
                 'GET'  => 'can.friend',
-                'POST' => 'can.friend'
+                'POST' => 'can.friend',
             ],
-            'api.rest.suggest' => [
-                'GET'  => 'can.friend',
+            'api.rest.suggest'     => [
+                'GET' => 'can.friend',
             ],
         ],
     ],
