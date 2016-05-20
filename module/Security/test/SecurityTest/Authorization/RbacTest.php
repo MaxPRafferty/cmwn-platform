@@ -468,6 +468,7 @@ class RbacTest extends TestCase
             'Neighbor' => [
                 'role'    => 'neighbor.adult',
                 'allowed' => [
+                    'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
                 ],
@@ -475,7 +476,6 @@ class RbacTest extends TestCase
                 'denied' => [
                     'can.friend',
                     'add.group.user',
-                    'adult.code',
                     'attach.profile.image',
                     'child.code',
                     'create.child.group',
