@@ -78,6 +78,8 @@ return [
                     'view.all.users',
                     'view.flip',
                     'view.user.flip',
+                    'adult.code',
+                    'child.code',
                 ],
             ],
 

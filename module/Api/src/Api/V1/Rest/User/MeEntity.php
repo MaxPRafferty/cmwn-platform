@@ -115,10 +115,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
             $links->add(new UserNameLink());
         }
 
-        if (!$links->has('user_flips') && !empty($this->getUserId())) {
-            $links->add(new UserFlipLink($this->getUserId()));
-        }
-
         if (!$links->has('friend') && !empty($this->getUserId())) {
             $links->add(new FriendLink($this->getUserId()));
         }

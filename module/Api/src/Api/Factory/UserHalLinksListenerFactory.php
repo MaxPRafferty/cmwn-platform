@@ -2,7 +2,7 @@
 
 namespace Api\Factory;
 
-use Api\Listeners\ResetHalLinkListener;
+use Api\Listeners\UserHalLinksListener;
 use Security\Service\SecurityGroupServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -10,7 +10,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Class ResetHalLinkListener
  */
-class ResetHalLinkListenerFactory implements FactoryInterface
+class UserHalLinksListenerFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -23,6 +23,6 @@ class ResetHalLinkListenerFactory implements FactoryInterface
     {
         /** @var SecurityGroupServiceInterface $groupService */
         $groupService = $serviceLocator->get(SecurityGroupServiceInterface::class);
-        return new ResetHalLinkListener($groupService);
+        return new UserHalLinksListener($groupService);
     }
 }
