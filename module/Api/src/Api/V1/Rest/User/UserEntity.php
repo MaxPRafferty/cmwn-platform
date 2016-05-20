@@ -116,10 +116,6 @@ class UserEntity extends User implements
             $links->add(new UserImageLink($this->getUserId()));
         }
 
-        if (!$links->has('forgot') && $this->getType() === static::TYPE_ADULT) {
-            $links->add(new ForgotLink());
-        }
-
         if (!$links->has('user_flip') && $this->getType() === static::TYPE_CHILD) {
             $links->add(new UserFlipLink($this->getUserId()));
         }

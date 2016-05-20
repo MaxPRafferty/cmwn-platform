@@ -6,7 +6,6 @@ use Api\Links\FlipLink;
 use Api\Links\FriendLink;
 use Api\Links\GameLink;
 use Api\Links\PasswordLink;
-use Api\Links\UserFlipLink;
 use Api\Links\UserLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
@@ -87,7 +86,11 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     {
         parent::injectLinks($links);
 
-        if (!$links->has('game')) {
+        if (!$links->has('user')) {
+            $links->add(new UserLink());
+        }
+
+        if (!$links->has('games')) {
             $links->add(new GameLink());
         }
 

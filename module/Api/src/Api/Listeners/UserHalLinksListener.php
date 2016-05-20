@@ -2,8 +2,10 @@
 
 namespace Api\Listeners;
 
+use Api\Links\ForgotLink;
 use Api\Links\PasswordLink;
 use Api\Links\ResetLink;
+use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
@@ -136,13 +138,13 @@ class UserHalLinksListener implements AuthenticationServiceAwareInterface, RbacA
      */
     protected function checkForgotLink(LinkCollection $links)
     {
-        if (!$links->has('forgot')) {
+        if ($this->entityUser instanceof MeEntity || $links->has('forgot')) {
             return $this;
         }
 
         $permission = strtolower($this->entityUser->getType()) . '.code';
-        if ($this->entityUser->getType() === UserEntity::TYPE_CHILD || !$this->checkPermissionHelper($permission)) {
-            $links->remove('forgot');
+        if ($this->entityUser->getType() === UserEntity::TYPE_ADULT && $this->checkPermissionHelper($permission)) {
+            $links->add(new ForgotLink());
         }
 
         return $this;
