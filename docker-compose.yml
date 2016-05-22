@@ -1,5 +1,9 @@
 phpserver:
-  image: cmwn/platform-api
+  build: ./docker/php
+  volumes:
+    - ./:/var/www/
+  links:
+    - mysqlserver
 
 mysqlserver:
   image: mysql:5.5
@@ -8,3 +12,15 @@ mysqlserver:
     MYSQL_DATABASE: cmwn_test
     MYSQL_USER: cmwn_user
     MYSQL_PASSWORD: cmwn_pass
+  volumes:
+    - /var/lib/mysql
+
+redis:
+  image: redis
+
+nginx:
+  build: ./docker/nginx
+  ports:
+    - "443:443"
+  links:
+    - phpserver
