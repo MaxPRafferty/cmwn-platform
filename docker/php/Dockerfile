@@ -18,4 +18,6 @@ RUN apt-get update && apt-get install -y \
     && cd /root/.composer/ \
     && composer global install --optimize-autoloader -vvv
 
+WORKDIR /var/www
+
 CMD ["/usr/local/sbin/php-fpm"]

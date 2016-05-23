@@ -35,3 +35,13 @@ build:
   after-steps:
     - slack-notifier:
       url: $SLACK_URL
+package:
+  steps:
+    - script:
+      name: Running Zend-Tool
+      code: |-
+       export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
+       /usr/sbin/zfdeploy.php build "platform-api-$VERSION.zip"
+    - script:
+      name: test
+      code: ls -al

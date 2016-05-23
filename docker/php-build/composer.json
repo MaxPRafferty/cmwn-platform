@@ -12,6 +12,7 @@
     "zendframework/zftool": "dev-master",
     "zendframework/zend-developer-tools": "dev-master",
     "fzaninotto/faker": "~1.5",
-    "zendframework/zend-test": "~2.6"
+    "zendframework/zend-test": "~2.6",
+    "zfcampus/zf-deploy": "~1.0-dev"
   }
 }

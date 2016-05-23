@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+echo "[post-merge] Checking for new modules"
+
+if [ "composer.json" -nt "vendor/" ]; then
+    echo "[post-merge] New composer.json installing new packages"
+    composer install && composer update
+fi
