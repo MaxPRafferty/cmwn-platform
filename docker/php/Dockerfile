@@ -1,4 +1,4 @@
-FROM php:7.0-cli
+FROM php:7.0-fpm
 MAINTAINER Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
 
 COPY composer.json /root/.composer/composer.json
@@ -18,4 +18,4 @@ RUN apt-get update && apt-get install -y \
     && cd /root/.composer/ \
     && composer global install --optimize-autoloader -vvv
 
-CMD ["/usr/local/bin/php -v"]
+CMD ["/usr/local/sbin/php-fpm"]

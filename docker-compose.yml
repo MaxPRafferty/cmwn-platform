@@ -19,8 +19,12 @@ redis:
   image: redis
 
 nginx:
-  build: ./docker/nginx
+  image: marvambass/nginx-ssl-secure
   ports:
     - "443:443"
+  environment:
+   - NGINX_HOST=api-local.changemyworldnow.com
+   - NGINX_PORT=443
+  command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
   links:
     - phpserver
