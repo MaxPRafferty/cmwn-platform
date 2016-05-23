@@ -1,9 +1,12 @@
 phpserver:
   build: ./docker/php
+  environment:
+    CACHE1_HOST: cmwn_redis_1
   volumes:
     - ./:/var/www/
   links:
     - mysqlserver
+    - redis
 
 mysqlserver:
   image: mysql:5.5
