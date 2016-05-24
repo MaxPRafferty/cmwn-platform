@@ -2,6 +2,14 @@
 
 cat $PWD/bin/splash.txt
 
+docker-machine active
+if [ $? != 0 ]
+then
+    echo "[post-merge] no default docker-machine running"
+    echo "[post-merge] you should check for updates in composer.json yourself"
+    exit 1
+fi
+
 echo "[api-installer] Copying development configs"
 
 cp config/development.config.php.dist config/development.config.php
@@ -18,17 +26,17 @@ if [ "composer.json" -nt "vendor/" ]; then
     if [ ! -e "vendor//" ];
     then
         echo "[api-installer] New composer.json installing new packages"
-        docker-compose run -w /var/www phpserver composer install
+        docker-compose run php composer install
     else
         echo "[api-installer] New composer.json updating packages"
-        docker-compose run -w /var/www phpserver composer update
+        docker-compose run php composer update
     fi
 else
     echo "[api-installer] Composer appears to be up to date"
 fi
 
-docker-compose run -w /var/www phpserver phinx migrate -c config/phinx.php -e dev
-docker-compose run -w /var/www phpserver phinx seed:run -c config/phinx.php -e dev
+docker-compose run php phinx migrate -c config/phinx.php -e dev
+docker-compose run php phinx seed:run -c config/phinx.php -e dev
 
 DOCKER_IP=$(docker-machine ip)
 

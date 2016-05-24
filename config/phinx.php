@@ -27,7 +27,7 @@ $config = [
         ],
         'dev'                     => [
             'adapter' => 'mysql',
-            'host'    => 'cmwn_mysqlserver_1',
+            'host'    => 'cmwn_mysql_1',
             'name'    => 'cmwn',
             'user'    => 'cmwn_user',
             'pass'    => 'cmwn_pass',
