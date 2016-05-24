@@ -35,6 +35,8 @@ else
     echo "[api-installer] Composer appears to be up to date"
 fi
 
+docker-compose start
+sleep 3
 docker-compose run php phinx migrate -c config/phinx.php -e dev
 docker-compose run php phinx seed:run -c config/phinx.php -e dev
 
@@ -54,7 +56,7 @@ cat <<EOF
 $DOCKER_IP    api-local.changemyworldnow.com
 
 You then run:
-docker-compose up -d
+docker-compose start
 and you will be able to access the site locally in the browser
 
 Happy Coding!
