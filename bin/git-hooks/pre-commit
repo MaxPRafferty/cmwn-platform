@@ -1,0 +1,69 @@
+#!/bin/sh
+
+# @source: https://gist.github.com/ronanguilloux/11f6a788358577474ab4
+# @link http://tech.zumba.com/2014/04/14/control-code-quality/
+docker-machine active
+if [ $? != 0 ]
+then
+    echo "[pre-commit] no default docker-machine running"
+    echo "[pre-commit] run docker-machine start default in order to commit"
+    exit 1
+fi
+
+# create empty errors array
+declare -a errors
+
+# Check if we're on a semi-secret empty tree
+if git rev-parse --verify HEAD
+then
+    against=HEAD
+else
+    # Initial commit: diff against an empty tree object
+    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# fetch all changed php files and validate them
+files=$(git diff-index --name-only --diff-filter=ACMR $against | grep '\.php$')
+if [ -n "$files" ]; then
+
+    echo '[pre-commit] Checking PHP Files'
+    echo '[pre-commit] ------------------'
+    echo
+
+    for file in $files; do
+
+        echo "[pre-commit] checking file: $file"
+
+        # first check if they are valid php files
+        output=`docker-compose run php php -l $file | grep 'Errors parsing'`
+
+        # if it did contain errors, we have output
+        if [ -n "$output" ]; then
+            echo "[pre-commit] $file contains php syntax errors"
+            errors=("${errors[@]}" "$output")
+        fi
+
+        # checks if the phpcs output contains '| ERROR |'
+        output=`docker-compose run php phpcs --standard=PSR2 --extensions=php --encoding=utf8 --report=full $file | grep '| ERROR |'`
+
+        # if it did contain errors, we have output
+        if [ -n "$output" ]; then
+            echo "[pre-commit] $file fails coding standards"
+            docker-compose run php phpcs --standard=PSR2 --extensions=php --encoding=utf8 --report=full $file
+            errors=("${errors[@]}" "$output")
+        fi
+
+        # checks if the phpmd output
+        output=`docker-compose run php phpmd $file text codesize,design,controversial --suffixes php --exclude "*Test*"`
+
+        # if it did contain errors, we have output
+        if [ -n "$output" ]; then
+            echo "[pre-commit] $file fails is messy"
+            docker-compose run php phpmd $file text codesize,design,controversial --suffixes php --exclude "*Test*"
+            errors=("${errors[@]}" "$output")
+        fi
+    done
+fi
+
+echo '[pre-commit] No errors found!'
+exit $?

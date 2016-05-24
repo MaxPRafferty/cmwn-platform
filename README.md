@@ -7,74 +7,44 @@ Change My World Now API
 Requirements
 ------------
 
-Please see the [composer.json](composer.json) file.
+docker 1.11+
+docker-compose 1.7+
 
-Installation
-------------
+Installing
+----------
 
-### Vagrant
-
-If you prefer to develop with Vagrant, there is a basic vagrant recipe included with this project.
-
-This recipe assumes that you already have Vagrant installed. The virtual machine will try to use localhost:8080 by
-default, so if you already have a server on this port of your host machine, you need to shut down the conflicting
-server first, or if you know how, you can reconfigure the ports in Vagrantfile.
-
-Assuming you have Vagrant installed and assuming you have no port conflicts, you can bring up the Vagrant machine
-with the standard `up` command:
-
-```
-vagrant up
+Using docker to install is simple.  1st make sure you have docker machine running:
+ 
+```bash
+$ docker-machine start
 ```
 
-When the machine comes up, you can ssh to it with the standard ssh forward agent:
+Afterwards you need to ensure that your host can talk to docker:
 
-```
-vagrant ssh
-```
-
-The web root is inside the shared directory, which is at `/var/www`. Once you've ssh'd into the box, you need to cd:
-
-```
-cd /var/www
+```bash
+$ eval $(docker-machine env)
 ```
 
-For vagrant documentation, please refer to [vagrantup.com](https://www.vagrantup.com/)
+Then you can run the install script and follow the instructions after the script runs:
 
-### Host
-
-Vagrant is configured for api-local.changemyworldnow.com to 192.168.56.101
-Update your host file to point to that IP
-
-### Config Files
-
-1st you need to take all the *.php.dist files and copy them to *.php in config/autoload
-ex: db.local.php.dist -> db.local.php 
-
-2nd copy config/development.config.php.dist to config/development.config.php
-
-## Database Migration
-
-Phinx is the primary module to perform DB migrations.  Currently there is a ZF2 Module that will
-proxy calls to migrate the DB but not seed the database. 
-
-#### Migration
-
-To create all the tables follow these steps:
-
-```
-$ vagrant ssh
-$ cd /var/www
-$ php vendor/bin/phinx migrate -c config/phinx.php -e dev
+```bash
+$ bin/install.sh
 ```
 
-#### DB Seeding
+Development 
+-----------
 
-Currently only games and user name candidates will be seeded.  To run the seed:
+After you run the install script, you are ready to get started.  To start docker just run:
 
+```bash
+$ docker-composer up -d 
 ```
-$ vagrant ssh
-$ cd /var/www
-$ php vendor/bin/phinx seed:run -c config/phinx.php
-```
 
+_Note: the -d flag means the container will run in the back ground_
+
+FAQ:
+---
+
+__Q:__ I get the following error: "ERROR: Couldn't connect to Docker daemon - you might need to run 'docker-machine start default'."
+
+__A:__ This happens when you restart your computer or when you open a new terminal window.  Run: ``eval $(docker-machine env)``

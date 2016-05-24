@@ -1,3 +1,4 @@
+## This container if for buiding on wercker
 FROM php:7.0-fpm
 MAINTAINER Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
 
@@ -17,16 +18,5 @@ RUN apt-get update && apt-get install -y \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && cd /root/.composer/ \
     && composer global install --optimize-autoloader -vvv
-
-RUN yes | pecl install xdebug
-
-RUN pecl install -o -f xdebug \
-    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/xdebug.ini
-
-WORKDIR /var/www
 
 CMD ["/usr/local/sbin/php-fpm"]
