@@ -27,10 +27,10 @@ $config = [
         ],
         'dev'                     => [
             'adapter' => 'mysql',
-            'host'    => 'localhost',
+            'host'    => 'cmwn_mysqlserver_1',
             'name'    => 'cmwn',
             'user'    => 'cmwn_user',
-            'pass'    => 'cmwn_pass123$',
+            'pass'    => 'cmwn_pass',
         ],
         'test'                    => [
             'adapter' => 'mysql',

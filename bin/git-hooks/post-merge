@@ -3,5 +3,5 @@ echo "[post-merge] Checking for new modules"
 
 if [ "composer.json" -nt "vendor/" ]; then
     echo "[post-merge] New composer.json installing new packages"
-    composer install && composer update
+    composer install --ignore-platform-reqs  && composer update --ignore-platform-reqs
 fi

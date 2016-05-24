@@ -3,8 +3,6 @@ HOOK_NAMES="applypatch-msg pre-applypatch post-applypatch pre-commit prepare-com
 # assuming the script is in a bin directory, one level into the repo
 HOOK_DIR=$(git rev-parse --show-toplevel)/.git/hooks
 
-echo "Installing commit hooks"
-
 for hook in $HOOK_NAMES; do
     # If the hook already exists, is executable, and is not a symlink
     if [ ! -h $HOOK_DIR/$hook -a -x $HOOK_DIR/$hook ]; then
