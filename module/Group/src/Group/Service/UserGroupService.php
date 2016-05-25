@@ -203,10 +203,16 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * Finds all the groups for a user
      *
-     * SELECT *
-     * FROM groups g
-     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'baz-bat'
+     * SELECT g.*,
+     *   ug.role AS ug_role,
+     *   tg.group_id AS temp_group_id
+     * FROM user_groups AS ug
+     *   LEFT JOIN groups AS tg ON tg.group_id = ug.group_id
+     *   LEFT JOIN groups AS g ON g.group_id = tg.group_id OR g.group_id = tg.parent_id
+     * WHERE ug.user_id = :user_id
+     * GROUP BY g.group_id
+     * ORDER BY g.title ASC;
+     *
      *
      * @param Where|GroupInterface|string $user
      * @param object $prototype
@@ -216,19 +222,29 @@ class UserGroupService implements UserGroupServiceInterface
     {
         $where = $this->createWhere($user);
 
-        if ($user instanceof UserInterface) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
-        }
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
 
-        if (is_string($user)) {
-            $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user));
-        }
-
-        $select = new Select();
-        $select->from(['g'  => 'groups']);
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = g.group_id', ['ug_role' => 'role'], Select::JOIN_LEFT);
+        $select = new Select(['ug' => 'user_groups']);
+        $select->columns(['ug_role' => 'role']);
+        $select->join(
+            ['tg' => 'groups'],
+            'tg.group_id = ug.group_id',
+            ['temp_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+        
+        $select->join(
+            ['g' => 'groups'],
+            'g.group_id = tg.group_id OR g.group_id = tg.parent_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+        
         $select->where($where);
+        $select->group('g.group_id');
         $select->order(['g.title']);
+
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,

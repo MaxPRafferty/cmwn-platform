@@ -142,7 +142,7 @@ class DevSeed extends AbstractSeed
         }
 
         $group->setData([]);
-        $classId = '9ee15bf2-0288-11e6-8b6b-0800274f2cef';
+        $classId = '9ee15bf2-0288-11e6-8b6b-0800576f2cef';
         try {
             $group->insert([
                 'group_id'        => $classId,
@@ -198,8 +198,8 @@ class DevSeed extends AbstractSeed
         $userGroups->setData([]);
         try {
             $userGroups->insert([
-                'user_id'  => $teacherId,
-                'group_id' => $studentId,
+                'user_id'  => $studentId,
+                'group_id' => $classId,
                 'role'     => 'student',
             ])->save();
         } catch (PDOException $exception) {
