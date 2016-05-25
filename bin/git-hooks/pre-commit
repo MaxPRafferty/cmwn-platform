@@ -67,5 +67,16 @@ if [ -n "$files" ]; then
     done
 fi
 
+echo '[pre-commit] Running tests'
+echo '[pre-commit] ------------------'
+echo
+
+docker-compose run php phpunit -c /var/www/test/phpunit.xml --stop-on-error --stop-on-failure
+if [ $? != 0 ]
+then
+    >&2 echo "[pre-commit] Please fix your tests before committing"
+    exit 1
+fi
+
 echo '[pre-commit] No errors found!'
 exit $?

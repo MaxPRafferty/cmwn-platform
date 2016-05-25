@@ -118,6 +118,7 @@ class TokenResourceTest extends TestCase
                 'links' => [
                     'flip',
                     'games',
+                    'group_school',
                     'group_class',
                     'org_district',
                     'password',
@@ -133,6 +134,7 @@ class TokenResourceTest extends TestCase
                     'flip',
                     'friend',
                     'games',
+                    'group_school',
                     'group_class',
                     'org_district',
                     'password',
