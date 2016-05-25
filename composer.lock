@@ -1793,16 +1793,16 @@
         },
         {
             "name": "zendframework/zend-log",
-            "version": "2.8.2",
+            "version": "2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-log.git",
-                "reference": "52873318dcdffdda37ce1912a8a7ced0efd6c974"
+                "reference": "78712a83261739f0c7bc5718c8cb9514b58e6a0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-log/zipball/52873318dcdffdda37ce1912a8a7ced0efd6c974",
-                "reference": "52873318dcdffdda37ce1912a8a7ced0efd6c974",
+                "url": "https://api.github.com/repos/zendframework/zend-log/zipball/78712a83261739f0c7bc5718c8cb9514b58e6a0d",
+                "reference": "78712a83261739f0c7bc5718c8cb9514b58e6a0d",
                 "shasum": ""
             },
             "require": {
@@ -1857,7 +1857,7 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2016-04-18 17:35:02"
+            "time": "2016-05-25 12:20:07"
         },
         {
             "name": "zendframework/zend-mail",

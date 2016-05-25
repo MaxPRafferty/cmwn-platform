@@ -1,14 +1,16 @@
 #!/bin/sh
 
-# @source: https://gist.github.com/ronanguilloux/11f6a788358577474ab4
-# @link http://tech.zumba.com/2014/04/14/control-code-quality/
-docker-machine active
+target_docker_name="api"
+
+bash $PWD/bin/setup-docker.sh $target_docker_name
 if [ $? != 0 ]
 then
-    echo "[pre-commit] no default docker-machine running"
-    echo "[pre-commit] run docker-machine start default in order to commit"
+    >&2 echo "[pre-commit] no $target_docker_name docker-machine running"
     exit 1
 fi
+
+echo "[pre-commit] Building docker containers"
+eval $(docker-machine env api)
 
 # create empty errors array
 declare -a errors
