@@ -5,11 +5,6 @@ box:
   tag: latest
 
 build:
-  setps:
-    - script:
-      code: $WERCKER_GIT_BRANCH
-
-foo:
   services:
     - id: mysql:5.5
       env:
@@ -50,6 +45,9 @@ deploy:
       name: Creating package directory
       code: mkdir -p data/build/artifact
     - script:
+      name: On Production?
+      code: export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
+    - script:
       name: Creating package name
       code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
     - script:
@@ -63,6 +61,7 @@ deploy:
     - github-create-release:
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
+      draft: $DRAFT
     - github-upload-asset:
       token: $MC_GITHUB_TOKEN
       file: data/build/artifact/platform-api-$VERSION.zip
