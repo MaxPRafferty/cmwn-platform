@@ -20,7 +20,9 @@ build:
         composer install --no-interaction --no-dev
     - script:
       name: Setup test DB
-      code: phinx migrate -c $PWD/config/phinx.php -e test
+      code: |-
+        sleep 3
+        phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
       code: phpcs --standard=PSR2 -p --no-colors module
