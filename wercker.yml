@@ -5,6 +5,11 @@ box:
   tag: latest
 
 build:
+  setps:
+    - script:
+      code: $WERCKER_GIT_BRANCH
+
+foo:
   services:
     - id: mysql:5.5
       env:
@@ -36,18 +41,29 @@ build:
     - slack-notifier:
       url: $SLACK_URL
 
-package:
+deploy:
   steps:
+    - script:
+      name: Setting version number
+      code: export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
     - script:
       name: Creating package directory
       code: mkdir -p data/build/artifact
     - script:
+      name: Creating package name
+      code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
+    - script:
       name: Running Zend-Tool
-      code: |-
-       export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
-       /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip"
+      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip"
     - s3sync:
       key-id: $AWS_KEY
       key-secret: $AWS_SECRET
       bucket-url: $AWS_BUCKET_URL
       source-dir: data/build/artifact
+    - github-create-release:
+      token: $MC_GITHUB_TOKEN
+      tag: $VERSION
+    - github-upload-asset:
+      token: $MC_GITHUB_TOKEN
+      file: data/build/artifact/platform-api-$VERSION.zip
+      filename: $PACKAGE.zip
