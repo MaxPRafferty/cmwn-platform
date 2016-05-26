@@ -1,6 +1,6 @@
 <?php
 
-namespace IntegrationTest\Api;
+namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
@@ -105,6 +105,7 @@ class TokenResourceTest extends TestCase
                     'flip',
                     'games',
                     'group_school',
+                    'group_class',
                     'org_district',
                     'password',
                     'profile',

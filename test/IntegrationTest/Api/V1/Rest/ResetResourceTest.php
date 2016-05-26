@@ -1,6 +1,6 @@
 <?php
 
-namespace IntegrationTest\Api;
+namespace IntegrationTest\Api\V1\Rest;
 
 use Forgot\Service\ForgotServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;

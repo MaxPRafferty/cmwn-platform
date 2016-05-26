@@ -1,6 +1,6 @@
 <?php
 
-namespace IntegrationTest\Api;
+namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
@@ -15,6 +15,7 @@ use Zend\Json\Json;
  * @group User
  * @group IntegrationTest
  * @group UserService
+ * @group UserGroupService0
  * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
