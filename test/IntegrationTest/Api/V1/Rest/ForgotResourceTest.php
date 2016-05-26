@@ -1,6 +1,6 @@
 <?php
 
-namespace IntegrationTest\Api;
+namespace IntegrationTest\Api\V1\Rest;
 
 use Application\Exception\NotFoundException;
 use Forgot\Service\ForgotServiceInterface;

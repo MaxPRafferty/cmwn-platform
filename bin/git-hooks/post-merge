@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
-docker-machine active
+target_docker_name="api"
+
+bash $PWD/bin/setup-docker.sh $target_docker_name
 if [ $? != 0 ]
 then
-    echo "[post-merge] no default docker-machine running"
-    echo "[post-merge] you should check for updates in composer.json yourself"
+    >&2 echo "[post-merge] no $target_docker_name docker-machine running"
     exit 1
 fi
+
+echo "[post-merge] Building docker containers"
+eval $(docker-machine env api)
 
 echo "[post-merge] Checking for new modules"
 
 if [ "composer.json" -nt "vendor/" ]; then
     echo "[post-merge] New composer.json installing new packages"
-    docker-compose run php composer update --ignore-platform-reqs
+    docker-compose run php composer update --vv
 fi
 
 docker-compose run php phinx migrate -c config/phinx.php -e dev

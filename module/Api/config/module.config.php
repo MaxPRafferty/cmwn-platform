@@ -137,7 +137,7 @@ return array(
             'api.rest.password' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/password[/:user_id]',
+                    'route' => '/user/:user_id/password',
                     'defaults' => array(
                         'controller' => 'Api\\V1\\Rest\\Password\\Controller',
                     ),
@@ -443,7 +443,9 @@ return array(
             'route_name' => 'api.rest.password',
             'route_identifier_name' => 'user_id',
             'collection_name' => 'password',
-            'entity_http_methods' => array(),
+            'entity_http_methods' => array(
+                1 => 'POST',
+            ),
             'collection_http_methods' => array(
                 1 => 'POST',
             ),

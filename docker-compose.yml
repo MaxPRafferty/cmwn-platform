@@ -6,6 +6,7 @@ php:
     DATABASE1_HOST: cmwn_mysql_1
     DATABASE1_USER: cmwn_user
     DATABASE1_PASS: cmwn_pass
+    USE_ZEND_ALLOC: 0
   volumes:
     - ./:/var/www/
   links:
@@ -19,6 +20,8 @@ mysql:
     MYSQL_DATABASE: cmwn
     MYSQL_USER: cmwn_user
     MYSQL_PASSWORD: cmwn_pass
+  ports:
+    - "3306:3306"
   volumes:
     - /var/lib/mysql
 

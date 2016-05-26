@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 
 cat $PWD/bin/splash.txt
+target_docker_name="api"
 
-docker-machine active
+bash $PWD/bin/setup-docker.sh $target_docker_name
 if [ $? != 0 ]
 then
-    echo "[post-merge] no default docker-machine running"
-    echo "[post-merge] you should check for updates in composer.json yourself"
+    >&2 echo "[api-installer] no $target_docker_name docker-machine running"
+    exit 1
+fi
+
+echo "[api-installer] Building docker containers"
+eval $(docker-machine env api)
+
+DOCKER_IP=`docker-machine ip $target_docker_name`
+
+if [ -z "$DOCKER_IP" ]
+then
+    >&2 echo "Looks like we did not the correct docker-machine set up"
     exit 1
 fi
 
@@ -18,8 +29,6 @@ cp config/autload/local.php.dist config/autoload/local.php
 echo "[api-installer] Installing git hooks"
 bash $PWD/bin/install-git-hooks.sh
 
-echo "[api-installer] Building docker containers"
-eval $(docker-machine env)
 
 docker-compose build
 if [ "composer.json" -nt "vendor/" ]; then
@@ -36,14 +45,25 @@ else
 fi
 
 docker-compose start
+echo "[api-installer] Allowing mysql to start"
 sleep 3
+
+echo "[api-installer] Migrating Database"
 docker-compose run php phinx migrate -c config/phinx.php -e dev
+
+echo "[api-installer] Seeding Database"
 docker-compose run php phinx seed:run -c config/phinx.php -e dev
 
-DOCKER_IP=$(docker-machine ip)
+echo "[api-installer] Creating test database"
+docker-compose run php mysql --host="cmwn_mysql_1" -u root --password="cmwn_pass123" -e "CREATE DATABASE IF NOT EXISTS cmwn_test; GRANT ALL PRIVILEGES ON cmwn_test.* TO cmwn_user@'%' IDENTIFIED BY 'cmwn_pass'"
+
+echo "[api-installer] Migrating test database"
+docker-compose run php phinx migrate -c config/phinx.php -e test
+
+echo "[api-installer] Seeding test database"
+docker-compose run php phinx seed:run -c config/phinx.php -e test
 
 cat <<EOF
-[api-installer] Completed!
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!                                                    !!

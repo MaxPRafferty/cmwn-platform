@@ -9,23 +9,13 @@ Requirements
 
 docker 1.11+
 docker-compose 1.7+
+VirtualBox 5.0+
 
 Installing
 ----------
 
-Using docker to install is simple.  1st make sure you have docker machine running:
- 
-```bash
-$ docker-machine start
-```
+To setup the site, just run 
 
-Afterwards you need to ensure that your host can talk to docker:
-
-```bash
-$ eval $(docker-machine env)
-```
-
-Then you can run the install script and follow the instructions after the script runs:
 
 ```bash
 $ bin/install.sh
@@ -37,6 +27,7 @@ Development
 After you run the install script, you are ready to get started.  To start docker just run:
 
 ```bash
+$ eval $(docker-machine env api)
 $ docker-composer up -d 
 ```
 
@@ -47,4 +38,4 @@ FAQ:
 
 __Q:__ I get the following error: "ERROR: Couldn't connect to Docker daemon - you might need to run 'docker-machine start default'."
 
-__A:__ This happens when you restart your computer or when you open a new terminal window.  Run: ``eval $(docker-machine env)``
+__A:__ This happens when you restart your computer or when you open a new terminal window.  Run: ``eval $(docker-machine env api)``

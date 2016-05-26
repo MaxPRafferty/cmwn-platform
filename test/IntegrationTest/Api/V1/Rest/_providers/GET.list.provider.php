@@ -5,6 +5,7 @@ return [
         'login'        => 'english_teacher',
         'expected_ids' => [
             'english_student',
+            'principal',
         ],
     ],
 
@@ -12,6 +13,7 @@ return [
         'login'        => 'math_teacher',
         'expected_ids' => [
             'math_student',
+            'principal',
         ],
     ],
 
@@ -19,6 +21,7 @@ return [
         'login'        => 'english_student',
         'expected_ids' => [
             'english_teacher',
+            'principal',
         ],
     ],
 
@@ -26,6 +29,7 @@ return [
         'login'        => 'math_student',
         'expected_ids' => [
             'math_teacher',
+            'principal',
         ],
     ],
 
@@ -43,6 +47,7 @@ return [
         'login'        => 'other_student',
         'expected_ids' => [
             'other_teacher',
+            'other_principal',
         ],
     ],
 
@@ -50,6 +55,7 @@ return [
         'login'        => 'other_teacher',
         'expected_ids' => [
             'other_student',
+            'other_principal',
         ],
     ],
 

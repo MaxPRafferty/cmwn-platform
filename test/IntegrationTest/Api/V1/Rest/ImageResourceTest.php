@@ -1,13 +1,12 @@
 <?php
 
-namespace IntegrationTest\Api;
+namespace IntegrationTest\Api\V1\Rest;
 
 use Application\Exception\NotFoundException;
 use Asset\Image;
 use Asset\Service\UserImageServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
-use Zend\Json\Json;
 
 /**
  * Test ImageResourceTest
