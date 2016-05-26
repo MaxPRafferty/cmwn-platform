@@ -35,8 +35,12 @@ build:
   after-steps:
     - slack-notifier:
       url: $SLACK_URL
+
 package:
   steps:
+    - script:
+      name: Creating package directory
+      code: mkdir -p data/build/artifact
     - script:
       name: Running Zend-Tool
       code: |-
