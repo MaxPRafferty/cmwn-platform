@@ -10,21 +10,21 @@ return array(
         6 => 'Api\\Listeners\\ChangePasswordListener',
         7 => 'Api\\Listeners\\GroupRouteListener',
         8 => 'Api\\Listeners\\FriendListener',
-        9 => \Api\Listeners\UserHalLinksListener::class,
-        10 => \Api\Listeners\TemplateLinkListener::class,
+        9 => 'Api\\Listeners\\UserHalLinksListener',
+        10 => 'Api\\Listeners\\TemplateLinkListener',
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
-            \Api\Listeners\TemplateLinkListener::class => \Api\Listeners\TemplateLinkListener::class,
+            'Api\\Listeners\\TemplateLinkListener' => 'Api\\Listeners\\TemplateLinkListener',
         ),
         'factories' => array(
-            \Api\Listeners\UserHalLinksListener::class => \Api\Factory\UserHalLinksListenerFactory::class,
-            'Api\\Listeners\\ImportRouteListener'      => 'Api\\Factory\\ImportRouteListenerFactory',
-            'Api\\Listeners\\ScopeListener'            => 'Api\\Factory\\ScopeListenerFactory',
-            'Api\\Listeners\\UserRouteListener'        => 'Api\\Factory\\UserRouteListenerFactory',
-            'Api\\Listeners\\UserGroupListener'        => 'Api\\Factory\\UserGroupListenerFactory',
-            'Api\\Listeners\\GroupRouteListener'       => 'Api\\Factory\\GroupRouteListenerFactory',
+            'Api\\Listeners\\UserHalLinksListener' => 'Api\\Factory\\UserHalLinksListenerFactory',
+            'Api\\Listeners\\ImportRouteListener' => 'Api\\Factory\\ImportRouteListenerFactory',
+            'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',
+            'Api\\Listeners\\UserRouteListener' => 'Api\\Factory\\UserRouteListenerFactory',
+            'Api\\Listeners\\UserGroupListener' => 'Api\\Factory\\UserGroupListenerFactory',
+            'Api\\Listeners\\GroupRouteListener' => 'Api\\Factory\\GroupRouteListenerFactory',
             'Api\\Listeners\\OrgRouteListener' => 'Api\\Factory\\OrgRouteListenerFactory',
             'Api\\Listeners\\SuperMeListener' => 'Api\\Factory\\SuperMeListenerFactory',
             'Api\\Listeners\\UserImageListener' => 'Api\\Factory\\UserImageListenerFactory',
@@ -49,6 +49,7 @@ return array(
             'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
             'Api\\V1\\Rest\\Reset\\ResetResource' => 'Api\\V1\\Rest\\Reset\\ResetResourceFactory',
+            'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource' => 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResourceFactory',
         ),
     ),
     'router' => array(
@@ -233,6 +234,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.update-password' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/password[/:update_password_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\UpdatePassword\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -257,6 +267,7 @@ return array(
             17 => 'api.rest.friend',
             18 => 'api.rest.suggest',
             19 => 'api.rest.reset',
+            20 => 'api.rest.update-password',
         ),
     ),
     'zf-rest' => array(
@@ -627,6 +638,28 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Reset\\ResetCollection',
             'service_name' => 'Reset',
         ),
+        'Api\\V1\\Rest\\UpdatePassword\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource',
+            'route_name' => 'api.rest.update-password',
+            'route_identifier_name' => 'update_password_id',
+            'collection_name' => 'update_password',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordEntity',
+            'collection_class' => 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordCollection',
+            'service_name' => 'UpdatePassword',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -650,6 +683,7 @@ return array(
             'Api\\V1\\Rest\\Friend\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Suggest\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Reset\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\UpdatePassword\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -752,6 +786,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\UpdatePassword\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -832,6 +871,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Reset\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\UpdatePassword\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1081,6 +1124,18 @@ return array(
                 'route_identifier_name' => 'reset_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.update-password',
+                'route_identifier_name' => 'update_password_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'api.rest.update-password',
+                'route_identifier_name' => 'update_password_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -1122,6 +1177,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Reset\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Reset\\Validator',
+        ),
+        'Api\\V1\\Rest\\UpdatePassword\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\UpdatePassword\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1543,6 +1601,34 @@ return array(
                 'filters' => array(),
                 'name' => 'code',
                 'description' => 'The temporary code to use',
+            ),
+        ),
+        'Api\\V1\\Rest\\UpdatePassword\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Security\\PasswordValidator',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'password',
+                'description' => 'New Password',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\Identical',
+                        'options' => array(
+                            'token' => 'password',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'password_confirmation',
+                'description' => 'Confirmed password',
             ),
         ),
     ),
