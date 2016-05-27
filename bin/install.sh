@@ -55,7 +55,7 @@ echo "[api-installer] Seeding Database"
 docker-compose run php phinx seed:run -c config/phinx.php -e dev
 
 echo "[api-installer] Creating test database"
-docker-compose run php mysql --host="cmwn_mysql_1" -u root --password="cmwn_pass123" -e "CREATE DATABASE IF NOT EXISTS cmwn_test; GRANT ALL PRIVILEGES ON cmwn_test.* TO cmwn_user@'%' IDENTIFIED BY 'cmwn_pass'"
+docker-compose run php mysql --host="cmwn_api_mysql" -u root --password="cmwn_pass123" -e "CREATE DATABASE IF NOT EXISTS cmwn_test; GRANT ALL PRIVILEGES ON cmwn_test.* TO cmwn_user@'%' IDENTIFIED BY 'cmwn_pass'"
 
 echo "[api-installer] Migrating test database"
 docker-compose run php phinx migrate -c config/phinx.php -e test
