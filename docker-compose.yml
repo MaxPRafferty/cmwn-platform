@@ -1,36 +1,42 @@
-php:
-  build: ./docker/php
-  environment:
-    CACHE1_HOST: cmwn_redis_1
-    DATABASE1_NAME: cmwn
-    DATABASE1_HOST: cmwn_mysql_1
-    DATABASE1_USER: cmwn_user
-    DATABASE1_PASS: cmwn_pass
-    USE_ZEND_ALLOC: 0
-  volumes:
-    - ./:/var/www/
-  links:
-    - mysql
-    - redis
+version: '2'
+services:
+  php:
+    container_name: cmwn_api_php
+    build: ./docker/php
+    environment:
+      CACHE1_HOST: cmwn_api_redis
+      DATABASE1_NAME: cmwn
+      DATABASE1_HOST: cmwn_api_mysql
+      DATABASE1_USER: cmwn_user
+      DATABASE1_PASS: cmwn_pass
+      USE_ZEND_ALLOC: 0
+    volumes:
+      - ./:/var/www/
+    links:
+      - mysql
+      - redis
 
-mysql:
-  image: mysql:5.5
-  environment:
-    MYSQL_ROOT_PASSWORD: cmwn_pass123
-    MYSQL_DATABASE: cmwn
-    MYSQL_USER: cmwn_user
-    MYSQL_PASSWORD: cmwn_pass
-  ports:
-    - "3306:3306"
-  volumes:
-    - /var/lib/mysql
+  mysql:
+    container_name: cmwn_api_mysql
+    image: mysql:5.5
+    environment:
+      MYSQL_ROOT_PASSWORD: cmwn_pass123
+      MYSQL_DATABASE: cmwn
+      MYSQL_USER: cmwn_user
+      MYSQL_PASSWORD: cmwn_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - /var/lib/mysql
 
-redis:
-  image: redis
+  redis:
+    image: redis
+    container_name: cmwn_api_redis
 
-nginx:
-  build: ./docker/nginx
-  ports:
-    - "443:443"
-  links:
-    - php
+  nginx:
+    container_name: cmwn_api_ngnix
+    build: ./docker/nginx
+    ports:
+      - "443:443"
+    links:
+      - php
