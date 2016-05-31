@@ -6,6 +6,7 @@ return [
             \Security\PasswordValidator::class => \Security\Factory\PasswordValidatorFactory::class,
         ],
     ],
+    
     'service_manager' => [
         'aliases' => [
             'authentication' =>
