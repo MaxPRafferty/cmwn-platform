@@ -15,6 +15,7 @@ use Zend\Paginator\Paginator;
  * @group Friend
  * @group IntegrationTest
  * @group FriendService
+ * @group UserGroupService
  * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -117,6 +118,7 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'english_teacher',
                 'expected_user_ids' => [
                     'english_student',
+                    'principal',
                 ],
             ],
 
@@ -124,6 +126,7 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'math_teacher',
                 'expected_user_ids' => [
                     'math_student',
+                    'principal',
                 ],
             ],
 
@@ -131,6 +134,7 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'english_student',
                 'expected_user_ids' => [
                     'english_teacher',
+                    'principal',
                 ],
             ],
 
@@ -138,6 +142,7 @@ class UserGroupServiceTest extends TestCase
                 'user'              => 'math_student',
                 'expected_user_ids' => [
                     'math_teacher',
+                    'principal',
                 ],
             ],
         ];
