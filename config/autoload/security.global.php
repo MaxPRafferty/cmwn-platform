@@ -43,6 +43,9 @@ return [
             'api.rest.password'    => [
                 'POST' => 'update.password',
             ],
+            'api.rest.update-password'    => [
+                'POST' => 'update.password',
+            ],
             'api.rest.group-users' => [
                 'GET' => 'view.group.users',
             ],

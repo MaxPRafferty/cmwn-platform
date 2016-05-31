@@ -30,9 +30,8 @@ $config = [
     ],
 ];
 
-if (defined('TEST_MODE')) {
+if (defined('TEST_MODE') || !extension_loaded('redis')) {
     unset($config['session']['save_handler']);
 }
 
 return $config;
-

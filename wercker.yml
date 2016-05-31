@@ -15,13 +15,11 @@ build:
   steps:
     - script:
       name: install dependencies
-      code: |-
-        export COMPOSER_CACHE_DIR=$WERCKER_CACHE_DIR/composer
-        composer install --no-interaction --no-dev
+      code: composer install --no-interaction --no-dev
     - script:
       name: Setup test DB
       code: |-
-        sleep 3
+        sleep 5
         phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
@@ -37,13 +35,34 @@ build:
   after-steps:
     - slack-notifier:
       url: $SLACK_URL
-package:
+
+deploy:
   steps:
     - script:
-      name: Running Zend-Tool
-      code: |-
-       export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
-       /usr/sbin/zfdeploy.php build "platform-api-$VERSION.zip"
+      name: Setting version number
+      code: export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
     - script:
-      name: test
-      code: ls -al
+      name: Creating package directory
+      code: mkdir -p data/build/artifact
+    - script:
+      name: On Production?
+      code: export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
+    - script:
+      name: Creating package name
+      code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
+    - script:
+      name: Running Zend-Tool
+      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip"
+    - s3sync:
+      key-id: $AWS_KEY
+      key-secret: $AWS_SECRET
+      bucket-url: $AWS_BUCKET_URL
+      source-dir: data/build/artifact
+    - github-create-release:
+      token: $MC_GITHUB_TOKEN
+      tag: $VERSION
+      draft: $DRAFT
+    - github-upload-asset:
+      token: $MC_GITHUB_TOKEN
+      file: data/build/artifact/platform-api-$VERSION.zip
+      filename: $PACKAGE.zip
