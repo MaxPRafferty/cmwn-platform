@@ -4,13 +4,17 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use Security\ChangePasswordUser;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
 
 /**
  * Test UpdatePasswordResourceTest
  *
- * @group Now
+ * @group Security
+ * @group Api
+ * @group IntegrationTest
+ * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -38,7 +42,7 @@ class UpdatePasswordResourceTest extends TestCase
     public function testItShouldChangePasswordForCodeUser()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInChangePasswordUser('english_student');
 
         $this->dispatch(
             '/password',
@@ -64,7 +68,7 @@ class UpdatePasswordResourceTest extends TestCase
     public function testItShouldErrorWhenConfirmationDoseNotMatchPassword()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInChangePasswordUser('english_student');
 
         $this->dispatch(
             '/password',
@@ -94,8 +98,10 @@ class UpdatePasswordResourceTest extends TestCase
         $user = $this->securityService->fetchUserByUserName('english_student');
         $this->securityService->saveCodeToUser('Apple0007', $user);
 
+        $user = new ChangePasswordUser(array_merge(['code' => 'Apple0007'], $user->getArrayCopy()));
+        $this->getAuthService()->getStorage()->write($user);
+
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
 
         $this->dispatch(
             '/password',
