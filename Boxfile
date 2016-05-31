@@ -11,7 +11,7 @@ global:
 build:
   before_exec:
     - 'rm -rf puphet'
-    - 'rm Vagrantfile'
+    - 'rm -rf Vagrantfile'
     - 'rm -rf public/img'
     - 'rm -rf html'
 #    - 'rm -rf vendor'
