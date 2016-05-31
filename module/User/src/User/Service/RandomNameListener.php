@@ -75,11 +75,13 @@ class RandomNameListener
             return null;
         }
 
+        // This SHOULD generate a name if no name is set
+        // FIXME maybe remove the conditional
+        $child->getUserName();
         if (!$child->isNameGenerated()) {
             return null;
         }
 
-        $child->getUserName();
         $userName = $child->getGeneratedName();
         $results  = $this->gateway->select(['name' => [$userName->left, $userName->right]]);
 

@@ -43,6 +43,7 @@ class UserNameResource extends AbstractResourceListener implements Authenticatio
      *
      * @param  mixed $data
      * @return ApiProblem|MeEntity
+     * @todo Create an asserting instead of checking the user type here
      */
     public function create($data)
     {
