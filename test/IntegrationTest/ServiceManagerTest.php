@@ -3,7 +3,6 @@
 namespace IntegrationTest;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Zend\File\ClassFileLocator;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -68,59 +67,6 @@ class ServiceManagerTest extends TestCase
         return $return;
     }
 
-    public function applicationClassProvider()
-    {
-        $iterator = new \GlobIterator(
-            realpath(__DIR__ . '/../../module/') . '/**/src/**',
-            \FilesystemIterator::KEY_AS_PATHNAME
-        );
-
-        $return   = [];
-        foreach ($iterator as $path => $file) {
-            $locator  = new ClassFileLocator($path);
-            foreach ($locator as $classFile) {
-                /** @var \Zend\File\PhpClassFile $classFile */
-                foreach ($classFile->getClasses() as $class) {
-
-                    if (strpos($class, 'Module') !== false) {
-                        continue;
-                    }
-
-                    if (strpos($class, 'Api') === 0) {
-                        continue;
-                    }
-
-                    // Dont need traits
-                    if (trait_exists($class)) {
-                        continue;
-                    }
-
-                    $interfaces = class_implements($class);
-
-                    if (in_array('Zend\ServiceManager\FactoryInterface', $interfaces)) {
-                        continue;
-                    }
-
-                    if (in_array('Throwable', $interfaces)) {
-                        continue;
-                    }
-
-                    if (in_array('Zend\ServiceManager\InitializerInterface', $interfaces)) {
-                        continue;
-                    }
-
-                    if (in_array('Zend\ServiceManager\AbstractFactoryInterface', $interfaces)) {
-                        continue;
-                    }
-
-                    $return[$class] = [$class];
-                }
-            }
-        }
-
-        return $return;
-    }
-
     /**
      * @param $service
      * @dataProvider servicesProvider
@@ -148,26 +94,4 @@ class ServiceManagerTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /**
-     * @dataProvider applicationClassProvider
-//     */
-//    public function testItShouldBeAbleToLoadAllClassesFromServiceManager($class)
-//    {
-//        $found = false;
-//
-//        /** @var ControllerManager $controllerManager */
-//        $controllerManager = $this->getServiceManager()->get('ControllerManager');
-//        if ($controllerManager->has($class)) {
-//            $found = true;
-//        }
-//
-//        if ($this->getServiceManager()->has($class)) {
-//            $found = true;
-//        }
-//
-//        $this->assertTrue(
-//            $found,
-//            $class . ' Is Missing From Service Manager'
-//        );
-//    }
 }
