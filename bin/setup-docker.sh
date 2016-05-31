@@ -52,6 +52,8 @@ if [ "$machine_state" == "Saved" ]; then
     then
         echo "[docker-setup] Unable to restart machine for $target_docker_name"
         exit 1
+    else
+        exit 0
     fi
 fi
 
@@ -62,6 +64,8 @@ if [ "$machine_state" == "Stopped" ] || [ "$machine_state" == "Paused" ]; then
     then
         echo "[docker-setup] Unable to start machine for $target_docker_name"
         exit 1
+    else
+        exit 0
     fi
 fi
 

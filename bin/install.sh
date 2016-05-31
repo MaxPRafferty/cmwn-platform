@@ -35,10 +35,10 @@ if [ "composer.json" -nt "vendor/" ]; then
     if [ ! -e "vendor//" ];
     then
         echo "[api-installer] New composer.json installing new packages"
-        docker-compose run php composer install
+        docker-compose run --rm php composer install
     else
         echo "[api-installer] New composer.json updating packages"
-        docker-compose run php composer update
+        docker-compose run --rm php composer update
     fi
 else
     echo "[api-installer] Composer appears to be up to date"
@@ -49,19 +49,19 @@ echo "[api-installer] Allowing mysql to start"
 sleep 3
 
 echo "[api-installer] Migrating Database"
-docker-compose run php phinx migrate -c config/phinx.php -e dev
+docker-compose run --rm php phinx migrate -c config/phinx.php -e dev
 
 echo "[api-installer] Seeding Database"
-docker-compose run php phinx seed:run -c config/phinx.php -e dev
+docker-compose run --rm php phinx seed:run -c config/phinx.php -e dev
 
 echo "[api-installer] Creating test database"
-docker-compose run php mysql --host="cmwn_api_mysql" -u root --password="cmwn_pass123" -e "CREATE DATABASE IF NOT EXISTS cmwn_test; GRANT ALL PRIVILEGES ON cmwn_test.* TO cmwn_user@'%' IDENTIFIED BY 'cmwn_pass'"
+docker-compose run --rm php mysql --host="cmwn_api_mysql" -u root --password="cmwn_pass123" -e "CREATE DATABASE IF NOT EXISTS cmwn_test; GRANT ALL PRIVILEGES ON cmwn_test.* TO cmwn_user@'%' IDENTIFIED BY 'cmwn_pass'"
 
 echo "[api-installer] Migrating test database"
-docker-compose run php phinx migrate -c config/phinx.php -e test
+docker-compose run --rm php phinx migrate -c config/phinx.php -e test
 
 echo "[api-installer] Seeding test database"
-docker-compose run php phinx seed:run -c config/phinx.php -e test
+docker-compose run --rm php phinx seed:run -c config/phinx.php -e test
 
 cat <<EOF
 

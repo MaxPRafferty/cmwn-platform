@@ -39,7 +39,7 @@ if [ -n "$files" ]; then
         echo "[pre-commit] checking file: $file"
 
         # first check if they are valid php files
-        output=`docker-compose run php php -l $file | grep 'Errors parsing'`
+        output=`docker-compose run --rm php php -l $file | grep 'Errors parsing'`
 
         # if it did contain errors, we have output
         if [ -n "$output" ]; then
@@ -48,22 +48,22 @@ if [ -n "$files" ]; then
         fi
 
         # checks if the phpcs output contains '| ERROR |'
-        output=`docker-compose run php phpcs --standard=PSR2 --extensions=php --encoding=utf8 --report=full $file | grep '| ERROR |'`
+        output=`docker-compose run --rm  php phpcs --standard=PSR2 --extensions=php --encoding=utf8 --report=full $file | grep '| ERROR |'`
 
         # if it did contain errors, we have output
         if [ -n "$output" ]; then
             echo "[pre-commit] $file fails coding standards"
-            docker-compose run php phpcs --standard=PSR2 --extensions=php --encoding=utf8 --report=full $file
+            docker-compose run --rm php phpcs --standard=PSR2 --extensions=php --encoding=utf8 --report=full $file
             errors=("${errors[@]}" "$output")
         fi
 
         # checks if the phpmd output
-        output=`docker-compose run php phpmd $file text codesize,design,controversial --suffixes php --exclude "*Test*"`
+        output=`docker-compose run --rm php phpmd $file text codesize,design,controversial --suffixes php --exclude "*Test*"`
 
         # if it did contain errors, we have output
         if [ -n "$output" ]; then
             echo "[pre-commit] $file fails is messy"
-            docker-compose run php phpmd $file text codesize,design,controversial --suffixes php --exclude "*Test*"
+            docker-compose run --rm php phpmd $file text codesize,design,controversial --suffixes php --exclude "*Test*"
             errors=("${errors[@]}" "$output")
         fi
     done
@@ -73,7 +73,7 @@ echo '[pre-commit] Running tests'
 echo '[pre-commit] ------------------'
 echo
 
-docker-compose run php phpunit -c /var/www/test/phpunit.xml --stop-on-error --stop-on-failure
+docker-compose run --rm php phpunit -c /var/www/test/phpunit.xml --stop-on-error --stop-on-failure
 if [ $? != 0 ]
 then
     >&2 echo "[pre-commit] Please fix your tests before committing"
