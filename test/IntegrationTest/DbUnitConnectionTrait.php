@@ -4,7 +4,6 @@ namespace IntegrationTest;
 
 use IntegrationTest\DataSets\ArrayDataSet;
 use PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection as TestConnection;
-use PHPUnit_Extensions_Database_DataSet_MysqlXmlDataSet as MysqlDataSet;
 
 /**
  * Trait DbUnitConnectionTrait
@@ -17,7 +16,7 @@ trait DbUnitConnectionTrait
     private $conn = null;
 
     /**
-     * @var MysqlDataSet
+     * @var ArrayDataSet
      */
     protected static $dataSet;
 
@@ -35,7 +34,7 @@ trait DbUnitConnectionTrait
     }
 
     /**
-     * @return MysqlDataSet
+     * @return ArrayDataSet
      */
     public function getDataSet()
     {
