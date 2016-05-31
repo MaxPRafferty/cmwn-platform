@@ -2,10 +2,12 @@
 
 namespace Forgot\Service;
 
+use Application\Exception\NotFoundException;
 use Application\Utils\NoopLoggerAwareTrait;
 use Security\Service\SecurityServiceInterface;
 use User\UserInterface;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Validator\StaticValidator;
 
 /**
  * Class ForgotService
@@ -37,7 +39,12 @@ class ForgotService implements LoggerAwareInterface, ForgotServiceInterface
      */
     public function saveForgotPassword($email, $code = null)
     {
-        $user = $this->securityService->fetchUserByEmail($email);
+        if (StaticValidator::execute($email, 'EmailAddress')) {
+            $user = $this->securityService->fetchUserByEmail($email);
+        } else {
+            $user = $this->securityService->fetchUserByUserName($email);
+        }
+
         $code = $code === null ? $this->generateCode() : $code;
         $this->securityService->saveCodeToUser($code, $user);
         return $user;

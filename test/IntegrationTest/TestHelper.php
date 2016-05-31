@@ -3,6 +3,8 @@
 namespace IntegrationTest;
 
 use Zend\Db\Adapter\Adapter;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Noop;
 use ZF\Apigility\Application;
 use Zend\ServiceManager\ServiceManager;
 
@@ -43,6 +45,13 @@ class TestHelper
         }
 
         static::$serviceManager = Application::init(static::getApplicationConfig())->getServiceManager();
+        static::$serviceManager->setAllowOverride(true);
+
+        $testLogger = new Logger();
+        $testLogger->addWriter(new Noop());
+
+        static::$serviceManager->setService('Log\App', $testLogger);
+        static::$serviceManager->setAllowOverride(false);
         return static::$serviceManager;
     }
 

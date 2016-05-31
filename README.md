@@ -7,74 +7,35 @@ Change My World Now API
 Requirements
 ------------
 
-Please see the [composer.json](composer.json) file.
+docker 1.11+
+docker-compose 1.7+
+VirtualBox 5.0+
 
-Installation
-------------
+Installing
+----------
 
-### Vagrant
+To setup the site, just run 
 
-If you prefer to develop with Vagrant, there is a basic vagrant recipe included with this project.
 
-This recipe assumes that you already have Vagrant installed. The virtual machine will try to use localhost:8080 by
-default, so if you already have a server on this port of your host machine, you need to shut down the conflicting
-server first, or if you know how, you can reconfigure the ports in Vagrantfile.
-
-Assuming you have Vagrant installed and assuming you have no port conflicts, you can bring up the Vagrant machine
-with the standard `up` command:
-
-```
-vagrant up
+```bash
+$ bin/install.sh
 ```
 
-When the machine comes up, you can ssh to it with the standard ssh forward agent:
+Development 
+-----------
 
-```
-vagrant ssh
-```
+After you run the install script, you are ready to get started.  To start docker just run:
 
-The web root is inside the shared directory, which is at `/var/www`. Once you've ssh'd into the box, you need to cd:
-
-```
-cd /var/www
+```bash
+$ eval $(docker-machine env api)
+$ docker-composer up -d 
 ```
 
-For vagrant documentation, please refer to [vagrantup.com](https://www.vagrantup.com/)
+_Note: the -d flag means the container will run in the back ground_
 
-### Host
+FAQ:
+---
 
-Vagrant is configured for api-local.changemyworldnow.com to 192.168.56.101
-Update your host file to point to that IP
+__Q:__ I get the following error: "ERROR: Couldn't connect to Docker daemon - you might need to run 'docker-machine start default'."
 
-### Config Files
-
-1st you need to take all the *.php.dist files and copy them to *.php in config/autoload
-ex: db.local.php.dist -> db.local.php 
-
-2nd copy config/development.config.php.dist to config/development.config.php
-
-## Database Migration
-
-Phinx is the primary module to perform DB migrations.  Currently there is a ZF2 Module that will
-proxy calls to migrate the DB but not seed the database. 
-
-#### Migration
-
-To create all the tables follow these steps:
-
-```
-$ vagrant ssh
-$ cd /var/www
-$ php vendor/bin/phinx migrate -c config/phinx.php -e dev
-```
-
-#### DB Seeding
-
-Currently only games and user name candidates will be seeded.  To run the seed:
-
-```
-$ vagrant ssh
-$ cd /var/www
-$ php vendor/bin/phinx seed:run -c config/phinx.php
-```
-
+__A:__ This happens when you restart your computer or when you open a new terminal window.  Run: ``eval $(docker-machine env api)``
