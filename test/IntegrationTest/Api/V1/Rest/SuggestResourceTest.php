@@ -32,12 +32,8 @@ class SuggestResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        if (static::$dataSet === null) {
-            $data = include __DIR__ . '/../../../DataSets/friends.dataset.php';
-            static::$dataSet = new ArrayDataSet($data);
-        }
-
-        return static::$dataSet;
+        $data = include __DIR__ . '/../../../DataSets/friends.dataset.php';
+        return new ArrayDataSet($data);
     }
 
     /**
@@ -65,6 +61,7 @@ class SuggestResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-701
+     * @ticket CORE-703
      */
     public function testItShouldReturnSuggestionsWhenUserHasPendingRequest()
     {
@@ -81,6 +78,62 @@ class SuggestResourceTest extends TestCase
 
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('suggest', $body['_embedded']);
-        $this->assertEquals(2, count($body['_embedded']['suggest']));
+        $actualSuggestion = [];
+        foreach ($body['_embedded']['suggest'] as $suggestData) {
+            $actualSuggestion[] = [
+                'user_id' => $suggestData['suggest_id'],
+                'status'  => $suggestData['friend_status'],
+            ];
+        }
+
+        $expected = [
+            [
+                'user_id' => 'other_student',
+                'status'  => 'CAN_FRIEND',
+            ],
+        ];
+
+        $this->assertEquals($expected, $actualSuggestion);
+    }
+    
+    /**
+     * @test
+     * @ticket CORE-701
+     * @ticket CORE-703
+     */
+    public function testItShouldReturnSuggestionsWhenUserHasNoFriends()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+
+        $this->dispatch('/user/english_student/suggest');
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.suggest');
+        $this->assertControllerName('api\v1\rest\suggest\controller');
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('suggest', $body['_embedded']);
+        $actualSuggestion = [];
+        foreach ($body['_embedded']['suggest'] as $suggestData) {
+            $actualSuggestion[] = [
+                'user_id' => $suggestData['suggest_id'],
+                'status'  => $suggestData['friend_status'],
+            ];
+        }
+
+        $expected = [
+            [
+                'user_id' => 'other_student',
+                'status'  => 'CAN_FRIEND',
+            ],
+            [
+                'user_id' => 'math_student',
+                'status'  => 'CAN_FRIEND',
+            ],
+        ];
+
+        $this->assertEquals($expected, $actualSuggestion);
     }
 }

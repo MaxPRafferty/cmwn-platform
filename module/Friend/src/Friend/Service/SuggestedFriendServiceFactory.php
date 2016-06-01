@@ -2,7 +2,7 @@
 
 namespace Friend\Service;
 
-use Group\Service\UserGroupServiceInterface;
+use Zend\Db\Adapter\Adapter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -19,8 +19,8 @@ class SuggestedFriendServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get(UserGroupServiceInterface::class);
-        return new SuggestedFriendService($userGroupService);
+        /** @var Adapter $adapter */
+        $adapter   = $serviceLocator->get(Adapter::class);
+        return new SuggestedFriendService($adapter);
     }
 }
