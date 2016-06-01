@@ -97,12 +97,14 @@ class UserGroupService implements UserGroupServiceInterface
      *   AND g.organization_id = 'district'
      *
      * @param Where|GroupInterface|string $group
+     * @param array $where
      * @param object $prototype
+     *
      * @return DbSelect
      */
-    public function fetchUsersForGroup(GroupInterface $group, $prototype = null)
+    public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null)
     {
-        $where = $this->createWhere([]);
+        $where = $this->createWhere($where);
         $where->addPredicate(new Between(
             'g.head',
             new Expression('active_group.head'),
@@ -161,13 +163,15 @@ class UserGroupService implements UserGroupServiceInterface
      * GROUP BY u.user_id;
      *
      * @param $organization
+     * @param array $where
      * @param null $prototype
+     *
      * @return DbSelect
      */
-    public function fetchUsersForOrg($organization, $prototype = null)
+    public function fetchUsersForOrg($organization, $where = null, $prototype = null)
     {
         $orgId = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
-        $where = new Where();
+        $where = $this->createWhere($where);
         $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $orgId));
         
         $select = new Select(['g'  => 'groups']);
