@@ -371,7 +371,7 @@ class UserGroupService implements UserGroupServiceInterface
         $select->join(
             ['uf' => 'user_friends'],
             'uf.user_id = ug.user_id OR uf.friend_id = ug.user_id',
-            ['friend_id' => 'user_id'],
+            ['friend_status' => 'status'],
             Select::JOIN_LEFT_OUTER
         );
 
@@ -392,8 +392,6 @@ class UserGroupService implements UserGroupServiceInterface
         $select->having(new Operator('u.user_id', '!=', $userId));
         $select->order(['u.first_name', 'u.last_name']);
 
-        $sql = new \Zend\Db\Sql\Sql($this->pivotTable->getAdapter());
-        $stmt = $sql->buildSqlString($select);
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         return new DbSelect(
