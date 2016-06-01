@@ -39,19 +39,23 @@ interface UserGroupServiceInterface
      * Finds all the users for a group
      *
      * @param Where|GroupInterface|string $group
+     * @param array $where
      * @param object $prototype
+     *
      * @return DbSelect
      */
-    public function fetchUsersForGroup(GroupInterface $group, $prototype = null);
+    public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null);
 
     /**
      * Finds all the users for an organization
      *
      * @param $organization
+     * @param array $where
      * @param null $prototype
+     *
      * @return DbSelect
      */
-    public function fetchUsersForOrg($organization, $prototype = null);
+    public function fetchUsersForOrg($organization, $where = null, $prototype = null);
 
     /**
      * Finds all the users for a group
