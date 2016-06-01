@@ -1,4 +1,4 @@
-FROM php:7.0-cli
+FROM php:7.0-fpm
 MAINTAINER Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
 
 COPY composer.json /root/.composer/composer.json
@@ -7,7 +7,7 @@ COPY composer.json /root/.composer/composer.json
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libmcrypt-dev \
-    && apt-get install git -y -q \
+    && apt-get install git mysql-client -y -q \
     && git clone --depth=1 -b php7 https://github.com/phpredis/phpredis.git /usr/src/php/ext/redis \
     && docker-php-ext-install iconv mcrypt \
     && docker-php-ext-install pdo \
@@ -18,4 +18,15 @@ RUN apt-get update && apt-get install -y \
     && cd /root/.composer/ \
     && composer global install --optimize-autoloader -vvv
 
-CMD ["/usr/local/bin/php -v"]
+RUN yes | pecl install xdebug
+
+RUN pecl install -o -f xdebug \
+    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/xdebug.ini
+
+WORKDIR /var/www
+
+CMD ["/usr/local/sbin/php-fpm"]

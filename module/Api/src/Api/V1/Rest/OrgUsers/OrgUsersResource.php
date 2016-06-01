@@ -34,6 +34,6 @@ class OrgUsersResource extends AbstractResourceListener
      */
     public function fetch($orgId)
     {
-        return new OrgUsersCollection($this->groupService->fetchUsersForOrg($orgId, new UserEntity()));
+        return new OrgUsersCollection($this->groupService->fetchUsersForOrg($orgId, [], new UserEntity()));
     }
 }

@@ -2,8 +2,10 @@
 
 namespace IntegrationTest;
 
+use Security\ChangePasswordUser;
 use Security\Guard\CsrfGuard;
 use Security\Service\SecurityService;
+use User\UserInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
@@ -95,13 +97,26 @@ abstract class AbstractApigilityTestCase extends TestCase
      * Logs in a user (from the test DB)
      *
      * @param $userName
+     * @return UserInterface
      */
-    public function logInUser($userName, $forceRole = null)
+    public function logInUser($userName)
     {
         /** @var SecurityService $userService */
         $userService = TestHelper::getServiceManager()->get(SecurityService::class);
 
         $user = $userService->fetchUserByUserName($userName);
+        $this->getAuthService()->getStorage()->write($user);
+        return $user;
+    }
+
+    /**
+     * Logs in a user (from the test DB)
+     *
+     * @param $userName
+     */
+    public function logInChangePasswordUser($userName)
+    {
+        $user = new ChangePasswordUser($this->logInUser($userName)->getArrayCopy());
         $this->getAuthService()->getStorage()->write($user);
     }
 

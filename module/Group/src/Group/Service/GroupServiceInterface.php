@@ -60,6 +60,7 @@ interface GroupServiceInterface
      * @param $externalId
      * @return GroupInterface
      * @throws NotFoundException
+     * @todo Add Organization ID to the mix
      */
     public function fetchGroupByExternalId($externalId);
 

@@ -6,7 +6,7 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
-
+use Security\Exception\ChangePasswordException;
 use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
@@ -98,7 +98,11 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         }
 
         /** @var SecurityUser $user */
-        $user = $this->authService->getIdentity();
+        try {
+            $user = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePass) {
+            $user = $changePass->getUser();
+        }
 
         if ($user->isSuper()) {
             $user->setRole('super');

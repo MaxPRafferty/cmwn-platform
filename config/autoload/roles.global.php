@@ -78,6 +78,8 @@ return [
                     'view.all.users',
                     'view.flip',
                     'view.user.flip',
+                    'adult.code',
+                    'child.code',
                 ],
             ],
 
@@ -208,6 +210,7 @@ return [
                     'view.group',
                     'view.group.users',
                     'view.org',
+                    'view.org.users',
                     'view.user.adult',
                     'view.user.child',
                     'attach.profile.image',
@@ -219,6 +222,7 @@ return [
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
+                    'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
                 ],
@@ -229,6 +233,7 @@ return [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
+                    'update.password',
                     'create.user.flip',
                     'edit.user.adult',
                     'edit.user.child',
@@ -257,6 +262,7 @@ return [
                     'view.group',
                     'view.group.users',
                     'view.org',
+                    'view.org.users',
                     'view.user.adult',
                     'view.user.child',
                 ],
@@ -276,6 +282,7 @@ return [
                     'view.group',
                     'view.group.users',
                     'view.org',
+                    'view.org.users',
                     'view.user.adult',
                     'view.user.child',
                     'attach.profile.image',

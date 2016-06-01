@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+target_docker_name="api"
+
+bash $PWD/bin/setup-docker.sh $target_docker_name
+if [ $? != 0 ]
+then
+    >&2 echo "[post-merge] no $target_docker_name docker-machine running"
+    exit 1
+fi
+
+echo "[post-merge] Building docker containers"
+eval $(docker-machine env api)
+
+echo "[post-merge] Checking for new modules"
+
+if [ "composer.json" -nt "vendor/" ]; then
+    echo "[post-merge] New composer.json installing new packages"
+    docker-compose run --rm php composer update --vv
+fi
+
+docker-compose run --rm php phinx migrate -c config/phinx.php -e dev
+docker-compose run --rm php phinx seed:run -c config/phinx.php -e dev

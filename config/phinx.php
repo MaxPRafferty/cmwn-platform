@@ -6,7 +6,9 @@ $dbHost = getenv('DATABASE1_HOST');
 $dbUser = getenv('DATABASE1_USER');
 $dbPass = getenv('DATABASE1_PASS');
 
-$testHost = getenv('MYSQL_PORT_3306_TCP_ADDR') === false ? 'localhost' : getenv('MYSQL_PORT_3306_TCP_ADDR');
+$testHost = getenv('MYSQL_PORT_3306_TCP_ADDR') === false ? $dbHost : getenv('MYSQL_PORT_3306_TCP_ADDR');
+$testUser = getenv('MYSQL_ENV_MYSQL_USER') === false ? $dbUser : getenv('MYSQL_ENV_MYSQL_USER');
+$testPass = getenv('MYSQL_ENV_MYSQL_PASSWORD') === false ? $dbPass : getenv('MYSQL_ENV_MYSQL_PASSWORD');
 
 $config = [
     'paths'        => [
@@ -25,10 +27,10 @@ $config = [
         ],
         'dev'                     => [
             'adapter' => 'mysql',
-            'host'    => 'localhost',
-            'name'    => 'cmwn',
-            'user'    => 'cmwn_user',
-            'pass'    => 'cmwn_pass123$',
+            'host'    => $dbHost,
+            'name'    => $dbName,
+            'user'    => $dbUser,
+            'pass'    => $dbPass,
         ],
         'test'                    => [
             'adapter' => 'mysql',

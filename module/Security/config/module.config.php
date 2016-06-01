@@ -2,14 +2,8 @@
 
 return [
     'validators' => [
-        'invokables' => [
-            \Security\PasswordValidator::class => \Security\PasswordValidator::class,
-        ],
-        'initializers' => [
-            \Security\Authentication\AuthenticationServiceAwareInitializer::class =>
-                \Security\Authentication\AuthenticationServiceAwareInitializer::class,
-
-            \Security\Authorization\RbacAwareInitializer::class => \Security\Authorization\RbacAwareInitializer::class,
+        'factories' => [
+            \Security\PasswordValidator::class => \Security\Factory\PasswordValidatorFactory::class,
         ],
     ],
     'service_manager' => [
