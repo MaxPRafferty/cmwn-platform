@@ -38,6 +38,6 @@ class GroupUsersResource extends AbstractResourceListener
             return new ApiProblem(421, 'Routing error');
         }
 
-        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, new UserEntity()));
+        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, [], new UserEntity()));
     }
 }

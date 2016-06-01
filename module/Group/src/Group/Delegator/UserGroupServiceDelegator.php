@@ -3,6 +3,7 @@
 namespace Group\Delegator;
 
 use Application\Utils\HideDeletedEntitiesListener;
+use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
@@ -21,6 +22,7 @@ use Zend\Permissions\Acl\Role\RoleInterface;
 class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
+    use ServiceTrait;
 
     /**
      * @var UserGroupService
@@ -124,19 +126,22 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
 
     /**
      * @param GroupInterface|\Zend\Db\Sql\Where $group
+     * @param array $where
      * @param null $prototype
+     *
      * @return bool
      */
-    public function fetchUsersForGroup(GroupInterface $group, $prototype = null)
+    public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null)
     {
-        $eventParams = ['group' => $group];
+        $where       = $this->createWhere($where);
+        $eventParams = ['group' => $group, 'where' => $where];
         $event       = new Event('fetch.group.users', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
             return false;
         }
 
         try {
-            $return = $this->realService->fetchUsersForGroup($group, $prototype);
+            $return = $this->realService->fetchUsersForGroup($group, $where, $prototype);
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event                    = new Event('fetch.group.users.error', $this->realService, $eventParams);
@@ -152,19 +157,22 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
 
     /**
      * @param $organization
+     * @param array $where
      * @param null $prototype
+     *
      * @return bool
      */
-    public function fetchUsersForOrg($organization, $prototype = null)
+    public function fetchUsersForOrg($organization, $where = null, $prototype = null)
     {
-        $eventParams = ['organization' => $organization];
+        $where       = $this->createWhere($where);
+        $eventParams = ['organization' => $organization, 'where' => $where];
         $event       = new Event('fetch.org.users', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
             return false;
         }
 
         try {
-            $return = $this->realService->fetchUsersForOrg($organization, $prototype);
+            $return = $this->realService->fetchUsersForOrg($organization, $where, $prototype);
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event                    = new Event('fetch.org.users.error', $this->realService, $eventParams);
