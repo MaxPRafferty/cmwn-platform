@@ -46,8 +46,7 @@
     "acelaya/zf2-acmailer": "~5.0",
     "phpoffice/phpexcel": "~1.8",
     "chrisboulton/php-resque": "~1.2",
-    "rollbar/rollbar": "dev-master@dev",
-    "robmorgan/phinx": "*"
+    "rollbar/rollbar": "dev-master@dev"
   },
   "require-dev": {
     "mockery/mockery": "0.9.*",
