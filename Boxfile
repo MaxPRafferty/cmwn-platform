@@ -19,7 +19,7 @@ build:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
     - 'composer install --no-interaction --prefer-dist --no-dev -vvvv'
-    - 'composer require robmorgan/phinx --no-interaction --prefer-dist --no-dev -vvvv'
+    - 'composer require robmorgan/phinx --no-interaction --prefer-dist -vvvv'
   after_exec:
     - 'composer dump-autoload --optimize'
   lib_dirs:
