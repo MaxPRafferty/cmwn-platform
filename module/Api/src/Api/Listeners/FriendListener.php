@@ -97,9 +97,22 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
     /**
      * @param Event $event
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function onRender(Event $event)
     {
+        $entity  = $event->getParam('entity');
+        if (!$entity instanceof Entity) {
+            return;
+        }
+
+        $realEntity = $entity->entity;
+        if (!$realEntity instanceof FriendInterface) {
+            return;
+        }
+
+
         // Should never be able to load a scope object
         if (!$this->getAuthenticationService()->hasIdentity()) {
             return;
@@ -108,16 +121,6 @@ class FriendListener implements AuthenticationServiceAwareInterface
         /** @var UserInterface $authUser */
         $authUser = $this->getAuthenticationService()->getIdentity();
         if ($authUser->getType() !== UserInterface::TYPE_CHILD) {
-            return;
-        }
-
-        $entity  = $event->getParam('entity');
-        if (!$entity instanceof Entity) {
-            return;
-        }
-
-        $realEntity = $entity->entity;
-        if (!$realEntity instanceof FriendInterface) {
             return;
         }
 
@@ -133,7 +136,11 @@ class FriendListener implements AuthenticationServiceAwareInterface
         if ($realEntity instanceof MeEntity && $realEntity->getType() === UserInterface::TYPE_CHILD) {
             $entity->getLinks()->add(new SuggestLink($authUser->getUserId()));
         }
-
+        
+        if ($realEntity instanceof MeEntity) {
+            return;
+        }
+        
         if ($status === FriendInterface::FRIEND && !$entity->getLinks()->has('friend')) {
             $entity->getLinks()->add(new FriendLink($authUser->getUserId(), $realEntity->getUserId()));
         }
