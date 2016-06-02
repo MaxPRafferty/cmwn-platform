@@ -97,9 +97,25 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
     /**
      * @param Event $event
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function onRender(Event $event)
     {
+        $entity  = $event->getParam('entity');
+        if (!$entity instanceof Entity) {
+            return;
+        }
+
+        $realEntity = $entity->entity;
+        if (!$realEntity instanceof FriendInterface) {
+            return;
+        }
+
+        if ($realEntity instanceof MeEntity) {
+            return;
+        }
+
         // Should never be able to load a scope object
         if (!$this->getAuthenticationService()->hasIdentity()) {
             return;
@@ -108,16 +124,6 @@ class FriendListener implements AuthenticationServiceAwareInterface
         /** @var UserInterface $authUser */
         $authUser = $this->getAuthenticationService()->getIdentity();
         if ($authUser->getType() !== UserInterface::TYPE_CHILD) {
-            return;
-        }
-
-        $entity  = $event->getParam('entity');
-        if (!$entity instanceof Entity) {
-            return;
-        }
-
-        $realEntity = $entity->entity;
-        if (!$realEntity instanceof FriendInterface) {
             return;
         }
 
