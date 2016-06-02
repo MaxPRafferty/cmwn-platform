@@ -199,7 +199,21 @@ class FriendService implements FriendServiceInterface
             return FriendInterface::CAN_FRIEND;
         }
 
-        return $result->offsetGet('uf_status');
+        $currentStatus = $result->offsetGet('uf_status');
+        if ($currentStatus === FriendInterface::FRIEND) {
+            return FriendInterface::FRIEND;
+        }
+
+        // pending at this point
+        if ($result->offsetGet('user_id') === $user->getUserId()) {
+            return FriendInterface::PENDING;
+        }
+
+        if ($result->offsetGet('uf_friend_id') === $user->getUserId()) {
+            return FriendInterface::REQUESTED;
+        }
+
+        return $currentStatus;
     }
 
     /**

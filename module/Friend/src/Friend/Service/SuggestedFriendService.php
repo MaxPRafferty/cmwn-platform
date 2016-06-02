@@ -3,13 +3,12 @@
 namespace Friend\Service;
 
 use Application\Utils\ServiceTrait;
-use Group\Service\UserGroupServiceInterface;
 use User\UserHydrator;
 use User\UserInterface;
-use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\NotIn;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Hydrator\ArraySerializable;
@@ -69,7 +68,7 @@ class SuggestedFriendService implements SuggestedFriendServiceInterface
     public function fetchSuggestedFriends($user, $where = null, $prototype = null)
     {
         $case = new Expression(
-            'CASE WHEN u.user_id = uf.friend_id THEN uf.status 
+            'CASE WHEN u.user_id = uf.friend_id THEN \'WAITING\' 
             WHEN u.user_id = uf.user_id THEN uf.status 
             ELSE \'NOT_FRIENDS\' END'
         );
@@ -136,7 +135,7 @@ class SuggestedFriendService implements SuggestedFriendServiceInterface
         $select->where($where);
         $select->group(['u.user_id']);
         $select->having(new Operator('u.user_id', '!=', $userId));
-        $select->having(new Operator('friend_status', '=', 'NOT_FRIENDS'));
+        $select->having(new NotIn('friend_status', ['FRIENDS', 'WAITING']));
         $select->order(['u.first_name', 'u.last_name']);
 
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
