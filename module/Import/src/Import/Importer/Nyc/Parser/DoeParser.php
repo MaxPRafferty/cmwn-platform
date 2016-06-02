@@ -266,6 +266,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
         foreach ($this->teacherRegistry as $teacher) {
             $groupType = "class";
             if (!$teacher->hasClassAssigned()) {
+                $this->getLogger()->info(sprintf('Teacher "%s" has no class assigned', $teacher->getEmail()));
                 $teacher->setClassRoom($schoolGroup);
                 $groupType = "school";
             }
