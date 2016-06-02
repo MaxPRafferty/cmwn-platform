@@ -112,9 +112,6 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        if ($realEntity instanceof MeEntity) {
-            return;
-        }
 
         // Should never be able to load a scope object
         if (!$this->getAuthenticationService()->hasIdentity()) {
@@ -139,7 +136,11 @@ class FriendListener implements AuthenticationServiceAwareInterface
         if ($realEntity instanceof MeEntity && $realEntity->getType() === UserInterface::TYPE_CHILD) {
             $entity->getLinks()->add(new SuggestLink($authUser->getUserId()));
         }
-
+        
+        if ($realEntity instanceof MeEntity) {
+            return;
+        }
+        
         if ($status === FriendInterface::FRIEND && !$entity->getLinks()->has('friend')) {
             $entity->getLinks()->add(new FriendLink($authUser->getUserId(), $realEntity->getUserId()));
         }
