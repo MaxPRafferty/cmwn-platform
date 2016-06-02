@@ -92,6 +92,11 @@ class DoeImporter implements
             $this->getLogger()->debug(sprintf('Attaching school "%s" to parser', $this->getSchool()));
             $this->parser->setSchool($this->getSchool());
         });
+
+        $this->getEventManager()->attach('nyc.import.excel', function () {
+            $this->getLogger()->debug('Attaching logger to parser');
+            $this->parser->setLogger($this->getLogger());
+        });
     }
 
     /**
