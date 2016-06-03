@@ -39,6 +39,39 @@ class SecurityGroupService implements SecurityGroupServiceInterface
     }
 
     /**
+     * Finds the role the user has to another user
+     *
+     * SELECT
+     *  requested_user.user_id AS requested_user_id,
+     *
+     *  active_user.role AS active_role,
+     *
+     *  active_group.head AS active_head,
+     *  active_group.tail AS active_tail,
+     *
+     *  active_parent_group.head AS active_parent_head,
+     *  active_parent_group.tail AS active_parent_tail,
+     *  active_parent_group.group_id AS active_parent_group,
+     *
+     *  requested_group.head AS requested_head,
+     *  requested_group.tail AS requested_tail,
+     *  requested_group.group_id AS requested_group,
+     *
+     *  requested_parent_group.head AS requested_parent_head,
+     *  requested_parent_group.tail AS requested_parent_tail,
+     *  requested_parent_group.group_id AS requested_parent_group
+     *
+     * FROM user_groups AS active_user
+     *  LEFT JOIN user_groups AS requested_user ON requested_user.user_id = '974263e8-2806-11e6-af9a-b1fd6b0b32b7'
+     *  LEFT JOIN groups AS active_group ON active_group.group_id = requested_user.group_id
+     *  LEFT JOIN groups AS active_parent_group ON active_parent_group.group_id = active_group.parent_id
+     *  LEFT JOIN groups AS requested_group ON requested_group.group_id = requested_user.group_id
+     *  LEFT JOIN groups AS requested_parent_group ON requested_parent_group.group_id = requested_group.parent_id
+     *
+     * WHERE active_user.user_id = '964437d2-2806-11e6-b002-8eb532838af7'
+     *  AND active_group.organization_id = requested_group.organization_id
+     *
+     *
      * @param UserInterface $activeUser
      * @param UserInterface $requestedUser
      * @return string

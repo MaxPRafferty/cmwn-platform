@@ -9,7 +9,7 @@ interface FriendInterface
 {
     const CAN_FRIEND  = 'CAN_FRIEND';
     const FRIEND      = 'FRIEND';
-    const REQUESTED   = 'REQUESTED';
+    const REQUESTED   = 'NEEDS_YOUR_ACCEPTANCE';
     const PENDING     = 'PENDING';
     const CANT_FRIEND = 'CANT_FRIEND';
     const NOT_FRIENDS = 'NOT_FRIENDS';
