@@ -63,7 +63,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
     {
         $events->detach('Zend\Mvc\Application', $this->listeners[0]);
         $events->detach('ZF\Hal\Plugin\Hal', $this->listeners[1]);
-        $events->detach('ZF\Rest\Controller', $this->listeners[2]);
+        $events->detach('ZF\Hal\Plugin\Hal', $this->listeners[2]);
     }
 
     /**
