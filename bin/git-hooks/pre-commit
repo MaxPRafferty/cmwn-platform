@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # @source: https://gist.github.com/ronanguilloux/11f6a788358577474ab4
 # @link http://tech.zumba.com/2014/04/14/control-code-quality/
