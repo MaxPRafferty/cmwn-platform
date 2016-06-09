@@ -62,9 +62,9 @@ interface SaveGameInterface
     /**
      * Saves the Game Data
      *
-     * @param array $gameData
+     * @param array|string $gameData
      */
-    public function setData(array $gameData);
+    public function setData($gameData);
 
     /**
      * @return \DateTime|null
@@ -76,4 +76,19 @@ interface SaveGameInterface
      * @return $this
      */
     public function setCreated($created);
+
+    /**
+     * Returns back the version that this game was saved at
+     *
+     * @return string
+     */
+    public function getVersion();
+
+    /**
+     * Sets the version of the game data
+     *
+     * @param $version
+     * @return $this
+     */
+    public function setVersion($version);
 }

@@ -5,6 +5,7 @@ namespace Game;
 use Application\Utils\Date\DateCreatedTrait;
 use Application\Utils\PropertiesTrait;
 use Zend\Filter\StaticFilter;
+use Zend\Json\Json;
 
 /**
  * Class SaveGame
@@ -28,6 +29,11 @@ class SaveGame implements SaveGameInterface
      * @var array
      */
     protected $data = [];
+
+    /**
+     * @var string
+     */
+    protected $version;
 
     /**
      * Save Game constructor.
@@ -54,6 +60,7 @@ class SaveGame implements SaveGameInterface
             'user_id' => null,
             'data'    => [],
             'created' => null,
+            'version' => null,
         ];
 
         $array = array_merge($defaults, $array);
@@ -77,6 +84,7 @@ class SaveGame implements SaveGameInterface
             'user_id' => $this->getUserId(),
             'data'    => $this->getData(),
             'created' => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
+            'version' => $this->getVersion(),
         ];
     }
 
@@ -133,10 +141,37 @@ class SaveGame implements SaveGameInterface
     /**
      * Saves the Game Data
      *
-     * @param array $gameData
+     * @param array|string $gameData
      */
-    public function setData(array $gameData)
+    public function setData($gameData)
     {
-        $this->data = $gameData;
+        if (is_string($gameData)) {
+            $gameData = Json::decode($gameData, Json::TYPE_ARRAY);
+        }
+
+        $this->data = !is_array($gameData) ? [$gameData] : $gameData;
     }
+
+    /**
+     * Returns back the version that this game was saved at
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Sets the version of the game data
+     *
+     * @param $version
+     *
+     * @return $this
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
 }

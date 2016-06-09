@@ -27,6 +27,7 @@ class SaveGameTest extends TestCase
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
             'created' => $date->format("Y-m-d H:i:s"),
+            'version' => '1.1.1',
         ];
 
         $saveGame = new SaveGame($data);
@@ -39,8 +40,10 @@ class SaveGameTest extends TestCase
             $saveGame->getData(),
             'Game Data was not set from constructor'
         );
+
+        $this->assertEquals('1.1.1', $saveGame->getVersion(), 'The version is incorrect');
     }
-    
+
     /**
      * @test
      */
@@ -53,17 +56,18 @@ class SaveGameTest extends TestCase
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
             'created' => $date->format(\DateTime::ISO8601),
+            'version' => '3.3.3-rc',
         ];
 
         $expected = new SaveGame($data);
         $actual   = new SaveGame();
-        
+
         $this->assertEquals(
             $data,
             $expected->getArrayCopy(),
             'Save Game was not able to correctly extract itself'
         );
-        
+
         $actual->exchangeArray($expected->getArrayCopy());
         $this->assertEquals($expected, $actual, 'Hydrating into new SaveGame produced incorrect data');
     }

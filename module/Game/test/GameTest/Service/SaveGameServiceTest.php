@@ -66,6 +66,7 @@ class SaveGameServiceTest extends TestCase
             'game_id' => 'monarch',
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
+            'version' => 'nightly',
         ]);
 
         $this->tableGateway->shouldReceive('insert')
@@ -84,10 +85,10 @@ class SaveGameServiceTest extends TestCase
                 $this->assertEquals($actualData, $data, '');
                 return true;
             });
-        
+
         $this->assertTrue($this->gameService->saveGame($saveGame), 'Game Service did not return true');
     }
-    
+
     /**
      * @test
      */
@@ -97,7 +98,7 @@ class SaveGameServiceTest extends TestCase
             ->with(['user_id' => 'manchuck', 'game_id' => 'monarch'])
             ->andReturn(true)
             ->once();
-        
+
         $this->gameService->deleteSaveForUser('manchuck', 'monarch');
     }
 
@@ -112,6 +113,7 @@ class SaveGameServiceTest extends TestCase
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
             'created' => $date->format("Y-m-d H:i:s"),
+            'version' => '8.6.7.5',
         ];
 
         $result = new ResultSet();
@@ -140,6 +142,7 @@ class SaveGameServiceTest extends TestCase
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
             'created' => $date->format("Y-m-d H:i:s"),
+            'version' => '8.6.7.5',
         ];
 
         $result = new ResultSet();
@@ -164,6 +167,7 @@ class SaveGameServiceTest extends TestCase
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
             'created' => $date->format("Y-m-d H:i:s"),
+            'version' => 'v1.2.3',
         ];
 
         $result = new ResultSet();
@@ -177,6 +181,7 @@ class SaveGameServiceTest extends TestCase
             'game_id' => 'monarch',
             'user_id' => 'manchuck',
             'data'    => ['foo' => 'bar', 'progress' => 100],
+            'version' => 'v1.2.3',
         ]);
 
         $this->tableGateway->shouldReceive('insert')
