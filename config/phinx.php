@@ -36,8 +36,8 @@ $config = [
             'adapter' => 'mysql',
             'host'    => $testHost,
             'name'    => 'cmwn_test',
-            'user'    => $testUser,
-            'pass'    => $testPass,
+            'user'    => 'cmwn_user',
+            'pass'    => 'cmwn_pass',
         ],
     ],
 ];

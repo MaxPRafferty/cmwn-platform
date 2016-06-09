@@ -3,7 +3,6 @@ box:
   username: $DOCKER_USER
   password: $DOCKER_PASS
   tag: latest
-
 build:
   services:
     - id: mysql:5.5

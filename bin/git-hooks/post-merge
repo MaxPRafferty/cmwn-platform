@@ -9,8 +9,8 @@ then
     exit 1
 fi
 
-echo "[post-merge] Building docker containers"
-eval $(docker-machine env api)
+echo "[post-merge] connecting to containers"
+eval $(docker-machine env $target_docker_name)
 
 echo "[post-merge] Checking for new modules"
 
