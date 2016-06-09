@@ -173,5 +173,4 @@ class SaveGame implements SaveGameInterface
     {
         $this->version = $version;
     }
-
 }
