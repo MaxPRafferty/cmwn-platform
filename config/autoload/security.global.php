@@ -53,7 +53,7 @@ return [
                 'GET' => 'view.org.users',
             ],
             'api.rest.user-image'      => [
-                'GET'  => 'attach.profile.image',
+                'GET'  => 'view.profile.image',
                 'POST' => 'attach.profile.image',
             ],
             'api.rest.import'          => [

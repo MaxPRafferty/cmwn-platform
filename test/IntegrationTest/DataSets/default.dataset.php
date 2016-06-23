@@ -463,6 +463,11 @@ return array (
       'user_id' => 'english_student',
       'image_id' => 'profiles/dwtm7optf0qq62vcveef',
     ),
+    2 =>
+    array (
+      'user_id' => 'other_principal',
+      'image_id' => 'profiles/dwtm7optf0qq62vcveef',
+    ),
   ),
   'user_saves' =>
   array(
