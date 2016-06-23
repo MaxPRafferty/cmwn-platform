@@ -1,6 +1,6 @@
 <?php
 
-namespace IntegrationTest\Api\V1\Rest;
+namespace IntegrationTest;
 
 use Friend\FriendInterface;
 use Friend\Service\FriendServiceInterface;
