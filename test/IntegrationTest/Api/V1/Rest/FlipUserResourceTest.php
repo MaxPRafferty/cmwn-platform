@@ -12,14 +12,28 @@ class FlipUserResourceTest extends TestCase
 {
     /**
      * @test
+     * @dataProvider validUserDataProvider
      */
-    public function testItShouldCheckIfUserHasAccess()
+    public function testItShouldCheckIfUserLoggedInIsTheOneRequestingFlip($login)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('math_student');
+        $this->logInUser($login);
 
         $this->dispatch('/user/english_student/flip');
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @dataProvider validUserDataProvider
+     */
+    public function testItShouldCheckIfRouteUrlIsCorrect($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch('/user/manchuck/flip');
+        $this->assertResponseStatusCode(404);
     }
 
     /**
@@ -115,12 +129,9 @@ class FlipUserResourceTest extends TestCase
             'Math Student' => [
                 'math_student'
             ],
-            'Super User' => [
-                'super_user'
-            ],
             'Principal' => [
                 'principal'
-            ]
+            ],
         ];
 
     }
