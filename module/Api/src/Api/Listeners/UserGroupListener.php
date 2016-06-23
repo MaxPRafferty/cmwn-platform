@@ -11,6 +11,7 @@ use Api\V1\Rest\Org\OrgEntity;
 use Api\V1\Rest\User\UserEntity;
 use Group\Service\UserGroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
+use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
@@ -142,6 +143,11 @@ class UserGroupListener
         $realEntity = $entity->entity;
 
         if (!$realEntity instanceof UserEntity) {
+            return;
+        }
+
+        // CORE-786 children no longer get access to districts
+        if ($realEntity->getType() === UserInterface::TYPE_CHILD) {
             return;
         }
 

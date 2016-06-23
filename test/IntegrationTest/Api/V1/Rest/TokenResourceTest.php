@@ -137,7 +137,6 @@ class TokenResourceTest extends TestCase
                     'games',
                     'group_school',
                     'group_class',
-                    'org_district',
                     'password',
                     'profile',
                     'self',
