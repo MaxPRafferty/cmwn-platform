@@ -1,5 +1,5 @@
 <?php
-
+// @codingStandardsIgnoreStart
 return array (
   'flips' =>
   array (
@@ -226,7 +226,7 @@ return array (
       'deleted' => NULL,
       'code_expires' => NULL,
       'super' => '0',
-      'external_id' => NULL,
+      'external_id' => '8675309',
     ),
     1 =>
     array (
@@ -464,7 +464,7 @@ return array (
       'image_id' => 'profiles/dwtm7optf0qq62vcveef',
     ),
   ),
-  'user_saves' => 
+  'user_saves' =>
   array(
   ),
 );
