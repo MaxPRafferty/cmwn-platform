@@ -49,6 +49,7 @@ return [
 
             // game
             'view.games'           => 'View all Games',
+            'save.game'            => 'Save Game progress',
 
             // misc
             'adult.code'           => 'Send adult reset code',
@@ -234,6 +235,7 @@ return [
                 ],
                 'permissions' => [
                     'update.password',
+                    'save.game',
                     'create.user.flip',
                     'edit.user.adult',
                     'edit.user.child',

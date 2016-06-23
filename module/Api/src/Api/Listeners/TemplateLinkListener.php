@@ -12,6 +12,22 @@ use ZF\Hal\Collection;
 class TemplateLinkListener
 {
     /**
+     * @var array Encoded characters to find
+     * @todo Expand this encoded list
+     */
+    protected $encoded = [
+        '%7B', // {
+        '%7D', // }
+    ];
+
+    /**
+     * @var array endocded characters to replace
+     */
+    protected $replace = [
+        '{', // %7B
+        '}', // %7D
+    ];
+    /**
      * @var array
      */
     protected $listeners = [];
@@ -22,6 +38,7 @@ class TemplateLinkListener
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderCollection.post', [$this, 'addTemplate']);
+        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'fixTemplates']);
     }
 
     /**
@@ -66,5 +83,28 @@ class TemplateLinkListener
             'href'      => $url  ,
             'templated' => true,
         ];
+    }
+
+    /**
+     * Helps remove the encoding from template links
+     *
+     * @param Event $event
+     */
+    public function fixTemplates(Event $event)
+    {
+        /** @var \ArrayObject $payload */
+        $payload = $event->getParam('payload');
+        if (!isset($payload['_links'])) {
+            return;
+        }
+
+        foreach ($payload['_links'] as $posistion => $link) {
+            if (!isset($link['templated'])) {
+                continue;
+            }
+
+            $link['href'] = str_replace($this->encoded, $this->replace, $link['href']);
+            $payload['_links'][$posistion] = $link;
+        }
     }
 }
