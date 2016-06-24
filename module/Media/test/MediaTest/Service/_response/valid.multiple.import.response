@@ -1,0 +1,41 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "asset_type": "item",
+    "type": "folder",
+    "media_id": "8418112873",
+    "name": "Menu",
+    "can_overlap": false,
+    "tags": [],
+    "items": [
+        {
+            "asset_type": "item",
+            "type": "folder",
+            "media_id": "8418142465",
+            "name": "Items",
+            "can_overlap": false,
+            "tags": [
+                "order_1"
+            ]
+        },
+        {
+            "asset_type": "item",
+            "type": "folder",
+            "media_id": "8418116569",
+            "name": "Messages",
+            "can_overlap": false,
+            "tags": [
+                "order_0"
+            ]
+        },
+        {
+            "asset_type": "item",
+            "type": "file",
+            "media_id": "71804634981",
+            "name": "message_demo_1_b.png",
+            "can_overlap": false,
+            "tags": []
+        }
+    ]
+}
