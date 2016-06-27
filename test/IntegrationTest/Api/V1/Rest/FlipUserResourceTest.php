@@ -87,8 +87,10 @@ class FlipUserResourceTest extends TestCase
         $this->assertArrayHasKey('description', $embedded[0]);
         $this->assertEquals($embedded[0]['flip_id'], "polar-bear");
         $this->assertEquals($embedded[0]['title'], "Polar Bear");
-        $this->assertEquals($embedded[0]['description'],
-            "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!");
+        $this->assertEquals(
+            $embedded[0]['description'],
+            "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!"
+        );
     }
 
     /**
@@ -114,7 +116,10 @@ class FlipUserResourceTest extends TestCase
         $this->assertArrayHasKey('description', $embedded[0]);
         $this->assertEquals($embedded[0]['flip_id'], "polar-bear");
         $this->assertEquals($embedded[0]['title'], "Polar Bear");
-        $this->assertEquals($embedded[0]['description'], "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!");
+        $this->assertEquals(
+            $embedded[0]['description'],
+            "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!"
+        );
     }
 
     /**
