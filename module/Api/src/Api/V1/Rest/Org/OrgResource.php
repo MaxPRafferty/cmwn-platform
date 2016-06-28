@@ -111,7 +111,7 @@ class OrgResource extends AbstractResourceListener
             $org->__set($key, $value);
         }
 
-        $this->service->saveOrg($org);
+        $this->service->updateOrganization($org);
         return $org;
     }
 }

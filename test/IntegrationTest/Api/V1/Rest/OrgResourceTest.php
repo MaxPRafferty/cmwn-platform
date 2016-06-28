@@ -4,6 +4,8 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
+use IntegrationTest\TestHelper;
+use Org\Service\OrganizationServiceInterface;
 
 /**
  * Test OrgResourceTest
@@ -13,6 +15,19 @@ use Zend\Json\Json;
 
 class OrgResourceTest extends TestCase
 {
+    /**
+     * @var OrganizationServiceInterface
+     */
+    protected $orgService;
+
+    /**
+     * @before
+     */
+    public function setUpUserService()
+    {
+        $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+    }
+
     /**
      * @test
      */
@@ -76,10 +91,10 @@ class OrgResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-884
-     * @incompleteTest
      */
     public function testItShould403WhenUserFetchOtherOrg()
     {
+        $this->markTestIncomplete("");
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
 
@@ -134,5 +149,121 @@ class OrgResourceTest extends TestCase
             $actualIds[] = $org['org_id'];
         }
         $this->assertEquals($expectedIds, $actualIds);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCreateOrganization()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+
+        $this->dispatch(
+            '/org',
+            POST,
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(201);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('org_id', $body);
+
+        $newOrg = $this->orgService->fetchOrganization($body['org_id'])->getArrayCopy();
+        $this->assertEquals('newOrg', $newOrg['title']);
+        $this->assertEquals('new organization', $newOrg['description']);
+        $this->assertEquals('district', $newOrg['type']);
+        $this->assertEquals([], $newOrg['meta']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotAllowOthersToCreateOrganization()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('math_teacher');
+
+        $this->dispatch(
+            '/org',
+            POST,
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckCsrfToCreateOrganization()
+    {
+        $this->logInUser('super_user');
+
+        $this->dispatch(
+            '/org',
+            POST,
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(500);
+    }
+    
+    /**
+     * @test
+     * @ticket CORE-885
+     */
+    public function testItShouldDeleteOrganization()
+    {
+        $this->markTestIncomplete("blocked by fetchOrganization");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+
+        $this->dispatch('/org/district', DELETE);
+        $this->assertResponseStatusCode(200);
+        $group = $this->groupService->fetchOrganization('district')->getArrayCopy();
+    }
+
+    /**
+     * @test
+     * @ticket CORE-886
+     */
+    public function testItShouldUpdateOrganization()
+    {
+        $this->markTestIncomplete("blocked by Org\Delegator\OrganizationServiceDelegator::updateOrganization");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+
+        $this->dispatch(
+            '/org/district',
+            PUT,
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(201);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        $newOrg = $this->orgService->fetchOrganization('district')->getArrayCopy();
+        $this->assertEquals('newOrg', $newOrg['title']);
+        $this->assertEquals('new organization', $newOrg['description']);
+        $this->assertEquals('district', $newOrg['type']);
+        $this->assertEquals([], $newOrg['meta']);
     }
 }
