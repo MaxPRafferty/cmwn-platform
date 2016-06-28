@@ -12,7 +12,7 @@ use Zend\Json\Json;
 
 /**
  * Test FriendResourceTest
- * 
+ *
  * @group Friend
  * @group IntegrationTest
  * @group FriendService
@@ -199,7 +199,7 @@ class FriendResourceTest extends TestCase
      * @test
      * @ticket CORE-558
      */
-    public function testItShouldAllowChildToAccessFriendEnpoint()
+    public function testItShouldAllowChildToAccessFriendEndpoint()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
