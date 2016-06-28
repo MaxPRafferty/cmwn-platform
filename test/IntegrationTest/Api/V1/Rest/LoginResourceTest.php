@@ -52,6 +52,8 @@ class LoginResourceTest extends TestCase
             POST,
             ['username' => $login, 'password' => 'business']
         );
+        $this->assertMatchedRouteName('api.rest.login');
+        $this->assertControllerName('api\v1\rest\login\controller');
         $this->assertResponseStatusCode(201);
     }
 
@@ -97,6 +99,22 @@ class LoginResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('detail', $body);
         $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldLoginWithCorrectPasswordUponCode()
+    {
+        $this->securityService->saveCodeToUser('xyz', 'english_teacher');
+        $this->dispatch(
+            '/login',
+            POST,
+            ['username' => 'english_teacher', 'password' => 'business']
+        );
+        $this->assertResponseStatusCode(201);
+        $this->assertMatchedRouteName('api.rest.login');
+        $this->assertControllerName('api\v1\rest\login\controller');
     }
 
     /**
