@@ -14,7 +14,6 @@ build:
     - 'rm -rf Vagrantfile'
     - 'rm -rf public/index.html'
     - 'rm -rf html'
-#    - 'rm -rf vendor'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
@@ -22,6 +21,11 @@ build:
     - 'composer require robmorgan/phinx --no-interaction --prefer-dist -vvvv'
   after_exec:
     - 'composer dump-autoload --optimize'
+    - openssl req -x509 -newkey rsa:2048 \
+      -subj "/C=XX/ST=XXXX/L=XXXX/O=XXXX/CN=api-local.changemyworldnow.com" \
+      pwd -keyout "/home/gopagoda/data/data/ssl/key.pem" \
+      -out "/home/gopagoda/data/data/ssl/cert.crt" \
+      -days 3650 -nodes -sha256
   lib_dirs:
     - vendor
   reuse_libs: true
