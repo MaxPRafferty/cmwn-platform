@@ -193,6 +193,7 @@ class RbacTest extends TestCase
                     'view.user.child',
                     'view.user.flip',
                     'view.all.users',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -226,6 +227,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -265,6 +267,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -314,6 +317,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -358,6 +362,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -395,6 +400,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -431,6 +437,7 @@ class RbacTest extends TestCase
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -471,6 +478,7 @@ class RbacTest extends TestCase
                     'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -526,6 +534,7 @@ class RbacTest extends TestCase
                     'view.user.child',
                     'create.user.flip',
                     'view.flip',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -569,6 +578,7 @@ class RbacTest extends TestCase
                     'view.user.adult',
                     'view.user.child',
                     'view.flip',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -639,6 +649,7 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'view.flip',
                     'view.user.flip',
+                    'view.profile.image',
                 ],
             ],
         ];
