@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreStart
 return array(
     'shared-listeners' => array(
         0 => 'Api\\Listeners\\UserRouteListener',
@@ -1235,6 +1236,12 @@ return array(
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
             ),
             'Api\\V1\\Rest\\Media\\MediaCollection' => array(
+                'entity_identifier_name' => 'media_id',
+                'route_name' => 'api.rest.media',
+                'route_identifier_name' => 'media_id',
+                'is_collection' => true,
+            ),
+            \Media\MediaCollection::class => array(
                 'entity_identifier_name' => 'media_id',
                 'route_name' => 'api.rest.media',
                 'route_identifier_name' => 'media_id',

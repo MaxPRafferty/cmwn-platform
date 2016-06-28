@@ -2,40 +2,25 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-    "asset_type": "item",
     "type": "folder",
-    "media_id": "8418112873",
-    "name": "Menu",
+    "media_id": "0",
+    "name": "All Files",
     "can_overlap": false,
-    "tags": [],
+    "asset_type": "folder",
     "items": [
         {
-            "asset_type": "item",
             "type": "folder",
-            "media_id": "8418142465",
-            "name": "Items",
+            "media_id": "7302958933",
+            "name": "Content",
             "can_overlap": false,
-            "tags": [
-                "order_1"
-            ]
+            "asset_type": "folder"
         },
         {
-            "asset_type": "item",
             "type": "folder",
-            "media_id": "8418116569",
-            "name": "Messages",
+            "media_id": "8418104929",
+            "name": "Skribble",
             "can_overlap": false,
-            "tags": [
-                "order_0"
-            ]
-        },
-        {
-            "asset_type": "item",
-            "type": "file",
-            "media_id": "71804634981",
-            "name": "message_demo_1_b.png",
-            "can_overlap": false,
-            "tags": []
+            "asset_type": "folder"
         }
     ]
 }

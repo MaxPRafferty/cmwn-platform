@@ -8,6 +8,7 @@ return [
             'api.rest.forgot',
             'api.rest.logout',
             'api.rest.image',
+            'api.rest.media',
         ],
         'route-permissions' => [
             'api.rest.reset'           => [

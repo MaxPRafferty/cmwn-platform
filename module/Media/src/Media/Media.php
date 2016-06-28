@@ -12,6 +12,11 @@ class Media implements MediaInterface
     /**
      * @var string
      */
+    protected $name;
+
+    /**
+     * @var string
+     */
     protected $assetType;
 
     /**
@@ -65,6 +70,7 @@ class Media implements MediaInterface
             'check_value' => null,
             'mime_type'   => null,
             'src'         => null,
+            'name'        => null,
         ];
 
         $array = array_merge($defaults, $array);
@@ -85,13 +91,32 @@ class Media implements MediaInterface
     public function getArrayCopy()
     {
         return [
-            'media_id'    => $this->getMediaId(),
-            'asset_type'  => $this->getAssetType(),
-            'check_type'  => $this->getCheckType(),
-            'check_value' => $this->getCheckValue(),
-            'mime_type'   => $this->getMimeType(),
-            'src'         => $this->getSrc(),
+            'media_id'   => $this->getMediaId(),
+            'asset_type' => $this->getAssetType(),
+            'check'      => [
+                'type'  => $this->getCheckType(),
+                'value' => $this->getCheckValue(),
+            ],
+            'mime_type'  => $this->getMimeType(),
+            'src'        => $this->getSrc(),
+            'name'       => $this->getName(),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**

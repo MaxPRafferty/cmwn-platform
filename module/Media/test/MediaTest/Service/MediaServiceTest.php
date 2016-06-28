@@ -85,12 +85,15 @@ class MediaServiceTest extends TestCase
 
         $this->assertInstanceOf(MediaInterface::class, $media);
         $expected = [
-            'media_id'    => '70116569037',
-            'asset_type'  => 'background',
-            'check_type'  => 'sha1',
-            'check_value' => 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
-            'mime_type'   => 'image/png',
-            'src'         => 'https://media.changemyworldnow.com/f/70116569037',
+            'media_id'   => '70116569037',
+            'asset_type' => 'background',
+            'check'      => [
+                'type'  => 'sha1',
+                'value' => 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+            ],
+            'mime_type'  => 'image/png',
+            'src'        => 'https://media.changemyworldnow.com/f/70116569037',
+            'name'       => 'img_animals_sprite.png',
         ];
 
         $this->assertEquals(
@@ -116,18 +119,21 @@ class MediaServiceTest extends TestCase
             $this->client->getRequest()->toString()
         );
 
-        // TODO update when the media is updated
         $this->assertInstanceOf(MediaCollection::class, $media);
         $expected = [
-            'media_id'    => '8418142465',
-            'asset_type'  => 'item',
-            'check_type'  => null,
-            'check_value' => null,
-            'mime_type'   => null,
-            'src'         => null,
+            'media_id'   => '7302958933',
+            'asset_type' => 'folder',
+            'check'      => [
+                'type'  => null,
+                'value' => null,
+            ],
+            'mime_type'  => null,
+            'src'        => null,
+            'name'       => 'Content',
         ];
 
         $iterator = $media->getIterator();
+        $this->assertEquals(2, count($iterator));
         $iterator->rewind();
         $this->assertEquals(
             $expected,
@@ -194,10 +200,12 @@ class MediaServiceTest extends TestCase
 
             $this->fail('MediaService::importFile did not throw required exception');
         } catch (InvalidResponseException $invalid) {
+            // @codingStandardsIgnoreStart
             $this->assertEquals(
                 'Invalid checksum: da39a3ee5e6b4b0d3255bfef95601890afd80709 expected da39a3ee5e6b4b0d3255bfef95601890afd807',
                 $invalid->getMessage()
             );
+            // @codingStandardsIgnoreEnd
         }
     }
 

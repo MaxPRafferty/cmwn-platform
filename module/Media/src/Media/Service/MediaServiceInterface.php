@@ -3,6 +3,7 @@
 namespace Media\Service;
 
 use Application\Exception\NotFoundException;
+use Media\MediaCollection;
 use Media\MediaInterface;
 
 /**

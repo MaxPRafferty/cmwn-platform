@@ -35,5 +35,4 @@ class Module implements ConfigProviderInterface, AutoloaderProviderInterface
     {
         return include __DIR__ . '/../../config/module.config.php';
     }
-
 }

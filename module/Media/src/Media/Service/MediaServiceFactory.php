@@ -22,6 +22,14 @@ class MediaServiceFactory implements FactoryInterface
     {
         /** @var Client $httpClient */
         $httpClient = $serviceLocator->get(Client::class);
-        return new MediaService($httpClient);
+        $service = new MediaService($httpClient);
+
+        $config = $serviceLocator->get('Config');
+
+        if (isset($config['media-service']) && isset($config['media-service']['url'])) {
+            $service->setBaseUrl($config['media-service']['url']);
+        }
+
+        return $service;
     }
 }
