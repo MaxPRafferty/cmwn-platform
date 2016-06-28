@@ -1,0 +1,26 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "type": "folder",
+    "media_id": "0",
+    "name": "All Files",
+    "can_overlap": false,
+    "asset_type": "folder",
+    "items": [
+        {
+            "type": "folder",
+            "media_id": "7302958933",
+            "name": "Content",
+            "can_overlap": false,
+            "asset_type": "folder"
+        },
+        {
+            "type": "folder",
+            "media_id": "8418104929",
+            "name": "Skribble",
+            "can_overlap": false,
+            "asset_type": "folder"
+        }
+    ]
+}

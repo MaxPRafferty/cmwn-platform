@@ -16,6 +16,7 @@ return [
     'Job',
     'Import',
     'Notice',
+    'Media',
     'AcMailer',
     'Forgot',
     'ZF\\ApiProblem',
