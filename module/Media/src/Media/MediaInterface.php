@@ -122,4 +122,18 @@ interface MediaInterface
      * @return MediaInterface
      */
     public function setMimeType($mime);
+
+    /**
+     * Returns the name of the asset
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Sets the name of the asset
+     *
+     * @param string $name
+     */
+    public function setName($name);
 }

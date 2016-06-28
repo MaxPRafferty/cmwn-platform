@@ -3,3 +3,4 @@
 *.less linguist-vendored
 
 *.response binary
+*.request binary
