@@ -235,7 +235,7 @@ return array (
                     'email' => 'english_teacher@ginasink.com',
                     'code' => NULL,
                     'type' => 'ADULT',
-                    'password' => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+                    'password' => password_hash('business', PASSWORD_DEFAULT),
                     'first_name' => 'Angelot',
                     'middle_name' => 'M',
                     'last_name' => 'Fredickson',
