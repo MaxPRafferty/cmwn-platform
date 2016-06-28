@@ -11,7 +11,10 @@ use Zend\Json\Json;
 /**
  * Test GroupResourceTest
  * @group DB
- * @group group
+ * @group Group
+ * @group GroupService
+ * @group Api
+ * @group Integration
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -57,7 +60,20 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
-     * @ticket core-864
+     */
+    public function testItShouldCheckCsrfToReturnValidGroups()
+    {
+        $this->logInUser('english_student');
+
+        $this->dispatch('/group');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(500);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-864
      */
     public function testItShouldReturnValidGroups()
     {
@@ -84,7 +100,20 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
-     * @ticket core-864
+     */
+    public function testItShouldCheckCsrfToReturnSchoolForUser()
+    {
+        $this->logInUser('english_student');
+
+        $this->dispatch('/group?type=school');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(500);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-864
      */
     public function testItShouldReturnSchoolForUser()
     {
@@ -107,6 +136,19 @@ class GroupResourceTest extends TestCase
             $actualIds[] = $group['group_id'];
         }
         $this->assertEquals($actualIds, $expectedIds);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckCsrfToReturnGroupData()
+    {
+        $this->logInUser('english_student');
+
+        $this->dispatch('/group/school');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(500);
     }
 
     /**
@@ -161,6 +203,25 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCheckCsrfToCreateGroup()
+    {
+        $this->logInUser('super_user');
+
+        $postData = array(
+            'organization_id' => 'district',
+            'title' => 'Joni School',
+            'description' => 'this is new school',
+            'meta' => null,
+        );
+        $this->dispatch('/group', POST, $postData);
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(500);
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCreateGroup()
     {
         $this->injectValidCsrfToken();
@@ -207,6 +268,17 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCheckCsrfToDeleteGroup()
+    {
+        $this->logInUser('super_user');
+
+        $this->dispatch('/group/school', DELETE);
+        $this->assertResponseStatusCode(500);
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldDeleteGroup()
     {
         $this->injectValidCsrfToken();
@@ -228,6 +300,23 @@ class GroupResourceTest extends TestCase
 
         $this->dispatch('/group/school', DELETE);
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckCsrfToUpdateGroup()
+    {
+        $this->logInUser('super_user');
+
+        $putData = [
+            'organization_id' => 'district',
+            'title' => 'Joni School',
+            'description' => 'this is new school',
+            'meta' => null,
+        ];
+        $this->dispatch('/group/school', PUT, $putData);
+        $this->assertResponseStatusCode(500);
     }
 
     /**

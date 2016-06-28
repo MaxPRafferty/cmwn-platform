@@ -5,6 +5,12 @@ namespace IntegrationTest\Api\V1\Rest;
 use IntegrationTest\AbstractApigilityTestCase;
 use Zend\Json\Json;
 
+/**
+ * Test GroupUsersResourceTest
+ * @group DB
+ * @group UserGroup
+ */
+
 class GroupUsersResourceTest extends AbstractApigilityTestCase
 {
     /**
