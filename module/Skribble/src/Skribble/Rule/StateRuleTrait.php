@@ -11,24 +11,24 @@ namespace Skribble\Rule;
 trait StateRuleTrait
 {
     /**
-     * @var float
+     * @var string
      */
-    protected $left = 0.0;
+    protected $left = '0.0';
 
     /**
-     * @var float
+     * @var string
      */
-    protected $top = 0.0;
+    protected $top = '0.0';
 
     /**
-     * @var float
+     * @var string
      */
-    protected $scale = 0.0;
+    protected $scale = '0.0';
 
     /**
-     * @var float
+     * @var string
      */
-    protected $rotation = 0.0;
+    protected $rotation = '0.0';
 
     /**
      * @var int
@@ -41,7 +41,7 @@ trait StateRuleTrait
     protected $corners = [];
 
     /**
-     * @return float
+     * @return string
      */
     public function getLeft()
     {
@@ -49,18 +49,18 @@ trait StateRuleTrait
     }
 
     /**
-     * @param float $left
+     * @param string $left
      *
      * @return StateRuleTrait
      */
     public function setLeft($left)
     {
-        $this->left = $left;
+        $this->left = bcmul($left, 1, 14);
         return $this;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getTop()
     {
@@ -68,18 +68,18 @@ trait StateRuleTrait
     }
 
     /**
-     * @param float $top
+     * @param string $top
      *
      * @return StateRuleTrait
      */
     public function setTop($top)
     {
-        $this->top = $top;
+        $this->top = bcmul($top, 1, 14);
         return $this;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getScale()
     {
@@ -87,18 +87,18 @@ trait StateRuleTrait
     }
 
     /**
-     * @param float $scale
+     * @param string $scale
      *
      * @return StateRuleTrait
      */
     public function setScale($scale)
     {
-        $this->scale = $scale;
+        $this->scale = bcmul($scale, 1, 14);
         return $this;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getRotation()
     {
@@ -106,13 +106,13 @@ trait StateRuleTrait
     }
 
     /**
-     * @param float $rotation
+     * @param string $rotation
      *
      * @return StateRuleTrait
      */
     public function setRotation($rotation)
     {
-        $this->rotation = $rotation;
+        $this->rotation = bcmul($rotation, 1, 14);
         return $this;
     }
 
@@ -189,11 +189,11 @@ trait StateRuleTrait
     public function setState(array $state)
     {
         $defaults = [
-            'left'     => 0.0,
-            'top'      => 0.0,
-            'scale'    => 0.0,
-            'rotation' => 0.0,
-            'layer'    => 0,
+            'left'     => '0.0',
+            'top'      => '0.0',
+            'scale'    => '0.0',
+            'rotation' => '0.0',
+            'layer'    => '0',
             'corners'  => [],
         ];
 

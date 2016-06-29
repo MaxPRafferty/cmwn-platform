@@ -72,7 +72,7 @@ interface StateRuleInterface
      *
      * @return StateRuleInterface
      */
-    public function setCorners($corners);
+    public function setCorners(array $corners);
 
     /**
      * @return array
@@ -82,7 +82,7 @@ interface StateRuleInterface
     /**
      * @param array $state
      *
-*@return StateRuleInterface
+     * @return StateRuleInterface
      */
     public function setState(array $state);
 

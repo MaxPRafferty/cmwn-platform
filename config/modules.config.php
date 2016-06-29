@@ -19,6 +19,7 @@ return [
     'Media',
     'AcMailer',
     'Forgot',
+    'Skribble',
     'ZF\\ApiProblem',
     'ZF\\Configuration',
     'ZF\\Hal',

@@ -32,6 +32,7 @@ web1:
     - json
     - mbstring
     - mcrypt
+    - bcmath
     - pdo_mysql
     - redis
     - curl
