@@ -1,10 +1,12 @@
 <?php
-
+/**
+ * @codingStandardsIgnoreStart
+ */
 return array (
     'flips' =>
         array (
         ),
-    'organizations' =>
+        'organizations' =>
         array (
             0 =>
                 array (
@@ -31,40 +33,6 @@ return array (
         ),
     'games' =>
         array (
-            0 =>
-                array (
-                    'game_id' => 'animal-id',
-                    'created' => '2016-04-13 00:00:00',
-                    'updated' => '2016-04-13 00:00:00',
-                    'title' => 'Animal ID',
-                    'description' => 'Can you ID the different kinds of animals? Do you know what plants and animals
-                    belong together? Prove it and learn it right here!
-                ',
-                    'deleted' => NULL,
-                    'coming_soon' => '0',
-                ),
-            1 =>
-                array (
-                    'game_id' => 'be-bright',
-                    'created' => '2016-04-13 00:00:00',
-                    'updated' => '2016-04-13 00:00:00',
-                    'title' => 'Be Bright',
-                    'description' => 'Become a Light Saver agent of change! This music video will kick your inner
-                    superhero into high gear!
-                ',
-                    'deleted' => NULL,
-                    'coming_soon' => '0',
-                ),
-            2 =>
-                array (
-                    'game_id' => 'Monarch',
-                    'created' => '2016-04-13 00:00:00',
-                    'updated' => '2016-04-13 00:00:00',
-                    'title' => 'Monarch',
-                    'description' => 'Monarch Butterflies are crucial for the environment yet they are endangered! This is your spot!',
-                    'deleted' => NULL,
-                    'coming_soon' => '0',
-                ),
         ),
     'groups' =>
         array (
@@ -156,51 +124,9 @@ return array (
         ),
     'images' =>
         array (
-            0 =>
-                array (
-                    'image_id' => 'profiles/drkynjsedoegxb0hwvch',
-                    'url' => 'https://res.cloudinary.com/changemyworldnow/image/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg',
-                    'moderation_status' => '0',
-                    'created' => '2016-05-05 20:14:18',
-                    'updated' => '2016-05-05 20:14:18',
-                    'type' => NULL,
-                ),
-            1 =>
-                array (
-                    'image_id' => 'profiles/dwtm7optf0qq62vcveef',
-                    'url' => 'https://res.cloudinary.com/changemyworldnow/image/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
-                    'moderation_status' => '1',
-                    'created' => '2016-04-14 00:07:53',
-                    'updated' => '2016-04-14 00:07:53',
-                    'type' => NULL,
-                ),
         ),
     'names' =>
         array (
-            0 =>
-                array (
-                    'name' => 'active',
-                    'position' => 'LEFT',
-                    'count' => '1',
-                ),
-            1 =>
-                array (
-                    'name' => 'adorable',
-                    'position' => 'LEFT',
-                    'count' => '1',
-                ),
-            2 =>
-                array (
-                    'name' => 'albatross',
-                    'position' => 'RIGHT',
-                    'count' => '1',
-                ),
-            3 =>
-                array (
-                    'name' => 'alligator',
-                    'position' => 'RIGHT',
-                    'count' => '1',
-                ),
         ),
     'user_flips' =>
         array (
@@ -453,16 +379,6 @@ return array (
         ),
     'user_images' =>
         array (
-            0 =>
-                array (
-                    'user_id' => 'english_student',
-                    'image_id' => 'profiles/drkynjsedoegxb0hwvch',
-                ),
-            1 =>
-                array (
-                    'user_id' => 'english_student',
-                    'image_id' => 'profiles/dwtm7optf0qq62vcveef',
-                ),
         ),
     'user_saves' =>
         array(
