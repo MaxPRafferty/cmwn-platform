@@ -2,6 +2,8 @@
 
 namespace Skribble\Rule;
 
+use Media\MediaInterface;
+
 /**
  * Interface RuleInterface
  */
