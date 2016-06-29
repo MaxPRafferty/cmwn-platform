@@ -52,8 +52,6 @@ return [
             'api.rest.org-users'       => [
                 'GET' => 'view.org.users',
             ],
-            'api.rest.user-image'      => [
-                'GET'  => 'attach.profile.image',
             'api.rest.user-image'  => [
                 'GET'  => 'view.profile.image',
                 'POST' => 'attach.profile.image',
@@ -79,5 +77,4 @@ return [
             ],
             ],
         ],
-    ]
 ];
