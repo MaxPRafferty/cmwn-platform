@@ -1,5 +1,5 @@
 <?php
-
+// @codingStandardsIgnoreStart
 return array (
   'flips' =>
   array (
@@ -213,6 +213,12 @@ return array (
       'count' => '1',
     ),
   ),
+<<<<<<< HEAD
+=======
+  'user_flips' =>
+  array (
+  ),
+>>>>>>> origin/feature/CORE-770/bugfixes-ghastly
   'users' =>
   array (
     0 =>
@@ -405,6 +411,7 @@ return array (
       'external_id' => NULL,
     ),
   ),
+<<<<<<< HEAD
   'user_flips' =>
    array (
     0 =>
@@ -438,6 +445,8 @@ return array (
             'earned' => '2016-04-27 10:48:45',
     ),
    ),
+=======
+>>>>>>> origin/feature/CORE-770/bugfixes-ghastly
   'user_friends' =>
   array (
   ),
@@ -502,6 +511,11 @@ return array (
     1 =>
     array (
       'user_id' => 'english_student',
+      'image_id' => 'profiles/dwtm7optf0qq62vcveef',
+    ),
+    2 =>
+    array (
+      'user_id' => 'other_principal',
       'image_id' => 'profiles/dwtm7optf0qq62vcveef',
     ),
   ),
