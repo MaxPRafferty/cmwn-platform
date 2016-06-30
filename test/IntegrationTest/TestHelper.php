@@ -3,7 +3,8 @@
 namespace IntegrationTest;
 
 use Zend\Db\Adapter\Adapter;
-use Zend\Mvc\MvcEvent;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Noop;
 use ZF\Apigility\Application;
 use Zend\ServiceManager\ServiceManager;
 
@@ -19,6 +20,11 @@ class TestHelper
      * @var ServiceManager
      */
     protected static $serviceManager;
+
+    /**
+     * @var \PDO
+     */
+    protected static $pdo;
 
     /**
      * @return bool
@@ -39,9 +45,19 @@ class TestHelper
         }
 
         static::$serviceManager = Application::init(static::getApplicationConfig())->getServiceManager();
+        static::$serviceManager->setAllowOverride(true);
+
+        $testLogger = new Logger();
+        $testLogger->addWriter(new Noop());
+
+        static::$serviceManager->setService('Log\App', $testLogger);
+        static::$serviceManager->setAllowOverride(false);
         return static::$serviceManager;
     }
 
+    /**
+     * @return array
+     */
     public static function getTestDbConfig()
     {
         $phinxConfig = include __DIR__ . '/../../config/phinx.php';
@@ -70,12 +86,11 @@ class TestHelper
         $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
 
         $appConfig['service_manager'] = [
-            'invokables' => [
-                'InjectTestAdapter' => InjectTestAdapterListener::class
+            'initializers' => [
+                'InjectTestAdapter' => InjectTestAdapterInitializer::class
             ]
         ];
 
-        $appConfig['listeners'] = ['InjectTestAdapter'];
         return $appConfig;
     }
 
@@ -107,5 +122,23 @@ class TestHelper
 
         unset($routes['zf-apigility']);
         return $routes;
+    }
+
+    /**
+     * @return \PDO
+     */
+    public static function getPdoConnection()
+    {
+        if (static::$pdo === null) {
+            $config      = static::getTestDbConfig();
+            static::$pdo = new \PDO(
+                $config['dsn'],
+                $config['username'],
+                $config['password'],
+                $config['driver_options']
+            );
+        }
+
+        return static::$pdo;
     }
 }

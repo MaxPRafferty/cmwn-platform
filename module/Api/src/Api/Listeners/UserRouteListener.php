@@ -10,9 +10,11 @@ use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
+use ZF\ContentNegotiation\ParameterDataContainer;
 
 /**
  * Class UserRouteListener
@@ -59,6 +61,13 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
             MvcEvent::EVENT_ROUTE,
             [$this, 'onRoute']
         );
+
+        $this->listeners['Zend\Mvc\Application'] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_ROUTE,
+            [$this, 'injectCurrentValues'],
+            -649
+        );
     }
 
     /**
@@ -77,6 +86,15 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
      */
     public function onRoute(MvcEvent $event)
     {
+        $request = $event->getRequest();
+        if (!$request instanceof Request) {
+            return null;
+        }
+
+        if ($request->getMethod() === Request::METHOD_OPTIONS) {
+            return null;
+        }
+
         $route  = $event->getRouteMatch();
         $userId = $route->getParam('user_id', false);
 
@@ -115,5 +133,35 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
         $assertion->setActiveUser($identity);
         $assertion->setRequestedUser($user);
         $event->setParam('assertion', $assertion);
+    }
+
+    /**
+     * @param MvcEvent $event
+     * @return null|void
+     */
+    public function injectCurrentValues(MvcEvent $event)
+    {
+        $request = $event->getRequest();
+        if (!$request instanceof Request) {
+            return ;
+        }
+
+        if ($request->getMethod() !== Request::METHOD_PUT) {
+            return;
+        }
+
+        $dataContainer = $event->getParam('ZFContentNegotiationParameterData', false);
+        if (!$dataContainer instanceof ParameterDataContainer) {
+            return null;
+        }
+
+        $user = $event->getRouteMatch()->getParam('user');
+        if (!$user instanceof UserInterface) {
+            return null;
+        }
+
+        if ($user->getType() === UserInterface::TYPE_CHILD) {
+            $dataContainer->setBodyParam('email', $user->getEmail());
+        }
     }
 }

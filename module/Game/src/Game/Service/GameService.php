@@ -9,7 +9,6 @@ use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
-
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
@@ -49,8 +48,10 @@ class GameService implements GameServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
-            $select    = new Select($this->gameTableGateway->getTable());
+            $select    = new Select(['g' => $this->gameTableGateway->getTable()]);
             $select->where($where);
+            $select->order(['g.title']);
+
             return new DbSelect(
                 $select,
                 $this->gameTableGateway->getAdapter(),

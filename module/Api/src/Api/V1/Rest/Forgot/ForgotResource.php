@@ -33,9 +33,8 @@ class ForgotResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        $data  = (array) $data;
-        $email = $data['email'];
+        $email = $this->getInputFilter()->getValue('email');
         $this->forgotService->saveForgotPassword($email);
-        return new ApiProblem(200, 'Ok');
+        return new ApiProblem(201, 'Ok');
     }
 }

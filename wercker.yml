@@ -1,7 +1,68 @@
-box: php
+box:
+  id: cmwn/platform-api
+  username: $DOCKER_USER
+  password: $DOCKER_PASS
+  tag: latest
+
 build:
+  services:
+    - id: mysql:5.5
+      env:
+        MYSQL_ROOT_PASSWORD: cmwn_pass123
+        MYSQL_DATABASE: cmwn_test
+        MYSQL_USER: cmwn_user
+        MYSQL_PASSWORD: cmwn_pass
   steps:
     - script:
-        name: install dependencies
-        code: |-
-            composer install --no-interaction
+      name: install dependencies
+      code: composer install --no-interaction --no-dev
+    - script:
+      name: Setup test DB
+      code: |-
+        sleep 5
+        phinx migrate -c $PWD/config/phinx.php -e test
+    - script:
+      name: PHPCS Check
+      code: phpcs --standard=PSR2 -p --no-colors module
+    - script:
+      name: PHPMD
+      code: phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
+    - script:
+      name: PHPUNIT
+      code: |-
+        export USE_ZEND_ALLOC=0
+        phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
+  after-steps:
+    - slack-notifier:
+      url: $SLACK_URL
+
+deploy:
+  steps:
+    - script:
+      name: Setting version number
+      code: export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
+    - script:
+      name: Creating package directory
+      code: mkdir -p data/build/artifact
+    - script:
+      name: On Production?
+      code: export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
+    - script:
+      name: Creating package name
+      code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
+    - script:
+      name: Running Zend-Tool
+      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip"
+    - s3sync:
+      key-id: $AWS_KEY
+      key-secret: $AWS_SECRET
+      bucket-url: $AWS_BUCKET_URL
+      source-dir: data/build/artifact
+    - github-create-release:
+      token: $MC_GITHUB_TOKEN
+      tag: $VERSION
+      draft: $DRAFT
+    - github-upload-asset:
+      token: $MC_GITHUB_TOKEN
+      file: data/build/artifact/platform-api-$VERSION.zip
+      filename: $PACKAGE.zip

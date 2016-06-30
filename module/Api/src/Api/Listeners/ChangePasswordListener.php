@@ -29,9 +29,26 @@ class ChangePasswordListener implements AuthenticationServiceAwareInterface
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], -PHP_INT_MAX);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], 150);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], 150);
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH,
+            [$this, 'onDispatch'],
+            -PHP_INT_MAX
+        );
+
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH_ERROR,
+            [$this, 'onError'],
+            150
+        );
+
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_RENDER_ERROR,
+            [$this, 'onError'],
+            150
+        );
     }
 
     /**
@@ -74,7 +91,6 @@ class ChangePasswordListener implements AuthenticationServiceAwareInterface
             $this->getAuthenticationService()->getIdentity();
             return null;
         } catch (ChangePasswordException $changePassword) {
-
         }
 
         return new ApiProblemResponse(new ApiProblem(401, $changePassword->getMessage()));

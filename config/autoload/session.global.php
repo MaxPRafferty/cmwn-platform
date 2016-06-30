@@ -2,6 +2,9 @@
 $cacheHost = getenv('CACHE1_HOST');
 $cachePort = getenv('CACHE1_PORT');
 
+$cacheHost = empty($cacheHost) ? 'localhost' : $cacheHost;
+$cachePort = empty($cachePort) ? 6379 : $cachePort;
+
 $config = [
     'session' => [
         'config'       => [
@@ -27,9 +30,8 @@ $config = [
     ],
 ];
 
-if (defined('TEST_MODE')) {
+if (defined('TEST_MODE') || !extension_loaded('redis')) {
     unset($config['session']['save_handler']);
 }
 
 return $config;
-

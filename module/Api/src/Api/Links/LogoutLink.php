@@ -17,6 +17,7 @@ class LogoutLink extends Link
     public function __construct()
     {
         parent::__construct('logout');
+        $this->setProps(['label' => 'Logout']);
         $this->setRoute('api.rest.logout');
     }
 }

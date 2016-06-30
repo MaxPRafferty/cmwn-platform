@@ -1,10 +1,13 @@
 <?php
 
-
 namespace SecurityTest;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use Security\ChangePasswordUser;
+use Security\Exception\ChangePasswordException;
 use Security\PasswordValidator;
+use Security\SecurityUser;
+use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
  * Test PasswordValidatorTest
@@ -16,6 +19,21 @@ use Security\PasswordValidator;
 class PasswordValidatorTest extends TestCase
 {
     /**
+     * @var \Mockery\MockInterface|\Zend\Authentication\AuthenticationServiceInterface
+     */
+    protected $authService;
+
+    /**
+     * @before
+     */
+    public function setUpAuthService()
+    {
+        $this->authService = \Mockery::mock(AuthenticationServiceInterface::class);
+        $this->authService->shouldReceive('getIdentity')->andReturn(null)->byDefault();
+        $this->authService->shouldReceive('hasIdentity')->andReturn(false)->byDefault();
+    }
+
+    /**
      * @dataProvider validPasswords
      * @param $password
      * @test
@@ -23,6 +41,7 @@ class PasswordValidatorTest extends TestCase
     public function testItShouldPassWithStrongPassword($password)
     {
         $validator = new PasswordValidator();
+        $validator->setAuthenticationService($this->authService);
         $this->assertTrue($validator->isValid($password));
     }
 
@@ -34,7 +53,75 @@ class PasswordValidatorTest extends TestCase
     public function testItShouldFailsWithWeakPassword($password)
     {
         $validator = new PasswordValidator();
+        $validator->setAuthenticationService($this->authService);
         $this->assertFalse($validator->isValid($password));
+    }
+
+    /**
+     * @dataProvider validPasswords
+     * @param $password
+     * @test
+     */
+    public function testItShouldValidateTrueWhenNewPasswordDoesNotEqualCode($password)
+    {
+        $securityUser = new SecurityUser(['code' => 'foobar']);
+
+        $validator = new PasswordValidator();
+        $validator->setAuthenticationService($this->authService);
+        
+        $this->authService->shouldReceive('getIdentity')->andReturn($securityUser)->once();
+        $this->assertTrue($validator->isValid($password));
+    }
+
+    /**
+     * @dataProvider validPasswords
+     * @param $password
+     * @test
+     */
+    public function testItShouldValidateTrueWhenUserNeedsToChangePassword($password)
+    {
+
+        $validator = new PasswordValidator();
+        $validator->setAuthenticationService($this->authService);
+
+        $this->authService
+            ->shouldReceive('getIdentity')
+            ->andThrow(new ChangePasswordException(new ChangePasswordUser(['code' => 'foobar'])))
+            ->once();
+
+        $this->assertTrue($validator->isValid($password));
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldValidateFalseCodeMatchesNewPassword()
+    {
+        $validator = new PasswordValidator();
+        $validator->setAuthenticationService($this->authService);
+
+        $this->authService
+            ->shouldReceive('getIdentity')
+            ->andReturn(new SecurityUser(['code' => 'a1234567']))
+            ->once();
+
+        $this->assertFalse($validator->isValid('a1234567'));
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldValidateFalseCodeMatchesNewPasswordOnChangePasswordUser()
+    {
+        $validator = new PasswordValidator();
+        $validator->setAuthenticationService($this->authService);
+
+        $this->authService
+            ->shouldReceive('getIdentity')
+            ->andThrow(new ChangePasswordException(new ChangePasswordUser(['code' => 'a1234567'])))
+            ->once();
+
+        $this->assertFalse($validator->isValid('a1234567'));
     }
 
     /**

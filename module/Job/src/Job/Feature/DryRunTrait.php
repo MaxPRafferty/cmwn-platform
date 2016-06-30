@@ -22,7 +22,7 @@ trait DryRunTrait
     public function setDryRun($dryRun)
     {
         if ($this instanceof LoggerAwareInterface) {
-            $this->getLogger()->info('Setting dry run flag');
+            $this->getLogger()->info(sprintf('Setting dry run flag to: %s', ($dryRun ? 'On ': 'Off')));
         }
 
         $this->dryRun = (bool) $dryRun;

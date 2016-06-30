@@ -14,7 +14,12 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Exception ResetPassWordListenerTest
  *
  * @group IntegrationTest
- * @group NotDefault
+ * @group Security
+ * @group DB
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ResetPassWordListenerTest extends AbstractHttpControllerTestCase
 {
@@ -56,6 +61,7 @@ class ResetPassWordListenerTest extends AbstractHttpControllerTestCase
             $checkRoutes[] = $controllerName;
         });
 
+        // FIXME!!!!
         $checkRoutes = array_unique($checkRoutes);
 //        $this->assertEquals(
 //            $checkRoutes,

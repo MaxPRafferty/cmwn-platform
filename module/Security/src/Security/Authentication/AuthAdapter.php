@@ -103,6 +103,10 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
         }
 
+        if ($user->isDeleted()) {
+            return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
+        }
+
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
             $this->getLogger()->notice(

@@ -34,9 +34,10 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
     /**
      * Saves an image to a user
      *
-     * @param string|ImageInterface $image
+     * @param ImageInterface|string $image
      * @param string|UserInterface $user
      * @return bool
+     * @throws \Exception
      */
     public function saveImageToUser($image, $user)
     {
@@ -52,7 +53,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('save.user.image.error');
-            $return = false;
+            throw $attachException;
         }
 
         $this->getEventManager()->trigger($event);
@@ -60,24 +61,28 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
     }
 
     /**
+     * Fetches an image for a user
+     *
      * @param $user
+     * @param bool $approvedOnly
      * @return \Asset\Image|bool
+     * @throws \Exception
      */
-    public function fetchImageForUser($user)
+    public function fetchImageForUser($user, $approvedOnly = true)
     {
-        $eventParams = ['user' => $user];
+        $eventParams = ['user' => $user, 'approved_only' => $approvedOnly];
         $event       = new Event('fetch.user.image', $this->realService, $eventParams);
         if ($this->getEventManager()->trigger($event)->stopped()) {
             return false;
         }
 
         try {
-            $return = $this->realService->fetchImageForUser($user);
+            $return = $this->realService->fetchImageForUser($user, $approvedOnly);
             $event->setName('fetch.user.image.post');
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event->setName('fetch.user.image.error');
-            $return = false;
+            throw $attachException;
         }
 
         $this->getEventManager()->trigger($event);

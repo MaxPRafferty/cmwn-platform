@@ -45,7 +45,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'onRender']);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'checkToken'], 200);
+        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'checkToken'], (PHP_INT_MAX - 1));
     }
 
     /**

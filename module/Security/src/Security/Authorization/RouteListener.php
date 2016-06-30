@@ -6,7 +6,7 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
-
+use Security\Exception\ChangePasswordException;
 use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
@@ -62,7 +62,12 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH,
+            [$this, 'onDispatch'],
+            (PHP_INT_MAX - 2)
+        );
     }
 
     /**
@@ -70,9 +75,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        foreach ($this->listeners as $listener) {
-            $events->detach('*', $listener);
-        }
+        $events->detach('Zend\Mvc\Application', $this->listeners[0]);
     }
 
     /**
@@ -95,7 +98,11 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         }
 
         /** @var SecurityUser $user */
-        $user = $this->authService->getIdentity();
+        try {
+            $user = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePass) {
+            $user = $changePass->getUser();
+        }
 
         if ($user->isSuper()) {
             $user->setRole('super');

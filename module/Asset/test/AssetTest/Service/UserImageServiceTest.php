@@ -113,8 +113,9 @@ class UserImageServiceTest extends TestCase
 
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
+                $where->addPredicate(new Operator('i.moderation_status', '=', 1));
                 $select->where($where);
-
+                $select->order('i.created DESC');
                 $this->assertEquals(
                     $select,
                     $actual,
@@ -136,7 +137,7 @@ class UserImageServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldThrowExceptionWhenImageNotApproved()
+    public function testItShouldRemoveModerationStatusWhenApprovedOnlyIsFalse()
     {
         $expectedImage = new Image();
         $this->tableGateway->shouldReceive('selectWith')
@@ -151,6 +152,7 @@ class UserImageServiceTest extends TestCase
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
                 $select->where($where);
+                $select->order('i.created DESC');
 
                 $this->assertEquals(
                     $select,
@@ -161,19 +163,13 @@ class UserImageServiceTest extends TestCase
                 return new \ArrayIterator([new \ArrayObject($expectedImage->getArrayCopy())]);
             });
 
-        try {
-            $this->service->fetchImageForUser('foo');
-        } catch (AssetNotApprovedException $actualException) {
+        $actualImage = $this->service->fetchImageForUser('foo', false);
 
-            $this->assertEquals(
-                $expectedImage,
-                $actualException->getImage(),
-                'Wrong image passed in exception'
-            );
-            return;
-        }
-
-        $this->fail('User Image Service did not throw exception');
+        $this->assertEquals(
+            $expectedImage,
+            $actualImage,
+            'Image was not returned from service'
+        );
     }
 
     /**
@@ -192,8 +188,9 @@ class UserImageServiceTest extends TestCase
 
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
+                $where->addPredicate(new Operator('i.moderation_status', '=', 1));
                 $select->where($where);
-
+                $select->order('i.created DESC');
                 $this->assertEquals(
                     $select,
                     $actual,

@@ -3,11 +3,13 @@
 namespace Api\Listeners;
 
 use Api\V1\Rest\Image\ImageEntity;
+use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
 use Asset\Service\UserImageServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
+use ZF\Hal\Plugin\Hal;
 
 /**
  * Class UserImageListener
@@ -41,7 +43,7 @@ class UserImageListener
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity.post', [$this, 'attachImage'], -1000);
+        $this->listeners[] = $events->attach(Hal::class, 'renderEntity.post', [$this, 'attachImage'], -1000);
     }
 
     /**
@@ -50,7 +52,7 @@ class UserImageListener
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('ZF\Hal\Plugin\Hal', $listener);
+            $events->detach(Hal::class, $listener);
         }
     }
 
@@ -75,7 +77,7 @@ class UserImageListener
         /** @var \ZF\Hal\Plugin\Hal $hal */
         $hal     = $event->getTarget();
         try {
-            $image = $this->userImageService->fetchImageForUser($realEntity);
+            $image = $this->userImageService->fetchImageForUser($realEntity, !$realEntity instanceof MeEntity);
         } catch (\Exception $imageException) {
             return;
         }

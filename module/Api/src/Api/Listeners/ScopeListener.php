@@ -98,6 +98,10 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
             $user = $changePassword->getUser();
         }
 
+        if ($user instanceof SecurityUser && $user->isSuper()) {
+            return $user->getRole();
+        }
+
         $realEntity = $entity->entity;
         if ($realEntity instanceof UserInterface) {
             return $this->securityGroupService->fetchRelationshipRole($user, $realEntity);

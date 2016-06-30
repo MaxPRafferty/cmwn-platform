@@ -145,8 +145,15 @@ class TeacherWorksheetParser extends AbstractExcelParser
                 ->setRole($rowData['TYPE']);
 
             if ($this->teacherRegistry->offsetExists($teacher->getEmail())) {
+                $this->getClassForTeacher(
+                    $rowData,
+                    $this->teacherRegistry->offsetGet($teacher->getEmail()),
+                    $rowNumber
+                );
+
                 continue;
             }
+
             $this->teacherRegistry->addTeacher($teacher);
             $this->getClassForTeacher($rowData, $teacher, $rowNumber);
         };
@@ -158,22 +165,19 @@ class TeacherWorksheetParser extends AbstractExcelParser
 
     /**
      * Creates all the add teacher actions
-     *
-     * @todo Add the association action to classes
-     * @todo add the association action to the school for teachers with no classes
      */
     protected function createActions()
     {
-        $this->getLogger()->info('Creating actions for teachers');
         foreach ($this->teacherRegistry as $teacher) {
             if (!$teacher->isNew()) {
                 $this->getLogger()->debug(
-                    sprintf('Teacher with email %s already exists', $teacher->getEmail())
+                    sprintf('Teacher with email "%s" found in registry', $teacher->getEmail())
                 );
 
                 continue;
             }
 
+            $this->getLogger()->info(sprintf('New teacher: %s', $teacher->getEmail()));
             $this->addAction(new AddTeacherAction($this->teacherRegistry->getUserService(), $teacher));
         }
     }
@@ -190,6 +194,7 @@ class TeacherWorksheetParser extends AbstractExcelParser
     {
         $class   = $rowData['OFF CLS'];
         if (empty($class)) {
+            $this->getLogger()->warn(sprintf('Teacher "%s" has empty class', $teacher->getEmail()));
             return;
         }
 
@@ -201,6 +206,12 @@ class TeacherWorksheetParser extends AbstractExcelParser
             );
             return;
         }
+
+        $this->getLogger()->debug(sprintf(
+            'Found class "%s" for teacher "%s"',
+            $class,
+            $teacher->getEmail()
+        ));
 
         $teacher->setClassRoom($this->classRoomRegistry->offsetGet($class));
     }

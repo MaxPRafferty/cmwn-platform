@@ -16,7 +16,10 @@ data/cache/*
 !data/cache/.gitkeep
 .vagrant
 ~*.xlsx
+public/apigility-ui
 _builds
-_cache
 _projects
 _steps
+_cache
+wercker.env
+.wercker

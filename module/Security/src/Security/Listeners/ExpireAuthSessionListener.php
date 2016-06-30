@@ -57,7 +57,8 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
         $this->listeners[] = $events->attach(
             '*',
             MvcEvent::EVENT_ROUTE,
-            [$this, 'onRoute']
+            [$this, 'onRoute'],
+            PHP_INT_MAX
         );
     }
 
