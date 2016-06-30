@@ -5,6 +5,7 @@ namespace Skribble;
 use Application\Utils\Date\DateCreatedTrait;
 use Application\Utils\Date\DateDeletedTrait;
 use Application\Utils\Date\DateUpdatedTrait;
+use Skribble\Rule\SkribbleRules;
 use Zend\Filter\StaticFilter;
 
 /**
@@ -42,12 +43,18 @@ class Skribble implements SkribbleInterface
     protected $version = self::CURRENT_VERSION;
 
     /**
+     * @var SkribbleRules
+     */
+    protected $rules;
+
+    /**
      * Skribble constructor.
      *
      * @param array $options
      */
     public function __construct(array $options = [])
     {
+        $this->rules = new SkribbleRules();
         $this->exchangeArray($options);
     }
 

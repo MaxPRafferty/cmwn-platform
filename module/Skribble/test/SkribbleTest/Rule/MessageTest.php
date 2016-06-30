@@ -3,10 +3,10 @@
 namespace SkribbleTest\Rule;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Skribble\Rule\Item;
+use Skribble\Rule\Message;
 
 /**
- * Test ItemTest
+ * Test MessageTest
  *
  * @group Skribble
  * @group SkribbleRule
@@ -16,7 +16,7 @@ use Skribble\Rule\Item;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ItemTest extends TestCase
+class MessageTest extends TestCase
 {
     /**
      * @test
@@ -26,7 +26,7 @@ class ItemTest extends TestCase
         $expected = [
             'media_id'    => '70116576425',
             'name'        => 'img_dogs_1-01.png',
-            'asset_type'  => 'item',
+            'asset_type'  => 'message',
             'check'       => [
                 'type'  => 'sha1',
                 'value' => '05735b54100ea1c1054da594550792c4f1c36fc5',
@@ -61,17 +61,17 @@ class ItemTest extends TestCase
             ],
         ];
 
-        $item = new Item($expected);
+        $message = new Message($expected);
 
         $this->assertEquals(
             $expected,
-            $item->getArrayCopy(),
-            'Item did not hydrate correctly'
+            $message->getArrayCopy(),
+            'Message did not hydrate correctly'
         );
 
-        $this->assertTrue($item->isValid(), 'Item is not reporting valid');
-        $this->assertTrue($item->isStateValid(), 'Item is not reporting valid state');
-        $this->assertEquals('item', $item->getType());
+        $this->assertTrue($message->isValid(), 'Message is not reporting valid');
+        $this->assertTrue($message->isStateValid(), 'Message is not reporting valid state');
+        $this->assertEquals('message', $message->getType());
     }
 
     /**
@@ -79,10 +79,10 @@ class ItemTest extends TestCase
      */
     public function testItShouldBeAbleToHydrateItSelf()
     {
-        $expected = new Item([
+        $expected = new Message([
             'media_id'    => '70116576425',
             'name'        => 'img_dogs_1-01.png',
-            'asset_type'  => 'item',
+            'asset_type'  => 'message',
             'check'       => [
                 'type'  => 'sha1',
                 'value' => '05735b54100ea1c1054da594550792c4f1c36fc5',
@@ -117,7 +117,7 @@ class ItemTest extends TestCase
             ],
         ]);
 
-        $actual = new Item($expected->getArrayCopy());
-        $this->assertEquals($expected, $actual, 'Item cannot hydrate itself');
+        $actual = new Message($expected->getArrayCopy());
+        $this->assertEquals($expected, $actual, 'Message cannot hydrate itself');
     }
 }

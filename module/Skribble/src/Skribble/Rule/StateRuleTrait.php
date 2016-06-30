@@ -152,7 +152,7 @@ trait StateRuleTrait
     {
         foreach ($corners as $corner) {
             // TODO confirm keys exist
-            $this->addCorner($corners['x'], $corner['y']);
+            $this->addCorner($corner['x'], $corner['y']);
         }
 
         return $this;
@@ -164,7 +164,7 @@ trait StateRuleTrait
      */
     public function addCorner($cornerX, $cornerY)
     {
-        array_push($this->corners, ['x' => $cornerX, 'y' => $cornerY]);
+        array_push($this->corners, ['x' => bcmul($cornerX, 1, 14), 'y' => bcmul($cornerY, 1, 14)]);
     }
 
     /**

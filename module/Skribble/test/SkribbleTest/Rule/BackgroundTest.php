@@ -8,6 +8,9 @@ use Skribble\Rule\Background;
 /**
  * Test BackgroundTest
  *
+ * @group Skribble
+ * @group SkribbleRule
+ * @group Media
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
