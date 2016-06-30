@@ -10,6 +10,14 @@ use Org\Service\OrganizationServiceInterface;
 /**
  * Test OrgResourceTest
  * @group Org
+ * @group DB
+ * @group API
+ * @group Integration
+ * @group OrgService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 
 class OrgResourceTest extends TestCase
@@ -242,7 +250,6 @@ class OrgResourceTest extends TestCase
      */
     public function testItShouldUpdateOrganization()
     {
-        $this->markTestIncomplete("blocked by Org\Delegator\OrganizationServiceDelegator::updateOrganization");
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
 
@@ -256,8 +263,7 @@ class OrgResourceTest extends TestCase
                 'meta' => null,
             ]
         );
-        $this->assertResponseStatusCode(201);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertResponseStatusCode(200);
 
         $newOrg = $this->orgService->fetchOrganization('district')->getArrayCopy();
         $this->assertEquals('newOrg', $newOrg['title']);
