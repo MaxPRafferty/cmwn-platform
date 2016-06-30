@@ -33,13 +33,14 @@ class EffectTest extends TestCase
             'mime_type'  => 'application/javascript',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Explosions',
+            'type'       => 'effect',
         ];
 
         $effect = new Effect($expected);
         $this->assertEquals(
             $expected,
             $effect->getArrayCopy(),
-            'Effect was not hydrated correctly'
+            'Things are always better with explosions, exception this did not explode'
         );
 
         $this->assertTrue($effect->isValid(), 'Effect is not reporting valid state');
@@ -61,6 +62,7 @@ class EffectTest extends TestCase
             'mime_type'  => 'application/javascript',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Explosions',
+            'type'       => 'effect',
         ]);
 
         $actual = new Effect($expected->getArrayCopy());

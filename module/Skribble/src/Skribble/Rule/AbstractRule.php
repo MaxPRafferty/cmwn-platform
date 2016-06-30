@@ -17,6 +17,7 @@ abstract class AbstractRule implements RuleInterface
 
     /**
      * AbstractRule constructor.
+     *
      * @param array $options
      */
     public function __construct(array $options = [])
@@ -40,7 +41,8 @@ abstract class AbstractRule implements RuleInterface
      */
     public function getArrayCopy()
     {
-        $return = $this->getMedia()->getArrayCopy();
+        $return         = $this->getMedia()->getArrayCopy();
+        $return['type'] = $this->getType();
         if ($this instanceof StateRuleInterface) {
             $return['state'] = $this->getState();
         }

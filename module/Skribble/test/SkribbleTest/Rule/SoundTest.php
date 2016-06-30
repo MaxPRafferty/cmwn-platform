@@ -10,6 +10,7 @@ use Skribble\Rule\Sound;
  *
  * @group Skribble
  * @group SkribbleRule
+ * @group Media
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -32,6 +33,7 @@ class SoundTest extends TestCase
             'mime_type'  => 'audo/mpeg',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'My Cool Sound',
+            'type'       => 'sound',
         ];
 
         $sound = new Sound($expected);
@@ -60,6 +62,7 @@ class SoundTest extends TestCase
             'mime_type'  => 'audo/mpeg',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'My Cool Sound',
+            'type'       => 'sound',
         ]);
 
         $actual = new Sound($expected->getArrayCopy());

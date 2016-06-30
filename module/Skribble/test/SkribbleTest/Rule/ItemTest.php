@@ -24,16 +24,17 @@ class ItemTest extends TestCase
     public function testItShouldHydrateCorrectly()
     {
         $expected = [
-            'media_id'    => '70116576425',
-            'name'        => 'img_dogs_1-01.png',
-            'asset_type'  => 'item',
-            'check'       => [
+            'media_id'   => '70116576425',
+            'name'       => 'img_dogs_1-01.png',
+            'asset_type' => 'item',
+            'check'      => [
                 'type'  => 'sha1',
                 'value' => '05735b54100ea1c1054da594550792c4f1c36fc5',
             ],
-            'src'         => 'https://media.changemyworldnow.com/f/70116576425',
-            'mime_type'   => 'image/png',
-            'state'       => [
+            'src'        => 'https://media.changemyworldnow.com/f/70116576425',
+            'mime_type'  => 'image/png',
+            'type'       => 'item',
+            'state'      => [
                 'left'     => '100.83125707814269',
                 'top'      => '-200.2378255945639',
                 'scale'    => '0.25589236226674',
@@ -80,16 +81,17 @@ class ItemTest extends TestCase
     public function testItShouldBeAbleToHydrateItSelf()
     {
         $expected = new Item([
-            'media_id'    => '70116576425',
-            'name'        => 'img_dogs_1-01.png',
-            'asset_type'  => 'item',
-            'check'       => [
+            'media_id'   => '70116576425',
+            'name'       => 'img_dogs_1-01.png',
+            'asset_type' => 'item',
+            'check'      => [
                 'type'  => 'sha1',
                 'value' => '05735b54100ea1c1054da594550792c4f1c36fc5',
             ],
-            'src'         => 'https://media.changemyworldnow.com/f/70116576425',
-            'mime_type'   => 'image/png',
-            'state'       => [
+            'src'        => 'https://media.changemyworldnow.com/f/70116576425',
+            'mime_type'  => 'image/png',
+            'type'       => 'item',
+            'state'      => [
                 'left'     => '100.83125707814269',
                 'top'      => '-200.2378255945639',
                 'scale'    => '0.25589236226674',

@@ -33,6 +33,7 @@ class BackgroundTest extends TestCase
             'mime_type'  => 'image/png',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Happy Trees',
+            'type'       => 'background',
         ];
 
         $bobRoss = new Background($expected);
@@ -62,6 +63,7 @@ class BackgroundTest extends TestCase
             'mime_type'  => 'image/png',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Happy Trees',
+            'type'       => 'background',
         ]);
 
         $actual = new Background($expected->getArrayCopy());
