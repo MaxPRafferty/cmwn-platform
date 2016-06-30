@@ -10,7 +10,6 @@ use Org\Service\OrganizationServiceInterface;
 /**
  * Test OrgResourceTest
  * @group Org
- * @incompleteTest
  */
 
 class OrgResourceTest extends TestCase
