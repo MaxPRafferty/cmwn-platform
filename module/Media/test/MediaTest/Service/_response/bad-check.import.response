@@ -1,0 +1,15 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "asset_type": "background",
+    "type": "file",
+    "check": {
+        "type": "sha1",
+        "value": "da39a3ee5e6b4b0d3255bfef95601890afd807"
+    },
+    "mime_type": "image/png",
+    "src": "https://media.changemyworld.com/f/82dd5620-df30-11e5-a52e-0800274877349",
+    "media_id": "82dd5620-df30-11e5-a52e-0800274877349",
+    "can_overlap": false
+}

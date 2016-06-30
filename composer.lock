@@ -595,7 +595,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/01a8ad13f7b04bdf1982c206243c162c72d6c782",
+                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/59d2648b2c54b6a115ff0c562cc24be1942f35ee",
                 "reference": "01a8ad13f7b04bdf1982c206243c162c72d6c782",
                 "shasum": ""
             },
