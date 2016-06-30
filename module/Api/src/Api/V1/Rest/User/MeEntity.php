@@ -6,6 +6,7 @@ use Api\Links\FlipLink;
 use Api\Links\FriendLink;
 use Api\Links\GameLink;
 use Api\Links\PasswordLink;
+use Api\Links\SaveGameLink;
 use Api\Links\UserLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
@@ -100,6 +101,10 @@ class MeEntity extends UserEntity implements TokenEntityInterface
 
         if (!$links->has('password') && !empty($this->getUserId())) {
             $links->add(new PasswordLink($this->getUserId()));
+        }
+
+        if (!$links->has('save_game') && !empty($this->getUserId())) {
+            $links->add(new SaveGameLink($this->getUserId()));
         }
 
         $this->injectChildLinks($links);
