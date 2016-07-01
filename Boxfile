@@ -13,8 +13,8 @@ build:
     - 'rm -rf puphet'
     - 'rm Vagrantfile'
     - 'rm -rf public/img'
-    - 'rm -rf html'
     - 'rm -rf vendor'
+    - 'rm -rf html'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
