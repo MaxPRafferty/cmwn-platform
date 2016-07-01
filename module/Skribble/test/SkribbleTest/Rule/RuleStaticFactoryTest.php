@@ -42,17 +42,54 @@ class RuleStaticFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTypeNotInArray()
     {
-        $this->setExpectedException(\RuntimeException::class);
+        $this->setExpectedException(
+            \RuntimeException::class,
+            'Cannot create rule: missing type'
+        );
+
         RuleStaticFactory::createRuleFromArray([]);
     }
 
     /**
      * @test
+     * @dataProvider badRuleTypesProvider
      */
-    public function testItShouldThrowExceptionWhenTypeNotARule()
+    public function testItShouldThrowExceptionWhenTypeHasInvalidClass($type)
     {
-        $this->setExpectedException(\RuntimeException::class);
-        RuleStaticFactory::createRuleFromArray(['type' => \stdClass::class]);
+        $this->setExpectedException(
+            \RuntimeException::class,
+            sprintf('Cannot create rule of type "%s": does not exist', $type)
+        );
+
+        RuleStaticFactory::createRuleFromArray(['type' => $type]);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenTypeIsNotARule()
+    {
+        $this->setExpectedException(
+            \RuntimeException::class,
+            sprintf('Cannot create rule of type "%s": is not a rule', 'RuleStaticFactory')
+        );
+
+        RuleStaticFactory::createRuleFromArray(['type' => 'RuleStaticFactory']);
+    }
+
+    /**
+     * @return array
+     */
+    public function badRuleTypesProvider()
+    {
+        return [
+            ['not_real'],
+            ['IN CAPS'],
+            ['With Spaces'],
+            ['studlyCaps'],
+            ['ßig one'],
+            ['UserService'],
+        ];
     }
 
     /**
@@ -64,7 +101,7 @@ class RuleStaticFactoryTest extends TestCase
             'Background' => [
                 'data'             => [
                     'media_id'   => '82dd5620-df30-11e5-a52e-0800274877349',
-                    'asset_type' => 'background',
+                    'asset_type' => 'file',
                     'check'      => [
                         'type'  => 'sha1',
                         'value' => '82dd5620df3011e5a52e0800274877349',
@@ -80,7 +117,7 @@ class RuleStaticFactoryTest extends TestCase
             'Effect' => [
                 'data'             => [
                     'media_id'   => '82dd5620-df30-11e5-a52e-0800274877349',
-                    'asset_type' => 'effect',
+                    'asset_type' => 'file',
                     'check'      => [
                         'type'  => 'sha1',
                         'value' => '82dd5620df3011e5a52e0800274877349',
@@ -97,7 +134,7 @@ class RuleStaticFactoryTest extends TestCase
                 'data'             => [
                     'media_id'   => '70116576425',
                     'name'       => 'img_dogs_1-01.png',
-                    'asset_type' => 'item',
+                    'asset_type' => 'file',
                     'check'      => [
                         'type'  => 'sha1',
                         'value' => '05735b54100ea1c1054da594550792c4f1c36fc5',
@@ -139,7 +176,7 @@ class RuleStaticFactoryTest extends TestCase
                 'data'             => [
                     'media_id'   => '70116576425',
                     'name'       => 'img_dogs_1-01.png',
-                    'asset_type' => 'message',
+                    'asset_type' => 'file',
                     'check'      => [
                         'type'  => 'sha1',
                         'value' => '05735b54100ea1c1054da594550792c4f1c36fc5',
@@ -180,7 +217,7 @@ class RuleStaticFactoryTest extends TestCase
             'Sound' => [
                 'data'             => [
                     'media_id'   => '82dd5620-df30-11e5-a52e-0800274877349',
-                    'asset_type' => 'sound',
+                    'asset_type' => 'file',
                     'check'      => [
                         'type'  => 'sha1',
                         'value' => '82dd5620df3011e5a52e0800274877349',

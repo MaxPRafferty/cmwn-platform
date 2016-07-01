@@ -26,41 +26,68 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
     ];
 
     protected $restricted = [
-        RuleCompositeInterface::TYPE_SOUND,
-        RuleCompositeInterface::TYPE_BACKGROUND,
-        RuleCompositeInterface::TYPE_EFFECT,
+        Sound::TYPE_SOUND,
+        Background::TYPE_BACKGROUND,
+        Effect::TYPE_EFFECT,
     ];
 
     /**
      * SkribbleRules constructor.
+     *
+     * @param array $options
      */
-    public function __construct()
+    public function __construct(array $options = [])
     {
         $this->rules['items']    = new RuleCollection('items');
         $this->rules['messages'] = new RuleCollection('messages');
+        $this->exchangeArray($options);
     }
 
     /**
-     * @param Background $background
+     * @param Background|array $background
      */
-    public function setBackground(Background $background)
+    public function setBackground($background)
     {
+        if (is_array($background)) {
+            $background = RuleStaticFactory::createRuleFromArray($background);
+        }
+
+        if (!$background instanceof Background) {
+            throw new \InvalidArgumentException('Only Backgrounds can be set');
+        }
+
         $this->addRule($background);
     }
 
     /**
-     * @param Sound $sound
+     * @param Sound|array $sound
      */
-    public function setSound(Sound $sound)
+    public function setSound($sound)
     {
+        if (is_array($sound)) {
+            $sound = RuleStaticFactory::createRuleFromArray($sound);
+        }
+
+        if (!$sound instanceof Sound) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->addRule($sound);
     }
 
     /**
-     * @param Effect $effect
+     * @param Effect|array $effect
      */
-    public function setEffect(Effect $effect)
+    public function setEffect($effect)
     {
+        if (is_array($effect)) {
+            $effect = RuleStaticFactory::createRuleFromArray($effect);
+        }
+
+        if (!$effect instanceof Effect) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->addRule($effect);
     }
 
@@ -73,10 +100,18 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
     }
 
     /**
-     * @param Item $item
+     * @param Item|array $item
      */
-    public function addItem(Item $item)
+    public function addItem($item)
     {
+        if (is_array($item)) {
+            $item = RuleStaticFactory::createRuleFromArray($item);
+        }
+
+        if (!$item instanceof Item) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->addRule($item);
     }
 
@@ -89,10 +124,18 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
     }
 
     /**
-     * @param Message $message
+     * @param Message|array $message
      */
-    public function addMessage(Message $message)
+    public function addMessage($message)
     {
+        if (is_array($message)) {
+            $message = RuleStaticFactory::createRuleFromArray($message);
+        }
+
+        if (!$message instanceof Message) {
+            throw new \InvalidArgumentException();
+        }
+
         $this->addRule($message);
     }
 
@@ -120,10 +163,12 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         $this->valid = $this->valid && $rule->isValid();
         if (in_array($rule->getType(), ['item', 'message'])) {
             $this->rules[$type]->append($rule);
+
             return true;
         }
 
         $this->rules[$type] = $rule;
+
         return true;
     }
 
@@ -136,11 +181,21 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
      */
     public function exchangeArray(array $array)
     {
-        $defaults = array_flip(array_keys($this->rules));
+        $defaults = [
+            'background' => null,
+            'effect'     => null,
+            'sound'      => null,
+            'items'      => null,
+            'messages'   => null,
+        ];
 
-        $array = array_merge($defaults, $array);
+        $array    = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
+            if (null === $value) {
+                continue;
+            }
+
             $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
@@ -155,7 +210,12 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
      */
     public function getArrayCopy()
     {
-        // TODO: Implement getArrayCopy() method.
+        $return = [];
+        foreach ($this->rules as $spec => $rule) {
+            $return[$spec] = null !== $rule ? $rule->getArrayCopy() : null;
+        }
+
+        return $return;
     }
 
     /**
