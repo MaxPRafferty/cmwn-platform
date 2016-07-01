@@ -34,6 +34,7 @@ class BackgroundTest extends TestCase
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Happy Trees',
             'type'       => 'background',
+            'can_overlap' => false,
         ];
 
         $bobRoss = new Background($expected);
@@ -64,6 +65,7 @@ class BackgroundTest extends TestCase
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Happy Trees',
             'type'       => 'background',
+            'can_overlap' => false,
         ]);
 
         $actual = new Background($expected->getArrayCopy());

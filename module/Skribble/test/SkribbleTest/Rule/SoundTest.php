@@ -24,16 +24,17 @@ class SoundTest extends TestCase
     public function testItShouldHydrateCorrectly()
     {
         $expected = [
-            'media_id'   => '82dd5620-df30-11e5-a52e-0800274877349',
-            'asset_type' => 'sound',
-            'check'      => [
+            'media_id'    => '82dd5620-df30-11e5-a52e-0800274877349',
+            'asset_type'  => 'sound',
+            'check'       => [
                 'type'  => 'sha1',
                 'value' => '82dd5620df3011e5a52e0800274877349',
             ],
-            'mime_type'  => 'audo/mpeg',
-            'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
-            'name'       => 'My Cool Sound',
-            'type'       => 'sound',
+            'mime_type'   => 'audo/mpeg',
+            'src'         => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
+            'name'        => 'My Cool Sound',
+            'type'        => 'sound',
+            'can_overlap' => false,
         ];
 
         $sound = new Sound($expected);
@@ -53,16 +54,17 @@ class SoundTest extends TestCase
     public function testItShouldExtractAndHydrateFromItself()
     {
         $expected = new Sound([
-            'media_id'   => '82dd5620-df30-11e5-a52e-0800274877349',
-            'asset_type' => 'sound',
-            'check'      => [
+            'media_id'    => '82dd5620-df30-11e5-a52e-0800274877349',
+            'asset_type'  => 'sound',
+            'check'       => [
                 'type'  => 'sha1',
                 'value' => '82dd5620df3011e5a52e0800274877349',
             ],
-            'mime_type'  => 'audo/mpeg',
-            'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
-            'name'       => 'My Cool Sound',
-            'type'       => 'sound',
+            'mime_type'   => 'audo/mpeg',
+            'src'         => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
+            'name'        => 'My Cool Sound',
+            'type'        => 'sound',
+            'can_overlap' => false,
         ]);
 
         $actual = new Sound($expected->getArrayCopy());

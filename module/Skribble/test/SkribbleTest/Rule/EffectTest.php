@@ -34,6 +34,7 @@ class EffectTest extends TestCase
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Explosions',
             'type'       => 'effect',
+            'can_overlap' => false,
         ];
 
         $effect = new Effect($expected);
@@ -63,6 +64,7 @@ class EffectTest extends TestCase
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Explosions',
             'type'       => 'effect',
+            'can_overlap' => false,
         ]);
 
         $actual = new Effect($expected->getArrayCopy());

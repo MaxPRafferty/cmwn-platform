@@ -9,6 +9,7 @@ namespace Application;
 use Application\Listeners\ListenersAggregate;
 use Application\Utils\StaticType;
 use Zend\EventManager\SharedEventManager;
+use Zend\Log\Filter\Priority;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -35,14 +36,13 @@ class Module implements ConfigProviderInterface
         /** @var Logger $logger */
         $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
 
-        // This is not the best but not getting fatal errors is annoying
-        if (defined('TEST_MODE') && TEST_MODE == true) {
-            $logger->addWriter(new Stream(STDOUT));
+        // This is not the best way to do this, but not getting fatal errors in tests are annoying
+        if (!defined('TEST_MODE') || TEST_MODE === false) {
+            Logger::registerErrorHandler($logger);
+            Logger::registerExceptionHandler($logger);
+            Logger::registerFatalErrorShutdownFunction($logger);
         }
 
-        Logger::registerErrorHandler($logger);
-        Logger::registerExceptionHandler($logger);
-        Logger::registerFatalErrorShutdownFunction($logger);
         $this->attachShared($mvcEvent);
 
         $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');

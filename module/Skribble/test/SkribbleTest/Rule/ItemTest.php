@@ -34,6 +34,7 @@ class ItemTest extends TestCase
             'src'        => 'https://media.changemyworldnow.com/f/70116576425',
             'mime_type'  => 'image/png',
             'type'       => 'item',
+            'can_overlap' => false,
             'state'      => [
                 'left'     => '100.83125707814269',
                 'top'      => '-200.2378255945639',
@@ -91,6 +92,7 @@ class ItemTest extends TestCase
             'src'        => 'https://media.changemyworldnow.com/f/70116576425',
             'mime_type'  => 'image/png',
             'type'       => 'item',
+            'can_overlap' => false,
             'state'      => [
                 'left'     => '100.83125707814269',
                 'top'      => '-200.2378255945639',
