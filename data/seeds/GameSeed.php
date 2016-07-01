@@ -34,7 +34,7 @@ class GameSeed extends AbstractSeed
         $games[] = [
             "game_id" => "sea-turtle",
             "title" => "Sea Turtle",
-            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts, play games and find out why they are endangered.",
+            "description" => "Sea Turtles are at risk but you will guide yours to safety!",
             "coming_soon" => 0,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
@@ -84,7 +84,7 @@ class GameSeed extends AbstractSeed
         $games[] = [
             "game_id" => "drought-out",
             "title" => "DroughtOUT",
-            "description" => "Want to be part of the solution for the biggest issue in our world? You came to the right place! Starts right here!",
+            "description" => "We all depend on water for life! What happens when there is a drought? And what you can do offline to help conserve water?",
             "coming_soon" => 0,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
@@ -94,7 +94,7 @@ class GameSeed extends AbstractSeed
         $games[] = [
             "game_id" => "twirl-n-swirl",
             "title" => "Twirl n' Swirl",
-            "description" => "Flushing isn't as simple as you think!  Avoid the plunger and help the environment!",
+            "description" => "Ever wonder where things go when you flush? It’s not as simple as you think! Learn how you can help the environment—and avoid the plunger!",
             "coming_soon" => 0,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
@@ -104,7 +104,7 @@ class GameSeed extends AbstractSeed
         $games[] = [
             "game_id" => "meerkat-mania",
             "title" => "Meerkat Mania",
-            "description" => "You will learn about fascinating beasts, but don't be surprised to find so much more. A fun video gives you the scoop and the \"Meerkat Move!\" What's the move? Do the Action Item and discover how important you can be to your friends.",
+            "description" => "These Meerkats, from the deserts and grasslands of Africa, have a lot to say about friendship! Check out their funny video, learn the \"Meerkat Move,\" and more!",
             "coming_soon" => 0,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
@@ -114,7 +114,7 @@ class GameSeed extends AbstractSeed
         $games[] = [
             "game_id" => "printmaster",
             "title" => "Printmaster",
-            "description" => "Is there a detective inside you? Find out as you learn about fingerprinting and go real world, taking and identifying prints in your own house!",
+            "description" => "Become a junior crimefighter by recognizing the different types of fingerprints! Take your knowledge offline and dust for fingerprints at home.",
             "coming_soon" => 0,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
@@ -157,7 +157,7 @@ class GameSeed extends AbstractSeed
         $games[] = [
             "game_id" => "turtle-hurdle",
             "title" => "Turtle Hurdle",
-            "description" => "Sea Turtles are at risk but you will guide yours to safety!",
+            "description" => "Sea Turtles are amazing creatures with a lot to teach us! Get cool turtle facts, play games and find out why they are endangered.",
             "coming_soon" => 0,
             "created" => $date->format('Y-m-d'),
             "updated" => $date->format('Y-m-d'),
