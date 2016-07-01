@@ -13,7 +13,7 @@ $mailUser = getenv('MAIL_USERNAME')
     ? getenv('MAIL_USERNAME')
     : '1fccb9203477e3';
 
-$mailPass = getenv('MAIL_PASSWORDg')
+$mailPass = getenv('MAIL_PASSWORD')
     ? getenv('MAIL_PASSWORD')
     : '1014d39a5059ac';
 
