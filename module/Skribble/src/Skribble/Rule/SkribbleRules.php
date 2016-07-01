@@ -6,6 +6,7 @@ use Zend\Filter\StaticFilter;
 
 /**
  * Class SkribbleRules
+ * @todo Add ability to remove rules?
  */
 class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterface
 {
@@ -53,7 +54,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$background instanceof Background) {
-            throw new \InvalidArgumentException('Only Backgrounds can be set');
+            throw new \InvalidArgumentException('Rule is not a Background');
         }
 
         $this->addRule($background);
@@ -69,7 +70,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$sound instanceof Sound) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('Rule is not a Sound');
         }
 
         $this->addRule($sound);
@@ -85,14 +86,14 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$effect instanceof Effect) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('Rule is not an Effect');
         }
 
         $this->addRule($effect);
     }
 
     /**
-     * @param array $items
+     * @param array|Item[] $items
      */
     public function setItems(array $items)
     {
@@ -109,7 +110,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$item instanceof Item) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('Rule is not an Item');
         }
 
         $this->addRule($item);
@@ -133,7 +134,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$message instanceof Message) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('Rule is not a Message');
         }
 
         $this->addRule($message);
@@ -156,7 +157,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
 
         if (!array_key_exists($type, $this->rules)) {
             throw new \UnexpectedValueException(
-                sprintf('Rule of type %s is currently not supported', $rule->getType())
+                sprintf('Rule of type "%s" is currently not supported', $rule->getType())
             );
         }
 
