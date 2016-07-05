@@ -271,6 +271,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -292,6 +293,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
