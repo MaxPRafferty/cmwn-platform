@@ -6,10 +6,15 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
 use IntegrationTest\TestHelper;
 use Org\Service\OrganizationServiceInterface;
+use Application\Exception\NotFoundException;
 
 /**
  * Test OrgResourceTest
  * @group Org
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 
 class OrgResourceTest extends TestCase
@@ -227,13 +232,13 @@ class OrgResourceTest extends TestCase
      */
     public function testItShouldDeleteOrganization()
     {
-        $this->markTestIncomplete("blocked by fetchOrganization");
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
 
         $this->dispatch('/org/district', DELETE);
         $this->assertResponseStatusCode(200);
-        $group = $this->groupService->fetchOrganization('district')->getArrayCopy();
+        $this->setExpectedException(NotFoundException::class);
+        $this->orgService->fetchOrganization('district')->getArrayCopy();
     }
 
     /**
