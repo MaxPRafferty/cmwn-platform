@@ -398,7 +398,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expected, $data);
 
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$parent) {
@@ -407,7 +408,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expected, $data);
 
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$child) {
@@ -416,7 +418,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expected, $data);
 
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->groupService->addChildToGroup($parent, $child);
     }
@@ -464,7 +467,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expected, $data);
 
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, $actualWhere) {
@@ -478,7 +482,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
@@ -493,7 +498,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
@@ -505,7 +511,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
-            ->once();
+            ->once()
+            ->ordered('update');
 
         $this->groupService->addChildToGroup($parent, $child);
     }
