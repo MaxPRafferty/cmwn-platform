@@ -60,6 +60,7 @@ class PasswordValidatorTest extends TestCase
     /**
      * @dataProvider validPasswords
      * @param $password
+     * @ticket CORE-732
      * @test
      */
     public function testItShouldValidateTrueWhenNewPasswordDoesNotEqualCode($password)
@@ -94,6 +95,7 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider passEqualsCode
+     * @ticket CORE-732
      * @test
      */
     public function testItShouldValidateFalseCodeMatchesNewPassword($password)
