@@ -64,7 +64,7 @@ class PasswordValidatorTest extends TestCase
      */
     public function testItShouldValidateTrueWhenNewPasswordDoesNotEqualCode($password)
     {
-        $securityUser = new SecurityUser(['code' => 'foobar']);
+        $securityUser = new SecurityUser(['code' => 'foobar123']);
 
         $validator = new PasswordValidator();
         $validator->setAuthenticationService($this->authService);
@@ -93,19 +93,20 @@ class PasswordValidatorTest extends TestCase
     }
 
     /**
+     * @dataProvider passEqualsCode
      * @test
      */
-    public function testItShouldValidateFalseCodeMatchesNewPassword()
+    public function testItShouldValidateFalseCodeMatchesNewPassword($password)
     {
         $validator = new PasswordValidator();
         $validator->setAuthenticationService($this->authService);
 
         $this->authService
             ->shouldReceive('getIdentity')
-            ->andReturn(new SecurityUser(['code' => 'a1234567']))
+            ->andReturn(new SecurityUser(['code' => 'foobar123']))
             ->once();
 
-        $this->assertFalse($validator->isValid('a1234567'));
+        $this->assertFalse($validator->isValid($password));
     }
 
     /**
@@ -145,6 +146,19 @@ class PasswordValidatorTest extends TestCase
             ['a123456'],
             ['1234567'],
             ['abcd$%##@®'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function passEqualsCode()
+    {
+        return [
+            ['foobar123'],
+            ['fOoBar123'],
+            ['FooBar123'],
+            ['FOOBar123'],
         ];
     }
 }
