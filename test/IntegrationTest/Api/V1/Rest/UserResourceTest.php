@@ -210,6 +210,7 @@ class UserResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-800
      */
     public function testItShouldAllowTeacherTooMakeChangesToStudent()
     {
@@ -242,7 +243,7 @@ class UserResourceTest extends TestCase
         $this->assertInstanceOf(UserInterface::class, $afterUser);
         $this->assertNotEquals($beforeUser, $afterUser);
 
-        $this->assertEquals('new_username', $afterUser->getUserName());
+        $this->assertEquals('english_student', $afterUser->getUserName());
         $this->assertEquals('Adam', $afterUser->getFirstName());
         $this->assertNull($afterUser->getMiddleName());
         $this->assertEquals('Welzer', $afterUser->getLastName());
