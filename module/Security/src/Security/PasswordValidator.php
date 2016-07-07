@@ -61,16 +61,19 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
             return true;
         }
 
-        if ((null !== $loggedIn->getCode())) {
-            if ($loggedIn->getCode() === $value) {
-                $this->error(static::NEW_PASSWORD);
-                return false;
-            } elseif (strcasecmp($loggedIn->getCode(), $value) == 0) {
-                $this->error(static::CASE_CHANGE);
-                return false;
-            }
+        if ((null === $loggedIn->getCode())) {
+            return true;
         }
 
+        if ($loggedIn->getCode() === $value) {
+                $this->error(static::NEW_PASSWORD);
+                return false;
+        }
+
+        if (strcasecmp($loggedIn->getCode(), $value) === 0) {
+                $this->error(static::CASE_CHANGE);
+                return false;
+        }
         return true;
     }
 
