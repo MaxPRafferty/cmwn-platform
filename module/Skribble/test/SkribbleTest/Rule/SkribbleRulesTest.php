@@ -28,7 +28,7 @@ class SkribbleRulesTest extends TestCase
      */
     public function testItShouldHydrateCorrectlyFromJson()
     {
-        $json          = file_get_contents(__DIR__ . '/_files/valid.skribble.json');
+        $json          = file_get_contents(__DIR__ . '/../_files/valid.skribble.json');
         $skribbleData  = Json::decode($json, Json::TYPE_ARRAY);
         $skribbleRules = new SkribbleRules($skribbleData['rules']);
 

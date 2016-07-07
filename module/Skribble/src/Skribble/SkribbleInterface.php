@@ -3,6 +3,7 @@
 namespace Skribble;
 
 use Application\Utils\SoftDeleteInterface;
+use Skribble\Rule\SkribbleRules;
 
 /**
  * Interface SkribbleInterface
@@ -14,7 +15,7 @@ interface SkribbleInterface extends SoftDeleteInterface
     const STATUS_NOT_COMPLETE = 'NOT_COMPLETE';
     const STATUS_ERROR        = 'ERROR';
 
-    const CURRENT_VERSION     = 1;
+    const CURRENT_VERSION     = '1';
 
     /**
      * Exchange internal values from provided array
@@ -115,4 +116,34 @@ interface SkribbleInterface extends SoftDeleteInterface
      * @return $this
      */
     public function setCreated($created);
+
+    /**
+     * @return string
+     */
+    public function getCreatedBy();
+
+    /**
+     * @param string $createdBy
+     */
+    public function setCreatedBy($createdBy);
+
+    /**
+     * @return SkribbleRules
+     */
+    public function getRules();
+
+    /**
+     * @param SkribbleRules|string|array $rules
+     */
+    public function setRules($rules);
+
+    /**
+     * @return boolean
+     */
+    public function isRead();
+
+    /**
+     * @param boolean $read
+     */
+    public function setRead($read);
 }
