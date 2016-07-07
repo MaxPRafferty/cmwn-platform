@@ -118,14 +118,9 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
     public function update($userId, $data)
     {
         $user = $this->fetch($userId);
-        $loggedIn = $this->getAuthenticationService()->getIdentity();
 
         $data = $this->getInputFilter()->getValues();
         $data['user_id'] = $userId;
-
-        if ($loggedIn instanceof UserInterface && $loggedIn->getUserId()!==$userId) {
-            unset($data['username']);
-        }
 
         foreach ($data as $key => $value) {
             $user->__set($key, $value);

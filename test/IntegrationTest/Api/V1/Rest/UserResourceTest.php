@@ -278,7 +278,7 @@ class UserResourceTest extends TestCase
         $this->assertArrayHasKey('_embedded', $decoded);
         $this->assertArrayHasKey('image', $decoded['_embedded']);
         $this->assertArrayHasKey('image_id', $decoded['_embedded']['image']);
-        
+
         $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $decoded['_embedded']['image']['image_id']);
     }
 
