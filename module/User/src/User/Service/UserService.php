@@ -112,6 +112,7 @@ class UserService implements UserServiceInterface
         unset($data['deleted']);
         unset($data['super']);
         unset($data['type']);
+        unset($data['username']);
 
         $this->fetchUser($user->getUserId());
 
@@ -120,6 +121,21 @@ class UserService implements UserServiceInterface
             ['user_id' => $user->getUserId()]
         );
 
+        return true;
+    }
+
+    /**
+     * Updates the username if the user wants to update his own username
+     * @param UserInterface $user
+     * @param $username
+     * @return bool
+     */
+    public function updateUserName(UserInterface $user, $username)
+    {
+        $this->userTableGateway->update(
+            ['username' => $username],
+            ['user_id' => $user->getUserId()]
+        );
         return true;
     }
 
