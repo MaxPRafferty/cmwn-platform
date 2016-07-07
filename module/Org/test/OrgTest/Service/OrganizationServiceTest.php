@@ -158,8 +158,7 @@ class OrganizationServiceTest extends TestCase
                 $this->assertEquals(['org_id' => $org->getOrgId()], $where);
                 $expected = $org->getArrayCopy();
                 $expected['meta'] = '[]';
-
-                unset($expected['password']);
+                
                 unset($expected['deleted']);
                 unset($expected['created']);
                 unset($expected['org_id']);
