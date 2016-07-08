@@ -43,7 +43,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldThrowExceptionWhenBackgroundIsInvalid()
     {
         $this->setExpectedException(
-            \InvalidArgumentException::class,
+            \Skribble\InvalidArgumentException::class,
             'Rule is not a Background'
         );
 
@@ -58,7 +58,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldThrowExceptionWhenSoundIsInvalid()
     {
         $this->setExpectedException(
-            \InvalidArgumentException::class,
+            \Skribble\InvalidArgumentException::class,
             'Rule is not a Sound'
         );
 
@@ -73,7 +73,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldThrowExceptionWhenEffectIsInvalid()
     {
         $this->setExpectedException(
-            \InvalidArgumentException::class,
+            \Skribble\InvalidArgumentException::class,
             'Rule is not an Effect'
         );
 
@@ -88,7 +88,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldThrowExceptionWhenItemIsInvalid()
     {
         $this->setExpectedException(
-            \InvalidArgumentException::class,
+            \Skribble\InvalidArgumentException::class,
             'Rule is not an Item'
         );
 
@@ -103,7 +103,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldThrowExceptionWhenMessageIsInvalid()
     {
         $this->setExpectedException(
-            \InvalidArgumentException::class,
+            \Skribble\InvalidArgumentException::class,
             'Rule is not a Message'
         );
 
@@ -119,7 +119,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldThrowExceptionWithBadArrayType($method, $ruleData, $message)
     {
         $this->setExpectedException(
-            \InvalidArgumentException::class,
+            \Skribble\InvalidArgumentException::class,
             $message
         );
 
@@ -139,7 +139,7 @@ class SkribbleRulesTest extends TestCase
             ->byDefault();
 
         $this->setExpectedException(
-            \UnexpectedValueException::class,
+            \Skribble\UnexpectedValueException::class,
             'Rule of type "FooBar" is currently not supported'
         );
 
@@ -155,7 +155,7 @@ class SkribbleRulesTest extends TestCase
     public function testItShouldNotAllowMultipleRulesBasedOnRestrictedType(RuleCompositeInterface $rule)
     {
         $this->setExpectedException(
-            \OverflowException::class,
+            \Skribble\OverflowException::class,
             printf('Only one rule of type "%s" can be set', $rule->getType())
         );
 

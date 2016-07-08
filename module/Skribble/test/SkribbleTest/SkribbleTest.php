@@ -10,6 +10,7 @@ use Zend\Json\Json;
 /**
  * Test SkribbleTest
  *
+ * @group Skribble
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

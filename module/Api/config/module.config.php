@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 return array(
     'shared-listeners' => array(
         0 => 'Api\\Listeners\\UserRouteListener',
@@ -55,6 +54,7 @@ return array(
             'Api\\V1\\Rest\\SaveGame\\SaveGameResource' => 'Api\\V1\\Rest\\SaveGame\\SaveGameResourceFactory',
             'Api\\Listeners\\GameRouteListener' => 'Api\\Factory\\GameRouteListenerFactory',
             'Api\\V1\\Rest\\Media\\MediaResource' => 'Api\\V1\\Rest\\Media\\MediaResourceFactory',
+            'Api\\V1\\Rest\\Skribble\\SkribbleResource' => 'Api\\V1\\Rest\\Skribble\\SkribbleResourceFactory',
         ),
     ),
     'router' => array(
@@ -266,6 +266,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.skribble' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/skribble[/:skribble_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Skribble\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -293,6 +302,7 @@ return array(
             20 => 'api.rest.update-password',
             21 => 'api.rest.save-game',
             22 => 'api.rest.media',
+            23 => 'api.rest.skribble',
         ),
     ),
     'zf-rest' => array(
@@ -721,6 +731,32 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Media\\MediaCollection',
             'service_name' => 'Media',
         ),
+        'Api\\V1\\Rest\\Skribble\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Skribble\\SkribbleResource',
+            'route_name' => 'api.rest.skribble',
+            'route_identifier_name' => 'skribble_id',
+            'collection_name' => 'skribble',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+                2 => 'status',
+            ),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Skribble\\SkribbleEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Skribble\\SkribbleCollection',
+            'service_name' => 'Skribble',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -747,6 +783,7 @@ return array(
             'Api\\V1\\Rest\\UpdatePassword\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\SaveGame\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Media\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Skribble\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -864,6 +901,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Skribble\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -956,6 +998,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Media\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Skribble\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1241,10 +1287,22 @@ return array(
                 'route_identifier_name' => 'media_id',
                 'is_collection' => true,
             ),
-            \Media\MediaCollection::class => array(
+            'Media\\MediaCollection' => array(
                 'entity_identifier_name' => 'media_id',
                 'route_name' => 'api.rest.media',
                 'route_identifier_name' => 'media_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Skribble\\SkribbleEntity' => array(
+                'entity_identifier_name' => 'skribble_id',
+                'route_name' => 'api.rest.skribble',
+                'route_identifier_name' => 'skribble_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Skribble\\SkribbleCollection' => array(
+                'entity_identifier_name' => 'skribble_id',
+                'route_name' => 'api.rest.skribble',
+                'route_identifier_name' => 'skribble_id',
                 'is_collection' => true,
             ),
         ),

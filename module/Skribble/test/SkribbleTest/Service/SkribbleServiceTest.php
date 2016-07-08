@@ -19,6 +19,9 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Test SkribbleServiceTest
  *
+ * @group Skribble
+ * @group SkribbleService
+ * @group Service
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

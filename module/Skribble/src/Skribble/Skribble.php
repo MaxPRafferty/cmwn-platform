@@ -139,6 +139,11 @@ class Skribble implements SkribbleInterface
      */
     public function setCreatedBy($createdBy)
     {
+        // Created by needs to be idempotent
+        if ($this->createdBy !== null && !empty($createdBy)) {
+            return;
+        }
+
         $createdBy       = $createdBy instanceof UserInterface ? $createdBy->getUserId() : $createdBy;
         $this->createdBy = $createdBy;
     }
@@ -213,6 +218,11 @@ class Skribble implements SkribbleInterface
      */
     public function setFriendTo($friendTo)
     {
+        // Friend to needs to be idempotent
+        if ($this->friendTo !== null && !empty($friendTo)) {
+            return;
+        }
+
         $friendTo       = $friendTo instanceof UserInterface ? $friendTo->getUserId() : $friendTo;
         $this->friendTo = $friendTo;
     }

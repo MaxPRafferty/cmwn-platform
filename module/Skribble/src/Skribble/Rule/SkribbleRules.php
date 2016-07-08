@@ -2,6 +2,9 @@
 
 namespace Skribble\Rule;
 
+use Skribble\InvalidArgumentException;
+use Skribble\OverflowException;
+use Skribble\UnexpectedValueException;
 use Zend\Filter\StaticFilter;
 
 /**
@@ -54,7 +57,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$background instanceof Background) {
-            throw new \InvalidArgumentException('Rule is not a Background');
+            throw new InvalidArgumentException('Rule is not a Background');
         }
 
         $this->addRule($background);
@@ -70,7 +73,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$sound instanceof Sound) {
-            throw new \InvalidArgumentException('Rule is not a Sound');
+            throw new InvalidArgumentException('Rule is not a Sound');
         }
 
         $this->addRule($sound);
@@ -86,7 +89,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$effect instanceof Effect) {
-            throw new \InvalidArgumentException('Rule is not an Effect');
+            throw new InvalidArgumentException('Rule is not an Effect');
         }
 
         $this->addRule($effect);
@@ -110,7 +113,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$item instanceof Item) {
-            throw new \InvalidArgumentException('Rule is not an Item');
+            throw new InvalidArgumentException('Rule is not an Item');
         }
 
         $this->addRule($item);
@@ -134,7 +137,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         }
 
         if (!$message instanceof Message) {
-            throw new \InvalidArgumentException('Rule is not a Message');
+            throw new InvalidArgumentException('Rule is not a Message');
         }
 
         $this->addRule($message);
@@ -148,7 +151,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
     public function addRule(RuleCompositeInterface $rule)
     {
         if (in_array($rule->getType(), $this->restricted) && null !== $this->rules[$rule->getType()]) {
-            throw new \OverflowException(
+            throw new OverflowException(
                 sprintf('Only one rule of type "%s" can be set', $rule->getType())
             );
         }
@@ -156,7 +159,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         $type = in_array($rule->getType(), ['item', 'message']) ? $rule->getType() . 's' : $rule->getType();
 
         if (!array_key_exists($type, $this->rules)) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 sprintf('Rule of type "%s" is currently not supported', $rule->getType())
             );
         }

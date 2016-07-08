@@ -12,6 +12,9 @@ use Zend\EventManager\Event;
 /**
  * Test SkribbleServiceDelegatorTest
  *
+ * @group Skribble
+ * @group SkribbleService
+ * @group Service
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
