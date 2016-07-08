@@ -76,6 +76,12 @@ return [
                 'POST'   => 'save.game',
                 'DELETE' => 'save.game',
             ],
+            'api.rest.skribble'        => [
+                'GET'    => 'view.skribble',
+                'POST'   => 'create.skribble',
+                'PUT'    => 'update.skribble',
+                'DELETE' => 'delete.skribble',
+            ],
         ],
     ],
 ];

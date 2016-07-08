@@ -45,12 +45,18 @@ class Media implements MediaInterface
     protected $mimeType;
 
     /**
+     * @var MediaProperties
+     */
+    protected $properties;
+
+    /**
      * Media constructor.
      *
      * @param array $options
      */
     public function __construct(array $options = [])
     {
+        $this->properties = new MediaProperties();
         $this->exchangeArray($options);
     }
 
@@ -76,6 +82,11 @@ class Media implements MediaInterface
         $array = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
+            if ($this->properties->isProperty($key)) {
+                $this->properties->setProperty($key, $value);
+                continue;
+            }
+
             $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
@@ -90,17 +101,20 @@ class Media implements MediaInterface
      */
     public function getArrayCopy()
     {
-        return [
-            'media_id'   => $this->getMediaId(),
-            'asset_type' => $this->getAssetType(),
-            'check'      => [
-                'type'  => $this->getCheckType(),
-                'value' => $this->getCheckValue(),
-            ],
-            'mime_type'  => $this->getMimeType(),
-            'src'        => $this->getSrc(),
-            'name'       => $this->getName(),
-        ];
+        return array_merge(
+            $this->properties->getArrayCopy(),
+            [
+                'media_id'   => $this->getMediaId(),
+                'asset_type' => $this->getAssetType(),
+                'check'      => [
+                    'type'  => $this->getCheckType(),
+                    'value' => $this->getCheckValue(),
+                ],
+                'mime_type'  => $this->getMimeType(),
+                'src'        => $this->getSrc(),
+                'name'       => $this->getName(),
+            ]
+        );
     }
 
     /**
