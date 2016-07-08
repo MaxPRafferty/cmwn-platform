@@ -78,7 +78,7 @@ class Skribble implements SkribbleInterface
     public function getArrayCopy()
     {
         return [
-            'skirbble_id' => $this->getSkirbbleId(),
+            'skribble_id' => $this->getSkribbleId(),
             'version'     => $this->getVersion(),
             'url'         => $this->getUrl(),
             'created'     => $this->getCreated() !== null ? $this->getCreated()->format("Y-m-d H:i:s") : null,
@@ -176,7 +176,7 @@ class Skribble implements SkribbleInterface
     /**
      * @return string
      */
-    public function getSkirbbleId()
+    public function getSkribbleId()
     {
         return $this->skirbbleId;
     }
@@ -184,7 +184,7 @@ class Skribble implements SkribbleInterface
     /**
      * @param string $skirbbleId
      */
-    public function setSkirbbleId($skirbbleId)
+    public function setSkribbleId($skirbbleId)
     {
         $this->skirbbleId = $skirbbleId;
     }

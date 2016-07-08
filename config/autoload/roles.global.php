@@ -8,21 +8,21 @@ return [
             'view.all.users'       => 'View all users',
 
             // user
-            'create.user'        => 'Create a user',
-            'view.user.adult'    => 'View an Adults Information',
-            'view.user.child'    => 'View a child\'s Information',
-            'edit.user.adult'    => 'Edit an Adult',
-            'edit.user.child'    => 'Edit a Child',
-            'pick.username'      => 'Pick a new User Name',
-            'update.password'    => 'Update profile password',
-            'remove.user.adult'  => 'Delete a child user',
-            'remove.user.child'  => 'Delete an adult user',
-            'can.friend'         => 'Can friend users',
+            'create.user'          => 'Create a user',
+            'view.user.adult'      => 'View an Adults Information',
+            'view.user.child'      => 'View a child\'s Information',
+            'edit.user.adult'      => 'Edit an Adult',
+            'edit.user.child'      => 'Edit a Child',
+            'pick.username'        => 'Pick a new User Name',
+            'update.password'      => 'Update profile password',
+            'remove.user.adult'    => 'Delete a child user',
+            'remove.user.child'    => 'Delete an adult user',
+            'can.friend'           => 'Can friend users',
 
             // Flip
-            'create.user.flip'   => 'Earn a flip',
-            'view.flip'          => 'View flip information',
-            'view.user.flip'     => 'View Flips for a user',
+            'create.user.flip'     => 'Earn a flip',
+            'view.flip'            => 'View flip information',
+            'view.user.flip'       => 'View Flips for a user',
 
             // group
             'create.child.group'   => 'Create a sub group',
@@ -55,6 +55,12 @@ return [
             'adult.code'           => 'Send adult reset code',
             'child.code'           => 'Send child reset code',
             'attach.profile.image' => 'Upload a profile image',
+
+            // skribble
+            'view.skribble'        => 'Read Skribbles',
+            'create.skribble'      => 'Create Skribbles',
+            'delete.skribble'      => 'Delete Skribbles',
+            'update.skribble'      => 'Update Skribbles',
         ],
         'roles'             => [
             'super' => [
@@ -245,6 +251,11 @@ return [
                     'view.user.child',
                     'view.user.flip',
                     'attach.profile.image',
+                    'view.skribble',
+                    'view.skribble',
+                    'create.skribble',
+                    'delete.skribble',
+                    'update.skribble',
                 ],
             ],
 

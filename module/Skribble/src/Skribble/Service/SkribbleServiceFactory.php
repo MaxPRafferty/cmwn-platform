@@ -17,7 +17,7 @@ class SkribbleServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var TableGateway $tableGateway */
-        $tableGateway = $serviceLocator->get('Skribbles/Table');
+        $tableGateway = $serviceLocator->get('SkribblesTable');
         return new SkribbleService($tableGateway);
     }
 }

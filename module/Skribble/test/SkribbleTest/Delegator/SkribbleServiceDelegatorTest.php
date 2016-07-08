@@ -67,7 +67,7 @@ class SkribbleServiceDelegatorTest extends TestCase
     public function setUpSkribble()
     {
         $this->skribble = new Skribble();
-        $this->skribble->setSkirbbleId('foo-bar');
+        $this->skribble->setSkribbleId('foo-bar');
     }
 
     /**
@@ -125,7 +125,12 @@ class SkribbleServiceDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->assertFalse($this->delegator->createSkribble($this->skribble));
+        try {
+            $this->delegator->createSkribble($this->skribble);
+            $this->fail('Exception was not re thrown');
+        } catch (\Exception $createException) {
+            // noop
+        }
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -190,7 +195,12 @@ class SkribbleServiceDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->assertFalse($this->delegator->updateSkribble($this->skribble));
+        try {
+            $this->delegator->updateSkribble($this->skribble);
+            $this->fail('Exception was not re thrown');
+        } catch (\Exception $updateException) {
+            // noop
+        }
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -255,7 +265,12 @@ class SkribbleServiceDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->assertFalse($this->delegator->deleteSkribble($this->skribble));
+        try {
+            $this->delegator->deleteSkribble($this->skribble);
+            $this->fail('Exception was not re thrown');
+        } catch (\Exception $deleteException) {
+            // noop
+        }
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(

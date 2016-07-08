@@ -182,7 +182,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         $return = $this->realService->fetchSkribble($skribbleId, $prototype);
 
         $event->setName('fetch.skribble.post');
-        $event->setParam('result', $return);
+        $event->setParam('skribble', $return);
 
         $this->getEventManager()->trigger($event);
 
@@ -212,7 +212,8 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         } catch (\Exception $createException) {
             $event->setName('create.skribble.error');
             $event->setParam('error', $createException);
-            $return = false;
+            $this->getEventManager()->trigger($event);
+            throw $createException;
         }
 
         $this->getEventManager()->trigger($event);
@@ -243,7 +244,8 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         } catch (\Exception $updateException) {
             $event->setName('update.skribble.error');
             $event->setParam('error', $updateException);
-            $return = false;
+            $this->getEventManager()->trigger($event);
+            throw $updateException;
         }
 
         $this->getEventManager()->trigger($event);
@@ -254,7 +256,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
     /**
      * @inheritDoc
      */
-    public function deleteSkribble(SkribbleInterface $skribble, $hard = false)
+    public function deleteSkribble($skribble, $hard = false)
     {
         $event = new Event(
             'delete.skribble',
@@ -275,7 +277,8 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         } catch (\Exception $deleteException) {
             $event->setName('delete.skribble.error');
             $event->setParam('error', $deleteException);
-            $return = false;
+            $this->getEventManager()->trigger($event);
+            throw $deleteException;
         }
         $this->getEventManager()->trigger($event);
 

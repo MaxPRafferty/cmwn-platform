@@ -36,12 +36,12 @@ interface SkribbleInterface extends SoftDeleteInterface
     /**
      * @return string
      */
-    public function getSkirbbleId();
+    public function getSkribbleId();
 
     /**
      * @param string $skirbbleId
      */
-    public function setSkirbbleId($skirbbleId);
+    public function setSkribbleId($skirbbleId);
 
     /**
      * @return string

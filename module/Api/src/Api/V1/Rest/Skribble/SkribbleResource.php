@@ -86,7 +86,7 @@ class SkribbleResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         $user = $this->getEvent()->getRouteParam('user');
-        $type = isset($params['type']) ? $params['type'] : 'all';
+        $type = isset($params['status']) ? $params['status'] : 'all';
 
         switch ($type) {
             case 'all':
@@ -123,12 +123,14 @@ class SkribbleResource extends AbstractResourceListener
     public function update($skribbleId, $data)
     {
         $skribbleEntity = $this->fetch($skribbleId);
-        $skribbleEntity->exchangeArray($this->getInputFilter()->getValues());
+        $data           = array_merge($skribbleEntity->getArrayCopy(), $this->getInputFilter()->getValues());
+        $skribbleEntity->exchangeArray($data);
 
         // Only save Skribbles to the DB not Skribble Entities
         $skribble = new Skribble($skribbleEntity->getArrayCopy());
         $this->service->updateSkribble($skribble);
 
+        // TODO skramble skribble
         return $skribbleEntity;
     }
 }

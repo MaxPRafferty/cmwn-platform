@@ -1830,6 +1830,9 @@ return array(
                         'name' => 'Zend\\Validator\\InArray',
                         'options' => array(
                             'strict' => true,
+                            'haystack' => array(
+                                0 => '1',
+                            ),
                         ),
                     ),
                 ),
@@ -1852,7 +1855,7 @@ return array(
                 'error_message' => 'Invalid Rules',
             ),
             2 => array(
-                'required' => true,
+                'required' => false,
                 'validators' => array(),
                 'filters' => array(),
                 'name' => 'friend_to',

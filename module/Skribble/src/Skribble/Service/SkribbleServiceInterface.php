@@ -89,10 +89,10 @@ interface SkribbleServiceInterface
     /**
      * Deletes the Skribble
      *
-     * @param SkribbleInterface $skribble
+     * @param SkribbleInterface|string $skribble
      * @param bool $hard
      *
      * @return int
      */
-    public function deleteSkribble(SkribbleInterface $skribble, $hard = false);
+    public function deleteSkribble($skribble, $hard = false);
 }

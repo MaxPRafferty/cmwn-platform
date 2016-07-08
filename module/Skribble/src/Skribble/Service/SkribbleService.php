@@ -55,7 +55,7 @@ class SkribbleService implements SkribbleServiceInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
-        $where->orPredicate(new Expression('created_by = ? OR friend_to = ?', $userId, $userId));
+        $where->addPredicate(new Expression('(created_by = ? OR friend_to = ?)', $userId, $userId));
 
         return $this->buildAdapter($where, $prototype);
     }
@@ -92,6 +92,7 @@ class SkribbleService implements SkribbleServiceInterface
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
         $where->addPredicate(new Operator('created_by', '=', $userId));
+        $where->addPredicate(new Operator('status', '=', SkribbleInterface::STATUS_COMPLETE));
 
         return $this->buildAdapter($where, $prototype);
     }
@@ -107,10 +108,12 @@ class SkribbleService implements SkribbleServiceInterface
      */
     public function fetchDraftForUser($user, $where = null, $prototype = null)
     {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where = $this->createWhere($where);
+        $where->addPredicate(new Operator('created_by', '=', $userId));
         $where->addPredicate(new Operator('status', '=', SkribbleInterface::STATUS_NOT_COMPLETE));
 
-        return $this->fetchSentForUser($user, $where, $prototype);
+        return $this->buildAdapter($where, $prototype);
     }
 
     /**
@@ -146,7 +149,7 @@ class SkribbleService implements SkribbleServiceInterface
      */
     public function createSkribble(SkribbleInterface $skribble)
     {
-        $skribble->setSkirbbleId(Uuid::uuid1());
+        $skribble->setSkribbleId(Uuid::uuid1());
         $skribble->setCreated(new \DateTime());
         $skribble->setUpdated(new \DateTime());
 
@@ -178,10 +181,10 @@ class SkribbleService implements SkribbleServiceInterface
         $data['updated'] = $skribble->getUpdated()->format("Y-m-d H:i:s");
         unset($data['created']);
 
-        $this->fetchSkribble($skribble->getSkirbbleId());
+        $this->fetchSkribble($skribble->getSkribbleId());
         $this->gateway->update(
             $data,
-            ['skribble_id' => $skribble->getSkirbbleId()]
+            ['skribble_id' => $skribble->getSkribbleId()]
         );
 
         return true;
@@ -195,17 +198,18 @@ class SkribbleService implements SkribbleServiceInterface
      *
      * @return int
      */
-    public function deleteSkribble(SkribbleInterface $skribble, $hard = false)
+    public function deleteSkribble($skribble, $hard = false)
     {
-        $where = ['skribble_id' => $skribble->getSkirbbleId()];
+        $skribbleId = $skribble instanceof SkribbleInterface ? $skribble->getSkribbleId() : $skribble;
+        $where = ['skribble_id' => $skribbleId];
         if ($hard) {
             return (bool)$this->gateway->delete($where);
         }
 
-        $skribble->setDeleted(new \DateTime());
-        $this->fetchSkribble($skribble->getSkirbbleId());
+        $date = new \DateTime();
+        $this->fetchSkribble($skribbleId);
         $this->gateway->update(
-            ['deleted' => $skribble->getDeleted()->format('Y-m-d H:i:s')],
+            ['deleted' => $date->format('Y-m-d H:i:s')],
             $where
         );
 

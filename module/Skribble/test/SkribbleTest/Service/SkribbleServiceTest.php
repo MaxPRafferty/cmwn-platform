@@ -160,7 +160,7 @@ class SkribbleServiceTest extends TestCase
                 );
 
                 $this->assertNotEmpty(
-                    $this->skribble->getSkirbbleId(),
+                    $this->skribble->getSkribbleId(),
                     'Skirbble Service did not set skribble id on create'
                 );
 
@@ -194,7 +194,7 @@ class SkribbleServiceTest extends TestCase
     public function testItShouldUpdateSkribble()
     {
         $originalUpdate = new \DateTime('-1 Day');
-        $this->skribble->setSkirbbleId(Uuid::uuid1());
+        $this->skribble->setSkribbleId(Uuid::uuid1());
         $this->skribble->setUpdated($originalUpdate);
         $result = new ResultSet();
         $result->initialize([$this->skribble->getArrayCopy()]);
@@ -207,7 +207,7 @@ class SkribbleServiceTest extends TestCase
             ->once()
             ->andReturnUsing(function ($actualData, $where) use (&$originalUpdate) {
                 $this->assertEquals(
-                    ['skribble_id' => $this->skribble->getSkirbbleId()],
+                    ['skribble_id' => $this->skribble->getSkribbleId()],
                     $where,
                     'Skribble service is going to update the wrong skribble'
                 );
@@ -337,7 +337,7 @@ class SkribbleServiceTest extends TestCase
      */
     public function testItShouldSoftDeleteSkribble()
     {
-        $this->skribble->setSkirbbleId(Uuid::uuid1());
+        $this->skribble->setSkribbleId(Uuid::uuid1());
         $result = new ResultSet();
         $result->initialize([$this->skribble->getArrayCopy()]);
 
@@ -360,7 +360,7 @@ class SkribbleServiceTest extends TestCase
                 );
 
                 $this->assertEquals(
-                    ['skribble_id' => $this->skribble->getSkirbbleId()],
+                    ['skribble_id' => $this->skribble->getSkribbleId()],
                     $where,
                     'Skribble service will be soft deleting the wrong skribble'
                 );
