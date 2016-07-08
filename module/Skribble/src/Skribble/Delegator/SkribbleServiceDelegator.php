@@ -284,5 +284,4 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
 
         return $return;
     }
-
 }
