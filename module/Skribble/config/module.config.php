@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'validators' => [
+        'invokables' => [
+            \Skribble\Rule\RuleValidator::class => \Skribble\Rule\RuleValidator::class,
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             \Skribble\Service\SkribbleServiceInterface::class => \Skribble\Service\SkribbleService::class,

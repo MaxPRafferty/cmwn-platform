@@ -1353,6 +1353,9 @@ return array(
         'Api\\V1\\Rest\\SaveGame\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\SaveGame\\Validator',
         ),
+        'Api\\V1\\Rest\\Skribble\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Skribble\\Validator',
+        ),
     ),
     'input_filter_specs' => array(
         'Api\\V1\\Rest\\User\\Validator' => array(
@@ -1817,6 +1820,44 @@ return array(
                 'filters' => array(),
                 'name' => 'version',
                 'description' => 'The Version of the data',
+            ),
+        ),
+        'Api\\V1\\Rest\\Skribble\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'strict' => true,
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'version',
+                'description' => 'The version that was used to create this skribble',
+                'error_message' => 'Invalid Version',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Skribble\\Rule\\RuleValidator',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'rules',
+                'description' => 'The rules for creating the skribble',
+                'error_message' => 'Invalid Rules',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'friend_to',
+                'description' => 'The Friend to send this message to',
+                'error_message' => 'Invalid Friend To',
             ),
         ),
     ),
