@@ -74,7 +74,6 @@ class FriendServiceDelegatorTest extends TestCase
     public function setUpUser()
     {
         $this->user = new Child(['user_id' => 'user']);
-        //$this->user->setUserId('user');
     }
 
     /**
