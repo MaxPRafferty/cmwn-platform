@@ -53,7 +53,7 @@ class SuggestedFriendServiceDelegator implements SuggestedFriendServiceInterface
             $return = $this->realService->fetchSuggestedFriends($user, $where, $prototype);
             $event->setName('fetch.suggested.friends.post');
         } catch (\Exception $exception) {
-            $eventParams['exception'] = $exception;
+            $event->setParam('exception', $exception);
             $event->setName('fetch.suggested.friends.error');
             $this->getEventManager()->trigger($event);
             throw $exception;
