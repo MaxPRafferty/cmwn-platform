@@ -97,6 +97,7 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
+                    'save_game',
                 ],
             ],
             'Principal' => [
@@ -112,6 +113,7 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
+                    'save_game',
                 ],
             ],
             'English Teacher' => [
@@ -127,6 +129,7 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
+                    'save_game',
                 ],
             ],
             'English Student' => [
@@ -146,6 +149,7 @@ class TokenResourceTest extends TestCase
                     'user_flip',
                     'user_image',
                     'user_name',
+                    'save_game',
                 ],
             ],
         ];

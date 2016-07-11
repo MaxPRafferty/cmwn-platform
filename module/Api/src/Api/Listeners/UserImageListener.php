@@ -4,8 +4,8 @@ namespace Api\Listeners;
 
 use Api\V1\Rest\Image\ImageEntity;
 use Api\V1\Rest\User\MeEntity;
-use Api\V1\Rest\User\UserEntity;
 use Asset\Service\UserImageServiceInterface;
+use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
@@ -68,7 +68,7 @@ class UserImageListener
 
         $realEntity = $entity->entity;
 
-        if (!$realEntity instanceof UserEntity) {
+        if (!$realEntity instanceof UserInterface) {
             return;
         }
 
