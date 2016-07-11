@@ -196,7 +196,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
         $array    = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
-            if (null === $value) {
+            if (empty($value)) {
                 continue;
             }
 

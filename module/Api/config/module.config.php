@@ -1829,7 +1829,6 @@ return array(
                     0 => array(
                         'name' => 'Zend\\Validator\\InArray',
                         'options' => array(
-                            'strict' => true,
                             'haystack' => array(
                                 0 => '1',
                             ),

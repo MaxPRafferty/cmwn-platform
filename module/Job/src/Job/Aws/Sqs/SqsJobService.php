@@ -4,7 +4,6 @@ namespace Job\Aws\Sqs;
 
 use Aws\Sqs\SqsClient;
 use Job\JobInterface;
-use Job\RuntimeException;
 use Job\Service\JobServiceInterface;
 use Zend\Json\Json;
 
@@ -19,13 +18,20 @@ class SqsJobService implements JobServiceInterface
     protected $sqsClient;
 
     /**
+     * @var string
+     */
+    protected $queueUrl;
+
+    /**
      * SqsJobService constructor.
      *
      * @param SqsClient $client
+     * @param string $queueUrl
      */
-    public function __construct(SqsClient $client)
+    public function __construct(SqsClient $client, $queueUrl)
     {
         $this->sqsClient = $client;
+        $this->queueUrl  = $queueUrl;
     }
 
     /**
@@ -33,12 +39,8 @@ class SqsJobService implements JobServiceInterface
      */
     public function sendJob(JobInterface $job)
     {
-        if (!$job instanceof SqsJobInterface) {
-            throw new RuntimeException('JobInterface passed to SqsJobService, expected SqsInterface');
-        }
-
         $this->sqsClient->sendMessage([
-            'QueueUrl'    => $job->getQueueUrl(),
+            'QueueUrl'    => $this->queueUrl,
             'MessageBody' => Json::encode($job->getArrayCopy()),
         ]);
     }

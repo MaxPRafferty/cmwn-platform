@@ -12,6 +12,9 @@ return [
         'invokables' => [
             \Job\Service\JobService::class => \Job\Service\JobService::class,
         ],
+        'abstract_factories' => [
+            \Job\Aws\Sqs\SqsJobServiceAbstractFactory::class,
+        ],
     ],
 
     'controllers' => [

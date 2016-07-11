@@ -186,7 +186,7 @@ class Skribble implements SkribbleInterface
      */
     public function setSkribbleId($skirbbleId)
     {
-        $this->skirbbleId = $skirbbleId;
+        $this->skirbbleId = (string) $skirbbleId;
     }
 
     /**

@@ -18,13 +18,20 @@ class SkribbleJob implements SqsJobInterface
     protected $skribble;
 
     /**
+     * @var string
+     */
+    protected $siteUrl;
+
+    /**
      * SkribbleJob constructor.
      *
      * @param SkribbleInterface $skribble
+     * @param $siteUrl
      */
-    public function __construct(SkribbleInterface $skribble)
+    public function __construct(SkribbleInterface $skribble, $siteUrl)
     {
         $this->skribble = $skribble;
+        $this->siteUrl  = $siteUrl;
     }
 
     /**
@@ -32,7 +39,12 @@ class SkribbleJob implements SqsJobInterface
      */
     public function getArrayCopy()
     {
-        $skribbleBase  = 'user/' . $this->skribble->getCreatedBy() . '/skribble/' . $this->skribble->getSkribbleId();
+        $skribbleBase = 'https:// ' . $this->siteUrl .
+            '/user/' .
+            $this->skribble->getCreatedBy() .
+            '/skribble/' .
+            $this->skribble->getSkribbleId();
+
         return [
             'skirbble_id'  => $this->skribble->getSkribbleId(),
             'skribble_url' => $skribbleBase,

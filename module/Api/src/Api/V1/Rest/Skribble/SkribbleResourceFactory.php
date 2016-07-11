@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\Skribble;
 
+use Job\Aws\Sqs\SqsJobService;
 use Skribble\Service\SkribbleServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -16,8 +17,10 @@ class SkribbleResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var SkribbleServiceInterface $service */
-        $service = $serviceLocator->get(SkribbleServiceInterface::class);
-        return new SkribbleResource($service);
+        /** @var SkribbleServiceInterface $skribbleService */
+        /** @var SqsJobService $jobService */
+        $skribbleService = $serviceLocator->get(SkribbleServiceInterface::class);
+        $jobService      = $serviceLocator->get('SkribbleSqs');
+        return new SkribbleResource($skribbleService, $jobService);
     }
 }
