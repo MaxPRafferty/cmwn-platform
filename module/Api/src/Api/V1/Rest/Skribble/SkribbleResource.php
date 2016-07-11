@@ -2,9 +2,13 @@
 
 namespace Api\V1\Rest\Skribble;
 
+use Job\Service\JobServiceInterface;
 use Skribble\Service\SkribbleServiceInterface;
 use Skribble\Skribble;
+use Skribble\SkribbleInterface;
+use Skribble\SkribbleJob;
 use User\UserInterface;
+use Zend\Http\PhpEnvironment\Request;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -19,13 +23,20 @@ class SkribbleResource extends AbstractResourceListener
     protected $service;
 
     /**
+     * @var JobServiceInterface
+     */
+    protected $sqsService;
+
+    /**
      * SkribbleResource constructor.
      *
      * @param SkribbleServiceInterface $service
+     * @param JobServiceInterface $jobService
      */
-    public function __construct(SkribbleServiceInterface $service)
+    public function __construct(SkribbleServiceInterface $service, JobServiceInterface $jobService)
     {
-        $this->service = $service;
+        $this->service    = $service;
+        $this->sqsService = $jobService;
     }
 
     /**
@@ -130,7 +141,25 @@ class SkribbleResource extends AbstractResourceListener
         $skribble = new Skribble($skribbleEntity->getArrayCopy());
         $this->service->updateSkribble($skribble);
 
-        // TODO skramble skribble
+        $this->skrambleSkribble($skribbleEntity);
         return $skribbleEntity;
+    }
+
+    /**
+     * @param SkribbleInterface $skribble
+     */
+    protected function skrambleSkribble(SkribbleInterface $skribble)
+    {
+        /** @var Request $request */
+        $request = $this->getEvent()->getRequest();
+
+        if (!$request->getQuery('skramble', false)) {
+            return;
+        }
+
+        $request->getServer('HTTP_HOST');
+        $job = new SkribbleJob($skribble, $request->getServer('HTTP_HOST'));
+
+        $this->sqsService->sendJob($job);
     }
 }
