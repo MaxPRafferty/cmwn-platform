@@ -15,21 +15,21 @@ class RuleStaticFactory
      */
     public static function createRuleFromArray(array $options)
     {
-        if (!isset($options['type'])) {
+        if (!isset($options['asset_type'])) {
             throw new \RuntimeException('Cannot create rule: missing type');
         }
 
-        $className = __NAMESPACE__ . '\\' . ucfirst(mb_strtolower($options['type']));
+        $className = __NAMESPACE__ . '\\' . ucfirst(mb_strtolower($options['asset_type']));
         if (!class_exists($className)) {
             throw new \RuntimeException(
-                sprintf('Cannot create rule of type "%s": does not exist', $options['type'])
+                sprintf('Cannot create rule of type "%s": does not exist', $options['asset_type'])
             );
         }
 
         $rule = new $className;
         if (!$rule instanceof RuleCompositeInterface) {
             throw new \RuntimeException(
-                sprintf('Cannot create rule of type "%s": is not a rule', $options['type'])
+                sprintf('Cannot create rule of type "%s": is not a rule', $options['asset_type'])
             );
         }
 
