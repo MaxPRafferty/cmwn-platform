@@ -39,7 +39,7 @@ class SkribbleJob implements SqsJobInterface
      */
     public function getArrayCopy()
     {
-        $skribbleBase = 'https:// ' . $this->siteUrl .
+        $skribbleBase = 'https://' . $this->siteUrl .
             '/user/' .
             $this->skribble->getCreatedBy() .
             '/skribble/' .
