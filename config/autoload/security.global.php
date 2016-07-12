@@ -9,6 +9,7 @@ return [
             'api.rest.logout',
             'api.rest.image',
             'api.rest.media',
+            'api.rest.skribble',
         ],
         'route-permissions' => [
             'api.rest.reset'           => [
