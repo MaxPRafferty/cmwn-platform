@@ -48,7 +48,7 @@ class SkribbleJob implements SqsJobInterface
         return [
             'skirbble_id'  => $this->skribble->getSkribbleId(),
             'skribble_url' => $skribbleBase,
-            'post_back'    => $skribbleBase . '/complete',
+            'post_back'    => $skribbleBase . '/notice',
         ];
     }
 
