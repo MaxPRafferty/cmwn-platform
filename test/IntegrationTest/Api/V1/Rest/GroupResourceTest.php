@@ -127,11 +127,13 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-864
+     * @ticket CORE-725
+     * @dataProvider schoolUserDataProvider
      */
-    public function testItShouldReturnSchoolForUser()
+    public function testItShouldReturnSchoolForUser($login)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($login);
 
         $this->dispatch('/group?type=school');
         $this->assertMatchedRouteName('api.rest.group');
@@ -374,6 +376,7 @@ class GroupResourceTest extends TestCase
     }
 
     /**
+<<<<<<< HEAD
      * @test
      * @ticket CORE-1062
      */
@@ -405,5 +408,20 @@ class GroupResourceTest extends TestCase
         }
 
         $this->assertEquals($expectedGroupIds, $actualGroupIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function schoolUserDataProvider()
+    {
+        return [
+            'English Teacher' => [
+                'english_teacher'
+                ],
+            'English Student' => [
+                'english_student'
+                ]
+         ];
     }
 }
