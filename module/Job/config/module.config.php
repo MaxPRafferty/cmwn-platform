@@ -14,6 +14,7 @@ return [
         ],
         'abstract_factories' => [
             \Job\Aws\Sqs\SqsJobServiceAbstractFactory::class,
+            \Job\Aws\Sns\SnsJobServiceAbstractFactory::class,
         ],
     ],
 

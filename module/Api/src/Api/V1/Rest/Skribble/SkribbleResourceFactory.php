@@ -20,7 +20,7 @@ class SkribbleResourceFactory implements FactoryInterface
         /** @var SkribbleServiceInterface $skribbleService */
         /** @var SqsJobService $jobService */
         $skribbleService = $serviceLocator->get(SkribbleServiceInterface::class);
-        $jobService      = $serviceLocator->get('SkribbleSqs');
+        $jobService      = $serviceLocator->get('SkribbleSns');
         return new SkribbleResource($skribbleService, $jobService);
     }
 }
