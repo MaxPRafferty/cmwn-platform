@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'skribble-sqs-config' => [
-        'queue-url' => 'https://sqs.us-east-1.amazonaws.com/454791371383/Skribble',
+    'skribble-sns-config' => [
+        'sns-arn' => 'arn:aws:sns:us-east-1:454791371383:skribble',
     ],
 ];
