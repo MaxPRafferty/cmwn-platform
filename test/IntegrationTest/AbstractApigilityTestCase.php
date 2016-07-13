@@ -44,7 +44,7 @@ abstract class AbstractApigilityTestCase extends TestCase
         $this->getDatabaseTester()->setDataSet($this->getDataSet());
         $this->getDatabaseTester()->onSetUp();
     }
-    
+
     /**
      * Performs operation returned by getTearDownOperation().
      */

@@ -95,6 +95,7 @@ class MediaServiceTest extends TestCase
             'src'         => 'https://media.changemyworldnow.com/f/70116569037',
             'name'        => 'img_animals_sprite.png',
             'can_overlap' => false,
+            'type'        => 'file',
         ];
 
         $this->assertEquals(
@@ -132,6 +133,7 @@ class MediaServiceTest extends TestCase
             'src'         => null,
             'name'        => 'Content',
             'can_overlap' => false,
+            'type'        => 'folder',
         ];
 
         $iterator = $media->getIterator();

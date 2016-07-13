@@ -49,6 +49,7 @@ class MediaTest extends TestCase
             'mime_type'   => 'image/png',
             'src'         => 'https://media.changemyworldnow.com/f/70116569037',
             'name'        => 'A Cool Image',
+            'type'        => 'file',
         ];
 
         $this->assertEquals(
@@ -74,6 +75,7 @@ class MediaTest extends TestCase
             'mime_type'   => 'image/png',
             'src'         => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'        => 'A Cool Image',
+            'type'        => 'file',
         ];
 
         $media = new Media($expected);

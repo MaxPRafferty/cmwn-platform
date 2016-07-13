@@ -1,5 +1,5 @@
 {
-  "skirbble_id": "82dd5620-df30-11e5-a52e-0800274f2cef",
+  "skribble_id": "82dd5620-df30-11e5-a52e-0800274f2cef",
   "version": "1",
   "url": null,
   "created": "2016-02-29 22:05:15",
@@ -11,7 +11,7 @@
   "read": false,
   "rules": {
     "effect": {
-      "type": "effect",
+      "type": "file",
       "media_id": "82dd5620-df30-11e5-a52e-0800274877349",
       "check": {
         "type": "sha1",
@@ -19,12 +19,12 @@
       },
       "mime_type": "application/javascript",
       "src": "https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349.js",
-      "asset_type": "file",
+      "asset_type": "effect",
       "name": "Explosions",
       "can_overlap": false
     },
     "sound": {
-      "type": "sound",
+      "type": "file",
       "media_id": "82dd5620-df30-11e5-a52e-0800274877349",
       "check": {
         "type": "sha1",
@@ -32,12 +32,12 @@
       },
       "mime_type": "audio/mpeg",
       "src": "https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349.mp3",
-      "asset_type": "file",
+      "asset_type": "sound",
       "name": "Woo-Hoo",
       "can_overlap": false
     },
     "background": {
-      "type": "background",
+      "type": "file",
       "check": {
         "type": "sha1",
         "value": "82dd5620df3011e5a52e0800274877349"
@@ -45,17 +45,17 @@
       "mime_type": "image/png",
       "src": "https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349",
       "media_id": "82dd5620-df30-11e5-a52e-0800274877349",
-      "asset_type": "file",
+      "asset_type": "background",
       "name": "Happy Trees",
       "can_overlap": false
     },
     "items": [
       {
-        "type": "item",
+        "type": "file",
         "media_id": "70116576425",
         "name": "img_dogs_1-01.png",
         "can_overlap": false,
-        "asset_type": "file",
+        "asset_type": "item",
         "check": {
           "type": "sha1",
           "value": "05735b54100ea1c1054da594550792c4f1c36fc5"
@@ -90,7 +90,7 @@
         }
       },
       {
-        "type": "item",
+        "type": "file",
         "media_id": "70116576425",
         "name": "img_dogs_1-01.png",
         "can_overlap": false,
@@ -129,7 +129,7 @@
         }
       },
       {
-        "type": "item",
+        "type": "file",
         "media_id": "70116576425",
         "name": "img_dogs_1-01.png",
         "can_overlap": false,
@@ -170,7 +170,7 @@
     ],
     "messages": [
       {
-        "type": "message",
+        "type": "file",
         "media_id": "70116370973",
         "name": "message_demo_10_b.png",
         "can_overlap": false,
@@ -209,7 +209,7 @@
         }
       },
       {
-        "type": "message",
+        "type": "file",
         "media_id": "70116370973",
         "name": "message_demo_10_b.png",
         "can_overlap": false,

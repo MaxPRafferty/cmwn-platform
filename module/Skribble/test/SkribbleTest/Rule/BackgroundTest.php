@@ -33,7 +33,7 @@ class BackgroundTest extends TestCase
             'mime_type'  => 'image/png',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Happy Trees',
-            'type'       => 'background',
+            'type'       => 'file',
             'can_overlap' => false,
         ];
 
@@ -46,7 +46,7 @@ class BackgroundTest extends TestCase
         );
 
         $this->assertTrue($bobRoss->isValid(), 'Background should be valid by default');
-        $this->assertEquals('background', $bobRoss->getType(), 'Background is not reporting self as a background');
+        $this->assertEquals('background', $bobRoss->getRuleType(), 'Background is not reporting self as a background');
     }
 
     /**

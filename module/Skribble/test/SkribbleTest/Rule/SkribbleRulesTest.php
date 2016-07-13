@@ -34,7 +34,7 @@ class SkribbleRulesTest extends TestCase
 
         $this->assertEquals($skribbleData['rules'], $skribbleRules->getArrayCopy());
         $this->assertTrue($skribbleRules->isValid(), 'Skribble rules MUST be valid');
-        $this->assertEquals('rules', $skribbleRules->getType());
+        $this->assertEquals('rules', $skribbleRules->getRuleType());
     }
 
     /**
@@ -134,7 +134,7 @@ class SkribbleRulesTest extends TestCase
     {
         /** @var \Mockery\MockInterface|\Skribble\Rule\RuleCompositeInterface $rule */
         $rule = \Mockery::mock('\Skribble\Rule\RuleCompositeInterface');
-        $rule->shouldReceive('getType')
+        $rule->shouldReceive('getRuleType')
             ->andReturn('FooBar')
             ->byDefault();
 
@@ -156,7 +156,7 @@ class SkribbleRulesTest extends TestCase
     {
         $this->setExpectedException(
             \Skribble\OverflowException::class,
-            printf('Only one rule of type "%s" can be set', $rule->getType())
+            printf('Only one rule of type "%s" can be set', $rule->getRuleType())
         );
 
         $skribbleRules = new SkribbleRules();

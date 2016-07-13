@@ -80,7 +80,7 @@ class SkribbleResource extends AbstractResourceListener
      *
      * @param  mixed $skribbleId
      *
-     * @return ApiProblem|SkribbleEntity
+     * @return ApiProblem|SkribbleEntity|SkribbleInterface
      */
     public function fetch($skribbleId)
     {

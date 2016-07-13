@@ -91,8 +91,8 @@ class SkribbleService implements SkribbleServiceInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
-        $where->addPredicate(new Operator('created_by', '=', $userId));
         $where->addPredicate(new Operator('status', '=', SkribbleInterface::STATUS_COMPLETE));
+        $where->addPredicate(new Operator('created_by', '=', $userId));
 
         return $this->buildAdapter($where, $prototype);
     }
@@ -110,8 +110,8 @@ class SkribbleService implements SkribbleServiceInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where = $this->createWhere($where);
-        $where->addPredicate(new Operator('created_by', '=', $userId));
         $where->addPredicate(new Operator('status', '=', SkribbleInterface::STATUS_NOT_COMPLETE));
+        $where->addPredicate(new Operator('created_by', '=', $userId));
 
         return $this->buildAdapter($where, $prototype);
     }
@@ -193,23 +193,25 @@ class SkribbleService implements SkribbleServiceInterface
     /**
      * Deletes the Skribble
      *
-     * @param SkribbleInterface $skribble
+     * @param SkribbleInterface|string $skribble
      * @param bool $hard
      *
      * @return int
      */
     public function deleteSkribble($skribble, $hard = false)
     {
-        $skribbleId = $skribble instanceof SkribbleInterface ? $skribble->getSkribbleId() : $skribble;
-        $where = ['skribble_id' => $skribbleId];
+        $skribble = $skribble instanceof SkribbleInterface
+            ? $skribble
+            : $this->fetchSkribble($skribble);
+
+        $where = ['skribble_id' => $skribble->getSkribbleId()];
         if ($hard) {
             return (bool)$this->gateway->delete($where);
         }
 
-        $date = new \DateTime();
-        $this->fetchSkribble($skribbleId);
+        $skribble->setDeleted(new \DateTime());
         $this->gateway->update(
-            ['deleted' => $date->format('Y-m-d H:i:s')],
+            ['deleted' => $skribble->getDeleted()->format('Y-m-d H:i:s')],
             $where
         );
 

@@ -33,7 +33,7 @@ class ItemTest extends TestCase
             ],
             'src'        => 'https://media.changemyworldnow.com/f/70116576425',
             'mime_type'  => 'image/png',
-            'type'       => 'item',
+            'type'       => 'file',
             'can_overlap' => false,
             'state'      => [
                 'left'     => '100.83125707814269',
@@ -73,7 +73,7 @@ class ItemTest extends TestCase
 
         $this->assertTrue($item->isValid(), 'Item is not reporting valid');
         $this->assertTrue($item->isStateValid(), 'Item is not reporting valid state');
-        $this->assertEquals('item', $item->getType());
+        $this->assertEquals('item', $item->getRuleType());
     }
 
     /**
@@ -91,7 +91,7 @@ class ItemTest extends TestCase
             ],
             'src'        => 'https://media.changemyworldnow.com/f/70116576425',
             'mime_type'  => 'image/png',
-            'type'       => 'item',
+            'type'       => 'file',
             'can_overlap' => false,
             'state'      => [
                 'left'     => '100.83125707814269',
