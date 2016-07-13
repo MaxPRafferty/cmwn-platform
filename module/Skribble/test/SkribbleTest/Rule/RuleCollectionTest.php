@@ -42,7 +42,7 @@ class RuleCollectionTest extends TestCase
         );
 
         $this->assertTrue($collection->isValid(), 'Collection should be valid when all rules are valid');
-        $this->assertEquals('items', $collection->getType());
+        $this->assertEquals('items', $collection->getRuleType());
     }
 
     /**
@@ -70,8 +70,12 @@ class RuleCollectionTest extends TestCase
         $rule = new Item();
         $expected->append($rule);
 
-        $actual  = new RuleCollection('items', $expected->getArrayCopy());
-        $this->assertEquals($rule, $actual->offsetGet(0), 'Collection cannot be hydrated from itself');
+        $actual = new RuleCollection('items', $expected->getArrayCopy());
+        $this->assertEquals(
+            $rule->getArrayCopy(),
+            $actual->offsetGet(0)->getArrayCopy(),
+            'Collection cannot be hydrated from itself'
+        );
     }
 
     /**

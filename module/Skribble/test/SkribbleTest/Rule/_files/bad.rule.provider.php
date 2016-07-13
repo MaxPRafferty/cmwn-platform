@@ -5,7 +5,7 @@ return [
     'Set Background with Item' => [
         'method'   => 'setBackground',
         'ruleData' => [
-            'type' => 'item',
+            'asset_type' => 'item',
         ],
         'message'  => 'Rule is not a Background',
     ],
@@ -13,7 +13,7 @@ return [
     'Set Background with Message' => [
         'method'   => 'setBackground',
         'ruleData' => [
-            'type' => 'message',
+            'asset_type' => 'message',
         ],
         'message'  => 'Rule is not a Background',
     ],
@@ -21,7 +21,7 @@ return [
     'Set Background with Effect' => [
         'method'   => 'setBackground',
         'ruleData' => [
-            'type' => 'effect',
+            'asset_type' => 'effect',
         ],
         'message'  => 'Rule is not a Background',
     ],
@@ -29,7 +29,7 @@ return [
     'Set Background with Sound' => [
         'method'   => 'setBackground',
         'ruleData' => [
-            'type' => 'sound',
+            'asset_type' => 'sound',
         ],
         'sound'  => 'Rule is not a Background',
     ],
@@ -37,7 +37,7 @@ return [
     'Set Message with Item' => [
         'method'   => 'addMessage',
         'ruleData' => [
-            'type' => 'item',
+            'asset_type' => 'item',
         ],
         'message'  => 'Rule is not a Message',
     ],
@@ -45,7 +45,7 @@ return [
     'Set Message with Background' => [
         'method'   => 'addMessage',
         'ruleData' => [
-            'type' => 'background',
+            'asset_type' => 'background',
         ],
         'message'  => 'Rule is not a Message',
     ],
@@ -53,7 +53,7 @@ return [
     'Set Message with Effect' => [
         'method'   => 'addMessage',
         'ruleData' => [
-            'type' => 'effect',
+            'asset_type' => 'effect',
         ],
         'message'  => 'Rule is not a Message',
     ],
@@ -61,7 +61,7 @@ return [
     'Set Message with Sound' => [
         'method'   => 'addMessage',
         'ruleData' => [
-            'type' => 'sound',
+            'asset_type' => 'sound',
         ],
         'sound'  => 'Rule is not a Message',
     ],
@@ -69,7 +69,7 @@ return [
     'Set Item with Background' => [
         'method'   => 'addItem',
         'ruleData' => [
-            'type' => 'background',
+            'asset_type' => 'background',
         ],
         'message'  => 'Rule is not an Item',
     ],
@@ -77,7 +77,7 @@ return [
     'Set Item with Message' => [
         'method'   => 'addItem',
         'ruleData' => [
-            'type' => 'message',
+            'asset_type' => 'message',
         ],
         'message'  => 'Rule is not an Item',
     ],
@@ -85,7 +85,7 @@ return [
     'Set Item with Effect' => [
         'method'   => 'addItem',
         'ruleData' => [
-            'type' => 'effect',
+            'asset_type' => 'effect',
         ],
         'message'  => 'Rule is not an Item',
     ],
@@ -93,7 +93,7 @@ return [
     'Set Item with Sound' => [
         'method'   => 'addItem',
         'ruleData' => [
-            'type' => 'sound',
+            'asset_type' => 'sound',
         ],
         'sound'  => 'Rule is not an Item',
     ],
@@ -101,7 +101,7 @@ return [
     'Set Effect with Item' => [
         'method'   => 'setEffect',
         'ruleData' => [
-            'type' => 'item',
+            'asset_type' => 'item',
         ],
         'message'  => 'Rule is not an Effect',
     ],
@@ -109,7 +109,7 @@ return [
     'Set Effect with Message' => [
         'method'   => 'setEffect',
         'ruleData' => [
-            'type' => 'message',
+            'asset_type' => 'message',
         ],
         'message'  => 'Rule is not an Effect',
     ],
@@ -117,7 +117,7 @@ return [
     'Set Effect with Background' => [
         'method'   => 'setEffect',
         'ruleData' => [
-            'type' => 'background',
+            'asset_type' => 'background',
         ],
         'message'  => 'Rule is not an Effect',
     ],
@@ -125,7 +125,7 @@ return [
     'Set Effect with Sound' => [
         'method'   => 'setEffect',
         'ruleData' => [
-            'type' => 'sound',
+            'asset_type' => 'sound',
         ],
         'sound'  => 'Rule is not an Effect',
     ],
@@ -133,7 +133,7 @@ return [
     'Set Sound with Item' => [
         'method'   => 'setSound',
         'ruleData' => [
-            'type' => 'item',
+            'asset_type' => 'item',
         ],
         'message'  => 'Rule is not a Sound',
     ],
@@ -141,7 +141,7 @@ return [
     'Set Sound with Message' => [
         'method'   => 'setSound',
         'ruleData' => [
-            'type' => 'message',
+            'asset_type' => 'message',
         ],
         'message'  => 'Rule is not a Sound',
     ],
@@ -149,7 +149,7 @@ return [
     'Set Sound with Background' => [
         'method'   => 'setSound',
         'ruleData' => [
-            'type' => 'background',
+            'asset_type' => 'background',
         ],
         'message'  => 'Rule is not a Sound',
     ],
@@ -157,7 +157,7 @@ return [
     'Set Sound with Effect' => [
         'method'   => 'setSound',
         'ruleData' => [
-            'type' => 'effect',
+            'asset_type' => 'effect',
         ],
         'sound'  => 'Rule is not a Sound',
     ],

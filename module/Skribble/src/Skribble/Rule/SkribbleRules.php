@@ -150,22 +150,22 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
      */
     public function addRule(RuleCompositeInterface $rule)
     {
-        if (in_array($rule->getType(), $this->restricted) && null !== $this->rules[$rule->getType()]) {
+        if (in_array($rule->getRuleType(), $this->restricted) && null !== $this->rules[$rule->getRuleType()]) {
             throw new OverflowException(
-                sprintf('Only one rule of type "%s" can be set', $rule->getType())
+                sprintf('Only one rule of type "%s" can be set', $rule->getRuleType())
             );
         }
 
-        $type = in_array($rule->getType(), ['item', 'message']) ? $rule->getType() . 's' : $rule->getType();
+        $type = in_array($rule->getRuleType(), ['item', 'message']) ? $rule->getRuleType() . 's' : $rule->getRuleType();
 
         if (!array_key_exists($type, $this->rules)) {
             throw new UnexpectedValueException(
-                sprintf('Rule of type "%s" is currently not supported', $rule->getType())
+                sprintf('Rule of type "%s" is currently not supported', $rule->getRuleType())
             );
         }
 
         $this->valid = $this->valid && $rule->isValid();
-        if (in_array($rule->getType(), ['item', 'message'])) {
+        if (in_array($rule->getRuleType(), ['item', 'message'])) {
             $this->rules[$type]->append($rule);
 
             return true;
@@ -237,7 +237,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
      *
      * @return string
      */
-    public function getType()
+    public function getRuleType()
     {
         return 'rules';
     }

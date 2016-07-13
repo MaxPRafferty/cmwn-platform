@@ -33,7 +33,7 @@ class MessageTest extends TestCase
             ],
             'src'        => 'https://media.changemyworldnow.com/f/70116576425',
             'mime_type'  => 'image/png',
-            'type'       => 'message',
+            'type'       => 'file',
             'can_overlap' => false,
             'state'      => [
                 'left'     => '100.83125707814269',
@@ -73,7 +73,7 @@ class MessageTest extends TestCase
 
         $this->assertTrue($message->isValid(), 'Message is not reporting valid');
         $this->assertTrue($message->isStateValid(), 'Message is not reporting valid state');
-        $this->assertEquals('message', $message->getType());
+        $this->assertEquals('message', $message->getRuleType());
     }
 
     /**
@@ -91,7 +91,7 @@ class MessageTest extends TestCase
             ],
             'src'        => 'https://media.changemyworldnow.com/f/70116576425',
             'mime_type'  => 'image/png',
-            'type'       => 'message',
+            'type'       => 'file',
             'can_overlap' => false,
             'state'      => [
                 'left'     => '100.83125707814269',

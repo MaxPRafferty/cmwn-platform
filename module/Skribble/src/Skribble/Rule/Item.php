@@ -20,7 +20,7 @@ class Item extends AbstractRule implements StateRuleInterface
     /**
      * @inheritDoc
      */
-    public function getType()
+    public function getRuleType()
     {
         return 'item';
     }

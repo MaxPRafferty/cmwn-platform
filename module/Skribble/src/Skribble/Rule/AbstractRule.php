@@ -41,8 +41,13 @@ abstract class AbstractRule implements RuleInterface
      */
     public function getArrayCopy()
     {
-        $return         = $this->getMedia()->getArrayCopy();
-        $return['type'] = $this->getType();
+        $return               = $this->getMedia()->getArrayCopy();
+
+        // In case we do not have a media rule or empty media
+        if (!isset($return['asset_type']) || empty($return['asset_type'])) {
+            $return['asset_type'] = $this->getRuleType();
+        }
+
         if ($this instanceof StateRuleInterface) {
             $return['state'] = $this->getState();
         }

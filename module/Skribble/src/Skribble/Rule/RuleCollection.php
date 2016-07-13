@@ -64,7 +64,7 @@ class RuleCollection extends \ArrayObject implements RuleCompositeInterface
      *
      * @return string
      */
-    public function getType()
+    public function getRuleType()
     {
         return $this->type;
     }

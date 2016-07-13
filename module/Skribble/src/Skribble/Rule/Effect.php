@@ -19,7 +19,7 @@ class Effect extends AbstractRule
     /**
      * @inheritDoc
      */
-    public function getType()
+    public function getRuleType()
     {
         return 'effect';
     }

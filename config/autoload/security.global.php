@@ -9,7 +9,8 @@ return [
             'api.rest.logout',
             'api.rest.image',
             'api.rest.media',
-            'api.rest.skribble',
+            'api.rest.skribble', // TODO lock this down
+            'api.rest.skribble-notify', // TODO lock this down
         ],
         'route-permissions' => [
             'api.rest.reset'           => [

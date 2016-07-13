@@ -6,6 +6,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use Skribble\Service\SkribbleService;
 use Skribble\Skribble;
+use Skribble\SkribbleInterface;
 use User\Child;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
@@ -245,7 +246,7 @@ class SkribbleServiceTest extends TestCase
     public function testItShouldFetchAllSkribblesForUser()
     {
         $where = new Where();
-        $where->orPredicate(new Expression('created_by = ? OR friend_to = ?', 'baz-bat', 'baz-bat'));
+        $where->andPredicate(new Expression('(created_by = ? OR friend_to = ?)', 'baz-bat', 'baz-bat'));
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
 
@@ -291,6 +292,7 @@ class SkribbleServiceTest extends TestCase
     public function testItShouldFetchAllSentSkribblesForUser()
     {
         $where = new Where();
+        $where->addPredicate(new Operator('status', '=', 'COMPLETE'));
         $where->addPredicate(new Operator('created_by', '=', 'baz-bat'));
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);

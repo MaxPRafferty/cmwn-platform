@@ -33,7 +33,7 @@ class SoundTest extends TestCase
             'mime_type'   => 'audo/mpeg',
             'src'         => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'        => 'My Cool Sound',
-            'type'        => 'sound',
+            'type'        => 'file',
             'can_overlap' => false,
         ];
 
@@ -45,7 +45,7 @@ class SoundTest extends TestCase
         );
 
         $this->assertTrue($sound->isValid(), 'Sound should default to valid');
-        $this->assertEquals('sound', $sound->getType(), 'Sound is reporting incorrect type');
+        $this->assertEquals('sound', $sound->getRuleType(), 'Sound is reporting incorrect type');
     }
 
     /**

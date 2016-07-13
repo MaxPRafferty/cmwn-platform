@@ -33,7 +33,7 @@ class EffectTest extends TestCase
             'mime_type'  => 'application/javascript',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Explosions',
-            'type'       => 'effect',
+            'type'       => 'file',
             'can_overlap' => false,
         ];
 
@@ -45,7 +45,7 @@ class EffectTest extends TestCase
         );
 
         $this->assertTrue($effect->isValid(), 'Effect is not reporting valid state');
-        $this->assertEquals('effect', $effect->getType());
+        $this->assertEquals('effect', $effect->getRuleType());
     }
 
     /**
@@ -63,7 +63,7 @@ class EffectTest extends TestCase
             'mime_type'  => 'application/javascript',
             'src'        => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
             'name'       => 'Explosions',
-            'type'       => 'effect',
+            'type'       => 'file',
             'can_overlap' => false,
         ]);
 
