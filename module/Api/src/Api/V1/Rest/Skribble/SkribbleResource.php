@@ -161,5 +161,9 @@ class SkribbleResource extends AbstractResourceListener
         $job = new SkribbleJob($skribble, $request->getServer('HTTP_HOST'));
 
         $this->sqsService->sendJob($job);
+
+        // TODO better solution for this  Maybe create skribbleSqsService? or a listener?
+        $skribble->setStatus(SkribbleInterface::STATUS_PROCESSING);
+        $this->service->updateSkribble($skribble);
     }
 }
