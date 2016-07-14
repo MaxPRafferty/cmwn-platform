@@ -6,10 +6,27 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
 
 /**
+ * Test FlipUserResourceTest
  * @group DB
+ * @group FlipUser
+ * @group Resource
  */
 class FlipUserResourceTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user/english_student/flip');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
     /**
      * @test
      * @dataProvider validUserDataProvider
