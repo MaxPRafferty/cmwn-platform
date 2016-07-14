@@ -130,6 +130,12 @@ return [
                 'description' => 'TAG IT! makes water conservation fun with a cool art project!',
                 'coming_soon' => 0,
             ],
+            'skribble'        => [
+                'game_id'     => 'skribble',
+                'title'       => 'Skribble',
+                'description' => 'Skribble',
+                'coming_soon' => 0,
+            ],
         ],
     ],
 ];
