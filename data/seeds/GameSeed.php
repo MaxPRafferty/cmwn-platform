@@ -4,6 +4,7 @@ use Phinx\Seed\AbstractSeed;
 
 /**
  * Class GameSeed
+ *
  * @codingStandardsIgnoreStart
  * @SuppressWarnings(PHPMD)
  */
@@ -19,250 +20,134 @@ class GameSeed extends AbstractSeed
      */
     public function run()
     {
-        $date = new \DateTime();
+        $currentDate    = new \DateTime();
+        $applicationEnv = getenv('APP_ENV') === false ? 'production' : getenv('APP_ENV');
+        $gamesToAdd     = [];
+        $gamesToRemove  = [];
+        $gamesToEdit    = [];
+        $gameList       = require __DIR__ . '/../../config/games/games.' . $applicationEnv . '.php';
+        $gameList       = $gameList['games'][$applicationEnv];
+        $existingStmt   = $this->query('SELECT * FROM games');
+        $currentGames   = [];
 
-        $games[] = [
-            "game_id" => "polar-bear",
-            "title" => "Polar Bear",
-            "description" => "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!",
-            "coming_soon" => 1,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+        // Find all current games in the the DB
+        foreach ($existingStmt as $key => $value) {
+            $gameId = $value['game_id'];
+            if (!isset($gameList[$gameId])) {
+                $this->getOutput()->writeln(sprintf('The game "%s" is no longer in the list', $gameId));
+                array_push($gamesToRemove, $gameId);
+                continue;
+            }
 
-        $games[] = [
-            "game_id" => "sea-turtle",
-            "title" => "Sea Turtle",
-            "description" => "Sea Turtles are at risk but you will guide yours to safety!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+            $currentGames[$gameId] = $value;
+        }
 
-        $games[] = [
-            "game_id" => "animal-id",
-            "title" => "Animal ID",
-            "description" => "Can you ID the different kinds of animals? Do you know what plants and animals belong together? Prove it and learn it right here!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+        // Check if the games have changed
+        foreach ($currentGames as $gameId => $gameData) {
+            $gameConfig = $gameList[$gameId];
+            $editGame   = false;
 
-        $games[] = [
-            "game_id" => "litter-bug",
-            "title" => "Litterbug",
-            "description" => "Sing it strong! Learn a great sing-a-long song while you work to save the environment! Doesn't get better!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+            if ($gameData['coming_soon'] != $gameConfig['coming_soon']) {
+                $this->getOutput()->writeln(sprintf('The game "%s" has changed coming soon', $gameId));
+                $gameData['coming_soon'] = $gameConfig['coming_soon'];
+                $editGame                = true;
+            }
 
-        $games[] = [
-            "game_id" => "be-bright",
-            "title" => "Be Bright",
-            "description" => "Become a Light Saver agent of change! This music video will kick your inner superhero into high gear!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+            if ($gameData['title'] !== $gameConfig['title']) {
+                $this->getOutput()->writeln(sprintf('The game "%s" has title', $gameId));
+                $gameData['title'] = $gameConfig['title'];
+                $editGame          = true;
+            }
 
-        $games[] = [
-            "game_id" => "fire",
-            "title" => "FIRE!!!",
-            "description" => "All about firefighters and firefighting theory. These are true heroes among us - maybe you will be one someday?",
-            "coming_soon" => 1,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+            if ($gameData['description'] !== $gameConfig['description']) {
+                $this->getOutput()->writeln(sprintf('The game "%s" has description', $gameId));
+                $gameData['description'] = $gameConfig['description'];
+                $editGame                = true;
+            }
 
-        $games[] = [
-            "game_id" => "drought-out",
-            "title" => "DroughtOUT",
-            "description" => "We all depend on water for life! What happens when there is a drought? And what you can do offline to help conserve water?",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+            if ($editGame) {
+                $gameData['updated'] = $currentDate->format('Y-m-d H:i:s');
+                $gamesToEdit[$gameId] = $gameData;
+            }
+        }
 
-        $games[] = [
-            "game_id" => "twirl-n-swirl",
-            "title" => "Twirl n' Swirl",
-            "description" => "Ever wonder where things go when you flush? It’s not as simple as you think! Learn how you can help the environment—and avoid the plunger!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+        // check for new games
+        foreach ($gameList as $gameId => $gameData) {
+            if (isset($currentGames[$gameId])) {
+                // means we already have the game
+                continue;
+            }
 
-        $games[] = [
-            "game_id" => "meerkat-mania",
-            "title" => "Meerkat Mania",
-            "description" => "These Meerkats, from the deserts and grasslands of Africa, have a lot to say about friendship! Check out their funny video, learn the \"Meerkat Move,\" and more!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
+            $this->getOutput()->writeln(sprintf('New game found "%s"', $gameId));
+            $gameData['created'] = $currentDate->format('Y-m-d H:i:s');
+            $gameData['updated'] = $currentDate->format('Y-m-d H:i:s');
+            array_push($gamesToAdd, $gameData);
+        }
 
-        $games[] = [
-            "game_id" => "printmaster",
-            "title" => "Printmaster",
-            "description" => "Become a junior crimefighter by recognizing the different types of fingerprints! Take your knowledge offline and dust for fingerprints at home.",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "happy-fish-face",
-            "title" => "Happy Fish Face",
-            "description" => "Find out how a fish feels! Get the scoop on water pollution and have fun doing it! Grab a net - we're cleaning up!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        /*
-         * unity games
-         */
-        $games[] = [
-            "game_id" => "pedal-pusher",
-            "title" => "Pedal Pusher",
-            "description" => "Jump, flip and win points! Guide your bike through the terrain.",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "salad-rain",
-            "title" => "Salad Rain",
-            "description" => "Be a Salad Chef!  Make tasty salads by following the recipes!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "turtle-hurdle",
-            "title" => "Turtle Hurdle",
-            "description" => "Sea Turtles are amazing creatures with a lot to teach us! Get cool turtle facts, play games and find out why they are endangered.",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "twirling-tower",
-            "title" => "Twirling Tower",
-            "description" => "Weather can change at any moment! Stay ahead of the tornado!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "bloom-boom",
-            "title" => "Bloom Boom",
-            "description" => "Be a pollinating pilot! Direct your pollinators to get a field of flowers!",
-            "coming_soon" => 1,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "carbon-catcher",
-            "title" => "Carbon Catcher",
-            "description" => "Bubble, bubble, carbon is trouble! Clean up the air by converting emissions!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "waterdrop",
-            "title" => "Waterdrop",
-            "description" => "Drip, drip drop! Water conservation is critical. Harness the power and score big!",
-            "coming_soon" => 1,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "reef-builder",
-            "title" => "Reef Builder",
-            "description" => "Create an ocean reef habitat for sea creatures and win big doing it!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "monarch",
-            "title" => "Monarchs",
-            "description" => "Monarch Butterflies are crucial for the environment yet they are endangered! This is your spot!",
-            "coming_soon" => 1,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        $games[] = [
-            "game_id" => "tag-it",
-            "title" => "Tag It",
-            "description" => "TAG IT! makes water conservation fun with a cool art project!",
-            "coming_soon" => 0,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-
-        /*
-         * game template for seeder
-         */
-        /*
-        $games[] = [
-            "game_id" => "",
-            "title" => "",
-            "description" => "",
-            "coming_soon" => 1,
-            "created" => $date->format('Y-m-d'),
-            "updated" => $date->format('Y-m-d'),
-            "deleted" => null
-        ];
-        */
-
-        $table = $this->table('games');
-        foreach ($games as $game) {
+        // remove games
+        foreach ($gamesToRemove as $gameId) {
             try {
-                $table
-                    ->insert($game)
-                    ->save();
+                $this->getOutput()->writeln(sprintf('Removing Game "%s"', $gameId));
+                $this->query(sprintf(
+                    "DELETE FROM games WHERE game_id='%s'",
+                    $gameId
+                ));
             } catch (\PDOException $exception) {
                 if ($exception->getCode() != 23000) {
                     $this->getOutput()->writeLn(
-                        'Got Exception When inserting game: ' . $exception->getMessage()
+                        sprintf(
+                            'Got Exception When trying to remove game "%s": %s',
+                            $gameId,
+                            $exception->getMessage()
+                        )
                     );
                 }
             }
-            $table->setData([]);
+        }
+
+        // edit games
+        foreach ($gamesToEdit as $gameId => $gameData) {
+            try {
+                $this->getOutput()->writeln(sprintf('Editing Game "%s"', $gameId));
+                $this->query(sprintf(
+                    "UPDATE games SET title = \"%s\", description = \"%s\", updated = '%s'  WHERE game_id='%s'",
+                    $gameData['title'],
+                    $gameData['description'],
+                    $gameData['updated'],
+                    $gameId
+                ));
+            } catch (\PDOException $exception) {
+                if ($exception->getCode() != 23000) {
+                    $this->getOutput()->writeLn(
+                        sprintf(
+                            'Got Exception When trying to edit game "%s": %s',
+                            $gameId,
+                            $exception->getMessage()
+                        )
+                    );
+                }
+            }
+        }
+
+        $table = $this->table('games');
+        // add games
+        foreach ($gamesToAdd as $gameData) {
+            try {
+                $this->getOutput()->writeln(sprintf('Adding Game "%s"', $gameData['game_id']));
+                $table->insert($gameData)
+                ->saveData();
+                $table->setData([]);
+            } catch (\PDOException $exception) {
+                if ($exception->getCode() != 23000) {
+                    $this->getOutput()->writeLn(
+                        sprintf(
+                            'Got Exception When trying to edit game "%s": %s',
+                            $gameId,
+                            $exception->getMessage()
+                        )
+                    );
+                }
+            }
         }
     }
 }
