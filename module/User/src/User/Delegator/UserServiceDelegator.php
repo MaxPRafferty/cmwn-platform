@@ -5,6 +5,7 @@ namespace User\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
+use Security\Listeners\UserUpdateListener;
 use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -105,6 +106,29 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
         $return = $this->realService->updateUser($user);
 
         $event    = new Event('save.user.post', $this->realService, ['user' => $user]);
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
+
+    /**
+     * Updates the username if the user wants to update his own username
+     * @param UserInterface $user
+     * @param $username
+     * @return mixed|bool
+     */
+    public function updateUserName(UserInterface $user, $username)
+    {
+        $event    = new Event('update.user.name', $this->realService, ['user' => $user, 'username' => $username]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->updateUserName($user, $username);
+
+        $event->setName('update.user.name.post');
         $this->getEventManager()->trigger($event);
 
         return $return;

@@ -54,6 +54,19 @@ class FlipResourceTest extends TestCase
      * @test
      * @dataProvider validUserDataProvider
      */
+    public function testItShouldReturnErrorStatusInvalidFlipAccess($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch('/flip/foo');
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * @test
+     * @dataProvider validUserDataProvider
+     */
     public function testItShouldReturnValidFlipData($login)
     {
         $this->injectValidCsrfToken();
@@ -69,8 +82,10 @@ class FlipResourceTest extends TestCase
         $this->assertArrayHaskey('description', $body);
         $this->assertEquals($body['flip_id'], 'polar-bear');
         $this->assertEquals($body['title'], 'Polar Bear');
-        $this->assertEquals($body['description'],
-            'The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!');
+        $this->assertEquals(
+            $body['description'],
+            'The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!'
+        );
     }
 
     /**

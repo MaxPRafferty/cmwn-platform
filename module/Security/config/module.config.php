@@ -24,6 +24,7 @@ return [
             \Security\Listeners\OrgServiceListener::class   => \Security\Listeners\OrgServiceListener::class,
             \Security\Listeners\GroupServiceListener::class => \Security\Listeners\GroupServiceListener::class,
             \Security\Listeners\UpdateSession::class        => \Security\Listeners\UpdateSession::class,
+            \Security\Listeners\UserUpdateListener::class   => \Security\Listeners\UserUpdateListener::class,
         ],
 
         'factories' => [
@@ -75,6 +76,7 @@ return [
         \Security\Listeners\ExpireAuthSessionListener::class,
         \Security\Listeners\UserServiceListener::class,
         \Security\Listeners\UpdateSession::class,
+        \Security\Listeners\UserUpdateListener::class,
     ],
 
     'console' => [

@@ -158,12 +158,55 @@ class RbacTest extends TestCase
     public function rolePermissionProvider()
     {
         return [
+            'me' => [
+                'role' => 'me',
+                'allowed' => [
+                    'attach.profile.image',
+                    'create.user.flip',
+                    'edit.user.adult',
+                    'edit.user.child',
+                    'remove.user.adult',
+                    'remove.user.child',
+                    'save.game',
+                    'update.password',
+                    'view.user.adult',
+                    'view.user.child',
+                    'view.user.flip',
+                    'view.profile.image'
+                ],
+                'denied' => [
+                    'add.group.user',
+                    'adult.code',
+                    'can.friend',
+                    'child.code',
+                    'create.child.group',
+                    'create.group',
+                    'create.org',
+                    'create.user',
+                    'edit.group',
+                    'edit.org',
+                    'import',
+                    'pick.username',
+                    'remove.child.group',
+                    'remove.group',
+                    'remove.group.user',
+                    'remove.org',
+                    'view.all.groups',
+                    'view.all.orgs',
+                    'view.games',
+                    'view.group',
+                    'view.group.users',
+                    'view.org',
+                    'view.org.users',
+                    'view.all.users',
+                    'view.flip',
+                ],
+            ],
             'Super Admin' => [
                 'role'    => 'super',
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
-                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -193,6 +236,7 @@ class RbacTest extends TestCase
                     'view.user.child',
                     'view.user.flip',
                     'view.all.users',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -200,6 +244,7 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'pick.username',
                     'save.game',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -208,7 +253,6 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
-                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -227,6 +271,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -245,6 +290,7 @@ class RbacTest extends TestCase
                     'view.all.users',
                     'view.flip',
                     'view.user.flip',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -252,7 +298,6 @@ class RbacTest extends TestCase
                 'role'    => 'group_admin',
                 'allowed' => [
                     'add.group.user',
-                    'attach.profile.image',
                     'child.code',
                     'edit.group',
                     'edit.user.child',
@@ -267,6 +312,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -290,6 +336,7 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'view.flip',
                     'view.user.flip',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -298,7 +345,6 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
-                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -317,6 +363,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -335,6 +382,7 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'view.flip',
                     'view.user.flip',
+                    'attach.profile.image',
                 ],
             ],
 
@@ -343,7 +391,6 @@ class RbacTest extends TestCase
                 'allowed' => [
                     'add.group.user',
                     'adult.code',
-                    'attach.profile.image',
                     'child.code',
                     'create.child.group',
                     'create.group',
@@ -362,6 +409,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -380,13 +428,13 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'view.flip',
                     'view.user.flip',
+                    'attach.profile.image',
                 ],
             ],
             'Teacher' => [
                 'role'    => 'teacher',
                 'allowed' => [
                     'add.group.user',
-                    'attach.profile.image',
                     'child.code',
                     'edit.group',
                     'edit.user.child',
@@ -400,6 +448,7 @@ class RbacTest extends TestCase
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -424,22 +473,24 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'view.flip',
                     'view.user.flip',
+                    'attach.profile.image',
                 ],
             ],
 
             'Logged In' => [
                 'role'    => 'logged_in',
                 'allowed' => [
-                    'attach.profile.image',
                     'update.password',
                     'view.games',
                     'view.group',
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
+                    'attach.profile.image',
                     'can.friend',
                     'add.group.user',
                     'adult.code',
@@ -478,6 +529,7 @@ class RbacTest extends TestCase
                     'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
@@ -520,7 +572,6 @@ class RbacTest extends TestCase
             'Child' => [
                 'role'    => 'child',
                 'allowed' => [
-                    'attach.profile.image',
                     'can.friend',
                     'child.code',
                     'pick.username',
@@ -534,9 +585,11 @@ class RbacTest extends TestCase
                     'view.user.child',
                     'create.user.flip',
                     'view.flip',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
+                    'attach.profile.image',
                     'add.group.user',
                     'adult.code',
                     'create.child.group',
@@ -566,7 +619,6 @@ class RbacTest extends TestCase
                 'role'    => 'student',
                 'allowed' => [
                     'can.friend',
-                    'attach.profile.image',
                     'child.code',
                     'pick.username',
                     'update.password',
@@ -578,9 +630,11 @@ class RbacTest extends TestCase
                     'view.user.adult',
                     'view.user.child',
                     'view.flip',
+                    'view.profile.image',
                 ],
 
                 'denied' => [
+                    'attach.profile.image',
                     'add.group.user',
                     'adult.code',
                     'create.child.group',
@@ -650,6 +704,7 @@ class RbacTest extends TestCase
                     'create.user.flip',
                     'view.flip',
                     'view.user.flip',
+                    'view.profile.image',
                 ],
             ],
         ];

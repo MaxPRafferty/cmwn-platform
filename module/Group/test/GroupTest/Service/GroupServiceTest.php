@@ -354,7 +354,7 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldRebuildTreeWhenChildAddedForNewTree()
     {
-        $this->markTestSkipped('Change GroupService interface to have create and save');
+        //$this->markTestSkipped('Change GroupService interface to have create and save');
         $parent = new Group([
             'group_id' => 'parent',
             'head'     => 0,
@@ -379,32 +379,47 @@ class GroupServiceTest extends TestCase
 
         $this->tableGateway->shouldReceive('select')
             ->with(['group_id' => $child->getGroupId()])
-            ->andReturn($childResult);
+            ->andReturn($childResult)
+            ->once();
 
         $this->tableGateway->shouldReceive('select')
             ->with(['group_id' => $parent->getGroupId()])
-            ->andReturn($parentResult);
-
-        $this->tableGateway->shouldReceive('update')
-            ->with(
-                $data,
-                ['group_id' => 'child']
-            )
+            ->andReturn($parentResult)
             ->once();
 
         $this->tableGateway->shouldReceive('update')
-            ->with(
-                ['head' => 1, 'tail' => 4],
-                ['group_id' => 'parent']
-            )
-            ->once();
+            ->andReturnUsing(function ($data, $where) use (&$child) {
+                $this->assertEquals(['group_id' => $child->getGroupId()], $where);
+                $expected = $child->getArrayCopy();
+                $expected['meta'] = '[]';
+                unset($expected['deleted']);
+                unset($expected['depth']);
+
+                $this->assertEquals($expected, $data);
+
+            })
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
-            ->with(
-                ['head' => 2, 'tail' => 3],
-                ['group_id' => 'child']
-            )
-            ->once();
+            ->andReturnUsing(function ($data, $where) use (&$parent) {
+                $this->assertEquals(['group_id' => $parent->getGroupId()], $where);
+                $expected = ['head' => 1, 'tail' => 4];
+                $this->assertEquals($expected, $data);
+
+            })
+            ->once()
+            ->ordered('update');
+
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($data, $where) use (&$child) {
+                $this->assertEquals(['group_id' => $child->getGroupId()], $where);
+                $expected = ['head' => 2, 'tail' => 3];
+                $this->assertEquals($expected, $data);
+
+            })
+            ->once()
+            ->ordered('update');
 
         $this->groupService->addChildToGroup($parent, $child);
     }
@@ -414,7 +429,7 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldRebuildTreeWhenChildAddedForExistingTree()
     {
-        $this->markTestSkipped('Change GroupService interface to have create and save');
+        //$this->markTestSkipped('Change GroupService interface to have create and save');
         $parent = new Group([
             'group_id'        => 'parent',
             'organization_id' => 'org',
@@ -425,11 +440,35 @@ class GroupServiceTest extends TestCase
         $child = new Group();
         $child->setGroupId('child');
 
-        $result = new ResultSet();
-        $result->initialize([$parent->getArrayCopy()]);
+        $parentResult = new ResultSet();
+        $parentResult->initialize([$parent->getArrayCopy()]);
+
+        $childResult = new ResultSet();
+        $childResult->initialize([$child->getArrayCopy()]);
+
+        $this->tableGateway->shouldReceive('select')
+            ->with(['group_id' => $child->getGroupId()])
+            ->andReturn($childResult)
+            ->once();
+
         $this->tableGateway->shouldReceive('select')
             ->with(['group_id' => $parent->getGroupId()])
-            ->andReturn($result);
+            ->andReturn($parentResult)
+            ->once();
+
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($data, $where) use (&$child) {
+                $this->assertEquals(['group_id' => $child->getGroupId()], $where);
+                $expected = $child->getArrayCopy();
+                $expected['meta'] = '[]';
+                unset($expected['deleted']);
+                unset($expected['depth']);
+
+                $this->assertEquals($expected, $data);
+
+            })
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, $actualWhere) {
@@ -443,8 +482,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
-            ->times(1)
-            ->ordered();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
@@ -459,8 +498,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
-            ->times(1)
-            ->ordered();
+            ->once()
+            ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
@@ -472,8 +511,8 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
                 return true;
             })
-            ->times(1)
-            ->ordered();
+            ->once()
+            ->ordered('update');
 
         $this->groupService->addChildToGroup($parent, $child);
     }
