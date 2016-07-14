@@ -38,10 +38,9 @@ class SnsJobService implements SnsServiceInterface
      */
     public function sendJob(JobInterface $job)
     {
-        $this->sqsClient->publishAsync([
+        $this->sqsClient->publish([
             'TargetArn'        => $this->snsArn,
-            'MessageStructure' => 'json',
-            'MessageBody'      => Json::encode($job->getArrayCopy()),
+            'Message'          => Json::encode($job->getArrayCopy()),
         ]);
     }
 }
