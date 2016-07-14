@@ -42,6 +42,7 @@ class GameSeed extends AbstractSeed
         }
 
         $currentGames   = [];
+        $this->getOutput()->writeln('Im doing something');
 
         // Find all current games in the the DB
         foreach ($existingStmt as $key => $value) {
@@ -52,11 +53,13 @@ class GameSeed extends AbstractSeed
                 continue;
             }
 
+            $this->getOutput()->writeln('Im doing something 1');
             $currentGames[$gameId] = $value;
         }
-
+        $this->getOutput()->writeln('Im doing something 2');
         // Check if the games have changed
         foreach ($currentGames as $gameId => $gameData) {
+            $this->getOutput()->writeln('Im doing something 3');
             $gameConfig = $gameList[$gameId];
             $editGame   = false;
 
@@ -83,13 +86,17 @@ class GameSeed extends AbstractSeed
                 $gamesToEdit[$gameId] = $gameData;
             }
         }
+        $this->getOutput()->writeln('Im doing something 4');
 
         // check for new games
         foreach ($gameList as $gameId => $gameData) {
+            $this->getOutput()->writeln('Im doing something 5');
             if (isset($currentGames[$gameId])) {
+                $this->getOutput()->writeln('Im doing something 6');
                 // means we already have the game
                 continue;
             }
+            $this->getOutput()->writeln('Im doing something 7');
 
             $this->getOutput()->writeln(sprintf('New game found "%s"', $gameId));
             $gameData['created'] = $currentDate->format('Y-m-d H:i:s');
@@ -97,6 +104,7 @@ class GameSeed extends AbstractSeed
             array_push($gamesToAdd, $gameData);
         }
 
+        $this->getOutput()->writeln('Im doing something 8');
         // remove games
         foreach ($gamesToRemove as $gameId) {
             try {
