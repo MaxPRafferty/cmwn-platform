@@ -3,7 +3,6 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
-use Security\ChangePasswordUser;
 use Zend\Json\Json;
 
 /**
