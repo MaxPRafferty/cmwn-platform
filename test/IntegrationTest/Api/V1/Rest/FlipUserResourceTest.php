@@ -6,7 +6,10 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
 
 /**
+ * Test FlipResourceTest
  * @group DB
+ * @group Flip
+ * @group Resource
  */
 class FlipUserResourceTest extends TestCase
 {
