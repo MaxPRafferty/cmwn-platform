@@ -2,15 +2,13 @@
 
 namespace Skribble;
 
-use Job\Aws\Sqs\SqsJobInterface;
-use Job\Aws\Sqs\SqsJobTrait;
+use Job\JobInterface;
 
 /**
  * Class SkribbleJob
  */
-class SkribbleJob implements SqsJobInterface
+class SkribbleJob implements JobInterface
 {
-    use SqsJobTrait;
 
     /**
      * @var SkribbleInterface
