@@ -4,11 +4,9 @@ namespace Security\Service;
 
 use Group\GroupInterface;
 use Org\OrganizationInterface;
-
 use User\UserInterface;
 use Zend\Db\Adapter\Adapter;
-
-
+use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql;
@@ -38,14 +36,20 @@ class SecurityOrgService
     /**
      * Gets the role from the group
      *
-     * SELECT `ug`.role AS `role`, `node`.*
-     * FROM `groups` AS `parent`
-     *    INNER JOIN `groups` AS `node` ON `node`.`lft` BETWEEN `parent`.`lft` AND `parent`.`rgt`
-     *    LEFT OUTER JOIN `user_groups` AS `ug` ON `ug`.`group_id` = `node`.`group_id`
-     * WHERE `ug`.`user_id` = '6bfb2d84-f299-11e5-b53c-0800274f2cef'
-     *    AND `parent`.`group_id` = '27d713fe-f206-11e6-b2bc-209a2c42dc83'
-     * ORDER BY node.lft ASC
-     * LIMIT 1;
+     * SELECT ug.role,
+     *      active_group.group_id AS active_group_id,
+     *      parent_group.group_id as parent_group_id,
+     *      g.*
+     * FROM user_groups AS ug
+     *  LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
+     *  LEFT JOIN groups AS parent_group ON parent_group.group_id = active_group.parent_id
+     *  LEFT OUTER JOIN groups AS g
+     *      ON (g.head BETWEEN active_group.head AND active_group.tail)
+     *      OR (g.group_id = parent_group.group_id)
+     * WHERE ug.user_id = 'english_teacher'
+     *  AND g.group_id = 'school'
+     *  AND g.organization_id = active_group.organization_id
+     * LIMIT 1
      *
      * @param $user
      * @param $group
@@ -56,16 +60,45 @@ class SecurityOrgService
         $groupId = $group instanceof GroupInterface ? $group->getGroupId() : $group;
         $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
 
-        $select = new Select();
+        $select = new Select(['ug' => 'user_groups']);
         $select->columns(['role' => 'ug.role'], false);
-        $select->from(['parent' => 'groups']);
-        $select->join(['node' => 'groups'], 'node.head BETWEEN parent.head AND parent.tail');
-        $select->join(['ug' => 'user_groups'], 'ug.group_id = node.group_id', [], Select::JOIN_LEFT_OUTER);
-        $select->order('node.head ASC');
+
+        // Get all the groups the user is assigned too
+        $select->join(
+            ['active_group' => 'groups'],
+            'active_group.group_id = ug.group_id',
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        // Get the parent group in case the user is one group up
+        $select->join(
+            ['parent_group' => 'groups'],
+            'parent_group.group_id = active_group.parent_id',
+            ['parent_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        // Get all the groups in the network
+        $select->join(
+            ['g' => 'groups'],
+            '(g.head BETWEEN active_group.head AND active_group.tail) OR (g.group_id = parent_group.group_id)',
+            ['g' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
         $where = new Where();
 
+        // Get groups the $user belongs too
         $where->addPredicate(new Operator('ug.user_id', '=', $userId));
-        $where->addPredicate(new Operator('parent.group_id', '=', $groupId));
+
+        // We only want the group we are looking at
+        $where->addPredicate(new Operator('g.group_id', '=', $groupId));
+
+        // Preserve the tree
+        $where->addPredicate(
+            new Expression('g.organization_id = active_group.organization_id')
+        );
 
         $select->where($where);
         $sql   = new Sql($this->adapter);
