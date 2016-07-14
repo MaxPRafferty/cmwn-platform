@@ -1,8 +1,19 @@
 <?php
-
+// @codingStandardsIgnoreStart
 return array (
   'flips' =>
   array (
+  		0 => array(
+	  			"flip_id" => "polar-bear",
+	  			"title" => "Polar Bear",
+	  			"description" => "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!",
+  		),
+  		1 => array(
+  				"flip_id" => "sea-turtle",
+  				"title" => "Sea Turtle",
+  				"description" => "Sea Turtles are wondrous creatures! Get cool turtle facts, play flips and find out why they are endangered.",
+  		),
+  		
   ),
   'organizations' =>
   array (
@@ -202,9 +213,6 @@ return array (
       'count' => '1',
     ),
   ),
-  'user_flips' =>
-  array (
-  ),
   'users' =>
   array (
     0 =>
@@ -226,7 +234,7 @@ return array (
       'deleted' => NULL,
       'code_expires' => NULL,
       'super' => '0',
-      'external_id' => NULL,
+      'external_id' => '8675309',
     ),
     1 =>
     array (
@@ -397,6 +405,39 @@ return array (
       'external_id' => NULL,
     ),
   ),
+  'user_flips' =>
+   array (
+    0 =>
+	array (
+			'user_id' => 'english_student',
+			'flip_id' => 'polar-bear',
+			'earned' => '2016-04-27 10:48:44',
+	),
+	1 =>
+	array(
+			'user_id' => 'english_student',
+		'flip_id' => 'sea-turtle',
+			'earned' => '2016-04-27 10:48:44',
+	),
+	2 =>
+	array(
+			'user_id' => 'math_student',
+			'flip_id' => 'polar-bear',
+			'earned' => '2016-04-27 10:48:44',
+	),
+	3 =>
+	array(
+			'user_id' => 'math_student',
+			'flip_id' => 'sea-turtle',
+			'earned' => '2016-04-27 10:48:44',
+	),
+    4 =>
+    array(
+            'user_id' => 'math_student',
+            'flip_id' => 'polar-bear',
+            'earned' => '2016-04-27 10:48:45',
+    ),
+   ),
   'user_friends' =>
   array (
   ),
@@ -463,8 +504,13 @@ return array (
       'user_id' => 'english_student',
       'image_id' => 'profiles/dwtm7optf0qq62vcveef',
     ),
+    2 =>
+    array (
+      'user_id' => 'other_principal',
+      'image_id' => 'profiles/dwtm7optf0qq62vcveef',
+    ),
   ),
-  'user_saves' => 
+  'user_saves' =>
   array(
   ),
 );
