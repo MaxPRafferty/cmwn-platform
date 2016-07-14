@@ -166,12 +166,13 @@ class OrganizationService implements OrganizationServiceInterface
         $data         = $org->getArrayCopy();
         $data['meta'] = Json::encode($data['meta']);
         unset($data['deleted']);
-
+        unset($data['org_id']);
+        unset($data['created']);
+        unset($data['links']);
         $this->orgTableGateway->update(
             $data,
             ['org_id' => $org->getOrgId()]
         );
-
         return true;
     }
 
