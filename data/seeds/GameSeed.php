@@ -27,7 +27,20 @@ class GameSeed extends AbstractSeed
         $gamesToEdit    = [];
         $gameList       = require __DIR__ . '/../../config/games/games.' . $applicationEnv . '.php';
         $gameList       = $gameList['games'][$applicationEnv];
-        $existingStmt   = $this->query('SELECT * FROM games');
+        try {
+            $existingStmt   = $this->query('SELECT * FROM games');
+        } catch (\PDOException $exception) {
+            if ($exception->getCode() != 23000) {
+                $this->getOutput()->writeLn(
+                    sprintf(
+                        'Got Exception When trying to fetch game list: %s',
+                        $exception->getMessage()
+                    )
+                );
+            }
+            throw $exception;
+        }
+
         $currentGames   = [];
 
         // Find all current games in the the DB

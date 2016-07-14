@@ -44,7 +44,7 @@ class SkribbleJob implements JobInterface
             $this->skribble->getSkribbleId();
 
         return [
-            'skirbble_id'  => $this->skribble->getSkribbleId(),
+            'skribble_id'  => $this->skribble->getSkribbleId(),
             'skribble_url' => $skribbleBase,
             'post_back'    => $skribbleBase . '/notice',
         ];
