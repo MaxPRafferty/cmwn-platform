@@ -39,7 +39,7 @@ $comingSoonGames = [
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {
-    if (in_array($gameId, $gameOnStaging)) {
+    if (!in_array($gameId, $gameOnStaging)) {
         continue;
     }
 

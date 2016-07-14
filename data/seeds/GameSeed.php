@@ -25,10 +25,24 @@ class GameSeed extends AbstractSeed
         $gamesToAdd     = [];
         $gamesToRemove  = [];
         $gamesToEdit    = [];
-        $gameList       = require __DIR__ . '/../../config/games/games.' . $applicationEnv . '.php';
-        $gameList       = $gameList['games'][$applicationEnv];
-        $existingStmt   = $this->query('SELECT * FROM games');
         $currentGames   = [];
+
+        $gameList       = require __DIR__ . '/../../config/games/games.' . $applicationEnv . '.php';
+
+        $gameList       = $gameList['games'][$applicationEnv];
+        try {
+            $existingStmt   = $this->query('SELECT * FROM games');
+        } catch (\PDOException $exception) {
+            if ($exception->getCode() != 23000) {
+                $this->getOutput()->writeLn(
+                    sprintf(
+                        'Got Exception When trying to fetch game list: %s',
+                        $exception->getMessage()
+                    )
+                );
+            }
+            throw $exception;
+        }
 
         // Find all current games in the the DB
         foreach ($existingStmt as $key => $value) {
@@ -83,6 +97,13 @@ class GameSeed extends AbstractSeed
             $gameData['updated'] = $currentDate->format('Y-m-d H:i:s');
             array_push($gamesToAdd, $gameData);
         }
+
+        $this->getOutput()->writeln(sprintf('Env: %s', $applicationEnv));
+        $this->getOutput()->writeln(sprintf('Total Games in config: %d', count($gameList)));
+        $this->getOutput()->writeln(sprintf('Total Games to found: %d', count($currentGames)));
+        $this->getOutput()->writeln(sprintf('Total Games to remove: %d', count($gamesToRemove)));
+        $this->getOutput()->writeln(sprintf('Total Games to add: %d', count($gamesToAdd)));
+        $this->getOutput()->writeln(sprintf('Total Games to edit: %d', count($gamesToEdit)));
 
         // remove games
         foreach ($gamesToRemove as $gameId) {
