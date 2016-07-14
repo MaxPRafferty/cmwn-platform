@@ -20,10 +20,11 @@ use Zend\Json\Json;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-
 class GroupResourceTest extends TestCase
 {
     /**
+     * @test
+     * @ticket core-864
      * @var GroupServiceInterface
      */
     protected $groupService;
