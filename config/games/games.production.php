@@ -39,14 +39,14 @@ $comingSoonGames = [
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {
-    if (in_array($gameId, $gameOnProduction)) {
+    if (!in_array($gameId, $gameOnProduction)) {
         continue;
     }
 
     $comingSoon = in_array($gameId, $comingSoonGames) ? 1 : 0;
 
     $productionData['coming_soon'] = $comingSoon;
-    $stagingGames[$gameId]         = $gameData;
+    $productionGames[$gameId]         = $gameData;
 }
 
 $master['games']['production'] = $productionGames;
