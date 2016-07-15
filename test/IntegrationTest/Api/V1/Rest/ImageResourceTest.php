@@ -7,6 +7,7 @@ use Asset\Image;
 use Asset\Service\UserImageServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use Zend\Json\Json;
 
 /**
  * Test ImageResourceTest
@@ -35,6 +36,24 @@ class ImageResourceTest extends TestCase
     public function setUpImageService()
     {
         $this->imageService = TestHelper::getServiceManager()->get(UserImageServiceInterface::class);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch(
+            '/user/english_student/image',
+            'POST',
+            ['image_id' => 'foobar', 'url' => 'www.example.com']
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
     }
 
     /**

@@ -46,6 +46,20 @@ class SuggestResourceTest extends TestCase
 
     /**
      * @test
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user/english_student/suggest');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
      * @ticket CORE-558
      */
     public function testItShouldAllowChildToAccessSuggestEndpoint()

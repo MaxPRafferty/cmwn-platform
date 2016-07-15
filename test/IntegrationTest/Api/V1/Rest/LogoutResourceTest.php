@@ -30,7 +30,16 @@ class LogoutResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.logout');
         $this->assertControllerName('api\v1\rest\logout\controller');
         $this->assertResponseStatusCode(200);
-        $this->dispatch('/user/english_student');
-        $this->assertResponseStatusCode(401);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionGroupId()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/logout');
+        $this->assertResponseStatusCode(200);
     }
 }

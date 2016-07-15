@@ -38,6 +38,65 @@ class SaveGameResourceTest extends TestCase
 
     /**
      * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionGET()
+    {
+        $date = new \DateTime();
+        $saveGame = new SaveGame();
+        $saveGame->setUserId('english_student');
+        $saveGame->setGameId('monarch');
+        $saveGame->setVersion('4.3.2.1');
+        $saveGame->setCreated($date);
+        $saveGame->setData(['baz' => 'bat']);
+        $this->saveService->saveGame($saveGame);
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch(
+            '/user/english_student/game/monarch'
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPOST()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch(
+            '/user/english_student/game/monarch',
+            'POST',
+            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionDELETE()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch(
+            '/user/english_student/game/monarch',
+            'DELETE'
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
      * @dataProvider usersAllowedToSaveGamesProvider
      */
     public function testItShouldSaveGameStatusForMe($userName)

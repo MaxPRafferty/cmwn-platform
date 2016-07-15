@@ -41,6 +41,7 @@ class UpdatePasswordResourceTest extends TestCase
      */
     public function testItShouldChangePasswordForCodeUser()
     {
+        $this->markTestIncomplete("Not checked");
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser('english_student');
 

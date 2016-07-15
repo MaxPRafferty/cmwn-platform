@@ -66,6 +66,34 @@ class FriendResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user/english_student/friend');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user/english_student/friend', 'POST', ['friend_id' => $this->friend->getUserId()]);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldReturnCorrectFriendListForUser()
     {
         $this->friendService->attachFriendToUser($this->user, $this->friend);
@@ -105,7 +133,7 @@ class FriendResourceTest extends TestCase
 
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
-        $this->dispatch('/user/math_student/friend');
+        $this->dispatch('/user/english_student/friend');
         $this->assertResponseStatusCode(200);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
@@ -121,7 +149,7 @@ class FriendResourceTest extends TestCase
         }
 
         $this->assertEquals(
-            ['english_student'],
+            ['math_student'],
             $actualId,
             'Service did not return correct friends'
         );

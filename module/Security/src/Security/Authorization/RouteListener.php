@@ -101,7 +101,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         try {
             $user = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePass) {
-            $user = $changePass->getUser();
+            return new ApiProblemResponse(new ApiProblem(401, 'RESET_PASSWORD'));
         }
 
         if ($user->isSuper()) {

@@ -38,6 +38,38 @@ class UserImageResourceTest extends TestCase
 
     /**
      * @test
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('other_teacher');
+        $this->dispatch('/user/other_principal/image');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('math_student');
+        $this->dispatch(
+            '/user/math_student/image',
+            POST,
+            ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
      * @ticket CORE-839
      */
     public function testItShouldAllowNeighborsToSeeProfileImages()
