@@ -6,10 +6,15 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
 
 /**
- * Test FlipUserResourceTest
+ * Test FlipResourceTest
  * @group DB
+ * @group Flip
  * @group FlipUser
  * @group Resource
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FlipUserResourceTest extends TestCase
 {
