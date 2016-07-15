@@ -10,6 +10,7 @@ use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser as ClassParser;
 use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser as StudentParser;
 use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser as TeacherParser;
+use Import\Importer\Nyc\Students\Student;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use Notice\NotificationAwareInterface;
@@ -116,7 +117,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
         $this->securityService  = $securityService;
     }
 
-    
+
     /**
      * Sets the school this parser is for
      *
@@ -275,8 +276,9 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
             $this->addAction(new AddTeacherToGroupAction($teacher, $this->userGroupService));
         }
 
+        /** @var Student $student */
         foreach ($this->studentRegistry as $student) {
-            $this->getLogger()->debug('Adding student to class');
+            $this->getLogger()->debug(sprintf('Adding student "%s" to class', $student->getFirstName()));
             $this->addAction(new AddStudentToGroupAction($student, $this->userGroupService));
         }
 
