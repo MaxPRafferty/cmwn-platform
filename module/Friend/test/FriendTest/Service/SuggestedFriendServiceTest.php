@@ -18,8 +18,6 @@ use User\UserInterface;
  */
 class SuggestedFriendServiceTest extends TestCase
 {
-    use ServiceTrait;
-
     /**
      * @var SuggestedFriendService
      */

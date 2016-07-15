@@ -12,10 +12,14 @@ use User\UserInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Hydrator\ArraySerializable;
 
+/**
+ * Test FriendServiceTest
+ * @group FriendService
+ * @group Friend
+ * @group Service
+ */
 class FriendServiceTest extends TestCase
 {
-    use ServiceTrait;
-
     /**
      * @var FriendService
      */
