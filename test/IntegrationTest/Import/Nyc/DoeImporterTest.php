@@ -4,7 +4,6 @@ namespace IntegrationTest\Import\Nyc;
 
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
-use Import\Importer\Nyc\DoeImporter;
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\DbUnitConnectionTrait;
 use IntegrationTest\TestHelper;
@@ -34,11 +33,6 @@ class DoeImporterTest extends TestCase
 {
     use DbTestCaseTrait;
     use DbUnitConnectionTrait;
-
-    /**
-     * @var DoeImporter
-     */
-    protected $importer;
 
     /**
      * @var UserServiceInterface
@@ -105,8 +99,8 @@ class DoeImporterTest extends TestCase
      */
     public function testItShouldImportDataOnGoodSheet()
     {
-        $this->markTestSkipped('Something up with sharing the registries.  Next test is more important');
-        $this->importer->exchangeArray([
+        $importer = NycDoeTestImporterSetup::getImporter();
+        $importer->exchangeArray([
             'file'         => __DIR__ . '/_files/test_sheet.xlsx',
             'teacher_code' => 'Apple0007',
             'student_code' => 'pear0007',
@@ -114,7 +108,7 @@ class DoeImporterTest extends TestCase
             'email'        => 'test@example.com',
         ]);
 
-        $this->importer->perform();
+        $importer->perform();
 
         // Principal Added?
         $principal = $this->userService->fetchUserByEmail('sandoval@gmail.com');
@@ -125,14 +119,12 @@ class DoeImporterTest extends TestCase
         $this->assertInstanceOf(Adult::class, $teacher);
 
         // Student Added?
-        $student = $this->userService->fetchUserByExternalId('123');
+        $student = $this->userService->fetchUserByExternalId('01X100-123');
         $this->assertInstanceOf(Child::class, $student);
 
         // Class Added?
         $group = $this->groupService->fetchGroupByExternalId('district', '001');
         $this->assertInstanceOf(GroupInterface::class, $group);
-
-        // TODO Expand this test to check relationships
     }
 
     /**
@@ -141,8 +133,8 @@ class DoeImporterTest extends TestCase
      */
     public function testItAddNumbersToStudentUserNames()
     {
-        $this->markTestSkipped('This works when running this test alone');
-        $this->importer->exchangeArray([
+        $importer = NycDoeTestImporterSetup::getImporter();
+        $importer->exchangeArray([
             'file'         => __DIR__ . '/_files/test_sheet.xlsx',
             'teacher_code' => 'Apple0007',
             'student_code' => 'pear0007',
@@ -150,7 +142,7 @@ class DoeImporterTest extends TestCase
             'email'        => 'test@example.com',
         ]);
 
-        $this->importer->perform();
+        $importer->perform();
 
         // Principal Added?
         $principal = $this->userService->fetchUserByEmail('sandoval@gmail.com');
@@ -161,7 +153,7 @@ class DoeImporterTest extends TestCase
         $this->assertInstanceOf(Adult::class, $teacher);
 
         // Student Added?
-        $student = $this->userService->fetchUserByExternalId('O1X123-123');
+        $student = $this->userService->fetchUserByExternalId('01X100-123');
         $this->assertInstanceOf(Child::class, $student);
 
         $this->assertRegExp(
