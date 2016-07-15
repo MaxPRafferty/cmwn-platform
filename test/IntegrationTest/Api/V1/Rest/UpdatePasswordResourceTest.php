@@ -38,6 +38,7 @@ class UpdatePasswordResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-710
+     * @ticket CORE-1024
      */
     public function testItShouldChangePasswordForCodeUser()
     {

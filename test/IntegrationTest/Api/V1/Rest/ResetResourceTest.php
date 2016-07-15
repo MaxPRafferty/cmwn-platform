@@ -45,6 +45,7 @@ class ResetResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1024
      */
     public function testItShouldCheckChangePasswordException()
     {
