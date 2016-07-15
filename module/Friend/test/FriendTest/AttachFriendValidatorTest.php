@@ -16,6 +16,7 @@ use Zend\Hydrator\ArraySerializable;
  * @package FriendTest
  * @group Friend
  * @group Validator
+ * @group FriendService
  */
 class AttachFriendValidatorTest extends TestCase
 {
