@@ -103,7 +103,7 @@ class StudentWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_good_sheet.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '001');
+        $class  = new ClassRoom('History of the world', '01X100-001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
@@ -130,7 +130,7 @@ class StudentWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_good_sheet_with_blanks.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '001');
+        $class  = new ClassRoom('History of the world', '01X100-001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
@@ -282,14 +282,14 @@ class StudentWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_duplicate_id.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '001');
+        $class  = new ClassRoom('History of the world', '01X100-001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
 
         // @codingStandardsIgnoreStart
         $expectedErrors = [
-            'Sheet <b>"Students"</b> Row: <b>4</b> A student with the id <b>STUDENT ID - "foo-bar"</b> appears more than once in this sheet',
+            'Sheet <b>"Students"</b> Row: <b>4</b> A student with the id <b>STUDENT ID - "01X100-foo-bar"</b> appears more than once in this sheet',
         ];
         // @codingStandardsIgnoreEnd
 

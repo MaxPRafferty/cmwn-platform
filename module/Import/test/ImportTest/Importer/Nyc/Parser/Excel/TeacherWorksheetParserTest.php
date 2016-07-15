@@ -103,7 +103,7 @@ class TeacherWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '001');
+        $class  = new ClassRoom('History of the world', '01X100-001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
@@ -130,7 +130,7 @@ class TeacherWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '001');
+        $class  = new ClassRoom('History of the world', '01X100-001');
         $this->classRegistry->addClassroom($class);
 
         $teacher = new Teacher();
@@ -167,7 +167,7 @@ class TeacherWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_good_sheet_with_warnings.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '001');
+        $class  = new ClassRoom('History of the world', '01X100-001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
@@ -347,7 +347,7 @@ class TeacherWorksheetParserTest extends TestCase
         $parser = $this->getParser($sheet);
         $parser->preProcess();
 
-        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Class ID <b>"001"</b> was not found'];
+        $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Class ID <b>"44Q001-001"</b> was not found'];
 
         $this->assertTrue(
             $parser->hasErrors(),
