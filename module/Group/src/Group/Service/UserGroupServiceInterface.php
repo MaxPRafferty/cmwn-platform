@@ -61,10 +61,12 @@ interface UserGroupServiceInterface
      * Finds all the users for a group
      *
      * @param Where|GroupInterface|string $user
+     * @param null $where
      * @param object $prototype
+     *
      * @return DbSelect
      */
-    public function fetchGroupsForUser($user, $prototype = null);
+    public function fetchGroupsForUser($user, $where = null, $prototype = null);
 
     /**
      * Fetches organizations for a user

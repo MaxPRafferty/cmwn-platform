@@ -139,6 +139,7 @@ class GroupService implements GroupServiceInterface
      * @param object $prototype
      * @param bool $paginate
      * @return DbSelect
+     * @deprecated
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
