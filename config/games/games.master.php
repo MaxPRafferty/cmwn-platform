@@ -8,12 +8,12 @@ return [
                 'game_id'     => 'polar-bear',
                 'title'       => 'Polar Bear',
                 'description' => 'The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!',
-                'coming_soon' => 1,
+                'coming_soon' => 0,
             ],
             'sea-turtle'      => [
                 'game_id'     => 'sea-turtle',
                 'title'       => 'Sea Turtle',
-                'description' => 'Sea Turtles are at risk but you will guide yours to safety!',
+                'description' => 'Sea Turtles are amazing creatures with a lot to teach us! Get cool turtle facts, play games and find out why they are endangered.',
                 'coming_soon' => 0,
             ],
             'animal-id'       => [
@@ -85,7 +85,7 @@ return [
             'turtle-hurdle'   => [
                 'game_id'     => 'turtle-hurdle',
                 'title'       => 'Turtle Hurdle',
-                'description' => 'Sea Turtles are amazing creatures with a lot to teach us! Get cool turtle facts, play games and find out why they are endangered.',
+                'description' => 'Sea Turtles are at risk but you will guide yours to safety!',
                 'coming_soon' => 0,
             ],
             'twirling-tower'  => [
@@ -128,6 +128,12 @@ return [
                 'game_id'     => 'tag-it',
                 'title'       => 'Tag It',
                 'description' => 'TAG IT! makes water conservation fun with a cool art project!',
+                'coming_soon' => 0,
+            ],
+            'skribble'        => [
+                'game_id'     => 'skribble',
+                'title'       => 'Skribble',
+                'description' => 'Skribble is the fun and creative way to message your classmates and brighten someone\'s day!',
                 'coming_soon' => 0,
             ],
         ],
