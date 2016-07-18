@@ -111,7 +111,11 @@ class UserGroupListener
 
         /** @var \ZF\Hal\Plugin\Hal $hal */
         $hal     = $event->getTarget();
-        $groups  = new GroupCollection($this->userGroupService->fetchGroupsForUser($realEntity, new GroupEntity()));
+        $groups  = new GroupCollection($this->userGroupService->fetchGroupsForUser(
+            $realEntity,
+            null,
+            new GroupEntity()
+        ));
         $groups->setItemCountPerPage(10);
         $renderedGroups = [];
         $groupTypes     = [];
