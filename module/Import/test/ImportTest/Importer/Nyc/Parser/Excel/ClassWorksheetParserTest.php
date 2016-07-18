@@ -73,20 +73,20 @@ class ClassWorksheetParserTest extends TestCase
     protected function getExpectedClassrooms()
     {
         return [
-            '001'  => new ClassRoom('Lunch', '001', ['8001', '8002']),
-            '102'  => new ClassRoom('PreK', '102', ['8001', '8002']),
-            '011'  => new ClassRoom('Kindergarten', '011', ['8001', '8002']),
-            '101'  => new ClassRoom('First Grade', '101', ['8001', '8002', '8003']),
-            '201'  => new ClassRoom('Second Grade', '201', ['8001', '8002', '8003']),
-            '301'  => new ClassRoom('Third Grade', '301', ['8001', '8002', '8003']),
-            '8001' => new ClassRoom('Physical Education', '8001', []),
-            '8002' => new ClassRoom('Art', '8002', []),
-            '8003' => new ClassRoom('Technology', '8003', []),
+            '01X100-001'  => new ClassRoom('Lunch', '01X100-001', ['01X100-8001', '01X100-8002']),
+            '01X100-102'  => new ClassRoom('PreK', '01X100-102', ['01X100-8001', '01X100-8002']),
+            '01X100-011'  => new ClassRoom('Kindergarten', '01X100-011', ['01X100-8001', '01X100-8002']),
+            '01X100-101'  => new ClassRoom('First Grade', '01X100-101', ['01X100-8001', '01X100-8002', '01X100-8003']),
+            '01X100-201'  => new ClassRoom('Second Grade', '01X100-201', ['01X100-8001', '01X100-8002', '01X100-8003']),
+            '01X100-301'  => new ClassRoom('Third Grade', '01X100-301', ['01X100-8001', '01X100-8002', '01X100-8003']),
+            '01X100-8001' => new ClassRoom('Physical Education', '01X100-8001', []),
+            '01X100-8002' => new ClassRoom('Art', '01X100-8002', []),
+            '01X100-8003' => new ClassRoom('Technology', '01X100-8003', []),
         ];
     }
 
     /**
-     * @return AddClassRoomAction[]
+     * @return \SplPriorityQueue|AddClassRoomAction[]
      */
     protected function getExpectedAddActions()
     {
@@ -95,7 +95,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Lunch', '001', ['8001', '8002'])
+                new ClassRoom('Lunch', '01X100-001', ['01X100-8001', '01X100-8002'])
             ),
             100
         );
@@ -104,7 +104,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('PreK', '102', ['8001', '8002'])
+                new ClassRoom('PreK', '01X100-102', ['01X100-8001', '01X100-8002'])
             ),
             100
         );
@@ -112,7 +112,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Kindergarten', '011', ['8001', '8002'])
+                new ClassRoom('Kindergarten', '01X100-011', ['01X100-8001', '01X100-8002'])
             ),
             100
         );
@@ -120,7 +120,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('First Grade', '101', ['8001', '8002', '8003'])
+                new ClassRoom('First Grade', '01X100-101', ['01X100-8001', '01X100-8002', '01X100-8003'])
             ),
             100
         );
@@ -128,7 +128,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Second Grade', '201', ['8001', '8002', '8003'])
+                new ClassRoom('Second Grade', '01X100-201', ['01X100-8001', '01X100-8002', '01X100-8003'])
             ),
             100
         );
@@ -136,7 +136,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Third Grade', '301', ['8001', '8002', '8003'])
+                new ClassRoom('Third Grade', '01X100-301', ['01X100-8001', '01X100-8002', '01X100-8003'])
             ),
             100
         );
@@ -144,7 +144,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Physical Education', '8001', [])
+                new ClassRoom('Physical Education', '01X100-8001', [])
             ),
             100
         );
@@ -152,7 +152,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Art', '8002', [])
+                new ClassRoom('Art', '01X100-8002', [])
             ),
             100
         );
@@ -160,7 +160,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Technology', '8003', [])
+                new ClassRoom('Technology', '01X100-8003', [])
             ),
             100
         );
@@ -168,7 +168,7 @@ class ClassWorksheetParserTest extends TestCase
         return $actions;
     }
     /**
-     * @return AddClassRoomAction[]
+     * @return \SplPriorityQueue|AddClassRoomAction[]
      */
     protected function getExpectedMixedActions()
     {
@@ -177,7 +177,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Lunch', '001', ['8001', '8002'])
+                new ClassRoom('Lunch', '01X100-001', ['01X100-8001', '01X100-8002'])
             ),
             100
         );
@@ -185,7 +185,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('PreK', '102', ['8001', '8002'])
+                new ClassRoom('PreK', '01X100-102', ['01X100-8001', '01X100-8002'])
             ),
             100
         );
@@ -193,7 +193,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Kindergarten', '011', ['8001', '8002'])
+                new ClassRoom('Kindergarten', '01X100-011', ['01X100-8001', '01X100-8002'])
             ),
             100
         );
@@ -201,7 +201,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('First Grade', '101', ['8001', '8002', '8003'])
+                new ClassRoom('First Grade', '01X100-101', ['01X100-8001', '01X100-8002', '01X100-8003'])
             ),
             100
         );
@@ -209,7 +209,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Third Grade', '301', ['8001', '8002', '8003'])
+                new ClassRoom('Third Grade', '01X100-301', ['01X100-8001', '01X100-8002', '01X100-8003'])
             ),
             100
         );
@@ -217,7 +217,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Physical Education', '8001', [])
+                new ClassRoom('Physical Education', '01X100-8001', [])
             ),
             100
         );
@@ -225,7 +225,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Art', '8002', [])
+                new ClassRoom('Art', '01X100-8002', [])
             ),
             100
         );
@@ -233,7 +233,7 @@ class ClassWorksheetParserTest extends TestCase
         $actions->insert(
             new AddClassRoomAction(
                 $this->groupService,
-                new ClassRoom('Technology', '8003', [])
+                new ClassRoom('Technology', '01X100-8003', [])
             ),
             100
         );
@@ -308,7 +308,14 @@ class ClassWorksheetParserTest extends TestCase
      */
     public function testItShouldItShouldStoreClassesInTheRegistryAndCreateMixedActions()
     {
-        $this->registry->addClassroom(new ClassRoom('Second Grade', '201', ['8001', '8002', '8003'], new Group()));
+        $this->registry->addClassroom(
+            new ClassRoom(
+                'Second Grade',
+                '01X100-201',
+                ['01X100-8001', '01X100-8002', '01X100-8003'],
+                new Group()
+            )
+        );
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_good_sheet.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
@@ -565,15 +572,15 @@ class ClassWorksheetParserTest extends TestCase
 
         // @codingStandardsIgnoreStart
         $expectedErrors = [
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>001</b>] "<b>Lunch</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>102</b>] "<b>PreK</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>011</b>] "<b>Kindergarten</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>101</b>] "<b>First Grade</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>101</b>] "<b>First Grade</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>201</b>] "<b>Second Grade</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>201</b>] "<b>Second Grade</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8002"</b> was not found for Class [<b>301</b>] "<b>Third Grade</b>"',
-            'Sheet <b>"Classes"</b> A subclass with the id <b>"8003"</b> was not found for Class [<b>301</b>] "<b>Third Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8002"</b> was not found for Class [<b>01X100-001</b>] "<b>Lunch</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8002"</b> was not found for Class [<b>01X100-102</b>] "<b>PreK</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8002"</b> was not found for Class [<b>01X100-011</b>] "<b>Kindergarten</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8002"</b> was not found for Class [<b>01X100-101</b>] "<b>First Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8003"</b> was not found for Class [<b>01X100-101</b>] "<b>First Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8002"</b> was not found for Class [<b>01X100-201</b>] "<b>Second Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8003"</b> was not found for Class [<b>01X100-201</b>] "<b>Second Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8002"</b> was not found for Class [<b>01X100-301</b>] "<b>Third Grade</b>"',
+            'Sheet <b>"Classes"</b> A subclass with the id <b>"01X100-8003"</b> was not found for Class [<b>01X100-301</b>] "<b>Third Grade</b>"',
         ];
         // @codingStandardsIgnoreEnd
 
