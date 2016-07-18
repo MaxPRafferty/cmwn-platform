@@ -38,90 +38,17 @@ class OrgResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordException()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/org');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionPost()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('super_user');
-        $this->dispatch(
-            '/org',
-            POST,
-            [
-                'title' => 'newOrg',
-                'description' => 'new organization',
-                'type' => 'district',
-                'meta' => null,
-            ]
-        );
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionDelete()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('super_user');
-        $this->dispatch('/org/district', DELETE);
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionPut()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('super_user');
-        $this->dispatch(
-            '/org/district',
-            PUT,
-            [
-                'title' => 'newOrg',
-                'description' => 'new organization',
-                'type' => 'district',
-                'meta' => null,
-            ]
-        );
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionOrgId()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/org/district');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -359,5 +286,49 @@ class OrgResourceTest extends TestCase
         $this->assertEquals('new organization', $newOrg['description']);
         $this->assertEquals('district', $newOrg['type']);
         $this->assertEquals([], $newOrg['meta']);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/org'
+            ],
+            1 => [
+                'super_user',
+                '/org',
+                'POST',
+                [
+                    'title' => 'newOrg',
+                    'description' => 'new organization',
+                    'type' => 'district',
+                    'meta' => null,
+                ]
+            ],
+            2 => [
+                'super_user',
+                '/org/district',
+                'DELETE'
+            ],
+            3 => [
+                'super_user',
+                '/org/district',
+                'PUT',
+                [
+                    'title' => 'newOrg',
+                    'description' => 'new organization',
+                    'type' => 'district',
+                    'meta' => null,
+                ]
+            ],
+            4 => [
+                'english_student',
+                '/org/district'
+            ]
+        ];
     }
 }

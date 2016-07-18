@@ -65,30 +65,17 @@ class FriendResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordException()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/user/english_student/friend');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionPost()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/user/english_student/friend', 'POST', ['friend_id' => $this->friend->getUserId()]);
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -233,5 +220,26 @@ class FriendResourceTest extends TestCase
         $this->logInUser('english_student');
         $this->dispatch('/user/english_student/friend');
         $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/friend'
+            ],
+            1 => [
+                'english_student',
+                '/user/english_student/friend',
+                'POST',
+                [
+                    'friend_id' => 'math_student'
+                ]
+            ],
+        ];
     }
 }
