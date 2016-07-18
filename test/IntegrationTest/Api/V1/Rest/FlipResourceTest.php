@@ -18,32 +18,18 @@ class FlipResourceTest extends TestCase
 {
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordException()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/flip');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionFlipId()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/flip/polar-bear');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
 
     /**
      * @test
@@ -166,6 +152,23 @@ class FlipResourceTest extends TestCase
             ],
             'Math Teacher' => [
                 'math_teacher'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/flip'
+            ],
+            1 => [
+                'english_student',
+                '/flip/polar-bear'
             ],
         ];
     }

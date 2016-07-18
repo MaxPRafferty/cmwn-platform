@@ -35,16 +35,17 @@ class OrgUsersResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordException()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/org/district/users');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -177,6 +178,19 @@ class OrgUsersResourceTest extends TestCase
                     'math_student',
                     'principal',
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/org/district/users'
             ],
         ];
     }

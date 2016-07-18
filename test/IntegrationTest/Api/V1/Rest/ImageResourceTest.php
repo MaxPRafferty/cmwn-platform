@@ -40,20 +40,17 @@ class ImageResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordUser()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch(
-            '/user/english_student/image',
-            'POST',
-            ['image_id' => 'foobar', 'url' => 'www.example.com']
-        );
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -98,6 +95,24 @@ class ImageResourceTest extends TestCase
             'English Teacher' => ['user_id' => 'english_teacher'],
             'Principal'       => ['user_id' => 'principal'],
             'Super'           => ['user_id' => 'super_user'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/image',
+                'POST',
+                [
+                    'image_id' => 'foobar',
+                    'url' => 'www.example.com'
+                ]
+            ],
         ];
     }
 }

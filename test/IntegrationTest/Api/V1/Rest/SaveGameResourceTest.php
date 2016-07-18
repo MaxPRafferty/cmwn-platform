@@ -38,61 +38,17 @@ class SaveGameResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordExceptionGET()
-    {
-        $date = new \DateTime();
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('monarch');
-        $saveGame->setVersion('4.3.2.1');
-        $saveGame->setCreated($date);
-        $saveGame->setData(['baz' => 'bat']);
-        $this->saveService->saveGame($saveGame);
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch(
-            '/user/english_student/game/monarch'
-        );
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionPOST()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch(
-            '/user/english_student/game/monarch',
-            'POST',
-            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
-        );
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionDELETE()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch(
-            '/user/english_student/game/monarch',
-            'DELETE'
-        );
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -323,6 +279,30 @@ class SaveGameResourceTest extends TestCase
             ],
             'Super User'      => [
                 'user_name' => 'super_user',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/game/monarch'
+            ],
+            1 => [
+                'english_student',
+                '/user/english_student/game/monarch',
+                'POST',
+                ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+            ],
+            0 => [
+                'english_student',
+                '/user/english_student/game/monarch',
+                'DELETE'
             ],
         ];
     }

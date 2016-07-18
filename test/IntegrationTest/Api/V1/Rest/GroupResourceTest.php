@@ -54,82 +54,17 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordException()
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/group');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionPost()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('super_user');
-
-        $postData = array(
-            'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'meta' => null,
-        );
-        $this->dispatch('/group', POST, $postData);
-        $this->assertResponseStatusCode(401);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionPut()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('super_user');
-        $putData = [
-            'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'meta' => null,
-        ];
-        $this->dispatch('/group/school', PUT, $putData);
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionDelete()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('super_user');
-        $this->dispatch('/group/school', DELETE);
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCheckChangePasswordExceptionGroupId()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser('english_student');
-        $this->dispatch('/group/school');
-        $this->assertResponseStatusCode(401);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -507,5 +442,49 @@ class GroupResourceTest extends TestCase
                 'english_student'
                 ]
          ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/group'
+            ],
+            1 => [
+                'super_user',
+                '/group',
+                'POST',
+                [
+                    'organization_id' => 'district',
+                    'title' => 'Joni School',
+                    'description' => 'this is new school',
+                    'meta' => null,
+                ]
+            ],
+            2 => [
+                'super_user',
+                '/group/school',
+                'PUT',
+                [
+                    'organization_id' => 'district',
+                    'title' => 'Joni School',
+                    'description' => 'this is new school',
+                    'meta' => null,
+                ]
+            ],
+            3 => [
+                'super_user',
+                '/group/school',
+                'DELETE',
+            ],
+            4 => [
+                'english_student',
+                '/group/school'
+            ],
+        ];
     }
 }
