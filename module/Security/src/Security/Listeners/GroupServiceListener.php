@@ -4,6 +4,7 @@ namespace Security\Listeners;
 
 use Application\Exception\NotAuthorizedException;
 use Group\Service\GroupServiceInterface;
+use Group\Service\UserGroupServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
@@ -27,6 +28,21 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
      * @var array
      */
     protected $listeners = [];
+
+    /**
+     * @var UserGroupServiceInterface
+     */
+    protected $userGroupService;
+
+    /**
+     * GroupServiceListener constructor.
+     *
+     * @param UserGroupServiceInterface $userGroupService
+     */
+    public function __construct(UserGroupServiceInterface $userGroupService)
+    {
+        $this->userGroupService = $userGroupService;
+    }
 
     /**
      * @param SharedEventManagerInterface $events
@@ -67,19 +83,14 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
         } catch (ChangePasswordException $changePassword) {
             $user = $changePassword->getUser();
         }
-        
+
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.groups')) {
             return null;
         }
 
         $event->stopPropagation(true);
-        /** @var GroupServiceInterface $service */
-        $service = $event->getTarget();
-        return $service->fetchAllForUser(
-            $user,
-            $event->getParam('where'),
-            $event->getParam('paginate'),
-            $event->getParam('prototype')
+        return $this->userGroupService->fetchGroupsForUser(
+            $user, $event->getParam('where'), $event->getParam('prototype')
         );
     }
 }

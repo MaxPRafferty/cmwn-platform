@@ -88,6 +88,7 @@ interface GroupServiceInterface
      * @param bool $paginate
      * @param object $prototype
      * @return DbSelect
+     * @deprecated
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null);
 
