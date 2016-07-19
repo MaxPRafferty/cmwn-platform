@@ -90,7 +90,9 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
 
         $event->stopPropagation(true);
         return $this->userGroupService->fetchGroupsForUser(
-            $user, $event->getParam('where'), $event->getParam('prototype')
+            $user,
+            $event->getParam('where'),
+            $event->getParam('prototype')
         );
     }
 }
