@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
+use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**
@@ -35,6 +36,21 @@ class GroupResourceTest extends TestCase
     public function setUpUserService()
     {
         $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+    }
+
+    /**
+     * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -376,5 +392,49 @@ class GroupResourceTest extends TestCase
                 'english_student'
                 ]
          ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/group'
+            ],
+            1 => [
+                'super_user',
+                '/group',
+                'POST',
+                [
+                    'organization_id' => 'district',
+                    'title' => 'Joni School',
+                    'description' => 'this is new school',
+                    'meta' => null,
+                ]
+            ],
+            2 => [
+                'super_user',
+                '/group/school',
+                'PUT',
+                [
+                    'organization_id' => 'district',
+                    'title' => 'Joni School',
+                    'description' => 'this is new school',
+                    'meta' => null,
+                ]
+            ],
+            3 => [
+                'super_user',
+                '/group/school',
+                'DELETE',
+            ],
+            4 => [
+                'english_student',
+                '/group/school'
+            ],
+        ];
     }
 }
