@@ -36,6 +36,7 @@ $comingSoonGames = [
     'waterdrop',
     'bloom-boom',
     'polar-bear',
+    'be-bright',
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {
