@@ -3,8 +3,12 @@
 namespace SecurityTest\Listeners;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use Security\Listeners\ExpireAuthSessionListener;
+use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Test ExpireAuthSessionListenerTest
@@ -21,13 +25,45 @@ class ExpireAuthSessionListenerTest extends TestCase
     protected $container;
 
     /**
+     * @var ExpireAuthSessionListener
+     */
+    protected $listener;
+
+    /**
+     * @var \Mockery\MockInterface|\Security\Authentication\AuthenticationService
+     */
+    protected $authService;
+
+    /**
+     * @var \Mockery\MockInterface|\Zend\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @before
      */
     public function setUpContainer()
     {
-        $this->markTestIncomplete('Not Set up');
-        $manager         = new SessionManager();
-        $this->container = new Container('expire_test', $manager);
+        Container::setDefaultManager(null);
+        $config = new StandardConfig([
+            'storage' => 'Zend\\Session\\Storage\\ArrayStorage',
+        ]);
+
+        $manager = new SessionManager($config);
+        $this->container = new Container('Default', $manager);
+
+    }
+
+    /**
+     * @before
+     */
+    public function setUpListener()
+    {
+        $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
+        $this->logger = \Mockery::mock('\Zend\Log\LoggerInterface');
+        $this->listener = new ExpireAuthSessionListener($this->container);
+        $this->listener->setAuthenticationService($this->authService);
+        $this->listener->setLogger($this->logger);
     }
 
     /**
@@ -35,6 +71,47 @@ class ExpireAuthSessionListenerTest extends TestCase
      */
     public function testItShouldExpireSession()
     {
-        $this->markTestIncomplete('Not Implementated');
+        $ls = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->container->offsetSet('last_seen', $ls->getTimestamp() - ExpireAuthSessionListener::AUTH_TIMEOUT-1);
+        $this->authService
+            ->shouldReceive('hasIdentity')
+            ->andReturn(true);
+        $this->logger
+            ->shouldReceive('debug')
+            ->once();
+        $this->authService
+            ->shouldReceive('clearIdentity')
+            ->once();
+        $this->logger
+            ->shouldReceive('info')
+            ->once();
+        $this->assertEquals($this->listener->onRoute(), new ApiProblemResponse(new ApiProblem(401, 'Expired')));
+        $this->assertEquals($this->container->offsetExists(), false);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldReturnNullIfNoIdentity()
+    {
+        $this->authService
+            ->shouldReceive('hasIdentity')
+            ->andReturnNull();
+        $this->assertEquals($this->listener->onRoute(), null);
+        $this->assertEquals($this->container->offsetExists('last_seen'), false);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotExpireSessionIfNotTimeOut()
+    {
+        $this->authService
+            ->shouldReceive('hasIdentity')
+            ->andReturn(true);
+        $this->logger
+            ->shouldReceive('debug')
+            ->once();
+        $this->assertEquals($this->listener->onRoute(), null);
     }
 }

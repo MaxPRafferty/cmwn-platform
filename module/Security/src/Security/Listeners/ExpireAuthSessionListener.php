@@ -82,8 +82,8 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
             $this->container->offsetUnset('last_seen');
             return null;
         }
-
-        $currentTime = $lastSeen = strtotime('now');
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $currentTime = $lastSeen = $now->getTimestamp();
         if ($this->container->offsetExists('last_seen')) {
             $lastSeen = $this->container->offsetGet('last_seen');
         }
