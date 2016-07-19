@@ -23,7 +23,7 @@ return [
         'invokables' => [
             \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
             \Security\Listeners\OrgServiceListener::class => \Security\Listeners\OrgServiceListener::class,
-            \Security\Listeners\UpdateSession::class => \Security\Listeners\UpdateSession::class,
+            \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
         ],
 
         'factories' => [
@@ -49,7 +49,8 @@ return [
 
             \Security\Authorization\Assertions\UserAssertion::class =>
                 \Security\Factory\UserAssertionFactory::class,
-            \Security\Listeners\GroupServiceListener::class         => \Security\Factory\GroupServiceListenerFactory::class,
+            \Security\Listeners\GroupServiceListener::class         =>
+                \Security\Factory\GroupServiceListenerFactory::class,
         ],
 
         'initializers' => [
