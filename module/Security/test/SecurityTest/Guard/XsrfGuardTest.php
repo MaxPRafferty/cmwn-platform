@@ -136,6 +136,9 @@ class XsrfGuardTest extends TestCase
             ->shouldReceive('getCookie')
             ->andReturn($cookie);
 
-        $this->assertEquals($this->xsrf->onRoute($this->event), new ApiProblemResponse(new ApiProblem(500, 'Invalid Token')));
+        $this->assertEquals(
+            $this->xsrf->onRoute($this->event),
+            new ApiProblemResponse(new ApiProblem(500, 'Invalid Token'))
+        );
     }
 }
