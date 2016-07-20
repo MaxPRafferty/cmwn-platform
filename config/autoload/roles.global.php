@@ -55,6 +55,7 @@ return [
             'adult.code'           => 'Send adult reset code',
             'child.code'           => 'Send child reset code',
             'attach.profile.image' => 'Upload a profile image',
+            'view.profile.image'   => 'View a users profile image',
         ],
         'roles'             => [
             'super' => [
@@ -79,6 +80,7 @@ return [
                     'view.all.users',
                     'view.flip',
                     'view.user.flip',
+                    'view.profile.image',
                     'adult.code',
                     'child.code',
                 ],
@@ -99,8 +101,8 @@ return [
                     'import',
                     'remove.child.group',
                     'view.org.users',
+                    'view.profile.image',
                     'remove.user.adult',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -125,7 +127,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 
@@ -157,7 +159,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 
@@ -188,8 +190,8 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                     'remove.user.adult',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -214,7 +216,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 
@@ -226,6 +228,7 @@ return [
                     'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
+                    'view.profile.image',
                 ],
             ],
 
@@ -244,6 +247,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
+                    'view.profile.image',
                     'attach.profile.image',
                 ],
             ],
@@ -253,7 +257,6 @@ return [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
-                    'attach.profile.image',
                     'can.friend',
                     'child.code',
                     'create.user.flip',
@@ -267,6 +270,8 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -287,7 +292,8 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -303,7 +309,7 @@ return [
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 

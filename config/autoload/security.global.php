@@ -52,8 +52,8 @@ return [
             'api.rest.org-users'       => [
                 'GET' => 'view.org.users',
             ],
-            'api.rest.user-image'      => [
-                'GET'  => 'attach.profile.image',
+            'api.rest.user-image'  => [
+                'GET'  => 'view.profile.image',
                 'POST' => 'attach.profile.image',
             ],
             'api.rest.import'          => [
@@ -75,6 +75,6 @@ return [
                 'POST'   => 'save.game',
                 'DELETE' => 'save.game',
             ],
+            ],
         ],
-    ],
 ];

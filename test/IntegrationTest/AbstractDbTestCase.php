@@ -10,4 +10,5 @@ use PHPUnit_Extensions_Database_TestCase as TestCase;
 abstract class AbstractDbTestCase extends TestCase
 {
     use DbUnitConnectionTrait;
+    use LoginUserTrait;
 }
