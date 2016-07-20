@@ -84,6 +84,7 @@ class StudentWorksheetParserTest extends TestCase
     {
         AbstractParser::clear();
         $this->classRegistry = new ClassRoomRegistry($this->groupService);
+        $this->classRegistry->setOrganization('foo-bar');
     }
 
     /**
@@ -103,7 +104,7 @@ class StudentWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_good_sheet.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '01X100-001');
+        $class  = new ClassRoom('History of the world', '001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
@@ -130,7 +131,7 @@ class StudentWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_good_sheet_with_blanks.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '01X100-001');
+        $class  = new ClassRoom('History of the world', '001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();
@@ -282,7 +283,7 @@ class StudentWorksheetParserTest extends TestCase
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/student_duplicate_id.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);
-        $class  = new ClassRoom('History of the world', '01X100-001');
+        $class  = new ClassRoom('History of the world', '001');
         $this->classRegistry->addClassroom($class);
 
         $parser->preProcess();

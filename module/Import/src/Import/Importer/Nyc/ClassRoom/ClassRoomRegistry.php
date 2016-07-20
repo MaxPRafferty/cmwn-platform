@@ -10,6 +10,7 @@ use \ArrayObject;
 use \ArrayAccess;
 use \BadMethodCallException;
 use \IteratorAggregate;
+use Org\OrganizationInterface;
 
 /**
  * Class ClassRegistry
@@ -25,6 +26,11 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
      * @var ArrayObject
      */
     protected $classRooms = [];
+
+    /**
+     * @var string
+     */
+    protected $organizationId;
 
     /**
      * ClassRoomRegistry constructor.
@@ -45,6 +51,18 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
     public function getIterator()
     {
         return new \IteratorIterator($this->classRooms);
+    }
+
+    /**
+     * Sets the organization needed for group lookups
+     *
+     * @param OrganizationInterface|string $organization
+     */
+    public function setOrganization($organization)
+    {
+        $this->organizationId = $organization instanceof OrganizationInterface
+            ? $organization->getOrgId()
+            : $organization;
     }
 
 
@@ -89,8 +107,12 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
      */
     protected function lookUpGroup($classRoomId)
     {
+        if (null === $this->organizationId) {
+            throw new \RuntimeException('Lookup group called with null for organzation id');
+        }
+
         try {
-            return $this->groupService->fetchGroupByExternalId($classRoomId);
+            return $this->groupService->fetchGroupByExternalId($this->organizationId, $classRoomId);
         } catch (NotFoundException $groupNotFound) {
         }
         return false;
