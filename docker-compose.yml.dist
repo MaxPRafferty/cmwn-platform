@@ -12,7 +12,7 @@ services:
       APP_ENV: 'dev'
       USE_ZEND_ALLOC: 0
       PHP_IDE_CONFIG: "serverName=api-local.changemyworldnow.com"
-      XDEBUG_CONFIG: "remote_enable=1 remote_mode=req remote_port=9001 remote_host=127.0.0.1 remote_connect_back=0"
+      XDEBUG_CONFIG: "remote_enable=1 remote_mode=req remote_port=9001 remote_connect_back=0 remote_host=127.0.0.1"
     volumes:
       - ./:/var/www/
     links:
