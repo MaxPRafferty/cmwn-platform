@@ -73,6 +73,14 @@ class DoeImporterTest extends TestCase
     /**
      * @before
      */
+    public function setUpImporter()
+    {
+        $this->importer = TestHelper::getServiceManager()->get('Nyc\DoeImporter');
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserService()
     {
         $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
@@ -115,7 +123,7 @@ class DoeImporterTest extends TestCase
         $this->assertInstanceOf(Child::class, $student);
 
         // Class Added?
-        $group = $this->groupService->fetchGroupByExternalId('01X100-001');
+        $group = $this->groupService->fetchGroupByExternalId('district', '001');
         $this->assertInstanceOf(GroupInterface::class, $group);
     }
 

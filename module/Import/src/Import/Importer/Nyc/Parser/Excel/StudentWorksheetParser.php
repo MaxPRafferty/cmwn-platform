@@ -257,7 +257,7 @@ class StudentWorksheetParser extends AbstractExcelParser
             return;
         }
 
-        $class   = $rowData['DDBNNN'] . '-' . $rowData['OFF CLS'];
+        $class   = $rowData['OFF CLS'];
 
         if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(
