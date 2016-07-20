@@ -198,7 +198,7 @@ class TeacherWorksheetParser extends AbstractExcelParser
             return;
         }
 
-        $class   = $rowData['DDBNNN'] . '-' . $rowData['OFF CLS'];
+        $class   = $rowData['OFF CLS'];
         if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(
                 sprintf('Class ID <b>"%s"</b> was not found', $class),

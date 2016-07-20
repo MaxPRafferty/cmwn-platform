@@ -122,7 +122,7 @@ class ClassWorksheetParser extends AbstractExcelParser
             }
             $subClasses = $this->getSubClasses($cellIterator);
 
-            $classRoomId = $rowData['DDBNNN'] . '-' . $rowData['OFF CLS'];
+            $classRoomId = $rowData['OFF CLS'];
             if (!$this->classRegistry->offsetExists($classRoomId)) {
                 $this->classRegistry->addClassroom(
                     new ClassRoom($rowData['TITLE'], $classRoomId, $subClasses)
@@ -230,12 +230,7 @@ class ClassWorksheetParser extends AbstractExcelParser
     protected function getSubClasses(CellIterator $cellIterator)
     {
         $classString = trim($cellIterator->seek('D')->current()->getFormattedValue());
-        $ddbnnn      = trim($cellIterator->seek('A')->current()->getFormattedValue());
-        $subClasses  =  empty($classString) ? [] : explode(',', $classString);
-        $test = array_map(function ($subClassId) use (&$ddbnnn) {
-            return $ddbnnn . '-'. $subClassId;
-        }, $subClasses);
-
-        return $test;
+        $subClasses  = empty($classString) ? [] : explode(',', $classString);
+        return $subClasses ;
     }
 }
