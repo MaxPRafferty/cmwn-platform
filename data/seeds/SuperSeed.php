@@ -14,9 +14,10 @@ class SuperSeed extends AbstractSeed
      */
     public function run()
     {
-        $table = $this->table('users');
 
-        $date = new \DateTime();
+        $table   = $this->table('users');
+        $date    = new \DateTime();
+        $expires = new \DateTime('+2 Weeks');
         try {
             $table->insert([
                 'user_id'    => \Ramsey\Uuid\Uuid::uuid1(),
@@ -32,7 +33,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -59,7 +60,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -86,7 +87,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -96,7 +97,7 @@ class SuperSeed extends AbstractSeed
                 );
             }
         }
-        
+
         $table->setData([]);
         try {
             $table->insert([
@@ -113,7 +114,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -140,7 +141,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -167,7 +168,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -194,7 +195,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -221,7 +222,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -248,7 +249,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -275,7 +276,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -302,7 +303,7 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {
@@ -329,7 +330,34 @@ class SuperSeed extends AbstractSeed
                 'birthdate'  => null,
                 'created'    => $date->format("Y-m-d H:i:s"),
                 'updated'    => $date->format("Y-m-d H:i:s"),
-                'super'      => 1
+                'super'      => 1,
+            ])
+                ->saveData();
+        } catch (PDOException $exception) {
+            if ($exception->getCode() != 23000) {
+                $this->getOutput()->writeLn(
+                    'Got Exception When inserting Bruno: ' . $exception->getMessage()
+                );
+            }
+        }
+
+        $table->setData([]);
+        try {
+            $table->insert([
+                'user_id'      => \Ramsey\Uuid\Uuid::uuid1(),
+                'username'     => 'nespartinez',
+                'email'        => 'nikki@ginasink.com',
+                'code'         => 'business',
+                'code_expires' => $expires->format('Y-m-d H:i:s'),
+                'type'         => 'ADULT',
+                'first_name'   => 'Nikki',
+                'last_name'    => 'Espartinez',
+                'gender'       => 'female',
+                'meta'         => '[]',
+                'birthdate'    => null,
+                'created'      => $date->format("Y-m-d H:i:s"),
+                'updated'      => $date->format("Y-m-d H:i:s"),
+                'super'        => 1,
             ])
                 ->saveData();
         } catch (PDOException $exception) {

@@ -2,11 +2,7 @@
 
 namespace IntegrationTest;
 
-use Security\ChangePasswordUser;
 use Security\Guard\CsrfGuard;
-use Security\Service\SecurityService;
-use User\UserInterface;
-use Zend\Authentication\AuthenticationService;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
 use ZF\ContentNegotiation\Request;
@@ -21,6 +17,7 @@ abstract class AbstractApigilityTestCase extends TestCase
 {
     use DbTestCaseTrait;
     use DbUnitConnectionTrait;
+    use LoginUserTrait;
 
     /**
      * @var string The accept type for the request
@@ -44,7 +41,7 @@ abstract class AbstractApigilityTestCase extends TestCase
         $this->getDatabaseTester()->setDataSet($this->getDataSet());
         $this->getDatabaseTester()->onSetUp();
     }
-    
+
     /**
      * Performs operation returned by getTearDownOperation().
      */
@@ -64,22 +61,6 @@ abstract class AbstractApigilityTestCase extends TestCase
     }
 
     /**
-     * @return AuthenticationService
-     */
-    protected function getAuthService()
-    {
-        return TestHelper::getServiceManager()->get(AuthenticationService::class);
-    }
-
-    /**
-     * @after
-     */
-    public function logOutUser()
-    {
-        $this->getAuthService()->clearIdentity();
-    }
-
-    /**
      * Sets the request to be a valid CSRF token
      */
     public function injectValidCsrfToken()
@@ -91,33 +72,6 @@ abstract class AbstractApigilityTestCase extends TestCase
         $this->getRequest()
             ->getHeaders()
             ->addHeaderLine('X-CSRF: foobar');
-    }
-
-    /**
-     * Logs in a user (from the test DB)
-     *
-     * @param $userName
-     * @return UserInterface
-     */
-    public function logInUser($userName)
-    {
-        /** @var SecurityService $userService */
-        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
-
-        $user = $userService->fetchUserByUserName($userName);
-        $this->getAuthService()->getStorage()->write($user);
-        return $user;
-    }
-
-    /**
-     * Logs in a user (from the test DB)
-     *
-     * @param $userName
-     */
-    public function logInChangePasswordUser($userName)
-    {
-        $user = new ChangePasswordUser($this->logInUser($userName)->getArrayCopy());
-        $this->getAuthService()->getStorage()->write($user);
     }
 
     /**

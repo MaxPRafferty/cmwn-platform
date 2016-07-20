@@ -9,7 +9,9 @@ namespace Application;
 use Application\Listeners\ListenersAggregate;
 use Application\Utils\StaticType;
 use Zend\EventManager\SharedEventManager;
+use Zend\Log\Filter\Priority;
 use Zend\Log\Logger;
+use Zend\Log\Writer\Stream;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -34,9 +36,13 @@ class Module implements ConfigProviderInterface
         /** @var Logger $logger */
         $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
 
-        Logger::registerErrorHandler($logger);
-        Logger::registerExceptionHandler($logger);
-        Logger::registerFatalErrorShutdownFunction($logger);
+        // This is not the best way to do this, but not getting fatal errors in tests are annoying
+        if (!defined('TEST_MODE') || TEST_MODE === false) {
+            Logger::registerErrorHandler($logger);
+            Logger::registerExceptionHandler($logger);
+            Logger::registerFatalErrorShutdownFunction($logger);
+        }
+
         $this->attachShared($mvcEvent);
 
         $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');
