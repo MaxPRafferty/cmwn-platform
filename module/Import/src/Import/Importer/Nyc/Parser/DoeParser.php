@@ -126,6 +126,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
     public function setSchool(GroupInterface $school)
     {
         $this->school = $school;
+        $this->classRegistry->setOrganization($school->getOrganizationId());
     }
 
     /**

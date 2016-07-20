@@ -31,11 +31,16 @@ $gameOnProduction = [
 ];
 
 $comingSoonGames = [
+    'be-bright',
+    'drought-out',
     'fire',
+    'happy-fish-face',
     'monarch',
+    'pedal-pusher',
+    'printmaster',
+    'sea-turtle',
+    'tag-it',
     'waterdrop',
-    'bloom-boom',
-    'polar-bear',
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {

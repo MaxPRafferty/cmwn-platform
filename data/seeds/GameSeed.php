@@ -91,7 +91,6 @@ class GameSeed extends AbstractSeed
                 // means we already have the game
                 continue;
             }
-            $this->getOutput()->writeln('Im doing something 7');
 
             $this->getOutput()->writeln(sprintf('New game found "%s"', $gameId));
             $gameData['created'] = $currentDate->format('Y-m-d H:i:s');

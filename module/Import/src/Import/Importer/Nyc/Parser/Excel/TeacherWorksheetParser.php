@@ -192,12 +192,13 @@ class TeacherWorksheetParser extends AbstractExcelParser
      */
     protected function getClassForTeacher(array $rowData, Teacher $teacher, $rowNumber)
     {
-        $class   = $rowData['OFF CLS'];
-        if (empty($class)) {
+
+        if (empty($rowData['OFF CLS'])) {
             $this->getLogger()->warn(sprintf('Teacher "%s" has empty class', $teacher->getEmail()));
             return;
         }
 
+        $class   = $rowData['OFF CLS'];
         if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(
                 sprintf('Class ID <b>"%s"</b> was not found', $class),

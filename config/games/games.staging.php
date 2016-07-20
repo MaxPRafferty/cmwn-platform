@@ -31,11 +31,17 @@ $gameOnStaging = [
 ];
 
 $comingSoonGames = [
+    'be-bright',
+    'carbon-catcher',
+    'drought-out',
     'fire',
+    'happy-fish-face',
     'monarch',
-    'waterdrop',
-    'bloom-boom',
     'polar-bear',
+    'printmaster',
+    'sea-turtle',
+    'tag-it',
+    'waterdrop',
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {
@@ -46,7 +52,7 @@ foreach ($master['games']['master'] as $gameId => $gameData) {
     $comingSoon = in_array($gameId, $comingSoonGames) ? 1 : 0;
 
     $stagingData['coming_soon'] = $comingSoon;
-    $stagingGames[$gameId]         = $gameData;
+    $stagingGames[$gameId]      = $gameData;
 }
 
 $master['games']['staging'] = $stagingGames;

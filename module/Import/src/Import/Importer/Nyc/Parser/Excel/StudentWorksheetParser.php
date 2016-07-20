@@ -253,10 +253,11 @@ class StudentWorksheetParser extends AbstractExcelParser
      */
     protected function getClassForStudent(array $rowData, Student $student, $rowNumber)
     {
-        $class   = $rowData['OFF CLS'];
-        if (empty($class)) {
+        if (empty($rowData['OFF CLS'])) {
             return;
         }
+
+        $class   = $rowData['OFF CLS'];
 
         if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(

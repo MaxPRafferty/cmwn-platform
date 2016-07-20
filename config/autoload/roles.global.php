@@ -109,7 +109,6 @@ return [
                     'view.org.users',
                     'view.profile.image',
                     'remove.user.adult',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -135,7 +134,6 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -168,7 +166,6 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -201,7 +198,6 @@ return [
                     'view.user.child',
                     'view.profile.image',
                     'remove.user.adult',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -227,7 +223,6 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -273,7 +268,6 @@ return [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
-                    'attach.profile.image',
                     'can.friend',
                     'child.code',
                     'create.user.flip',
@@ -288,6 +282,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -309,7 +304,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
-                    'attach.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -326,7 +321,6 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.profile.image',
-                    'attach.profile.image',
                 ],
             ],
 

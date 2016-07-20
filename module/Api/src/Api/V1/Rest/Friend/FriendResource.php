@@ -72,7 +72,7 @@ class FriendResource extends AbstractResourceListener
      * Fetch a resource
      *
      * @param  mixed $friendId
-     * @return ApiProblem|FriendEntity
+     * @return ApiProblem|FriendEntity|UserInterface
      */
     public function fetch($friendId)
     {

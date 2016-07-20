@@ -13,14 +13,44 @@ class FlipUserResourceTest extends TestCase
     /**
      * @test
      * @dataProvider validUserDataProvider
+     * @ticket CORE-773
      */
-    public function testItShouldCheckIfUserLoggedInIsTheOneRequestingFlip($login)
+    public function testItShouldCheckIfUserLoggedInCanSeeUserFlip($login)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
 
         $this->dispatch('/user/english_student/flip');
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-773
+     */
+    public function testItShouldLetChildOrStudentSeeUserFlip()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+
+        $this->dispatch('/user/math_student/flip');
+        $this->assertMatchedRouteName('api.rest.flip-user');
+        $this->assertControllerName('api\v1\rest\flipuser\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $embedded = $body['_embedded'];
+        $this->assertArrayHasKey('flip_user', $embedded);
+        $flips = $embedded['flip_user'];
+        $this->assertArrayHasKey('flip_id', $flips[0]);
+
+        $expectedids = ['polar-bear', 'sea-turtle'];
+        $actualids = [];
+        foreach ($flips as $flip) {
+            $actualids[] = $flip['flip_id'];
+        }
+        $this->assertEquals($actualids, $expectedids);
     }
 
     /**
@@ -130,9 +160,6 @@ class FlipUserResourceTest extends TestCase
         return [
             'English Teacher' => [
                 'english_teacher'
-            ],
-            'Math Student' => [
-                'math_student'
             ],
             'Principal' => [
                 'principal'
