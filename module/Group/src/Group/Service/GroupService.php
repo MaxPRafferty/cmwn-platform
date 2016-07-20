@@ -367,10 +367,10 @@ class GroupService implements GroupServiceInterface
     {
         $where  = $this->createWhere($where);
         $select = new Select();
-        $select->from($this->groupTableGateway->getTable());
+        $select->from(['g' => $this->groupTableGateway->getTable()]);
 
-        $where->addPredicate(new Operator('organization_id', '=', $group->getOrganizationId()));
-        $where->addPredicate(new Between('head', ($group->getHead() + 1), ($group->getTail() - 1)));
+        $where->addPredicate(new Operator('g.organization_id', '=', $group->getOrganizationId()));
+        $where->addPredicate(new Between('g.head', ($group->getHead() + 1), ($group->getTail() - 1)));
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
