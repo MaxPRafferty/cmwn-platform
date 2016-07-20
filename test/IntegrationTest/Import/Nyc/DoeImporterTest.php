@@ -75,7 +75,7 @@ class DoeImporterTest extends TestCase
 
         return static::$dataSet;
     }
-    
+
     /**
      * @before
      */
@@ -129,12 +129,12 @@ class DoeImporterTest extends TestCase
         $this->assertInstanceOf(Child::class, $student);
 
         // Class Added?
-        $group = $this->groupService->fetchGroupByExternalId('01X100-001');
+        $group = $this->groupService->fetchGroupByExternalId('district', '001');
         $this->assertInstanceOf(GroupInterface::class, $group);
 
         // TODO Expand this test to check relationships
     }
-    
+
     /**
      * @test
      * @ticket CORE-707
@@ -161,7 +161,7 @@ class DoeImporterTest extends TestCase
         $this->assertInstanceOf(Adult::class, $teacher);
 
         // Student Added?
-        $student = $this->userService->fetchUserByExternalId('123');
+        $student = $this->userService->fetchUserByExternalId('O1X123-123');
         $this->assertInstanceOf(Child::class, $student);
 
         $this->assertRegExp(

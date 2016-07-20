@@ -4,6 +4,7 @@ namespace Group\Service;
 
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
+use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 
@@ -57,12 +58,12 @@ interface GroupServiceInterface
     /**
      * Fetches on group from the DB by using the external id
      *
+     * @param OrganizationInterface|string $organization
      * @param $externalId
+     *
      * @return GroupInterface
-     * @throws NotFoundException
-     * @todo Add Organization ID to the mix
      */
-    public function fetchGroupByExternalId($externalId);
+    public function fetchGroupByExternalId($organization, $externalId);
 
     /**
      * Deletes a group from the database

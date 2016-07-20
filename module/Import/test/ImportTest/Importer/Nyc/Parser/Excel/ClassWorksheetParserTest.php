@@ -55,6 +55,7 @@ class ClassWorksheetParserTest extends TestCase
     public function setUpRegistry()
     {
         $this->registry = new ClassRoomRegistry($this->groupService);
+        $this->registry->setOrganization('foo-bar');
     }
 
     /**

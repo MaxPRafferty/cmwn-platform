@@ -84,6 +84,7 @@ class StudentWorksheetParserTest extends TestCase
     {
         AbstractParser::clear();
         $this->classRegistry = new ClassRoomRegistry($this->groupService);
+        $this->classRegistry->setOrganization('foo-bar');
     }
 
     /**

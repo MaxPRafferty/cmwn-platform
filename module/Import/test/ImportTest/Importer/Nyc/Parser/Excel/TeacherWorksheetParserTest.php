@@ -83,6 +83,7 @@ class TeacherWorksheetParserTest extends TestCase
     public function setUpClassRegistry()
     {
         $this->classRegistry = new ClassRoomRegistry($this->groupService);
+        $this->classRegistry->setOrganization('foo-bar');
     }
 
     /**

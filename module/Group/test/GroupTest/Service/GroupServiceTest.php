@@ -14,6 +14,7 @@ use Zend\Json\Json;
 
 /**
  * Test GroupServiceTest
+ *
  * @group Group
  * @group Service
  * @group GroupService
@@ -78,6 +79,7 @@ class GroupServiceTest extends TestCase
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) {
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -97,6 +99,7 @@ class GroupServiceTest extends TestCase
             ->andReturnUsing(function ($where) use (&$expectedWhere) {
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
+
                 return new \ArrayIterator([]);
 
             })
@@ -125,12 +128,13 @@ class GroupServiceTest extends TestCase
 
                 $this->assertTrue(is_array($data));
 
-                $expected = $newGroup->getArrayCopy();
+                $expected         = $newGroup->getArrayCopy();
                 $expected['meta'] = '[]';
                 unset($expected['depth']);
                 unset($expected['deleted']);
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
+
                 return 1;
             })
             ->once();
@@ -151,7 +155,7 @@ class GroupServiceTest extends TestCase
             'type'            => 'school',
             'meta'            => [],
             'head'            => 1,
-            'tail'           => 2,
+            'tail'            => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -168,7 +172,7 @@ class GroupServiceTest extends TestCase
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$group) {
                 $this->assertEquals(['group_id' => $group->getGroupId()], $where);
-                $expected = $group->getArrayCopy();
+                $expected         = $group->getArrayCopy();
                 $expected['meta'] = '[]';
                 unset($expected['deleted']);
                 unset($expected['depth']);
@@ -194,7 +198,7 @@ class GroupServiceTest extends TestCase
             'type'            => 'school',
             'meta'            => [],
             'head'            => 1,
-            'tail'           => 2,
+            'tail'            => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -213,7 +217,7 @@ class GroupServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldFetchGroupByExternalIdId()
+    public function testItShouldFetchGroupByExternalId()
     {
         $groupData = [
             'group_id'        => 'abcd-efgh-ijklm-nop',
@@ -223,21 +227,25 @@ class GroupServiceTest extends TestCase
             'type'            => 'school',
             'meta'            => [],
             'head'            => 1,
-            'tail'           => 2,
+            'tail'            => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
             'deleted'         => '2016-02-28',
-            'external_id'     => 'foo-bar'
+            'external_id'     => 'foo-bar',
         ];
 
         $result = new ResultSet();
         $result->initialize([$groupData]);
         $this->tableGateway->shouldReceive('select')
-            ->with(['external_id' => $groupData['external_id']])
+            ->with(['organization_id' => $groupData['organization_id'], 'external_id' => $groupData['external_id']])
             ->andReturn($result);
 
-        $this->assertInstanceOf('Group\Group', $this->groupService->fetchGroupByExternalId($groupData['external_id']));
+        $this->assertInstanceOf(
+            'Group\Group',
+            $this->groupService->fetchGroupByExternalId($groupData['organization_id'], $groupData['external_id']),
+            'GroupService did not return a group when fetching by external Id'
+        );
     }
 
     /**
@@ -273,7 +281,7 @@ class GroupServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturn($result);
 
-        $this->groupService->fetchGroupByExternalId('foo');
+        $this->groupService->fetchGroupByExternalId('foo', 'bar');
     }
 
     /**
@@ -289,14 +297,14 @@ class GroupServiceTest extends TestCase
             'type'            => 'school',
             'meta'            => [],
             'head'            => 1,
-            'tail'           => 2,
+            'tail'            => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
             'deleted'         => '',
         ];
 
-        $group   = new Group($groupData);
+        $group  = new Group($groupData);
         $result = new ResultSet();
         $result->initialize([$groupData]);
         $this->tableGateway->shouldReceive('select')
@@ -326,7 +334,7 @@ class GroupServiceTest extends TestCase
             'type'            => 'school',
             'meta'            => [],
             'head'            => 1,
-            'tail'           => 2,
+            'tail'            => 2,
             'depth'           => 3,
             'created'         => '2016-02-28',
             'updated'         => '2016-02-28',
@@ -419,7 +427,7 @@ class GroupServiceTest extends TestCase
             'group_id'        => 'parent',
             'organization_id' => 'org',
             'head'            => 1,
-            'tail'           => 2,
+            'tail'            => 2,
         ]);
 
         $child = new Group();
@@ -441,6 +449,7 @@ class GroupServiceTest extends TestCase
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
                 $this->assertEquals(['tail' => new Expression('tail + 2')], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+
                 return true;
             })
             ->times(1)
@@ -457,6 +466,7 @@ class GroupServiceTest extends TestCase
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
                 $this->assertEquals(['head' => new Expression('head + 2')], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+
                 return true;
             })
             ->times(1)
@@ -470,6 +480,7 @@ class GroupServiceTest extends TestCase
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
                 $this->assertEquals(['head' => 2, 'tail' => 3], $actualSet);
                 $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+
                 return true;
             })
             ->times(1)
