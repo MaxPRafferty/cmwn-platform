@@ -97,7 +97,7 @@ class AddStudentToGroupActionTest extends TestCase
         $action = new AddStudentToGroupAction($this->getGoodStudent(), $this->userGroupService);
 
         $this->assertEquals(
-            'Adding student "foo-bar" to Classroom [hist101] "History of the world"',
+            'Adding student foo-bar to Classroom [hist101] "History of the world"',
             $action->__toString(),
             'AddStudentToGroupAction reporting invalid command'
         );
