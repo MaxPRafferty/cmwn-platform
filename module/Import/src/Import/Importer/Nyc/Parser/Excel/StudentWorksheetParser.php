@@ -155,7 +155,7 @@ class StudentWorksheetParser extends AbstractExcelParser
                     $rowNumber
                 );
             }
-            
+
             if ($this->hasErrors()) {
                 continue;
             }
@@ -163,7 +163,7 @@ class StudentWorksheetParser extends AbstractExcelParser
             $this->studentRegistry->addStudent($student);
             $this->getClassForStudent($rowData, $student, $rowNumber);
         };
-        
+
         if (!$this->hasErrors()) {
             $this->createActions();
         }
@@ -191,7 +191,7 @@ class StudentWorksheetParser extends AbstractExcelParser
             $this->addAction(new AddStudentAction($this->studentRegistry->getUserService(), $student));
         }
     }
-    
+
     /**
      * @param array $rowData
      * @param $rowNumber
@@ -225,7 +225,7 @@ class StudentWorksheetParser extends AbstractExcelParser
             ->setLastName($rowData['LAST NAME'])
             ->setEmail($rowData['EMAIL'])
             ->setGender($rowData['SEX'])
-            ->setStudentId($rowData['STUDENT ID'])
+            ->setStudentId($rowData['DDBNNN'] . '-'. $rowData['STUDENT ID'])
             ->setBirthday($birthday);
 
         unset($rowData['FIRST NAME']);
@@ -253,10 +253,11 @@ class StudentWorksheetParser extends AbstractExcelParser
      */
     protected function getClassForStudent(array $rowData, Student $student, $rowNumber)
     {
-        $class   = $rowData['OFF CLS'];
-        if (empty($class)) {
+        if (empty($rowData['OFF CLS'])) {
             return;
         }
+
+        $class   = $rowData['OFF CLS'];
 
         if (!$this->classRoomRegistry->offsetExists($class)) {
             $this->addError(

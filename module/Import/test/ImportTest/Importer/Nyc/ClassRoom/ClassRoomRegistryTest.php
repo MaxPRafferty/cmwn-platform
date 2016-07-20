@@ -45,6 +45,7 @@ class ClassRoomRegistryTest extends TestCase
     public function setUpRegistry()
     {
         $this->registry = new ClassRoomRegistry($this->groupService);
+        $this->registry->setOrganization('foo-bar');
     }
 
     /**
@@ -71,7 +72,7 @@ class ClassRoomRegistryTest extends TestCase
         $group->setMeta(['sub_classes' => ['foo', 'bar']]);
 
         $this->groupService->shouldReceive('fetchGroupByExternalId')
-            ->with('hist101')
+            ->with('foo-bar', 'hist101')
             ->andReturn($group)
             ->once();
 
@@ -93,7 +94,7 @@ class ClassRoomRegistryTest extends TestCase
         $group->setMeta(['sub_classes' => ['foo', 'bar']]);
 
         $this->groupService->shouldReceive('fetchGroupByExternalId')
-            ->with('hist101')
+            ->with('foo-bar', 'hist101')
             ->andReturn($group)
             ->once();
 
@@ -111,7 +112,7 @@ class ClassRoomRegistryTest extends TestCase
     public function testItShouldReturnFalseWhenDbLookFailsToFindClass()
     {
         $this->groupService->shouldReceive('fetchGroupByExternalId')
-            ->with('hist101')
+            ->with('foo-bar', 'hist101')
             ->andThrow(new NotFoundException())
             ->once();
 
@@ -137,7 +138,7 @@ class ClassRoomRegistryTest extends TestCase
     public function testItShouldReturnNullWhenNotSet()
     {
         $this->groupService->shouldReceive('fetchGroupByExternalId')
-            ->with('hist101')
+            ->with('foo-bar', 'hist101')
             ->andThrow(new NotFoundException())
             ->once();
 

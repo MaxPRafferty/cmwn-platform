@@ -40,7 +40,7 @@ class AddStudentToGroupAction implements ActionInterface
     public function __toString()
     {
         return sprintf(
-            'Adding student %s to Classroom [%s] "%s"',
+            'Adding student "%s" to Classroom [%s] "%s"',
             $this->student->getStudentId(),
             $this->student->getClassRoom()->getClassRoomId(),
             $this->student->getClassRoom()->getTitle()

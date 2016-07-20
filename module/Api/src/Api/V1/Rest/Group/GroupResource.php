@@ -43,10 +43,7 @@ class GroupResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        $data = (array) $data;
-        unset($data['group_id']);
-        $group = new Group($data);
-
+        $group = new Group($this->getInputFilter()->getValues());
         $this->service->saveGroup($group);
         return new GroupEntity($group->getArrayCopy());
     }

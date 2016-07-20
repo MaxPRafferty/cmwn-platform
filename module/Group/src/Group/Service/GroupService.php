@@ -5,6 +5,7 @@ namespace Group\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Group\Group;
+use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
 use User\UserInterface;
@@ -22,6 +23,7 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class GroupService
+ *
  * @package Group\Service
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -48,6 +50,7 @@ class GroupService implements GroupServiceInterface
     /**
      * @param GroupInterface $parent
      * @param GroupInterface $child
+     *
      * @return bool
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
@@ -108,6 +111,7 @@ class GroupService implements GroupServiceInterface
      * @param null|PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
+     *
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
@@ -116,9 +120,10 @@ class GroupService implements GroupServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         if ($paginate) {
-            $select    = new Select(['g' => $this->groupTableGateway->getTable()]);
+            $select = new Select(['g' => $this->groupTableGateway->getTable()]);
             $select->where($where);
             $select->order(['g.title']);
+
             return new DbSelect(
                 $select,
                 $this->groupTableGateway->getAdapter(),
@@ -128,6 +133,7 @@ class GroupService implements GroupServiceInterface
 
         $results = $this->groupTableGateway->select($where);
         $resultSet->initialize($results);
+
         return $resultSet;
     }
 
@@ -138,7 +144,9 @@ class GroupService implements GroupServiceInterface
      * @param Where|GroupInterface|string $where
      * @param object $prototype
      * @param bool $paginate
+     *
      * @return DbSelect
+     * @deprecated
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
@@ -148,6 +156,7 @@ class GroupService implements GroupServiceInterface
 
         $select = new Select(['ug' => 'user_groups']);
         $select->columns([]);
+        //join user_groups and groups to get all groups for user
         $select->join(
             ['active_group' => 'groups'],
             'active_group.group_id = ug.group_id',
@@ -155,9 +164,20 @@ class GroupService implements GroupServiceInterface
             Select::JOIN_LEFT
         );
 
+        //get groups based on parent
+        $select->join(
+            ['parent_group' => 'groups'],
+            'parent_group.group_id = active_group.parent_id',
+            ['parent_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        //get child groups and parent groups for the user
         $select->join(
             ['g' => 'groups'],
-            new Expression('g.head BETWEEN active_group.head AND active_group.tail'),
+            new Expression(
+                '(g.head BETWEEN active_group.head AND active_group.tail) OR (g.group_id=parent_group.group_id)'
+            ),
             ['*'],
             Select::JOIN_LEFT_OUTER
         );
@@ -178,6 +198,7 @@ class GroupService implements GroupServiceInterface
 
         $results = $this->groupTableGateway->select($select);
         $resultSet->initialize($results);
+
         return $resultSet;
     }
 
@@ -187,6 +208,7 @@ class GroupService implements GroupServiceInterface
      * If the group id is null, then a new group is created
      *
      * @param GroupInterface $group
+     *
      * @return bool
      * @throws NotFoundException
      */
@@ -207,9 +229,10 @@ class GroupService implements GroupServiceInterface
             $group->setGroupId(Uuid::uuid1());
 
             $data['group_id'] = $group->getGroupId();
-            $data['created'] = $group->getCreated()->format(\DateTime::ISO8601);
+            $data['created']  = $group->getCreated()->format(\DateTime::ISO8601);
 
             $this->groupTableGateway->insert($data);
+
             return true;
         }
 
@@ -227,6 +250,7 @@ class GroupService implements GroupServiceInterface
      * Fetches one group from the DB using the id
      *
      * @param $groupId
+     *
      * @return GroupInterface
      * @throws NotFoundException
      */
@@ -244,13 +268,16 @@ class GroupService implements GroupServiceInterface
     /**
      * Fetches on group from the DB by using the external id
      *
+     * @param $organization
      * @param $externalId
+     *
      * @return GroupInterface
      * @throws NotFoundException
      */
-    public function fetchGroupByExternalId($externalId)
+    public function fetchGroupByExternalId($organization, $externalId)
     {
-        $rowSet = $this->groupTableGateway->select(['external_id' => $externalId]);
+        $orgId  = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
+        $rowSet = $this->groupTableGateway->select(['organization_id' => $orgId, 'external_id' => $externalId]);
         $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");
@@ -266,6 +293,7 @@ class GroupService implements GroupServiceInterface
      *
      * @param GroupInterface $group
      * @param bool $soft
+     *
      * @return bool
      */
     public function deleteGroup(GroupInterface $group, $soft = true)
@@ -276,7 +304,7 @@ class GroupService implements GroupServiceInterface
             $group->setDeleted(new \DateTime());
 
             $this->groupTableGateway->update(
-                ['deleted'  => $group->getDeleted()->format(\DateTime::ISO8601)],
+                ['deleted' => $group->getDeleted()->format(\DateTime::ISO8601)],
                 ['group_id' => $group->getGroupId()]
             );
 
@@ -284,6 +312,7 @@ class GroupService implements GroupServiceInterface
         }
 
         $this->groupTableGateway->delete(['group_id' => $group->getGroupId()]);
+
         return true;
     }
 
@@ -293,6 +322,7 @@ class GroupService implements GroupServiceInterface
      * Used for hal link building
      *
      * @param GroupInterface $group
+     *
      * @return string[]
      * @deprecated
      */
@@ -320,6 +350,7 @@ class GroupService implements GroupServiceInterface
         }
 
         sort($types);
+
         return array_unique($types);
     }
 
@@ -329,6 +360,7 @@ class GroupService implements GroupServiceInterface
      * @param GroupInterface $group
      * @param null|PredicateInterface|array $where
      * @param null|object $prototype
+     *
      * @return DbSelect
      */
     public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null)
@@ -342,6 +374,7 @@ class GroupService implements GroupServiceInterface
         $select->where($where);
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
         return new DbSelect(
             $select,
             $this->groupTableGateway->getAdapter(),
@@ -367,6 +400,7 @@ class GroupService implements GroupServiceInterface
         }
 
         sort($types);
+
         return array_unique($types);
     }
 }
