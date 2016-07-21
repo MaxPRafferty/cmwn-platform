@@ -156,7 +156,7 @@ class SkribbleRulesTest extends TestCase
     {
         $this->setExpectedException(
             \Skribble\OverflowException::class,
-            printf('Only one rule of type "%s" can be set', $rule->getRuleType())
+            sprintf('Only one rule of type "%s" can be set', $rule->getRuleType())
         );
 
         $skribbleRules = new SkribbleRules();
