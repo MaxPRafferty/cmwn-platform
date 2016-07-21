@@ -128,7 +128,7 @@ class TeacherParserSetup
             ->setLastName('Solomon')
             ->setEmail('solomon@gmail.com')
             ->setGender('M')
-            ->setClassRoom(new ClassRoom('History of the world', '001'));
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'));
 
         $action = new AddTeacherAction($userService, $teacher);
         $this->actions->insert($action, $action->priority());
@@ -147,7 +147,7 @@ class TeacherParserSetup
             ->setLastName('Lucas')
             ->setEmail('lucas@gmail.com')
             ->setGender('F')
-            ->setClassRoom(new ClassRoom('History of the world', '001'));
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'));
 
         $action = new AddTeacherAction($userService, $teacher);
         $this->actions->insert($action, $action->priority());
@@ -166,7 +166,7 @@ class TeacherParserSetup
             ->setLastName('Ramirez')
             ->setEmail('ramirex@gmail.com')
             ->setGender('F')
-            ->setClassRoom(new ClassRoom('History of the world', '001'));
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'));
 
         $action = new AddTeacherAction($userService, $teacher);
         $this->actions->insert($action, $action->priority());
@@ -185,7 +185,7 @@ class TeacherParserSetup
             ->setLastName('Addonis')
             ->setEmail('addonis@gmail.com')
             ->setGender('F')
-            ->setClassRoom(new ClassRoom('History of the world', '001'));
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'));
 
         $action = new AddTeacherAction($userService, $teacher);
         $this->actions->insert($action, $action->priority());
@@ -204,7 +204,7 @@ class TeacherParserSetup
             ->setLastName('Agnone')
             ->setEmail('agnone@gmail.com')
             ->setGender('M')
-            ->setClassRoom(new ClassRoom('History of the world', '001'));
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'));
 
         $action = new AddTeacherAction($userService, $teacher);
         $this->actions->insert($action, $action->priority());

@@ -55,6 +55,7 @@ class ClassWorksheetParserTest extends TestCase
     public function setUpRegistry()
     {
         $this->registry = new ClassRoomRegistry($this->groupService);
+        $this->registry->setOrganization('foo-bar');
     }
 
     /**
@@ -86,7 +87,7 @@ class ClassWorksheetParserTest extends TestCase
     }
 
     /**
-     * @return AddClassRoomAction[]
+     * @return \SplPriorityQueue|AddClassRoomAction[]
      */
     protected function getExpectedAddActions()
     {
@@ -168,7 +169,7 @@ class ClassWorksheetParserTest extends TestCase
         return $actions;
     }
     /**
-     * @return AddClassRoomAction[]
+     * @return \SplPriorityQueue|AddClassRoomAction[]
      */
     protected function getExpectedMixedActions()
     {
@@ -308,7 +309,14 @@ class ClassWorksheetParserTest extends TestCase
      */
     public function testItShouldItShouldStoreClassesInTheRegistryAndCreateMixedActions()
     {
-        $this->registry->addClassroom(new ClassRoom('Second Grade', '201', ['8001', '8002', '8003'], new Group()));
+        $this->registry->addClassroom(
+            new ClassRoom(
+                'Second Grade',
+                '201',
+                ['8001', '8002', '8003'],
+                new Group()
+            )
+        );
         $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/class_good_sheet.xlsx');
         $sheet  = $reader->getSheet(0);
         $parser = $this->getParser($sheet);

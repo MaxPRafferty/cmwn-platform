@@ -15,7 +15,7 @@ class ClassIdValidator extends Regex
      */
     public function __construct($pattern = null)
     {
-        parent::__construct('/^\d{3}$/');
+        parent::__construct('/^\d{2}[A-Z]\d{3}-\d{3}$/');
     }
 
     /**
@@ -26,10 +26,10 @@ class ClassIdValidator extends Regex
      */
     public function isValid($value)
     {
-        if (strpos($value, '8') === 0) {
-            $this->pattern = '/^8\d{3}$/';
+        if (strpos($value, '8') === 7) {
+            $this->pattern = '/^\d{2}[A-Z]\d{3}-8\d{3}$/';
         }
-        
+
         return parent::isValid($value);
     }
 }

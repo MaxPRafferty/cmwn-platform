@@ -33,16 +33,12 @@ class Module implements ConfigProviderInterface
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
-        /** @var Logger $logger */
-        $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
-
-        // This is not the best way to do this, but not getting fatal errors in tests are annoying
         if (!defined('TEST_MODE') || TEST_MODE === false) {
+            $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
             Logger::registerErrorHandler($logger);
             Logger::registerExceptionHandler($logger);
             Logger::registerFatalErrorShutdownFunction($logger);
         }
-
         $this->attachShared($mvcEvent);
 
         $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');

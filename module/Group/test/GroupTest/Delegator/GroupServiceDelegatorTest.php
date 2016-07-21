@@ -67,6 +67,7 @@ class GroupServiceDelegatorTest extends TestCase
     {
         $this->group = new Group();
         $this->group->setGroupId(md5('foobar'));
+        $this->group->setOrganizationId('baz-bat');
         $this->group->setExternalId('foo-bar');
     }
 
@@ -181,13 +182,13 @@ class GroupServiceDelegatorTest extends TestCase
     public function testItShouldCallFetchGroupByExternalId()
     {
         $this->groupService->shouldReceive('fetchGroupByExternalId')
-            ->with($this->group->getExternalId())
+            ->with($this->group->getOrganizationId(), $this->group->getExternalId())
             ->andReturn($this->group)
             ->once();
 
         $this->assertSame(
             $this->group,
-            $this->delegator->fetchGroupByExternalId($this->group->getExternalId())
+            $this->delegator->fetchGroupByExternalId($this->group->getOrganizationId(), $this->group->getExternalId())
         );
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -195,7 +196,10 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.external',
                 'target' => $this->groupService,
-                'params' => ['external_id' => $this->group->getExternalId()]
+                'params' => [
+                    'organization' => $this->group->getOrganizationId(),
+                    'external_id' => $this->group->getExternalId()
+                ]
             ],
             $this->calledEvents[0]
         );
@@ -203,7 +207,11 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.external.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'external_id' => $this->group->getExternalId()]
+                'params' => [
+                    'group' => $this->group,
+                    'organization' => $this->group->getOrganizationId(),
+                    'external_id' => $this->group->getExternalId()
+                ]
             ],
             $this->calledEvents[1]
         );

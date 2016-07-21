@@ -29,11 +29,11 @@ class OrgUsersResource extends AbstractResourceListener
     /**
      * Fetch a resource
      *
-     * @param  mixed $orgId
      * @return ApiProblem|mixed
      */
-    public function fetch($orgId)
+    public function fetchAll()
     {
+        $orgId = $this->getEvent()->getRouteParam('org', false);
         return new OrgUsersCollection($this->groupService->fetchUsersForOrg($orgId, [], new UserEntity()));
     }
 }
