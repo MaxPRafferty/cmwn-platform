@@ -9,8 +9,6 @@ use Org\OrgAwareInterface;
 
 /**
  * Class ClassRoomAction
- *
- * ${CARET}
  */
 class AddClassRoomAction implements ActionInterface, OrgAwareInterface
 {

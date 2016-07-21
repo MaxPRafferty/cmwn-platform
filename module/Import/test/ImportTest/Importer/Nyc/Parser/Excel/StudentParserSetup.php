@@ -60,11 +60,11 @@ class StudentParserSetup
         $student = new Student();
         $student->setFirstName('Dylan')
             ->setLastName('Smith')
-            ->setStudentId('123')
+            ->setStudentId('01X100-123')
             ->setGender('M')
             ->setBirthday(new \DateTime('06/02/2015'))
             ->setEmail('')
-            ->setClassRoom(new ClassRoom('History of the world', '001'))
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'))
             ->setExtra([
                 'GRD CD'        => '',
                 'GRD LVL'       => '',
@@ -103,11 +103,11 @@ class StudentParserSetup
         $student = new Student();
         $student->setFirstName('Collin')
             ->setLastName('Marts')
-            ->setStudentId('1234')
+            ->setStudentId('01X100-1234')
             ->setGender('M')
             ->setEmail('')
             ->setBirthday(new \DateTime('05/31/2015'))
-            ->setClassRoom(new ClassRoom('History of the world', '001'))
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'))
             ->setExtra([
                 'GRD CD'        => '',
                 'GRD LVL'       => '',
@@ -146,11 +146,11 @@ class StudentParserSetup
         $student = new Student();
         $student->setFirstName('Sally')
             ->setLastName('Smith')
-            ->setStudentId('12345')
+            ->setStudentId('01X100-12345')
             ->setGender('F')
             ->setEmail('')
             ->setBirthday(new \DateTime('12/31/2014'))
-            ->setClassRoom(new ClassRoom('History of the world', '001'))
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'))
             ->setExtra([
                 'GRD CD'        => '',
                 'GRD LVL'       => '',
@@ -189,11 +189,11 @@ class StudentParserSetup
         $student = new Student();
         $student->setFirstName('Sara')
             ->setLastName('Johnson')
-            ->setStudentId('123456')
+            ->setStudentId('01X100-123456')
             ->setGender('F')
             ->setEmail('')
             ->setBirthday(new \DateTime('11/23/2015'))
-            ->setClassRoom(new ClassRoom('History of the world', '001'))
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'))
             ->setExtra([
                 'GRD CD'        => '',
                 'GRD LVL'       => '',
@@ -232,11 +232,11 @@ class StudentParserSetup
         $student = new Student();
         $student->setFirstName('Christie')
             ->setLastName('Williams')
-            ->setStudentId('1234567')
+            ->setStudentId('01X100-1234567')
             ->setGender('F')
             ->setEmail('')
             ->setBirthday(new \DateTime('08/31/2015'))
-            ->setClassRoom(new ClassRoom('History of the world', '001'))
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'))
             ->setExtra([
                 'GRD CD'        => '',
                 'GRD LVL'       => '',
@@ -277,11 +277,11 @@ class StudentParserSetup
         $student = new Student();
         $student->setFirstName('Dylan')
             ->setLastName('Smith')
-            ->setStudentId('123')
+            ->setStudentId('01X100-123')
             ->setGender('M')
             ->setEmail('')
             ->setBirthday(new \DateTime('06/02/2015'))
-            ->setClassRoom(new ClassRoom('History of the world', '001'))
+            ->setClassRoom(new ClassRoom('History of the world', '01X100-001'))
             ->setExtra([
                 'GRD CD'        => '',
                 'GRD LVL'       => '',

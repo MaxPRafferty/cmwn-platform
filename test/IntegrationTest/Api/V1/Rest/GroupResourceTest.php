@@ -20,7 +20,6 @@ use Zend\Json\Json;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-
 class GroupResourceTest extends TestCase
 {
     /**
@@ -34,6 +33,20 @@ class GroupResourceTest extends TestCase
     public function setUpUserService()
     {
         $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+    }
+    /**
+     * @test
+     * @ticket CORE-993
+     */
+    public function testItShouldAllowPrincipalToAccessGroup()
+    {
+        $this->logInUser('principal');
+        $this->injectValidCsrfToken();
+        $this->dispatch('/group/english');
+
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
     }
 
     /**
@@ -233,7 +246,7 @@ class GroupResourceTest extends TestCase
             'description' => 'this is new school',
             'meta' => null,
         );
-        $this->dispatch('/group', POST, $postData);
+        $this->dispatch('/group', 'POST', $postData);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
         $this->assertResponseStatusCode(201);
@@ -261,7 +274,7 @@ class GroupResourceTest extends TestCase
             'description' => 'this is new school',
             'meta' => null,
         );
-        $this->dispatch('/group', POST, $postData);
+        $this->dispatch('/group', 'POST', $postData);
         $this->assertResponseStatusCode(403);
     }
 
@@ -272,7 +285,7 @@ class GroupResourceTest extends TestCase
     {
         $this->logInUser('super_user');
 
-        $this->dispatch('/group/school', DELETE);
+        $this->dispatch('/group/school', 'DELETE');
         $this->assertResponseStatusCode(500);
     }
 
@@ -284,7 +297,7 @@ class GroupResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
 
-        $this->dispatch('/group/school', DELETE);
+        $this->dispatch('/group/school', 'DELETE');
         $this->assertResponseStatusCode(200);
         $this->setExpectedException(NotFoundException::class);
         $group = $this->groupService->fetchGroup('school')->getArrayCopy();
@@ -298,7 +311,7 @@ class GroupResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_teacher');
 
-        $this->dispatch('/group/school', DELETE);
+        $this->dispatch('/group/school', 'DELETE');
         $this->assertResponseStatusCode(403);
     }
 
@@ -315,7 +328,7 @@ class GroupResourceTest extends TestCase
             'description' => 'this is new school',
             'meta' => null,
         ];
-        $this->dispatch('/group/school', PUT, $putData);
+        $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(500);
     }
 
@@ -333,7 +346,7 @@ class GroupResourceTest extends TestCase
             'description' => 'this is new school',
             'meta' => null,
         ];
-        $this->dispatch('/group/school', PUT, $putData);
+        $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(200);
         $group = $this->groupService->fetchGroup('school')->getArrayCopy();
         $this->assertEquals('district', $group['organization_id']);
@@ -356,7 +369,41 @@ class GroupResourceTest extends TestCase
             'description' => 'this is new school',
             'meta' => null,
         ];
-        $this->dispatch('/group/school', PUT, $putData);
+        $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1062
+     */
+    public function testItShouldFetchChildGroups()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+
+        $this->dispatch('/group?type=class&parent=school');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+
+        $groupList = $body['_embedded'];
+        $this->assertArrayHasKey('group', $groupList);
+
+        $expectedGroupIds = [
+            'english',
+            'math'
+        ];
+        $actualGroupIds   = [];
+
+        foreach ($groupList['group'] as $groupData) {
+            $this->assertArrayHasKey('group_id', $groupData);
+            array_push($actualGroupIds, $groupData['group_id']);
+        }
+
+        $this->assertEquals($expectedGroupIds, $actualGroupIds);
     }
 }
