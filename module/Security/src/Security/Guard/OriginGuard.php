@@ -86,7 +86,7 @@ class OriginGuard implements LoggerAwareInterface
             : null;
 
         // THOUGHT Config?
-        if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+)?\.changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {
+        if (preg_match("/^https:\/\/([0-9a-zA-Z-_]+\.)?changemyworldnow\.com(:[0-9]+)?\/?$/i", $origin)) {
             $response->getHeaders()
                 ->addHeaderLine('Access-Control-Allow-Origin', $origin);
         } else {

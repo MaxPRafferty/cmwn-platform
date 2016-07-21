@@ -40,4 +40,14 @@ class GroupUsersResource extends AbstractResourceListener
 
         return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, [], new UserEntity()));
     }
+
+    public function fetchAll()
+    {
+        $group = $this->getEvent()->getRouteParam('group');
+        if (!$group instanceof GroupInterface) {
+            return new ApiProblem(421, 'Routing error');
+        }
+
+        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, [], new UserEntity()));
+    }
 }

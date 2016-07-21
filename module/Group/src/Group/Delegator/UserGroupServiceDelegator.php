@@ -195,25 +195,28 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
      * WHERE ug.user_id = 'baz-bat'
      *
      * @param Where|GroupInterface|string $user
+     * @param null $where
      * @param object $prototype
+     * @throws \Exception
      * @return DbSelect
      */
-    public function fetchGroupsForUser($user, $prototype = null)
+    public function fetchGroupsForUser($user, $where = null, $prototype = null)
     {
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.group', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
-            return false;
+        $response    = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
         }
 
         try {
-            $return = $this->realService->fetchGroupsForUser($user, $prototype);
-        } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
+            $return = $this->realService->fetchGroupsForUser($user, $where, $prototype);
+        } catch (\Exception $fetchException) {
+            $eventParams['exception'] = $fetchException;
             $event->setName('fetch.user.group.error');
             $this->getEventManager()->trigger($event);
 
-            return false;
+            throw $fetchException;
         }
 
         $event->setName('fetch.user.group.post');

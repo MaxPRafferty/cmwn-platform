@@ -122,25 +122,27 @@ class GroupDelegator implements GroupServiceInterface
     /**
      * Fetches on group from the DB by using the external id
      *
+     * @param \Org\OrganizationInterface|string $organization
      * @param $externalId
+     *
      * @return GroupInterface
-     * @throws NotFoundException
      */
-    public function fetchGroupByExternalId($externalId)
+    public function fetchGroupByExternalId($organization, $externalId)
     {
-        $event    = new Event('fetch.group.external', $this->realService, ['external_id' => $externalId]);
+        $event    = new Event(
+            'fetch.group.external',
+            $this->realService,
+            ['organization' => $organization, 'external_id' => $externalId]
+        );
         $response = $this->getEventManager()->trigger($event);
 
         if ($response->stopped()) {
             return $response->last();
         }
 
-        $return = $this->realService->fetchGroupByExternalId($externalId);
-        $event  = new Event(
-            'fetch.group.external.post',
-            $this->realService,
-            ['external_id' => $externalId, 'group' => $return]
-        );
+        $return = $this->realService->fetchGroupByExternalId($organization, $externalId);
+        $event->setName('fetch.group.external.post');
+        $event->setParam('group', $return);
         $this->getEventManager()->trigger($event);
         return $return;
     }
@@ -206,6 +208,7 @@ class GroupDelegator implements GroupServiceInterface
      * @param bool $paginate
      * @param null $prototype
      * @return mixed|HydratingResultSet|DbSelect
+     * @deprecated
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
