@@ -65,6 +65,21 @@ class FriendResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
+    /**
+     * @test
      */
     public function testItShouldReturnCorrectFriendListForUser()
     {
@@ -105,7 +120,7 @@ class FriendResourceTest extends TestCase
 
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
-        $this->dispatch('/user/math_student/friend');
+        $this->dispatch('/user/english_student/friend');
         $this->assertResponseStatusCode(200);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
@@ -121,7 +136,7 @@ class FriendResourceTest extends TestCase
         }
 
         $this->assertEquals(
-            ['english_student'],
+            ['math_student'],
             $actualId,
             'Service did not return correct friends'
         );
@@ -205,5 +220,26 @@ class FriendResourceTest extends TestCase
         $this->logInUser('english_student');
         $this->dispatch('/user/english_student/friend');
         $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/friend'
+            ],
+            1 => [
+                'english_student',
+                '/user/english_student/friend',
+                'POST',
+                [
+                    'friend_id' => 'math_student'
+                ]
+            ],
+        ];
     }
 }

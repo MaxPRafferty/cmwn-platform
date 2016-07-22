@@ -146,6 +146,30 @@ abstract class AbstractApigilityTestCase extends TestCase
     }
 
     /**
+     * Check for change password exception
+     *
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     */
+    public function assertChangePasswordException($url, $method = 'GET', $params = [])
+    {
+        $this->dispatch($url, $method, $params);
+        $this->assertResponseStatusCode(401);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals(
+            'RESET_PASSWORD',
+            $body['detail'],
+            sprintf(
+                'Failed asserting that change password exception is thrown. Actual exception is %s',
+                $this->getResponse()->getContent()
+            )
+        );
+    }
+
+    /**
      * Assert response status code
      *
      * @param int $code

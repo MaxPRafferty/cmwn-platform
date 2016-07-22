@@ -4,6 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use Security\Exception\ChangePasswordException;
 use User\Adult;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
@@ -30,6 +31,21 @@ class OrgUsersResourceTest extends TestCase
     public function setUpUserService()
     {
         $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+    }
+
+    /**
+     * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -162,6 +178,19 @@ class OrgUsersResourceTest extends TestCase
                     'math_student',
                     'principal',
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/org/district/users'
             ],
         ];
     }

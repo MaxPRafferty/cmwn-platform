@@ -3,6 +3,7 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 use IntegrationTest\TestHelper;
 use Org\Service\OrganizationServiceInterface;
@@ -33,6 +34,21 @@ class OrgResourceTest extends TestCase
     public function setUpUserService()
     {
         $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+    }
+
+    /**
+     * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -270,5 +286,49 @@ class OrgResourceTest extends TestCase
         $this->assertEquals('new organization', $newOrg['description']);
         $this->assertEquals('district', $newOrg['type']);
         $this->assertEquals([], $newOrg['meta']);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/org'
+            ],
+            1 => [
+                'super_user',
+                '/org',
+                'POST',
+                [
+                    'title' => 'newOrg',
+                    'description' => 'new organization',
+                    'type' => 'district',
+                    'meta' => null,
+                ]
+            ],
+            2 => [
+                'super_user',
+                '/org/district',
+                'DELETE'
+            ],
+            3 => [
+                'super_user',
+                '/org/district',
+                'PUT',
+                [
+                    'title' => 'newOrg',
+                    'description' => 'new organization',
+                    'type' => 'district',
+                    'meta' => null,
+                ]
+            ],
+            4 => [
+                'english_student',
+                '/org/district'
+            ]
+        ];
     }
 }
