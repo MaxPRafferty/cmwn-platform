@@ -106,4 +106,27 @@ class SkribbleTest extends TestCase
         $skribble = new Skribble();
         $skribble->setRules(new \stdClass());
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldAddTheSkribbleUrlWhenStatusIsComplete()
+    {
+        $skribble = new Skribble();
+        $skribble->setSkribbleId('foo-bar');
+
+        $this->assertEmpty($skribble->getUrl());
+
+        $skribble->setStatus(Skribble::STATUS_ERROR);
+        $this->assertEmpty($skribble->getUrl());
+
+        $skribble->setStatus(Skribble::STATUS_PROCESSING);
+        $this->assertEmpty($skribble->getUrl());
+
+        $skribble->setStatus(Skribble::STATUS_NOT_COMPLETE);
+        $this->assertEmpty($skribble->getUrl());
+
+        $skribble->setStatus(Skribble::STATUS_COMPLETE);
+        $this->assertEquals(Skribble::SKRIBBLE_BASE_URL . 'foo-bar.png', $skribble->getUrl());
+    }
 }

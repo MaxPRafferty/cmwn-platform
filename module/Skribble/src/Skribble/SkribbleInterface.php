@@ -17,6 +17,8 @@ interface SkribbleInterface extends SoftDeleteInterface
 
     const CURRENT_VERSION     = '1';
 
+    const SKRIBBLE_BASE_URL   = 'https://skribble.changemyworldnow.com/';
+
     /**
      * Exchange internal values from provided array
      *
