@@ -232,6 +232,10 @@ class Skribble implements SkribbleInterface
      */
     public function getUrl()
     {
+        if ($this->url === null && $this->getStatus() === static::STATUS_COMPLETE) {
+            $this->setUrl(static::SKRIBBLE_BASE_URL . $this->getSkribbleId() . '.png');
+        }
+
         return $this->url;
     }
 
