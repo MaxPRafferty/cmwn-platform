@@ -18,7 +18,6 @@ return [
             'remove.user.adult'    => 'Delete a child user',
             'remove.user.child'    => 'Delete an adult user',
             'can.friend'           => 'Can friend users',
-            'view.profile.image'   => 'View a users profile image',
 
             // Flip
             'create.user.flip'     => 'Earn a flip',
@@ -56,13 +55,13 @@ return [
             'adult.code'           => 'Send adult reset code',
             'child.code'           => 'Send child reset code',
             'attach.profile.image' => 'Upload a profile image',
+            'view.profile.image'   => 'View a users profile image',
 
             // skribble
             'view.skribble'        => 'Read Skribbles',
             'create.skribble'      => 'Create Skribbles',
             'delete.skribble'      => 'Delete Skribbles',
             'update.skribble'      => 'Update Skribbles',
-
         ],
         'roles'             => [
             'super' => [

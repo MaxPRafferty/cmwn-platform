@@ -33,12 +33,13 @@ class Module implements ConfigProviderInterface
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
-        if (!defined('TEST_MODE') || TEST_MODE === false) {
+        if (!defined('TEST_MODE')) {
             $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
             Logger::registerErrorHandler($logger);
             Logger::registerExceptionHandler($logger);
             Logger::registerFatalErrorShutdownFunction($logger);
         }
+
         $this->attachShared($mvcEvent);
 
         $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');

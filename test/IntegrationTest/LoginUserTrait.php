@@ -55,5 +55,4 @@ trait LoginUserTrait
     {
         $this->getAuthService()->clearIdentity();
     }
-
 }
