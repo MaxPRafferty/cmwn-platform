@@ -26,7 +26,8 @@ class ServiceManagerTest extends TestCase
         'ZF\OAuth2\Adapter\IbmDb2Adapter',
         'ZF\OAuth2\Adapter\MongoAdapter',
         'Zend\Session\SessionManager',
-        'Log\App'
+        'Log\App',
+        'ZF\Configuration\ConfigResource',
     ];
 
     /**
