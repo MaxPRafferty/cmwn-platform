@@ -36,11 +36,6 @@ class XsrfGuardTest extends TestCase
     protected $container;
 
     /**
-     * @var \Mockery\MockInterface|\Zend\Log\LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var \Mockery\MockInterface|\Zend\Mvc\MvcEvent
      */
     protected $event;
@@ -63,15 +58,7 @@ class XsrfGuardTest extends TestCase
         $this->manager   = $manager = new SessionManager($config);
         $this->container = new Container('Default', $manager);
     }
-
-    /**
-     * @before
-     */
-    public function setUpLogger()
-    {
-        $this->logger = \Mockery::mock('\Zend\Log\LoggerInterface');
-    }
-
+    
     /**
      * @before
      */
