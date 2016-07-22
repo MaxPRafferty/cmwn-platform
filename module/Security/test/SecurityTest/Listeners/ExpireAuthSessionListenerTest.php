@@ -20,8 +20,9 @@ use ZF\ApiProblem\ApiProblemResponse;
  * @group Session
  * @group Authentication
  */
-class ExpireAuthSessionListenerTest extends TestCase
+class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
 
     /**
      * @var Container
@@ -37,11 +38,6 @@ class ExpireAuthSessionListenerTest extends TestCase
      * @var \Mockery\MockInterface|\Security\Authentication\AuthenticationService
      */
     protected $authService;
-
-    /**
-     * @var \Mockery\MockInterface|\Zend\Log\LoggerInterface
-     */
-    protected $logger;
 
     /**
      * @before
@@ -66,10 +62,7 @@ class ExpireAuthSessionListenerTest extends TestCase
         $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
         $this->listener = new ExpireAuthSessionListener($this->container);
         $this->listener->setAuthenticationService($this->authService);
-        $this->logger = \Mockery::mock('\Zend\Log\LoggerInterface');
-        $this->listener = new ExpireAuthSessionListener($this->container);
-        $this->listener->setAuthenticationService($this->authService);
-        $this->listener->setLogger($this->logger);
+        $this->listener->setLogger($this->getLogger());
     }
 
     /**
@@ -77,19 +70,13 @@ class ExpireAuthSessionListenerTest extends TestCase
      */
     public function testItShouldExpireSession()
     {
-        $ls = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->container->offsetSet('last_seen', $ls->getTimestamp() - ExpireAuthSessionListener::AUTH_TIMEOUT-1);
+        $currentTimestamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->container->offsetSet('last_seen', $currentTimestamp->getTimestamp() - ExpireAuthSessionListener::AUTH_TIMEOUT-1);
         $this->authService
             ->shouldReceive('hasIdentity')
             ->andReturn(true);
-        $this->logger
-            ->shouldReceive('debug')
-            ->once();
         $this->authService
             ->shouldReceive('clearIdentity')
-            ->once();
-        $this->logger
-            ->shouldReceive('info')
             ->once();
         $this->assertEquals($this->listener->onRoute(), new ApiProblemResponse(new ApiProblem(401, 'Expired')));
         $this->assertEquals($this->container->offsetExists(), false);
@@ -115,9 +102,6 @@ class ExpireAuthSessionListenerTest extends TestCase
         $this->authService
             ->shouldReceive('hasIdentity')
             ->andReturn(true);
-        $this->logger
-            ->shouldReceive('debug')
-            ->once();
         $this->assertEquals($this->listener->onRoute(), null);
     }
 }
