@@ -23,7 +23,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
-    
+
     /**
      * @var Container
      */
@@ -71,7 +71,10 @@ class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInter
     public function testItShouldExpireSession()
     {
         $currentTimestamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->container->offsetSet('last_seen', $currentTimestamp->getTimestamp() - ExpireAuthSessionListener::AUTH_TIMEOUT-1);
+        $this->container->offsetSet(
+            'last_seen',
+            $currentTimestamp->getTimestamp() - ExpireAuthSessionListener::AUTH_TIMEOUT-1
+        );
         $this->authService
             ->shouldReceive('hasIdentity')
             ->andReturn(true);
