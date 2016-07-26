@@ -170,7 +170,7 @@ class FriendResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_teacher');
         $this->dispatch('/user/english_teacher/friend', 'POST', ['friend_id' => $this->friend->getUserId()]);
-        $this->assertResponseStatusCode(422);
+        $this->assertResponseStatusCode(403);
     }
 
     /**

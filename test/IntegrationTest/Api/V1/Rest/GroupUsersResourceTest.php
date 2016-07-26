@@ -69,7 +69,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
     /**
      * @test
      */
-    public function testItShouldReturnUsersOfOtherGroup()
+    public function testItShouldNotReturnUsersOfOtherGroup()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
@@ -77,18 +77,6 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         $this->dispatch('/group/english/users');
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
-        $this->assertResponseStatusCode(200);
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('items', $body['_embedded']);
-        $groupUsers = $body['_embedded']['items'];
-        $expectedIds = ['english_teacher','english_student'];
-        $actualIds = [];
-        foreach ($groupUsers as $user) {
-            $this->assertArrayHasKey('user_id', $user);
-            $actualIds[] = $user['user_id'];
-        }
-        $this->assertEquals($actualIds, $expectedIds);
+        $this->assertResponseStatusCode(403);
     }
 }

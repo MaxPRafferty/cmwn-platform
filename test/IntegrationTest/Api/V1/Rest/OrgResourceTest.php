@@ -75,33 +75,19 @@ class OrgResourceTest extends TestCase
 
     /**
      * @test
+     * @dataProvider userDataProvider
      */
-    public function testItShould404FetchOrg()
+    public function testItShouldCheckFetchOrgOnInvalidOrg($user, $code)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($user);
 
         $this->dispatch('/org/foo');
         $this->assertMatchedRouteName('api.rest.org');
         $this->assertControllerName('api\v1\rest\org\controller');
-        $this->assertResponseStatusCode(404);
+        $this->assertResponseStatusCode($code);
     }
 
-    /**
-     * @test
-     * @ticket CORE-884
-     */
-    public function testItShould403WhenUserFetchOtherOrg()
-    {
-        $this->markTestIncomplete("");
-        $this->injectValidCsrfToken();
-        $this->logInUser('math_student');
-
-        $this->dispatch('/org/manchuck');
-        $this->assertMatchedRouteName('api.rest.org');
-        $this->assertControllerName('api\v1\rest\org\controller');
-        $this->assertResponseStatusCode(200);
-    }
     /**
      * @test
      */
@@ -128,6 +114,21 @@ class OrgResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-884
+     */
+    public function testItShould403WhenUserFetchOtherOrg()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('math_student');
+
+        $this->dispatch('/org/manchuck');
+        $this->assertMatchedRouteName('api.rest.org');
+        $this->assertControllerName('api\v1\rest\org\controller');
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
      */
     public function testItShouldFetchTheirOrgForOthers()
     {
@@ -137,17 +138,7 @@ class OrgResourceTest extends TestCase
         $this->dispatch('/org');
         $this->assertMatchedRouteName('api.rest.org');
         $this->assertControllerName('api\v1\rest\org\controller');
-        $this->assertResponseStatusCode(200);
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('org', $body['_embedded']);
-        $expectedIds = ['district'];
-        foreach ($body['_embedded']['org'] as $org) {
-            $this->assertArrayHasKey('org_id', $org);
-            $actualIds[] = $org['org_id'];
-        }
-        $this->assertEquals($expectedIds, $actualIds);
+        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -264,5 +255,22 @@ class OrgResourceTest extends TestCase
         $this->assertEquals('new organization', $newOrg['description']);
         $this->assertEquals('district', $newOrg['type']);
         $this->assertEquals([], $newOrg['meta']);
+    }
+
+    /**
+     * @return array
+     */
+    public function userDataProvider()
+    {
+        return [
+            'English student' => [
+                'english_student',
+                403
+            ],
+            'English Teacher' => [
+                'english_teacher',
+                404
+            ],
+        ];
     }
 }

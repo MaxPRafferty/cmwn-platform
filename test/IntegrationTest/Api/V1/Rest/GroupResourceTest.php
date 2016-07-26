@@ -188,29 +188,30 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      */
-    public function testItShould404WhenGroupWhichUserIsNotInIsAccessed()
+    public function testItShould403WhenGroupWhichUserIsNotInIsAccessed()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
 
-        $this->dispatch('/group/manchuck');
+        $this->dispatch('/group/other_math');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
-        $this->assertResponseStatusCode(404);
+        $this->assertResponseStatusCode(403);
     }
 
     /**
      * @test
+     * @dataProvider userDataProvider
      */
-    public function testItShould404WhenInvalidGroupIsAccessed()
+    public function testItShouldCheckWhenInvalidGroupIsAccessed($user, $code)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($user);
 
         $this->dispatch('/group/foobar');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
-        $this->assertResponseStatusCode(404);
+        $this->assertResponseStatusCode($code);
     }
 
     /**
@@ -371,5 +372,22 @@ class GroupResourceTest extends TestCase
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @return array
+     */
+    public function userDataProvider()
+    {
+        return [
+            'English student' => [
+                'english_student',
+                404
+            ],
+            'English Teacher' => [
+                'english_teacher',
+                404
+            ],
+        ];
     }
 }

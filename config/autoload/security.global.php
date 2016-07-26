@@ -29,7 +29,7 @@ return [
                 'PUT'  => ['edit.user.child', 'edit.user.adult'],
             ],
             'api.rest.org'             => [
-                'GET'    => 'view.org',
+                'GET'    => ['view.org', 'view.user.orgs'],
                 'POST'   => 'create.org',
                 'PUT'    => 'edit.org',
                 'DELETE' => 'delete.org',
@@ -38,7 +38,7 @@ return [
                 'GET' => 'view.games',
             ],
             'api.rest.group'           => [
-                'GET'    => 'view.group',
+                'GET'    => ['view.group', 'view.user.groups'],
                 'POST'   => 'create.group',
                 'PUT'    => 'edit.group',
                 'DELETE' => 'remote.group',
