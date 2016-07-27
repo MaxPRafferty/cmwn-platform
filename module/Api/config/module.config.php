@@ -50,12 +50,14 @@ return array(
             'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
             'Api\\V1\\Rest\\Reset\\ResetResource' => 'Api\\V1\\Rest\\Reset\\ResetResourceFactory',
-            'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource' => 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResourceFactory',
+            'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource' =>
+                'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResourceFactory',
             'Api\\V1\\Rest\\SaveGame\\SaveGameResource' => 'Api\\V1\\Rest\\SaveGame\\SaveGameResourceFactory',
             'Api\\Listeners\\GameRouteListener' => 'Api\\Factory\\GameRouteListenerFactory',
             'Api\\V1\\Rest\\Media\\MediaResource' => 'Api\\V1\\Rest\\Media\\MediaResourceFactory',
             'Api\\V1\\Rest\\Skribble\\SkribbleResource' => 'Api\\V1\\Rest\\Skribble\\SkribbleResourceFactory',
-            'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource' => 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
+            'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource' =>
+                'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
         ),
     ),
     'router' => array(

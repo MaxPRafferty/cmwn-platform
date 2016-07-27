@@ -31,7 +31,7 @@ class SnsJobServiceAbstractFactory implements AbstractFactoryInterface
 
         /** @var Sdk $aws */
         $aws       = $serviceLocator->get(Sdk::class);
-        $sqsClient = $aws->createSns(['version' => 'latest']);
+        $sqsClient = $aws->createSns(['version' => 'latest', 'region' => 'us-east-1']);
 
         return new SnsJobService($sqsClient, $snsArn);
     }
