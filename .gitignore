@@ -24,3 +24,5 @@ _cache
 wercker.env
 .wercker
 docker-compose.yml
+**/*.swp
+

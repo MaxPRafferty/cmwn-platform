@@ -19,6 +19,8 @@
       },
       "mime_type": "application/javascript",
       "src": "https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349.js",
+      "thumb": "https://media.changemyworldnow.com/f/70116370973",
+      "order": 1,
       "asset_type": "effect",
       "name": "Explosions",
       "can_overlap": false
@@ -32,6 +34,8 @@
       },
       "mime_type": "audio/mpeg",
       "src": "https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349.mp3",
+      "thumb": "https://media.changemyworldnow.com/f/70116370973",
+      "order": 2,
       "asset_type": "sound",
       "name": "Woo-Hoo",
       "can_overlap": false
@@ -44,6 +48,8 @@
       },
       "mime_type": "image/png",
       "src": "https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349",
+      "thumb": "https://media.changemyworldnow.com/f/70116370973",
+      "order": 3,
       "media_id": "82dd5620-df30-11e5-a52e-0800274877349",
       "asset_type": "background",
       "name": "Happy Trees",
@@ -61,6 +67,8 @@
           "value": "05735b54100ea1c1054da594550792c4f1c36fc5"
         },
         "src": "https://media.changemyworldnow.com/f/70116576425",
+        "thumb": "https://media.changemyworldnow.com/f/70116370973",
+        "order": 1,
         "mime_type": "image/png",
         "state": {
           "left": "100.83125707814269",
@@ -100,6 +108,8 @@
           "value": "05735b54100ea1c1054da594550792c4f1c36fc5"
         },
         "src": "https://media.changemyworldnow.com/f/70116576425",
+        "thumb": "https://media.changemyworldnow.com/f/70116370973",
+        "order": 1,
         "mime_type": "image/png",
         "state": {
           "left": "-291.37032842582107",
@@ -139,6 +149,8 @@
           "value": "05735b54100ea1c1054da594550792c4f1c36fc5"
         },
         "src": "https://media.changemyworldnow.com/f/70116576425",
+        "thumb": "https://media.changemyworldnow.com/f/70116370973",
+        "order": 1,
         "mime_type": "image/png",
         "state": {
           "left": "235.92298980747452",
@@ -180,6 +192,8 @@
           "value": "f3b0c6106a36a0561fc2a90ed964fda51dec513d"
         },
         "src": "https://media.changemyworldnow.com/f/70116370973",
+        "thumb": "https://media.changemyworldnow.com/f/70116370973",
+        "order": 1,
         "mime_type": "image/png",
         "state": {
           "left": "163.08040770101925",
@@ -219,6 +233,8 @@
           "value": "f3b0c6106a36a0561fc2a90ed964fda51dec513d"
         },
         "src": "https://media.changemyworldnow.com/f/70116370973",
+        "thumb": "https://media.changemyworldnow.com/f/70116370973",
+        "order": 1,
         "mime_type": "image/png",
         "state": {
           "left": "-16.30804077010192",
