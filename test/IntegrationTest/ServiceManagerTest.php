@@ -31,7 +31,8 @@ class ServiceManagerTest extends TestCase
         'ZF\OAuth2\Adapter\MongoAdapter',
         'Zend\Session\SessionManager',
         'AwsModule\Session\SaveHandler\DynamoDb',
-        'Log\App'
+        'Log\App',
+        'ZF\Configuration\ConfigResource'
     ];
 
     /**
@@ -98,5 +99,4 @@ class ServiceManagerTest extends TestCase
 
         $this->assertTrue(true);
     }
-
 }
