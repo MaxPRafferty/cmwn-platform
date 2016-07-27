@@ -33,6 +33,8 @@ class MediaTest extends TestCase
                 "value": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
             },
             "src": "https://media.changemyworldnow.com/f/70116569037",
+            "thumb": "https://media.changemyworldnow.com/f/70116569037",
+            "order": 1,
             "mime_type": "image/png",
             "name": "A Cool Image"
         }';
@@ -48,6 +50,8 @@ class MediaTest extends TestCase
             ],
             'mime_type'   => 'image/png',
             'src'         => 'https://media.changemyworldnow.com/f/70116569037',
+            'thumb'       => 'https://media.changemyworldnow.com/f/70116569037',
+            'order'       => 1,
             'name'        => 'A Cool Image',
             'type'        => 'file',
         ];
@@ -74,6 +78,8 @@ class MediaTest extends TestCase
             ],
             'mime_type'   => 'image/png',
             'src'         => 'https://media.changemyworldnow.com/f/82dd5620-df30-11e5-a52e-0800274877349',
+            'thumb'       => 'https://media.changemyworldnow.com/f/70116569037',
+            'order'       => 1,
             'name'        => 'A Cool Image',
             'type'        => 'file',
         ];
