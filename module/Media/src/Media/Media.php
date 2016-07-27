@@ -15,6 +15,11 @@ class Media implements MediaInterface
     protected $name;
 
     /**
+     * @var int
+     */
+    protected $order;
+
+    /**
      * @var string
      */
     protected $assetType;
@@ -28,6 +33,11 @@ class Media implements MediaInterface
      * @var string
      */
     protected $src;
+
+    /**
+     * @var string
+     */
+    protected $thumb;
 
     /**
      * @var string
@@ -82,6 +92,8 @@ class Media implements MediaInterface
             'check_value' => null,
             'mime_type'   => null,
             'src'         => null,
+            'thumb'       => null,
+            'order'       => null,
             'name'        => null,
             'type'        => null,
         ];
@@ -121,6 +133,8 @@ class Media implements MediaInterface
                 'src'        => $this->getSrc(),
                 'name'       => $this->getName(),
                 'type'       => $this->getType(),
+                'thumb'      => $this->getThumb(),
+                'order'      => $this->getOrder(),
             ]
         );
     }
@@ -225,6 +239,22 @@ class Media implements MediaInterface
     }
 
     /**
+     * @return string
+     */
+    public function getThumb()
+    {
+        return $this->thumb;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
      * @param string $url
      *
      * @return MediaInterface
@@ -232,6 +262,30 @@ class Media implements MediaInterface
     public function setSrc($url)
     {
         $this->src = $url;
+
+        return $this;
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return MediaInterface
+     */
+    public function setThumb($url)
+    {
+        $this->thumb = $url;
+
+        return $this;
+    }
+
+    /**
+     * @param int $order
+     *
+     * @return MediaInterface
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
 
         return $this;
     }
