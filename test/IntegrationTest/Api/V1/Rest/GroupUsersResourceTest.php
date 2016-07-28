@@ -8,18 +8,20 @@ use Zend\Json\Json;
 
 /**
  * Test GroupUsersResourceTest
+ *
  * @group DB
  * @group UserGroup
  */
-
 class GroupUsersResourceTest extends AbstractApigilityTestCase
 {
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -58,13 +60,20 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
 
     /**
      * @test
+     *
+     * @param $user
+     * @param $group
+     * @param $expectedIds
+     *
+     * @ticket       CORE-1059
+     * @dataProvider userDataProvider
      */
-    public function testItShouldReturnUsersOfHisGroup()
+    public function testItShouldReturnUsersOfHisGroup($user, $group, $expectedIds)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('math_student');
+        $this->logInUser($user);
 
-        $this->dispatch('/group/math/users');
+        $this->dispatch('/group/' . $group . '/users');
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
         $this->assertResponseStatusCode(200);
@@ -73,8 +82,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('items', $body['_embedded']);
         $groupUsers = $body['_embedded']['items'];
-        $expectedIds = ['math_teacher'];
-        $actualIds = [];
+        $actualIds  = [];
         foreach ($groupUsers as $user) {
             $this->assertArrayHasKey('user_id', $user);
             $actualIds[] = $user['user_id'];
@@ -104,7 +112,23 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         return [
             0 => [
                 'english_student',
-                '/group/school/users'
+                '/group/school/users',
+            ],
+        ];
+    }
+
+    public function userDataProvider()
+    {
+        return [
+            'math student' => [
+                'math_student',
+                'math',
+                ['math_teacher'],
+            ],
+            'principal'    => [
+                'principal',
+                'school',
+                ['english_teacher', 'english_student', 'math_teacher', 'math_student'],
             ],
         ];
     }
