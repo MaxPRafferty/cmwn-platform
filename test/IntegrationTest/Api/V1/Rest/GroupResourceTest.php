@@ -131,6 +131,32 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1060
+     */
+    public function testItShouldReturnValidGroupsForPrincipal()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('principal');
+        $this->dispatch('/group');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('group', $body['_embedded']);
+        $groups = $body['_embedded']['group'];
+        $expectedIds = ['english', 'school', 'math'];
+        $actualIds = [];
+        foreach ($groups as $group) {
+            $this->assertArrayHasKey('group_id', $group);
+            $actualIds[] = $group['group_id'];
+        }
+        $this->assertEquals($actualIds, $expectedIds);
+    }
+
+    /**
+     * @test
      */
     public function testItShouldCheckCsrfToReturnSchoolForUser()
     {
