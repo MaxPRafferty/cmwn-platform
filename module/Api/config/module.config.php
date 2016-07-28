@@ -1482,6 +1482,14 @@ return array(
                 'description' => 'Meta data for the group',
                 'error_message' => 'Invalid Meta data',
             ),
+            4 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'type',
+                'description' => 'type of the group',
+                'error_message' => 'Invalid group type',
+            ),
         ),
         'Api\\V1\\Rest\\Login\\Validator' => array(
             0 => array(

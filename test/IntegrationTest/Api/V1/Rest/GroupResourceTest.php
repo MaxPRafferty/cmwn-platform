@@ -245,6 +245,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         );
         $this->dispatch('/group', POST, $postData);
@@ -265,6 +266,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         );
         $this->dispatch('/group', 'POST', $postData);
@@ -293,6 +295,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         );
         $this->dispatch('/group', 'POST', $postData);
@@ -347,6 +350,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
@@ -365,6 +369,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
@@ -388,6 +393,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
@@ -462,6 +468,7 @@ class GroupResourceTest extends TestCase
                     'organization_id' => 'district',
                     'title' => 'Joni School',
                     'description' => 'this is new school',
+                    'type' => 'school',
                     'meta' => null,
                 ]
             ],
@@ -473,6 +480,7 @@ class GroupResourceTest extends TestCase
                     'organization_id' => 'district',
                     'title' => 'Joni School',
                     'description' => 'this is new school',
+                    'type' => 'school',
                     'meta' => null,
                 ]
             ],
