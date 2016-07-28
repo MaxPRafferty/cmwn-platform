@@ -401,8 +401,26 @@ class GroupResourceTest extends TestCase
     }
 
     /**
-<<<<<<< HEAD
      * @test
+     * @test
+     * @ticket CORE-1061
+     */
+    public function testItShouldNotLetPrincipalUpdateOtherGroup()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('principal');
+
+        $putData = [
+            'organization_id' => 'district',
+            'title' => 'Joni School',
+            'description' => 'this is new school',
+            'meta' => null,
+        ];
+        $this->dispatch('/group/other_school', 'PUT', $putData);
+        $this->assertResponseStatusCode(403);
+    }
+
+    /* @test
      * @ticket CORE-1062
      */
     public function testItShouldFetchChildGroups()
@@ -433,21 +451,6 @@ class GroupResourceTest extends TestCase
         }
 
         $this->assertEquals($expectedGroupIds, $actualGroupIds);
-    }
-
-    /**
-     * @return array
-     */
-    public function schoolUserDataProvider()
-    {
-        return [
-            'English Teacher' => [
-                'english_teacher'
-                ],
-            'English Student' => [
-                'english_student'
-                ]
-         ];
     }
 
     /**
@@ -494,6 +497,21 @@ class GroupResourceTest extends TestCase
                 '/group/school',
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function schoolUserDataProvider()
+    {
+        return [
+            'English Teacher' => [
+                'english_teacher'
+                ],
+            'English Student' => [
+                'english_student'
+                ]
+         ];
     }
 
     /**
