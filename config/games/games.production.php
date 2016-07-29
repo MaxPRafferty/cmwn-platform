@@ -32,11 +32,12 @@ $gameOnProduction = [
 
 $comingSoonGames = [
     'be-bright',
+    'carbon-catcher',
     'drought-out',
     'fire',
     'happy-fish-face',
     'monarch',
-    'pedal-pusher',
+    'polar-bear',
     'printmaster',
     'sea-turtle',
     'tag-it',
