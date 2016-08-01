@@ -11,6 +11,7 @@ use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
@@ -74,6 +75,7 @@ class SkribbleService implements SkribbleServiceInterface
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
         $where->addPredicate(new Operator('friend_to', '=', $userId));
+        $where->addPredicate(new Operator('status', '=', SkribbleInterface::STATUS_COMPLETE));
 
         return $this->buildAdapter($where, $prototype);
     }
@@ -91,8 +93,12 @@ class SkribbleService implements SkribbleServiceInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
-        $where->addPredicate(new Operator('status', '=', SkribbleInterface::STATUS_COMPLETE));
+        $status = new PredicateSet();
+        $status->orPredicate(new Operator('status', '=', SkribbleInterface::STATUS_COMPLETE));
+        $status->orPredicate(new Operator('status', '=', SkribbleInterface::STATUS_PROCESSING));
+
         $where->addPredicate(new Operator('created_by', '=', $userId));
+        $where->addPredicate($status);
 
         return $this->buildAdapter($where, $prototype);
     }
@@ -234,6 +240,8 @@ class SkribbleService implements SkribbleServiceInterface
         $select = new Select(['s' => $this->gateway->getTable()]);
         $select->where($where);
 
+//        $sql = new \Zend\Db\Sql\Sql($this->gateway->getAdapter());
+//        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->gateway->getAdapter(),
