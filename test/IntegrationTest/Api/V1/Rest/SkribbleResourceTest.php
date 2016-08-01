@@ -245,7 +245,64 @@ class SkribbleResourceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldFetchSkribble()
+    public function testItShouldFetchCompletedSkribble()
+    {
+        $this->logInUser('english_student');
+        $this->injectValidCsrfToken();
+        $this->dispatch('/user/english_student/skribble/baz-bat');
+
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.skribble');
+        $this->assertControllerName('api\v1\rest\skribble\controller');
+
+
+        $body = $this->getResponse()->getContent();
+
+        try {
+            $decoded = Json::decode($body, Json::TYPE_ARRAY);
+        } catch (\Exception $jsonException) {
+            $this->fail('Error Decoding Skribble Response');
+
+            return;
+        }
+
+        $this->assertArrayHasKey(
+            'skribble_id',
+            $decoded,
+            'Skribble ID missing from skribble'
+        );
+
+        $this->assertEquals('baz-bat', $decoded['skribble_id'], 'GET on skribble did not return back correct skribble');
+
+        $this->assertArrayHasKey(
+            'friend_to',
+            $decoded,
+            'friend_to missing from skirbble'
+        );
+
+        $this->assertEquals(
+            'math_student',
+            $decoded['friend_to'],
+            'GET on skribble did not return back correct friend'
+        );
+
+        $this->assertArrayHasKey(
+            'status',
+            $decoded,
+            'status missing from skribble'
+        );
+
+        $this->assertEquals(
+            'COMPLETE',
+            $decoded['status'],
+            'GET on skribble did not return back correct status'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchNonCompletedSkribble()
     {
         $this->logInUser('english_student');
         $this->injectValidCsrfToken();
@@ -269,10 +326,33 @@ class SkribbleResourceTest extends TestCase
         $this->assertArrayHasKey(
             'skribble_id',
             $decoded,
-            'Invalid Response from API;'
+            'Skribble ID missing from skribble'
         );
 
-        $this->assertEquals('foo-bar', $decoded['skribble_id']);
+        $this->assertEquals('foo-bar', $decoded['skribble_id'], 'GET on skribble did not return back correct skribble');
+
+        $this->assertArrayHasKey(
+            'friend_to',
+            $decoded,
+            'friend_to missing from skirbble'
+        );
+
+        $this->assertNull(
+            $decoded['friend_to'],
+            'GET on skribble did not return back correct friend'
+        );
+
+        $this->assertArrayHasKey(
+            'status',
+            $decoded,
+            'status missing from skribble'
+        );
+
+        $this->assertEquals(
+            'NOT_COMPLETE',
+            $decoded['status'],
+            'GET on skribble did not return back correct status'
+        );
     }
 
     /**
@@ -366,7 +446,7 @@ class SkribbleResourceTest extends TestCase
             'url'         => null,
             'status'      => 'NOT_COMPLETE',
             'friend_to'   => null,
-            'read'        => false,
+            'read'        => 0,
             'rules'       => [
                 'background' => null,
                 'effect'     => null,
@@ -413,7 +493,6 @@ class SkribbleResourceTest extends TestCase
             'url'         => null,
             'status'      => 'NOT_COMPLETE',
             'friend_to'   => 'math_student',
-            'read'        => false,
             'rules'       => [
                 'background' => null,
                 'effect'     => null,
@@ -469,7 +548,6 @@ class SkribbleResourceTest extends TestCase
             'url'         => null,
             'status'      => 'NOT_COMPLETE',
             'friend_to'   => 'math_student',
-            'read'        => false,
             'rules'       => [
                 'background' => null,
                 'effect'     => null,
@@ -531,5 +609,86 @@ class SkribbleResourceTest extends TestCase
 
         $this->setExpectedException(NotFoundException::class);
         $this->skribbleService->fetchSkribble('foo-bar');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldUpdateSkribbleAsRead()
+    {
+        $this->logInUser('english_student');
+        $this->injectValidCsrfToken();
+        $this->dispatch('/user/english_student/skribble/foo-bar', 'PATCH', ['read' => 0]);
+
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.skribble');
+        $this->assertControllerName('api\v1\rest\skribble\controller');
+
+        $body = $this->getResponse()->getContent();
+
+        try {
+            $decoded = Json::decode($body, Json::TYPE_ARRAY);
+        } catch (\Exception $jsonException) {
+            $this->fail('Error Decoding Skribble Response');
+
+            return;
+        }
+
+        $this->assertArrayHasKey(
+            'skribble_id',
+            $decoded,
+            'Invalid Response from API;'
+        );
+
+        $this->assertEquals('foo-bar', $decoded['skribble_id'], 'Skribble ID was not marked as read');
+        $changed = $this->skribbleService->fetchSkribble($decoded['skribble_id']);
+        $this->assertTrue(
+            $changed->isRead(),
+            'API did not PATCH the skribble to be marked as read'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldReturnBackReadOnlySkribbles()
+    {
+        $expectedIds = ['fizz-buzz'];
+        $this->logInUser('math_student');
+        $this->injectValidCsrfToken();
+        $this->dispatch('/user/math_student/skribble?read=true');
+
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.skribble');
+        $this->assertControllerName('api\v1\rest\skribble\controller');
+
+        $body = $this->getResponse()->getContent();
+
+        try {
+            $decoded = Json::decode($body, Json::TYPE_ARRAY);
+        } catch (\Exception $jsonException) {
+            $this->fail('Error Decoding Skribble Response');
+
+            return;
+        }
+
+        $this->assertArrayHasKey(
+            '_embedded',
+            $decoded,
+            'Invalid Response from API;'
+        );
+
+        $embedded = $decoded['_embedded'];
+        $this->assertArrayHasKey('skribble', $embedded, 'Embedded does not contain any skribbles');
+
+        $actualIds = [];
+        foreach ($embedded['skribble'] as $skribble) {
+            $actualSkribble = new Skribble($skribble);
+            $actualIds[]    = $actualSkribble->getSkribbleId();
+        }
+
+        sort($expectedIds);
+        sort($actualIds);
+        $this->assertEquals($expectedIds, $actualIds, 'Api Did not Return Correct Sent Skribbles');
     }
 }

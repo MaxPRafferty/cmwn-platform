@@ -227,12 +227,12 @@ class SkribbleService implements SkribbleServiceInterface
     /**
      * Helper to build the pagination adapter
      *
-     * @param Where $where
+     * @param PredicateSet $where
      * @param null $prototype
      *
      * @return DbSelect
      */
-    protected function buildAdapter(Where $where, $prototype = null)
+    protected function buildAdapter(PredicateSet $where, $prototype = null)
     {
         $prototype = $prototype === null ? new Skribble() : $prototype;
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);

@@ -98,22 +98,23 @@ class SkribbleResource extends AbstractResourceListener
     {
         $user = $this->getEvent()->getRouteParam('user');
         $type = isset($params['status']) ? $params['status'] : 'all';
+        $read = isset($params['read']) ? ['read' => 1] : [];
 
         switch ($type) {
             case 'all':
-                $adapter = $this->service->fetchAllForUser($user, null, new SkribbleEntity());
+                $adapter = $this->service->fetchAllForUser($user, $read, new SkribbleEntity());
                 break;
 
             case 'sent':
-                $adapter = $this->service->fetchSentForUser($user, null, new SkribbleEntity());
+                $adapter = $this->service->fetchSentForUser($user, $read, new SkribbleEntity());
                 break;
 
             case 'received':
-                $adapter = $this->service->fetchReceivedForUser($user, null, new SkribbleEntity());
+                $adapter = $this->service->fetchReceivedForUser($user, $read, new SkribbleEntity());
                 break;
 
             case 'draft':
-                $adapter = $this->service->fetchDraftForUser($user, null, new SkribbleEntity());
+                $adapter = $this->service->fetchDraftForUser($user, $read, new SkribbleEntity());
                 break;
 
             default:
@@ -142,6 +143,21 @@ class SkribbleResource extends AbstractResourceListener
         $this->service->updateSkribble($skribble);
 
         $this->skrambleSkribble($skribbleEntity);
+        return $skribbleEntity;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function patch($skribbleId, $data)
+    {
+        $skribbleEntity = $this->fetch($skribbleId);
+        $skribbleEntity->setRead(true);
+
+        // Only save Skribbles to the DB not Skribble Entities
+        $skribble = new Skribble($skribbleEntity->getArrayCopy());
+        $this->service->updateSkribble($skribble);
+
         return $skribbleEntity;
     }
 

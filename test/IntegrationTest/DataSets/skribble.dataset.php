@@ -127,7 +127,7 @@ return [
             'status'      => 'COMPLETE',
             'created_by'  => 'manchuck',
             'friend_to'   => 'math_student',
-            'read'        => 0,
+            'read'        => 1,
             'rules'       => '[]',
         ],
     ],
