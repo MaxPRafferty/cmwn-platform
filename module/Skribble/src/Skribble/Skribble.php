@@ -219,7 +219,7 @@ class Skribble implements SkribbleInterface
     public function setFriendTo($friendTo)
     {
         // Friend to needs to be idempotent
-        if ($this->friendTo !== null && !empty($friendTo)) {
+        if (!empty($this->friendTo)) {
             return;
         }
 

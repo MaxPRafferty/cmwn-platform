@@ -6,12 +6,12 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use Skribble\Service\SkribbleService;
 use Skribble\Skribble;
-use Skribble\SkribbleInterface;
 use User\Child;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Hydrator\ArraySerializable;
@@ -270,6 +270,7 @@ class SkribbleServiceTest extends TestCase
     {
         $where = new Where();
         $where->addPredicate(new Operator('friend_to', '=', 'baz-bat'));
+        $where->addPredicate(new Operator('status', '=', 'COMPLETE'));
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
 
@@ -291,9 +292,14 @@ class SkribbleServiceTest extends TestCase
      */
     public function testItShouldFetchAllSentSkribblesForUser()
     {
-        $where = new Where();
-        $where->addPredicate(new Operator('status', '=', 'COMPLETE'));
+        $where  = new Where();
+        $status = new PredicateSet();
+        $status->orPredicate(new Operator('status', '=', 'COMPLETE'));
+        $status->orPredicate(new Operator('status', '=', 'PROCESSING'));
+
         $where->addPredicate(new Operator('created_by', '=', 'baz-bat'));
+        $where->addPredicate($status);
+
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
 

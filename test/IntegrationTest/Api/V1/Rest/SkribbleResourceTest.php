@@ -56,7 +56,7 @@ class SkribbleResourceTest extends TestCase
      */
     public function testItShouldFetchAllForSkribble()
     {
-        $expectedIds = ['foo-bar', 'baz-bat'];
+        $expectedIds = ['foo-bar', 'baz-bat', 'qux-thud'];
         $this->logInUser('english_student');
         $this->injectValidCsrfToken();
         $this->dispatch('/user/english_student/skribble');
@@ -100,7 +100,7 @@ class SkribbleResourceTest extends TestCase
      */
     public function testItShouldFetchAllSentForSkribble()
     {
-        $expectedIds = ['baz-bat'];
+        $expectedIds = ['baz-bat', 'qux-thud'];
         $this->logInUser('english_student');
         $this->injectValidCsrfToken();
         $this->dispatch('/user/english_student/skribble?status=sent');

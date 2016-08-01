@@ -88,8 +88,22 @@ return [
             'read'        => 0,
             'rules'       => '[]',
         ],
-        // sent to math_student and received for math_student
+        // sent but processing for english_student
         1 => [
+            'skribble_id' => 'qux-thud',
+            'version'     => '1',
+            'url'         => 'https://media.changemyworldnow.com/f/abcdef',
+            'created'     => '2016-04-27 10:48:44',
+            'updated'     => '2016-04-27 10:48:46',
+            'deleted'     => null,
+            'status'      => 'PROCESSING',
+            'created_by'  => 'english_student',
+            'friend_to'   => 'math_student',
+            'read'        => 0,
+            'rules'       => '[]',
+        ],
+        // sent to math_student and received for math_student
+        2 => [
             'skribble_id' => 'baz-bat',
             'version'     => '1',
             'url'         => 'https://media.changemyworldnow.com/f/abcdef',
@@ -103,7 +117,7 @@ return [
             'rules'       => '[]',
         ],
         // sent by manchuck
-        2 => [
+        3 => [
             'skribble_id' => 'fizz-buzz',
             'version'     => '1',
             'url'         => 'https://media.changemyworldnow.com/f/abcdef',
