@@ -20,9 +20,8 @@ use ZF\ApiProblem\ApiProblemResponse;
  * @group Session
  * @group Authentication
  */
-class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInterface
+class ExpireAuthSessionListenerTest extends TestCase
 {
-    use NoopLoggerAwareTrait;
 
     /**
      * @var Container
@@ -62,7 +61,6 @@ class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInter
         $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
         $this->listener = new ExpireAuthSessionListener($this->container);
         $this->listener->setAuthenticationService($this->authService);
-        $this->listener->setLogger($this->getLogger());
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Security\Listeners;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -22,7 +23,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
     use AuthenticationServiceAwareTrait;
-    use LoggerAwareTrait;
+    use NoopLoggerAwareTrait;
 
     /**
      * How many seconds to keep an authenticated session active
