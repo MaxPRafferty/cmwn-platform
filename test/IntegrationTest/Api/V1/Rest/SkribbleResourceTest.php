@@ -446,7 +446,7 @@ class SkribbleResourceTest extends TestCase
             'url'         => null,
             'status'      => 'NOT_COMPLETE',
             'friend_to'   => null,
-            'read'        => 0,
+            'read'        => false,
             'rules'       => [
                 'background' => null,
                 'effect'     => null,

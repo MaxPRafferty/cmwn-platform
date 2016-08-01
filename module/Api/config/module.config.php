@@ -1913,8 +1913,26 @@ return array(
             ),
             3 => array(
                 'required' => false,
-                'validators' => array(),
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 0,
+                                1 => 1,
+                            ),
+                        ),
+                    ),
+                ),
                 'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\Boolean',
+                        'options' => array('type' => 'all'),
+                    ),
+                    1 => array(
+                        'name' => 'Zend\\Filter\\ToInt',
+                        'options' => array(),
+                    ),
                 ),
                 'name' => 'read',
                 'description' => 'The Read flag',
