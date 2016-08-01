@@ -298,7 +298,7 @@ class SkribbleServiceTest extends TestCase
                 'status'      => 'COMPLETE',
                 'created_by'  => 'manchuck',
                 'friend_to'   => 'math_student',
-                'read'        => false,
+                'read'        => true,
                 'rules'       => [
                     'background' => null,
                     'effect'     => null,

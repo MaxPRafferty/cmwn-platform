@@ -756,6 +756,7 @@ return array(
                 0 => 'page',
                 1 => 'per_page',
                 2 => 'status',
+                3 => 'read',
             ),
             'page_size' => 25,
             'page_size_param' => null,
@@ -1907,6 +1908,15 @@ return array(
                 'name' => 'friend_to',
                 'description' => 'The Friend to send this message to',
                 'error_message' => 'Invalid Friend To',
+            ),
+            3 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(
+                ),
+                'name' => 'read',
+                'description' => 'The Read flag',
+                'error_message' => 'Invalid read flag',
             ),
         ),
         'Api\\V1\\Rest\\SkribbleNotify\\Validator' => array(
