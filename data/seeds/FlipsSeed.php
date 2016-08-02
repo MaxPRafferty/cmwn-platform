@@ -85,6 +85,12 @@ class FlipsSeed extends AbstractSeed
             "description" => "Find out how a fish feels! Get the scoop on water pollution and have fun doing it! Grab a net - we're cleaning up!",
         ];
 
+        $flips[] = [
+            "flip_id"     => "all-about-you",
+            "title"       => "All About You",
+            "description" => "This survey is All About You: your favorite things, what makes you happy or sad, and a lot more!",
+        ];
+
         /*
          * unity flips
          */

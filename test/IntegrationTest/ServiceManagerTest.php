@@ -32,7 +32,7 @@ class ServiceManagerTest extends TestCase
         'Zend\Session\SessionManager',
         'AwsModule\Session\SaveHandler\DynamoDb',
         'Log\App',
-        'ZF\Configuration\ConfigResource'
+        'ZF\Configuration\ConfigResource',
     ];
 
     /**
