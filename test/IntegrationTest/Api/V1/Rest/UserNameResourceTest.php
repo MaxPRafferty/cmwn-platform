@@ -38,6 +38,34 @@ class UserNameResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user-name');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionForPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user-name', 'POST', ['user_name' => 'active-alligator']);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldGenerateRandomName()
     {
         $this->logInUser('english_student');

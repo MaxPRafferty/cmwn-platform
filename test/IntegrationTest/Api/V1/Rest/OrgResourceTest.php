@@ -3,6 +3,7 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 use IntegrationTest\TestHelper;
 use Org\Service\OrganizationServiceInterface;
@@ -33,6 +34,94 @@ class OrgResourceTest extends TestCase
     public function setUpUserService()
     {
         $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/org');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('super_user');
+        $this->dispatch(
+            '/org',
+            POST,
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionDelete()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('super_user');
+        $this->dispatch('/org/district', DELETE);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPut()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('super_user');
+        $this->dispatch(
+            '/org/district',
+            PUT,
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionOrgId()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/org/district');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
     }
 
     /**

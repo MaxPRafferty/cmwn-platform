@@ -34,6 +34,20 @@ class FlipUserResourceTest extends TestCase
 
     /**
      * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('math_student');
+        $this->dispatch('/user/math_student/flip', 'POST', ['flip_id' => 'polar-bear']);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
      * @dataProvider validUserDataProvider
      * @ticket CORE-773
      */

@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
+use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**
@@ -49,6 +50,86 @@ class GroupResourceTest extends TestCase
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/group');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('super_user');
+
+        $postData = array(
+            'organization_id' => 'district',
+            'title' => 'Joni School',
+            'description' => 'this is new school',
+            'meta' => null,
+        );
+        $this->dispatch('/group', POST, $postData);
+        $this->assertResponseStatusCode(401);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionPut()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('super_user');
+        $putData = [
+            'organization_id' => 'district',
+            'title' => 'Joni School',
+            'description' => 'this is new school',
+            'meta' => null,
+        ];
+        $this->dispatch('/group/school', PUT, $putData);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionDelete()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('super_user');
+        $this->dispatch('/group/school', DELETE);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionGroupId()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/group/school');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
     }
 
     /**

@@ -24,6 +24,33 @@ use Zend\Json\Json;
  */
 class UserResourceTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionForMe()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch('/user/english_student');
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
 
     /**
      * @test
@@ -125,6 +152,30 @@ class UserResourceTest extends TestCase
         sort($expectedIds);
         sort($actualIds);
         $this->assertEquals($expectedIds, $actualIds, 'Api Did not Return Correct Users for: ' . $login);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckChangePasswordExceptionForPutMe()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $putData = [
+            'first_name'  => 'Adam',
+            'last_name'   => 'Welzer',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'ADULT',
+            'username'    => 'new_username',
+            'email'       => 'adam@ginasink.com',
+            'birthdate'   => '1982-05-13',
+        ];
+        $this->dispatch('/user/english_student', 'PUT', $putData, true);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
     }
 
     /**
