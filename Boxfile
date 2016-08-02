@@ -38,6 +38,10 @@ web1:
     - zip
   php_always_populate_raw_post_data: -1
   httpd_document_root: public
+  httpd_access_log: true
+  httpd_error_log: true
+  php_error_log: true
+  php_fpm_log: true
   php_session_save_handler: redis
   php_session_save_path: "tcp://${CACHE1_HOST}:${CACHE1_PORT}"
   network_dirs:
@@ -53,6 +57,8 @@ web1:
 
 worker1:
    exec: 'php public/index.php worker --queue=default'
+   php_error_log: true
+   php_fpm_log: true
    php_extensions:
     - json
     - mbstring
