@@ -171,15 +171,7 @@ class GroupService implements GroupServiceInterface
             ['parent_group_id' => 'group_id'],
             Select::JOIN_LEFT
         );
-
-        //get child groups and parent groups for the user
-        $select->join(
-            ['parent_group' => 'groups'],
-            'parent_group.group_id = active_group.parent_id',
-            ['parent_group_id' => 'group_id'],
-            Select::JOIN_LEFT
-        );
-
+        
         $select->join(
             ['g' => 'groups'],
             new Expression(

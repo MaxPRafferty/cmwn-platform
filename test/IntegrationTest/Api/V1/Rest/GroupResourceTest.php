@@ -2,21 +2,15 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-<<<<<<< HEAD
-use IntegrationTest\AbstractApigilityTestCase as TestCase;
-=======
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
 use Zend\Json\Json;
 
 /**
  * Test GroupResourceTest
  * @group DB
-<<<<<<< HEAD
-=======
  * @group Group
  * @group GroupService
  * @group Api
@@ -25,15 +19,12 @@ use Zend\Json\Json;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
  */
 class GroupResourceTest extends TestCase
 {
     /**
-<<<<<<< HEAD
      * @test
      * @ticket core-864
-=======
      * @var GroupServiceInterface
      */
     protected $groupService;
@@ -98,7 +89,6 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-864
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
      */
     public function testItShouldReturnValidGroups()
     {
@@ -114,11 +104,7 @@ class GroupResourceTest extends TestCase
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('group', $body['_embedded']);
         $groups = $body['_embedded']['group'];
-<<<<<<< HEAD
-        $expectedIds = ['english','school'];
-=======
         $expectedIds = ['english', 'school'];
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
         $actualIds = [];
         foreach ($groups as $group) {
             $this->assertArrayHasKey('group_id', $group);
@@ -126,30 +112,17 @@ class GroupResourceTest extends TestCase
         }
         $this->assertEquals($actualIds, $expectedIds);
     }
-<<<<<<< HEAD
-    
-    /**
-     * @test
-     * @ticket core-864
-     */
-    public function testItShouldReturnSchoolForUser()
-    {
-        $this->injectValidCsrfToken();
-=======
 
     /**
      * @test
      */
     public function testItShouldCheckCsrfToReturnSchoolForUser()
     {
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
         $this->logInUser('english_student');
 
         $this->dispatch('/group?type=school');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
-<<<<<<< HEAD
-=======
         $this->assertResponseStatusCode(500);
     }
 
@@ -167,7 +140,6 @@ class GroupResourceTest extends TestCase
         $this->dispatch('/group?type=school');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
         $this->assertResponseStatusCode(200);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
@@ -182,8 +154,6 @@ class GroupResourceTest extends TestCase
         }
         $this->assertEquals($actualIds, $expectedIds);
     }
-<<<<<<< HEAD
-=======
 
     /**
      * @test
@@ -457,5 +427,4 @@ class GroupResourceTest extends TestCase
                 ]
          ];
     }
->>>>>>> 94ca63daae70a9a6d06a9f19727536378230094d
 }
