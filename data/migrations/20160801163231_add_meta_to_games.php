@@ -29,10 +29,6 @@ class AddMetaToGames extends AbstractMigration
     {
         $table = $this->table('games', ['id' => false, 'primary_key' => ['game_id']]);
 
-        if ($table->hasColumn('meta')) {
-            $table->removeColumn('meta');
-        }
-
         if (!$table->hasColumn('meta')) {
             $table->addColumn('meta', 'text', ['null' => true]);
         }
