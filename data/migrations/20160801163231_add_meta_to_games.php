@@ -31,9 +31,9 @@ class AddMetaToGames extends AbstractMigration
 
         if (!$table->hasColumn('meta')) {
             $table->addColumn('meta', 'text', ['null' => true]);
+            $table->update();
         }
 
-        $table->update();
         return null;
     }
 }
