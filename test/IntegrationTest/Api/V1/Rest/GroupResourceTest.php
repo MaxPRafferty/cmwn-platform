@@ -394,8 +394,6 @@ class GroupResourceTest extends TestCase
     }
 
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
      * @test
      * @ticket CORE-1062
      */
