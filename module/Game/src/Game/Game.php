@@ -5,6 +5,7 @@ namespace Game;
 use Application\Utils\Date\DateCreatedTrait;
 use Application\Utils\Date\DateDeletedTrait;
 use Application\Utils\Date\DateUpdatedTrait;
+use Application\Utils\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
 use Application\Utils\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
@@ -21,6 +22,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
     use DateDeletedTrait;
     use DateUpdatedTrait;
     use PropertiesTrait;
+    use MetaDataTrait;
 
     /**
      * @var string
@@ -65,6 +67,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
             'game_id'     => null,
             'title'       => null,
             'description' => null,
+            'meta'        => [],
             'created'     => null,
             'updated'     => null,
             'deleted'     => null,
@@ -96,6 +99,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
             'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
             'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
             'coming_soon' => $this->isComingSoon(),
+            'meta'        => $this->getMeta(),
         ];
     }
 
