@@ -56,7 +56,6 @@ class GroupRouteListener
             [$this, 'onDispatch'],
             PHP_INT_MAX
         );
-
     }
 
     /**

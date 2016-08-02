@@ -118,6 +118,5 @@ class SecurityUserTest extends TestCase
             $user->getRole(),
             'Security user did not return "child" for role when role is set'
         );
-
     }
 }

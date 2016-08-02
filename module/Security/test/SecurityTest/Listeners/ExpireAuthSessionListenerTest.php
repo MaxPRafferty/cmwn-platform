@@ -48,7 +48,6 @@ class ExpireAuthSessionListenerTest extends TestCase
 
         $manager = new SessionManager($config);
         $this->container = new Container('Default', $manager);
-
     }
 
     /**

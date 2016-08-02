@@ -101,7 +101,6 @@ class GroupServiceTest extends TestCase
                 $this->assertSame($expectedWhere, $where);
 
                 return new \ArrayIterator([]);
-
             })
             ->once();
 
@@ -179,7 +178,6 @@ class GroupServiceTest extends TestCase
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
-
             });
 
         $this->assertTrue($this->groupService->saveGroup($group));
@@ -315,7 +313,6 @@ class GroupServiceTest extends TestCase
             ->andReturnUsing(function ($data, $where) use (&$group) {
                 $this->assertEquals(['group_id' => $group->getGroupId()], $where);
                 $this->assertNotEmpty($data['deleted']);
-
             });
 
         $this->assertTrue($this->groupService->deleteGroup($group));
@@ -351,7 +348,6 @@ class GroupServiceTest extends TestCase
         $this->tableGateway->shouldReceive('delete')
             ->andReturnUsing(function ($where) use (&$group) {
                 $this->assertEquals(['group_id' => $group->getGroupId()], $where);
-
             });
 
         $this->assertTrue($this->groupService->deleteGroup($group, false));
@@ -404,7 +400,6 @@ class GroupServiceTest extends TestCase
                 unset($expected['depth']);
 
                 $this->assertEquals($expected, $data);
-
             })
             ->once()
             ->ordered('update');
@@ -414,7 +409,6 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals(['group_id' => $parent->getGroupId()], $where);
                 $expected = ['head' => 1, 'tail' => 4];
                 $this->assertEquals($expected, $data);
-
             })
             ->once()
             ->ordered('update');
@@ -424,7 +418,6 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals(['group_id' => $child->getGroupId()], $where);
                 $expected = ['head' => 2, 'tail' => 3];
                 $this->assertEquals($expected, $data);
-
             })
             ->once()
             ->ordered('update');
@@ -473,7 +466,6 @@ class GroupServiceTest extends TestCase
                 unset($expected['depth']);
 
                 $this->assertEquals($expected, $data);
-
             })
             ->once()
             ->ordered('update');
