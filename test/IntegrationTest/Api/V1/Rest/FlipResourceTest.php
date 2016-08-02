@@ -7,6 +7,12 @@ use Zend\Json\Json;
 
 /**
  * @group DB
+ * @group Flip
+ * @group Resource
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FlipResourceTest extends TestCase
 {
