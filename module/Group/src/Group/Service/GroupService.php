@@ -174,6 +174,13 @@ class GroupService implements GroupServiceInterface
 
         //get child groups and parent groups for the user
         $select->join(
+            ['parent_group' => 'groups'],
+            'parent_group.group_id = active_group.parent_id',
+            ['parent_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
+
+        $select->join(
             ['g' => 'groups'],
             new Expression(
                 '(g.head BETWEEN active_group.head AND active_group.tail) OR (g.group_id=parent_group.group_id)'
