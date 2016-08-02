@@ -11,19 +11,15 @@ use Application\Exception\NotFoundException;
 /**
  * Test OrgResourceTest
  * @group Org
-<<<<<<< HEAD
  * @group DB
  * @group API
  * @group Integration
  * @group OrgService
-=======
->>>>>>> 0dfec99c96d707dc4f18ed7360d38d8186f8ca23
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-
 class OrgResourceTest extends TestCase
 {
     /**
