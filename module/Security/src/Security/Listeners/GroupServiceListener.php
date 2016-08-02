@@ -37,7 +37,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
      * @var SecurityOrgService $securityOrgService
      */
     protected $securityOrgService;
-    
+
     /**
      * GroupServiceListener constructor.
      * @param UserGroupServiceInterface $userGroupService
@@ -59,7 +59,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
             'fetch.all.groups',
             [$this, 'fetchAll']
         );
-        
+
         $this->listeners[] = $events->attach(
             GroupServiceInterface::class,
             'fetch.group.post',
@@ -126,7 +126,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
         }
 
         $user->setRole($this->securityOrgService->getRoleForGroup($groupId, $user));
-        
+
         if (!$this->getRbac()->isGranted($user->getRole(), 'view.user.groups')) {
             throw new NotAuthorizedException;
         }
