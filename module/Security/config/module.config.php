@@ -20,11 +20,10 @@ return [
         ],
 
         'invokables' => [
-            \Security\Guard\OriginGuard::class              => \Security\Guard\OriginGuard::class,
-            \Security\Listeners\OrgServiceListener::class   => \Security\Listeners\OrgServiceListener::class,
-            \Security\Listeners\UpdateSession::class        => \Security\Listeners\UpdateSession::class,
-            \Security\Guard\OriginGuard::class              => \Security\Guard\OriginGuard::class,
-            \Security\Listeners\UserUpdateListener::class   => \Security\Listeners\UserUpdateListener::class,
+            \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
+            \Security\Listeners\OrgServiceListener::class => \Security\Listeners\OrgServiceListener::class,
+            \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
+            \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
         ],
 
         'factories' => [
