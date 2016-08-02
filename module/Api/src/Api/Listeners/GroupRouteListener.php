@@ -50,7 +50,12 @@ class GroupRouteListener
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_RENDER, [$this, 'onRender'], 1000);
-        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], PHP_INT_MAX);
+        $this->listeners[] = $events->attach(
+            'Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH,
+            [$this, 'onDispatch'],
+            PHP_INT_MAX
+        );
 
     }
 
