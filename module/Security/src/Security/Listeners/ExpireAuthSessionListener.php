@@ -7,7 +7,6 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
 use ZF\ApiProblem\ApiProblem;
@@ -102,7 +101,7 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
             $this->container->offsetUnset('last_seen');
             return new ApiProblemResponse(new ApiProblem(401, 'Expired'));
         }
-        
+
         return null;
     }
 }

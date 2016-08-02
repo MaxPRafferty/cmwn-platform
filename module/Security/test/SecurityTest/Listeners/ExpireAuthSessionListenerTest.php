@@ -2,10 +2,8 @@
 
 namespace SecurityTest\Listeners;
 
-use Application\Utils\NoopLoggerAwareTrait;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Listeners\ExpireAuthSessionListener;
-use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
@@ -20,9 +18,8 @@ use ZF\ApiProblem\ApiProblemResponse;
  * @group Session
  * @group Authentication
  */
-class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInterface
+class ExpireAuthSessionListenerTest extends TestCase
 {
-    use NoopLoggerAwareTrait;
 
     /**
      * @var Container
@@ -62,7 +59,6 @@ class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInter
         $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
         $this->listener = new ExpireAuthSessionListener($this->container);
         $this->listener->setAuthenticationService($this->authService);
-        $this->listener->setLogger($this->getLogger());
     }
 
     /**
@@ -81,6 +77,7 @@ class ExpireAuthSessionListenerTest extends TestCase implements LoggerAwareInter
         $this->authService
             ->shouldReceive('clearIdentity')
             ->once();
+
         $this->assertEquals($this->listener->onRoute(), new ApiProblemResponse(new ApiProblem(401, 'Expired')));
         $this->assertEquals($this->container->offsetExists(), false);
     }

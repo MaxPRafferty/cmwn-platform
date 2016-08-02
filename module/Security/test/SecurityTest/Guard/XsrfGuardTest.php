@@ -44,7 +44,7 @@ class XsrfGuardTest extends TestCase
      * @var \Security\Guard\XsrfGuard
      */
     protected $xsrf;
-    
+
     /**
      * @before
      */
@@ -58,7 +58,7 @@ class XsrfGuardTest extends TestCase
         $this->manager   = $manager = new SessionManager($config);
         $this->container = new Container('Default', $manager);
     }
-    
+
     /**
      * @before
      */
@@ -74,7 +74,7 @@ class XsrfGuardTest extends TestCase
     {
         $this->xsrf = new XsrfGuard([]);
     }
-    
+
     /**
      * @test
      */
@@ -100,7 +100,7 @@ class XsrfGuardTest extends TestCase
         $request
             ->shouldReceive('getCookie')
             ->andReturn($cookie);
-        $this->assertNull($this->xsrf->onRoute($this->event));
+        $this->assertNull($this->xsrf->onDispatch($this->event));
     }
 
     /**
@@ -124,7 +124,7 @@ class XsrfGuardTest extends TestCase
             ->andReturn($cookie);
 
         $this->assertEquals(
-            $this->xsrf->onRoute($this->event),
+            $this->xsrf->onDispatch($this->event),
             new ApiProblemResponse(new ApiProblem(500, 'Invalid Token'))
         );
     }

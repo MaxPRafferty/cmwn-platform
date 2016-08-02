@@ -217,9 +217,10 @@ return [
                     'view.group.users',
                     'view.org',
                     'view.org.users',
+                    'view.profile.image',
                     'view.user.adult',
                     'view.user.child',
-                    'view.profile.image',
+                    'view.user.groups',
                 ],
             ],
 

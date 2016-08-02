@@ -350,6 +350,7 @@ return [
             'view.profile.image',
             'view.user.adult',
             'view.user.child',
+            'view.user.groups',
         ],
 
         'denied' => [
@@ -375,7 +376,6 @@ return [
             'view.all.users',
             'view.flip',
             'view.user.flip',
-            'view.user.groups',
             'view.user.orgs'
         ],
     ],
