@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'validators'      => [
+    'validators' => [
         'factories' => [
             \Security\PasswordValidator::class => \Security\Factory\PasswordValidatorFactory::class,
         ],
     ],
-    
+
     'service_manager' => [
         'aliases' => [
             'authentication' =>
@@ -24,6 +24,7 @@ return [
             \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
             \Security\Listeners\OrgServiceListener::class => \Security\Listeners\OrgServiceListener::class,
             \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
+            \Security\Listeners\HttpAuthListener::class   => \Security\Listeners\HttpAuthListener::class,
         ],
 
         'factories' => [
@@ -77,6 +78,7 @@ return [
         \Security\Listeners\ExpireAuthSessionListener::class,
         \Security\Listeners\UserServiceListener::class,
         \Security\Listeners\UpdateSession::class,
+        \Security\Listeners\HttpAuthListener::class,
     ],
 
     'console' => [
