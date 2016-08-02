@@ -65,6 +65,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
      * @param bool $paginate
      * @param null $prototype
      * @return mixed|HydratingResultSet|DbSelect
+     * @deprecated
      */
     public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {

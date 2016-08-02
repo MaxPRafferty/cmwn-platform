@@ -44,6 +44,7 @@ class UserResourceTest extends TestCase
      */
     public function testItShould404OnGetToNonExistentUser()
     {
+        $this->injectValidCsrfToken();
         $this->dispatch('/user/foo_bar');
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.user');
@@ -56,6 +57,7 @@ class UserResourceTest extends TestCase
      */
     public function testItShould404OnPutToNonExistentUser()
     {
+        $this->injectValidCsrfToken();
         $this->dispatch('/user/foo_bar', 'PUT', [], true);
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.user');

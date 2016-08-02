@@ -11,13 +11,12 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
+use Security\Service\SecurityOrgService;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
  * Class GroupServiceListener
- *
- * ${CARET}
  */
 class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceAwareInterface
 {
@@ -35,13 +34,19 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
     protected $userGroupService;
 
     /**
-     * GroupServiceListener constructor.
-     *
-     * @param UserGroupServiceInterface $userGroupService
+     * @var SecurityOrgService $securityOrgService
      */
-    public function __construct(UserGroupServiceInterface $userGroupService)
+    protected $securityOrgService;
+    
+    /**
+     * GroupServiceListener constructor.
+     * @param UserGroupServiceInterface $userGroupService
+     * @param SecurityOrgService $securityOrgService
+     */
+    public function __construct(UserGroupServiceInterface $userGroupService, SecurityOrgService $securityOrgService)
     {
         $this->userGroupService = $userGroupService;
+        $this->securityOrgService = $securityOrgService;
     }
 
     /**
@@ -53,6 +58,12 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
             GroupServiceInterface::class,
             'fetch.all.groups',
             [$this, 'fetchAll']
+        );
+        
+        $this->listeners[] = $events->attach(
+            GroupServiceInterface::class,
+            'fetch.group.post',
+            [$this, 'fetchGroup']
         );
     }
 
@@ -94,5 +105,30 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
             $event->getParam('where'),
             $event->getParam('prototype')
         );
+    }
+
+    /**
+     * @param $event
+     * @throws NotAuthorizedException
+     */
+    public function fetchGroup(Event $event)
+    {
+        $groupId = $event->getParam('group_id', null);
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            throw new NotAuthorizedException;
+        }
+
+        /** @var SecurityUser $user */
+        try {
+            $user = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+
+        $user->setRole($this->securityOrgService->getRoleForGroup($groupId, $user));
+        
+        if (!$this->getRbac()->isGranted($user->getRole(), 'view.user.groups')) {
+            throw new NotAuthorizedException;
+        }
     }
 }

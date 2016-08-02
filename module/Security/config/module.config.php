@@ -6,6 +6,7 @@ return [
             \Security\PasswordValidator::class => \Security\Factory\PasswordValidatorFactory::class,
         ],
     ],
+    
     'service_manager' => [
         'aliases' => [
             'authentication' =>
@@ -21,7 +22,6 @@ return [
 
         'invokables' => [
             \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
-            \Security\Listeners\OrgServiceListener::class => \Security\Listeners\OrgServiceListener::class,
             \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
             \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
         ],
@@ -51,6 +51,8 @@ return [
                 \Security\Factory\UserAssertionFactory::class,
             \Security\Listeners\GroupServiceListener::class         =>
                 \Security\Factory\GroupServiceListenerFactory::class,
+            \Security\Listeners\OrgServiceListener::class         =>
+                \Security\Factory\OrgServiceListenerFactory::class,
         ],
 
         'initializers' => [

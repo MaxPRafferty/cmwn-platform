@@ -3,6 +3,7 @@
 namespace Api\Listeners;
 
 use Api\Links\GroupLink;
+use Application\Exception\NotAuthorizedException;
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
@@ -10,6 +11,7 @@ use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 use ZF\Hal\Entity;
 
 /**
@@ -28,6 +30,11 @@ class GroupRouteListener
     protected $groupService;
 
     /**
+     * @var \Exception
+     */
+    protected $exception;
+
+    /**
      * GroupRouteListener constructor.
      *
      * @param GroupServiceInterface $groupService
@@ -42,8 +49,9 @@ class GroupRouteListener
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
         $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_RENDER, [$this, 'onRender'], 1000);
+        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch'], PHP_INT_MAX);
+
     }
 
     /**
@@ -56,36 +64,11 @@ class GroupRouteListener
         }
     }
 
-    /**
-     * @param MvcEvent $event
-     * @return null|ApiProblem
-     */
-    public function onRoute(MvcEvent $event)
+    public function onDispatch()
     {
-        $request = $event->getRequest();
-        if (!$request instanceof Request) {
-            return ;
+        if ($this->exception !== null) {
+            return new ApiProblem(404, 'Not Found');
         }
-
-        if ($request->getMethod() === Request::METHOD_OPTIONS) {
-            return;
-        }
-
-        $route   = $event->getRouteMatch();
-        $groupId = $route->getParam('group_id', false);
-
-        if ($groupId === false) {
-            return null;
-        }
-
-        try {
-            $group = $this->groupService->fetchGroup($groupId);
-        } catch (NotFoundException $notFound) {
-            return new ApiProblem(404, 'Group not found');
-        }
-
-        $route->setParam('group', $group);
-        return null;
     }
 
     /**

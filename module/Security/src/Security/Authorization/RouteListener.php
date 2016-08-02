@@ -64,9 +64,9 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     {
         $this->listeners[] = $events->attach(
             'Zend\Mvc\Application',
-            MvcEvent::EVENT_DISPATCH,
-            [$this, 'onDispatch'],
-            (PHP_INT_MAX - 2)
+            MvcEvent::EVENT_ROUTE,
+            [$this, 'onRoute'],
+            -2
         );
     }
 
@@ -82,7 +82,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param MvcEvent $event
      * @return void|ApiProblemResponse
      */
-    public function onDispatch(MvcEvent $event)
+    public function onRoute(MvcEvent $event)
     {
         if ($this->isRouteUnRestricted($event)) {
             return null;
@@ -207,7 +207,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
             $foundRole = $this->orgService->getRoleForOrg($orgId, $identity);
         }
 
-        $foundRole = $foundRole === false ? 'logged_in' : $foundRole;
+        $foundRole = $foundRole === null ? 'logged_in' : $foundRole;
 
         if ($identity instanceof SecurityUser) {
             $identity->setRole($foundRole);

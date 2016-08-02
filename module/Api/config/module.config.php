@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreStart
 return array(
     'shared-listeners' => array(
         0 => 'Api\\Listeners\\UserRouteListener',

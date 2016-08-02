@@ -13,7 +13,6 @@ build:
     - 'rm -rf Vagrantfile'
     - 'rm -rf public/index.html'
     - 'rm -rf html'
-    - 'rm -rf vendor'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
@@ -32,6 +31,7 @@ web1:
     - json
     - mbstring
     - mcrypt
+    - bcmath
     - pdo_mysql
     - redis
     - curl
@@ -78,3 +78,13 @@ cache1:
 
 storage1:
   type: nfs
+global:
+  env:
+    - APP_ENV: production
+    - DB_HOST: 'MAP:DATABASE1_HOST'
+    - DB_DATABASE: 'MAP:DATABASE1_NAME'
+    - DB_USERNAME: 'MAP:DATABASE1_USER'
+    - DB_PASSWORD: 'MAP:DATABASE1_PASS'
+    - SESSION_DRIVER: redis
+
+
