@@ -5,8 +5,10 @@
   "require": {
     "robmorgan/phinx": "*",
     "phpunit/phpunit": "~4.0",
+    "mockery/mockery": "0.9.*",
     "phpunit/dbunit": "~2.0",
     "squizlabs/php_codesniffer": "~2.5",
+    "zendframework/zend-servicemanager": "2.7.5",
     "phpmd/phpmd": "~2.3",
     "zendframework/zftool": "dev-master",
     "zendframework/zend-developer-tools": "dev-master",
@@ -15,3 +17,4 @@
     "zfcampus/zf-deploy": "~1.0-dev"
   }
 }
+
