@@ -239,9 +239,8 @@ class SkribbleService implements SkribbleServiceInterface
 
         $select = new Select(['s' => $this->gateway->getTable()]);
         $select->where($where);
+        $select->order(['s.updated DESC']);
 
-//        $sql = new \Zend\Db\Sql\Sql($this->gateway->getAdapter());
-//        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->gateway->getAdapter(),
