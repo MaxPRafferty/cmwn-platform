@@ -63,6 +63,13 @@ docker-compose run --rm php phinx migrate -c config/phinx.php -e test
 echo "[api-installer] Seeding test database"
 docker-compose run --rm php phinx seed:run -c config/phinx.php -e test
 
+echo "[api-installer] Creating development ssl keys"
+docker-compose run --rm php openssl req -x509 -newkey rsa:2048 \
+  -subj "/C=XX/ST=XXXX/L=XXXX/O=XXXX/CN=api-local.changemyworldnow.com" \
+  -keyout "/var/www/data/ssl/key.pem" \
+  -out "/var/www/data/ssl/cert.crt" \
+  -days 3650 -nodes -sha256
+
 cat <<EOF
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

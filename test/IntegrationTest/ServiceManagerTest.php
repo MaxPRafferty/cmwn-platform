@@ -19,6 +19,10 @@ class ServiceManagerTest extends TestCase
 
     /**
      * List of services to skip from testing
+     *
+     * Modules may add services that are never invoked.  This test will try
+     * load all services that we may not have configured to use
+     *
      * @var array
      */
     protected $blackList = [
@@ -26,7 +30,9 @@ class ServiceManagerTest extends TestCase
         'ZF\OAuth2\Adapter\IbmDb2Adapter',
         'ZF\OAuth2\Adapter\MongoAdapter',
         'Zend\Session\SessionManager',
-        'Log\App'
+        'Log\App',
+        'ZF\Configuration\ConfigResource',
+        'AwsModule\Session\SaveHandler\DynamoDb',
     ];
 
     /**

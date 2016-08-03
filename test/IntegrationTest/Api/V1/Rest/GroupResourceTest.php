@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
+use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**
@@ -23,6 +24,8 @@ use Zend\Json\Json;
 class GroupResourceTest extends TestCase
 {
     /**
+     * @test
+     * @ticket core-864
      * @var GroupServiceInterface
      */
     protected $groupService;
@@ -47,6 +50,21 @@ class GroupResourceTest extends TestCase
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
+    }
+
+    /**
+     * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -113,6 +131,32 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1060
+     */
+    public function testItShouldReturnValidGroupsForPrincipal()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('principal');
+        $this->dispatch('/group');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('group', $body['_embedded']);
+        $groups = $body['_embedded']['group'];
+        $expectedIds = ['english', 'school', 'math'];
+        $actualIds = [];
+        foreach ($groups as $group) {
+            $this->assertArrayHasKey('group_id', $group);
+            $actualIds[] = $group['group_id'];
+        }
+        $this->assertEquals($actualIds, $expectedIds);
+    }
+
+    /**
+     * @test
      */
     public function testItShouldCheckCsrfToReturnSchoolForUser()
     {
@@ -127,11 +171,13 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-864
+     * @ticket CORE-725
+     * @dataProvider schoolUserDataProvider
      */
-    public function testItShouldReturnSchoolForUser()
+    public function testItShouldReturnSchoolForUser($login)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($login);
 
         $this->dispatch('/group?type=school');
         $this->assertMatchedRouteName('api.rest.group');
@@ -188,29 +234,30 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      */
-    public function testItShould404WhenGroupWhichUserIsNotInIsAccessed()
+    public function testItShould403WhenGroupWhichUserIsNotInIsAccessed()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
 
-        $this->dispatch('/group/manchuck');
+        $this->dispatch('/group/other_math');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
-        $this->assertResponseStatusCode(404);
+        $this->assertResponseStatusCode(403);
     }
 
     /**
      * @test
+     * @dataProvider userDataProvider
      */
-    public function testItShould404WhenInvalidGroupIsAccessed()
+    public function testItShouldCheckWhenInvalidGroupIsAccessed($user, $code)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($user);
 
         $this->dispatch('/group/foobar');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
-        $this->assertResponseStatusCode(404);
+        $this->assertResponseStatusCode($code);
     }
 
     /**
@@ -224,6 +271,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         );
         $this->dispatch('/group', POST, $postData);
@@ -244,6 +292,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         );
         $this->dispatch('/group', 'POST', $postData);
@@ -272,6 +321,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         );
         $this->dispatch('/group', 'POST', $postData);
@@ -326,6 +376,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
@@ -344,6 +395,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
@@ -367,6 +419,7 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title' => 'Joni School',
             'description' => 'this is new school',
+            'type' => 'school',
             'meta' => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
@@ -375,6 +428,25 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @test
+     * @ticket CORE-1061
+     */
+    public function testItShouldNotLetPrincipalUpdateOtherGroup()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('principal');
+
+        $putData = [
+            'organization_id' => 'district',
+            'title' => 'Joni School',
+            'description' => 'this is new school',
+            'meta' => null,
+        ];
+        $this->dispatch('/group/other_school', 'PUT', $putData);
+        $this->assertResponseStatusCode(403);
+    }
+
+    /* @test
      * @ticket CORE-1062
      */
     public function testItShouldFetchChildGroups()
@@ -405,5 +477,83 @@ class GroupResourceTest extends TestCase
         }
 
         $this->assertEquals($expectedGroupIds, $actualGroupIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/group'
+            ],
+            1 => [
+                'super_user',
+                '/group',
+                'POST',
+                [
+                    'organization_id' => 'district',
+                    'title' => 'Joni School',
+                    'description' => 'this is new school',
+                    'type' => 'school',
+                    'meta' => null,
+                ]
+            ],
+            2 => [
+                'super_user',
+                '/group/school',
+                'PUT',
+                [
+                    'organization_id' => 'district',
+                    'title' => 'Joni School',
+                    'description' => 'this is new school',
+                    'type' => 'school',
+                    'meta' => null,
+                ]
+            ],
+            3 => [
+                'super_user',
+                '/group/school',
+                'DELETE',
+            ],
+            4 => [
+                'english_student',
+                '/group/school',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function schoolUserDataProvider()
+    {
+        return [
+            'English Teacher' => [
+                'english_teacher'
+                ],
+            'English Student' => [
+                'english_student'
+                ]
+         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function userDataProvider()
+    {
+        return [
+            'English student' => [
+                'english_student',
+                404
+            ],
+            'English Teacher' => [
+                'english_teacher',
+                404
+            ],
+        ];
     }
 }

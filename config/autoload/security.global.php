@@ -26,7 +26,7 @@ return [
                 'PUT'  => ['edit.user.child', 'edit.user.adult'],
             ],
             'api.rest.org'             => [
-                'GET'    => 'view.org',
+                'GET'    => ['view.org', 'view.user.orgs'],
                 'POST'   => 'create.org',
                 'PUT'    => 'edit.org',
                 'DELETE' => 'delete.org',
@@ -35,7 +35,7 @@ return [
                 'GET' => 'view.games',
             ],
             'api.rest.group'           => [
-                'GET'    => 'view.group',
+                'GET'    => ['view.group', 'view.user.groups'],
                 'POST'   => 'create.group',
                 'PUT'    => 'edit.group',
                 'DELETE' => 'remote.group',
@@ -52,7 +52,7 @@ return [
             'api.rest.org-users'       => [
                 'GET' => 'view.org.users',
             ],
-            'api.rest.user-image'  => [
+            'api.rest.user-image'      => [
                 'GET'  => 'view.profile.image',
                 'POST' => 'attach.profile.image',
             ],
@@ -75,6 +75,6 @@ return [
                 'POST'   => 'save.game',
                 'DELETE' => 'save.game',
             ],
-            ],
         ],
+    ],
 ];

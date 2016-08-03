@@ -91,7 +91,6 @@ class ImageServiceTest extends TestCase
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
                 return new \ArrayIterator([]);
-
             })
             ->once();
 
@@ -162,7 +161,6 @@ class ImageServiceTest extends TestCase
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
-
             });
 
         $this->assertTrue($this->imageService->saveImage($image));
@@ -236,7 +234,6 @@ class ImageServiceTest extends TestCase
             ->andReturnUsing(function ($data, $where) use (&$image) {
                 $this->assertEquals(['image_id' => $image->getImageId()], $where);
                 $this->assertNotEmpty($data['deleted']);
-
             });
 
         $this->assertTrue($this->imageService->deleteImage($image));
@@ -267,7 +264,6 @@ class ImageServiceTest extends TestCase
         $this->tableGateway->shouldReceive('delete')
             ->andReturnUsing(function ($where) use (&$image) {
                 $this->assertEquals(['image_id' => $image->getImageId()], $where);
-
             });
 
         $this->assertTrue($this->imageService->deleteImage($image, false));

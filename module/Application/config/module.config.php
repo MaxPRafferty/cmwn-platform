@@ -25,13 +25,13 @@ return [
         ],
         'initializers'       => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
-            
         ],
         'factories'          => [
-            \Application\Listeners\ListenersAggregate::class => \Application\Listeners\ListenersAggregateFactory::class,
-            \Application\Log\Rollbar\Options::class          => \Application\Log\Rollbar\OptionsFactory::class,
-            'Application\Log\Rollbar\Notifier'               => \Application\Log\Rollbar\NotifierFactory::class,
-            \Application\Log\Rollbar\Writer::class           => \Application\Log\Rollbar\WriterFactory::class,
+            \Application\Listeners\ListenersAggregate::class  =>
+                \Application\Listeners\ListenersAggregateFactory::class,
+            \Application\Log\Rollbar\Options::class           => \Application\Log\Rollbar\OptionsFactory::class,
+            'Application\Log\Rollbar\Notifier'                => \Application\Log\Rollbar\NotifierFactory::class,
+            \Application\Log\Rollbar\Writer::class            => \Application\Log\Rollbar\WriterFactory::class,
         ],
         'abstract_factories' => [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
@@ -46,8 +46,8 @@ return [
     ],
 
     'controllers' => [
-        'aliases' => [
-            \Application\Controller\IndexController::class => '\Application\Controller\Index'
+        'aliases'    => [
+            \Application\Controller\IndexController::class => '\Application\Controller\Index',
         ],
         'invokables' => [
             'Application\Controller\Index' => \Application\Controller\IndexController::class,
@@ -60,13 +60,13 @@ return [
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
-        'template_map' => [
+        'template_map'             => [
             'layout/layout'           => realpath(__DIR__ . '/../view/layout/layout.phtml'),
             'application/index/index' => realpath(__DIR__ . '/../view/application/index/index.phtml'),
             'error/404'               => realpath(__DIR__ . '/../view/error/404.phtml'),
             'error/index'             => realpath(__DIR__ . '/../view/error/index.phtml'),
         ],
-        'template_path_stack' => [
+        'template_path_stack'      => [
             realpath(__DIR__ . '/../view'),
         ],
     ],

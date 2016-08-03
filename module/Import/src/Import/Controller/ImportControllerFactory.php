@@ -23,7 +23,8 @@ class ImportControllerFactory implements FactoryInterface
         $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
             ? $serviceLocator->getServiceLocator()
             : $serviceLocator;
-        
-        return new ImportController($serviceLocator);
+
+        $authService = $serviceLocator->get('authentication');
+        return new ImportController($serviceLocator, $authService);
     }
 }

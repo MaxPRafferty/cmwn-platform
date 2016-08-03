@@ -9,7 +9,9 @@ namespace Application;
 use Application\Listeners\ListenersAggregate;
 use Application\Utils\StaticType;
 use Zend\EventManager\SharedEventManager;
+use Zend\Log\Filter\Priority;
 use Zend\Log\Logger;
+use Zend\Log\Writer\Stream;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -39,6 +41,7 @@ class Module implements ConfigProviderInterface
             Logger::registerExceptionHandler($logger);
             Logger::registerFatalErrorShutdownFunction($logger);
         }
+
         $this->attachShared($mvcEvent);
 
         $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');

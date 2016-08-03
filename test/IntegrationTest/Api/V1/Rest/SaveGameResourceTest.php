@@ -38,6 +38,21 @@ class SaveGameResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
+    /**
+     * @test
      * @dataProvider usersAllowedToSaveGamesProvider
      */
     public function testItShouldSaveGameStatusForMe($userName)
@@ -264,6 +279,30 @@ class SaveGameResourceTest extends TestCase
             ],
             'Super User'      => [
                 'user_name' => 'super_user',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/game/monarch'
+            ],
+            1 => [
+                'english_student',
+                '/user/english_student/game/monarch',
+                'POST',
+                ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+            ],
+            0 => [
+                'english_student',
+                '/user/english_student/game/monarch',
+                'DELETE'
             ],
         ];
     }

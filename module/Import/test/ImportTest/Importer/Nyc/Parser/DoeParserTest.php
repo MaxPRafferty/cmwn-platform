@@ -225,7 +225,6 @@ class DoeParserTest extends TestCase
         );
 
         $this->assertEquals(11, count($parser->getActions()), 'Parser did not merge actions');
-
     }
 
     /**

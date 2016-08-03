@@ -77,4 +77,11 @@ interface UserServiceInterface
      * @throws NotFoundException
      */
     public function updateUser(UserInterface $user);
+
+    /**
+     * Updates the username if the user wants to update his own username
+     * @param UserInterface $user
+     * @param $username
+     */
+    public function updateUserName(UserInterface $user, $username);
 }
