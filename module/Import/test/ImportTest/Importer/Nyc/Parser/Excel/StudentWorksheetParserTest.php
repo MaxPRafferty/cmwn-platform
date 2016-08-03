@@ -84,6 +84,7 @@ class StudentWorksheetParserTest extends TestCase
     {
         AbstractParser::clear();
         $this->classRegistry = new ClassRoomRegistry($this->groupService);
+        $this->classRegistry->setOrganization('foo-bar');
     }
 
     /**
@@ -289,7 +290,7 @@ class StudentWorksheetParserTest extends TestCase
 
         // @codingStandardsIgnoreStart
         $expectedErrors = [
-            'Sheet <b>"Students"</b> Row: <b>4</b> A student with the id <b>STUDENT ID - "foo-bar"</b> appears more than once in this sheet',
+            'Sheet <b>"Students"</b> Row: <b>4</b> A student with the id <b>STUDENT ID - "01X100-foo-bar"</b> appears more than once in this sheet',
         ];
         // @codingStandardsIgnoreEnd
 

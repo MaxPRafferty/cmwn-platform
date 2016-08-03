@@ -9,6 +9,8 @@ return [
             'api.rest.logout',
             'api.rest.image',
             'api.rest.media',
+            'api.rest.skribble', // TODO lock this down
+            'api.rest.skribble-notify', // TODO lock this down
         ],
         'route-permissions' => [
             'api.rest.reset'           => [
@@ -54,7 +56,7 @@ return [
                 'GET' => 'view.org.users',
             ],
             'api.rest.user-image'      => [
-                'GET'  => 'attach.profile.image',
+                'GET'  => 'view.profile.image',
                 'POST' => 'attach.profile.image',
             ],
             'api.rest.import'          => [
@@ -75,6 +77,12 @@ return [
                 'GET'    => 'save.game',
                 'POST'   => 'save.game',
                 'DELETE' => 'save.game',
+            ],
+            'api.rest.skribble'        => [
+                'GET'    => 'view.skribble',
+                'POST'   => 'create.skribble',
+                'PUT'    => 'update.skribble',
+                'DELETE' => 'delete.skribble',
             ],
         ],
     ],

@@ -86,6 +86,7 @@ class DoeParserTest extends TestCase
             ->byDefault();
 
         $this->classRegistry = new ClassRoomRegistry($groupService);
+        $this->classRegistry->setOrganization('foo-bar');
     }
 
     /**
@@ -133,6 +134,7 @@ class DoeParserTest extends TestCase
         $this->school = new Group();
         $this->school->setGroupId('manchuck');
         $this->school->setTitle('MANCHUCK School of Rock');
+        $this->school->setOrganizationId('foo-bar');
     }
 
     /**
@@ -223,7 +225,6 @@ class DoeParserTest extends TestCase
         );
 
         $this->assertEquals(11, count($parser->getActions()), 'Parser did not merge actions');
-
     }
 
     /**

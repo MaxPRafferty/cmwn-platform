@@ -36,6 +36,7 @@ class DevSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 0
             ])->save();
+            $this->getOutput()->writeln('Created Principal user');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeln(
@@ -63,6 +64,7 @@ class DevSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 0
             ])->save();
+            $this->getOutput()->writeln('Created Teacher user');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeln(
@@ -90,6 +92,7 @@ class DevSeed extends AbstractSeed
                 'updated'    => $date->format("Y-m-d H:i:s"),
                 'super'      => 0
             ])->save();
+            $this->getOutput()->writeln('Created Student user');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeln(
@@ -110,6 +113,7 @@ class DevSeed extends AbstractSeed
                 'updated'     => $date->format("Y-m-d H:i:s"),
                 'type'        => 'district'
             ])->save();
+            $this->getOutput()->writeln('Created District');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeln(
@@ -133,6 +137,7 @@ class DevSeed extends AbstractSeed
                 'updated'         => $date->format("Y-m-d H:i:s"),
                 'type'            => 'school'
             ])->save();
+            $this->getOutput()->writeln('Created School');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeln(
@@ -157,6 +162,7 @@ class DevSeed extends AbstractSeed
                 'updated'         => $date->format("Y-m-d H:i:s"),
                 'type'            => 'class'
             ])->save();
+            $this->getOutput()->writeln('Created Class');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeln(
@@ -172,6 +178,7 @@ class DevSeed extends AbstractSeed
                 'group_id' => $schoolId,
                 'role'     => 'principal',
             ])->save();
+            $this->getOutput()->writeln('Created Added principal to school');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeLn(
@@ -187,6 +194,7 @@ class DevSeed extends AbstractSeed
                 'group_id' => $classId,
                 'role'     => 'teacher',
             ])->save();
+            $this->getOutput()->writeln('Created Added teacher to class');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeLn(
@@ -194,7 +202,7 @@ class DevSeed extends AbstractSeed
                 );
             }
         }
-        
+
         $userGroups->setData([]);
         try {
             $userGroups->insert([
@@ -202,6 +210,7 @@ class DevSeed extends AbstractSeed
                 'group_id' => $classId,
                 'role'     => 'student',
             ])->save();
+            $this->getOutput()->writeln('Created Added student to class');
         } catch (PDOException $exception) {
             if ($exception->getCode() != 23000) {
                 $this->getOutput()->writeLn(

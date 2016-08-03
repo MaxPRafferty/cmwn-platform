@@ -140,6 +140,7 @@ class UserServiceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-645
      */
     public function testItShouldUpdateExistingUser()
     {
@@ -173,12 +174,12 @@ class UserServiceTest extends TestCase
 
                 unset($expected['password']);
                 unset($expected['deleted']);
+                unset($expected['type']);
 
                 $expected['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
-
             });
 
         $this->assertTrue($this->userService->updateUser($user));

@@ -111,6 +111,7 @@ class UserService implements UserServiceInterface
         unset($data['password']);
         unset($data['deleted']);
         unset($data['super']);
+        unset($data['type']);
 
         $this->fetchUser($user->getUserId());
 

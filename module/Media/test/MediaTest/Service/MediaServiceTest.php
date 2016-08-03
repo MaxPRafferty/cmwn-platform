@@ -85,15 +85,17 @@ class MediaServiceTest extends TestCase
 
         $this->assertInstanceOf(MediaInterface::class, $media);
         $expected = [
-            'media_id'   => '70116569037',
-            'asset_type' => 'background',
-            'check'      => [
+            'media_id'    => '70116569037',
+            'asset_type'  => 'background',
+            'check'       => [
                 'type'  => 'sha1',
                 'value' => 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
             ],
-            'mime_type'  => 'image/png',
-            'src'        => 'https://media.changemyworldnow.com/f/70116569037',
-            'name'       => 'img_animals_sprite.png',
+            'mime_type'   => 'image/png',
+            'src'         => 'https://media.changemyworldnow.com/f/70116569037',
+            'name'        => 'img_animals_sprite.png',
+            'can_overlap' => false,
+            'type'        => 'file',
         ];
 
         $this->assertEquals(
@@ -121,15 +123,17 @@ class MediaServiceTest extends TestCase
 
         $this->assertInstanceOf(MediaCollection::class, $media);
         $expected = [
-            'media_id'   => '7302958933',
-            'asset_type' => 'folder',
-            'check'      => [
+            'media_id'    => '7302958933',
+            'asset_type'  => 'folder',
+            'check'       => [
                 'type'  => null,
                 'value' => null,
             ],
-            'mime_type'  => null,
-            'src'        => null,
-            'name'       => 'Content',
+            'mime_type'   => null,
+            'src'         => null,
+            'name'        => 'Content',
+            'can_overlap' => false,
+            'type'        => 'folder',
         ];
 
         $iterator = $media->getIterator();

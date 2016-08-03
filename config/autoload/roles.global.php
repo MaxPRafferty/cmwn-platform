@@ -8,21 +8,21 @@ return [
             'view.all.users'       => 'View all users',
 
             // user
-            'create.user'        => 'Create a user',
-            'view.user.adult'    => 'View an Adults Information',
-            'view.user.child'    => 'View a child\'s Information',
-            'edit.user.adult'    => 'Edit an Adult',
-            'edit.user.child'    => 'Edit a Child',
-            'pick.username'      => 'Pick a new User Name',
-            'update.password'    => 'Update profile password',
-            'remove.user.adult'  => 'Delete a child user',
-            'remove.user.child'  => 'Delete an adult user',
-            'can.friend'         => 'Can friend users',
+            'create.user'          => 'Create a user',
+            'view.user.adult'      => 'View an Adults Information',
+            'view.user.child'      => 'View a child\'s Information',
+            'edit.user.adult'      => 'Edit an Adult',
+            'edit.user.child'      => 'Edit a Child',
+            'pick.username'        => 'Pick a new User Name',
+            'update.password'      => 'Update profile password',
+            'remove.user.adult'    => 'Delete a child user',
+            'remove.user.child'    => 'Delete an adult user',
+            'can.friend'           => 'Can friend users',
 
             // Flip
-            'create.user.flip'   => 'Earn a flip',
-            'view.flip'          => 'View flip information',
-            'view.user.flip'     => 'View Flips for a user',
+            'create.user.flip'     => 'Earn a flip',
+            'view.flip'            => 'View flip information',
+            'view.user.flip'       => 'View Flips for a user',
 
             // group
             'create.child.group'   => 'Create a sub group',
@@ -55,6 +55,13 @@ return [
             'adult.code'           => 'Send adult reset code',
             'child.code'           => 'Send child reset code',
             'attach.profile.image' => 'Upload a profile image',
+            'view.profile.image'   => 'View a users profile image',
+
+            // skribble
+            'view.skribble'        => 'Read Skribbles',
+            'create.skribble'      => 'Create Skribbles',
+            'delete.skribble'      => 'Delete Skribbles',
+            'update.skribble'      => 'Update Skribbles',
         ],
         'roles'             => [
             'super' => [
@@ -79,6 +86,7 @@ return [
                     'view.all.users',
                     'view.flip',
                     'view.user.flip',
+                    'view.profile.image',
                     'adult.code',
                     'child.code',
                 ],
@@ -99,8 +107,8 @@ return [
                     'import',
                     'remove.child.group',
                     'view.org.users',
+                    'view.profile.image',
                     'remove.user.adult',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -125,7 +133,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 
@@ -157,7 +165,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 
@@ -188,8 +196,8 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
                     'remove.user.adult',
-                    'attach.profile.image',
                 ],
             ],
 
@@ -214,7 +222,7 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 
@@ -226,6 +234,7 @@ return [
                     'adult.code',
                     'remove.user.adult',
                     'view.user.adult',
+                    'view.profile.image',
                 ],
             ],
 
@@ -244,7 +253,13 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
+                    'view.profile.image',
                     'attach.profile.image',
+                    'view.skribble',
+                    'view.skribble',
+                    'create.skribble',
+                    'delete.skribble',
+                    'update.skribble',
                 ],
             ],
 
@@ -253,7 +268,6 @@ return [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
-                    'attach.profile.image',
                     'can.friend',
                     'child.code',
                     'create.user.flip',
@@ -267,6 +281,8 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
+                    'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -287,7 +303,8 @@ return [
                     'view.org.users',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
+                    'view.user.flip',
                 ],
             ],
 
@@ -303,7 +320,7 @@ return [
                     'view.org',
                     'view.user.adult',
                     'view.user.child',
-                    'attach.profile.image',
+                    'view.profile.image',
                 ],
             ],
 

@@ -101,6 +101,7 @@ class GroupServiceTest extends TestCase
                 'user'            => 'english_teacher',
                 'expected_groups' => [
                     'english',
+                    'school',
                 ],
             ],
 
@@ -108,6 +109,7 @@ class GroupServiceTest extends TestCase
                 'user'            => 'math_teacher',
                 'expected_groups' => [
                     'math',
+                    'school',
                 ],
             ],
         ];
@@ -155,6 +157,7 @@ class GroupServiceTest extends TestCase
                 'user'            => 'english_teacher',
                 'type'            => 'school',
                 'expected_groups' => [
+                    'school',
                 ],
             ],
 
@@ -177,6 +180,7 @@ class GroupServiceTest extends TestCase
                 'user'            => 'math_teacher',
                 'type'            => 'school',
                 'expected_groups' => [
+                    'school',
                 ],
             ],
 

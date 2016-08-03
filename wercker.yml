@@ -3,6 +3,7 @@ box:
   username: $DOCKER_USER
   password: $DOCKER_PASS
   tag: latest
+
 build:
   services:
     - id: mysql:5.5
@@ -14,7 +15,7 @@ build:
   steps:
     - script:
       name: install dependencies
-      code: composer install --no-interaction --no-dev
+      code: composer install --no-interaction
     - script:
       name: Setup test DB
       code: |-

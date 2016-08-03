@@ -45,12 +45,23 @@ class Media implements MediaInterface
     protected $mimeType;
 
     /**
+     * @var MediaProperties
+     */
+    protected $properties;
+
+    /**
+     * @var string The type of asset (either file or folder)
+     */
+    protected $type;
+
+    /**
      * Media constructor.
      *
      * @param array $options
      */
     public function __construct(array $options = [])
     {
+        $this->properties = new MediaProperties();
         $this->exchangeArray($options);
     }
 
@@ -59,6 +70,7 @@ class Media implements MediaInterface
      *
      * @param  array $array
      *2
+     *
      * @return void
      */
     public function exchangeArray(array $array)
@@ -71,11 +83,17 @@ class Media implements MediaInterface
             'mime_type'   => null,
             'src'         => null,
             'name'        => null,
+            'type'        => null,
         ];
 
         $array = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
+            if ($this->properties->isProperty($key)) {
+                $this->properties->setProperty($key, $value);
+                continue;
+            }
+
             $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
@@ -90,17 +108,37 @@ class Media implements MediaInterface
      */
     public function getArrayCopy()
     {
-        return [
-            'media_id'   => $this->getMediaId(),
-            'asset_type' => $this->getAssetType(),
-            'check'      => [
-                'type'  => $this->getCheckType(),
-                'value' => $this->getCheckValue(),
-            ],
-            'mime_type'  => $this->getMimeType(),
-            'src'        => $this->getSrc(),
-            'name'       => $this->getName(),
-        ];
+        return array_merge(
+            $this->properties->getArrayCopy(),
+            [
+                'media_id'   => $this->getMediaId(),
+                'asset_type' => $this->getAssetType(),
+                'check'      => [
+                    'type'  => $this->getCheckType(),
+                    'value' => $this->getCheckValue(),
+                ],
+                'mime_type'  => $this->getMimeType(),
+                'src'        => $this->getSrc(),
+                'name'       => $this->getName(),
+                'type'       => $this->getType(),
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 
     /**
@@ -121,6 +159,7 @@ class Media implements MediaInterface
 
     /**
      * @param array $check
+     *
      * @return MediaInterface
      */
     public function setCheck(array $check)
@@ -133,6 +172,7 @@ class Media implements MediaInterface
         $check = array_merge($checkDefaults, $check);
         $this->setCheckType($check['type']);
         $this->setCheckValue($check['value']);
+
         return $this;
     }
 

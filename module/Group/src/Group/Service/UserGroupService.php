@@ -173,7 +173,7 @@ class UserGroupService implements UserGroupServiceInterface
         $orgId = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
         $where = $this->createWhere($where);
         $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $orgId));
-        
+
         $select = new Select(['g'  => 'groups']);
         $select->columns(['group_id']);
 
@@ -203,7 +203,6 @@ class UserGroupService implements UserGroupServiceInterface
         );
     }
 
-
     /**
      * Finds all the groups for a user
      *
@@ -221,12 +220,14 @@ class UserGroupService implements UserGroupServiceInterface
      *
      *
      * @param Where|GroupInterface|string $user
+     * @param null $where
      * @param object $prototype
+     *
      * @return DbSelect
      */
-    public function fetchGroupsForUser($user, $prototype = null)
+    public function fetchGroupsForUser($user, $where = null, $prototype = null)
     {
-        $where = $this->createWhere($user);
+        $where = $this->createWhere($where);
 
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where->addPredicate(new Operator('ug.user_id', '=', $userId));
@@ -256,7 +257,7 @@ class UserGroupService implements UserGroupServiceInterface
             '*',
             Select::JOIN_LEFT
         );
-        
+
         $select->where($where);
         $select->group('g.group_id');
         $select->order(['g.title']);

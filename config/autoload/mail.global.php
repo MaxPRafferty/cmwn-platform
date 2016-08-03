@@ -238,7 +238,7 @@ return [
                  *
                  * Default value is 'smtp'.
                  */
-                'connection_class' => 'plain',
+                'connection_class' => 'login',
 
                 'connection_config' => [
                     /**
@@ -262,7 +262,7 @@ return [
                      *
                      * Default value is false
                      */
-//                    'ssl' => false,
+                    'ssl' => 'tls',
                 ],
             ],
 

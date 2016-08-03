@@ -312,6 +312,20 @@ class UserResourceTest extends TestCase
         $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $decoded['_embedded']['image']['image_id']);
     }
 
+    /**
+     * @test
+     * @ticket CORE-727
+     */
+    public function testItShouldNotLetTeacherDeleteStudentProfile()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+        $this->dispatch('/user/english_student', 'DELETE');
+
+        $this->assertResponseStatusCode(403);
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+    }
 
     /**
      * @param $userId
