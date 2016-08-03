@@ -249,6 +249,7 @@ class SkribbleServiceTest extends TestCase
         $where->andPredicate(new Expression('(created_by = ? OR friend_to = ?)', 'baz-bat', 'baz-bat'));
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
+        $select->order(['s.updated DESC']);
 
         $expected = new DbSelect(
             $select,
@@ -273,6 +274,7 @@ class SkribbleServiceTest extends TestCase
         $where->addPredicate(new Operator('status', '=', 'COMPLETE'));
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
+        $select->order(['s.updated DESC']);
 
         $expected = new DbSelect(
             $select,
@@ -302,6 +304,7 @@ class SkribbleServiceTest extends TestCase
 
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
+        $select->order(['s.updated DESC']);
 
         $expected = new DbSelect(
             $select,
@@ -326,6 +329,7 @@ class SkribbleServiceTest extends TestCase
         $where->addPredicate(new Operator('created_by', '=', 'baz-bat'));
         $select = new Select(['s' => 'skribbles']);
         $select->where($where);
+        $select->order(['s.updated DESC']);
 
         $expected = new DbSelect(
             $select,

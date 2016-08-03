@@ -43,7 +43,6 @@ class ImportNotiferTest extends TestCase
     public function setUpMessage()
     {
         $this->message = \Mockery::mock('\Zend\Mail\Message');
-        
     }
     /**
      * @before
@@ -74,7 +73,6 @@ class ImportNotiferTest extends TestCase
         $this->parser->shouldReceive('getEmail')
             ->andReturn('chuck@manchuck.com')
             ->byDefault();
-
     }
 
     /**

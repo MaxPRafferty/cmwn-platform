@@ -94,7 +94,6 @@ class GroupDelegator implements GroupServiceInterface
         $this->getEventManager()->trigger($event);
 
         return $return;
-
     }
 
     /**

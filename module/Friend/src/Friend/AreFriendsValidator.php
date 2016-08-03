@@ -45,8 +45,6 @@ class AreFriendsValidator extends AbstractValidator implements ValidatorInterfac
     public function isValid($value)
     {
         if (empty($value)) {
-
-
         }
 
 
