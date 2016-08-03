@@ -4,13 +4,6 @@
 return [
     'games' => [
         'master' => [
-            'all-about-you'        => [
-                'game_id'     => 'all-about-you',
-                'title'       => 'All About You',
-                'description' => 'This survey is All About You: your favorite things, what makes you happy or sad, and a lot more!',
-                'coming_soon' => 0,
-                'meta'        => '{"desktop" : false, "unity" : false}',
-            ],
             'polar-bear'      => [
                 'game_id'     => 'polar-bear',
                 'title'       => 'Polar Bear',
