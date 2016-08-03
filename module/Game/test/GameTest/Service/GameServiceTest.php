@@ -93,7 +93,6 @@ class GameServiceTest extends TestCase
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
                 return new \ArrayIterator([]);
-
             })
             ->once();
 

@@ -22,5 +22,4 @@ class SkribbleServiceDelegatorFactory implements DelegatorFactoryInterface
 
         return $delegator;
     }
-
 }

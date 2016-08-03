@@ -19,6 +19,5 @@ class SkribbleNotifyResourceFactory implements FactoryInterface
         /** @var SkribbleServiceInterface $skribbleService */
         $skribbleService = $serviceLocator->get(SkribbleServiceInterface::class);
         return new SkribbleNotifyResource($skribbleService);
-
     }
 }

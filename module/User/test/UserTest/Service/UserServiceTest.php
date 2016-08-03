@@ -180,7 +180,6 @@ class UserServiceTest extends TestCase
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
-
             });
 
         $this->assertTrue($this->userService->updateUser($user));
