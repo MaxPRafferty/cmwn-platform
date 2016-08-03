@@ -94,7 +94,7 @@ class GroupServiceDelegatorTest extends TestCase
             ->once();
 
 
-        $this->delegator->saveGroup($this->group);
+        $this->delegator->createGroup($this->group);
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -129,7 +129,7 @@ class GroupServiceDelegatorTest extends TestCase
             return ['foo' => 'bar'];
         });
 
-        $this->assertEquals(['foo' => 'bar'], $this->delegator->saveGroup($this->group));
+        $this->assertEquals(['foo' => 'bar'], $this->delegator->createGroup($this->group));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(

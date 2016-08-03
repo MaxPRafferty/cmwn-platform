@@ -38,51 +38,6 @@ class GroupServiceTest extends TestCase
     }
 
     /**
-     * @param $user
-     * @param $expectedGroups
-     * @dataProvider userGroupDataProvider
-     */
-    public function testItShouldFetchAllForUser($user, array $expectedGroups)
-    {
-        $groups       = $this->groupService->fetchAllForUser($user);
-        $groupsPage   = new Paginator($groups);
-        $actualGroups = [];
-        /** @var GroupInterface $group */
-        foreach ($groupsPage as $group) {
-            $this->assertInstanceOf(GroupInterface::class, $group);
-            array_push($actualGroups, $group->getGroupId());
-        }
-
-        sort($actualGroups);
-        sort($expectedGroups);
-
-        $this->assertSame($expectedGroups, $actualGroups, 'Fetching groups for a user did not return correct groups');
-    }
-
-    /**
-     * @dataProvider userGroupTypeDataProvider
-     */
-    public function testItShouldFetchAllForUserWithType($user, $type, array $expectedGroups)
-    {
-        $where        = new Where();
-        $where->addPredicate(new Operator('g.type', '=', $type));
-        $groups       = $this->groupService->fetchAllForUser($user, $where);
-        $groupsPage   = new Paginator($groups);
-
-        $actualGroups = [];
-        /** @var GroupInterface $group */
-        foreach ($groupsPage as $group) {
-            $this->assertInstanceOf(GroupInterface::class, $group);
-            array_push($actualGroups, $group->getGroupId());
-        }
-
-        sort($actualGroups);
-        sort($expectedGroups);
-
-        $this->assertSame($expectedGroups, $actualGroups, 'Fetching groups for a user did not return correct groups');
-    }
-
-    /**
      * @return array
      */
     public function userGroupDataProvider()

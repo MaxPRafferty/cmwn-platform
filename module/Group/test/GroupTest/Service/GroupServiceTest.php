@@ -138,7 +138,7 @@ class GroupServiceTest extends TestCase
             })
             ->once();
 
-        $this->assertTrue($this->groupService->saveGroup($newGroup));
+        $this->assertTrue($this->groupService->createGroup($newGroup));
     }
 
     /**
@@ -180,7 +180,7 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expected, $data);
             });
 
-        $this->assertTrue($this->groupService->saveGroup($group));
+        $this->assertTrue($this->groupService->updateGroup($group));
     }
 
     /**

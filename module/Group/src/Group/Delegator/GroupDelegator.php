@@ -44,6 +44,26 @@ class GroupDelegator implements GroupServiceInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function updateGroup(GroupInterface $group)
+    {
+        $event    = new Event('update.group', $this->realService, ['group' => $group]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->updateGroup($group);
+
+        $event->setName('update.group.post');
+        $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
+
+    /**
      * Attaches the HideDeletedEntitiesListener
      */
     protected function attachDefaultListeners()
@@ -79,7 +99,7 @@ class GroupDelegator implements GroupServiceInterface
      * @return bool
      * @throws NotFoundException
      */
-    public function saveGroup(GroupInterface $group)
+    public function createGroup(GroupInterface $group)
     {
         $event    = new Event('save.group', $this->realService, ['group' => $group]);
         $response = $this->getEventManager()->trigger($event);
@@ -88,7 +108,7 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return = $this->realService->saveGroup($group);
+        $return = $this->realService->createGroup($group);
 
         $event    = new Event('save.group.post', $this->realService, ['group' => $group]);
         $this->getEventManager()->trigger($event);
@@ -196,36 +216,6 @@ class GroupDelegator implements GroupServiceInterface
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'groups' => $return]
         );
-        $this->getEventManager()->trigger($event);
-
-        return $return;
-    }
-
-    /**
-     * @param GroupInterface|string|Where $user
-     * @param null $where
-     * @param bool $paginate
-     * @param null $prototype
-     * @return mixed|HydratingResultSet|DbSelect
-     * @deprecated
-     */
-    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
-    {
-        $where = $this->createWhere($where);
-        $event    = new Event(
-            'fetch.user.groups',
-            $this->realService,
-            ['user' => $user, 'where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
-        );
-
-        $response = $this->getEventManager()->trigger($event);
-        if ($response->stopped()) {
-            return $response->last();
-        }
-
-        $return   = $this->realService->fetchAllForUser($user, $event->getParam('where'), $paginate, $prototype);
-        $event->setName('fetch.user.groups.post');
-        $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);
 
         return $return;
