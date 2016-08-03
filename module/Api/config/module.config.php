@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreStart
+// @@codingStandardsIgnoreStart
 return array(
     'shared-listeners' => array(
         0 => 'Api\\Listeners\\UserRouteListener',
@@ -54,6 +54,9 @@ return array(
             'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource' => 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResourceFactory',
             'Api\\V1\\Rest\\SaveGame\\SaveGameResource' => 'Api\\V1\\Rest\\SaveGame\\SaveGameResourceFactory',
             'Api\\Listeners\\GameRouteListener' => 'Api\\Factory\\GameRouteListenerFactory',
+            'Api\\V1\\Rest\\Media\\MediaResource' => 'Api\\V1\\Rest\\Media\\MediaResourceFactory',
+            'Api\\V1\\Rest\\Skribble\\SkribbleResource' => 'Api\\V1\\Rest\\Skribble\\SkribbleResourceFactory',
+            'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource' => 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
         ),
     ),
     'router' => array(
@@ -256,6 +259,33 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.media' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/media[/:media_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Media\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.skribble' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/skribble[/:skribble_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Skribble\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.skribble-notify' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/skribble/:skribble_id/notice',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\SkribbleNotify\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -282,6 +312,9 @@ return array(
             19 => 'api.rest.reset',
             20 => 'api.rest.update-password',
             21 => 'api.rest.save-game',
+            22 => 'api.rest.media',
+            23 => 'api.rest.skribble',
+            24 => 'api.rest.skribble-notify',
         ),
     ),
     'zf-rest' => array(
@@ -687,6 +720,67 @@ return array(
             'service_name' => 'SaveGame',
             'collection_http_methods' => array(),
         ),
+        'Api\\V1\\Rest\\Media\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Media\\MediaResource',
+            'route_name' => 'api.rest.media',
+            'route_identifier_name' => 'media_id',
+            'collection_name' => 'media',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Media\\MediaEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Media\\MediaCollection',
+            'service_name' => 'Media',
+        ),
+        'Api\\V1\\Rest\\Skribble\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Skribble\\SkribbleResource',
+            'route_name' => 'api.rest.skribble',
+            'route_identifier_name' => 'skribble_id',
+            'collection_name' => 'skribble',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+                2 => 'status',
+                3 => 'read',
+            ),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\Skribble\\SkribbleEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Skribble\\SkribbleCollection',
+            'service_name' => 'Skribble',
+        ),
+        'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource',
+            'route_name' => 'api.rest.skribble-notify',
+            'route_identifier_name' => 'skribble_id',
+            'collection_name' => 'skribble_notify',
+            'entity_http_methods' => array(
+                0 => 'POST',
+            ),
+            'collection_http_methods' => array(),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyEntity',
+            'collection_class' => 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyCollection',
+            'service_name' => 'SkribbleNotify',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -712,6 +806,9 @@ return array(
             'Api\\V1\\Rest\\Reset\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UpdatePassword\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\SaveGame\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Media\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Skribble\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\SkribbleNotify\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -824,6 +921,21 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Media\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Skribble\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -912,6 +1024,18 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\SaveGame\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Media\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Skribble\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1185,6 +1309,48 @@ return array(
                 'route_identifier_name' => 'game_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Media\\MediaEntity' => array(
+                'entity_identifier_name' => 'media_id',
+                'route_name' => 'api.rest.media',
+                'route_identifier_name' => 'media_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Media\\MediaCollection' => array(
+                'entity_identifier_name' => 'media_id',
+                'route_name' => 'api.rest.media',
+                'route_identifier_name' => 'media_id',
+                'is_collection' => true,
+            ),
+            'Media\\MediaCollection' => array(
+                'entity_identifier_name' => 'media_id',
+                'route_name' => 'api.rest.media',
+                'route_identifier_name' => 'media_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Skribble\\SkribbleEntity' => array(
+                'entity_identifier_name' => 'skribble_id',
+                'route_name' => 'api.rest.skribble',
+                'route_identifier_name' => 'skribble_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Skribble\\SkribbleCollection' => array(
+                'entity_identifier_name' => 'skribble_id',
+                'route_name' => 'api.rest.skribble',
+                'route_identifier_name' => 'skribble_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyEntity' => array(
+                'entity_identifier_name' => 'skribble_id',
+                'route_name' => 'api.rest.skribble-notify',
+                'route_identifier_name' => 'skribble_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyCollection' => array(
+                'entity_identifier_name' => 'skribble_id',
+                'route_name' => 'api.rest.skribble-notify',
+                'route_identifier_name' => 'skribble_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -1232,6 +1398,12 @@ return array(
         ),
         'Api\\V1\\Rest\\SaveGame\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\SaveGame\\Validator',
+        ),
+        'Api\\V1\\Rest\\Skribble\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Skribble\\Validator',
+        ),
+        'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\SkribbleNotify\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -1483,14 +1655,6 @@ return array(
                 'description' => 'Meta data for the group',
                 'error_message' => 'Invalid Meta data',
             ),
-            4 => array(
-                'required' => true,
-                'validators' => array(),
-                'filters' => array(),
-                'name' => 'type',
-                'description' => 'type of the group',
-                'error_message' => 'Invalid group type',
-            ),
         ),
         'Api\\V1\\Rest\\Login\\Validator' => array(
             0 => array(
@@ -1705,6 +1869,92 @@ return array(
                 'filters' => array(),
                 'name' => 'version',
                 'description' => 'The Version of the data',
+            ),
+        ),
+        'Api\\V1\\Rest\\Skribble\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => '1',
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'version',
+                'description' => 'The version that was used to create this skribble',
+                'error_message' => 'Invalid Version',
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Skribble\\Rule\\RuleValidator',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'rules',
+                'description' => 'The rules for creating the skribble',
+                'error_message' => 'Invalid Rules',
+            ),
+            2 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'friend_to',
+                'description' => 'The Friend to send this message to',
+                'error_message' => 'Invalid Friend To',
+            ),
+            3 => array(
+                'required' => false,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 0,
+                                1 => 1,
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\Boolean',
+                        'options' => array('type' => 'all'),
+                    ),
+                    1 => array(
+                        'name' => 'Zend\\Filter\\ToInt',
+                        'options' => array(),
+                    ),
+                ),
+                'name' => 'read',
+                'description' => 'The Read flag',
+                'error_message' => 'Invalid read flag',
+            ),
+        ),
+        'Api\\V1\\Rest\\SkribbleNotify\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 'error',
+                                1 => 'success',
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'status',
+                'description' => 'The status of the skribble',
             ),
         ),
     ),

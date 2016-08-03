@@ -8,6 +8,9 @@ return [
             'api.rest.forgot',
             'api.rest.logout',
             'api.rest.image',
+            'api.rest.media',
+            'api.rest.skribble', // TODO lock this down
+            'api.rest.skribble-notify', // TODO lock this down
         ],
         'route-permissions' => [
             'api.rest.reset'           => [
@@ -74,6 +77,12 @@ return [
                 'GET'    => 'save.game',
                 'POST'   => 'save.game',
                 'DELETE' => 'save.game',
+            ],
+            'api.rest.skribble'        => [
+                'GET'    => 'view.skribble',
+                'POST'   => 'create.skribble',
+                'PUT'    => 'update.skribble',
+                'DELETE' => 'delete.skribble',
             ],
         ],
     ],
