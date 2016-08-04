@@ -22,7 +22,7 @@ use Zend\Validator\StaticValidator;
 class AuthAdapter implements AdapterInterface, LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
-    
+
     /**
      * @var SecurityServiceInterface
      */
@@ -104,6 +104,10 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
         }
 
         if ($user->isDeleted()) {
+            $this->getLogger()->warn(
+                'Deleted user attempted to login',
+                ['user_id' => $this->userId]
+            );
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
         }
 
@@ -125,20 +129,24 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 return new Result(Result::FAILURE_UNCATEGORIZED, new GuestUser());
 
             case $user::CODE_INVALID:
-                $this->getLogger()->alert(
+                $this->getLogger()->warn(
                     'Invalid password/code supplied for user',
                     ['user_id' => $this->userId]
                 );
                 return new Result(Result::FAILURE_CREDENTIAL_INVALID, new GuestUser());
 
             case $user::CODE_VALID:
+                $this->getLogger()->notice(
+                    'User Logged in with correct code',
+                    ['user_id' => $this->userId]
+                );
                 return new Result(
                     Result::SUCCESS,
                     new ChangePasswordUser($user->getArrayCopy())
                 );
         }
 
-        $this->getLogger()->emerg('THIS IS THE BAD! THIS IS VERY BAD', ['user_id' => $this->userId]);
+        $this->getLogger()->emerg('THIS IS THE BAD! SHOW THEM THE BAD', ['user_id' => $this->userId]);
         // @codeCoverageIgnoreStart
         // Hard to get here unless a new code status is added
         return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, new GuestUser());
