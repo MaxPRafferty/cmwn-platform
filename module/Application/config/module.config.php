@@ -32,6 +32,7 @@ return [
             \Application\Log\Rollbar\Options::class           => \Application\Log\Rollbar\OptionsFactory::class,
             'Application\Log\Rollbar\Notifier'                => \Application\Log\Rollbar\NotifierFactory::class,
             \Application\Log\Rollbar\Writer::class            => \Application\Log\Rollbar\WriterFactory::class,
+            \Zend\Http\Client::class                          => \Application\Factory\HttpClientFactory::class,
         ],
         'abstract_factories' => [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,

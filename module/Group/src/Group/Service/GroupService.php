@@ -171,7 +171,7 @@ class GroupService implements GroupServiceInterface
             ['parent_group_id' => 'group_id'],
             Select::JOIN_LEFT
         );
-        
+
         $select->join(
             ['g' => 'groups'],
             new Expression(

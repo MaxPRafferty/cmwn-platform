@@ -56,6 +56,7 @@ class RbacTest extends TestCase
      * @param $role
      * @param array $allowed
      * @param array $denied
+     *
      * @dataProvider rolePermissionProvider
      */
     public function testRolesShouldHaveCorrectPermission($role, array $allowed, array $denied)
@@ -87,6 +88,7 @@ class RbacTest extends TestCase
      * @param $role
      * @param $entity
      * @param $expected
+     *
      * @dataProvider roleEntityProvider
      */
     public function testRolesShouldHaveCorrectPermissionsBits($role, $entity, $expected)

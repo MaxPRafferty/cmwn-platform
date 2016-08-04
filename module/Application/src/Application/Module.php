@@ -34,9 +34,7 @@ class Module implements ConfigProviderInterface
         $moduleRouteListener->attach($eventManager);
 
         if (!defined('TEST_MODE')) {
-            /** @var Logger $logger */
             $logger = $mvcEvent->getApplication()->getServiceManager()->get('Log\App');
-
             Logger::registerErrorHandler($logger);
             Logger::registerExceptionHandler($logger);
             Logger::registerFatalErrorShutdownFunction($logger);
