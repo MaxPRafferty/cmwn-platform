@@ -2,7 +2,6 @@
 
 namespace IntegrationTest;
 
-use Zend\Db\Adapter\Adapter;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use ZF\Apigility\Application;
@@ -88,7 +87,7 @@ class TestHelper
         $appConfig['service_manager'] = [
             'initializers' => [
                 'InjectTestAdapter' => InjectTestAdapterInitializer::class
-            ]
+            ],
         ];
 
         return $appConfig;

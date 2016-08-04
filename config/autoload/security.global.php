@@ -2,6 +2,19 @@
 
 return [
     'cmwn-security' => [
+        'basic-auth'        => [
+            'config' => [
+                'accept_schemes' => 'basic',
+                'realm'          => 'cmwn',
+            ],
+
+            'resolver' => [
+                'resolver_class' => \Zend\Authentication\Adapter\Http\FileResolver::class,
+                'options'        => [
+                    'file' => realpath(__DIR__ . '/../../data/files/.htpasswd-lambda'),
+                ],
+            ],
+        ],
         'open-routes'       => [
             'api.rest.token',
             'api.rest.login',
@@ -9,8 +22,6 @@ return [
             'api.rest.logout',
             'api.rest.image',
             'api.rest.media',
-            'api.rest.skribble', // TODO lock this down
-            'api.rest.skribble-notify', // TODO lock this down
         ],
         'route-permissions' => [
             'api.rest.reset'           => [
@@ -82,7 +93,11 @@ return [
                 'GET'    => 'view.skribble',
                 'POST'   => 'create.skribble',
                 'PUT'    => 'update.skribble',
+                'PATCH'  => 'update.skribble',
                 'DELETE' => 'delete.skribble',
+            ],
+            'api.rest.skribble-notify' => [
+                'POST' => 'skribble.notice',
             ],
         ],
     ],

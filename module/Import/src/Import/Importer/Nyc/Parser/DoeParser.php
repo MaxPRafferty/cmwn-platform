@@ -166,7 +166,7 @@ class DoeParser extends AbstractParser implements NotificationAwareInterface
      */
     public function preProcess()
     {
-        $this->getLogger()->info('Starting to process file: ' . $this->getFileName());
+        $this->getLogger()->notice('Starting to process file: ' . $this->getFileName());
         if ($this->fileName === null || empty($this->teacherCode) || empty($this->studentCode)) {
             throw new \RuntimeException('Cannot pre process: Missing required fields');
         }

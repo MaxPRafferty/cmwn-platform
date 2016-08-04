@@ -3,15 +3,19 @@
 namespace Security\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\NoopLoggerAwareTrait;
 use Security\SecurityUser;
 use User\UserInterface;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Log\LoggerAwareInterface;
 
 /**
  * Class SecurityService
  */
-class SecurityService implements SecurityServiceInterface
+class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @var TableGateway
      */
@@ -73,6 +77,8 @@ class SecurityService implements SecurityServiceInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 
+        $this->getLogger()->notice('Saving new password to user: ' . $userId);
+
         $this->gateway->update(
             ['password' => static::encryptPassword($password), 'code' => null, 'code_expires' => null],
             ['user_id'  => $userId]
@@ -92,6 +98,8 @@ class SecurityService implements SecurityServiceInterface
     {
         $bit    = $super ? 1 : 0;
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+
+        $this->getLogger()->notice('Setting user to be a super user: ' . $userId);
 
         $this->gateway->update(
             ['super'   => $bit],

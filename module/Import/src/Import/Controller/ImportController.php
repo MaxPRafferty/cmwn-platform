@@ -94,7 +94,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 throw new \RuntimeException('Invalid Request');
             }
 
-            $this->getLogger()->notice('File Importer');
+            $this->getLogger()->notice('File Importer running');
             $this->getLogger()->info('Turning on verbose');
             $this->getLogger()->debug('Turning on Debug');
             $type = $request->getParam('type');
@@ -126,7 +126,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
 
             $job->setLogger($this->getLogger());
 
-            $this->getLogger()->info('Running importer');
+            $this->getLogger()->notice('Importer configured.  Performing import');
             $job->perform();
         } catch (\Exception $processException) {
             $this->getLogger()->emerg(
