@@ -99,5 +99,4 @@ class ServiceManagerTest extends TestCase
 
         $this->assertTrue(true);
     }
-
 }
