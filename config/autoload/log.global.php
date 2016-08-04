@@ -143,6 +143,11 @@ return [
              * request timeout for posting to rollbar, in seconds. default 3.
              */
             //'timeout' => 3,
+
+            /**
+             * Sets the log level to report
+             */
+            'log_level' => \Zend\Log\Logger::INFO,
         ]
     ],
     'log' => [

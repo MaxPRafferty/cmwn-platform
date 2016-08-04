@@ -91,7 +91,6 @@ class OrganizationServiceTest extends TestCase
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
                 return new \ArrayIterator([]);
-
             })
             ->once();
 
@@ -164,7 +163,6 @@ class OrganizationServiceTest extends TestCase
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);
-
             });
 
         $this->assertTrue($this->organizationService->updateOrganization($org));
@@ -238,7 +236,6 @@ class OrganizationServiceTest extends TestCase
             ->andReturnUsing(function ($data, $where) use (&$org) {
                 $this->assertEquals(['org_id' => $org->getOrgId()], $where);
                 $this->assertNotEmpty($data['deleted']);
-
             });
 
         $this->assertTrue($this->organizationService->deleteOrganization($org));
@@ -269,7 +266,6 @@ class OrganizationServiceTest extends TestCase
         $this->tableGateway->shouldReceive('delete')
             ->andReturnUsing(function ($where) use (&$org) {
                 $this->assertEquals(['org_id' => $org->getOrgId()], $where);
-
             });
 
         $this->assertTrue($this->organizationService->deleteOrganization($org, false));
