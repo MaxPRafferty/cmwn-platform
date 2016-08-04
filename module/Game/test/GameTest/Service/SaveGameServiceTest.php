@@ -46,7 +46,6 @@ class SaveGameServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturn(new \ArrayIterator([]))
             ->byDefault();
-
     }
 
     /**

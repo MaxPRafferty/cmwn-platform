@@ -79,6 +79,12 @@ class GameSeed extends AbstractSeed
                 $editGame                = true;
             }
 
+            if ($gameData['meta'] !== $gameConfig['meta']) {
+                $this->getOutput()->writeln(sprintf('The game "%s" has meta', $gameId));
+                $gameData['meta'] = $gameConfig['meta'];
+                $editGame                = true;
+            }
+
             if ($editGame) {
                 $gameData['updated'] = $currentDate->format('Y-m-d H:i:s');
                 $gamesToEdit[$gameId] = $gameData;
@@ -131,10 +137,11 @@ class GameSeed extends AbstractSeed
             try {
                 $this->getOutput()->writeln(sprintf('Editing Game "%s"', $gameId));
                 $this->query(sprintf(
-                    "UPDATE games SET title = \"%s\", description = \"%s\", updated = '%s'  WHERE game_id='%s'",
+                    "UPDATE games SET title = \"%s\", description = \"%s\", updated = '%s', meta = '%s'  WHERE game_id='%s'",
                     $gameData['title'],
                     $gameData['description'],
                     $gameData['updated'],
+                    $gameData['meta'],
                     $gameId
                 ));
             } catch (\PDOException $exception) {
