@@ -63,8 +63,6 @@ class FriendService implements FriendServiceInterface
             Select::JOIN_LEFT
         );
 
-        $where = $this->createWhere([]);
-
         $firstOr = new PredicateSet();
         $firstOr->orPredicate(new Operator('uf.friend_id', '=', $userId));
         $firstOr->orPredicate(new Operator('uf.user_id', '=', $userId));

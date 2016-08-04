@@ -64,9 +64,9 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     {
         $this->listeners[] = $events->attach(
             'Zend\Mvc\Application',
-            MvcEvent::EVENT_DISPATCH,
-            [$this, 'onDispatch'],
-            (PHP_INT_MAX - 2)
+            MvcEvent::EVENT_ROUTE,
+            [$this, 'onRoute'],
+            -2
         );
     }
 
@@ -82,7 +82,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param MvcEvent $event
      * @return void|ApiProblemResponse
      */
-    public function onDispatch(MvcEvent $event)
+    public function onRoute(MvcEvent $event)
     {
         if ($this->isRouteUnRestricted($event)) {
             return null;
@@ -101,6 +101,11 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         try {
             $user = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePass) {
+            // FIXME create a new listener that will check for change password user and send this response
+            if ($event->getRouteMatch()->getMatchedRouteName() !== 'api.rest.update-password') {
+                return new ApiProblemResponse(new ApiProblem(401, 'RESET_PASSWORD'));
+            }
+
             $user = $changePass->getUser();
         }
 
@@ -207,7 +212,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
             $foundRole = $this->orgService->getRoleForOrg($orgId, $identity);
         }
 
-        $foundRole = $foundRole === false ? 'logged_in' : $foundRole;
+        $foundRole = $foundRole === null ? 'logged_in' : $foundRole;
 
         if ($identity instanceof SecurityUser) {
             $identity->setRole($foundRole);

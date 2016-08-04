@@ -175,7 +175,7 @@ class UserServiceTest extends TestCase
                 unset($expected['password']);
                 unset($expected['deleted']);
                 unset($expected['type']);
-
+                unset($expected['username']);
                 $expected['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
                 $this->assertArrayNotHasKey('deleted', $data);
 

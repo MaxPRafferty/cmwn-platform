@@ -3,6 +3,8 @@
 namespace Security\Listeners;
 
 use Application\Exception\NotAuthorizedException;
+use Group\Service\UserGroupService;
+use Group\Service\UserGroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
@@ -10,6 +12,7 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
+use Security\Service\SecurityOrgService;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
@@ -27,6 +30,27 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
     protected $listeners = [];
 
     /**
+     * @var SecurityOrgService
+     */
+    protected $securityOrgService;
+
+    /**
+     * @var UserGroupService
+     */
+    protected $userGroupService;
+
+    /**
+     * OrgServiceListener constructor.
+     * @param SecurityOrgService $securityOrgService
+     * @param UserGroupServiceInterface $userGroupService
+     */
+    public function __construct(SecurityOrgService $securityOrgService, UserGroupServiceInterface $userGroupService)
+    {
+        $this->securityOrgService = $securityOrgService;
+        $this->userGroupService = $userGroupService;
+    }
+
+    /**
      * @param SharedEventManagerInterface $events
      */
     public function attachShared(SharedEventManagerInterface $events)
@@ -35,6 +59,12 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
             OrganizationServiceInterface::class,
             'fetch.all.orgs',
             [$this, 'fetchAll']
+        );
+
+        $this->listeners[] = $events->attach(
+            SecurityOrgService::class,
+            'fetch.org.post',
+            [$this, 'fetchOrganization']
         );
     }
 
@@ -71,13 +101,35 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
         }
 
         $event->stopPropagation(true);
-        /** @var OrganizationServiceInterface $service */
-        $service = $event->getTarget();
-        return $service->fetchAllForUser(
+        
+        return $this->userGroupService->fetchOrganizationsForUser(
             $user,
-            $event->getParam('where'),
-            $event->getParam('paginate'),
             $event->getParam('prototype')
         );
+    }
+
+    /**
+     * @param Event $event
+     * @throws NotAuthorizedException
+     */
+    public function fetchOrganization(Event $event)
+    {
+        $orgId = $event->getParam('org_id', null);
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            throw new NotAuthorizedException;
+        }
+
+        /** @var SecurityUser $user */
+        try {
+            $user = $this->getAuthenticationService()->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+
+        $user->setRole($this->securityOrgService->getRoleForOrg($orgId, $user));
+        
+        if (!$this->getRbac()->isGranted($user->getRole(), 'view.org')) {
+            throw new NotAuthorizedException;
+        }
     }
 }

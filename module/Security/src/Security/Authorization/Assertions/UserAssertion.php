@@ -73,6 +73,7 @@ class UserAssertion implements AssertionInterface
             $role = $this->securityGroupService->fetchRelationshipRole($this->activeUser, $this->requestedUser);
         }
 
+        $role .= '.' . strtolower($this->activeUser->getType());
         //attach requested user type to permission
         foreach ($this->permission as $permission) {
             if ($rbac->isGranted($role, $permission)) {

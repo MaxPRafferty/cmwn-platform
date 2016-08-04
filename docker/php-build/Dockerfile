@@ -15,8 +15,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install zip \
-    && docker-php-ext-install redis \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && docker-php-ext-install redis
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && cd /root/.composer/ \
     && composer global install --optimize-autoloader -vvv
 

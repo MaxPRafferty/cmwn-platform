@@ -112,6 +112,7 @@ class GameServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
+            'meta'        => '{"desktop" : false, "unity" : false}',
         ];
 
         $result = new ResultSet();
