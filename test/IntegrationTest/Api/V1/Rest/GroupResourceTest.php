@@ -372,4 +372,38 @@ class GroupResourceTest extends TestCase
         $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(403);
     }
+
+    /**
+     * @test
+     * @ticket CORE-1062
+     */
+    public function testItShouldFetchChildGroups()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+
+        $this->dispatch('/group?type=class&parent=school');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+
+        $groupList = $body['_embedded'];
+        $this->assertArrayHasKey('group', $groupList);
+
+        $expectedGroupIds = [
+            'english',
+            'math'
+        ];
+        $actualGroupIds   = [];
+
+        foreach ($groupList['group'] as $groupData) {
+            $this->assertArrayHasKey('group_id', $groupData);
+            array_push($actualGroupIds, $groupData['group_id']);
+        }
+
+        $this->assertEquals($expectedGroupIds, $actualGroupIds);
+    }
 }
