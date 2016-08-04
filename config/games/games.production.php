@@ -7,6 +7,7 @@ $master = include __DIR__ . '/games.master.php';
 $productionGames = [];
 
 $gameOnProduction = [
+    'all-about-you',
     'animal-id',
     'be-bright',
     'bloom-boom',
@@ -31,13 +32,11 @@ $gameOnProduction = [
 ];
 
 $comingSoonGames = [
-    'be-bright',
+    'all-about-you',
     'drought-out',
     'fire',
-    'happy-fish-face',
     'monarch',
     'pedal-pusher',
-    'printmaster',
     'sea-turtle',
     'tag-it',
     'waterdrop',
