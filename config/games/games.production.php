@@ -7,7 +7,6 @@ $master = include __DIR__ . '/games.master.php';
 $productionGames = [];
 
 $gameOnProduction = [
-    'all-about-you',
     'animal-id',
     'be-bright',
     'bloom-boom',
@@ -32,7 +31,6 @@ $gameOnProduction = [
 ];
 
 $comingSoonGames = [
-    'all-about-you',
     'drought-out',
     'fire',
     'monarch',
@@ -50,7 +48,7 @@ foreach ($master['games']['master'] as $gameId => $gameData) {
     $comingSoon = in_array($gameId, $comingSoonGames) ? 1 : 0;
 
     $productionData['coming_soon'] = $comingSoon;
-    $productionGames[$gameId]         = $gameData;
+    $productionGames[$gameId]      = $gameData;
 }
 
 $master['games']['production'] = $productionGames;
