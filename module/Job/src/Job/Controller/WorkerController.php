@@ -3,7 +3,9 @@
 namespace Job\Controller;
 
 use Job\Service\ResqueWorker;
+use PHPMD\Writer\StreamWriter;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Log\Filter\Priority;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerInterface;
@@ -69,7 +71,9 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
             throw new \RuntimeException('Invalid Request');
         }
 
-        $this->getLogger()->addWriter(new Stream(STDOUT));
+        $writer = new Stream(STDOUT);
+        $writer->addFilter(new Priority(Logger::INFO));
+        $this->getLogger()->addWriter($writer);
 
         $queue    = [$request->getParam('queue', 'default')];
         $interval = $request->getParam('interval', 5);
