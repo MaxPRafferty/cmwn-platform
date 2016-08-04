@@ -56,4 +56,25 @@ interface GameInterface
      * @return Game
      */
     public function setDescription($description);
+
+    /**
+     * Sets the meta data
+     * @param array $meta
+     */
+    public function setMeta($meta = []);
+
+    /**
+     * Gets all the meta data
+     *
+     * @return array
+     */
+    public function getMeta();
+
+    /**
+     * Add a value to meta data
+     *
+     * @param $key
+     * @param $value
+     */
+    public function addToMeta($key, $value);
 }
