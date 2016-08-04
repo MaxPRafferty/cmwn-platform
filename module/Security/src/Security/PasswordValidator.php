@@ -20,6 +20,7 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
     use AuthenticationServiceAwareTrait;
 
     const NEW_PASSWORD = 'newPassword';
+    const CASE_CHANGE = 'caseChange';
 
     /**
      * @var array
@@ -29,6 +30,7 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
         self::NOT_MATCH    => "Password must be at least 8 characters with one of them being a number",
         self::ERROROUS     => "Password must be at least 8 characters with one of them being a number",
         self::NEW_PASSWORD => 'You must set a new password',
+        self::CASE_CHANGE  => "You must create a new password and it must be different than your access code.",
     ];
 
     /**
@@ -59,11 +61,19 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
             return true;
         }
 
-        if ((null !== $loggedIn->getCode()) && $loggedIn->getCode() === $value) {
-            $this->error(static::NEW_PASSWORD);
-            return false;
+        if ((null === $loggedIn->getCode())) {
+            return true;
         }
 
+        if ($loggedIn->getCode() === $value) {
+                $this->error(static::NEW_PASSWORD);
+                return false;
+        }
+
+        if (strcasecmp($loggedIn->getCode(), $value) === 0) {
+                $this->error(static::CASE_CHANGE);
+                return false;
+        }
         return true;
     }
 

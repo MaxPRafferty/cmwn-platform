@@ -35,6 +35,23 @@ class PasswordResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1024
+     */
+    public function testItShouldCheckChangePasswordException()
+    {
+        $this->markTestIncomplete("Not checked");
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $this->dispatch(
+            '/user/english_student/password',
+            'POST',
+            ['password' => 'apple0007', 'password_confirmation' => 'apple0007']
+        );
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @test
      * @ticket CORE-707
      */
     public function testItShouldResetPasswordForUser()
@@ -58,5 +75,4 @@ class PasswordResourceTest extends TestCase
         $this->assertEquals('english_student', $user->getUserId());
         $this->assertTrue($user->comparePassword('apple0007'));
     }
-
 }

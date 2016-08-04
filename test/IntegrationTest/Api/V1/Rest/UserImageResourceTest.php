@@ -38,6 +38,21 @@ class UserImageResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
+    /**
+     * @test
      * @ticket CORE-839
      */
     public function testItShouldAllowNeighborsToSeeProfileImages()
@@ -149,5 +164,24 @@ class UserImageResourceTest extends TestCase
             ['image_id' => 'profiles/bar', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
         );
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'other_teacher',
+                '/user/other_principal/image'
+            ],
+            1 => [
+                'math_student',
+                '/user/math_student/image',
+                'POST',
+                ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
+            ],
+        ];
     }
 }

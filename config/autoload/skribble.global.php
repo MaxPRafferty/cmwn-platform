@@ -1,7 +1,10 @@
 <?php
 
+$skribbleSNSArn = getenv('SKRIBBLE_SNS_ARN');
+$skribbleSNSArn = empty($skribbleSNSArn) ? 'not a real arn' : $skribbleSNSArn;
+
 return [
     'skribble-sns-config' => [
-        'sns-arn' => 'arn:aws:sns:us-east-1:454791371383:skribble',
+        'sns-arn' => $skribbleSNSArn,
     ],
 ];

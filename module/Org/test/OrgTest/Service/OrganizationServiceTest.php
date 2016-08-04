@@ -158,8 +158,9 @@ class OrganizationServiceTest extends TestCase
                 $expected = $org->getArrayCopy();
                 $expected['meta'] = '[]';
 
-                unset($expected['password']);
                 unset($expected['deleted']);
+                unset($expected['created']);
+                unset($expected['org_id']);
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);

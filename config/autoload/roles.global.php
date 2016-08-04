@@ -28,6 +28,7 @@ return [
             'create.child.group'   => 'Create a sub group',
             'create.group'         => 'Create a group',
             'view.group'           => 'View Group',
+            'view.user.groups'     => 'View Groups of a user',
             'view.all.groups'      => 'View all Groups',
             'edit.group'           => 'Edit a Group',
             'import'               => 'Import Data file',
@@ -43,6 +44,7 @@ return [
             'create.org'           => 'Create an Organization',
             'view.all.orgs'        => 'View all Organizations',
             'view.org'             => 'View an Organization',
+            'view.user.orgs'       => 'View all Organizations the user belongs too',
             'view.org.users'       => 'View all users in an organization',
             'edit.org'             => 'Edit an Organization',
             'remove.org'           => 'Remove an Organization',
@@ -62,6 +64,7 @@ return [
             'create.skribble'      => 'Create Skribbles',
             'delete.skribble'      => 'Delete Skribbles',
             'update.skribble'      => 'Update Skribbles',
+            'skribble.notice'      => 'Notify Skribble status',
         ],
         'roles'             => [
             'super' => [
@@ -89,6 +92,7 @@ return [
                     'view.profile.image',
                     'adult.code',
                     'child.code',
+                    'skribble.notice',
                 ],
             ],
 
@@ -137,7 +141,7 @@ return [
                 ],
             ],
 
-            'principal' => [
+            'principal.adult' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'adult' => Rbac::SCOPE_REMOVE,
@@ -160,6 +164,7 @@ return [
                     'update.password',
                     'view.games',
                     'view.group',
+                    'view.user.groups',
                     'view.group.users',
                     'view.org',
                     'view.org.users',
@@ -169,7 +174,7 @@ return [
                 ],
             ],
 
-            'asst_principal' => [
+            'asst_principal.adult' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
                     'adult' => Rbac::SCOPE_REMOVE,
@@ -201,7 +206,7 @@ return [
                 ],
             ],
 
-            'teacher' => [
+            'teacher.adult' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
@@ -220,13 +225,14 @@ return [
                     'view.group.users',
                     'view.org',
                     'view.org.users',
+                    'view.profile.image',
                     'view.user.adult',
                     'view.user.child',
-                    'view.profile.image',
+                    'view.user.groups',
                 ],
             ],
 
-            'neighbor.adult' => [
+            'neighbor.adult.adult' => [
                 'entity_bits' => [
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
@@ -238,28 +244,46 @@ return [
                 ],
             ],
 
-            'me' => [
+            'me.child' => [
+                'entity_bits' => [
+                    'me' => Rbac::SCOPE_UPDATE,
+                ],
+                'permissions' => [
+                    'attach.profile.image',
+                    'can.friend',
+                    'create.skribble',
+                    'create.user.flip',
+                    'delete.skribble',
+                    'edit.user.adult',
+                    'edit.user.child',
+                    'remove.user.adult',
+                    'remove.user.child',
+                    'save.game',
+                    'update.password',
+                    'update.skribble',
+                    'view.profile.image',
+                    'view.skribble',
+                    'view.user.adult',
+                    'view.user.child',
+                    'view.user.flip',
+                ],
+            ],
+
+            'me.adult' => [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'update.password',
                     'save.game',
-                    'create.user.flip',
                     'edit.user.adult',
                     'edit.user.child',
                     'remove.user.adult',
                     'remove.user.child',
                     'view.user.adult',
                     'view.user.child',
-                    'view.user.flip',
                     'view.profile.image',
                     'attach.profile.image',
-                    'view.skribble',
-                    'view.skribble',
-                    'create.skribble',
-                    'delete.skribble',
-                    'update.skribble',
                 ],
             ],
 
@@ -286,7 +310,7 @@ return [
                 ],
             ],
 
-            'student' => [
+            'student.child' => [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
@@ -305,10 +329,11 @@ return [
                     'view.user.child',
                     'view.profile.image',
                     'view.user.flip',
+                    'view.user.groups',
                 ],
             ],
 
-            'logged_in' => [
+            'logged_in.child' => [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
@@ -316,16 +341,33 @@ return [
                 'permissions' => [
                     'update.password',
                     'view.games',
-                    'view.group',
-                    'view.org',
+                    'view.user.groups',
+                    'view.group.users',
+                    'view.flip',
+                    'pick.username',
                     'view.user.adult',
                     'view.user.child',
-                    'view.profile.image',
+                ],
+            ],
+
+            'logged_in.adult' => [
+                'entity_bits' => [
+                    'me' => Rbac::SCOPE_UPDATE,
+                ],
+                'parents'     => ['group_admin'],
+                'permissions' => [
+                    'update.password',
+                    'view.games',
+                    'view.user.orgs',
+                    'view.user.groups',
+                    'pick.username',
+                    'view.user.adult',
+                    'view.user.child',
                 ],
             ],
 
             'guest' => [
-                'parents' => ['logged_in'],
+                'parents' => ['logged_in.adult'],
             ],
         ],
     ],
