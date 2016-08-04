@@ -74,8 +74,7 @@ class SkribbleNotifyResourceTest extends TestCase
      */
     public function testItShouldUpdateSkribbleToCompleteWithError()
     {
-        $this->logInUser('english_student');
-        $this->injectValidCsrfToken();
+        $this->loginBasicAuth($this->getRequest());
         $this->dispatch('/user/english_student/skribble/foo-bar/notice', 'POST', ['status' => 'error']);
 
         $this->assertResponseStatusCode(201);
@@ -95,8 +94,7 @@ class SkribbleNotifyResourceTest extends TestCase
      */
     public function testItShould404WhenSkribbleIsNotFound()
     {
-        $this->logInUser('english_student');
-        $this->injectValidCsrfToken();
+        $this->loginBasicAuth($this->getRequest());
         $this->dispatch('/user/english_student/skribble/manchuck/notice', 'POST', ['status' => 'error']);
 
         $this->assertResponseStatusCode(404);

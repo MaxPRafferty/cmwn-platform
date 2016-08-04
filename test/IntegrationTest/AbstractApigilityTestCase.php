@@ -2,11 +2,11 @@
 
 namespace IntegrationTest;
 
+use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
 use Security\Guard\CsrfGuard;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
 use ZF\ContentNegotiation\Request;
-use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
 
 /**
  * Class AbstractApigilityTestCase
