@@ -232,7 +232,6 @@ class SkribbleResourceTest extends TestCase
      */
     public function testItShouldNotAllowFetchingOtherSkribbles()
     {
-        $this->markTestSkipped('skribbles is open until oauth is implemented');
         $this->logInUser('manchuck');
         $this->injectValidCsrfToken();
         $this->dispatch('/user/english_student/skribble?status=draft');
@@ -425,9 +424,7 @@ class SkribbleResourceTest extends TestCase
      */
     public function testItShouldAllowYouToFetchSkribbleYouDoNotOwn()
     {
-        // TODO Fix this once the service is locked down
-        $this->markTestSkipped('Service is open for the moment');
-        $this->logInUser('manchuck');
+        $this->logInUser('english_student');
         $this->injectValidCsrfToken();
         $this->dispatch('/user/manchuck/skribble/foo-bar');
 
@@ -540,9 +537,6 @@ class SkribbleResourceTest extends TestCase
      */
     public function testItShouldNotAllowSkribblesToBeUpdatedFromOtherUsers()
     {
-        // TODO Fix this once the service is locked down
-        $this->markTestSkipped('Service is open for the moment');
-
         $skribbleData = [
             'version'     => '1',
             'url'         => null,
@@ -566,8 +560,7 @@ class SkribbleResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\skribble\controller');
 
         $changed = $this->skribbleService->fetchSkribble('foo-bar');
-        $this->assertEquals(
-            'math_student',
+        $this->assertNull(
             $changed->getFriendTo(),
             'API did not update the skribble'
         );
@@ -596,9 +589,6 @@ class SkribbleResourceTest extends TestCase
      */
     public function testItShouldNotAllowYouToDeleteSkribbleYouDontOwn()
     {
-        // TODO Fix this once the service is locked down
-        $this->markTestSkipped('Service is open for the moment');
-
         $this->logInUser('manchuck');
         $this->injectValidCsrfToken();
         $this->dispatch('/user/english_student/skribble/foo-bar', 'DELETE');
@@ -607,7 +597,6 @@ class SkribbleResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.skribble');
         $this->assertControllerName('api\v1\rest\skribble\controller');
 
-        $this->setExpectedException(NotFoundException::class);
         $this->skribbleService->fetchSkribble('foo-bar');
     }
 

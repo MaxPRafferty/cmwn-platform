@@ -58,6 +58,12 @@ return [
             'child.code'           => 'Send child reset code',
             'attach.profile.image' => 'Upload a profile image',
             'view.profile.image'   => 'View a users profile image',
+
+            // skribble
+            'view.skribble'        => 'Read Skribbles',
+            'create.skribble'      => 'Create Skribbles',
+            'delete.skribble'      => 'Delete Skribbles',
+            'update.skribble'      => 'Update Skribbles',
         ],
         'roles'             => [
             'super' => [
@@ -241,19 +247,23 @@ return [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
-                    'update.password',
-                    'save.game',
+                    'attach.profile.image',
+                    'can.friend',
+                    'create.skribble',
                     'create.user.flip',
+                    'delete.skribble',
                     'edit.user.adult',
                     'edit.user.child',
                     'remove.user.adult',
                     'remove.user.child',
+                    'save.game',
+                    'update.password',
+                    'update.skribble',
+                    'view.profile.image',
+                    'view.skribble',
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
-                    'view.profile.image',
-                    'attach.profile.image',
-                    'can.friend',
                 ],
             ],
 
