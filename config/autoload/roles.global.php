@@ -64,6 +64,7 @@ return [
             'create.skribble'      => 'Create Skribbles',
             'delete.skribble'      => 'Delete Skribbles',
             'update.skribble'      => 'Update Skribbles',
+            'skribble.notice'      => 'Notify Skribble status',
         ],
         'roles'             => [
             'super' => [
@@ -91,6 +92,7 @@ return [
                     'view.profile.image',
                     'adult.code',
                     'child.code',
+                    'skribble.notice',
                 ],
             ],
 

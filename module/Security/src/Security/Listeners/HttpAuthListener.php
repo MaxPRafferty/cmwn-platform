@@ -5,6 +5,7 @@ namespace Security\Listeners;
 use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Guard\CsrfGuard;
 use Security\SecurityUser;
 use Zend\Authentication\Adapter\Http;
 use Zend\Authentication\AuthenticationService;
@@ -14,7 +15,6 @@ use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Mvc\MvcEvent;
-use Zend\Session\Storage\ArrayStorage;
 
 /**
  * Class HttpAuthListener
@@ -35,6 +35,28 @@ class HttpAuthListener implements AuthenticationServiceAwareInterface, LoggerAwa
     protected $user;
 
     /**
+     * @var Http
+     */
+    protected $adapter;
+
+    /**
+     * @var CsrfGuard
+     */
+    protected $guard;
+
+    /**
+     * HttpAuthListener constructor.
+     *
+     * @param Http $adapter
+     * @param CsrfGuard $guard
+     */
+    public function __construct(Http $adapter, CsrfGuard $guard)
+    {
+        $this->adapter = $adapter;
+        $this->guard   = $guard;
+    }
+
+    /**
      * @param SharedEventManagerInterface $events
      */
     public function attachShared(SharedEventManagerInterface $events)
@@ -45,12 +67,6 @@ class HttpAuthListener implements AuthenticationServiceAwareInterface, LoggerAwa
             [$this, 'onRoute'],
             PHP_INT_MAX
         );
-
-//        $this->listeners[] = $events->attach(
-//            'Zend\Mvc\Application',
-//            MvcEvent::EVENT_FINISH,
-//            [$this, 'onFinish']
-//        );
     }
 
     /**
@@ -85,23 +101,10 @@ class HttpAuthListener implements AuthenticationServiceAwareInterface, LoggerAwa
             return;
         }
 
-        $config = [
-            'accept_schemes' => 'basic',
-            'realm'          => 'cmwn',
-            'digest_domains' => '/lambda',
-            'nonce_timeout'  => 3600,
-        ];
+        $this->adapter->setRequest($request);
+        $this->adapter->setResponse($response);
 
-        $adapter  = new Http($config);
-        $resolver = new Http\FileResolver();
-        $resolver->setFile(getcwd() . '/data/files/.htpasswd-lambda');
-
-        $adapter->setBasicResolver($resolver);
-
-        $adapter->setRequest($request);
-        $adapter->setResponse($response);
-
-        $result = $adapter->authenticate();
+        $result = $this->adapter->authenticate();
 
         if (!$result->isValid()) {
             return;
@@ -121,5 +124,10 @@ class HttpAuthListener implements AuthenticationServiceAwareInterface, LoggerAwa
         $auth = $this->getAuthenticationService();
         $auth->setStorage(new NonPersistent());
         $auth->getStorage()->write($this->user);
+
+        // Set a csrf token
+        $request
+            ->getHeaders()
+            ->addHeaderLine('X-CSRF: ' . $this->guard->getHash());
     }
 }

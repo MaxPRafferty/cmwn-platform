@@ -2,6 +2,8 @@
 
 namespace IntegrationTest;
 
+use Zend\Authentication\Adapter\Http\FileResolver;
+use Zend\Authentication\Adapter\Http\ResolverInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
@@ -50,7 +52,12 @@ class TestHelper
         $testLogger = new Logger();
         $testLogger->addWriter(new Noop());
 
+        /** @var FileResolver $httpAuthResolver */
+        $httpAuthResolver = static::$serviceManager->get(ResolverInterface::class);
+        $httpAuthResolver->setFile(__DIR__ . '/_files/.htpasswd-test');
+
         static::$serviceManager->setService('Log\App', $testLogger);
+        static::$serviceManager->setService(ResolverInterface::class, $httpAuthResolver);
         static::$serviceManager->setAllowOverride(false);
         return static::$serviceManager;
     }

@@ -23,7 +23,6 @@ return [
         'invokables' => [
             \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
             \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
-            \Security\Listeners\HttpAuthListener::class   => \Security\Listeners\HttpAuthListener::class,
             \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
         ],
 
@@ -54,6 +53,14 @@ return [
                 \Security\Factory\GroupServiceListenerFactory::class,
             \Security\Listeners\OrgServiceListener::class           =>
                 \Security\Factory\OrgServiceListenerFactory::class,
+
+            \Zend\Authentication\Adapter\Http::class =>
+                \Security\Factory\BasicAuthAdapterFactory::class,
+
+            \Zend\Authentication\Adapter\Http\ResolverInterface::class =>
+                \Security\Factory\BasicAuthResolverFactory::class,
+
+            \Security\Listeners\HttpAuthListener::class => \Security\Factory\HttpAuthListenerFactory::class,
         ],
 
         'initializers' => [

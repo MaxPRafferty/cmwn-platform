@@ -4,6 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\DataSets\ArrayDataSet;
+use IntegrationTest\LoginBasicAuthTrait;
 use IntegrationTest\TestHelper;
 use Skribble\Service\SkribbleServiceInterface;
 use Skribble\SkribbleInterface;
@@ -23,6 +24,8 @@ use Skribble\SkribbleInterface;
  */
 class SkribbleNotifyResourceTest extends TestCase
 {
+    use LoginBasicAuthTrait;
+
     /**
      * @var SkribbleServiceInterface
      */
@@ -51,8 +54,7 @@ class SkribbleNotifyResourceTest extends TestCase
      */
     public function testItShouldUpdateSkribbleToCompleteWithSuccess()
     {
-        $this->logInUser('english_student');
-        $this->injectValidCsrfToken();
+        $this->loginBasicAuth($this->getRequest());
         $this->dispatch('/user/english_student/skribble/foo-bar/notice', 'POST', ['status' => 'success']);
 
         $this->assertResponseStatusCode(201);
