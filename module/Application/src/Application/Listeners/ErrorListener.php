@@ -33,8 +33,19 @@ class ErrorListener implements LoggerAwareInterface
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'dispatchError']);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_RENDER_ERROR, [$this, 'renderError']);
+        $this->listeners[] = $events->attach(
+            '\Zend\Mvc\Application',
+            MvcEvent::EVENT_DISPATCH_ERROR,
+            [$this, 'dispatchError'],
+            PHP_INT_MAX
+        );
+
+        $this->listeners[] = $events->attach(
+            '\Zend\Mvc\Application',
+            MvcEvent::EVENT_RENDER_ERROR,
+            [$this, 'renderError'],
+            PHP_INT_MAX
+        );
     }
 
     /**
@@ -43,7 +54,7 @@ class ErrorListener implements LoggerAwareInterface
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('*', $listener);
+            $events->detach('\Zend\Mvc\Application', $listener);
         }
     }
 
@@ -53,7 +64,7 @@ class ErrorListener implements LoggerAwareInterface
     public function dispatchError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
-        $this->getLogger()->err(
+        $this->getLogger()->crit(
             sprintf('Dispatch Error: %s', $exception->getMessage()),
             $exception->getTrace()
         );
@@ -65,7 +76,7 @@ class ErrorListener implements LoggerAwareInterface
     public function renderError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
-        $this->getLogger()->err(
+        $this->getLogger()->crit(
             sprintf('Render Error: %s', $exception->getMessage()),
             $exception->getTrace()
         );
@@ -79,7 +90,7 @@ class ErrorListener implements LoggerAwareInterface
     {
         $exception = $mvcEvent->getParam('exception');
         if (!$exception instanceof \Exception) {
-            $exception = new \Exception($mvcEvent->getError());
+            $exception = new \Exception('An Error occurred with no exception this is bad: ' . $mvcEvent->getError());
         }
 
         return $exception;

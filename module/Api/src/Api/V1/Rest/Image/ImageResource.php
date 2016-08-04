@@ -31,7 +31,7 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
     {
         $this->service = $service;
     }
-    
+
     /**
      * Create a resource
      *
@@ -41,7 +41,7 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
      */
     public function create($data)
     {
-        $this->getLogger()->debug('Cloudinary web hook called');
+        $this->getLogger()->info('Cloudinary web hook called');
         //check header
         /** @var Request $request */
         $request   = $this->getEvent()->getRequest();
@@ -65,7 +65,7 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
 
             return new ApiProblem(403, 'Not authorized');
         }
-        
+
         $imageId = $this->getInputFilter()->getValue('public_id');
         $image   = $this->service->fetchImage($imageId);
         $code    = $image::statusToNumber($this->getInputFilter()->getValue('moderation_status'));
