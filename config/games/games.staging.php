@@ -29,6 +29,7 @@ $gameOnStaging = [
     'twirl-n-swirl',
     'twirling-tower',
     'waterdrop',
+    'skribble',
 ];
 
 $comingSoonGames = [
