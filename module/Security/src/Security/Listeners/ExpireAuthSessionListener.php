@@ -2,11 +2,11 @@
 
 namespace Security\Listeners;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
 use ZF\ApiProblem\ApiProblem;
@@ -22,7 +22,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
     use AuthenticationServiceAwareTrait;
-    use LoggerAwareTrait;
+    use NoopLoggerAwareTrait;
 
     /**
      * How many seconds to keep an authenticated session active
@@ -82,8 +82,8 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
             $this->container->offsetUnset('last_seen');
             return null;
         }
-
-        $currentTime = $lastSeen = strtotime('now');
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $currentTime = $lastSeen = $now->getTimestamp();
         if ($this->container->offsetExists('last_seen')) {
             $lastSeen = $this->container->offsetGet('last_seen');
         }
@@ -101,7 +101,7 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
             $this->container->offsetUnset('last_seen');
             return new ApiProblemResponse(new ApiProblem(401, 'Expired'));
         }
-        
+
         return null;
     }
 }

@@ -5,6 +5,7 @@
  * The previous config file has been stored in ./config/modules.config.old
  */
 return [
+    'AwsModule',
     'Application',
     'User',
     'Org',
@@ -18,6 +19,8 @@ return [
     'Notice',
     'AcMailer',
     'Forgot',
+    'Media',
+    'Skribble',
     'ZF\\ApiProblem',
     'ZF\\Configuration',
     'ZF\\Hal',

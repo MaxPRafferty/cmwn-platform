@@ -7,6 +7,7 @@ use Asset\Image;
 use Asset\Service\UserImageServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use Zend\Json\Json;
 
 /**
  * Test ImageResourceTest
@@ -35,6 +36,21 @@ class ImageResourceTest extends TestCase
     public function setUpImageService()
     {
         $this->imageService = TestHelper::getServiceManager()->get(UserImageServiceInterface::class);
+    }
+
+    /**
+     * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
     }
 
     /**
@@ -79,6 +95,24 @@ class ImageResourceTest extends TestCase
             'English Teacher' => ['user_id' => 'english_teacher'],
             'Principal'       => ['user_id' => 'principal'],
             'Super'           => ['user_id' => 'super_user'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/image',
+                'POST',
+                [
+                    'image_id' => 'foobar',
+                    'url' => 'www.example.com'
+                ]
+            ],
         ];
     }
 }

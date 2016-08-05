@@ -2,7 +2,9 @@
 namespace Api\V1\Rest\GroupUsers;
 
 use Api\V1\Rest\User\UserEntity;
+use Application\Exception\NotFoundException;
 use Group\GroupInterface;
+use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -16,14 +18,21 @@ class GroupUsersResource extends AbstractResourceListener
     /**
      * @var UserGroupServiceInterface
      */
+    protected $userGroupService;
+
+    /**
+     * @var GroupServiceInterface
+     */
     protected $groupService;
 
     /**
      * GroupUsersResource constructor.
-     * @param UserGroupServiceInterface $groupService
+     * @param UserGroupServiceInterface $userGroupService
+     * @param GroupServiceInterface $groupService
      */
-    public function __construct(UserGroupServiceInterface $groupService)
+    public function __construct(UserGroupServiceInterface $userGroupService, GroupServiceInterface $groupService)
     {
+        $this->userGroupService = $userGroupService;
         $this->groupService = $groupService;
     }
 
@@ -33,21 +42,25 @@ class GroupUsersResource extends AbstractResourceListener
      */
     public function fetch($groupId)
     {
-        $group = $this->getEvent()->getRouteParam('group');
-        if (!$group instanceof GroupInterface) {
+        try {
+            $group = $this->groupService->fetchGroup($groupId);
+        } catch (NotFoundException $notFound) {
             return new ApiProblem(421, 'Routing error');
         }
 
-        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, [], new UserEntity()));
+        return new GroupUsersCollection($this->userGroupService->fetchUsersForGroup($group, [], new UserEntity()));
     }
 
     public function fetchAll()
     {
-        $group = $this->getEvent()->getRouteParam('group');
-        if (!$group instanceof GroupInterface) {
+        $groupId = $this->getEvent()->getRouteParam('group_id');
+
+        try {
+            $group = $this->groupService->fetchGroup($groupId);
+        } catch (NotFoundException $notFound) {
             return new ApiProblem(421, 'Routing error');
         }
 
-        return new GroupUsersCollection($this->groupService->fetchUsersForGroup($group, [], new UserEntity()));
+        return new GroupUsersCollection($this->userGroupService->fetchUsersForGroup($group, [], new UserEntity()));
     }
 }

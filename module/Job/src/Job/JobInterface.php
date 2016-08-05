@@ -9,6 +9,7 @@ interface JobInterface
 {
     /**
      * Performs the work for the job
+     * @todo remove from this interface to allow jobs to be processed outside PHP
      */
     public function perform();
 

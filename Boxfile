@@ -13,7 +13,6 @@ build:
     - 'rm -rf Vagrantfile'
     - 'rm -rf public/index.html'
     - 'rm -rf html'
-    - 'rm -rf vendor'
   exec:
     - 'COMPOSER_DISCARD_CHANGES=true'
     - 'composer clear-cache'
@@ -32,12 +31,17 @@ web1:
     - json
     - mbstring
     - mcrypt
+    - bcmath
     - pdo_mysql
     - redis
     - curl
     - zip
   php_always_populate_raw_post_data: -1
   httpd_document_root: public
+  httpd_access_log: true
+  httpd_error_log: true
+  php_error_log: true
+  php_fpm_log: true
   php_session_save_handler: redis
   php_session_save_path: "tcp://${CACHE1_HOST}:${CACHE1_PORT}"
   network_dirs:
@@ -53,6 +57,8 @@ web1:
 
 worker1:
    exec: 'php public/index.php worker --queue=default'
+   php_error_log: true
+   php_fpm_log: true
    php_extensions:
     - json
     - mbstring

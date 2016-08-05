@@ -48,8 +48,8 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 210);
-        $this->listeners[] = $events->attach('*', MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
+        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 210);
+        $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
     }
 
     /**
@@ -57,9 +57,8 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        foreach ($this->listeners as $listener) {
-            $events->detach('*', $listener);
-        }
+        $events->detach('Zend\Mvc\Application', $this->listeners[0]);
+        $events->detach('Zend\Mvc\Application', $this->listeners[1]);
     }
 
     /**
@@ -126,7 +125,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      * @param MvcEvent $event
      * @return null|void|ApiProblemResponse
      */
-    public function onRoute(MvcEvent $event)
+    public function onDispatch(MvcEvent $event)
     {
         if ($this->isRouteOpen($event)) {
             return null;
