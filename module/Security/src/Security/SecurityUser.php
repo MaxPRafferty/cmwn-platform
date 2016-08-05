@@ -73,6 +73,11 @@ class SecurityUser extends User
     protected $role = 'guest';
 
     /**
+     * @var string
+     */
+    protected $normalizedUsername;
+
+    /**
      * Sets the data for the user
      *
      * Also sets the code, password and super flag
@@ -207,5 +212,21 @@ class SecurityUser extends User
     public function getGroupTypes()
     {
         return $this->groupTypes;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNormalizedUsername()
+    {
+        return $this->normalizedUsername;
+    }
+
+    /**
+     * @param $normalizedUsername
+     */
+    public function setNormalizedUsername($normalizedUsername)
+    {
+        $this->normalizedUsername = $normalizedUsername;
     }
 }
