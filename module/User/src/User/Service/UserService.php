@@ -85,6 +85,7 @@ class UserService implements UserServiceInterface
         $data['user_id'] = $user->getUserId();
         $data['created'] = $user->getCreated()->format("Y-m-d H:i:s");
         $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
+        $data['normalized_username'] = $this->normalizeUsername($data['username']);
 
         unset($data['password']);
         unset($data['deleted']);
@@ -107,7 +108,9 @@ class UserService implements UserServiceInterface
         $data            = $user->getArrayCopy();
         $data['meta']    = Json::encode($data['meta']);
         $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
-
+        if (isset($data['username'])) {
+            $data['normalized_username'] = $this->normalizeUsername($data['username']);
+        }
         unset($data['password']);
         unset($data['deleted']);
         unset($data['super']);
@@ -219,5 +222,14 @@ class UserService implements UserServiceInterface
 
         $this->userTableGateway->delete(['user_id' => $user->getUserId()]);
         return true;
+    }
+
+    /**
+     * @param string $username
+     * @return string
+     */
+    public function normalizeUsername($username)
+    {
+        return strtolower(preg_replace('/((?![a-zA-Z0-9]+).)/', '', $username));
     }
 }

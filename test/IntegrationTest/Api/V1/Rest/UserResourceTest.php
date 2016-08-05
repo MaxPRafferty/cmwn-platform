@@ -145,6 +145,7 @@ class UserResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1164
      */
     public function testItShouldCheckChangePasswordExceptionForPutMe()
     {
@@ -199,8 +200,14 @@ class UserResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\user\controller');
         $this->assertNotRedirect();
 
-        $afterUser = $this->loadUserFromDb('english_teacher');
+        $conn = $this->getConnection()->getConnection();
+        $query = "select normalized_username from users where username = 'new_username'";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        $this->assertEquals('newusername', $row[0]['normalized_username']);
 
+        $afterUser = $this->loadUserFromDb('english_teacher');
         $this->assertInstanceOf(UserInterface::class, $afterUser);
         $this->assertNotEquals($beforeUser, $afterUser);
 
@@ -410,6 +417,35 @@ class UserResourceTest extends TestCase
         $this->assertResponseStatusCode(403);
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1164
+     */
+    public function testItShouldCreateUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'first_name'  => 'Chaithra',
+            'last_name'   => 'Yenikapati',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'wigglytuff-007',
+            'email'       => 'chaithra@ginasink.com',
+            'birthdate'   => '1993-07-13',
+        ];
+        $this->dispatch('/user', 'POST', $postData);
+        $this->assertResponseStatusCode(201);
+
+        $conn = $this->getConnection()->getConnection();
+        $query = "select normalized_username from users where username = 'wigglytuff-007'";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        $this->assertEquals('wigglytuff007', $row[0]['normalized_username']);
     }
 
     /**

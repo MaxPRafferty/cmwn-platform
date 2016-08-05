@@ -125,6 +125,7 @@ class UserServiceTest extends TestCase
                 $expected['meta'] = '[]';
                 $expected['created'] = $newUser->getCreated()->format("Y-m-d H:i:s");
                 $expected['updated'] = $newUser->getUpdated()->format("Y-m-d H:i:s");
+                $expected['normalized_username'] = '';
                 unset($expected['password']);
                 unset($expected['deleted']);
 
@@ -156,7 +157,7 @@ class UserServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
-            'type'        => Adult::TYPE_ADULT
+            'type'        => Adult::TYPE_ADULT,
         ];
 
         $user   = new Adult($userData);
@@ -176,6 +177,8 @@ class UserServiceTest extends TestCase
                 unset($expected['deleted']);
                 unset($expected['type']);
                 unset($expected['username']);
+                $expected['normalized_username'] = 'manchuck';
+
                 $expected['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
                 $this->assertArrayNotHasKey('deleted', $data);
 
