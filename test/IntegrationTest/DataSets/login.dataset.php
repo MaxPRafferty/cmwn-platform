@@ -153,6 +153,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'englishstudent'
                 ),
             1 =>
                 array (
@@ -174,6 +175,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'englishteacher'
                 ),
             2 =>
                 array (
@@ -195,6 +197,7 @@ return array (
                     'code_expires' => (string) (new \DateTime('-3 days'))->format("Y-m-d H:i:s"),
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'mathstudent'
                 ),
             3 =>
                 array (
@@ -216,6 +219,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'mathteacher'
                 ),
             4 =>
                 array (
@@ -237,6 +241,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'otherprincipal'
                 ),
             5 =>
                 array (
@@ -258,6 +263,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'otherstudent'
                 ),
             6 =>
                 array (
@@ -279,6 +285,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'otherteacher'
                 ),
             7 =>
                 array (
@@ -300,6 +307,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'principal'
                 ),
             8 =>
                 array (
@@ -321,6 +329,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '1',
                     'external_id' => NULL,
+                    'normalized_username' => 'superuser'
                 ),
         ),
     'user_friends' =>

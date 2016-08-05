@@ -152,6 +152,10 @@ class SecurityServiceTest extends TestCase
             ->with(['username' => 'manchuck'])
             ->andReturn(new \ArrayIterator([]))
             ->once();
+        $this->tableGateway->shouldReceive('select')
+            ->with(['normalized_username' => 'manchuck'])
+            ->andReturn(new \ArrayIterator([]))
+            ->once();
 
         $this->securityService->fetchUserByUserName('manchuck');
     }

@@ -43,6 +43,7 @@ class LoginResourceTest extends TestCase
 
     /**
      * @test
+     * @ticker CORE-1165
      * @dataProvider loginDataProvider
      */
     public function testItShouldLoginUser($login)
@@ -164,6 +165,12 @@ class LoginResourceTest extends TestCase
             1 => [
                 'user' => 'english_student@ginasink.com',
             ],
+            2 => [
+                'user' => 'english _ student',
+            ],
+            3 => [
+                'user' => 'English - Student',
+            ]
 
         ];
     }
