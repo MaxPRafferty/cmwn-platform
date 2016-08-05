@@ -30,7 +30,7 @@ class AddNormalizedColumnAndUniqueUsername extends AbstractMigration
         $table = $this->table('users', ['id' => false, 'primary_key' => ['user_id']]);
         $table
             ->addColumn('normalized_username', 'string', ['null' => true])
-            ->addIndex(['email', 'normalized_username'], ['unique' => true])
+            ->addIndex(['username', 'normalized_username'], ['unique' => true])
             ->update();
     }
 }
