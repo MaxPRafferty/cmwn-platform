@@ -138,7 +138,6 @@ class FlipResourceTest extends TestCase
                 'super_user'
             ],
         ];
-
     }
 
     /**
