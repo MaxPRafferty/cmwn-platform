@@ -28,7 +28,7 @@ abstract class AbstractRule implements RuleInterface
     /**
      * @inheritDoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray($array)
     {
         $this->setMedia(new Media($array));
         if ($this instanceof StateRuleInterface && isset($array['state'])) {

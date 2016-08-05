@@ -20,7 +20,7 @@ interface RuleCompositeInterface
      *
      * @return void
      */
-    public function exchangeArray(array $array);
+    public function exchangeArray($array);
 
     /**
      * Return an array representation of the object
