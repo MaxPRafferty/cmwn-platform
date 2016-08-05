@@ -49,6 +49,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_FINISH, [$this, 'onFinish'], 210);
+        // todo check to onRoute instead of dispatch
         $this->listeners[] = $events->attach('Zend\Mvc\Application', MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
     }
 
@@ -138,7 +139,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
         if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
             return $this->verifyToken($cookie);
         }
-        
+
         return null;
     }
 
