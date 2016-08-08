@@ -8,11 +8,8 @@ use Org\OrganizationInterface;
 use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
@@ -82,15 +79,28 @@ class UserGroupService implements UserGroupServiceInterface
     public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null)
     {
         $where = $this->createWhere($where);
-        $where->addPredicate(new Operator(
-            'ug.group_id',
-            '=',
-            $group->getGroupId()
-        ));
+        $where->addPredicate(new Operator('g.group_id', '=', $group->getGroupId()));
 
-        $select = new Select(['ug' => 'user_groups']);
-        $select->columns(['group_id']);
+        $select = new Select(['g' => 'groups']);
+        $select->columns(['active_group' => 'group_id']);
 
+        // Get all the child groups
+        $select->join(
+            ['cg' => 'groups'],
+            '(cg.head BETWEEN g.head AND g.tail) AND (cg.network_id = g.network_id)',
+            ['child_group' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        // Get all the users in the groups we just got
+        $select->join(
+            ['ug' => 'user_groups'],
+            'ug.group_id = cg.group_id',
+            ['user_group_id' => 'group_id'],
+            Select::JOIN_LEFT_OUTER
+        );
+
+        // Get all the users
         $select->join(
             ['u' => 'users'],
             'ug.user_id = u.user_id',
@@ -100,6 +110,7 @@ class UserGroupService implements UserGroupServiceInterface
 
         $select->where($where);
         $select->order(['u.first_name', 'u.last_name']);
+        $select->group(['u.user_id']);
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
 
@@ -174,7 +185,7 @@ class UserGroupService implements UserGroupServiceInterface
         // This grabs all the sub groups from the above groups
         $select->join(
             ['sg' => 'groups'],
-            'sg.head BETWEEN ugg.head AND ugg.tail' .
+            'sg.head BETWEEN ugg.head AND ugg.tail ' .
             'AND sg.network_id = ugg.network_id',
             ['sub_group_id' => 'group_id'],
             Select::JOIN_LEFT
@@ -203,12 +214,7 @@ class UserGroupService implements UserGroupServiceInterface
     }
 
     /**
-     * Fetches organizations for a user
-     *
-     * @param Where|UserInterface|string $user
-     * @param bool $prototype
-     *
-     * @return DbSelect
+     * @inheritdoc
      */
     public function fetchOrganizationsForUser($user, $prototype = null)
     {
@@ -220,6 +226,8 @@ class UserGroupService implements UserGroupServiceInterface
         $select = new Select();
         $select->columns(['o' => '*']);
         $select->from(['o' => 'organizations']);
+
+        // Join in the groups to get the organization id
         $select->join(
             ['g' => 'groups'],
             'o.org_id = g.organization_id',
@@ -227,6 +235,7 @@ class UserGroupService implements UserGroupServiceInterface
             Select::JOIN_LEFT
         );
 
+        // Join in the groups the user belongs too
         $select->join(
             ['ug' => 'user_groups'],
             'ug.group_id = g.group_id',
@@ -247,29 +256,7 @@ class UserGroupService implements UserGroupServiceInterface
     }
 
     /**
-     * SELECT ug.user_id AS active_user_id,
-     *   active_group.group_id AS active_group_id,
-     *   ug2.user_id AS sub_user_id,
-     *   uf.friend_id as friend_id,
-     *   u.*
-     * FROM user_groups AS ug
-     *   LEFT JOIN groups AS ugg ON ugg.group_id = ug.group_id
-     *   LEFT JOIN groups AS sg ON sg.organization_id = ugg.organization_id AND sg.head BETWEEN ugg.head AND ugg.tail
-     *   LEFT JOIN groups AS g ON g.group_id = sg.group_id OR g.group_id = ugg.parent_id
-     *   LEFT OUTER JOIN user_groups AS oug ON oug.group_id = g.group_id
-     *   LEFT OUTER JOIN user_friends AS uf ON uf.user_id = ug.user_id OR uf.friend_id = ug.user_id
-     *   LEFT OUTER JOIN users AS u ON u.user_id = oug.user_id OR u.user_id = uf.friend_id OR u.user_id = uf.user_id
-     * WHERE u.deleted IS NULL
-     *   AND ug.user_id = 'english_student'
-     * GROUP BY u.user_id
-     * HAVING u.user_id != 'english_student'
-     * ORDER BY u.first_name ASC, u.last_name ASC
-     *
-     * @param $user
-     * @param $where
-     * @param null $prototype
-     *
-     * @return DbSelect
+     * @inheritdoc
      */
     public function fetchAllUsersForUser($user, $where = null, $prototype = null)
     {
@@ -286,12 +273,12 @@ class UserGroupService implements UserGroupServiceInterface
         // This is all the sub groups from above
         $select->join(
             ['sg' => 'groups'],
-            'sg.organization_id = ugg.organization_id AND sg.head BETWEEN ugg.head AND ugg.tail',
+            'sg.network_id = ugg.network_id AND sg.head BETWEEN ugg.head AND ugg.tail',
             ['sub_group_id' => 'group_id'],
             Select::JOIN_LEFT
         );
 
-        // This is all the groups
+        // This is all the groups our user belongs too
         $select->join(
             ['g' => 'groups'],
             'g.group_id = sg.group_id OR g.group_id = ugg.parent_id',

@@ -3,7 +3,6 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase;
-use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**

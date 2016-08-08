@@ -4,8 +4,11 @@ namespace IntegrationTest\Service;
 
 use Group\Service\GroupServiceInterface;
 use Group\Group;
+use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use Org\Organization;
+use Org\Service\OrganizationServiceInterface;
 
 /**
  * Exception GroupServiceTest
@@ -21,6 +24,8 @@ use IntegrationTest\AbstractDbTestCase as TestCase;
  */
 class GroupServiceTest extends TestCase
 {
+    use LoginUserTrait;
+
     /**
      * @var GroupServiceInterface
      */
@@ -35,6 +40,14 @@ class GroupServiceTest extends TestCase
     }
 
     /**
+     * @before
+     */
+    public function setUpLogin()
+    {
+        $this->logInUser('super_user');
+    }
+
+    /**
      * @return array
      */
     public function testItShouldReBalanceTheNetworkCorrectlyInTheDatabase()
@@ -42,29 +55,53 @@ class GroupServiceTest extends TestCase
         $district = new Organization([
             'org_id' => 'network_district',
             'title'  => 'Test network district',
-            'type'   => 'district',
+            'type'   => 'network_district',
         ]);
 
         /** @var OrganizationServiceInterface $orgService */
         $orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
         $orgService->createOrganization($district);
 
-        $schoolOne = new Group(['type' => 'school', 'title' => 'School 1', 'organization_id' => '']);
+        $schoolOne = new Group([
+            'type'            => 'school',
+            'title'           => 'School 1',
+            'organization_id' => $district->getOrgId(),
+        ]);
         $schoolOne->setOrganizationId($district);
 
-        $schoolTwo = new Group(['type' => 'school', 'title' => 'School 2']);
+        $schoolTwo = new Group([
+            'type'            => 'school',
+            'title'           => 'School 2',
+            'organization_id' => $district->getOrgId(),
+        ]);
         $schoolTwo->setOrganizationId($district);
 
-        $mathForSchoolOne = new Group(['type' => 'class', 'title' => 'Math for school 1']);
+        $mathForSchoolOne = new Group([
+            'type'            => 'class',
+            'title'           => 'Math for school 1',
+            'organization_id' => $district->getOrgId(),
+        ]);
         $mathForSchoolOne->setOrganizationId($district);
 
-        $mathForSchoolTwo = new Group(['type' => 'class', 'title' => 'Math for school 2']);
+        $mathForSchoolTwo = new Group([
+            'type'            => 'class',
+            'title'           => 'Math for school 2',
+            'organization_id' => $district->getOrgId(),
+        ]);
         $mathForSchoolTwo->setOrganizationId($district);
 
-        $lunchForSchoolOne = new Group(['type' => 'class', 'title' => 'Lunch for school 1']);
+        $lunchForSchoolOne = new Group([
+            'type'            => 'class',
+            'title'           => 'Lunch for school 1',
+            'organization_id' => $district->getOrgId(),
+        ]);
         $lunchForSchoolOne->setOrganizationId($district);
 
-        $lunchForSchoolTwo = new Group(['type' => 'class', 'title' => 'Lunch for school 2']);
+        $lunchForSchoolTwo = new Group([
+            'type'            => 'class',
+            'title'           => 'Lunch for school 2',
+            'organization_id' => $district->getOrgId(),
+        ]);
         $lunchForSchoolTwo->setOrganizationId($district);
 
         $this->groupService->createGroup($schoolOne);

@@ -84,9 +84,9 @@ class GroupService implements GroupServiceInterface
         $connection->beginTransaction();
 
         try {
+            // Shift the tail
             $where = new Where();
             $where->addPredicate(new Operator('tail', '>', $parent->getHead()));
-            $where->addPredicate(new Operator('organization_id', '=', $parent->getOrganizationId()));
             $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
 
             $this->groupTableGateway->update(
@@ -94,24 +94,24 @@ class GroupService implements GroupServiceInterface
                 $where
             );
 
+            // Shift the head
             $where = new Where();
-            $where->addPredicate(new Operator('head', Operator::OP_GT, $parent->getHead()));
-            $where->addPredicate(new Operator('organization_id', '=', $parent->getOrganizationId()));
-            $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
+            $where->addPredicate(new Operator('head', '>', $parent->getHead()));
             $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
             $this->groupTableGateway->update(
                 ['head' => new Expression('head + 2')],
                 $where
             );
 
+            // Set the child
             $where = new Where();
             $where->addPredicate(new Operator('group_id', '=', $child->getGroupId()));
-            $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
             $this->groupTableGateway->update(
                 [
                     'head'       => $parent->getHead() + 1,
                     'tail'       => $parent->getHead() + 2,
                     'network_id' => $child->getNetworkId(),
+                    'parent_id'     => $parent->getGroupId(),
                 ],
                 $where
             );

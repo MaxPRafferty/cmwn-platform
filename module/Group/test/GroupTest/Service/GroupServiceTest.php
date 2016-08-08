@@ -10,7 +10,6 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Predicate as Where;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Json\Json;
 
 /**
  * Test GroupServiceTest
@@ -467,7 +466,6 @@ class GroupServiceTest extends TestCase
 
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('tail', '>', 1));
-                $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
                 $expectedWhere->addPredicate(new Operator('network_id', '=', 'baz-bat'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
@@ -493,8 +491,6 @@ class GroupServiceTest extends TestCase
 
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('head', '>', 1));
-                $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
-                $expectedWhere->addPredicate(new Operator('group_id', '!=', 'parent'));
                 $expectedWhere->addPredicate(new Operator('network_id', '=', 'baz-bat'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
@@ -518,11 +514,10 @@ class GroupServiceTest extends TestCase
             ->andReturnUsing(function ($actualSet, PredicateInterface $actualWhere) {
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('group_id', '=', 'child'));
-                $expectedWhere->addPredicate(new Operator('network_id', '=', 'baz-bat'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
                 $this->assertEquals(
-                    ['head' => 2, 'tail' => 3, 'network_id' => 'baz-bat'],
+                    ['head' => 2, 'tail' => 3, 'network_id' => 'baz-bat', 'parent_id' => 'parent'],
                     $actualSet,
                     'Network shift update for child incorrect'
                 );
