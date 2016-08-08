@@ -2,6 +2,7 @@
 namespace Api\V1\Rest\Import;
 
 use Group\GroupAwareInterface;
+use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
@@ -66,11 +67,27 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
         }
 
         if ($job instanceof GroupAwareInterface) {
-            $job->setGroup($this->getEvent()->getRouteParam('group'));
+            $job->setGroup(
+                $this->getGroup(
+                    $this->getEvent()->getRouteParam('group_id')
+                )
+            );
         }
 
         $token = $this->jobService->sendJob($job);
         return new ImportEntity($token);
+    }
+
+    /**
+     * @param $groupId
+     *
+     * @return \Group\GroupInterface
+     */
+    protected function getGroup($groupId)
+    {
+        /** @var GroupServiceInterface $groupService */
+        $groupService = $this->services->get(GroupServiceInterface::class);
+        return $groupService->fetchGroup($groupId);
     }
 
     /**

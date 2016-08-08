@@ -61,6 +61,7 @@ class OrgRouteListener implements ListenerAggregateInterface
      *
      * @param MvcEvent $event
      * @return null|ApiProblem
+     * @deprecated
      */
     public function onRoute(MvcEvent $event)
     {
@@ -113,5 +114,8 @@ class OrgRouteListener implements ListenerAggregateInterface
         foreach ($types as $type) {
             $payload->getLinks()->add(new GroupLink($type, null, $realEntity->getOrgId()));
         }
+
+        // Add the generic group link to creating new groups
+        $payload->getLinks()->add(new GroupLink());
     }
 }

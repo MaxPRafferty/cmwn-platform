@@ -24,6 +24,14 @@ class StaticType
     }
 
     /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return static::$types;
+    }
+
+    /**
      * @param $type
      *
      * @return mixed

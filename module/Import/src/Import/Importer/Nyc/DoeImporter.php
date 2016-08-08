@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc;
 
+use Application\Exception\NotFoundException;
 use Application\Utils\NoopLoggerAwareTrait;
 use Group\GroupAwareInterface;
 use Group\GroupInterface;
@@ -40,7 +41,7 @@ class DoeImporter implements
      * @var array Adds the Importer interface the shared manager
      */
     protected $eventIdentifier = ['Import\ImporterInterface'];
-    
+
     /**
      * @var string the file name to process
      */
@@ -127,12 +128,21 @@ class DoeImporter implements
 
     /**
      * @param $school
+     * @throws \Exception
      */
     protected function setSchool($school)
     {
         if ($school !== null && !$school instanceof GroupInterface) {
             $this->getLogger()->debug('Loading school from database');
-            $school = $this->groupService->fetchGroup($school);
+            try {
+                $school = $this->groupService->fetchGroup($school);
+            } catch (\Exception $schoolNotFound) {
+                $message = sprintf('Error Fetching school %s: %s', $school, $schoolNotFound->getMessage());
+                $this->getLogger()->crit($message);
+
+                throw new \RuntimeException($message, 500, $schoolNotFound);
+            }
+
             $this->getLogger()->debug('School loaded');
         }
 
@@ -216,7 +226,7 @@ class DoeImporter implements
             return;
         }
     }
-    
+
     /**
      * Gets the data that will be passed for the job
      *
