@@ -2,13 +2,9 @@
 
 namespace IntegrationTest\Service;
 
-use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
-use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Where;
-use Zend\Paginator\Paginator;
 
 /**
  * Exception GroupServiceTest
@@ -75,76 +71,148 @@ class GroupServiceTest extends TestCase
      */
     public function userGroupTypeDataProvider()
     {
-        return [
-            'Principal with Class' => [
-                'user'            => 'principal',
-                'type'            => 'class',
-                'expected_groups' => [
-                    'english',
-                    'math',
-                ],
-            ],
+        $district = new Organization([
+            'org_id' => 'network_district',
+            'title'  => 'Test network district',
+            'type'   => 'district',
+        ]);
 
-            'Principal with School' => [
-                'user'            => 'principal',
-                'type'            => 'school',
-                'expected_groups' => [
-                    'school',
-                ],
-            ],
+        /** @var OrganizationServiceInterface $orgService */
+        $orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+        $orgService->createOrganization($district);
 
-            'Principal with foo' => [
-                'user'            => 'principal',
-                'type'            => 'foo',
-                'expected_groups' => [
-                ],
-            ],
+        $schoolOne = new Group(['type' => 'school', 'title' => 'School 1', 'organization_id' => '']);
+        $schoolOne->setOrganizationId($district);
 
-            'English Teacher with Class' => [
-                'user'            => 'english_teacher',
-                'type'            => 'class',
-                'expected_groups' => [
-                    'english',
-                ],
-            ],
+        $schoolTwo = new Group(['type' => 'school', 'title' => 'School 2']);
+        $schoolTwo->setOrganizationId($district);
 
-            'English Teacher with School' => [
-                'user'            => 'english_teacher',
-                'type'            => 'school',
-                'expected_groups' => [
-                    'school',
-                ],
-            ],
+        $mathForSchoolOne = new Group(['type' => 'class', 'title' => 'Math for school 1']);
+        $mathForSchoolOne->setOrganizationId($district);
 
-            'English Teacher with foo' => [
-                'user'            => 'english_teacher',
-                'type'            => 'foo',
-                'expected_groups' => [
-                ],
-            ],
+        $mathForSchoolTwo = new Group(['type' => 'class', 'title' => 'Math for school 2']);
+        $mathForSchoolTwo->setOrganizationId($district);
 
-            'Math Teacher with Class' => [
-                'user'            => 'math_teacher',
-                'type'            => 'class',
-                'expected_groups' => [
-                    'math',
-                ],
-            ],
+        $lunchForSchoolOne = new Group(['type' => 'class', 'title' => 'Lunch for school 1']);
+        $lunchForSchoolOne->setOrganizationId($district);
 
-            'Math Teacher with School' => [
-                'user'            => 'math_teacher',
-                'type'            => 'school',
-                'expected_groups' => [
-                    'school',
-                ],
-            ],
+        $lunchForSchoolTwo = new Group(['type' => 'class', 'title' => 'Lunch for school 2']);
+        $lunchForSchoolTwo->setOrganizationId($district);
 
-            'Math Teacher with foo' => [
-                'user'            => 'math_teacher',
-                'type'            => 'foo',
-                'expected_groups' => [
-                ],
-            ],
-        ];
+        $this->groupService->createGroup($schoolOne);
+        $this->groupService->createGroup($schoolTwo);
+        $this->groupService->createGroup($mathForSchoolOne);
+        $this->groupService->createGroup($mathForSchoolTwo);
+        $this->groupService->createGroup($lunchForSchoolOne);
+        $this->groupService->createGroup($lunchForSchoolTwo);
+
+        $this->groupService->addChildToGroup($schoolOne, $mathForSchoolOne);
+        $this->groupService->addChildToGroup($schoolTwo, $mathForSchoolTwo);
+
+        $this->groupService->addChildToGroup($mathForSchoolOne, $lunchForSchoolOne);
+        $this->groupService->addChildToGroup($mathForSchoolTwo, $lunchForSchoolTwo);
+
+        $updatedSchoolOne = $this->groupService->fetchGroup($schoolOne->getGroupId());
+        $updatedMathOne   = $this->groupService->fetchGroup($mathForSchoolOne->getGroupId());
+        $updatedLunchOne  = $this->groupService->fetchGroup($lunchForSchoolOne->getGroupId());
+
+        $this->assertEquals(
+            '1',
+            $updatedSchoolOne->getHead(),
+            'Head for school 1 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '6',
+            $updatedSchoolOne->getTail(),
+            'Tail for school 1 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '2',
+            $updatedMathOne->getHead(),
+            'Head for math 1 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '5',
+            $updatedMathOne->getTail(),
+            'Tail for math 1 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '3',
+            $updatedLunchOne->getHead(),
+            'Head for Lunch 1 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '4',
+            $updatedLunchOne->getTail(),
+            'Tail for Lunch 1 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            $schoolOne->getNetworkId(),
+            $updatedMathOne->getNetworkId(),
+            'Math one was not attached to the same network as school 1'
+        );
+
+        $this->assertEquals(
+            $schoolOne->getNetworkId(),
+            $updatedLunchOne->getNetworkId(),
+            'Lunch one was not attached to the same network as lunch 1'
+        );
+
+        $updatedSchoolTwo = $this->groupService->fetchGroup($schoolTwo->getGroupId());
+        $updatedMathTwo   = $this->groupService->fetchGroup($mathForSchoolTwo->getGroupId());
+        $updatedLunchTwo  = $this->groupService->fetchGroup($lunchForSchoolTwo->getGroupId());
+
+        $this->assertEquals(
+            '1',
+            $updatedSchoolTwo->getHead(),
+            'Head for school 2 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '6',
+            $updatedSchoolTwo->getTail(),
+            'Tail for school 2 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '2',
+            $updatedMathTwo->getHead(),
+            'Head for math 2 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '5',
+            $updatedMathTwo->getTail(),
+            'Tail for math 2 is incorrect after Attaching Class'
+        );
+        $this->assertEquals(
+            '3',
+            $updatedLunchTwo->getHead(),
+            'Head for lunch 2 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            '4',
+            $updatedLunchTwo->getTail(),
+            'Tail for lunch 2 is incorrect after Attaching Class'
+        );
+
+        $this->assertEquals(
+            $schoolTwo->getNetworkId(),
+            $updatedMathTwo->getNetworkId(),
+            'Math two was not attached to the same network as school 2'
+        );
+
+        $this->assertEquals(
+            $schoolTwo->getNetworkId(),
+            $updatedLunchTwo->getNetworkId(),
+            'Lunch two was not attached to the same network as school 2'
+        );
     }
 }

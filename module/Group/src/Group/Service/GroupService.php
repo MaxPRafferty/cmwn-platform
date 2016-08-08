@@ -8,6 +8,7 @@ use Group\Group;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
+use Zend\Db\Adapter\Driver\Pdo\Connection;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Between;
@@ -59,7 +60,6 @@ class GroupService implements GroupServiceInterface
 
         // Add the child to the network
         $child->setNetworkId($parent->getNetworkId());
-        $this->updateGroup($child);
 
         // fetch the parent to get the latest head value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
@@ -72,40 +72,55 @@ class GroupService implements GroupServiceInterface
             );
 
             $this->groupTableGateway->update(
-                ['head' => 2, 'tail' => 3],
+                ['head' => 2, 'tail' => 3, 'network_id' => $parent->getNetworkId()],
                 ['group_id' => $child->getGroupId()]
             );
 
             return true;
         }
 
-        // UPDATE group SET tail = tail + 2 WHERE tail > @head AND org_id = @org_id
-        // UPDATE group SET head = head + 2 WHERE head > @head AND org_id = @org_id
+        /** @var Connection $connection */
+        $connection = $this->groupTableGateway->getAdapter()->getDriver()->getConnection();
+        $connection->beginTransaction();
 
-        // TODO create transaction
-        $where = new Where();
-        $where->addPredicate(new Operator('tail', Operator::OP_GT, $parent->getHead()));
-        $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
-        $this->groupTableGateway->update(
-            ['tail' => new Expression("tail + 2")],
-            $where
-        );
+        try {
+            $where = new Where();
+            $where->addPredicate(new Operator('tail', '>', $parent->getHead()));
+            $where->addPredicate(new Operator('organization_id', '=', $parent->getOrganizationId()));
+            $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
 
-        $where = new Where();
-        $where->addPredicate(new Operator('head', Operator::OP_GT, $parent->getHead()));
-        $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
-        $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
-        $this->groupTableGateway->update(
-            ['head' => new Expression('head + 2')],
-            $where
-        );
+            $this->groupTableGateway->update(
+                ['tail' => new Expression('tail + 2')],
+                $where
+            );
 
-        $where = new Where();
-        $where->addPredicate(new Operator('group_id', Operator::OP_EQ, $child->getGroupId()));
-        $this->groupTableGateway->update(
-            ['head' => $parent->getHead() + 1, 'tail' => $parent->getHead() + 2],
-            $where
-        );
+            $where = new Where();
+            $where->addPredicate(new Operator('head', Operator::OP_GT, $parent->getHead()));
+            $where->addPredicate(new Operator('organization_id', '=', $parent->getOrganizationId()));
+            $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
+            $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
+            $this->groupTableGateway->update(
+                ['head' => new Expression('head + 2')],
+                $where
+            );
+
+            $where = new Where();
+            $where->addPredicate(new Operator('group_id', '=', $child->getGroupId()));
+            $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
+            $this->groupTableGateway->update(
+                [
+                    'head'       => $parent->getHead() + 1,
+                    'tail'       => $parent->getHead() + 2,
+                    'network_id' => $child->getNetworkId(),
+                ],
+                $where
+            );
+
+            $connection->commit();
+        } catch (\Exception $attachException) {
+            $connection->rollback();
+            throw $attachException;
+        }
 
         return true;
     }
