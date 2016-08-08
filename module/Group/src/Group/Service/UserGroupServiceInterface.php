@@ -38,6 +38,14 @@ interface UserGroupServiceInterface
     /**
      * Finds all the users for a group
      *
+     * SELECT
+     *   ug.group_id
+     *   u.*
+     * FROM user_groups
+     *   LEFT OUTER JOIN users AS u ON ug.user_id = u.user_id
+     * WHERE ug.group_id = :group_id
+     * ORDER BY u.first_name, u.last_name
+     *
      * @param Where|GroupInterface|string $group
      * @param array $where
      * @param object $prototype
@@ -47,7 +55,16 @@ interface UserGroupServiceInterface
     public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null);
 
     /**
+     *
      * Finds all the users for an organization
+     *
+     * SELECT u.*
+     * FROM groups g
+     *   LEFT OUTER JOIN user_groups AS ug ON ug.group_id = g.group_id
+     *   LEFT OUTER JOIN users AS u ON ug.user_id = u.user_id
+     * WHERE g.organization_id = :org_id
+     * GROUP BY u.user_id
+     * ORDER BY u.first_name, u.last_name
      *
      * @param $organization
      * @param array $where
@@ -58,7 +75,22 @@ interface UserGroupServiceInterface
     public function fetchUsersForOrg($organization, $where = null, $prototype = null);
 
     /**
-     * Finds all the users for a group
+     * Finds all the groups for a user
+     *
+     * SELECT
+     *      ug.role      AS ug_role,
+     *      ugg.group_id AS user_group_id,
+     *      sg.group_id  AS sub_group_id,
+     *      g.*
+     * FROM user_groups AS ug
+     *      LEFT JOIN groups AS ugg ON ugg.group_id = ug.group_id
+     *      LEFT JOIN groups AS sg ON sg.head BETWEEN ugg.head AND ugg.tail
+     *          AND sg.network_id = ugg.network_id
+     *      LEFT JOIN groups AS g ON g.group_id = sg.group_id OR g.group_id = ugg.parent_id
+     * WHERE ug.user_id = :user_id
+     * GROUP BY g.group_id
+     * ORDER BY g.title ASC;
+     *
      *
      * @param Where|GroupInterface|string $user
      * @param null $where
