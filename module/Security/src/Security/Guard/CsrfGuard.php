@@ -88,6 +88,12 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
 
         /** @var HttpRequest $request */
         $request = $event->getRequest();
+
+        // Dont check on options
+        if ($request->getMethod() === $request::METHOD_OPTIONS) {
+            return null;
+        }
+
         $header  = $request->getHeader('X-CSRF');
         $token   = $header === false ? $request->getPost('_token', null) : $header->getFieldValue();
 
@@ -103,7 +109,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
 
             return new ApiProblemResponse(new ApiProblem(500, 'Invalid token'));
         }
-        
+
         return null;
     }
 
