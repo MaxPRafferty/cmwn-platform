@@ -88,7 +88,7 @@ class RuleCollection extends \ArrayObject implements RuleCompositeInterface
      * @param array $input
      * @return array
      */
-    public function exchangeArray(array $input)
+    public function exchangeArray($input)
     {
         foreach ($input as $ruleOptions) {
             $this->append(RuleStaticFactory::createRuleFromArray($ruleOptions));

@@ -110,7 +110,7 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
         $serviceName = isset($this->payload['class']) ? $this->payload['class'] : null;
 
         if (!$this->services->has($serviceName)) {
-            $this->getLogger()->alert(sprintf('Service with name %s was not found', $serviceName));
+            $this->getLogger()->crit(sprintf('Service with name %s was not found', $serviceName));
             throw new \Resque_Job_DirtyExitException(sprintf('No Service found for "%s"', $serviceName));
         }
 

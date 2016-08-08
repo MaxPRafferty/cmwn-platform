@@ -20,6 +20,21 @@ class TokenResourceTest extends TestCase
 {
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
+    /**
+     * @test
      * @ticket CORE-681
      */
     public function testItShouldReturnDefaultHalLinksWhenNotLoggedIn()
@@ -150,6 +165,19 @@ class TokenResourceTest extends TestCase
                     'user_name',
                     'save_game',
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/'
             ],
         ];
     }

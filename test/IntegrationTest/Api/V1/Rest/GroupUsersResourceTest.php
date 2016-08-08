@@ -3,16 +3,34 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase;
+use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**
  * Test GroupUsersResourceTest
+ *
  * @group DB
  * @group UserGroup
  */
-
 class GroupUsersResourceTest extends AbstractApigilityTestCase
 {
+    /**
+     * @test
+     *
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     *
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
     /**
      * @test
      */
@@ -42,13 +60,20 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
 
     /**
      * @test
+     *
+     * @param $user
+     * @param $group
+     * @param $expectedIds
+     *
+     * @ticket       CORE-1059
+     * @dataProvider userDataProvider
      */
-    public function testItShouldReturnUsersOfHisGroup()
+    public function testItShouldReturnUsersOfHisGroup($user, $group, $expectedIds)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('math_student');
+        $this->logInUser($user);
 
-        $this->dispatch('/group/math/users');
+        $this->dispatch('/group/' . $group . '/users');
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
         $this->assertResponseStatusCode(200);
@@ -57,8 +82,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('items', $body['_embedded']);
         $groupUsers = $body['_embedded']['items'];
-        $expectedIds = ['math_teacher'];
-        $actualIds = [];
+        $actualIds  = [];
         foreach ($groupUsers as $user) {
             $this->assertArrayHasKey('user_id', $user);
             $actualIds[] = $user['user_id'];
@@ -69,7 +93,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
     /**
      * @test
      */
-    public function testItShouldReturnUsersOfOtherGroup()
+    public function testItShouldNotReturnUsersOfOtherGroup()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
@@ -77,18 +101,35 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         $this->dispatch('/group/english/users');
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(403);
+    }
 
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('items', $body['_embedded']);
-        $groupUsers = $body['_embedded']['items'];
-        $expectedIds = ['english_teacher','english_student'];
-        $actualIds = [];
-        foreach ($groupUsers as $user) {
-            $this->assertArrayHasKey('user_id', $user);
-            $actualIds[] = $user['user_id'];
-        }
-        $this->assertEquals($actualIds, $expectedIds);
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/group/school/users',
+            ],
+        ];
+    }
+
+    public function userDataProvider()
+    {
+        return [
+            'math student' => [
+                'math_student',
+                'math',
+                ['math_teacher'],
+            ],
+            'principal'    => [
+                'principal',
+                'school',
+                ['english_teacher', 'english_student', 'math_teacher', 'math_student'],
+            ],
+        ];
     }
 }

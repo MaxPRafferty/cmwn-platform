@@ -183,7 +183,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
      *
      * @return void
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray($array)
     {
         $defaults = [
             'background' => null,

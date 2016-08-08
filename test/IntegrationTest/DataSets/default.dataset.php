@@ -52,6 +52,7 @@ return array (
                     belong together? Prove it and learn it right here!
                 ',
       'deleted' => NULL,
+      'meta' => '{"desktop" : false, "unity" : false}',
       'coming_soon' => '0',
     ),
     1 =>
@@ -64,6 +65,7 @@ return array (
                     superhero into high gear!
                 ',
       'deleted' => NULL,
+      'meta' => '{"desktop" : false, "unity" : false}',
       'coming_soon' => '0',
     ),
     2 =>
@@ -73,6 +75,7 @@ return array (
       'updated' => '2016-04-13 00:00:00',
       'title' => 'Monarch',
       'description' => 'Monarch Butterflies are crucial for the environment yet they are endangered! This is your spot!',
+      'meta' => '{"desktop" : false, "unity" : false}',
       'deleted' => NULL,
       'coming_soon' => '0',
     ),

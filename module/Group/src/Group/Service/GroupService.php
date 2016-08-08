@@ -172,7 +172,6 @@ class GroupService implements GroupServiceInterface
             Select::JOIN_LEFT
         );
 
-        //get child groups and parent groups for the user
         $select->join(
             ['g' => 'groups'],
             new Expression(

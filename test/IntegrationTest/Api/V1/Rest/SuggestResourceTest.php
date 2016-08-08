@@ -46,6 +46,21 @@ class SuggestResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
+    /**
+     * @test
      * @ticket CORE-558
      */
     public function testItShouldAllowChildToAccessSuggestEndpoint()
@@ -177,5 +192,18 @@ class SuggestResourceTest extends TestCase
         ];
 
         $this->assertEquals($expected, $actualSuggestion);
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user/english_student/suggest'
+            ],
+        ];
     }
 }

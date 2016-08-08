@@ -2,6 +2,7 @@
 
 namespace Application\Log\Rollbar;
 
+use Zend\Log\Logger;
 use Zend\Stdlib\AbstractOptions;
 
 /**
@@ -11,6 +12,7 @@ use Zend\Stdlib\AbstractOptions;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Options extends AbstractOptions
 {
@@ -147,6 +149,11 @@ class Options extends AbstractOptions
      * @var bool Register Rollbar as an shutdown function
      */
     protected $shutdownfunction;
+
+    /**
+     * @var int default log level
+     */
+    protected $logLevel = Logger::INFO;
 
     /**
      * @return boolean
@@ -530,5 +537,21 @@ class Options extends AbstractOptions
     public function setShutdownfunction($shutdownfunction)
     {
         $this->shutdownfunction = $shutdownfunction;
+    }
+
+    /**
+     * @param int $level
+     */
+    public function setLogLevel($level)
+    {
+        $this->logLevel = $level;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLogLevel()
+    {
+        return $this->logLevel;
     }
 }

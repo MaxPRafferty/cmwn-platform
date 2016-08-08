@@ -7,6 +7,7 @@ $master = include __DIR__ . '/games.master.php';
 $stagingGames = [];
 
 $gameOnStaging = [
+    'all-about-you',
     'animal-id',
     'be-bright',
     'bloom-boom',
@@ -31,18 +32,15 @@ $gameOnStaging = [
 ];
 
 $comingSoonGames = [
-    'be-bright',
+    'all-about-you',
     'carbon-catcher',
     'drought-out',
     'fire',
-    'happy-fish-face',
     'monarch',
     'polar-bear',
-    'printmaster',
     'sea-turtle',
     'tag-it',
     'waterdrop',
-    'all-about-you',
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {

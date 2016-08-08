@@ -1,12 +1,13 @@
 <?php
 
-namespace Api\Listeners;
+namespace Security\Listeners;
 
 use Application\Exception\NotFoundException;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\UserAssertion;
 use Security\Exception\ChangePasswordException;
+use Security\SecurityUser;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -59,14 +60,15 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
         $this->listeners['Zend\Mvc\Application'] = $events->attach(
             'Zend\Mvc\Application',
             MvcEvent::EVENT_ROUTE,
-            [$this, 'onRoute']
+            [$this, 'onRoute'],
+            -1
         );
 
         $this->listeners['Zend\Mvc\Application'] = $events->attach(
             'Zend\Mvc\Application',
             MvcEvent::EVENT_ROUTE,
             [$this, 'injectCurrentValues'],
-            -649
+            -2
         );
     }
 

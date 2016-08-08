@@ -24,12 +24,27 @@ use Zend\Json\Json;
  */
 class UserResourceTest extends TestCase
 {
+    /**
+     * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
 
     /**
      * @test
      */
     public function testItShould404OnGetToNonExistentUser()
     {
+        $this->injectValidCsrfToken();
         $this->dispatch('/user/foo_bar');
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.user');
@@ -42,6 +57,7 @@ class UserResourceTest extends TestCase
      */
     public function testItShould404OnPutToNonExistentUser()
     {
+        $this->injectValidCsrfToken();
         $this->dispatch('/user/foo_bar', 'PUT', [], true);
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.user');
@@ -130,6 +146,30 @@ class UserResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCheckChangePasswordExceptionForPutMe()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser('english_student');
+        $putData = [
+            'first_name'  => 'Adam',
+            'last_name'   => 'Welzer',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'ADULT',
+            'username'    => 'new_username',
+            'email'       => 'adam@ginasink.com',
+            'birthdate'   => '1982-05-13',
+        ];
+        $this->dispatch('/user/english_student', 'PUT', $putData, true);
+        $this->assertResponseStatusCode(401);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('RESET_PASSWORD', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCorrectlyPutMeUser()
     {
         $beforeUser = $this->loadUserFromDb('english_teacher');
@@ -210,6 +250,7 @@ class UserResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-800
      */
     public function testItShouldAllowTeacherTooMakeChangesToStudent()
     {
@@ -242,7 +283,51 @@ class UserResourceTest extends TestCase
         $this->assertInstanceOf(UserInterface::class, $afterUser);
         $this->assertNotEquals($beforeUser, $afterUser);
 
-        $this->assertEquals('new_username', $afterUser->getUserName());
+        $this->assertEquals('english_student', $afterUser->getUserName());
+        $this->assertEquals('Adam', $afterUser->getFirstName());
+        $this->assertNull($afterUser->getMiddleName());
+        $this->assertEquals('Welzer', $afterUser->getLastName());
+        $this->assertEquals('Female', $afterUser->getGender());
+        $this->assertEquals($beforeUser->getCreated(), $afterUser->getCreated());
+    }
+
+    /**
+     * @test
+     * @ticket CORE-800
+     * @dataProvider loginDataProvider
+     */
+    public function testItShouldNotAllowOtherUsersToChangeUsernames($login)
+    {
+        $beforeUser = $this->loadUserFromDb('english_student');
+        $this->assertInstanceOf(UserInterface::class, $beforeUser);
+        $this->assertEquals('english_student', $beforeUser->getUserName());
+
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $putData = [
+            'first_name'  => 'Adam',
+            'last_name'   => 'Welzer',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'new_username',
+            'email'       => 'adam@ginasink.com',
+            'birthdate'   => '1982-05-13',
+        ];
+
+        $this->dispatch('/user/english_student', 'PUT', $putData, true);
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertNotRedirect();
+
+        $afterUser = $this->loadUserFromDb('english_student');
+
+        $this->assertInstanceOf(UserInterface::class, $afterUser);
+        $this->assertNotEquals($beforeUser, $afterUser);
+
+        $this->assertEquals('english_student', $afterUser->getUserName());
         $this->assertEquals('Adam', $afterUser->getFirstName());
         $this->assertNull($afterUser->getMiddleName());
         $this->assertEquals('Welzer', $afterUser->getLastName());
@@ -277,7 +362,7 @@ class UserResourceTest extends TestCase
         $this->assertArrayHasKey('_embedded', $decoded);
         $this->assertArrayHasKey('image', $decoded['_embedded']);
         $this->assertArrayHasKey('image_id', $decoded['_embedded']['image']);
-        
+
         $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $decoded['_embedded']['image']['image_id']);
     }
 
@@ -352,5 +437,40 @@ class UserResourceTest extends TestCase
     public function getListAccessProvider()
     {
         return include __DIR__ . '/_providers/GET.list.provider.php';
+    }
+
+    /**
+     * @return array
+     */
+    public function loginDataProvider()
+    {
+        return [
+            'Super User' => [
+                'super_user'
+            ],
+            'Principal' => [
+                'principal'
+            ],
+            'English Teacher' => [
+                'english_teacher'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user'
+            ],
+            1 => [
+                'math_student',
+                '/user/math_student',
+            ],
+        ];
     }
 }

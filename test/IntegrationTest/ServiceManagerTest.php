@@ -30,9 +30,9 @@ class ServiceManagerTest extends TestCase
         'ZF\OAuth2\Adapter\IbmDb2Adapter',
         'ZF\OAuth2\Adapter\MongoAdapter',
         'Zend\Session\SessionManager',
-        'AwsModule\Session\SaveHandler\DynamoDb',
         'Log\App',
         'ZF\Configuration\ConfigResource',
+        'AwsModule\Session\SaveHandler\DynamoDb',
     ];
 
     /**

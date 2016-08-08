@@ -5,6 +5,11 @@ namespace Import\Controller;
 use Application\Utils\NoopLoggerAwareTrait;
 use Import\ImporterInterface;
 use Job\Feature\DryRunInterface;
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\SecurityUser;
+use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\Storage\NonPersistent;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Log\Filter\Priority;
 use Zend\Log\Formatter\Simple;
@@ -19,8 +24,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * Class ImportController
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ImportController extends ConsoleController implements LoggerAwareInterface
+class ImportController extends ConsoleController implements LoggerAwareInterface, AuthenticationServiceAwareInterface
 {
+    use AuthenticationServiceAwareTrait;
     use NoopLoggerAwareTrait;
 
     /**
@@ -35,11 +41,14 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
 
     /**
      * ImportController constructor.
+     *
      * @param ServiceLocatorInterface $services
+     * @param AuthenticationService $authenticationService
      */
-    public function __construct(ServiceLocatorInterface $services)
+    public function __construct(ServiceLocatorInterface $services, AuthenticationService $authenticationService)
     {
         $this->services     = $services;
+        $this->setAuthenticationService($authenticationService);
     }
 
     /**
@@ -63,6 +72,14 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
         $priority = $debug ? Logger::DEBUG : $priority;
         $writer->addFilter(new Priority(['priority' => $priority]));
         $this->getLogger()->addWriter($writer);
+
+        $user = new SecurityUser(['super' => 1, 'username' => 'Import Processor']);
+        $auth = $this->getAuthenticationService();
+        if ($auth instanceof AuthenticationService) {
+            $auth->setStorage(new NonPersistent());
+            $auth->getStorage()->write($user);
+        }
+
         return parent::onDispatch($event);
     }
 
@@ -77,7 +94,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 throw new \RuntimeException('Invalid Request');
             }
 
-            $this->getLogger()->notice('File Importer');
+            $this->getLogger()->notice('File Importer running');
             $this->getLogger()->info('Turning on verbose');
             $this->getLogger()->debug('Turning on Debug');
             $type = $request->getParam('type');
@@ -109,11 +126,11 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
 
             $job->setLogger($this->getLogger());
 
-            $this->getLogger()->info('Running importer');
+            $this->getLogger()->notice('Importer configured.  Performing import');
             $job->perform();
         } catch (\Exception $processException) {
             $this->getLogger()->emerg(
-                'Error when trying to process: ' . $processException->getMessage(),
+                sprintf('Error when trying to process: %s', $processException->getMessage()),
                 $processException->getTrace()
             );
         }
