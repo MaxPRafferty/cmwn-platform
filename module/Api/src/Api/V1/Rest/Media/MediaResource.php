@@ -43,7 +43,7 @@ class MediaResource extends AbstractResourceListener
      * @param  array $params
      * @return ApiProblem|mixed
      */
-    public function fetchAll($params = array())
+    public function fetchAll($params = [])
     {
         return $this->mediaService->importMediaData('', new MediaEntity());
     }

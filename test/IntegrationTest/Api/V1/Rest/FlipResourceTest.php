@@ -104,8 +104,9 @@ class FlipResourceTest extends TestCase
         $this->assertEquals($body['flip_id'], 'polar-bear');
         $this->assertEquals($body['title'], 'Polar Bear');
         $this->assertEquals(
-            $body['description'],
-            'The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!'
+            'The magnificent Polar Bear is in danger of becoming extinct.' .
+            '  Get the scoop and go offline for the science on how they stay warm!',
+            $body['description']
         );
     }
 
@@ -138,7 +139,6 @@ class FlipResourceTest extends TestCase
                 'super_user'
             ],
         ];
-
     }
 
     /**

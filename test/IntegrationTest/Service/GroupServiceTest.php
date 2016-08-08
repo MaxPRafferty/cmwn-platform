@@ -3,6 +3,7 @@
 namespace IntegrationTest\Service;
 
 use Group\Service\GroupServiceInterface;
+use Group\Group;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 
@@ -36,40 +37,7 @@ class GroupServiceTest extends TestCase
     /**
      * @return array
      */
-    public function userGroupDataProvider()
-    {
-        return [
-            'Principal' => [
-                'user'            => 'principal',
-                'expected_groups' => [
-                    'english',
-                    'math',
-                    'school',
-                ],
-            ],
-
-            'English Teacher' => [
-                'user'            => 'english_teacher',
-                'expected_groups' => [
-                    'english',
-                    'school',
-                ],
-            ],
-
-            'Math Teacher' => [
-                'user'            => 'math_teacher',
-                'expected_groups' => [
-                    'math',
-                    'school',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function userGroupTypeDataProvider()
+    public function testItShouldReBalanceTheNetworkCorrectlyInTheDatabase()
     {
         $district = new Organization([
             'org_id' => 'network_district',

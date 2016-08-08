@@ -11,6 +11,7 @@ use Zend\Json\Json;
 
 /**
  * Test GroupResourceTest
+ *
  * @group DB
  * @group Group
  * @group GroupService
@@ -37,6 +38,7 @@ class GroupResourceTest extends TestCase
     {
         $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
     }
+
     /**
      * @test
      * @ticket CORE-993
@@ -54,10 +56,12 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -119,9 +123,9 @@ class GroupResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('group', $body['_embedded']);
-        $groups = $body['_embedded']['group'];
+        $groups      = $body['_embedded']['group'];
         $expectedIds = ['english', 'school'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($groups as $group) {
             $this->assertArrayHasKey('group_id', $group);
             $actualIds[] = $group['group_id'];
@@ -145,9 +149,9 @@ class GroupResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('group', $body['_embedded']);
-        $groups = $body['_embedded']['group'];
+        $groups      = $body['_embedded']['group'];
         $expectedIds = ['english', 'school', 'math'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($groups as $group) {
             $this->assertArrayHasKey('group_id', $group);
             $actualIds[] = $group['group_id'];
@@ -170,8 +174,8 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
-     * @ticket CORE-864
-     * @ticket CORE-725
+     * @ticket       CORE-864
+     * @ticket       CORE-725
      * @dataProvider schoolUserDataProvider
      */
     public function testItShouldReturnSchoolForUser($login)
@@ -187,9 +191,9 @@ class GroupResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('group', $body['_embedded']);
-        $groups = $body['_embedded']['group'];
+        $groups      = $body['_embedded']['group'];
         $expectedIds = ['school'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($groups as $group) {
             $this->assertArrayHasKey('group_id', $group);
             $actualIds[] = $group['group_id'];
@@ -267,13 +271,13 @@ class GroupResourceTest extends TestCase
     {
         $this->logInUser('super_user');
 
-        $postData = array(
+        $postData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'type' => 'school',
-            'meta' => null,
-        );
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => null,
+        ];
         $this->dispatch('/group', POST, $postData);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
@@ -288,13 +292,13 @@ class GroupResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
 
-        $postData = array(
+        $postData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'type' => 'school',
-            'meta' => null,
-        );
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => null,
+        ];
         $this->dispatch('/group', 'POST', $postData);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
@@ -317,13 +321,13 @@ class GroupResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
 
-        $postData = array(
+        $postData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'type' => 'school',
-            'meta' => null,
-        );
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => null,
+        ];
         $this->dispatch('/group', 'POST', $postData);
         $this->assertResponseStatusCode(403);
     }
@@ -374,10 +378,10 @@ class GroupResourceTest extends TestCase
 
         $putData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'type' => 'school',
-            'meta' => null,
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(500);
@@ -393,10 +397,10 @@ class GroupResourceTest extends TestCase
 
         $putData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'type' => 'school',
-            'meta' => null,
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(200);
@@ -417,10 +421,10 @@ class GroupResourceTest extends TestCase
 
         $putData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'type' => 'school',
-            'meta' => null,
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => null,
         ];
         $this->dispatch('/group/school', 'PUT', $putData);
         $this->assertResponseStatusCode(403);
@@ -438,9 +442,9 @@ class GroupResourceTest extends TestCase
 
         $putData = [
             'organization_id' => 'district',
-            'title' => 'Joni School',
-            'description' => 'this is new school',
-            'meta' => null,
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'meta'            => null,
         ];
         $this->dispatch('/group/other_school', 'PUT', $putData);
         $this->assertResponseStatusCode(403);
@@ -467,7 +471,7 @@ class GroupResourceTest extends TestCase
 
         $expectedGroupIds = [
             'english',
-            'math'
+            'math',
         ];
         $actualGroupIds   = [];
 
@@ -487,7 +491,7 @@ class GroupResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/group'
+                '/group',
             ],
             1 => [
                 'super_user',
@@ -495,11 +499,11 @@ class GroupResourceTest extends TestCase
                 'POST',
                 [
                     'organization_id' => 'district',
-                    'title' => 'Joni School',
-                    'description' => 'this is new school',
-                    'type' => 'school',
-                    'meta' => null,
-                ]
+                    'title'           => 'Joni School',
+                    'description'     => 'this is new school',
+                    'type'            => 'school',
+                    'meta'            => null,
+                ],
             ],
             2 => [
                 'super_user',
@@ -507,11 +511,11 @@ class GroupResourceTest extends TestCase
                 'PUT',
                 [
                     'organization_id' => 'district',
-                    'title' => 'Joni School',
-                    'description' => 'this is new school',
-                    'type' => 'school',
-                    'meta' => null,
-                ]
+                    'title'           => 'Joni School',
+                    'description'     => 'this is new school',
+                    'type'            => 'school',
+                    'meta'            => null,
+                ],
             ],
             3 => [
                 'super_user',
@@ -532,12 +536,12 @@ class GroupResourceTest extends TestCase
     {
         return [
             'English Teacher' => [
-                'english_teacher'
-                ],
+                'english_teacher',
+            ],
             'English Student' => [
-                'english_student'
-                ]
-         ];
+                'english_student',
+            ],
+        ];
     }
 
     /**
@@ -548,11 +552,11 @@ class GroupResourceTest extends TestCase
         return [
             'English student' => [
                 'english_student',
-                404
+                404,
             ],
             'English Teacher' => [
                 'english_teacher',
-                404
+                404,
             ],
         ];
     }
