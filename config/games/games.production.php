@@ -23,6 +23,7 @@ $gameOnProduction = [
     'reef-builder',
     'salad-rain',
     'sea-turtle',
+    'skribble',
     'tag-it',
     'turtle-hurdle',
     'twirl-n-swirl',
