@@ -31,12 +31,10 @@ $gameOnProduction = [
 ];
 
 $comingSoonGames = [
-    'carbon-catcher',
     'drought-out',
     'fire',
     'monarch',
     'pedal-pusher',
-    'polar-bear',
     'sea-turtle',
     'tag-it',
     'waterdrop',
