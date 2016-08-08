@@ -59,7 +59,8 @@ class GameRouteListener
 
     /**
      * @param MvcEvent $event
-     * @return void|ApiProblem
+     *
+     * @return null|ApiProblemResponse
      */
     public function onRoute(MvcEvent $event)
     {

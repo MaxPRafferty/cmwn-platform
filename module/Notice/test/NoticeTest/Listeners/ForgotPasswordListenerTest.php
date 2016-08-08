@@ -38,6 +38,7 @@ class ForgotPasswordListenerTest extends TestCase
     {
         $this->message = \Mockery::mock('\Zend\Mail\Message');
     }
+
     /**
      * @before
      */

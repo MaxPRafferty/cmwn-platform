@@ -6,6 +6,7 @@ use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\DbUnitConnectionTrait;
+use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
 use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
@@ -33,6 +34,7 @@ class DoeImporterTest extends TestCase
 {
     use DbTestCaseTrait;
     use DbUnitConnectionTrait;
+    use LoginUserTrait;
 
     /**
      * @var UserServiceInterface
@@ -99,6 +101,7 @@ class DoeImporterTest extends TestCase
      */
     public function testItShouldImportDataOnGoodSheet()
     {
+        $this->logInUser('super_user');
         $importer = NycDoeTestImporterSetup::getImporter();
         $importer->exchangeArray([
             'file'         => __DIR__ . '/_files/test_sheet.xlsx',
@@ -133,6 +136,7 @@ class DoeImporterTest extends TestCase
      */
     public function testItAddNumbersToStudentUserNames()
     {
+        $this->logInUser('super_user');
         $importer = NycDoeTestImporterSetup::getImporter();
         $importer->exchangeArray([
             'file'         => __DIR__ . '/_files/test_sheet.xlsx',

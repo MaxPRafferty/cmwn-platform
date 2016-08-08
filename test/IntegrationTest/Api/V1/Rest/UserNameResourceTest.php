@@ -37,6 +37,21 @@ class UserNameResourceTest extends TestCase
 
     /**
      * @test
+     * @param string $user
+     * @param string $url
+     * @param string $method
+     * @param array $params
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    {
+        $this->injectValidCsrfToken();
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException($url, $method, $params);
+    }
+
+    /**
+     * @test
      */
     public function testItShouldGenerateRandomName()
     {
@@ -82,5 +97,24 @@ class UserNameResourceTest extends TestCase
             $changedUser->getUserName(),
             'User Name was not appended with numbers when the user selected a name'
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            0 => [
+                'english_student',
+                '/user-name'
+            ],
+            1 => [
+                'english_student',
+                '/user-name',
+                'POST',
+                ['user_name' => 'active-alligator']
+            ],
+        ];
     }
 }

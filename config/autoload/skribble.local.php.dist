@@ -1,0 +1,7 @@
+<?php
+
+return [
+    'skribble-sns-config' => [
+        'sns-arn' => 'need sns arn here',
+    ],
+];

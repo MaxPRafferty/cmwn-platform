@@ -70,8 +70,11 @@ class GroupResource extends AbstractResourceListener
      */
     public function fetch($groupId)
     {
-        $group = $this->getEvent()->getRouteParam('group', false);
-        $group = !$group instanceof GroupInterface ? $this->service->fetchGroup($groupId) : $group;
+        try {
+            $group = $this->service->fetchGroup($groupId);
+        } catch (NotFoundException $notFound) {
+            return new ApiProblem(421, 'Routing error');
+        }
 
         $org = $this->orgService->fetchOrganization($group->getOrganizationId());
 

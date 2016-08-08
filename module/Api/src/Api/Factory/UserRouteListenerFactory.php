@@ -2,7 +2,7 @@
 
 namespace Api\Factory;
 
-use Api\Listeners\UserRouteListener;
+use Security\Listeners\UserRouteListener;
 use Security\Authorization\Assertions\UserAssertion;
 use User\Service\UserServiceInterface;
 use Zend\ServiceManager\FactoryInterface;

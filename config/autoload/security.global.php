@@ -2,12 +2,26 @@
 
 return [
     'cmwn-security' => [
+        'basic-auth'        => [
+            'config' => [
+                'accept_schemes' => 'basic',
+                'realm'          => 'cmwn',
+            ],
+
+            'resolver' => [
+                'resolver_class' => \Zend\Authentication\Adapter\Http\FileResolver::class,
+                'options'        => [
+                    'file' => realpath(__DIR__ . '/../../data/files/.htpasswd-lambda'),
+                ],
+            ],
+        ],
         'open-routes'       => [
             'api.rest.token',
             'api.rest.login',
             'api.rest.forgot',
             'api.rest.logout',
             'api.rest.image',
+            'api.rest.media',
         ],
         'route-permissions' => [
             'api.rest.reset'           => [
@@ -26,7 +40,7 @@ return [
                 'PUT'  => ['edit.user.child', 'edit.user.adult'],
             ],
             'api.rest.org'             => [
-                'GET'    => 'view.org',
+                'GET'    => ['view.org', 'view.user.orgs'],
                 'POST'   => 'create.org',
                 'PUT'    => 'edit.org',
                 'DELETE' => 'delete.org',
@@ -35,7 +49,7 @@ return [
                 'GET' => 'view.games',
             ],
             'api.rest.group'           => [
-                'GET'    => 'view.group',
+                'GET'    => ['view.group', 'view.user.groups'],
                 'POST'   => 'create.group',
                 'PUT'    => 'edit.group',
                 'DELETE' => 'remote.group',
@@ -52,7 +66,7 @@ return [
             'api.rest.org-users'       => [
                 'GET' => 'view.org.users',
             ],
-            'api.rest.user-image'  => [
+            'api.rest.user-image'      => [
                 'GET'  => 'view.profile.image',
                 'POST' => 'attach.profile.image',
             ],
@@ -75,6 +89,16 @@ return [
                 'POST'   => 'save.game',
                 'DELETE' => 'save.game',
             ],
+            'api.rest.skribble'        => [
+                'GET'    => 'view.skribble',
+                'POST'   => 'create.skribble',
+                'PUT'    => 'update.skribble',
+                'PATCH'  => 'update.skribble',
+                'DELETE' => 'delete.skribble',
+            ],
+            'api.rest.skribble-notify' => [
+                'POST' => 'skribble.notice',
             ],
         ],
+    ],
 ];
