@@ -8,6 +8,7 @@ use Group\Group;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Between;
@@ -54,12 +55,8 @@ class GroupService implements GroupServiceInterface
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
     {
-        // Set the child as descendant of the parent
         $child->setParentId($parent);
-
-        // Add the child to the network
-        $child->setNetworkId($parent->getNetworkId());
-        $this->updateGroup($child);
+        $this->saveGroup($child);
 
         // fetch the parent to get the latest head value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
@@ -141,31 +138,67 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Creates a new group
+     * Finds all the groups for a user
      *
-     * @param GroupInterface $group
+     * @param UserInterface|string $user
+     * @param Where|GroupInterface|string $where
+     * @param object $prototype
+     * @param bool $paginate
      *
-     * @return bool
-     * @throws NotFoundException
+     * @return DbSelect
+     * @deprecated
      */
-    public function createGroup(GroupInterface $group)
+    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
     {
-        $group->setCreated(new \DateTime());
-        $group->setGroupId(Uuid::uuid1());
-        $group->setUpdated(new \DateTime());
-        $data = $group->getArrayCopy();
+        $where  = $this->createWhere($where);
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
 
-        $data['meta'] = Json::encode($data['meta']);
+        $select = new Select(['ug' => 'user_groups']);
+        $select->columns([]);
+        //join user_groups and groups to get all groups for user
+        $select->join(
+            ['active_group' => 'groups'],
+            'active_group.group_id = ug.group_id',
+            ['active_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
 
-        unset($data['depth']);
-        unset($data['deleted']);
+        //get groups based on parent
+        $select->join(
+            ['parent_group' => 'groups'],
+            'parent_group.group_id = active_group.parent_id',
+            ['parent_group_id' => 'group_id'],
+            Select::JOIN_LEFT
+        );
 
-        $data['group_id'] = $group->getGroupId();
-        $data['created']  = $group->getCreated()->format(\DateTime::ISO8601);
+        $select->join(
+            ['g' => 'groups'],
+            new Expression(
+                '(g.head BETWEEN active_group.head AND active_group.tail) OR (g.group_id=parent_group.group_id)'
+            ),
+            ['*'],
+            Select::JOIN_LEFT_OUTER
+        );
 
-        $this->groupTableGateway->insert($data);
+        $where->addPredicate(new Operator('g.organization_id', '=', new Expression('active_group.organization_id')));
+        $select->where($where);
+        $select->order(['g.title']);
 
-        return true;
+        $prototype = $prototype === null ? new Group() : $prototype;
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        if ($paginate) {
+            return new DbSelect(
+                $select,
+                $this->groupTableGateway->getAdapter(),
+                $resultSet
+            );
+        }
+
+        $results = $this->groupTableGateway->select($select);
+        $resultSet->initialize($results);
+
+        return $resultSet;
     }
 
     /**
@@ -178,15 +211,29 @@ class GroupService implements GroupServiceInterface
      * @return bool
      * @throws NotFoundException
      */
-    public function updateGroup(GroupInterface $group)
+    public function saveGroup(GroupInterface $group)
     {
+        $new = empty($group->getGroupId());
         $group->setUpdated(new \DateTime());
         $data = $group->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
+        $data['tail'] = $group->getTail();
 
         unset($data['depth']);
         unset($data['deleted']);
+
+        if ($new) {
+            $group->setCreated(new \DateTime());
+            $group->setGroupId(Uuid::uuid1());
+
+            $data['group_id'] = $group->getGroupId();
+            $data['created']  = $group->getCreated()->format(\DateTime::ISO8601);
+
+            $this->groupTableGateway->insert($data);
+
+            return true;
+        }
 
         $this->fetchGroup($group->getGroupId());
 

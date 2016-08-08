@@ -5,8 +5,12 @@ namespace Group\Service;
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
+use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+
 use Zend\Db\Sql\Predicate\PredicateInterface;
+
+use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -32,12 +36,15 @@ interface GroupServiceInterface
     public function fetchAll($where = null, $paginate = true, $prototype = null);
 
     /**
-     * Creates a new a group
+     * Saves a group
+     *
+     * If the group id is null, then a new group is created
      *
      * @param GroupInterface $group
      * @return bool
+     * @throws NotFoundException
      */
-    public function createGroup(GroupInterface $group);
+    public function saveGroup(GroupInterface $group);
 
     /**
      * Fetches one group from the DB using the id
@@ -70,6 +77,23 @@ interface GroupServiceInterface
     public function deleteGroup(GroupInterface $group, $soft = true);
 
     /**
+     * Finds all the groups for a user
+     *
+     * SELECT *
+     * FROM groups g
+     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
+     * WHERE ug.user_id = 'baz-bat'
+     *
+     * @param UserInterface|string $user
+     * @param Where|GroupInterface|string $where
+     * @param bool $paginate
+     * @param object $prototype
+     * @return DbSelect
+     * @deprecated
+     */
+    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null);
+
+    /**
      * Fetches all the types of groups for the children
      *
      * Used for hal link building
@@ -95,15 +119,4 @@ interface GroupServiceInterface
      * @return string[]
      */
     public function fetchGroupTypes();
-
-    /**
-     * Updates a group
-     *
-     *
-     * @param GroupInterface $group
-     *
-     * @return bool
-     * @throws NotFoundException
-     */
-    public function updateGroup(GroupInterface $group);
 }

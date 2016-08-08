@@ -2,13 +2,13 @@
 
 namespace IntegrationTest\Service;
 
-use Group\Group;
+use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
-use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
-use Org\Organization;
-use Org\Service\OrganizationServiceInterface;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Where;
+use Zend\Paginator\Paginator;
 
 /**
  * Exception GroupServiceTest
@@ -24,8 +24,6 @@ use Org\Service\OrganizationServiceInterface;
  */
 class GroupServiceTest extends TestCase
 {
-    use LoginUserTrait;
-
     /**
      * @var GroupServiceInterface
      */
@@ -36,139 +34,162 @@ class GroupServiceTest extends TestCase
      */
     public function setUpUserGroupService()
     {
-        $this->logInUser('super_user');
         $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
-     * @test
-     * @ticket CORE-1072
+     * @param $user
+     * @param $expectedGroups
+     * @dataProvider userGroupDataProvider
      */
-    public function testItShouldAttachGroupsToCorrectNetwork()
+    public function testItShouldFetchAllForUser($user, array $expectedGroups)
     {
-        $district = new Organization([
-            'org_id' => 'network_district',
-            'title'  => 'Test network district',
-            'type'   => 'district',
-        ]);
+        $groups       = $this->groupService->fetchAllForUser($user);
+        $groupsPage   = new Paginator($groups);
+        $actualGroups = [];
+        /** @var GroupInterface $group */
+        foreach ($groupsPage as $group) {
+            $this->assertInstanceOf(GroupInterface::class, $group);
+            array_push($actualGroups, $group->getGroupId());
+        }
 
-        /** @var OrganizationServiceInterface $orgService */
-        $orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
-        $orgService->createOrganization($district);
+        sort($actualGroups);
+        sort($expectedGroups);
 
-        $schoolOne = new Group(['type' => 'school', 'title' => 'School 1', 'organization_id' => '']);
-        $schoolOne->setOrganizationId($district);
+        $this->assertSame($expectedGroups, $actualGroups, 'Fetching groups for a user did not return correct groups');
+    }
 
-        $schoolTwo = new Group(['type' => 'school', 'title' => 'School 2']);
-        $schoolTwo->setOrganizationId($district);
+    /**
+     * @dataProvider userGroupTypeDataProvider
+     */
+    public function testItShouldFetchAllForUserWithType($user, $type, array $expectedGroups)
+    {
+        $where        = new Where();
+        $where->addPredicate(new Operator('g.type', '=', $type));
+        $groups       = $this->groupService->fetchAllForUser($user, $where);
+        $groupsPage   = new Paginator($groups);
 
-        $mathForSchoolOne = new Group(['type' => 'class', 'title' => 'Math for school 1']);
-        $mathForSchoolOne->setOrganizationId($district);
+        $actualGroups = [];
+        /** @var GroupInterface $group */
+        foreach ($groupsPage as $group) {
+            $this->assertInstanceOf(GroupInterface::class, $group);
+            array_push($actualGroups, $group->getGroupId());
+        }
 
-        $mathForSchoolTwo = new Group(['type' => 'class', 'title' => 'Math for school 2']);
-        $mathForSchoolTwo->setOrganizationId($district);
+        sort($actualGroups);
+        sort($expectedGroups);
 
-        $lunchForSchoolOne = new Group(['type' => 'class', 'title' => 'Lunch for school 1']);
-        $lunchForSchoolOne->setOrganizationId($district);
+        $this->assertSame($expectedGroups, $actualGroups, 'Fetching groups for a user did not return correct groups');
+    }
 
-        $lunchForSchoolTwo = new Group(['type' => 'class', 'title' => 'Lunch for school 2']);
-        $lunchForSchoolTwo->setOrganizationId($district);
+    /**
+     * @return array
+     */
+    public function userGroupDataProvider()
+    {
+        return [
+            'Principal' => [
+                'user'            => 'principal',
+                'expected_groups' => [
+                    'english',
+                    'math',
+                    'school',
+                ],
+            ],
 
-        $this->groupService->createGroup($schoolOne);
-        $this->groupService->createGroup($schoolTwo);
-        $this->groupService->createGroup($mathForSchoolOne);
-        $this->groupService->createGroup($mathForSchoolTwo);
-        $this->groupService->createGroup($lunchForSchoolOne);
-        $this->groupService->createGroup($lunchForSchoolTwo);
+            'English Teacher' => [
+                'user'            => 'english_teacher',
+                'expected_groups' => [
+                    'english',
+                    'school',
+                ],
+            ],
 
-        $this->groupService->addChildToGroup($schoolOne, $mathForSchoolOne);
-        $this->groupService->addChildToGroup($schoolTwo, $mathForSchoolTwo);
+            'Math Teacher' => [
+                'user'            => 'math_teacher',
+                'expected_groups' => [
+                    'math',
+                    'school',
+                ],
+            ],
+        ];
+    }
 
-        $this->groupService->addChildToGroup($mathForSchoolOne, $lunchForSchoolOne);
-        $this->groupService->addChildToGroup($mathForSchoolTwo, $lunchForSchoolTwo);
+    /**
+     * @return array
+     */
+    public function userGroupTypeDataProvider()
+    {
+        return [
+            'Principal with Class' => [
+                'user'            => 'principal',
+                'type'            => 'class',
+                'expected_groups' => [
+                    'english',
+                    'math',
+                ],
+            ],
 
-        $updatedSchoolOne = $this->groupService->fetchGroup($schoolOne->getGroupId());
-        $updatedMathOne   = $this->groupService->fetchGroup($mathForSchoolOne->getGroupId());
-        $updatedLunchOne  = $this->groupService->fetchGroup($lunchForSchoolOne->getGroupId());
+            'Principal with School' => [
+                'user'            => 'principal',
+                'type'            => 'school',
+                'expected_groups' => [
+                    'school',
+                ],
+            ],
 
-        $this->assertEquals(
-            '1',
-            $updatedSchoolOne->getHead(),
-            'Head for school 1 is incorrect after Attaching Class'
-        );
+            'Principal with foo' => [
+                'user'            => 'principal',
+                'type'            => 'foo',
+                'expected_groups' => [
+                ],
+            ],
 
-        $this->assertEquals(
-            '6',
-            $updatedSchoolOne->getTail(),
-            'Tail for school 1 is incorrect after Attaching Class'
-        );
+            'English Teacher with Class' => [
+                'user'            => 'english_teacher',
+                'type'            => 'class',
+                'expected_groups' => [
+                    'english',
+                ],
+            ],
 
-        $this->assertEquals(
-            '2',
-            $updatedMathOne->getHead(),
-            'Head for math 1 is incorrect after Attaching Class'
-        );
+            'English Teacher with School' => [
+                'user'            => 'english_teacher',
+                'type'            => 'school',
+                'expected_groups' => [
+                    'school',
+                ],
+            ],
 
-        $this->assertEquals(
-            '5',
-            $updatedMathOne->getTail(),
-            'Tail for math 1 is incorrect after Attaching Class'
-        );
+            'English Teacher with foo' => [
+                'user'            => 'english_teacher',
+                'type'            => 'foo',
+                'expected_groups' => [
+                ],
+            ],
 
-        $this->assertEquals(
-            '3',
-            $updatedLunchOne->getHead(),
-            'Head for Lunch 1 is incorrect after Attaching Class'
-        );
+            'Math Teacher with Class' => [
+                'user'            => 'math_teacher',
+                'type'            => 'class',
+                'expected_groups' => [
+                    'math',
+                ],
+            ],
 
-        $this->assertEquals(
-            '4',
-            $updatedLunchOne->getTail(),
-            'Tail for Lunch 1 is incorrect after Attaching Class'
-        );
+            'Math Teacher with School' => [
+                'user'            => 'math_teacher',
+                'type'            => 'school',
+                'expected_groups' => [
+                    'school',
+                ],
+            ],
 
-        $this->assertEquals(
-            $schoolOne->getNetworkId(),
-            $updatedMathOne->getNetworkId(),
-            'Math one was not attached to the same network as school 1'
-        );
-
-        $this->assertEquals(
-            $schoolOne->getNetworkId(),
-            $updatedLunchOne->getNetworkId(),
-            'Lunch one was not attached to the same network as lunch 1'
-        );
-
-        $updatedSchoolTwo = $this->groupService->fetchGroup($schoolTwo->getGroupId());
-        $updatedMathTwo   = $this->groupService->fetchGroup($mathForSchoolTwo->getGroupId());
-
-        $this->assertEquals(
-            '1',
-            $updatedSchoolTwo->getHead(),
-            'Head for school 2 is incorrect after Attaching Class'
-        );
-        $this->assertEquals(
-            '4',
-            $updatedSchoolTwo->getTail(),
-            'Tail for school 2 is incorrect after Attaching Class'
-        );
-
-        $this->assertEquals(
-            '2',
-            $updatedMathTwo->getHead(),
-            'Head for math 2 is incorrect after Attaching Class'
-        );
-
-        $this->assertEquals(
-            '3',
-            $updatedMathTwo->getTail(),
-            'Tail for math 2 is incorrect after Attaching Class'
-        );
-
-        $this->assertEquals(
-            $schoolTwo->getNetworkId(),
-            $updatedMathTwo->getNetworkId(),
-            'Math two was not attached to the same network as school 2'
-        );
+            'Math Teacher with foo' => [
+                'user'            => 'math_teacher',
+                'type'            => 'foo',
+                'expected_groups' => [
+                ],
+            ],
+        ];
     }
 }

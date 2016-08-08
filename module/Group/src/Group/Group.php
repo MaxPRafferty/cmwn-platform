@@ -9,7 +9,6 @@ use Application\Utils\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
 use Application\Utils\SoftDeleteInterface;
 use Org\OrganizationInterface;
-use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
@@ -364,25 +363,5 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     {
         $parentId = $parentId instanceof static ? $parentId->getGroupId() : $parentId;
         $this->parentId = $parentId;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getNetworkId()
-    {
-        if (empty($this->networkId)) {
-            $this->setNetworkId(Uuid::uuid1());
-        }
-
-        return $this->networkId;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setNetworkId($networkId)
-    {
-        $this->networkId = $networkId;
     }
 }
