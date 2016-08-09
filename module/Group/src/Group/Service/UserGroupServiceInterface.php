@@ -151,7 +151,7 @@ interface UserGroupServiceInterface
      * HAVING u.user_id != 'english_student'
      * ORDER BY u.first_name ASC, u.last_name ASC
      *
-     * @param $user
+     * @param UserInterface|ß$user
      * @param $where
      * @param null $prototype
      *

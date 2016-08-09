@@ -2,6 +2,7 @@
 
 namespace Security\Service;
 
+use User\Service\UserServiceInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\FactoryInterface;
@@ -23,8 +24,13 @@ class SecurityGroupServiceFactory implements FactoryInterface
     {
         /** @var Adapter $adapter */
         $adapter = $serviceLocator->get(Adapter::class);
+
+        /** @var UserServiceInterface $userService */
+        $userService = $serviceLocator->get(UserServiceInterface::class);
+
         return new SecurityGroupService(
-            new TableGateway('user_groups', $adapter)
+            new TableGateway('user_groups', $adapter),
+            $userService
         );
     }
 }

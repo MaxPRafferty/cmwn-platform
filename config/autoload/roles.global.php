@@ -96,7 +96,7 @@ return [
                 ],
             ],
 
-            'admin' => [
+            'admin.adult' => [
                 'parents'     => ['super'],
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
@@ -116,14 +116,14 @@ return [
                 ],
             ],
 
-            'group_admin' => [
+            'group_admin.adult' => [
                 'entity_bits' => [
                     'group' => Rbac::SCOPE_UPDATE,
                     'me'    => Rbac::SCOPE_UPDATE,
                     'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
-                'parents'     => ['admin'],
+                'parents'     => ['admin.adult'],
                 'permissions' => [
                     'add.group.user',
                     'child.code',
@@ -155,6 +155,7 @@ return [
                     'create.child.group',
                     'create.group',
                     'edit.group',
+                    'edit.user.adult',
                     'edit.user.child',
                     'import',
                     'remove.child.group',
@@ -164,13 +165,13 @@ return [
                     'update.password',
                     'view.games',
                     'view.group',
-                    'view.user.groups',
                     'view.group.users',
                     'view.org',
                     'view.org.users',
+                    'view.profile.image',
                     'view.user.adult',
                     'view.user.child',
-                    'view.profile.image',
+                    'view.user.groups',
                 ],
             ],
 
@@ -232,7 +233,7 @@ return [
                 ],
             ],
 
-            'neighbor.adult.adult' => [
+            'neighbor.adult' => [
                 'entity_bits' => [
                     'adult' => Rbac::SCOPE_REMOVE,
                 ],
@@ -337,7 +338,7 @@ return [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
-                'parents'     => ['group_admin'],
+                'parents'     => ['group_admin.adult'],
                 'permissions' => [
                     'update.password',
                     'view.games',
@@ -354,7 +355,7 @@ return [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
-                'parents'     => ['group_admin'],
+                'parents'     => ['group_admin.adult'],
                 'permissions' => [
                     'update.password',
                     'view.games',
