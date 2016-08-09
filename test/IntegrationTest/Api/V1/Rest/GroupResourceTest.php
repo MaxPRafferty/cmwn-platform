@@ -309,7 +309,7 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('district', $newGroup['organization_id']);
         $this->assertEquals('Joni School', $newGroup['title']);
         $this->assertEquals('this is new school', $newGroup['description']);
-        $this->assertEquals([], $newGroup['meta']);
+        $this->assertEquals(['code' => 'test'], $newGroup['meta']);
     }
 
     /**
