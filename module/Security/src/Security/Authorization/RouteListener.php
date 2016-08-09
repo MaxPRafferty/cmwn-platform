@@ -20,6 +20,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class RouteListener
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
