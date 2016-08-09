@@ -6,7 +6,6 @@ use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
-use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**
@@ -552,11 +551,11 @@ class GroupResourceTest extends TestCase
         return [
             'English student' => [
                 'english_student',
-                404,
+                403,
             ],
             'English Teacher' => [
                 'english_teacher',
-                404,
+                403,
             ],
         ];
     }

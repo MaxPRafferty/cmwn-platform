@@ -15,6 +15,7 @@ use IntegrationTest\TestHelper;
  * @group API
  * @group UserImage
  * @group DB
+ * @group IntegrationTest
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

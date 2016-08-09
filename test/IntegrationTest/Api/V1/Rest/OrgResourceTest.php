@@ -161,7 +161,7 @@ class OrgResourceTest extends TestCase
         $this->dispatch('/org');
         $this->assertMatchedRouteName('api.rest.org');
         $this->assertControllerName('api\v1\rest\org\controller');
-        $this->assertResponseStatusCode(403);
+        $this->assertResponseStatusCode(200);
     }
 
     /**
@@ -174,7 +174,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org',
-            POST,
+            'POST',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -204,7 +204,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org',
-            POST,
+            'POST',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -224,7 +224,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org',
-            POST,
+            'POST',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -261,7 +261,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org/district',
-            PUT,
+            'PUT',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -332,7 +332,7 @@ class OrgResourceTest extends TestCase
             ],
             'English Teacher' => [
                 'english_teacher',
-                404
+                403
             ],
         ];
     }

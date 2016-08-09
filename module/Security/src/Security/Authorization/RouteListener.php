@@ -236,10 +236,10 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
                 break;
 
             default:
-                return 'logged_in';
+                // Become "me" when no org, group or user
+                // This means that we are hitting /user, /group or /org
+                $foundRole = 'me.' . strtolower($identity->getType());
         }
-
-        $foundRole = $foundRole === null ? 'logged_in' : $foundRole;
 
         if ($identity instanceof SecurityUser) {
             $identity->setRole($foundRole);

@@ -10,6 +10,10 @@ use Security\Service\SecurityService;
 /**
  * Test ResetResourceTest
  *
+ * @group IntegrationTest
+ * @group Api
+ * @group User
+ * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)

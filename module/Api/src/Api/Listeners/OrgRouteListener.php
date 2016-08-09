@@ -50,45 +50,7 @@ class OrgRouteListener implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'onRoute']);
         $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER, [$this, 'onRender']);
-    }
-
-    /**
-     * Injects the Organization into the route params when org_id is set on the route
-     *
-     * Will quickly 404 to save on other calls
-     *
-     * @param MvcEvent $event
-     * @return null|ApiProblem
-     * @deprecated
-     */
-    public function onRoute(MvcEvent $event)
-    {
-        $request = $event->getRequest();
-        if (!$request instanceof Request) {
-            return null;
-        }
-
-        if ($request->getMethod() === Request::METHOD_OPTIONS) {
-            return null;
-        }
-
-        $route   = $event->getRouteMatch();
-        $orgId = $route->getParam('org_id', false);
-
-        if ($orgId === false) {
-            return null;
-        }
-
-        try {
-            $org = $this->orgService->fetchOrganization($orgId);
-        } catch (NotFoundException $notFound) {
-            return new ApiProblem(404, 'org not found');
-        }
-
-        $route->setParam('org', $org);
-        return null;
     }
 
     /**

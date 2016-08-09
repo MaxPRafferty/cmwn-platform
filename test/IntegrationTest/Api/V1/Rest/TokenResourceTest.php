@@ -11,6 +11,7 @@ use Zend\Json\Json;
  * @group Token
  * @group API
  * @group User
+ * @group IntegrationTest
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -20,10 +21,12 @@ class TokenResourceTest extends TestCase
 {
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -49,6 +52,7 @@ class TokenResourceTest extends TestCase
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
+
             return;
         }
 
@@ -62,10 +66,9 @@ class TokenResourceTest extends TestCase
         $this->assertCount(3, $links);
     }
 
-
     /**
      * @test
-     * @ticket CORE-681
+     * @ticket       CORE-681
      * @dataProvider loginHalLinksDataProvider
      */
     public function testItShouldBuildCorrectEndpointsForMe($user, $links = [])
@@ -82,6 +85,7 @@ class TokenResourceTest extends TestCase
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
+
             return;
         }
 
@@ -99,7 +103,7 @@ class TokenResourceTest extends TestCase
     public function loginHalLinksDataProvider()
     {
         return [
-            'Super User' => [
+            'Super User'      => [
                 'user'  => 'super_user',
                 'links' => [
                     'flip',
@@ -115,7 +119,7 @@ class TokenResourceTest extends TestCase
                     'save_game',
                 ],
             ],
-            'Principal' => [
+            'Principal'       => [
                 'user'  => 'principal',
                 'links' => [
                     'flip',
@@ -177,7 +181,7 @@ class TokenResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/'
+                '/',
             ],
         ];
     }
