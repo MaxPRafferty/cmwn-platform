@@ -296,7 +296,7 @@ class GroupResourceTest extends TestCase
             'title'           => 'Joni School',
             'description'     => 'this is new school',
             'type'            => 'school',
-            'meta'            => null,
+            'meta'            => ['code' => 'test'],
         ];
         $this->dispatch('/group', 'POST', $postData);
         $this->assertMatchedRouteName('api.rest.group');
@@ -315,6 +315,27 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldNotCreateGroupWithInvalidType()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+
+        $postData = [
+            'organization_id' => 'district',
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'not-real',
+            'meta'            => ['code' => 'test'],
+        ];
+        $this->dispatch('/group', 'POST', $postData);
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(422);
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldNotAllowOthersToCreateGroup()
     {
         $this->injectValidCsrfToken();
@@ -325,7 +346,7 @@ class GroupResourceTest extends TestCase
             'title'           => 'Joni School',
             'description'     => 'this is new school',
             'type'            => 'school',
-            'meta'            => null,
+            'meta'            => ['code' => 'test'],
         ];
         $this->dispatch('/group', 'POST', $postData);
         $this->assertResponseStatusCode(403);
