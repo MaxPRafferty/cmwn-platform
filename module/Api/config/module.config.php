@@ -1667,7 +1667,7 @@ return array(
                     ),
                 ),
                 'filters' => array(),
-                'name' => 'meta',
+                'name' => 'type',
                 'description' => 'Type of group',
                 'error_message' => 'Invalid group type',
             ),
