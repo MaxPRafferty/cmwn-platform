@@ -11,9 +11,14 @@ use Zend\EventManager\Event;
 
 /**
  * Test GroupServiceDelegatorTest
+ *
  * @group Group
  * @group Delegator
  * @group GroupService
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class GroupServiceDelegatorTest extends TestCase
 {
@@ -79,29 +84,28 @@ class GroupServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
     /**
      * @test
      */
-    public function testItShouldCallSaveGroup()
+    public function testItShouldCallCreateGroup()
     {
-        $this->groupService->shouldReceive('saveGroup')
+        $this->groupService->shouldReceive('createGroup')
             ->with($this->group)
             ->andReturn(true)
             ->once();
 
-
-        $this->delegator->saveGroup($this->group);
+        $this->delegator->createGroup($this->group);
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
                 'name'   => 'save.group',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group]
+                'params' => ['group' => $this->group],
             ],
             $this->calledEvents[0]
         );
@@ -109,7 +113,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.group.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group]
+                'params' => ['group' => $this->group],
             ],
             $this->calledEvents[1]
         );
@@ -118,25 +122,170 @@ class GroupServiceDelegatorTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldNotCallSaveGroupWhenEventPrevents()
+    public function testItShouldCallCreateGroupWithException()
     {
-        $this->groupService->shouldReceive('saveGroup')
+        $exception = new \Exception('Im borked');
+        $this->groupService->shouldReceive('createGroup')
+            ->with($this->group)
+            ->andThrow($exception)
+            ->once();
+
+        try {
+            $this->delegator->createGroup($this->group);
+            $this->fail('Group Service delegator did not re-throw exception on createGroup');
+        } catch (\Exception $actualException) {
+            $this->assertSame(
+                $exception,
+                $actualException,
+                'Group service delegator threw wrong exception on createGroup'
+            );
+        }
+
+        $this->assertEquals(
+            [
+                'name'   => 'save.group',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group],
+            ],
+            $this->calledEvents[0],
+            'save.group was not triggered on GroupServiceDelegator'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'save.group.error',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group, 'exception' => $exception],
+            ],
+            $this->calledEvents[1],
+            'save.group.error was not triggered on GroupServiceDelegator'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallCreateGroupWhenEventPrevents()
+    {
+        $this->groupService->shouldReceive('createGroup')
             ->with($this->group)
             ->never();
 
         $this->delegator->getEventManager()->attach('save.group', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
 
-        $this->assertEquals(['foo' => 'bar'], $this->delegator->saveGroup($this->group));
+        $this->assertEquals(['foo' => 'bar'], $this->delegator->createGroup($this->group));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
             [
                 'name'   => 'save.group',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group]
+                'params' => ['group' => $this->group],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallUpdateGroup()
+    {
+        $this->groupService->shouldReceive('updateGroup')
+            ->with($this->group)
+            ->andReturn(true)
+            ->once();
+
+        $this->delegator->updateGroup($this->group);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'update.group',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'update.group.post',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallUpdateGroupWithException()
+    {
+        $exception = new \Exception('Im broken');
+        $this->groupService->shouldReceive('updateGroup')
+            ->with($this->group)
+            ->andThrow($exception)
+            ->once();
+
+        try {
+            $this->delegator->updateGroup($this->group);
+            $this->fail('Exception was not thrown for updateGroup on Group Service Delegator');
+        } catch (\Exception $actualException) {
+            $this->assertSame($exception, $actualException, 'Group Service delegator did not re-throw exception');
+        }
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            'Incorrect number of events triggered for Group Service Delegator on exceptionr'
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'update.group',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group],
+            ],
+            $this->calledEvents[0]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'update.group.error',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group, 'exception' => $exception],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallUpdateGroupWhenEventPrevents()
+    {
+        $this->groupService->shouldReceive('updateGroup')
+            ->with($this->group)
+            ->never();
+
+        $this->delegator->getEventManager()->attach('update.group', function (Event $event) {
+            $event->stopPropagation(true);
+
+            return ['foo' => 'bar'];
+        });
+
+        $this->assertEquals(['foo' => 'bar'], $this->delegator->updateGroup($this->group));
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'update.group',
+                'target' => $this->groupService,
+                'params' => ['group' => $this->group],
             ],
             $this->calledEvents[0]
         );
@@ -162,7 +311,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group',
                 'target' => $this->groupService,
-                'params' => ['group_id' => $this->group->getGroupId()]
+                'params' => ['group_id' => $this->group->getGroupId()],
             ],
             $this->calledEvents[0]
         );
@@ -170,7 +319,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'group_id' => $this->group->getGroupId()]
+                'params' => ['group' => $this->group, 'group_id' => $this->group->getGroupId()],
             ],
             $this->calledEvents[1]
         );
@@ -198,8 +347,8 @@ class GroupServiceDelegatorTest extends TestCase
                 'target' => $this->groupService,
                 'params' => [
                     'organization' => $this->group->getOrganizationId(),
-                    'external_id' => $this->group->getExternalId()
-                ]
+                    'external_id'  => $this->group->getExternalId(),
+                ],
             ],
             $this->calledEvents[0]
         );
@@ -208,10 +357,10 @@ class GroupServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.group.external.post',
                 'target' => $this->groupService,
                 'params' => [
-                    'group' => $this->group,
+                    'group'        => $this->group,
                     'organization' => $this->group->getOrganizationId(),
-                    'external_id' => $this->group->getExternalId()
-                ]
+                    'external_id'  => $this->group->getExternalId(),
+                ],
             ],
             $this->calledEvents[1]
         );
@@ -229,6 +378,7 @@ class GroupServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.group', function (Event $event) {
             $event->stopPropagation(true);
+
             return $this->group;
         });
 
@@ -242,7 +392,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group',
                 'target' => $this->groupService,
-                'params' => ['group_id' => $this->group->getGroupId()]
+                'params' => ['group_id' => $this->group->getGroupId()],
             ],
             $this->calledEvents[0]
         );
@@ -268,7 +418,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.group',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'soft' => true]
+                'params' => ['group' => $this->group, 'soft' => true],
             ],
             $this->calledEvents[0]
         );
@@ -276,7 +426,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.group.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'soft' => true]
+                'params' => ['group' => $this->group, 'soft' => true],
             ],
             $this->calledEvents[1]
         );
@@ -294,6 +444,7 @@ class GroupServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('delete.group', function (Event $event) {
             $event->stopPropagation(true);
+
             return $this->group;
         });
 
@@ -307,7 +458,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.group',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'soft' => true]
+                'params' => ['group' => $this->group, 'soft' => true],
             ],
             $this->calledEvents[0]
         );
@@ -333,7 +484,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.groups',
                 'target' => $this->groupService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -342,7 +493,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.groups.post',
                 'target' => $this->groupService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'groups' => $result]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'groups' => $result],
             ],
             $this->calledEvents[1]
         );
@@ -360,6 +511,7 @@ class GroupServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.all.groups', function (Event $event) use (&$result) {
             $event->stopPropagation(true);
+
             return $result;
         });
 
@@ -373,7 +525,7 @@ class GroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.groups',
                 'target' => $this->groupService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[0]
         );

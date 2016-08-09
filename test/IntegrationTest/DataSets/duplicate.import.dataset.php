@@ -3,7 +3,7 @@
 return [
     'flips'         => [],
     'organizations' => [
-        0 => [
+        [
             'org_id'      => 'district',
             'title'       => 'Gina\'s District',
             'description' => null,
@@ -13,7 +13,7 @@ return [
             'deleted'     => null,
             'type'        => 'district',
         ],
-        1 => [
+        [
             'org_id'      => 'm-o-m',
             'title'       => 'Ministry of Magic',
             'description' => null,
@@ -41,6 +41,7 @@ return [
             'external_id'     => null,
             'parent_id'       => null,
             'depth'           => '0',
+            'network_id'      => 'school',
         ],
         [
             'group_id'        => 'hogwarts',
@@ -57,6 +58,7 @@ return [
             'external_id'     => null,
             'parent_id'       => null,
             'depth'           => '0',
+            'network_id'      => 'hogwarts',
         ],
         [
             'group_id'        => 'english',
@@ -73,6 +75,7 @@ return [
             'external_id'     => '789',
             'parent_id'       => 'school',
             'depth'           => '0',
+            'network_id'      => 'school',
         ],
         [
             'group_id'        => 'math',
@@ -89,6 +92,7 @@ return [
             'external_id'     => '456',
             'parent_id'       => 'school',
             'depth'           => '0',
+            'network_id'      => 'school',
         ],
     ],
     'images'        => [],

@@ -10,7 +10,6 @@ use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Predicate as Where;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Json\Json;
 
 /**
  * Test GroupServiceTest
@@ -36,13 +35,32 @@ class GroupServiceTest extends TestCase
     protected $tableGateway;
 
     /**
+     * @var \Mockery\MockInterface|\Zend\Db\Adapter\Driver\Pdo\Connection
+     */
+    protected $connection;
+
+    /**
+     * @before
+     */
+    public function setUpConnection()
+    {
+        $this->connection = \Mockery::mock('Zend\Db\Adapter\Driver\Pdo\Connection');
+    }
+
+    /**
      * @before
      */
     public function setUpGateWay()
     {
+        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\Driver\DriverInterface $driver */
+        $driver = \Mockery::mock('\Zend\Db\Adapter\Driver\DriverInterface');
+
+        $driver->shouldReceive('getConnection')->andReturn($this->connection)->byDefault();
+
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
         $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
         $adapter->shouldReceive('getPlatform')->byDefault();
+        $adapter->shouldReceive('getDriver')->andReturn($driver)->byDefault();
 
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('groups')->byDefault();
@@ -138,7 +156,7 @@ class GroupServiceTest extends TestCase
             })
             ->once();
 
-        $this->assertTrue($this->groupService->saveGroup($newGroup));
+        $this->assertTrue($this->groupService->createGroup($newGroup));
     }
 
     /**
@@ -180,7 +198,7 @@ class GroupServiceTest extends TestCase
                 $this->assertEquals($expected, $data);
             });
 
-        $this->assertTrue($this->groupService->saveGroup($group));
+        $this->assertTrue($this->groupService->updateGroup($group));
     }
 
     /**
@@ -358,33 +376,18 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldRebuildTreeWhenChildAddedForNewTree()
     {
-        //$this->markTestSkipped('Change GroupService interface to have create and save');
         $parent = new Group([
-            'group_id' => 'parent',
-            'head'     => 0,
-            'tail'     => 0,
+            'group_id'   => 'parent',
+            'head'       => 0,
+            'tail'       => 0,
+            'network_id' => 'baz-bat',
         ]);
 
         $child = new Group();
         $child->setGroupId('child');
 
-        $data = $child->getArrayCopy();
-
-        $data['meta'] = Json::encode($data['meta']);
-
-        unset($data['depth']);
-        unset($data['deleted']);
-
         $parentResult = new ResultSet();
         $parentResult->initialize([$parent->getArrayCopy()]);
-
-        $childResult = new ResultSet();
-        $childResult->initialize([$child->getArrayCopy()]);
-
-        $this->tableGateway->shouldReceive('select')
-            ->with(['group_id' => $child->getGroupId()])
-            ->andReturn($childResult)
-            ->once();
 
         $this->tableGateway->shouldReceive('select')
             ->with(['group_id' => $parent->getGroupId()])
@@ -392,37 +395,42 @@ class GroupServiceTest extends TestCase
             ->once();
 
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($data, $where) use (&$child) {
-                $this->assertEquals(['group_id' => $child->getGroupId()], $where);
-                $expected = $child->getArrayCopy();
-                $expected['meta'] = '[]';
-                unset($expected['deleted']);
-                unset($expected['depth']);
-
-                $this->assertEquals($expected, $data);
-            })
-            ->once()
-            ->ordered('update');
-
-        $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$parent) {
-                $this->assertEquals(['group_id' => $parent->getGroupId()], $where);
-                $expected = ['head' => 1, 'tail' => 4];
-                $this->assertEquals($expected, $data);
+                $this->assertEquals(
+                    ['group_id' => $parent->getGroupId()],
+                    $where,
+                    'Network update Where incorrect for parent'
+                );
+                $this->assertEquals(
+                    ['head' => 1, 'tail' => 4],
+                    $data
+                );
             })
             ->once()
             ->ordered('update');
 
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$child) {
-                $this->assertEquals(['group_id' => $child->getGroupId()], $where);
-                $expected = ['head' => 2, 'tail' => 3];
-                $this->assertEquals($expected, $data);
+                $this->assertEquals(
+                    ['group_id' => $child->getGroupId()],
+                    $where,
+                    'Network update Where incorrect for child'
+                );
+                $this->assertEquals(
+                    ['head' => 2, 'tail' => 3, 'network_id' => 'baz-bat'],
+                    $data,
+                    'Network update incorrect for child'
+                );
             })
             ->once()
             ->ordered('update');
 
         $this->groupService->addChildToGroup($parent, $child);
+        $this->assertEquals(
+            'baz-bat',
+            $child->getNetworkId(),
+            'Network id was not set to the child'
+        );
     }
 
     /**
@@ -430,12 +438,16 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldRebuildTreeWhenChildAddedForExistingTree()
     {
-        //$this->markTestSkipped('Change GroupService interface to have create and save');
+        $this->connection->shouldReceive('beginTransaction')->once();
+        $this->connection->shouldReceive('commit')->once();
+        $this->connection->shouldReceive('rollback')->never();
+
         $parent = new Group([
             'group_id'        => 'parent',
             'organization_id' => 'org',
             'head'            => 1,
             'tail'            => 2,
+            'network_id'      => 'baz-bat',
         ]);
 
         $child = new Group();
@@ -444,42 +456,30 @@ class GroupServiceTest extends TestCase
         $parentResult = new ResultSet();
         $parentResult->initialize([$parent->getArrayCopy()]);
 
-        $childResult = new ResultSet();
-        $childResult->initialize([$child->getArrayCopy()]);
-
-        $this->tableGateway->shouldReceive('select')
-            ->with(['group_id' => $child->getGroupId()])
-            ->andReturn($childResult)
-            ->once();
-
         $this->tableGateway->shouldReceive('select')
             ->with(['group_id' => $parent->getGroupId()])
             ->andReturn($parentResult)
             ->once();
 
         $this->tableGateway->shouldReceive('update')
-            ->andReturnUsing(function ($data, $where) use (&$child) {
-                $this->assertEquals(['group_id' => $child->getGroupId()], $where);
-                $expected = $child->getArrayCopy();
-                $expected['meta'] = '[]';
-                unset($expected['deleted']);
-                unset($expected['depth']);
-
-                $this->assertEquals($expected, $data);
-            })
-            ->once()
-            ->ordered('update');
-
-        $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($actualSet, $actualWhere) {
 
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('tail', '>', 1));
-                $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
+                $expectedWhere->addPredicate(new Operator('network_id', '=', 'baz-bat'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['tail' => new Expression('tail + 2')], $actualSet);
-                $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+                $this->assertEquals(
+                    ['tail' => new Expression('tail + 2')],
+                    $actualSet,
+                    'Network shift update for tail incorrect'
+                );
+
+                $this->assertEquals(
+                    $expectedWhere->getExpressionData(),
+                    $actualWhere->getExpressionData(),
+                    'Network shift for tail was built incorrectly'
+                );
 
                 return true;
             })
@@ -491,12 +491,19 @@ class GroupServiceTest extends TestCase
 
                 $expectedWhere = new Where();
                 $expectedWhere->addPredicate(new Operator('head', '>', 1));
-                $expectedWhere->addPredicate(new Operator('organization_id', '=', 'org'));
-                $expectedWhere->addPredicate(new Operator('group_id', '!=', 'parent'));
+                $expectedWhere->addPredicate(new Operator('network_id', '=', 'baz-bat'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['head' => new Expression('head + 2')], $actualSet);
-                $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+                $this->assertEquals(
+                    ['head' => new Expression('head + 2')],
+                    $actualSet,
+                    'Network shift update for head incorrect'
+                );
+                $this->assertEquals(
+                    $expectedWhere->getExpressionData(),
+                    $actualWhere->getExpressionData(),
+                    'Network shift for head was built incorrectly'
+                );
 
                 return true;
             })
@@ -509,8 +516,16 @@ class GroupServiceTest extends TestCase
                 $expectedWhere->addPredicate(new Operator('group_id', '=', 'child'));
 
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $actualWhere);
-                $this->assertEquals(['head' => 2, 'tail' => 3], $actualSet);
-                $this->assertEquals($expectedWhere->getExpressionData(), $actualWhere->getExpressionData());
+                $this->assertEquals(
+                    ['head' => 2, 'tail' => 3, 'network_id' => 'baz-bat', 'parent_id' => 'parent'],
+                    $actualSet,
+                    'Network shift update for child incorrect'
+                );
+                $this->assertEquals(
+                    $expectedWhere->getExpressionData(),
+                    $actualWhere->getExpressionData(),
+                    'Network shift Where for child group was built incorrectly'
+                );
 
                 return true;
             })
@@ -518,5 +533,10 @@ class GroupServiceTest extends TestCase
             ->ordered('update');
 
         $this->groupService->addChildToGroup($parent, $child);
+        $this->assertEquals(
+            'baz-bat',
+            $child->getNetworkId(),
+            'Network id was not set to the child'
+        );
     }
 }

@@ -68,7 +68,7 @@ class ClassRoomActionTest extends TestCase
         $action = new AddClassRoomAction($this->groupService, $classRoom);
 
         $this->assertEquals(100, $action->priority(), 'Priority for class room has changed');
-        $this->groupService->shouldReceive('saveGroup')
+        $this->groupService->shouldReceive('createGroup')
             ->once()
             ->andReturnUsing(function (GroupInterface $group) {
                 $this->assertEquals(

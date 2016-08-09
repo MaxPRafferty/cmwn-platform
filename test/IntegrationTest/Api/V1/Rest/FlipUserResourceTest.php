@@ -7,6 +7,7 @@ use Zend\Json\Json;
 
 /**
  * Test FlipResourceTest
+ *
  * @group DB
  * @group Flip
  * @group Resource
@@ -20,10 +21,12 @@ class FlipUserResourceTest extends TestCase
 {
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -36,7 +39,7 @@ class FlipUserResourceTest extends TestCase
     /**
      * @test
      * @dataProvider validUserDataProvider
-     * @ticket CORE-773
+     * @ticket       CORE-773
      */
     public function testItShouldCheckIfUserLoggedInCanSeeUserFlip($login)
     {
@@ -69,7 +72,7 @@ class FlipUserResourceTest extends TestCase
         $this->assertArrayHasKey('flip_id', $flips[0]);
 
         $expectedids = ['polar-bear', 'sea-turtle'];
-        $actualids = [];
+        $actualids   = [];
         foreach ($flips as $flip) {
             $actualids[] = $flip['flip_id'];
         }
@@ -110,7 +113,7 @@ class FlipUserResourceTest extends TestCase
         $this->assertArrayHasKey('flip_id', $flips[0]);
 
         $expectedids = ['polar-bear', 'sea-turtle'];
-        $actualids = [];
+        $actualids   = [];
         foreach ($flips as $flip) {
             $actualids[] = $flip['flip_id'];
         }
@@ -141,8 +144,9 @@ class FlipUserResourceTest extends TestCase
         $this->assertEquals($embedded[0]['flip_id'], "polar-bear");
         $this->assertEquals($embedded[0]['title'], "Polar Bear");
         $this->assertEquals(
-            $embedded[0]['description'],
-            "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!"
+            'The magnificent Polar Bear is in danger of becoming extinct.  ' .
+            'Get the scoop and go offline for the science on how they stay warm!',
+            $embedded[0]['description']
         );
     }
 
@@ -170,8 +174,9 @@ class FlipUserResourceTest extends TestCase
         $this->assertEquals($embedded[0]['flip_id'], "polar-bear");
         $this->assertEquals($embedded[0]['title'], "Polar Bear");
         $this->assertEquals(
-            $embedded[0]['description'],
-            "The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!"
+            'The magnificent Polar Bear is in danger of becoming extinct.' .
+            '  Get the scoop and go offline for the science on how they stay warm!',
+            $embedded[0]['description']
         );
     }
 
@@ -182,13 +187,12 @@ class FlipUserResourceTest extends TestCase
     {
         return [
             'English Teacher' => [
-                'english_teacher'
+                'english_teacher',
             ],
-            'Principal' => [
-                'principal'
+            'Principal'       => [
+                'principal',
             ],
         ];
-
     }
 
     /**
@@ -199,15 +203,15 @@ class FlipUserResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/user/english_student/flip'
+                '/user/english_student/flip',
             ],
             1 => [
                 'math_student',
                 '/user/math_student/flip',
                 'POST',
                 [
-                    'flip_id' =>'polar-bear'
-                ]
+                    'flip_id' => 'polar-bear',
+                ],
             ],
         ];
     }

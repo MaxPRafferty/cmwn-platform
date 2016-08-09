@@ -9,7 +9,7 @@ return [
     'names'         => [],
     'user_flips'    => [],
     'users'         => [
-        0 => [
+        [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
             'email'        => 'english_student@ginasink.com',
@@ -29,7 +29,7 @@ return [
             'super'        => '0',
             'external_id'  => null,
         ],
-        1 => [
+        [
             'user_id'      => 'math_student',
             'username'     => 'math_student',
             'email'        => 'math_student@ginasink.com',
@@ -49,7 +49,7 @@ return [
             'super'        => '0',
             'external_id'  => null,
         ],
-        2 => [
+        [
             'user_id'      => 'manchuck',
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
@@ -75,7 +75,7 @@ return [
     'user_images'   => [],
     'skribbles'     => [
         // draft for english_student
-        0 => [
+        [
             'skribble_id' => 'foo-bar',
             'version'     => '1',
             'url'         => 'https://media.changemyworldnow.com/f/abcdef',
@@ -89,7 +89,7 @@ return [
             'rules'       => '[]',
         ],
         // sent but processing for english_student
-        1 => [
+        [
             'skribble_id' => 'qux-thud',
             'version'     => '1',
             'url'         => 'https://media.changemyworldnow.com/f/abcdef',
@@ -103,7 +103,7 @@ return [
             'rules'       => '[]',
         ],
         // sent to math_student and received for math_student
-        2 => [
+        [
             'skribble_id' => 'baz-bat',
             'version'     => '1',
             'url'         => 'https://media.changemyworldnow.com/f/abcdef',
@@ -117,7 +117,7 @@ return [
             'rules'       => '[]',
         ],
         // sent by manchuck
-        3 => [
+        [
             'skribble_id' => 'fizz-buzz',
             'version'     => '1',
             'url'         => 'https://media.changemyworldnow.com/f/abcdef',

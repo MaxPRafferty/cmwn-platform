@@ -54,6 +54,7 @@ return [
             'external_id'     => null,
             'parent_id'       => null,
             'depth'           => '0',
+            'network_id'      => 'school',
         ],
     ],
     'images'        => [],

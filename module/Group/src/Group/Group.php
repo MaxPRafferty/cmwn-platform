@@ -9,6 +9,7 @@ use Application\Utils\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
 use Application\Utils\SoftDeleteInterface;
 use Org\OrganizationInterface;
+use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ArraySerializableInterface;
 
@@ -75,6 +76,11 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     protected $parentId;
 
     /**
+     * @var null|string
+     */
+    protected $networkId;
+
+    /**
      * Group constructor.
      * @param array|null $options
      */
@@ -115,7 +121,8 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'updated'         => null,
             'deleted'         => null,
             'external_id'     => null,
-            'parent_id'       => null
+            'parent_id'       => null,
+            'network_id'      => null,
         ];
 
         $array = array_merge($defaults, $array);
@@ -150,6 +157,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'updated'         => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
             'deleted'         => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
             'parent_id'       => $this->getParentId(),
+            'network_id'      => $this->getNetworkId(),
         ];
     }
 
@@ -363,5 +371,25 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     {
         $parentId = $parentId instanceof static ? $parentId->getGroupId() : $parentId;
         $this->parentId = $parentId;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNetworkId()
+    {
+        if (empty($this->networkId)) {
+            $this->setNetworkId(Uuid::uuid1());
+        }
+
+        return $this->networkId;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setNetworkId($networkId)
+    {
+        $this->networkId = $networkId;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+// This file is auto generated skipping PHPCS test
 // @@codingStandardsIgnoreStart
 return array(
     'shared-listeners' => array(
@@ -1656,6 +1657,19 @@ return array(
                 'name' => 'meta',
                 'description' => 'Meta data for the group',
                 'error_message' => 'Invalid Meta data',
+            ),
+            4 => array(
+                'required' => false,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Application\\Utils\\TypeValidator',
+                        'options' => array(),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'meta',
+                'description' => 'Type of group',
+                'error_message' => 'Invalid group type',
             ),
         ),
         'Api\\V1\\Rest\\Login\\Validator' => array(

@@ -8,23 +8,30 @@ use ZF\Hal\Link\Link;
 
 /**
  * Class GroupLink
+ *
  * @package Api\Links
  */
 class GroupLink extends Link
 {
     /**
      * GroupLink constructor.
+     *
      * @param string $group
      * @param null $parent
      * @param null $orgId
      */
-    public function __construct($group, $parent = null, $orgId = null)
+    public function __construct($group = null, $parent = null, $orgId = null)
     {
-        $type = $group instanceof GroupInterface ? $group->getType() : $group;
-        parent::__construct(strtolower('group_' . $type));
-        $query = ['type' => $type];
+        $type  = $group instanceof GroupInterface ? $group->getType() : $group;
+        $label = 'group';
+        $query = [];
+        if (!empty($type)) {
+            $label .= '_' . $type;
+            $query = ['type' => $type];
+            $this->setProps(['label' => StaticType::getLabelForType($type)]);
+        }
 
-        $this->setProps(['label' => StaticType::getLabelForType($type)]);
+        parent::__construct(strtolower($label));
 
         if ($orgId !== null) {
             $query['org_id'] = $orgId;

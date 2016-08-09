@@ -4,6 +4,7 @@ namespace IntegrationTest\Service;
 
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use Security\Service\SecurityGroupService;
 use Security\Service\SecurityGroupServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
@@ -24,7 +25,7 @@ use User\UserInterface;
 class SecurityGroupServiceTest extends TestCase
 {
     /**
-     * @var SecurityGroupServiceInterface
+     * @var SecurityGroupService
      */
     protected $userGroupService;
 
@@ -54,23 +55,11 @@ class SecurityGroupServiceTest extends TestCase
     public function relationshipsDataProvider()
     {
         return [
-            'English Teacher to Principal' => [
-                'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'neighbor.adult'
-            ],
-
-            'Math Teacher to Principal' => [
-                'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'neighbor.adult'
-            ],
-
             // English Student
             'English Teacher to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'teacher'
+                'expectedRole'  => 'teacher.adult'
             ],
 
             'Math Teacher to English Student' => [
@@ -82,13 +71,13 @@ class SecurityGroupServiceTest extends TestCase
             'Principal to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'principal'
+                'expectedRole'  => 'principal.adult'
             ],
 
             'Math Student to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child'
             ],
 
             'English Student to English Student' => [
@@ -96,7 +85,7 @@ class SecurityGroupServiceTest extends TestCase
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'expectedRole'  => 'me'
             ],
-            
+
             // Math Student
             'English Teacher to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
@@ -107,13 +96,13 @@ class SecurityGroupServiceTest extends TestCase
             'Math Teacher to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'teacher'
+                'expectedRole'  => 'teacher.adult'
             ],
 
             'Principal to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'principal'
+                'expectedRole'  => 'principal.adult'
             ],
 
             'Math Student to Math Student' => [
@@ -125,7 +114,7 @@ class SecurityGroupServiceTest extends TestCase
             'English Student to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child'
             ],
 
             // English Teacher
@@ -144,7 +133,7 @@ class SecurityGroupServiceTest extends TestCase
             'Principal to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'principal.adult'
             ],
 
             'Math Student to English Teacher' => [
@@ -156,7 +145,7 @@ class SecurityGroupServiceTest extends TestCase
             'English Student to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child'
             ],
 
             // Math Teacher
@@ -175,13 +164,13 @@ class SecurityGroupServiceTest extends TestCase
             'Principal to Math Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'principal.adult'
             ],
 
             'Math Student to Math Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child'
             ],
 
             'English Student to Math Teacher' => [
@@ -213,13 +202,13 @@ class SecurityGroupServiceTest extends TestCase
             'Math Student to Principal' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child'
             ],
 
             'English Student to Principal' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child'
             ],
         ];
     }

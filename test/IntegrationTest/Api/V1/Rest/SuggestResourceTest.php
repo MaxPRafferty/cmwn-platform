@@ -33,6 +33,7 @@ class SuggestResourceTest extends TestCase
     public function getDataSet()
     {
         $data = include __DIR__ . '/../../../DataSets/friends.dataset.php';
+
         return new ArrayDataSet($data);
     }
 
@@ -46,10 +47,12 @@ class SuggestResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -72,7 +75,7 @@ class SuggestResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.suggest');
         $this->assertControllerName('api\v1\rest\suggest\controller');
     }
- 
+
     /**
      * @test
      * @ticket CORE-701
@@ -110,7 +113,7 @@ class SuggestResourceTest extends TestCase
 
         $this->assertEquals($expected, $actualSuggestion);
     }
-    
+
     /**
      * @test
      * @ticket CORE-701
@@ -187,7 +190,7 @@ class SuggestResourceTest extends TestCase
             ],
             [
                 'user_id' => 'english_student',
-                'status'  => 'NEEDS_YOUR_ACCEPTANCE'
+                'status'  => 'NEEDS_YOUR_ACCEPTANCE',
             ],
         ];
 
@@ -202,7 +205,7 @@ class SuggestResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/user/english_student/suggest'
+                '/user/english_student/suggest',
             ],
         ];
     }

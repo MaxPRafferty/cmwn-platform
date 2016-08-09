@@ -96,27 +96,4 @@ class SecurityUserTest extends TestCase
         $user = new SecurityUser($userData);
         $this->assertEquals(SecurityUser::CODE_VALID, $user->compareCode('some_code'));
     }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnChildRoleForRoleAllTheTimeWhenUserIsChild()
-    {
-        $user = new SecurityUser();
-        $user->setType(UserInterface::TYPE_CHILD);
-
-        $this->assertEquals(
-            'guest.child',
-            $user->getRole(),
-            'Security user did not return "child" for role when user is a child'
-        );
-
-        $user->setRole('admin');
-
-        $this->assertEquals(
-            'admin.child',
-            $user->getRole(),
-            'Security user did not return "child" for role when role is set'
-        );
-    }
 }

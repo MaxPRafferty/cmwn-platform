@@ -189,12 +189,30 @@ interface GroupInterface
     public function setExternalId($externalId);
 
     /**
+     * Gets the Id of the parent group
+     *
      * @return null|string
      */
     public function getParentId();
 
     /**
-     * @param null|string $parentId
+     * Sets the parent group
+     *
+     * @param GroupInterface|null|string $parentId
      */
     public function setParentId($parentId);
+
+    /**
+     * Gets the Id of the network this group belongs too
+     *
+     * @return null|string
+     */
+    public function getNetworkId();
+
+    /**
+     * Sets the Id of the network this group belongs too
+     *
+     * @param $networkId
+     */
+    public function setNetworkId($networkId);
 }

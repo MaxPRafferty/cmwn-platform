@@ -2,11 +2,10 @@
 
 namespace Job\Service;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Job\JobInterface;
 use Job\Processor\JobRunner;
-use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -15,8 +14,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 class ResqueJob extends \Resque_Job implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
-     * @var object  Override the instance var since it is private
+     * @var JobRunner  Override the instance var since it is private
      */
     protected $jobInstance;
 
@@ -24,11 +25,6 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
      * @var ServiceLocatorInterface
      */
     protected $services;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * ResqueJob constructor.
@@ -41,29 +37,6 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
     {
         $this->services = $services;
         parent::__construct($queue, $payload);
-    }
-
-    /**
-     * Set logger instance
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @return null|LoggerInterface
-     */
-    public function getLogger()
-    {
-        if ($this->logger === null) {
-            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
-        }
-
-        return $this->logger;
     }
 
     /**
@@ -119,15 +92,19 @@ class ResqueJob extends \Resque_Job implements LoggerAwareInterface
         $job = $this->services->get($serviceName);
 
         if (!$job instanceof JobInterface) {
+            $this->getLogger()->crit(sprintf('Job "%s" does not implement JobInterface', $serviceName));
             throw new \Resque_Job_DirtyExitException(sprintf('Job "%s" does not implement JobInterface', $serviceName));
         }
 
-        $job->exchangeArray($this->getArguments());
+        $job->setLogger($this->getLogger());
 
-        /** @var JobRunner $runner */
-        $runner = $this->services->get(JobRunner::class);
-        $runner->setLogger($this->getLogger());
         try {
+            $this->getLogger()->notice('Prepping job');
+            /** @var JobRunner $runner */
+            $runner = $this->services->get(JobRunner::class);
+
+            $runner->setLogger($this->getLogger());
+            $job->exchangeArray($this->getArguments());
             $runner->setJob($serviceName, $job->getArrayCopy());
         } catch (\RuntimeException $jobException) {
             $msg = sprintf('Error creating job %s: %s', $serviceName, $jobException->getMessage());

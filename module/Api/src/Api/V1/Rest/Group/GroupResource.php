@@ -44,7 +44,7 @@ class GroupResource extends AbstractResourceListener
     public function create($data)
     {
         $group = new Group($this->getInputFilter()->getValues());
-        $this->service->saveGroup($group);
+        $this->service->createGroup($group);
         return new GroupEntity($group->getArrayCopy());
     }
 
@@ -125,7 +125,7 @@ class GroupResource extends AbstractResourceListener
         $data  = $this->getInputFilter()->getValues();
 
         $saveGroup = new Group(array_merge($group->getArrayCopy(), $data));
-        $this->service->saveGroup($saveGroup);
+        $this->service->updateGroup($saveGroup);
         return $group;
     }
 }

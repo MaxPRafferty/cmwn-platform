@@ -2,6 +2,8 @@
 
 namespace Security\Service;
 
+use User\Service\UserServiceInterface;
+use User\User;
 use User\UserInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
@@ -30,58 +32,32 @@ class SecurityGroupService implements SecurityGroupServiceInterface
     protected $requestedUser;
 
     /**
+     * @var UserServiceInterface
+     */
+    protected $userService;
+
+    /**
      * GroupService constructor.
+     *
      * @param TableGateway $pivotTable
      */
-    public function __construct(TableGateway $pivotTable)
+    public function __construct(TableGateway $pivotTable, UserServiceInterface $userService)
     {
-        $this->pivotTable = $pivotTable;
+        $this->pivotTable  = $pivotTable;
+        $this->userService = $userService;
     }
 
     /**
-     * Finds the role the user has to another user
-     *
-     * SELECT
-     *  requested_user.user_id AS requested_user_id,
-     *
-     *  active_user.role AS active_role,
-     *
-     *  active_group.head AS active_head,
-     *  active_group.tail AS active_tail,
-     *
-     *  active_parent_group.head AS active_parent_head,
-     *  active_parent_group.tail AS active_parent_tail,
-     *  active_parent_group.group_id AS active_parent_group,
-     *
-     *  requested_group.head AS requested_head,
-     *  requested_group.tail AS requested_tail,
-     *  requested_group.group_id AS requested_group,
-     *
-     *  requested_parent_group.head AS requested_parent_head,
-     *  requested_parent_group.tail AS requested_parent_tail,
-     *  requested_parent_group.group_id AS requested_parent_group
-     *
-     * FROM user_groups AS active_user
-     *  LEFT JOIN user_groups AS requested_user ON requested_user.user_id = '974263e8-2806-11e6-af9a-b1fd6b0b32b7'
-     *  LEFT JOIN groups AS active_group ON active_group.group_id = requested_user.group_id
-     *  LEFT JOIN groups AS active_parent_group ON active_parent_group.group_id = active_group.parent_id
-     *  LEFT JOIN groups AS requested_group ON requested_group.group_id = requested_user.group_id
-     *  LEFT JOIN groups AS requested_parent_group ON requested_parent_group.group_id = requested_group.parent_id
-     *
-     * WHERE active_user.user_id = '964437d2-2806-11e6-b002-8eb532838af7'
-     *  AND active_group.organization_id = requested_group.organization_id
-     *
-     *
-     * @param UserInterface $activeUser
-     * @param UserInterface $requestedUser
-     * @return string
+     * @inheritdoc
      */
-    public function fetchRelationshipRole(UserInterface $activeUser, UserInterface $requestedUser)
+    public function fetchRelationshipRole(UserInterface $activeUser, $requestedUser)
     {
+        // get the actual user
+        if (!$requestedUser instanceof UserInterface) {
+            $requestedUser = $this->userService->fetchUser($requestedUser);
+        }
+
         // Same user FTW!
-        // ..... Wow!
-        // ... Cool! .... such fun
-        // . Awesome
         if ($activeUser->getUserId() === $requestedUser->getUserId()) {
             return 'me';
         }
@@ -89,8 +65,16 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         $this->activeUser    = $activeUser;
         $this->requestedUser = $requestedUser;
 
-        $activeUserId    = $activeUser->getUserId();
-        $requestedUserId = $requestedUser->getUserId();
+        return $this->getRoleFromDb();
+    }
+
+    /**
+     * @return bool|string
+     */
+    protected function getRoleFromDb()
+    {
+        $activeUserId    = $this->activeUser->getUserId();
+        $requestedUserId = $this->requestedUser->getUserId();
 
         $select = new Select();
         $select->columns(['active_role' => 'active_user.role'], false);
@@ -110,7 +94,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
             'active_user.group_id = active_group.group_id',
             [
                 'active_head' => 'head',
-                'active_tail' => 'tail'
+                'active_tail' => 'tail',
             ],
             Select::JOIN_LEFT
         );
@@ -132,9 +116,9 @@ class SecurityGroupService implements SecurityGroupServiceInterface
             ['requested_group' => 'groups'],
             'requested_user.group_id = requested_group.group_id',
             [
-                'requested_head' => 'head',
-                'requested_tail' => 'tail',
-                'requested_group' => 'group_id'
+                'requested_head'  => 'head',
+                'requested_tail'  => 'tail',
+                'requested_group' => 'group_id',
             ],
             Select::JOIN_LEFT
         );
@@ -159,9 +143,9 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         ));
 
         $where->addPredicate(new Operator(
-            'active_group.organization_id',
+            'active_group.network_id',
             '=',
-            new Expression('requested_group.organization_id')
+            new Expression('requested_group.network_id')
         ));
 
         $select->where($where);
@@ -171,6 +155,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         }
 
         $results->rewind();
+
         return $this->marshalRole($results->current());
     }
 
@@ -178,25 +163,26 @@ class SecurityGroupService implements SecurityGroupServiceInterface
      * Figures out the comparing role for the active user
      *
      * @param \ArrayObject $row
+     *
      * @return string
      */
     protected function marshalRole(\ArrayObject $row)
     {
-
+        // Give us something nice to pass around
         $result = new \stdClass();
 
-        $result->active_role = $row->active_role;
-        $result->active_head = (int) $row->active_head;
-        $result->active_tail = (int) $row->active_tail;
-        $result->active_parent = new \stdClass();
-        $result->active_parent->head = (int) $row->active_parent_head;
-        $result->active_parent->tail = (int) $row->active_parent_tail;
+        $result->active_role         = $row->active_role;
+        $result->active_head         = (int)$row->active_head;
+        $result->active_tail         = (int)$row->active_tail;
+        $result->active_parent       = new \stdClass();
+        $result->active_parent->head = (int)$row->active_parent_head;
+        $result->active_parent->tail = (int)$row->active_parent_tail;
 
-        $result->requested_head = (int) $row->requested_head;
-        $result->requested_tail = (int) $row->requested_tail;
-        $result->requested_parent = new \stdClass();
-        $result->requested_parent->head = (int) $row->requested_parent_head;
-        $result->requested_parent->tail = (int) $row->requested_parent_tail;
+        $result->requested_head         = (int)$row->requested_head;
+        $result->requested_tail         = (int)$row->requested_tail;
+        $result->requested_parent       = new \stdClass();
+        $result->requested_parent->head = (int)$row->requested_parent_head;
+        $result->requested_parent->tail = (int)$row->requested_parent_tail;
 
         return $this->isActiveSameTypeAsRequested()
             ? $this->marshalRoleForSameTypes($result)
@@ -207,31 +193,33 @@ class SecurityGroupService implements SecurityGroupServiceInterface
      * Different cases when the two users are different
      *
      * @param \stdClass $row
+     *
      * @return string
      */
     protected function marshalRoleForDifferentTypes(\stdClass $row)
     {
         // Active and requested are in the same group
         if ($this->isSameNode($row)) {
-            return $row->active_role;
+            return $row->active_role . '.' . strtolower($this->activeUser->getType());
         }
 
         // requested group is child of active group
         if ($this->isRequestedInChildNodeOfActive($row)) {
-            return $row->active_role;
+            return $row->active_role . '.' . strtolower($this->activeUser->getType());
         }
 
         if ($this->activeUser->getType() === UserInterface::TYPE_ADULT) {
             return 'guest';
         }
 
-        return $this->isActiveInChildNodeOfRequested($row) ? $row->active_role : 'guest';
+        return $this->isActiveInChildNodeOfRequested($row) ? $row->active_role . '.child' : 'guest';
     }
 
     /**
      * Figures out the role if the 2 users are the same type
      *
      * @param \stdClass $row
+     *
      * @return string
      */
     protected function marshalRoleForSameTypes(\stdClass $row)
@@ -243,10 +231,24 @@ class SecurityGroupService implements SecurityGroupServiceInterface
 
         // children in the same network always have the same relationship
         if ($this->activeUser->getType() === UserInterface::TYPE_CHILD) {
-            return $row->active_role;
+            return $row->active_role . '.child';
+        }
+
+        // Siblings
+        if ($row->active_parent->head === $row->requested_parent->head) {
+            return 'neighbor.adult';
+        }
+
+        // if the requested is below the active, return the role
+        if ($row->active_tail > $row->requested_tail) {
+            return $row->active_role . '.adult';
         }
 
         return 'neighbor.adult';
+    }
+
+    protected function findRequestedInTree(\stdClass $row)
+    {
     }
 
     /**
@@ -261,6 +263,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
 
     /**
      * @param \stdClass $row
+     *
      * @return bool
      */
     protected function isRequestedInSameNetworkAsActive(\stdClass $row)
@@ -270,6 +273,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
 
     /**
      * @param \stdClass $row
+     *
      * @return bool
      */
     protected function isActiveInSameNetworkAsRequested(\stdClass $row)
@@ -277,17 +281,18 @@ class SecurityGroupService implements SecurityGroupServiceInterface
         //requested is in the root group
         if ($row->requested_parent->head === 0) {
             return ($row->active_head >= $row->requested_head)
-                && ($row->active_tail <= $row->requested_tail);
+            && ($row->active_tail <= $row->requested_tail);
         }
 
         return ($row->active_head >= $row->requested_parent->head)
-            && ($row->active_tail <= $row->requested_parent->tail);
+        && ($row->active_tail <= $row->requested_parent->tail);
     }
 
     /**
      * Checks if the two users are in the same network node
      *
      * @param \stdClass $row
+     *
      * @return bool
      */
     protected function isSameNode(\stdClass $row)
@@ -299,6 +304,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
      * Checks if the active user is a child of the requested user
      *
      * @param \stdClass $row
+     *
      * @return bool
      */
     protected function isActiveInChildNodeOfRequested(\stdClass $row)
@@ -310,6 +316,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
      * Checks if the active user is a child of the requested user
      *
      * @param \stdClass $row
+     *
      * @return bool
      */
     protected function isRequestedInChildNodeOfActive(\stdClass $row)

@@ -19,6 +19,7 @@ class DuplicateEntryException extends \Exception
     public function __construct($message = null, $code = null, \Exception $previous = null)
     {
         $code = 409;
+        $message = null === $message ? 'Duplicate Entry' : $message;
         parent::__construct($message, $code, $previous);
     }
 }

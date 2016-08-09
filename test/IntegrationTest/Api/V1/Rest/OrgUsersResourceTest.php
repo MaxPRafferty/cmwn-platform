@@ -4,7 +4,6 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
-use Security\Exception\ChangePasswordException;
 use User\Adult;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
@@ -13,6 +12,10 @@ use Zend\Json\Json;
 /**
  * Test OrgUsersResourceTest
  *
+ * @group IntegrationTest
+ * @group Api
+ * @group Org
+ * @group UserGroupService
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -53,7 +56,7 @@ class OrgUsersResourceTest extends TestCase
      * @ticket CORE-610
      * @dataProvider organizationUsersDataProvider
      */
-    public function testItShouldUsersForOrganizationForUsers($login, $orgId, array $expectedIds)
+    public function testItShouldUsersForUsersForOrganization($login, $orgId, array $expectedIds)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
@@ -103,7 +106,7 @@ class OrgUsersResourceTest extends TestCase
     public function testItShouldReturnBackCorrectUsersWhenDeleted($login, $orgId, $deleteUser, array $expectedIds)
     {
         $this->userService->deleteUser(new Adult(['user_id' => $deleteUser]));
-        $this->testItShouldUsersForOrganizationForUsers($login, $orgId, $expectedIds);
+        $this->testItShouldUsersForUsersForOrganization($login, $orgId, $expectedIds);
     }
 
     /**
