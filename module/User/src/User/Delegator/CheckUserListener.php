@@ -36,7 +36,6 @@ class CheckUserListener implements ListenerAggregateInterface
         $this->listeners[] = $events->attach('save.new.user', [$this, 'checkUniqueFields']);
         $this->listeners[] = $events->attach('save.user', [$this, 'checkUniqueFields']);
         $this->listeners[] = $events->attach('update.user.name', [$this, 'checkUniqueFields']);
-
     }
 
     /**

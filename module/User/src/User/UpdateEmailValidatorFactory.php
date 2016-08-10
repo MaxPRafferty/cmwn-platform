@@ -13,6 +13,10 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
+/**
+ * Class UpdateEmailValidatorFactory
+ * @package User
+ */
 class UpdateEmailValidatorFactory implements FactoryInterface
 {
     /**
