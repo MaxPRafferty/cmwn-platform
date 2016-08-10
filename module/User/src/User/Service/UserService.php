@@ -20,6 +20,7 @@ use Zend\Paginator\Adapter\DbSelect;
  *
  * @package User\Service
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class UserService implements UserServiceInterface
 {
