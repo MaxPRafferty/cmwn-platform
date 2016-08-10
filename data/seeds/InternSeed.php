@@ -238,6 +238,5 @@ class InternSeed extends AbstractSeed
                 );
             }
         }
-
     }
 }

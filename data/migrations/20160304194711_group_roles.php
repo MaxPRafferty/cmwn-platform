@@ -48,6 +48,5 @@ class GroupRoles extends AbstractMigration
             $table->addColumn('role', 'string')
                 ->save();
         }
-
     }
 }

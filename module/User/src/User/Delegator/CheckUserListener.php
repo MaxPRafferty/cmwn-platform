@@ -3,6 +3,7 @@
 namespace User\Delegator;
 
 use Application\Exception\DuplicateEntryException;
+use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
@@ -32,7 +33,10 @@ class CheckUserListener implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
+        $this->listeners[] = $events->attach('save.new.user', [$this, 'checkUniqueFields']);
         $this->listeners[] = $events->attach('save.user', [$this, 'checkUniqueFields']);
+        $this->listeners[] = $events->attach('update.user.name', [$this, 'checkUniqueFields']);
+
     }
 
     /**
@@ -58,12 +62,18 @@ class CheckUserListener implements ListenerAggregateInterface
         $predicate = new PredicateSet([
             new PredicateSet([
                 new Operator('email', Operator::OP_EQ, $user->getEmail()),
-                new Operator('username', Operator::OP_EQ, $user->getUserName())
-            ], PredicateSet::OP_OR),
-
-            new Operator('user_id', Operator::OP_NE, $user->getUserId())
+                new Operator('username', Operator::OP_EQ, $user->getUserName()),
+                new Operator(
+                    'normalized_username',
+                    Operator::OP_EQ,
+                    UserService::normalizeUsername($user->getUserName())
+                )
+            ], PredicateSet::OP_OR)
         ]);
 
+        if ($event->getName() !== 'save.new.user') {
+            $predicate->addPredicate(new Operator('user_id', Operator::OP_NE, $user->getUserId()));
+        }
 
         $results = $userService->fetchAll($predicate, false);
 

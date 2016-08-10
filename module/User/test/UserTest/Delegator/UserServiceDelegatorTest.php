@@ -98,6 +98,8 @@ class UserServiceDelegatorTest extends TestCase
             ->andReturn(true)
             ->once();
 
+        $this->userService->shouldReceive('fetchAll')
+            ->once();
 
         $this->delegator->createUser($this->user);
 
@@ -160,6 +162,8 @@ class UserServiceDelegatorTest extends TestCase
         $this->userService->shouldReceive('createUser')
             ->with($this->user)
             ->never();
+        $this->userService->shouldReceive('fetchAll')
+            ->once();
 
         $this->delegator->getEventManager()->attach('save.new.user', function (Event $event) {
             $event->stopPropagation(true);

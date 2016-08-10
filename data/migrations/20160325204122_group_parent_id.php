@@ -38,6 +38,5 @@ class GroupParentId extends AbstractMigration
             ['delete' => 'SET_NULL', 'update'=> 'NO_ACTION']
         )
             ->update();
-
     }
 }
