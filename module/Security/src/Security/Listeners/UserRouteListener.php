@@ -1,5 +1,5 @@
 <?php
-
+// @@codingStandardsIgnoreStart
 namespace Security\Listeners;
 
 use Application\Exception\NotFoundException;
@@ -18,6 +18,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 /**
  * Class UserRouteListener
  * @package Api\Listeners
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserRouteListener implements AuthenticationServiceAwareInterface
 {

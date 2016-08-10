@@ -1,5 +1,5 @@
 <?php
-
+// @@codingStandardsIgnoreStart
 use Phinx\Migration\AbstractMigration;
 
 class GroupParentId extends AbstractMigration

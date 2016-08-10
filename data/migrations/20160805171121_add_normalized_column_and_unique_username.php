@@ -1,5 +1,5 @@
 <?php
-
+// @@codingStandardsIgnoreStart
 use Phinx\Migration\AbstractMigration;
 
 class AddNormalizedColumnAndUniqueUsername extends AbstractMigration
