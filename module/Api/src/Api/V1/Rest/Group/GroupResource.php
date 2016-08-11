@@ -2,7 +2,6 @@
 namespace Api\V1\Rest\Group;
 
 use Group\Group;
-use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
 use ZF\ApiProblem\ApiProblem;

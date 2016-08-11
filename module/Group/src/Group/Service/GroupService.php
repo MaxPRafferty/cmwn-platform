@@ -233,18 +233,11 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fetches on group from the DB by using the external id
-     *
-     * @param $organization
-     * @param $externalId
-     *
-     * @return GroupInterface
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function fetchGroupByExternalId($organization, $externalId)
+    public function fetchGroupByExternalId($networkId, $externalId)
     {
-        $orgId  = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
-        $rowSet = $this->groupTableGateway->select(['organization_id' => $orgId, 'external_id' => $externalId]);
+        $rowSet = $this->groupTableGateway->select(['network_id' => $networkId, 'external_id' => $externalId]);
         $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");

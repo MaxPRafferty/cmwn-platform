@@ -30,7 +30,7 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
     /**
      * @var string
      */
-    protected $organizationId;
+    protected $networkId;
 
     /**
      * ClassRoomRegistry constructor.
@@ -54,17 +54,14 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * Sets the organization needed for group lookups
+     * Sets the network id needed for group lookups
      *
-     * @param OrganizationInterface|string $organization
+     * @param string $networkId
      */
-    public function setOrganization($organization)
+    public function setNetworkId($networkId)
     {
-        $this->organizationId = $organization instanceof OrganizationInterface
-            ? $organization->getOrgId()
-            : $organization;
+        $this->networkId = $networkId;
     }
-
 
     /**
      * @return GroupServiceInterface
@@ -107,12 +104,12 @@ class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
      */
     protected function lookUpGroup($classRoomId)
     {
-        if (null === $this->organizationId) {
+        if (null === $this->networkId) {
             throw new \RuntimeException('Lookup group called with null for organzation id');
         }
 
         try {
-            return $this->groupService->fetchGroupByExternalId($this->organizationId, $classRoomId);
+            return $this->groupService->fetchGroupByExternalId($this->networkId, $classRoomId);
         } catch (NotFoundException $groupNotFound) {
         }
         return false;
