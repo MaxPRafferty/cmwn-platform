@@ -215,11 +215,12 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @dataProvider adultDataProvider
      */
-    public function testItShouldReturnGroupData()
+    public function testItShouldReturnGroupDataForAdults($adult)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($adult);
 
         $this->dispatch('/group/school');
         $this->assertMatchedRouteName('api.rest.group');
@@ -232,6 +233,21 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('school', $body['group_id']);
         $this->assertEquals('district', $body['organization_id']);
         $this->assertEquals('Gina\'s School', $body['title']);
+    }
+
+    /**
+     * @test
+     * @dataProvider childDataProvider
+     */
+    public function testItShouldReturnDenyGroupDataForChildren($child)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($child);
+
+        $this->dispatch('/group/school');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -577,6 +593,42 @@ class GroupResourceTest extends TestCase
             'English Teacher' => [
                 'english_teacher',
                 403,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function childDataProvider()
+    {
+        return [
+            'English Student' => [
+                'english_student',
+            ],
+            'Math Student' => [
+                'math_student',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function adultDataProvider()
+    {
+        return [
+            'English Teacher' => [
+                'english_teacher',
+            ],
+            'Math Teacher' => [
+                'math_teacher',
+            ],
+            'Principal' => [
+                'principal',
+            ],
+            'Super' => [
+                'super_user',
             ],
         ];
     }

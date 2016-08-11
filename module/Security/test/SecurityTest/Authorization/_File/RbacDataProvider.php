@@ -378,6 +378,7 @@ return [
         'role'    => 'me.child',
         'allowed' => [
             'attach.profile.image',
+            'can.friend',
             'create.skribble',
             'create.user.flip',
             'delete.skribble',
@@ -397,7 +398,6 @@ return [
         'denied'  => [
             'add.group.user',
             'adult.code',
-            'can.friend',
             'child.code',
             'create.child.group',
             'create.group',

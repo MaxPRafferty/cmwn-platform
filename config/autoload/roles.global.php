@@ -293,6 +293,7 @@ return [
                 ],
                 'permissions' => [
                     'attach.profile.image',
+                    'can.friend',
                     'create.skribble',
                     'create.user.flip',
                     'delete.skribble',
