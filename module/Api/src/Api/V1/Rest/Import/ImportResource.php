@@ -66,7 +66,7 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
         }
 
         if ($job instanceof GroupAwareInterface) {
-            $job->setGroup($this->getEvent()->getRouteParam('group'));
+            $job->setGroup($this->getEvent()->getRouteParam('group_id'));
         }
 
         $token = $this->jobService->sendJob($job);
