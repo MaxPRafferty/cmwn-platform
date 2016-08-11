@@ -72,7 +72,7 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
         }
 
         $writer = new Stream(STDOUT);
-        $writer->addFilter(new Priority(Logger::INFO));
+        $writer->addFilter(new Priority(Logger::DEBUG));
         $this->getLogger()->addWriter($writer);
 
         $queue    = [$request->getParam('queue', 'default')];
