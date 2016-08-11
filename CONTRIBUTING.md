@@ -20,5 +20,6 @@ Code Style Guide
 1. Events on object that will be series MUST be in the follow order: event.pre, event, event.post,  Events names MUST also
  be lowercase separated by dots
     ex: save.user.pre, save.user, save.user.post
+1. Use @inheritDoc and keep all the documentation on the Trait or Interface
     
 __Note: PSR-0 is being followed until ZF3 is stable and ready for use__ 

@@ -2,23 +2,33 @@
 
 namespace Job\Controller;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Job\Service\ResqueWorker;
-use PHPMD\Writer\StreamWriter;
+use Security\Authentication\AuthenticationService;
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\SecurityUser;
+use Zend\Authentication\Storage\NonPersistent;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Log\Filter\Priority;
+use Zend\Log\Formatter\Simple;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
+use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class WorkerController
  * @codeCoverageIgnore
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class WorkerController extends ConsoleController implements LoggerAwareInterface
+class WorkerController extends ConsoleController implements LoggerAwareInterface, AuthenticationServiceAwareInterface
 {
+    use AuthenticationServiceAwareTrait;
+    use NoopLoggerAwareTrait;
+
     /**
      * @var ServiceLocatorInterface
      */
@@ -30,35 +40,47 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
     protected $logger;
 
     /**
-     * WorkerController constructor.
-     * @param ServiceLocatorInterface $services
-     */
-    public function __construct(ServiceLocatorInterface $services)
-    {
-        $this->services = $services;
-    }
-
-    /**
-     * Set logger instance
+     * ImportController constructor.
      *
-     * @param LoggerInterface $logger
-     * @return void
+     * @param ServiceLocatorInterface $services
+     * @param AuthenticationService $authenticationService
      */
-    public function setLogger(LoggerInterface $logger)
+    public function __construct(ServiceLocatorInterface $services, AuthenticationService $authenticationService)
     {
-        $this->logger = $logger;
+        $this->services     = $services;
+        $this->setAuthenticationService($authenticationService);
     }
 
     /**
-     * @return Logger
+     * Sets the logging level
+     *
+     * @param MvcEvent $event
+     * @return mixed
      */
-    public function getLogger()
+    public function onDispatch(MvcEvent $event)
     {
-        if ($this->logger === null) {
-            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        $routeMatch = $event->getRouteMatch();
+
+        $writer = new Stream(STDOUT);
+        $writer->setFormatter(new Simple('%priorityName%: %message%'));
+
+        $priority = Logger::NOTICE;
+        $verbose  = $routeMatch->getParam('verbose') || $routeMatch->getParam('v');
+        $debug    = $routeMatch->getParam('debug') || $routeMatch->getParam('d');
+
+        $priority = $verbose ? Logger::INFO : $priority;
+        $priority = $debug ? Logger::DEBUG : $priority;
+        $writer->addFilter(new Priority(['priority' => $priority]));
+        $this->getLogger()->addWriter($writer);
+
+        $user = new SecurityUser(['super' => 1, 'username' => 'Import Processor']);
+        $auth = $this->getAuthenticationService();
+        if ($auth instanceof AuthenticationService) {
+            $auth->setStorage(new NonPersistent());
+            $auth->getStorage()->write($user);
         }
 
-        return $this->logger;
+        return parent::onDispatch($event);
     }
 
     /**
@@ -70,10 +92,6 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
         if (!$request instanceof ConsoleRequest) {
             throw new \RuntimeException('Invalid Request');
         }
-
-        $writer = new Stream(STDOUT);
-        $writer->addFilter(new Priority(Logger::DEBUG));
-        $this->getLogger()->addWriter($writer);
 
         $queue    = [$request->getParam('queue', 'default')];
         $interval = $request->getParam('interval', 5);

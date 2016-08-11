@@ -71,7 +71,7 @@ class AddClassRoomAction implements ActionInterface, OrgAwareInterface
         $group->setType('class');
         $group->setMeta(['sub_class_rooms' => $this->classRoom->getSubClassRooms()]);
         $group->setOrganizationId($this->orgId);
-        $this->groupService->saveGroup($group);
+        $this->groupService->createGroup($group);
         $this->classRoom->setGroup($group);
     }
 

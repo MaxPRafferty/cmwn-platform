@@ -2,10 +2,10 @@
 
 namespace Job\Processor;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Zend\Filter\StaticFilter;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
 
 /**
  * Class JobRunner
@@ -13,7 +13,7 @@ use Zend\Log\LoggerAwareTrait;
  */
 class JobRunner implements LoggerAwareInterface
 {
-    use LoggerAwareTrait;
+    use NoopLoggerAwareTrait;
 
     /**
      * Contains a list of allowed jobs that can be executed

@@ -9,13 +9,13 @@ use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class GroupServiceDelegator
+ *
  * @package Group\Delegator
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -36,11 +36,39 @@ class GroupDelegator implements GroupServiceInterface
 
     /**
      * GroupDelegator constructor.
+     *
      * @param GroupServiceInterface $service
      */
     public function __construct(GroupServiceInterface $service)
     {
         $this->realService = $service;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateGroup(GroupInterface $group)
+    {
+        $event    = new Event('update.group', $this->realService, ['group' => $group]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        try {
+            $return = $this->realService->updateGroup($group);
+            $event->setName('update.group.post');
+            $this->getEventManager()->trigger($event);
+
+            return $return;
+        } catch (\Exception $groupException) {
+            $event->setName('update.group.error');
+            $event->setParam('exception', $groupException);
+            $this->getEventManager()->trigger($event);
+        }
+
+        throw $groupException;
     }
 
     /**
@@ -62,6 +90,7 @@ class GroupDelegator implements GroupServiceInterface
     /**
      * @param GroupInterface $parent
      * @param GroupInterface $child
+     *
      * @return bool
      * @fixme This is not following the contributing standard
      */
@@ -76,10 +105,11 @@ class GroupDelegator implements GroupServiceInterface
      * If the group id is null, then a new group is created
      *
      * @param GroupInterface $group
+     *
      * @return bool
-     * @throws NotFoundException
+     * @throws \Exception
      */
-    public function saveGroup(GroupInterface $group)
+    public function createGroup(GroupInterface $group)
     {
         $event    = new Event('save.group', $this->realService, ['group' => $group]);
         $response = $this->getEventManager()->trigger($event);
@@ -88,18 +118,25 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return = $this->realService->saveGroup($group);
+        try {
+            $return = $this->realService->createGroup($group);
+            $event->setName('save.group.post');
+            $this->getEventManager()->trigger($event);
+            return $return;
+        } catch (\Exception $groupException) {
+            $event->setName('save.group.error');
+            $event->setParam('exception', $groupException);
+            $this->getEventManager()->trigger($event);
+        }
 
-        $event    = new Event('save.group.post', $this->realService, ['group' => $group]);
-        $this->getEventManager()->trigger($event);
-
-        return $return;
+        throw $groupException;
     }
 
     /**
      * Fetches one group from the DB using the id
      *
      * @param $groupId
+     *
      * @return GroupInterface
      * @throws NotFoundException
      */
@@ -113,25 +150,21 @@ class GroupDelegator implements GroupServiceInterface
         }
 
         $return = $this->realService->fetchGroup($groupId);
-        $event    = new Event('fetch.group.post', $this->realService, ['group_id' => $groupId, 'group' => $return]);
+        $event  = new Event('fetch.group.post', $this->realService, ['group_id' => $groupId, 'group' => $return]);
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 
     /**
-     * Fetches on group from the DB by using the external id
-     *
-     * @param \Org\OrganizationInterface|string $organization
-     * @param $externalId
-     *
-     * @return GroupInterface
+     * @inheritdoc
      */
-    public function fetchGroupByExternalId($organization, $externalId)
+    public function fetchGroupByExternalId($networkId, $externalId)
     {
         $event    = new Event(
             'fetch.group.external',
             $this->realService,
-            ['organization' => $organization, 'external_id' => $externalId]
+            ['network_id' => $networkId, 'external_id' => $externalId]
         );
         $response = $this->getEventManager()->trigger($event);
 
@@ -139,10 +172,11 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return = $this->realService->fetchGroupByExternalId($organization, $externalId);
+        $return = $this->realService->fetchGroupByExternalId($networkId, $externalId);
         $event->setName('fetch.group.external.post');
         $event->setParam('group', $return);
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 
@@ -153,6 +187,7 @@ class GroupDelegator implements GroupServiceInterface
      *
      * @param GroupInterface $group
      * @param bool $soft
+     *
      * @return bool
      */
     public function deleteGroup(GroupInterface $group, $soft = true)
@@ -167,6 +202,7 @@ class GroupDelegator implements GroupServiceInterface
         $return = $this->realService->deleteGroup($group, $soft);
         $event  = new Event('delete.group.post', $this->realService, ['group' => $group, 'soft' => $soft]);
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 
@@ -174,12 +210,13 @@ class GroupDelegator implements GroupServiceInterface
      * @param null|PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
+     *
      * @return HydratingResultSet|DbSelect
      */
     public function fetchAll($where = null, $paginate = true, $prototype = null)
     {
         $where = $this->createWhere($where);
-        $event    = new Event(
+        $event = new Event(
             'fetch.all.groups',
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
@@ -190,42 +227,12 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
-        $event    = new Event(
+        $return = $this->realService->fetchAll($where, $paginate, $prototype);
+        $event  = new Event(
             'fetch.all.groups.post',
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'groups' => $return]
         );
-        $this->getEventManager()->trigger($event);
-
-        return $return;
-    }
-
-    /**
-     * @param GroupInterface|string|Where $user
-     * @param null $where
-     * @param bool $paginate
-     * @param null $prototype
-     * @return mixed|HydratingResultSet|DbSelect
-     * @deprecated
-     */
-    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
-    {
-        $where = $this->createWhere($where);
-        $event    = new Event(
-            'fetch.user.groups',
-            $this->realService,
-            ['user' => $user, 'where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
-        );
-
-        $response = $this->getEventManager()->trigger($event);
-        if ($response->stopped()) {
-            return $response->last();
-        }
-
-        $return   = $this->realService->fetchAllForUser($user, $event->getParam('where'), $paginate, $prototype);
-        $event->setName('fetch.user.groups.post');
-        $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);
 
         return $return;
@@ -237,6 +244,7 @@ class GroupDelegator implements GroupServiceInterface
      * Used for hal link building
      *
      * @param GroupInterface $group
+     *
      * @return string[]
      * @deprecated
      */
@@ -264,12 +272,13 @@ class GroupDelegator implements GroupServiceInterface
      * @param GroupInterface $group
      * @param null|PredicateInterface|array $where
      * @param null|object $prototype
+     *
      * @return DbSelect
      */
     public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null)
     {
         $where = $this->createWhere($where);
-        $event    = new Event(
+        $event = new Event(
             'fetch.child.groups',
             $this->realService,
             ['group' => $group, 'where' => $where, 'prototype' => $prototype]
@@ -280,7 +289,7 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchChildGroups($group, $where, $prototype);
+        $return = $this->realService->fetchChildGroups($group, $where, $prototype);
         $event->setName('fetch.child.groups.post');
         $event->setParam('result', $return);
         $this->getEventManager()->trigger($event);
@@ -306,6 +315,7 @@ class GroupDelegator implements GroupServiceInterface
         $event->setName('fetch.group.types.post');
         $event->setParam('results', $return);
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 }

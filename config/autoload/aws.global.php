@@ -9,7 +9,7 @@ $awsSecret = empty($awsSecret)
     ? 'This is not a real secret make an aws.local.php or set the correct Environment variables'
     : $awsSecret;
 
-$aswRegion = empty($aswRegion) ? 'us-east1' : $aswRegion;
+$awsRegion = empty($awsRegion) ? 'us-east-1' : $awsRegion;
 
 return [
     'aws' => [

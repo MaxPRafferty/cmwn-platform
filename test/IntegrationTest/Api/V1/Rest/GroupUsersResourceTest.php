@@ -3,7 +3,6 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase;
-use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 
 /**
@@ -55,7 +54,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         $this->dispatch('/group/foo/users');
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
-        $this->assertResponseStatusCode(421);
+        $this->assertResponseStatusCode(403);
     }
 
     /**

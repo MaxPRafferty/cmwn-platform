@@ -29,7 +29,7 @@ return [
             'routes' => [
                 'run-worker' => [
                     'options' => [
-                        'route'    => 'worker --queue=',
+                        'route'    => 'worker --queue= [--verbose|-v] [--debug|-d]',
                         'defaults' => [
                             'controller' => 'Job\Controller',
                             'action'     => 'work',

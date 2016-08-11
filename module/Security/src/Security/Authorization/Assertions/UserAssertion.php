@@ -60,6 +60,7 @@ class UserAssertion implements AssertionInterface
      * Assertion method - must return a boolean.
      *
      * @param  Rbac $rbac
+     *
      * @return bool
      */
     public function assert(Rbac $rbac)
@@ -68,12 +69,14 @@ class UserAssertion implements AssertionInterface
             return false;
         }
 
-        $role = ($this->requestedUser->getUserId() === $this->activeUser->getUserId()) ? 'me' : 'guest';
+        $role = ($this->requestedUser->getUserId() === $this->activeUser->getUserId())
+            ? 'me.' . strtolower($this->requestedUser->getType())
+            : 'guest';
+
         if ($this->requestedUser->getUserId() !== $this->activeUser->getUserId()) {
             $role = $this->securityGroupService->fetchRelationshipRole($this->activeUser, $this->requestedUser);
         }
 
-        $role .= '.' . strtolower($this->activeUser->getType());
         //attach requested user type to permission
         foreach ($this->permission as $permission) {
             if ($rbac->isGranted($role, $permission)) {

@@ -102,7 +102,6 @@ class ForgotResourceTest extends TestCase
             $this->securityService->fetchUserByUserName('foo@example.com');
             $this->fail('There seems to be a user with the email foo@example.com');
         } catch (NotFoundException $notFound) {
-
         }
 
         $this->dispatch('/forgot', 'POST', ['email' => 'foo@example.com']);
@@ -121,7 +120,6 @@ class ForgotResourceTest extends TestCase
             $this->securityService->fetchUserByUserName('foo_bar');
             $this->fail('There seems to be a user with the username foo_bar');
         } catch (NotFoundException $notFound) {
-
         }
 
         $this->dispatch('/forgot', 'POST', ['email' => 'foo_bar']);

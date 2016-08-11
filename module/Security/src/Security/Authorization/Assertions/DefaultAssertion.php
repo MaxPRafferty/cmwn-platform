@@ -8,8 +8,6 @@ use Zend\Permissions\Rbac\Rbac;
 
 /**
  * Class DefaultAssertion
- *
- * ${CARET}
  */
 class DefaultAssertion implements AssertionInterface
 {

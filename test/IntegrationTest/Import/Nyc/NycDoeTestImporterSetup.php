@@ -141,5 +141,4 @@ class NycDoeTestImporterSetup
             static::getGroupService()
         );
     }
-
 }

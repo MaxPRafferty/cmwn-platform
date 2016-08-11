@@ -24,6 +24,7 @@ class WorkerControllerFactory implements FactoryInterface
             ? $serviceLocator->getServiceLocator()
             : $serviceLocator;
 
-        return new WorkerController($serviceLocator);
+        $authService = $serviceLocator->get('authentication');
+        return new WorkerController($serviceLocator, $authService);
     }
 }

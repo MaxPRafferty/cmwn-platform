@@ -126,7 +126,7 @@ class DoeImporterTest extends TestCase
         $this->assertInstanceOf(Child::class, $student);
 
         // Class Added?
-        $group = $this->groupService->fetchGroupByExternalId('district', '001');
+        $group = $this->groupService->fetchGroupByExternalId('school', '001');
         $this->assertInstanceOf(GroupInterface::class, $group);
     }
 

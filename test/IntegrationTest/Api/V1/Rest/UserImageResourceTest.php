@@ -15,6 +15,7 @@ use IntegrationTest\TestHelper;
  * @group API
  * @group UserImage
  * @group DB
+ * @group IntegrationTest
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -90,7 +91,10 @@ class UserImageResourceTest extends TestCase
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
         $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $body['image_id']);
-        $this->assertEquals('https://res.cloudinary.com/changemyworldnow/image/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg', $body['url']);
+        $this->assertEquals(
+            'https://res.cloudinary.com/changemyworldnow/image/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg',
+            $body['url']
+        );
     }
 
     /**
