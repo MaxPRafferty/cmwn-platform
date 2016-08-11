@@ -145,6 +145,7 @@ class UserResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1164
      */
     public function testItShouldCheckChangePasswordExceptionForPutMe()
     {
@@ -199,8 +200,14 @@ class UserResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\user\controller');
         $this->assertNotRedirect();
 
-        $afterUser = $this->loadUserFromDb('english_teacher');
+        $conn = $this->getConnection()->getConnection();
+        $query = "select normalized_username from users where username = 'new_username'";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        $this->assertEquals('newusername', $row[0]['normalized_username']);
 
+        $afterUser = $this->loadUserFromDb('english_teacher');
         $this->assertInstanceOf(UserInterface::class, $afterUser);
         $this->assertNotEquals($beforeUser, $afterUser);
 
@@ -226,7 +233,7 @@ class UserResourceTest extends TestCase
 
         $putData = [
             'first_name'  => 'Angelot',
-            'middle_name'  => 'M',
+            'middle_name' => 'M',
             'last_name'   => 'Fredickson',
             'gender'      => 'M',
             'meta'        => '[]',
@@ -410,6 +417,134 @@ class UserResourceTest extends TestCase
         $this->assertResponseStatusCode(403);
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1164
+     */
+    public function testItShouldCreateUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'first_name'  => 'Chaithra',
+            'last_name'   => 'Yenikapati',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'wigglytuff-007',
+            'email'       => 'chaithra@ginasink.com',
+            'birthdate'   => '1993-07-13',
+        ];
+        $this->dispatch('/user', 'POST', $postData);
+        $this->assertResponseStatusCode(201);
+
+        $conn = $this->getConnection()->getConnection();
+        $query = "select normalized_username from users where username = 'wigglytuff-007'";
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        $this->assertEquals('wigglytuff007', $row[0]['normalized_username']);
+    }
+
+    /**
+     * Test if username already exists while create
+     * @test
+     */
+    public function testItShouldCheckIfUsernameIsDuplicateOnPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'first_name'  => 'Chaithra',
+            'last_name'   => 'Yenikapati',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'english_student',
+            'email'       => 'chaithra@ginasink.com',
+            'birthdate'   => '1993-07-13',
+        ];
+        $this->dispatch('/user', 'POST', $postData);
+        $this->assertResponseStatusCode(422);
+    }
+
+    /**
+     * Test if username already exists while update
+     * @test
+     */
+    public function testItShouldCheckIfUsernameIsDuplicateOnPut()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+
+        $putData = [
+            'first_name'  => 'Angelot',
+            'middle_name' => 'M',
+            'last_name'   => 'Fredickson',
+            'gender'      => 'M',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'english_student',
+            'email'       => 'english_teacher@ginasink.com',
+            'birthdate'   => '2016-04-15',
+        ];
+
+        $this->dispatch('/user/english_teacher', 'PUT', $putData, true);
+        $this->assertResponseStatusCode(422);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckIfEmailIsDuplicateOnPost()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'first_name'  => 'Chaithra',
+            'last_name'   => 'Yenikapati',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'wigglytuff-007',
+            'email'       => 'english_student@ginasink.com',
+            'birthdate'   => '1993-07-13',
+        ];
+        $this->dispatch('/user', 'POST', $postData);
+        $this->assertResponseStatusCode(422);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckIfEmailIsDuplicateOnPut()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+
+        $putData = [
+            'first_name'  => 'Angelot',
+            'middle_name' => 'M',
+            'last_name'   => 'Fredickson',
+            'gender'      => 'M',
+            'meta'        => '[]',
+            'type'        => 'ADULT',
+            'username'    => 'english_teacher',
+            'email'       => 'english_student@ginasink.com',
+            'birthdate'   => '2016-04-15',
+        ];
+
+        $this->dispatch('/user/english_teacher', 'PUT', $putData, true);
+        $this->assertResponseStatusCode(422);
+
+        $body = $this->getResponse()->getContent();
+        $body = Json::decode($body, Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('validation_messages', $body);
+        $this->assertArrayHasKey('email', $body['validation_messages']);
+        $emailMessage = $body['validation_messages']['email'];
+        $this->assertEquals('Invalid Email', $emailMessage[0]);
     }
 
     /**

@@ -129,7 +129,6 @@ class SecurityServiceTest extends TestCase
         ];
 
         $this->tableGateway->shouldReceive('select')
-            ->with(['username' => 'manchuck'])
             ->andReturn(new \ArrayIterator([new \ArrayObject($userData)]))
             ->once();
 
@@ -149,7 +148,6 @@ class SecurityServiceTest extends TestCase
             'User not Found'
         );
         $this->tableGateway->shouldReceive('select')
-            ->with(['username' => 'manchuck'])
             ->andReturn(new \ArrayIterator([]))
             ->once();
 

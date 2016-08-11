@@ -153,6 +153,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'englishstudent'
                 ),
             1 =>
                 array (
@@ -174,6 +175,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'englishteacher'
                 ),
             2 =>
                 array (
@@ -195,6 +197,7 @@ return array (
                     'code_expires' => (string) (new \DateTime('-3 days'))->format("Y-m-d H:i:s"),
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'mathstudent'
                 ),
             3 =>
                 array (
@@ -216,6 +219,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'mathteacher'
                 ),
             4 =>
                 array (
@@ -237,6 +241,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'otherprincipal'
                 ),
             5 =>
                 array (
@@ -258,6 +263,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'otherstudent'
                 ),
             6 =>
                 array (
@@ -279,6 +285,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'otherteacher'
                 ),
             7 =>
                 array (
@@ -300,6 +307,7 @@ return array (
                     'code_expires' => NULL,
                     'super' => '0',
                     'external_id' => NULL,
+                    'normalized_username' => 'principal'
                 ),
             8 =>
                 array (
@@ -321,6 +329,29 @@ return array (
                     'code_expires' => NULL,
                     'super' => '1',
                     'external_id' => NULL,
+                    'normalized_username' => 'superuser'
+                ),
+            9 =>
+                array (
+                    'user_id' => 'fancy-lion002',
+                    'username' => 'fancy-lion002',
+                    'email' => 'fancy-lion002@ginasink.com',
+                    'code' => NULL,
+                    'type' => 'CHILD',
+                    'password' => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+                    'first_name' => 'Fancy',
+                    'middle_name' => NULL,
+                    'last_name' => 'Lion',
+                    'gender' => 'F',
+                    'meta' => NULL,
+                    'birthdate' => '2016-04-27 10:48:42',
+                    'created' => '2016-04-27 10:48:44',
+                    'updated' => '2016-04-27 10:48:46',
+                    'deleted' => NULL,
+                    'code_expires' => NULL,
+                    'super' => '0',
+                    'external_id' => NULL,
+                    'normalized_username' => 'fancylion002'
                 ),
         ),
     'user_friends' =>

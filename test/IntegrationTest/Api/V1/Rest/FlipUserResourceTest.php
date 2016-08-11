@@ -188,7 +188,6 @@ class FlipUserResourceTest extends TestCase
                 'principal'
             ],
         ];
-
     }
 
     /**

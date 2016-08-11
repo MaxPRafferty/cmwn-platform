@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d5902b2d8b592d8ce916ea63be50d14b",
-    "content-hash": "22bf8657a08399b7a2a9a330d024d890",
+    "hash": "d1bb9365e0f7e7f8c020e8bac80ac9a3",
+    "content-hash": "72fc260d86a3048cc3cbb9f854860bf4",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -70,16 +70,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.18.36",
+            "version": "3.18.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "48362bce008fa9c20a71dfa6a68aebac65a8ab1b"
+                "reference": "0d4abd38caf09fbda9177e8c1fd2a9ec73d71d66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/48362bce008fa9c20a71dfa6a68aebac65a8ab1b",
-                "reference": "48362bce008fa9c20a71dfa6a68aebac65a8ab1b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0d4abd38caf09fbda9177e8c1fd2a9ec73d71d66",
+                "reference": "0d4abd38caf09fbda9177e8c1fd2a9ec73d71d66",
                 "shasum": ""
             },
             "require": {
@@ -146,7 +146,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-08-02 20:49:01"
+            "time": "2016-08-04 21:27:47"
         },
         {
             "name": "aws/aws-sdk-php-zf2",
@@ -780,16 +780,16 @@
         },
         {
             "name": "psr/http-message",
-            "version": "1.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298"
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
-                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
                 "shasum": ""
             },
             "require": {
@@ -817,6 +817,7 @@
                 }
             ],
             "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
             "keywords": [
                 "http",
                 "http-message",
@@ -825,7 +826,7 @@
                 "request",
                 "response"
             ],
-            "time": "2015-05-04 20:22:00"
+            "time": "2016-08-06 14:39:51"
         },
         {
             "name": "psr/log",
@@ -1788,16 +1789,16 @@
         },
         {
             "name": "zendframework/zend-http",
-            "version": "2.5.4",
+            "version": "2.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-http.git",
-                "reference": "7b920b4ec34b5ee58f76eb4e8c408b083121953c"
+                "reference": "98b1cac0bc7a91497c5898184281abcd0e24c8d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-http/zipball/7b920b4ec34b5ee58f76eb4e8c408b083121953c",
-                "reference": "7b920b4ec34b5ee58f76eb4e8c408b083121953c",
+                "url": "https://api.github.com/repos/zendframework/zend-http/zipball/98b1cac0bc7a91497c5898184281abcd0e24c8d6",
+                "reference": "98b1cac0bc7a91497c5898184281abcd0e24c8d6",
                 "shasum": ""
             },
             "require": {
@@ -1834,7 +1835,7 @@
                 "http",
                 "zf2"
             ],
-            "time": "2016-02-04 20:36:48"
+            "time": "2016-08-08 15:01:54"
         },
         {
             "name": "zendframework/zend-hydrator",
@@ -3626,16 +3627,16 @@
         },
         {
             "name": "zfcampus/zf-content-validation",
-            "version": "1.3.3",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-content-validation.git",
-                "reference": "448a45692661e868ac8e298892d215369ceaced0"
+                "reference": "35c40a0f0553e960b1699d31380c41ed043c92c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-content-validation/zipball/448a45692661e868ac8e298892d215369ceaced0",
-                "reference": "448a45692661e868ac8e298892d215369ceaced0",
+                "url": "https://api.github.com/repos/zfcampus/zf-content-validation/zipball/35c40a0f0553e960b1699d31380c41ed043c92c1",
+                "reference": "35c40a0f0553e960b1699d31380c41ed043c92c1",
                 "shasum": ""
             },
             "require": {
@@ -3683,7 +3684,7 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-07-26 21:15:44"
+            "time": "2016-08-04 22:29:13"
         },
         {
             "name": "zfcampus/zf-hal",
@@ -3754,16 +3755,16 @@
         },
         {
             "name": "zfcampus/zf-mvc-auth",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-mvc-auth.git",
-                "reference": "95de6b929d0b94b1886aff2a090387a37db7e40e"
+                "reference": "3c15ae465ae75d594c939043e44e3ba079ab0fa7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-mvc-auth/zipball/95de6b929d0b94b1886aff2a090387a37db7e40e",
-                "reference": "95de6b929d0b94b1886aff2a090387a37db7e40e",
+                "url": "https://api.github.com/repos/zfcampus/zf-mvc-auth/zipball/3c15ae465ae75d594c939043e44e3ba079ab0fa7",
+                "reference": "3c15ae465ae75d594c939043e44e3ba079ab0fa7",
                 "shasum": ""
             },
             "require": {
@@ -3810,7 +3811,7 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-07-25 15:28:36"
+            "time": "2016-08-03 20:34:18"
         },
         {
             "name": "zfcampus/zf-oauth2",
@@ -6702,6 +6703,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "rollbar/rollbar": 20,
+        "zfcampus/zf-content-validation": 20,
         "zendframework/zftool": 20,
         "zendframework/zend-developer-tools": 20
     },
