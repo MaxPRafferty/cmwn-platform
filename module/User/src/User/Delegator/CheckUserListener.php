@@ -3,8 +3,8 @@
 namespace User\Delegator;
 
 use Application\Exception\DuplicateEntryException;
-use User\Service\UserService;
 use User\Service\UserServiceInterface;
+use User\User;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
@@ -65,7 +65,7 @@ class CheckUserListener implements ListenerAggregateInterface
                 new Operator(
                     'normalized_username',
                     Operator::OP_EQ,
-                    UserService::normalizeUsername($user->getUserName())
+                    User::normalizeUsername($user->getUserName())
                 )
             ], PredicateSet::OP_OR)
         ]);

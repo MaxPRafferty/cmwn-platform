@@ -8,6 +8,7 @@ use Ramsey\Uuid\Uuid;
 use User\StaticUserFactory;
 use User\UserHydrator;
 use User\UserInterface;
+use User\User;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
@@ -41,6 +42,7 @@ class UserService implements UserServiceInterface
     }
 
     /**
+     * @inheritdoc
      * @param null|PredicateInterface|array $where
      * @param bool $paginate
      * @param null|object $prototype
@@ -86,7 +88,7 @@ class UserService implements UserServiceInterface
         $data['user_id'] = $user->getUserId();
         $data['created'] = $user->getCreated()->format("Y-m-d H:i:s");
         $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
-        $data['normalized_username'] = static::normalizeUsername($data['username']);
+        $data['normalized_username'] = User::normalizeUsername($data['username']);
 
         unset($data['password']);
         unset($data['deleted']);
@@ -110,7 +112,7 @@ class UserService implements UserServiceInterface
         $data['meta']    = Json::encode($data['meta']);
         $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
         if (isset($data['username'])) {
-            $data['normalized_username'] = static::normalizeUsername($data['username']);
+            $data['normalized_username'] = User::normalizeUsername($data['username']);
         }
         unset($data['password']);
         unset($data['deleted']);
@@ -144,6 +146,21 @@ class UserService implements UserServiceInterface
     }
 
     /**
+     * @param $array
+     * @return \User\Adult|\User\Child
+     * @throws NotFoundException
+     */
+    protected function fetchHelper($array)
+    {
+        $rowSet = $this->userTableGateway->select($array);
+        $row    = $rowSet->current();
+        if (!$row) {
+            throw new NotFoundException("User not Found");
+        }
+
+        return StaticUserFactory::createUser($row->getArrayCopy());
+    }
+    /**
      * Fetches one user from the DB using the id
      *
      * @param $userId
@@ -152,13 +169,7 @@ class UserService implements UserServiceInterface
      */
     public function fetchUser($userId)
     {
-        $rowSet = $this->userTableGateway->select(['user_id' => $userId]);
-        $row    = $rowSet->current();
-        if (!$row) {
-            throw new NotFoundException("User not Found");
-        }
-
-        return StaticUserFactory::createUser($row->getArrayCopy());
+        return $this->fetchHelper(['user_id' => $userId]);
     }
 
     /**
@@ -170,13 +181,7 @@ class UserService implements UserServiceInterface
      */
     public function fetchUserByExternalId($externalId)
     {
-        $rowSet = $this->userTableGateway->select(['external_id' => $externalId]);
-        $row    = $rowSet->current();
-        if (!$row) {
-            throw new NotFoundException("User not Found");
-        }
-
-        return StaticUserFactory::createUser($row->getArrayCopy());
+        return $this->fetchHelper(['external_id' => $externalId]);
     }
 
     /**
@@ -188,29 +193,18 @@ class UserService implements UserServiceInterface
      */
     public function fetchUserByEmail($email)
     {
-        $rowSet = $this->userTableGateway->select(['email' => $email]);
-        $row    = $rowSet->current();
-        if (!$row) {
-            throw new NotFoundException("User not Found");
-        }
-
-        return StaticUserFactory::createUser($row->getArrayCopy());
+        return $this->fetchHelper(['email' => $email]);
     }
 
     /**
+     * @inheritdoc
      * @param $username
      * @return UserInterface
      * @throws NotFoundException
      */
     public function fetchUserByUsername($username)
     {
-        $rowSet = $this->userTableGateway->select(['username' => $username]);
-        $row    = $rowSet->current();
-        if (!$row) {
-            throw new NotFoundException("User not Found");
-        }
-
-        return StaticUserFactory::createUser($row->getArrayCopy());
+        return $this->fetchHelper(['username' => $username]);
     }
 
     /**
@@ -239,14 +233,5 @@ class UserService implements UserServiceInterface
 
         $this->userTableGateway->delete(['user_id' => $user->getUserId()]);
         return true;
-    }
-
-    /**
-     * @param string $username
-     * @return string
-     */
-    public static function normalizeUsername($username)
-    {
-        return strtolower(preg_replace('/((?![a-zA-Z0-9]+).)/', '', $username));
     }
 }

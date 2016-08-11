@@ -5,7 +5,6 @@ namespace User\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
-use Security\Listeners\UserUpdateListener;
 use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
