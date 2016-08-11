@@ -54,12 +54,12 @@ interface GroupServiceInterface
     /**
      * Fetches on group from the DB by using the external id
      *
-     * @param OrganizationInterface|string $organization
+     * @param string $networkId
      * @param $externalId
      *
      * @return GroupInterface
      */
-    public function fetchGroupByExternalId($organization, $externalId);
+    public function fetchGroupByExternalId($networkId, $externalId);
 
     /**
      * Deletes a group from the database

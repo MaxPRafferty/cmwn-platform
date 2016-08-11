@@ -9,7 +9,6 @@ use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Paginator\Adapter\DbSelect;
@@ -158,19 +157,14 @@ class GroupDelegator implements GroupServiceInterface
     }
 
     /**
-     * Fetches on group from the DB by using the external id
-     *
-     * @param \Org\OrganizationInterface|string $organization
-     * @param $externalId
-     *
-     * @return GroupInterface
+     * @inheritdoc
      */
-    public function fetchGroupByExternalId($organization, $externalId)
+    public function fetchGroupByExternalId($networkId, $externalId)
     {
         $event    = new Event(
             'fetch.group.external',
             $this->realService,
-            ['organization' => $organization, 'external_id' => $externalId]
+            ['network_id' => $networkId, 'external_id' => $externalId]
         );
         $response = $this->getEventManager()->trigger($event);
 
@@ -178,7 +172,7 @@ class GroupDelegator implements GroupServiceInterface
             return $response->last();
         }
 
-        $return = $this->realService->fetchGroupByExternalId($organization, $externalId);
+        $return = $this->realService->fetchGroupByExternalId($networkId, $externalId);
         $event->setName('fetch.group.external.post');
         $event->setParam('group', $return);
         $this->getEventManager()->trigger($event);

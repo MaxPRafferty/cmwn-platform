@@ -249,17 +249,18 @@ class GroupServiceTest extends TestCase
             'updated'         => '2016-02-28',
             'deleted'         => '2016-02-28',
             'external_id'     => 'foo-bar',
+            'network_id'      => 'baz-bat'
         ];
 
         $result = new ResultSet();
         $result->initialize([$groupData]);
         $this->tableGateway->shouldReceive('select')
-            ->with(['organization_id' => $groupData['organization_id'], 'external_id' => $groupData['external_id']])
+            ->with(['network_id' => $groupData['network_id'], 'external_id' => $groupData['external_id']])
             ->andReturn($result);
 
         $this->assertInstanceOf(
             'Group\Group',
-            $this->groupService->fetchGroupByExternalId($groupData['organization_id'], $groupData['external_id']),
+            $this->groupService->fetchGroupByExternalId($groupData['network_id'], $groupData['external_id']),
             'GroupService did not return a group when fetching by external Id'
         );
     }
