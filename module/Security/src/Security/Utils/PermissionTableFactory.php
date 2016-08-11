@@ -5,7 +5,6 @@ namespace Security\Utils;
 use Security\Authorization\Rbac;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
-use Security\Authorization\Role;
 use Zend\Text\Table\Column;
 use Zend\Text\Table\Row;
 use Zend\Text\Table\Table;
@@ -53,7 +52,7 @@ class PermissionTableFactory implements RbacAwareInterface
     public function build($roles = [])
     {
         $header = $this->buildHeaderRow($roles);
-        $width  = array_fill(0, count($header->getColumns()), 20);
+        $width  = array_fill(0, count($header->getColumns()) + 1, 20);
         $width[0] = 44;
         $this->table = new Table([
             'columnwidths' => $width,
@@ -79,6 +78,7 @@ class PermissionTableFactory implements RbacAwareInterface
     protected function buildHeaderRow($roles = [])
     {
         $header = new Row();
+        $header->appendColumn(new Column('Permission Label'));
         $header->appendColumn(new Column('Permission'));
 
         $roles = !empty($roles) ? $roles : $this->roles;
@@ -110,6 +110,7 @@ class PermissionTableFactory implements RbacAwareInterface
     {
         $permissionRow = new Row();
         $permissionRow->appendColumn(new Column($label));
+        $permissionRow->appendColumn(new Column($permission));
         array_walk($roles, function ($role) use ($permissionRow, $permission) {
             $permissionRow->appendColumn(
                 new Column(
