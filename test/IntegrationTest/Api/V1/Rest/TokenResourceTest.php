@@ -69,9 +69,10 @@ class TokenResourceTest extends TestCase
     /**
      * @test
      * @ticket       CORE-681
+     * @ticket       CORE-6184
      * @dataProvider loginHalLinksDataProvider
      */
-    public function testItShouldBuildCorrectEndpointsForMe($user, $links = [])
+    public function testItShouldBuildCorrectEndpointsForMe($user, $links, $expectedScope)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($user);
@@ -89,12 +90,15 @@ class TokenResourceTest extends TestCase
             return;
         }
 
-        $this->assertArrayHasKey('_links', $decoded);
+        $this->assertArrayHasKey('_links', $decoded, 'No hal links returned on me');
+        $this->assertArrayHasKey('scope', $decoded, 'No Scope returned on me');
 
         sort($links);
         $actualLinks = array_keys($decoded['_links']);
         sort($actualLinks);
         $this->assertEquals($links, $actualLinks);
+
+        $this->assertEquals($expectedScope, $decoded['scope'], 'Incorrect scope for ME');
     }
 
     /**
@@ -118,6 +122,7 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                 ],
+                'scope' => -1,
             ],
             'Principal'       => [
                 'user'  => 'principal',
@@ -134,6 +139,7 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                 ],
+                'scope' => 2,
             ],
             'English Teacher' => [
                 'user'  => 'english_teacher',
@@ -150,6 +156,7 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                 ],
+                'scope' => 2,
             ],
             'English Student' => [
                 'user'  => 'english_student',
@@ -169,6 +176,7 @@ class TokenResourceTest extends TestCase
                     'user_name',
                     'save_game',
                 ],
+                'scope' => 2,
             ],
         ];
     }
