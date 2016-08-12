@@ -59,7 +59,7 @@ class SecurityGroupService implements SecurityGroupServiceInterface
 
         // Same user FTW!
         if ($activeUser->getUserId() === $requestedUser->getUserId()) {
-            return 'me';
+            return 'me.' . strtolower($activeUser->getType());
         }
 
         $this->activeUser    = $activeUser;
