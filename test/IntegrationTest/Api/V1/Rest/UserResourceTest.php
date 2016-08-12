@@ -14,8 +14,9 @@ use Zend\Json\Json;
  *
  * @group User
  * @group IntegrationTest
+ * @group Api
  * @group UserService
- * @group UserGroupService0
+ * @group UserGroupService
  * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)

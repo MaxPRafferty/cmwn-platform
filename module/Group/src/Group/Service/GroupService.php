@@ -8,7 +8,7 @@ use Group\Group;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
-use User\UserInterface;
+use Zend\Db\Adapter\Driver\Pdo\Connection;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Between;
@@ -55,8 +55,11 @@ class GroupService implements GroupServiceInterface
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
     {
+        // Set the child as descendant of the parent
         $child->setParentId($parent);
-        $this->saveGroup($child);
+
+        // Add the child to the network
+        $child->setNetworkId($parent->getNetworkId());
 
         // fetch the parent to get the latest head value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
@@ -69,40 +72,55 @@ class GroupService implements GroupServiceInterface
             );
 
             $this->groupTableGateway->update(
-                ['head' => 2, 'tail' => 3],
+                ['head' => 2, 'tail' => 3, 'network_id' => $parent->getNetworkId()],
                 ['group_id' => $child->getGroupId()]
             );
 
             return true;
         }
 
-        // UPDATE group SET tail = tail + 2 WHERE tail > @head AND org_id = @org_id
-        // UPDATE group SET head = head + 2 WHERE head > @head AND org_id = @org_id
+        /** @var Connection $connection */
+        $connection = $this->groupTableGateway->getAdapter()->getDriver()->getConnection();
+        $connection->beginTransaction();
 
-        // TODO create transaction
-        $where = new Where();
-        $where->addPredicate(new Operator('tail', Operator::OP_GT, $parent->getHead()));
-        $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
-        $this->groupTableGateway->update(
-            ['tail' => new Expression("tail + 2")],
-            $where
-        );
+        try {
+            // Shift the tail
+            $where = new Where();
+            $where->addPredicate(new Operator('tail', '>', $parent->getHead()));
+            $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
 
-        $where = new Where();
-        $where->addPredicate(new Operator('head', Operator::OP_GT, $parent->getHead()));
-        $where->addPredicate(new Operator('organization_id', Operator::OP_EQ, $parent->getOrganizationId()));
-        $where->addPredicate(new Operator('group_id', Operator::OP_NE, $parent->getGroupId()));
-        $this->groupTableGateway->update(
-            ['head' => new Expression('head + 2')],
-            $where
-        );
+            $this->groupTableGateway->update(
+                ['tail' => new Expression('tail + 2')],
+                $where
+            );
 
-        $where = new Where();
-        $where->addPredicate(new Operator('group_id', Operator::OP_EQ, $child->getGroupId()));
-        $this->groupTableGateway->update(
-            ['head' => $parent->getHead() + 1, 'tail' => $parent->getHead() + 2],
-            $where
-        );
+            // Shift the head
+            $where = new Where();
+            $where->addPredicate(new Operator('head', '>', $parent->getHead()));
+            $where->addPredicate(new Operator('network_id', '=', $parent->getNetworkId()));
+            $this->groupTableGateway->update(
+                ['head' => new Expression('head + 2')],
+                $where
+            );
+
+            // Set the child
+            $where = new Where();
+            $where->addPredicate(new Operator('group_id', '=', $child->getGroupId()));
+            $this->groupTableGateway->update(
+                [
+                    'head'       => $parent->getHead() + 1,
+                    'tail'       => $parent->getHead() + 2,
+                    'network_id' => $child->getNetworkId(),
+                    'parent_id'     => $parent->getGroupId(),
+                ],
+                $where
+            );
+
+            $connection->commit();
+        } catch (\Exception $attachException) {
+            $connection->rollback();
+            throw $attachException;
+        }
 
         return true;
     }
@@ -138,67 +156,31 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Finds all the groups for a user
+     * Creates a new group
      *
-     * @param UserInterface|string $user
-     * @param Where|GroupInterface|string $where
-     * @param object $prototype
-     * @param bool $paginate
+     * @param GroupInterface $group
      *
-     * @return DbSelect
-     * @deprecated
+     * @return bool
+     * @throws NotFoundException
      */
-    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
+    public function createGroup(GroupInterface $group)
     {
-        $where  = $this->createWhere($where);
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
+        $group->setCreated(new \DateTime());
+        $group->setGroupId(Uuid::uuid1());
+        $group->setUpdated(new \DateTime());
+        $data = $group->getArrayCopy();
 
-        $select = new Select(['ug' => 'user_groups']);
-        $select->columns([]);
-        //join user_groups and groups to get all groups for user
-        $select->join(
-            ['active_group' => 'groups'],
-            'active_group.group_id = ug.group_id',
-            ['active_group_id' => 'group_id'],
-            Select::JOIN_LEFT
-        );
+        $data['meta'] = Json::encode($data['meta']);
 
-        //get groups based on parent
-        $select->join(
-            ['parent_group' => 'groups'],
-            'parent_group.group_id = active_group.parent_id',
-            ['parent_group_id' => 'group_id'],
-            Select::JOIN_LEFT
-        );
+        unset($data['depth']);
+        unset($data['deleted']);
 
-        $select->join(
-            ['g' => 'groups'],
-            new Expression(
-                '(g.head BETWEEN active_group.head AND active_group.tail) OR (g.group_id=parent_group.group_id)'
-            ),
-            ['*'],
-            Select::JOIN_LEFT_OUTER
-        );
+        $data['group_id'] = $group->getGroupId();
+        $data['created']  = $group->getCreated()->format(\DateTime::ISO8601);
 
-        $where->addPredicate(new Operator('g.organization_id', '=', new Expression('active_group.organization_id')));
-        $select->where($where);
-        $select->order(['g.title']);
+        $this->groupTableGateway->insert($data);
 
-        $prototype = $prototype === null ? new Group() : $prototype;
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        if ($paginate) {
-            return new DbSelect(
-                $select,
-                $this->groupTableGateway->getAdapter(),
-                $resultSet
-            );
-        }
-
-        $results = $this->groupTableGateway->select($select);
-        $resultSet->initialize($results);
-
-        return $resultSet;
+        return true;
     }
 
     /**
@@ -211,29 +193,15 @@ class GroupService implements GroupServiceInterface
      * @return bool
      * @throws NotFoundException
      */
-    public function saveGroup(GroupInterface $group)
+    public function updateGroup(GroupInterface $group)
     {
-        $new = empty($group->getGroupId());
         $group->setUpdated(new \DateTime());
         $data = $group->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
-        $data['tail'] = $group->getTail();
 
         unset($data['depth']);
         unset($data['deleted']);
-
-        if ($new) {
-            $group->setCreated(new \DateTime());
-            $group->setGroupId(Uuid::uuid1());
-
-            $data['group_id'] = $group->getGroupId();
-            $data['created']  = $group->getCreated()->format(\DateTime::ISO8601);
-
-            $this->groupTableGateway->insert($data);
-
-            return true;
-        }
 
         $this->fetchGroup($group->getGroupId());
 
@@ -265,18 +233,11 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fetches on group from the DB by using the external id
-     *
-     * @param $organization
-     * @param $externalId
-     *
-     * @return GroupInterface
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function fetchGroupByExternalId($organization, $externalId)
+    public function fetchGroupByExternalId($networkId, $externalId)
     {
-        $orgId  = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
-        $rowSet = $this->groupTableGateway->select(['organization_id' => $orgId, 'external_id' => $externalId]);
+        $rowSet = $this->groupTableGateway->select(['network_id' => $networkId, 'external_id' => $externalId]);
         $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");

@@ -4,6 +4,7 @@ namespace IntegrationTest\Service;
 
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use Security\Service\SecurityGroupService;
 use Security\Service\SecurityGroupServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
@@ -24,7 +25,7 @@ use User\UserInterface;
 class SecurityGroupServiceTest extends TestCase
 {
     /**
-     * @var SecurityGroupServiceInterface
+     * @var SecurityGroupService
      */
     protected $userGroupService;
 
@@ -54,172 +55,159 @@ class SecurityGroupServiceTest extends TestCase
     public function relationshipsDataProvider()
     {
         return [
-            'English Teacher to Principal' => [
-                'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'neighbor.adult'
-            ],
-
-            'Math Teacher to Principal' => [
-                'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'neighbor.adult'
-            ],
-
             // English Student
             'English Teacher to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'teacher'
+                'expectedRole'  => 'teacher.adult',
             ],
 
             'Math Teacher to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'guest'
+                'expectedRole'  => 'guest',
             ],
 
             'Principal to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'principal'
+                'expectedRole'  => 'principal.adult',
             ],
 
             'Math Student to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child',
             ],
 
             'English Student to English Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
-                'expectedRole'  => 'me'
+                'expectedRole'  => 'me.child',
             ],
-            
+
             // Math Student
-            'English Teacher to Math Student' => [
+            'English Teacher to Math Student'    => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'guest'
+                'expectedRole'  => 'guest',
             ],
 
             'Math Teacher to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'teacher'
+                'expectedRole'  => 'teacher.adult',
             ],
 
             'Principal to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'principal'
+                'expectedRole'  => 'principal.adult',
             ],
 
             'Math Student to Math Student' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'me'
+                'expectedRole'  => 'me.child',
             ],
 
-            'English Student to Math Student' => [
+            'English Student to Math Student'    => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child',
             ],
 
             // English Teacher
             'English Teacher to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'me'
+                'expectedRole'  => 'me.adult',
             ],
 
             'Math Teacher to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'neighbor.adult',
             ],
 
             'Principal to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'principal.adult',
             ],
 
             'Math Student to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'guest'
+                'expectedRole'  => 'guest',
             ],
 
             'English Student to English Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child',
             ],
 
             // Math Teacher
-            'English Teacher to Math Teacher' => [
+            'English Teacher to Math Teacher'    => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'neighbor.adult',
             ],
 
             'Math Teacher to Math Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'me'
+                'expectedRole'  => 'me.adult',
             ],
 
             'Principal to Math Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'principal.adult',
             ],
 
             'Math Student to Math Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child',
             ],
 
             'English Student to Math Teacher' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
-                'expectedRole'  => 'guest'
+                'expectedRole'  => 'guest',
             ],
 
-
             // Principal
-            'English Teacher to Principal' => [
+            'English Teacher to Principal'    => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'english_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'neighbor.adult',
             ],
 
             'Math Teacher to Principal' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'math_teacher'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'neighbor.adult'
+                'expectedRole'  => 'neighbor.adult',
             ],
 
             'Principal to Principal' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'me'
+                'expectedRole'  => 'me.adult',
             ],
 
             'Math Student to Principal' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'math_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child',
             ],
 
             'English Student to Principal' => [
                 'activeUser'    => ['type' => UserInterface::TYPE_CHILD, 'user_id' => 'english_student'],
                 'requestedUser' => ['type' => UserInterface::TYPE_ADULT, 'user_id' => 'principal'],
-                'expectedRole'  => 'student'
+                'expectedRole'  => 'student.child',
             ],
         ];
     }

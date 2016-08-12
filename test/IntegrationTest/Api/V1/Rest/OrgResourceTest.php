@@ -3,7 +3,6 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
-use Security\Exception\ChangePasswordException;
 use Zend\Json\Json;
 use IntegrationTest\TestHelper;
 use Org\Service\OrganizationServiceInterface;
@@ -79,7 +78,7 @@ class OrgResourceTest extends TestCase
     public function testItShouldFetchOrg()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser('english_teacher');
 
         $this->dispatch('/org/district');
         $this->assertMatchedRouteName('api.rest.org');
@@ -95,6 +94,21 @@ class OrgResourceTest extends TestCase
         $this->assertEquals('Gina\'s District', $body['title']);
         $this->assertEquals('district', $body['type']);
         $this->assertEquals(null, $body['description']);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1184
+     */
+    public function testItShouldDenyFetchOrgForChild()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+
+        $this->dispatch('/org/district');
+        $this->assertMatchedRouteName('api.rest.org');
+        $this->assertControllerName('api\v1\rest\org\controller');
+        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -153,8 +167,24 @@ class OrgResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-1185
      */
-    public function testItShouldFetchTheirOrgForOthers()
+    public function testItShouldFetchAllOrgsAnAdultBelongToo()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_teacher');
+
+        $this->dispatch('/org');
+        $this->assertMatchedRouteName('api.rest.org');
+        $this->assertControllerName('api\v1\rest\org\controller');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1185
+     */
+    public function testItShouldDenyFetchAllOrgsForChildren()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
@@ -175,7 +205,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org',
-            POST,
+            'POST',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -197,15 +227,38 @@ class OrgResourceTest extends TestCase
 
     /**
      * @test
+     * @dataProvider adultDataProvider
      */
-    public function testItShouldNotAllowOthersToCreateOrganization()
+    public function testItShouldDenyCreateOrganizationForAdults($login)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('math_teacher');
+        $this->logInUser($login);
 
         $this->dispatch(
             '/org',
-            POST,
+            'POST',
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @dataProvider childDataProvider
+     */
+    public function testItShouldDenyCreateOrganizationForChildren($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch(
+            '/org',
+            'POST',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -225,7 +278,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org',
-            POST,
+            'POST',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -245,10 +298,38 @@ class OrgResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
 
-        $this->dispatch('/org/district', DELETE);
+        $this->dispatch('/org/district', 'DELETE');
         $this->assertResponseStatusCode(200);
         $this->setExpectedException(NotFoundException::class);
         $this->orgService->fetchOrganization('district')->getArrayCopy();
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1184
+     * @dataProvider adultDataProvider
+     */
+    public function testItShouldDenyDeleteOrganizationForAdult($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch('/org/district', 'DELETE');
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1184
+     * @dataProvider childDataProvider
+     */
+    public function testItShouldDenyDeleteOrganizationForChildren($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch('/org/district', 'DELETE');
+        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -262,7 +343,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch(
             '/org/district',
-            PUT,
+            'PUT',
             [
                 'title' => 'newOrg',
                 'description' => 'new organization',
@@ -271,13 +352,58 @@ class OrgResourceTest extends TestCase
             ]
         );
         $this->assertResponseStatusCode(200);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
 
         $newOrg = $this->orgService->fetchOrganization('district')->getArrayCopy();
         $this->assertEquals('newOrg', $newOrg['title']);
         $this->assertEquals('new organization', $newOrg['description']);
         $this->assertEquals('district', $newOrg['type']);
         $this->assertEquals([], $newOrg['meta']);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1184
+     * @dataProvider adultDataProvider
+     */
+    public function testItShouldDenyUpdateOrganizationForAdults($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch(
+            '/org/district',
+            'PUT',
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1184
+     * @dataProvider childDataProvider
+     */
+    public function testItShouldDenyUpdateOrganizationForChildren($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+
+        $this->dispatch(
+            '/org/district',
+            'PUT',
+            [
+                'title' => 'newOrg',
+                'description' => 'new organization',
+                'type' => 'district',
+                'meta' => null,
+            ]
+        );
+        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -324,6 +450,9 @@ class OrgResourceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function userDataProvider()
     {
         return [
@@ -333,7 +462,40 @@ class OrgResourceTest extends TestCase
             ],
             'English Teacher' => [
                 'english_teacher',
-                404
+                403
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function childDataProvider()
+    {
+        return [
+            'English Student' => [
+                'english_student',
+            ],
+            'Math Student' => [
+                'math_student',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function adultDataProvider()
+    {
+        return [
+            'English Teacher' => [
+                'english_teacher',
+            ],
+            'Math Teacher' => [
+                'math_teacher',
+            ],
+            'Principal' => [
+                'principal',
             ],
         ];
     }

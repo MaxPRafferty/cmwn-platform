@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Security\Controller;
 
 use Security\PasswordValidator;
 use Security\Service\SecurityServiceInterface;
 use User\Adult;
 use User\Service\UserServiceInterface;
-use Zend\Console\Adapter\AdapterInterface as ConsoleAdapter;
 use Zend\Console\Prompt\Line;
 use Zend\Console\Prompt\Password;
 use Zend\Console\Request as ConsoleRequest;
@@ -32,6 +30,7 @@ class UserController extends AbstractConsoleController
 
     /**
      * UserController constructor.
+     *
      * @param SecurityServiceInterface $service
      * @param UserServiceInterface $userService
      */
@@ -83,6 +82,7 @@ class UserController extends AbstractConsoleController
         do {
             $email = Line::prompt('Email: ');
         } while (!$validator->isValid($email));
+
         return $email;
     }
 
@@ -155,7 +155,7 @@ class UserController extends AbstractConsoleController
 
             return $password;
         }
-        
+
         return null;
     }
 }

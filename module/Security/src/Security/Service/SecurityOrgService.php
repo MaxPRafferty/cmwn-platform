@@ -34,31 +34,12 @@ class SecurityOrgService
     }
 
     /**
-     * Gets the role from the group
-     *
-     * SELECT ug.role,
-     *      active_group.group_id AS active_group_id,
-     *      parent_group.group_id as parent_group_id,
-     *      g.*
-     * FROM user_groups AS ug
-     *  LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
-     *  LEFT JOIN groups AS parent_group ON parent_group.group_id = active_group.parent_id
-     *  LEFT OUTER JOIN groups AS g
-     *      ON (g.head BETWEEN active_group.head AND active_group.tail)
-     *      OR (g.group_id = parent_group.group_id)
-     * WHERE ug.user_id = 'english_teacher'
-     *  AND g.group_id = 'school'
-     *  AND g.organization_id = active_group.organization_id
-     * LIMIT 1
-     *
-     * @param $user
-     * @param $group
-     * @thought Move to own service?
+     * @inheritdoc
      */
-    public function getRoleForGroup($group, $user)
+    public function getRoleForGroup($group, UserInterface $user)
     {
         $groupId = $group instanceof GroupInterface ? $group->getGroupId() : $group;
-        $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $userId  = $user->getUserId();
 
         $select = new Select(['ug' => 'user_groups']);
         $select->columns(['role' => 'ug.role'], false);
@@ -97,7 +78,7 @@ class SecurityOrgService
 
         // Preserve the tree
         $where->addPredicate(
-            new Expression('g.organization_id = active_group.organization_id')
+            new Expression('g.network_id = active_group.network_id')
         );
 
         $select->where($where);
@@ -107,28 +88,17 @@ class SecurityOrgService
 
         $results->rewind();
         $role = $results->current()['role'];
-        return $role;
+        $role = $role === null ? 'logged_in' : $role;
+        return $role . '.' . strtolower($user->getType());
     }
 
     /**
-     * Gets the role for the org
-     *
-     * SELECT ug.role AS role
-     * FROM groups g
-     *   LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE g.organization_id = '27d713fe-f206-11e5-b2bc-209a2c42dc83'
-     *   AND ug.user_id = '6bfb2d84-f299-11e5-b53c-0800274f2cef'
-     * ORDER BY g.lft ASC
-     * LIMIT 1
-     *
-     * @param $user
-     * @param $org
-     * @thought Move to own service?
+     * @inheritdoc
      */
-    public function getRoleForOrg($org, $user)
+    public function getRoleForOrg($org, UserInterface $user)
     {
         $orgId  = $org instanceof OrganizationInterface ? $org->getOrgId() : $org;
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $userId = $user->getUserId();
 
         $select = new Select();
         $select->columns(['role' => 'ug.role'], false);
@@ -149,6 +119,7 @@ class SecurityOrgService
 
         $results->rewind();
         $role = $results->current()['role'];
-        return $role;
+        $role = $role === null ? 'logged_in' : $role;
+        return $role . '.' . strtolower($user->getType());
     }
 }

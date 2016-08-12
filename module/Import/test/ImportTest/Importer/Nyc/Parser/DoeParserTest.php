@@ -86,7 +86,7 @@ class DoeParserTest extends TestCase
             ->byDefault();
 
         $this->classRegistry = new ClassRoomRegistry($groupService);
-        $this->classRegistry->setOrganization('foo-bar');
+        $this->classRegistry->setNetworkId('foo-bar');
     }
 
     /**

@@ -2,10 +2,9 @@
 
 namespace Job\Service;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Job\JobInterface;
-use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -14,15 +13,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @var ServiceLocatorInterface
      */
     protected $services;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * ResqueWorker constructor.
@@ -33,29 +29,6 @@ class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
     {
         $this->services = $services;
         parent::__construct($queues);
-    }
-
-    /**
-     * Set logger instance
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        if ($this->logger === null) {
-            $this->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
-        }
-
-        return $this->logger;
     }
 
     /**
@@ -80,6 +53,7 @@ class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
         foreach ($this->queues() as $queue) {
             $job = ResqueJob::reserveJob($queue, $this->services);
             if ($job !== false) {
+                $this->getLogger()->notice('Got a job');
                 $job->setLogger($this->getLogger());
                 return $job;
             }

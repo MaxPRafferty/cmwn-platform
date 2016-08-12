@@ -4,6 +4,7 @@ namespace Api\V1\Rest\OrgUsers;
 
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
+use Org\Service\OrganizationServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -23,6 +24,8 @@ class OrgUsersResourceFactory implements FactoryInterface
     {
         /** @var UserGroupService $userGroupService */
         $userGroupService = $services->get(UserGroupServiceInterface::class);
-        return new OrgUsersResource($userGroupService);
+
+        $orgService       = $services->get(OrganizationServiceInterface::class);
+        return new OrgUsersResource($userGroupService, $orgService);
     }
 }

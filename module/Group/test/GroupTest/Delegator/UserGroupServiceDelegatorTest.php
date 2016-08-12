@@ -9,12 +9,12 @@ use Group\Group;
 use User\Adult;
 use User\User;
 use Zend\Db\Sql\Predicate\IsNull;
-use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 
 /**
  * Class UserGroupServiceDelegatorTest
+ *
  * @group User
  * @group Group
  * @group Delegator
@@ -23,6 +23,7 @@ use Zend\EventManager\Event;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserGroupServiceDelegatorTest extends TestCase
 {
@@ -50,6 +51,7 @@ class UserGroupServiceDelegatorTest extends TestCase
      * @var User
      */
     protected $user;
+
     /**
      * @before
      */
@@ -79,10 +81,9 @@ class UserGroupServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
-
 
     /**
      * @before
@@ -118,7 +119,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.user',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher']
+                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher'],
             ],
             $this->calledEvents[0]
         );
@@ -126,7 +127,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.user.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher']
+                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher'],
             ],
             $this->calledEvents[1]
         );
@@ -139,6 +140,7 @@ class UserGroupServiceDelegatorTest extends TestCase
     {
         $this->delegator->getEventManager()->attach('attach.user', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
 
@@ -152,7 +154,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.user',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher']
+                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher'],
             ],
             $this->calledEvents[0]
         );
@@ -176,7 +178,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.user',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher']
+                'params' => ['group' => $this->group, 'user' => $this->user, 'role' => 'teacher'],
             ],
             $this->calledEvents[0]
         );
@@ -189,7 +191,8 @@ class UserGroupServiceDelegatorTest extends TestCase
                     'group'     => $this->group,
                     'user'      => $this->user,
                     'role'      => 'teacher',
-                    'exception' => $testException]
+                    'exception' => $testException,
+                ],
             ],
             $this->calledEvents[1]
         );
@@ -211,7 +214,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.user',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user]
+                'params' => ['group' => $this->group, 'user' => $this->user],
             ],
             $this->calledEvents[0]
         );
@@ -220,7 +223,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.user.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user]
+                'params' => ['group' => $this->group, 'user' => $this->user],
             ],
             $this->calledEvents[1]
         );
@@ -243,7 +246,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.users',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'where' => $where]
+                'params' => ['group' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForGroup Is incorrect'
@@ -253,7 +256,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.users.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'where' => $where]
+                'params' => ['group' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[1],
             'Post event for fetchUsersForGroup Is incorrect'
@@ -277,7 +280,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where]
+                'params' => ['organization' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForOrg Is incorrect'
@@ -287,7 +290,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users.post',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where]
+                'params' => ['organization' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[1],
             'Post event for fetchUsersForOrg Is incorrect'
@@ -314,7 +317,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.users',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'where' => $where]
+                'params' => ['group' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForGroup was not fired for fetch users for group'
@@ -342,7 +345,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where]
+                'params' => ['organization' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForGroup Is incorrect'
@@ -368,7 +371,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.users',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'where' => $where]
+                'params' => ['group' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForGroup was not fired for fetch users for group'
@@ -378,7 +381,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.users.error',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'where' => $where, 'exception' => $exception]
+                'params' => ['group' => $this->group, 'where' => $where, 'exception' => $exception],
             ],
             $this->calledEvents[1],
             'Pre event for fetchUsersForGroup was not fired for fetch users for group'
@@ -403,7 +406,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where]
+                'params' => ['organization' => $this->group, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForOrg Is incorrect'
@@ -413,7 +416,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users.error',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where, 'exception' => $exception]
+                'params' => ['organization' => $this->group, 'where' => $where, 'exception' => $exception],
             ],
             $this->calledEvents[1],
             'Pre event for fetchUsersForOrg Is incorrect'
@@ -427,6 +430,7 @@ class UserGroupServiceDelegatorTest extends TestCase
     {
         $this->delegator->getEventManager()->attach('detach.user', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
 
@@ -440,7 +444,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.user',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user]
+                'params' => ['group' => $this->group, 'user' => $this->user],
             ],
             $this->calledEvents[0]
         );
@@ -464,7 +468,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.user',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'user' => $this->user]
+                'params' => ['group' => $this->group, 'user' => $this->user],
             ],
             $this->calledEvents[0]
         );
@@ -476,7 +480,8 @@ class UserGroupServiceDelegatorTest extends TestCase
                 'params' => [
                     'group'     => $this->group,
                     'user'      => $this->user,
-                    'exception' => $testException]
+                    'exception' => $testException,
+                ],
             ],
             $this->calledEvents[1]
         );
