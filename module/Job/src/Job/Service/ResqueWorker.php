@@ -4,9 +4,7 @@ namespace Job\Service;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Job\JobInterface;
-use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -21,11 +19,6 @@ class ResqueWorker extends \Resque_Worker implements LoggerAwareInterface
      * @var ServiceLocatorInterface
      */
     protected $services;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * ResqueWorker constructor.
