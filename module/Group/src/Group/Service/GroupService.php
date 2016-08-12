@@ -322,6 +322,7 @@ class GroupService implements GroupServiceInterface
      * @param null|object $prototype
      *
      * @return DbSelect
+     * @deprecated
      */
     public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null)
     {
@@ -329,7 +330,7 @@ class GroupService implements GroupServiceInterface
         $select = new Select();
         $select->from(['g' => $this->groupTableGateway->getTable()]);
 
-        $where->addPredicate(new Operator('g.organization_id', '=', $group->getOrganizationId()));
+        $where->addPredicate(new Operator('g.network_id', '=', $group->getNetworkId()));
         $where->addPredicate(new Between('g.head', ($group->getHead() + 1), ($group->getTail() - 1)));
         $select->where($where);
 
