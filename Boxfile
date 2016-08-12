@@ -53,25 +53,25 @@ web1:
   log_watch:
     - cmwn[php]: data/logs/app.log
 
-worker1:
-   exec: 'php public/index.php worker --queue=default --debug'
-   php_error_log: true
-   php_fpm_log: true
-   php_extensions:
-    - json
-    - mbstring
-    - mcrypt
-    - pdo_mysql
-    - redis
-    - curl
-    - zip
-   network_dirs:
-    - tmp/
-   nonpersistent_writable_dirs:
-    - data/cache
-    - data/logs
-   log_watch:
-     - cmwn[php]: data/logs/app.log
+#worker1:
+#   exec: 'php public/index.php worker --queue=default --debug'
+#   php_error_log: true
+#   php_fpm_log: true
+#   php_extensions:
+#    - json
+#    - mbstring
+#    - mcrypt
+#    - pdo_mysql
+#    - redis
+#    - curl
+#    - zip
+#   network_dirs:
+#    - tmp/
+#   nonpersistent_writable_dirs:
+#    - data/cache
+#    - data/logs
+#   log_watch:
+#     - cmwn[php]: data/logs/app.log
 
 database1:
   type: mysql
