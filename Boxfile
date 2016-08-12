@@ -54,7 +54,7 @@ web1:
     - cmwn[php]: data/logs/app.log
 
 worker1:
-   exec: 'php public/index.php worker --queue=default'
+   exec: 'php public/index.php worker --queue=default --debug'
    php_error_log: true
    php_fpm_log: true
    php_extensions:
