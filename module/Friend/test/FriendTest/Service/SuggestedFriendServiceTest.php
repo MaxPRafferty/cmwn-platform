@@ -3,7 +3,6 @@
 namespace FriendTest\Service;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Application\Utils\ServiceTrait;
 use Friend\Service\SuggestedFriendService;
 use User\Child;
 use User\UserInterface;
