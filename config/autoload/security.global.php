@@ -35,9 +35,10 @@ return [
                 'POST' => 'create.user.flip',
             ],
             'api.rest.user'            => [
-                'GET'  => ['view.user.adult', 'view.user.child'],
-                'POST' => 'create.user',
-                'PUT'  => ['edit.user.child', 'edit.user.adult'],
+                'GET'    => ['view.user.adult', 'view.user.child'],
+                'POST'   => 'create.user',
+                'PUT'    => ['edit.user.child', 'edit.user.adult'],
+                'DELETE' => ['remove.user.child', 'remove.user.adult'],
             ],
             'api.rest.org'             => [
                 'GET'    => ['view.org', 'view.user.orgs'],
