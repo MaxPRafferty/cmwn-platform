@@ -60,7 +60,8 @@ return [
             \Zend\Authentication\Adapter\Http\ResolverInterface::class =>
                 \Security\Factory\BasicAuthResolverFactory::class,
 
-            \Security\Listeners\HttpAuthListener::class => \Security\Factory\HttpAuthListenerFactory::class,
+            \Security\Listeners\HttpAuthListener::class   => \Security\Factory\HttpAuthListenerFactory::class,
+            \Security\Utils\PermissionTableFactory::class => \Security\Utils\PermissionTableBuilderFactory::class,
         ],
 
         'initializers' => [
@@ -73,7 +74,8 @@ return [
 
     'controllers' => [
         'factories' => [
-            'Security\Controller\User' => 'Security\Controller\UserControllerFactory',
+            'Security\Controller\User' => \Security\Controller\UserControllerFactory::class,
+            'Security\Controller\Perm' => \Security\Controller\PermControllerFactory::class,
         ],
     ],
 
@@ -96,10 +98,20 @@ return [
             'routes' => [
                 'add-user' => [
                     'options' => [
-                        'route'    => 'create user',
+                        'route'    => 'create:user',
                         'defaults' => [
                             'controller' => 'Security\Controller\User',
                             'action'     => 'createUser',
+                        ],
+                    ],
+                ],
+
+                'permissions' => [
+                    'options' => [
+                        'route'    => 'security:perms [--csv=] [--roles=]',
+                        'defaults' => [
+                            'controller' => 'Security\Controller\Perm',
+                            'action'     => 'showPerm',
                         ],
                     ],
                 ],
