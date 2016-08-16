@@ -212,7 +212,6 @@ class StudentWorksheetParserTest extends TestCase
             2 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"STUDENT ID"</b>',
             3 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"BIRTH DT"</b>',
             4 => 'Sheet <b>"Students"</b> Row: <b>2</b> Missing <b>"OFF CLS"</b>',
-            5 => 'Sheet <b>"Students"</b> Row: <b>2</b> Invalid birthday <b>""</b>',
         ];
 
         $this->assertTrue(
