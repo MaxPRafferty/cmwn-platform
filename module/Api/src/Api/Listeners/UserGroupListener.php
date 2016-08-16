@@ -121,6 +121,12 @@ class UserGroupListener
         $groupTypes     = [];
         /** @var GroupEntity[] $groups */
         foreach ($groups as $group) {
+            // As of CORE-1184 Children are no longer allowed to see schools
+            // TODO refine permissions to the group/org type and check access here
+            if ($realEntity->getType() === UserInterface::TYPE_CHILD && $group->getType() === 'school') {
+                continue;
+            }
+
             $entityToRender = new Entity($group);
             $renderedGroups[] = $hal->renderEntity($entityToRender);
             array_push($groupTypes, $group->getType());
