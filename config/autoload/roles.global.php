@@ -370,6 +370,7 @@ return [
                     'can.friend',
                     'view.flip',
                     'view.games',
+                    'view.group',
                     'view.group.users',
                     'view.profile.image',
                     'view.user.adult',
