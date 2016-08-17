@@ -199,6 +199,10 @@ class StudentWorksheetParser extends AbstractExcelParser
      */
     protected function getStudentFromRow($rowData, $rowNumber)
     {
+        if ($rowData === false) {
+            return false;
+        }
+
         $bDayString = isset($rowData['BIRTH DT']) ? $rowData['BIRTH DT'] : null;
 
         try {
@@ -213,10 +217,7 @@ class StudentWorksheetParser extends AbstractExcelParser
                 static::SHEET_NAME,
                 $rowNumber
             );
-        }
 
-        // check row data here so we can test the birthday
-        if ($birthday === null || $rowData === false) {
             return false;
         }
 
