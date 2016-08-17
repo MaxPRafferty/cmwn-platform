@@ -7,6 +7,7 @@ $master = include __DIR__ . '/games.master.php';
 $productionGames = [];
 
 $gameOnProduction = [
+    'all-about-you',
     'animal-id',
     'be-bright',
     'bloom-boom',
