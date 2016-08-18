@@ -69,11 +69,15 @@ return [
         'roles'             => [
             'super' => [
                 'entity_bits' => [
-                    'group'        => -1,
-                    'organization' => -1,
-                    'adult'        => -1,
-                    'child'        => -1,
-                    'me'           => -1,
+                    'group.district'        => -1,
+                    'group.school'          => -1,
+                    'group.class'           => -1,
+                    'organization.district' => -1,
+                    'organization.school'   => -1,
+                    'organization.class'    => -1,
+                    'adult'                 => -1,
+                    'child'                 => -1,
+                    'me'                    => -1,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -116,12 +120,13 @@ return [
                 ],
             ],
 
-            'admin.adult' => [
+            'admin.adult'       => [
                 'entity_bits' => [
-                    'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
-                    'me'    => Rbac::SCOPE_UPDATE,
-                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'adult' => Rbac::SCOPE_REMOVE,
+                    'group.school' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
+                    'group.class'  => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
+                    'me'           => Rbac::SCOPE_UPDATE,
+                    'child'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'adult'        => Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -154,10 +159,11 @@ return [
             // deprecated role
             'group_admin.adult' => [
                 'entity_bits' => [
-                    'group' => Rbac::SCOPE_UPDATE,
-                    'me'    => Rbac::SCOPE_UPDATE,
-                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'adult' => Rbac::SCOPE_REMOVE,
+                    'group.school' => Rbac::SCOPE_UPDATE,
+                    'group.class'  => Rbac::SCOPE_UPDATE,
+                    'me'           => Rbac::SCOPE_UPDATE,
+                    'child'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'adult'        => Rbac::SCOPE_REMOVE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -182,10 +188,11 @@ return [
 
             'principal.adult' => [
                 'entity_bits' => [
-                    'group' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'adult' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'me'    => Rbac::SCOPE_UPDATE,
+                    'group.school' => Rbac::SCOPE_UPDATE,
+                    'group.class'  => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'adult'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'child'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'           => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -216,10 +223,11 @@ return [
 
             'asst_principal.adult' => [
                 'entity_bits' => [
-                    'group' => Rbac::SCOPE_UPDATE,
-                    'adult' => Rbac::SCOPE_REMOVE,
-                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'me'    => Rbac::SCOPE_UPDATE,
+                    'group.school' => Rbac::SCOPE_UPDATE ,
+                    'group.class'  => Rbac::SCOPE_UPDATE,
+                    'adult'        => Rbac::SCOPE_REMOVE,
+                    'child'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'           => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -239,7 +247,6 @@ return [
                     'view.group',
                     'view.group.users',
                     'view.org',
-                    'view.org.users',
                     'view.profile.image',
                     'view.user.adult',
                     'view.user.child',
@@ -251,9 +258,9 @@ return [
 
             'teacher.adult' => [
                 'entity_bits' => [
-                    'group' => Rbac::SCOPE_UPDATE,
-                    'child' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'me'    => Rbac::SCOPE_UPDATE,
+                    'group.class' => Rbac::SCOPE_UPDATE,
+                    'child'       => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
+                    'me'          => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
                     'add.group.user',
@@ -332,7 +339,7 @@ return [
             ],
 
             // todo make this into neighbor.child?
-            'child' => [
+            'child'    => [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
@@ -363,6 +370,7 @@ return [
                     'can.friend',
                     'view.flip',
                     'view.games',
+                    'view.group',
                     'view.group.users',
                     'view.profile.image',
                     'view.user.adult',

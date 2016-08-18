@@ -69,7 +69,8 @@ class TokenResourceTest extends TestCase
     /**
      * @test
      * @ticket       CORE-681
-     * @ticket       CORE-6184
+     * @ticket       CORE-1184
+     * @ticket       CORE-1233
      * @dataProvider loginHalLinksDataProvider
      */
     public function testItShouldBuildCorrectEndpointsForMe($user, $links, $expectedScope)
@@ -164,7 +165,6 @@ class TokenResourceTest extends TestCase
                     'flip',
                     'friend',
                     'games',
-                    'group_school',
                     'group_class',
                     'password',
                     'profile',
