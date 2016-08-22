@@ -361,7 +361,6 @@ return [
         ],
     ],
     'user_friends'  => [],
-    'user_suggestions' => [],
     'user_groups'   => [
         [
             'user_id'  => 'english_student',
