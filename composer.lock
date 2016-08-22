@@ -3964,18 +3964,6 @@
         },
         {
             "name": "zfcampus/zf-content-validation",
-<<<<<<< HEAD
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zfcampus/zf-content-validation.git",
-                "reference": "35c40a0f0553e960b1699d31380c41ed043c92c1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-content-validation/zipball/35c40a0f0553e960b1699d31380c41ed043c92c1",
-                "reference": "35c40a0f0553e960b1699d31380c41ed043c92c1",
-=======
             "version": "1.3.4",
             "source": {
                 "type": "git",
@@ -3986,7 +3974,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/zfcampus/zf-content-validation/zipball/aa9b688d0995bab00a3c94fe629891d3581b0ca5",
                 "reference": "aa9b688d0995bab00a3c94fe629891d3581b0ca5",
->>>>>>> release/ditto
                 "shasum": ""
             },
             "require": {
