@@ -49,7 +49,7 @@
     "chrisboulton/php-resque": "~1.2",
     "rollbar/rollbar": "dev-master@dev",
     "aws/aws-sdk-php-zf2": "2.*",
-    "zfcampus/zf-content-validation": "~1.0-dev"
+    "zfcampus/zf-content-validation": "~1.0-dev",
     "robmorgan/phinx": "0.6.4"
   },
   "require-dev": {
