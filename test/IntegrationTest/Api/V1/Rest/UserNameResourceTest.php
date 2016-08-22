@@ -67,7 +67,7 @@ class UserNameResourceTest extends TestCase
         $response = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('user_name', $response);
         $this->assertNotEmpty($response['user_name']);
-        
+
         $this->assertRegExp(
             '/^[a-z]+-[a-z]+$/',
             $response['user_name'],
@@ -86,14 +86,14 @@ class UserNameResourceTest extends TestCase
         $this->logInUser('english_student');
         $this->injectValidCsrfToken();
 
-        $this->dispatch('/user-name', 'POST', ['user_name' => 'active-alligator']);
+        $this->dispatch('/user-name', 'POST', ['user_name' => 'active-albatross']);
 
         $this->assertResponseStatusCode(201);
         $this->assertControllerName('api\v1\rest\username\controller');
 
         $changedUser = $this->userService->fetchUser('english_student');
         $this->assertRegExp(
-            '/^active-alligator\d{3}$/',
+            '/^active-albatross\d{3}$/',
             $changedUser->getUserName(),
             'User Name was not appended with numbers when the user selected a name'
         );
@@ -113,7 +113,7 @@ class UserNameResourceTest extends TestCase
                 'english_student',
                 '/user-name',
                 'POST',
-                ['user_name' => 'active-alligator']
+                ['user_name' => 'active-albatross']
             ],
         ];
     }
