@@ -15,7 +15,7 @@ return [
             'bouncing',
             'brave',
             'bright',
-            'brilliant',
+//            'brilliant', REMOVED CORE-2180
             'bronze',
             'calm',
             'caring',
@@ -30,8 +30,8 @@ return [
             'curious',
             'cute',
             'daring',
-            'dedicated',
-            'delightful',
+//            'dedicated', REMOVED CORE-2180
+//            'delightful', REMOVED CORE-2180
             'energetic',
             'epic',
             'fabulous',
@@ -54,7 +54,7 @@ return [
             'helpful',
             'hip',
             'honest',
-            'inspiring',
+//            'inspiring', REMOVED CORE-2180
             'jazzy',
             'jolly',
             'joyful',
@@ -74,13 +74,13 @@ return [
             'orange',
             'original',
             'playful',
-            'pleasant',
+//            'pleasant', REMOVED CORE-2180
             'positive',
-            'precious',
+//            'precious', REMOVED CORE-2180 (and when Frodo threw it into Mordo)
             'proud',
             'purple',
             'rare',
-            'reliable',
+//            'reliable', REMOVED CORE-2180
             'royal',
             'silly',
             'silver',
@@ -106,12 +106,12 @@ return [
         ],
         'right' => [
             'albatross',
-            'alligator',
+//            'alligator', REMOVED CORE-2180
             'angelfish',
             'antelope',
-            'armadillo',
+//            'armadillo', REMOVED CORE-2180
             'badger',
-            'barracuda',
+//            'barracuda', REMOVED CORE-2180
             'bear',
             'bee',
             'beetle',
@@ -125,14 +125,14 @@ return [
             'butterfly',
             'cardinal',
             'caribou',
-            'caterpillar',
+//            'caterpillar', REMOVED CORE-2180
             'chameleon',
             'cheetah',
-            'chinchilla',
+//            'chinchilla', REMOVED CORE-2180
             'chipmunk',
             'coyote',
             'crane',
-            'crocodile',
+//            'crocodile', REMOVED CORE-2180
             'deer',
             'dolphin',
             'dragon',
