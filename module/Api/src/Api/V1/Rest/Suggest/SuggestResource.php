@@ -1,7 +1,7 @@
 <?php
 namespace Api\V1\Rest\Suggest;
 
-use Friend\Service\SuggestedFriendServiceInterface;
+use Suggest\Service\SuggestedServiceInterface;
 use User\UserInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -12,15 +12,15 @@ use ZF\Rest\AbstractResourceListener;
 class SuggestResource extends AbstractResourceListener
 {
     /**
-     * @var SuggestedFriendServiceInterface
+     * @var SuggestedServiceInterface
      */
     protected $suggestedService;
 
     /**
      * SuggestResource constructor.
-     * @param SuggestedFriendServiceInterface $suggestedFriendService
+     * @param SuggestedServiceInterface $suggestedFriendService
      */
-    public function __construct(SuggestedFriendServiceInterface $suggestedFriendService)
+    public function __construct(SuggestedServiceInterface $suggestedFriendService)
     {
         $this->suggestedService = $suggestedFriendService;
     }
@@ -35,6 +35,7 @@ class SuggestResource extends AbstractResourceListener
     {
         /** @var  UserInterface $user */
         $user = $this->getEvent()->getRouteParam('user');
-        return new SuggestCollection($this->suggestedService->fetchSuggestedFriends($user, null, new SuggestEntity()));
+        return new SuggestCollection($this->suggestedService->
+        fetchSuggestedFriendsForUser($user, null, new SuggestEntity()));
     }
 }
