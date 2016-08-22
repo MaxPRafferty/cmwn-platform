@@ -31,11 +31,12 @@ class Module implements
      * directly access Console and send output.
      *
      * @param AdapterInterface $console
+     *
      * @return string|null
      */
     public function getConsoleBanner(AdapterInterface $console)
     {
-        return 'CMWN Super Admin Control';
+        return 'CMWN Security Control';
     }
 
     /**
@@ -57,15 +58,16 @@ class Module implements
      *            )
      *
      * @param AdapterInterface $console
+     *
      * @return array|string|null
      */
     public function getConsoleUsage(AdapterInterface $console)
     {
         return [
-            'create user' => 'Creates a new super admin'
+            'create:user'    => 'Creates a new super admin',
+            'security:perms' => 'Creates a dump of the current permissions',
         ];
     }
-
 
     /**
      * @return array

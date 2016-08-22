@@ -2,6 +2,7 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
+use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use User\Service\UserServiceInterface;
@@ -14,8 +15,9 @@ use Zend\Json\Json;
  *
  * @group User
  * @group IntegrationTest
+ * @group Api
  * @group UserService
- * @group UserGroupService0
+ * @group UserGroupService
  * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -408,15 +410,18 @@ class UserResourceTest extends TestCase
      * @test
      * @ticket CORE-727
      */
-    public function testItShouldNotLetTeacherDeleteStudentProfile()
+    public function testItShouldLetTeacherDeleteStudentProfile()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_teacher');
         $this->dispatch('/user/english_student', 'DELETE');
 
-        $this->assertResponseStatusCode(403);
+        $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
+
+        $this->setExpectedException(NotFoundException::class);
+        $this->loadUserFromDb('english_student');
     }
 
     /**

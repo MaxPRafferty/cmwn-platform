@@ -44,6 +44,7 @@ class FlipResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.flip');
         $this->assertControllerName('api\v1\rest\flip\controller');
 
+        $this->assertResponseStatusCode(200);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
 
@@ -56,19 +57,6 @@ class FlipResourceTest extends TestCase
         }
         $expectedIds = ['polar-bear', 'sea-turtle'];
         $this->assertEquals($actualIds, $expectedIds);
-    }
-
-    /**
-     * @test
-     * @dataProvider invalidUserDataProvider
-     */
-    public function testItShouldReturnErrorStatusUnauthorizedAccessOfAllFlips($login)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($login);
-
-        $this->dispatch('/flip');
-        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -104,22 +92,21 @@ class FlipResourceTest extends TestCase
         $this->assertEquals($body['flip_id'], 'polar-bear');
         $this->assertEquals($body['title'], 'Polar Bear');
         $this->assertEquals(
-            $body['description'],
-            'The magnificent Polar Bear is in danger of becoming extinct. Get the scoop and go offline for the science on how they stay warm!'
+            'The magnificent Polar Bear is in danger of becoming extinct.' .
+            '  Get the scoop and go offline for the science on how they stay warm!',
+            $body['description']
         );
     }
 
     /**
      * @test
-     * @dataProvider invalidUserDataProvider
      */
-    public function testItShouldReturnErrorUnauthorizedAccessOfFlip($login)
+    public function testItShouldReturnErrorUnauthorizedAccessOfFlip()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser($login);
 
         $this->dispatch('/flip/polar-bear');
-        $this->assertResponseStatusCode(403);
+        $this->assertResponseStatusCode(401);
     }
 
     /**

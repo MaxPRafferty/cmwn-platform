@@ -18,6 +18,7 @@ class NotFoundException extends \Exception
     public function __construct($message = null, $code = null, \Exception $previous = null)
     {
         $code = 404;
+        $message = null === $message ? 'Not Found' : $message;
         parent::__construct($message, $code, $previous);
     }
 }

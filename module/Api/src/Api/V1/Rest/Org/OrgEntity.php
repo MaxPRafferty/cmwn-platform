@@ -56,7 +56,7 @@ class OrgEntity extends Organization implements ScopeAwareInterface, LinkCollect
      */
     public function getEntityType()
     {
-        return 'organization';
+        return 'organization' . (!empty($this->getType()) ? '.' . $this->getType() : '');
     }
 
     /**

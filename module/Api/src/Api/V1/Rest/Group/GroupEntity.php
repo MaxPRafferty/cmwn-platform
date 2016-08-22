@@ -66,7 +66,7 @@ class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareIn
      */
     public function getEntityType()
     {
-        return 'group';
+        return 'group' . (!empty($this->getType()) ? '.' . $this->getType() : '');
     }
 
     /**
@@ -87,7 +87,7 @@ class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareIn
         if ($this->links === null) {
             $this->setLinks(new LinkCollection());
         }
-        
+
         return $this->links;
     }
 }

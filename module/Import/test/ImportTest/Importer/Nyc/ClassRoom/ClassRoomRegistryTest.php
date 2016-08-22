@@ -45,7 +45,7 @@ class ClassRoomRegistryTest extends TestCase
     public function setUpRegistry()
     {
         $this->registry = new ClassRoomRegistry($this->groupService);
-        $this->registry->setOrganization('foo-bar');
+        $this->registry->setNetworkId('foo-bar');
     }
 
     /**

@@ -11,6 +11,7 @@ use Zend\Json\Json;
  * @group Token
  * @group API
  * @group User
+ * @group IntegrationTest
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -20,10 +21,12 @@ class TokenResourceTest extends TestCase
 {
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -49,6 +52,7 @@ class TokenResourceTest extends TestCase
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
+
             return;
         }
 
@@ -62,13 +66,14 @@ class TokenResourceTest extends TestCase
         $this->assertCount(3, $links);
     }
 
-
     /**
      * @test
-     * @ticket CORE-681
+     * @ticket       CORE-681
+     * @ticket       CORE-1184
+     * @ticket       CORE-1233
      * @dataProvider loginHalLinksDataProvider
      */
-    public function testItShouldBuildCorrectEndpointsForMe($user, $links = [])
+    public function testItShouldBuildCorrectEndpointsForMe($user, $links, $expectedScope)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($user);
@@ -82,15 +87,19 @@ class TokenResourceTest extends TestCase
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
+
             return;
         }
 
-        $this->assertArrayHasKey('_links', $decoded);
+        $this->assertArrayHasKey('_links', $decoded, 'No hal links returned on me');
+        $this->assertArrayHasKey('scope', $decoded, 'No Scope returned on me');
 
         sort($links);
         $actualLinks = array_keys($decoded['_links']);
         sort($actualLinks);
         $this->assertEquals($links, $actualLinks);
+
+        $this->assertEquals($expectedScope, $decoded['scope'], 'Incorrect scope for ME');
     }
 
     /**
@@ -99,7 +108,7 @@ class TokenResourceTest extends TestCase
     public function loginHalLinksDataProvider()
     {
         return [
-            'Super User' => [
+            'Super User'      => [
                 'user'  => 'super_user',
                 'links' => [
                     'flip',
@@ -114,8 +123,9 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                 ],
+                'scope' => -1,
             ],
-            'Principal' => [
+            'Principal'       => [
                 'user'  => 'principal',
                 'links' => [
                     'flip',
@@ -130,6 +140,7 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                 ],
+                'scope' => 2,
             ],
             'English Teacher' => [
                 'user'  => 'english_teacher',
@@ -146,6 +157,7 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                 ],
+                'scope' => 2,
             ],
             'English Student' => [
                 'user'  => 'english_student',
@@ -153,7 +165,6 @@ class TokenResourceTest extends TestCase
                     'flip',
                     'friend',
                     'games',
-                    'group_school',
                     'group_class',
                     'password',
                     'profile',
@@ -165,6 +176,7 @@ class TokenResourceTest extends TestCase
                     'user_name',
                     'save_game',
                 ],
+                'scope' => 2,
             ],
         ];
     }
@@ -177,7 +189,7 @@ class TokenResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/'
+                '/',
             ],
         ];
     }

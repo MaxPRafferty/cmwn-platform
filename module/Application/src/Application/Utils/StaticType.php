@@ -24,6 +24,14 @@ class StaticType
     }
 
     /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return static::$types;
+    }
+
+    /**
      * @param $type
      *
      * @return mixed
@@ -31,7 +39,7 @@ class StaticType
     public static function getLabelForType($type)
     {
         if (!static::isValid($type)) {
-            throw new \InvalidArgumentException('Invalid type specified: ' . $type);
+            throw new \InvalidArgumentException('Invalid type specified');
         }
 
         return static::$types[$type];

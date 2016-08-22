@@ -1,4 +1,6 @@
 <?php
+// This file is auto generated skipping PHPCS test
+// @codingStandardsIgnoreStart
 return array(
     'Api\\V1\\Rest\\User\\Controller' => array(
         'description' => 'Top level management for users',

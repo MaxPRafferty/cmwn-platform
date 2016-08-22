@@ -3,15 +3,11 @@
 namespace Api\Listeners;
 
 use Api\Links\GroupLink;
-use Application\Exception\NotAuthorizedException;
-use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 use ZF\Hal\Entity;
 
 /**

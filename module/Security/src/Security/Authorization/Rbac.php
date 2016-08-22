@@ -71,7 +71,7 @@ class Rbac extends ZfRbac
         foreach ($roleConfig['permissions'] as $permission) {
             $role->addPermission($permission);
         }
-        
+
         $this->permissionBits[$roleName] = $roleConfig['entity_bits'];
     }
 
@@ -108,5 +108,28 @@ class Rbac extends ZfRbac
         }
 
         return $this->permissionBits[$roleName][$entity];
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getPermissions()
+    {
+        return $this->permissionLabels;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfiguredScopes()
+    {
+        $allEntities = array_map(function ($role) {
+            return array_keys($this->permissionBits[$role]);
+        }, $this->permissionBits);
+
+        sort($allEntities);
+        array_unique($allEntities);
+
+        return $allEntities;
     }
 }

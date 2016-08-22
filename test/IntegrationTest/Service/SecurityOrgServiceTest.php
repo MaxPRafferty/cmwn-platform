@@ -5,10 +5,14 @@ namespace IntegrationTest\Service;
 use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Service\SecurityOrgService;
+use User\Adult;
 
 /**
  * Test SecurityOrgServiceTest
  *
+ * @group Db
+ * @group Security
+ * @group Organization
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -56,33 +60,33 @@ class SecurityOrgServiceTest extends TestCase
     {
         return [
             'Principal to English' => [
-                'user'     => 'principal',
+                'user'     => new Adult(['user_id' => 'principal']),
                 'group'    => 'english',
-                'expected' => 'principal',
+                'expected' => 'principal.adult',
             ],
 
             'Principal to Math' => [
-                'user'     => 'principal',
+                'user'     => new Adult(['user_id' => 'principal']),
                 'group'    => 'math',
-                'expected' => 'principal',
+                'expected' => 'principal.adult',
             ],
 
             'Principal to School' => [
-                'user'     => 'principal',
+                'user'     => new Adult(['user_id' => 'principal']),
                 'group'    => 'math',
-                'expected' => 'principal',
+                'expected' => 'principal.adult',
             ],
 
             'Principal to Other Math' => [
-                'user'     => 'principal',
+                'user'     => new Adult(['user_id' => 'principal']),
                 'group'    => 'other_math',
-                'expected' => null,
+                'expected' => 'logged_in.adult',
             ],
 
             'Principal to Other School' => [
-                'user'     => 'principal',
+                'user'     => new Adult(['user_id' => 'principal']),
                 'group'    => 'other_school',
-                'expected' => null,
+                'expected' => 'logged_in.adult',
             ],
         ];
     }

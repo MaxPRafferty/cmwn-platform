@@ -9,6 +9,7 @@ use Security\Authorization\Assertions\DefaultAssertion;
 use Security\Exception\ChangePasswordException;
 use Security\OpenRouteTrait;
 use Security\SecurityUser;
+use Security\Service\SecurityGroupService;
 use Security\Service\SecurityOrgService;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
@@ -19,6 +20,7 @@ use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class RouteListener
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
@@ -38,6 +40,11 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     protected $orgService;
 
     /**
+     * @var SecurityGroupService
+     */
+    protected $groupService;
+
+    /**
      * @var array
      */
     protected $listeners = [];
@@ -47,14 +54,17 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      *
      * @param array $config
      * @param SecurityOrgService $orgService
+     * @param SecurityGroupService $groupService
      */
     public function __construct(
         array $config,
-        SecurityOrgService $orgService
+        SecurityOrgService $orgService,
+        SecurityGroupService $groupService
     ) {
         $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
-        $this->routePerms  = isset($config['route-permissions']) ? $config['route-permissions'] : [];
-        $this->orgService  = $orgService;
+        $this->routePerms   = isset($config['route-permissions']) ? $config['route-permissions'] : [];
+        $this->orgService   = $orgService;
+        $this->groupService = $groupService;
     }
 
     /**
@@ -80,6 +90,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
     /**
      * @param MvcEvent $event
+     *
      * @return void|ApiProblemResponse
      */
     public function onRoute(MvcEvent $event)
@@ -111,10 +122,12 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
         if ($user->isSuper()) {
             $user->setRole('super');
+
             return null;
         }
 
         $user->setRole($this->getRoleForGroup($event));
+
         return $this->isRouteAllowed($event, $user);
     }
 
@@ -122,6 +135,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      *
      * @param MvcEvent $event
      * @param SecurityUser $user
+     *
      * @return null|ApiProblemResponse
      */
     protected function isRouteAllowed(MvcEvent $event, SecurityUser $user)
@@ -156,11 +170,12 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * @param MvcEvent $event
      * @param $role
      * @param $permission
+     *
      * @return AssertionInterface
      */
     protected function getAssertion(MvcEvent $event, $role, array $permission)
     {
-        $assertion  = $event->getParam('assertion', new DefaultAssertion());
+        $assertion = $event->getParam('assertion', new DefaultAssertion());
 
         if ($assertion instanceof AssertionInterface) {
             $assertion->setRole($role);
@@ -174,6 +189,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * Checks if the route is restricted
      *
      * @param MvcEvent $event
+     *
      * @return bool
      */
     protected function isRouteUnRestricted(MvcEvent $event)
@@ -193,26 +209,38 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     /**
      *
      * @param MvcEvent $event
+     *
      * @return string
      */
     protected function getRoleForGroup(MvcEvent $event)
     {
-        $group = $event->getRouteMatch()->getParam('group_id', false);
-        $orgId = $event->getRouteMatch()->getParam('org_id', false);
-        if ($group === false && $orgId === false) {
-            return 'logged_in';
+        $group     = $event->getRouteMatch()->getParam('group_id', false);
+        $orgId     = $event->getRouteMatch()->getParam('org_id', false);
+        $userId    = $event->getRouteMatch()->getParam('user_id', false);
+        try {
+            $identity = $this->authService->getIdentity();
+        } catch (ChangePasswordException $reset) {
+            $identity = $reset->getUser();
         }
 
-        $identity  = $this->authService->getIdentity();
-        $foundRole = false;
+        switch (true) {
+            case $group !== false:
+                $foundRole = $this->orgService->getRoleForGroup($group, $identity);
+                break;
 
-        if ($group !== false) {
-            $foundRole = $this->orgService->getRoleForGroup($group, $identity);
-        } elseif ($orgId !== false) {
-            $foundRole = $this->orgService->getRoleForOrg($orgId, $identity);
+            case $orgId !== false:
+                $foundRole = $this->orgService->getRoleForOrg($orgId, $identity);
+                break;
+
+            case $userId !== false:
+                $foundRole = $this->groupService->fetchRelationshipRole($identity, $userId);
+                break;
+
+            default:
+                // Become "me" when no org, group or user
+                // This means that we are hitting /user, /group or /org
+                $foundRole = 'me.' . strtolower($identity->getType());
         }
-
-        $foundRole = $foundRole === null ? 'logged_in' : $foundRole;
 
         if ($identity instanceof SecurityUser) {
             $identity->setRole($foundRole);

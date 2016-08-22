@@ -195,7 +195,7 @@ class SecurityUser extends User
             return 'super';
         }
 
-        return $this->role . '.' . strtolower($this->getType());
+        return $this->role;
     }
 
     /**
