@@ -79,7 +79,7 @@ class FeedResourceTest extends TestCase
                 continue;
             }
             $this->assertArrayHasKey('_links', $feed);
-            $this->assertArrayHasKey('game', $feed['_links']);
+            $this->assertArrayHasKey('games', $feed['_links']);
         }
     }
     /**

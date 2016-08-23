@@ -17,8 +17,8 @@ class GameLink extends Link
      */
     public function __construct($gameId = null)
     {
-        parent::__construct('game');
-        $this->setProps(['label' => 'Game']);
+        parent::__construct('games');
+        $this->setProps(['label' => 'Games']);
         $this->setRoute('api.rest.game', ['game_id' => $gameId]);
     }
 }
