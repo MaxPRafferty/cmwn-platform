@@ -38,7 +38,6 @@ class FeedResource extends AbstractResourceListener
         $feeds = [];
         /**@var \Game\GameInterface $game*/
         foreach ($games as $game) {
-
             $feedData = [
                 'type' => 'game',
             ];
@@ -51,9 +50,9 @@ class FeedResource extends AbstractResourceListener
             $feedData['link'] = new GameLink($gameId);
             $feeds[] = new FeedEntity($feedData);
         }
-
         return $feeds;
     }
+
     /**
      * @param array $params
      * @return FeedCollection
