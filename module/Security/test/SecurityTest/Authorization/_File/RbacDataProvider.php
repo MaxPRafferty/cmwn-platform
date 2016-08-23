@@ -51,6 +51,7 @@ return [
             'save.game',
             'update.skribble',
             'view.skribble',
+            'view.feed',
         ],
     ],
 
@@ -104,6 +105,7 @@ return [
             'view.all.orgs',
             'view.all.users',
             'view.skribble',
+            'view.feed',
         ],
     ],
 
@@ -158,6 +160,7 @@ return [
             'view.org',
             'view.skribble',
             'view.user.flip',
+            'view.feed',
         ],
     ],
 
@@ -211,7 +214,7 @@ return [
             'view.all.users',
             'view.org.users',
             'view.skribble',
-
+            'view.feed',
         ],
     ],
 
@@ -265,6 +268,7 @@ return [
             'view.all.users',
             'view.org.users',
             'view.skribble',
+            'view.feed',
         ],
     ],
 
@@ -318,6 +322,7 @@ return [
             'view.all.orgs',
             'view.all.users',
             'view.skribble',
+            'view.feed',
         ],
     ],
 
@@ -371,6 +376,7 @@ return [
             'view.user.child',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
     ],
 
@@ -394,6 +400,7 @@ return [
             'view.user.child',
             'view.user.flip',
             'view.user.groups',
+            'view.feed',
         ],
         'denied'  => [
             'add.group.user',
@@ -440,6 +447,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
         'denied'  => [
             'add.group.user',
@@ -528,6 +536,7 @@ return [
             'view.skribble',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
     ],
 
@@ -581,6 +590,7 @@ return [
             'view.skribble',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
     ],
 
@@ -634,6 +644,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
     ],
 
@@ -686,6 +697,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
     ],
 
@@ -740,6 +752,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'view.feed',
         ],
     ],
 ];
