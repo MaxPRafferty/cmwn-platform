@@ -64,6 +64,7 @@ class FriendServiceTest extends TestCase
     {
         try {
             $this->friendService->fetchFriendStatusForUser($this->user, $this->friend);
+            $this->fail('This test requires that math_student and english_student are not friends');
         } catch (NotFriendsException $nf) {
             //noop
         }

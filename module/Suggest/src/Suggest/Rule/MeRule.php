@@ -16,7 +16,7 @@ class MeRule implements SuggestedRuleCompositeInterface
         $iterator = $suggestionContainer->getIterator();
         foreach ($suggestionContainer as $key => $suggestion) {
             if ($currentUser->getUserId() === $suggestion->getUserId()) {
-                $iterator->offsetUnset($key);
+                $iterator->offsetUnset($currentUser->getUserId());
             }
         }
     }

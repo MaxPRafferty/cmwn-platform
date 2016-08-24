@@ -66,7 +66,7 @@ class FriendRuleUnitTest extends TestCase
     {
         $this->container = new SuggestionContainer();
         $friend = new Child(['user_id' => 'math_student']);
-        $this->container->append($friend);
+        $this->container[$friend->getUserId()] = $friend;
     }
 
     /**

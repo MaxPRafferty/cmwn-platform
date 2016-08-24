@@ -44,8 +44,9 @@ class MeRuleTest extends \PHPUnit_Framework_TestCase
     public function setUpContainer()
     {
         $this->container = new SuggestionContainer();
-        $this->container->append($this->user);
-        $this->container->append(new Adult(['user_id' => 'english_teacher']));
+        $this->container[$this->user->getUserId()] = $this->user;
+        $adult = new Adult(['user_id' => 'english_teacher']);
+        $this->container[$adult->getUserId()] = $adult;
     }
 
     /**

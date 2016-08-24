@@ -67,7 +67,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
     /**
      * @test
      */
-    public function testItShouldAttachSuggestions()
+    public function testItShouldProduceCorrectSuggestions()
     {
         $this->logInUser('english_student');
         $this->engine->setUser($this->user);

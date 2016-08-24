@@ -141,7 +141,6 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        //TODO ask the suggested service if they could be friends
         try {
             $status = $this->friendService->fetchFriendStatusForUser($authUser, $realEntity);
         } catch (NotFriendsException $nf) {

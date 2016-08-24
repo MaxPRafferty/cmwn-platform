@@ -26,19 +26,29 @@ class FriendRule implements SuggestedRuleCompositeInterface
     }
 
     /**
+     * @param \ArrayIterator $iterator
+     * @param $currentUser
+     * @return bool
+     */
+    public function checkIfAlreadyFriends($iterator, $currentUser)
+    {
+        try {
+            $suggestion = $iterator->current();
+            $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
+
+            $iterator->offsetUnset($suggestion->getUserId());
+        } catch (NotFriendsException $nf) {
+            //noop
+        }
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function apply($suggestionContainer, $currentUser)
     {
-        $iterator = $suggestionContainer->getIterator();
-
-        foreach ($iterator as $key => $suggestion) {
-            try {
-                $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
-                $iterator->offsetUnset($key);
-            } catch (NotFriendsException $nf) {
-                //noop
-            }
-        }
+        $iterator = new \ArrayIterator($suggestionContainer);
+        iterator_apply($iterator, [$this, "checkIfAlreadyFriends"], [$iterator, $currentUser]);
     }
 }
