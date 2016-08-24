@@ -1398,7 +1398,8 @@ return array(
                 'route_name' => 'api.rest.feed',
                 'route_identifier_name' => 'feed_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
-                'max_depth' => 2,
+                'max_depth' => 3,
+                //TODO Add a test to check if the image of the semder is correctly sent
             ),
             'Api\\V1\\Rest\\Feed\\FeedCollection' => array(
                 'entity_identifier_name' => 'feed_id',
