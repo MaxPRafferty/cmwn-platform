@@ -82,6 +82,33 @@ class FeedResourceTest extends TestCase
             $this->assertArrayHasKey('games', $feed['_links']);
         }
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckIfImageIsBeingSentCorrectly()
+    {
+        $this->markTestIncomplete("To be done once more types of feed are added");
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+        $this->dispatch('/user/english_student/feed');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('feed', $body['_embedded']);
+
+        $feeds = $body['_embedded']['feed'];
+
+        foreach ($feeds as $feed) {
+            if ($feed['type']==='game') {
+                continue;
+            }
+            $this->assertArrayHasKey('sender', $feed);
+            $this->assertArrayHasKey('image', $feed['sender']);
+        }
+    }
+
     /**
      * @return array
      */
