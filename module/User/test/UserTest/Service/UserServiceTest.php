@@ -280,6 +280,36 @@ class UserServiceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldFetchUserByUsername()
+    {
+        $userData = [
+            'user_id'     => 'abcd-efgh-ijklm-nop',
+            'username'    => 'manchuck',
+            'email'       => 'chuck@manchuck.com',
+            'first_name'  => 'Charles',
+            'middle_name' => 'Henry',
+            'last_name'   => 'Reeves',
+            'gender'      => Adult::GENDER_MALE,
+            'birthdate'   => '2016-02-28',
+            'created'     => '2016-02-28',
+            'updated'     => '2016-02-28',
+            'deleted'     => '2016-02-28',
+            'type'        => Adult::TYPE_ADULT,
+            'external_id' => 'foo-bar'
+        ];
+
+        $result = new ResultSet();
+        $result->initialize([$userData]);
+        $this->tableGateway->shouldReceive('select')
+            ->with(['username' => $userData['username']])
+            ->andReturn($result);
+
+        $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByUsername($userData['username']));
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFound()
     {
         $this->setExpectedException(

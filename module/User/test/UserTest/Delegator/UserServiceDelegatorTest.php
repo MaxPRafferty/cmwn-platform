@@ -315,6 +315,40 @@ class UserServiceDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCallFetchUserByUsername()
+    {
+        $this->userService->shouldReceive('fetchUserByUsername')
+            ->with($this->user->getUserName())
+            ->andReturn($this->user)
+            ->once();
+
+        $this->assertSame(
+            $this->user,
+            $this->delegator->fetchUserByUsername($this->user->getUserName())
+        );
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.username',
+                'target' => $this->userService,
+                'params' => ['username' => $this->user->getUserName()]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.username.post',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user, 'username' => $this->user->getUserName()]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchUserAndReturnEventResult()
     {
         $this->userService->shouldReceive('fetchUser')
