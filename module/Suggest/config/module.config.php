@@ -1,6 +1,17 @@
 <?php
 
 return [
+    'job_runner' => [
+        'allowed_jobs' => [
+            'Suggest\Engine\SuggestionEngine' => [
+                'command' => 'suggest',
+                'params'  => [
+                    'user_id',
+                ],
+            ],
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             \Suggest\Service\SuggestedServiceInterface::class => \Suggest\Service\SuggestedService::class,
@@ -20,6 +31,30 @@ return [
         'delegators' => [
             \Suggest\Service\SuggestedService::class          => [
                 \Suggest\Delegator\SuggestedServiceDelegatorFactory::class,
+            ],
+        ],
+    ],
+
+    'controllers' => [
+        'factories' => [
+            'Suggest\Controller' => \Suggest\Controller\SuggestionControllerFactory::class,
+        ],
+    ],
+
+    'console' => [
+        'router' => [
+            'routes' => [
+                'suggest-cli' => [
+                    'options' => [
+                        // @codingStandardsIgnoreStart
+                        'route'    => 'suggest --user_id= [--verbose|-v] [--debug|-d]',
+                        // @codingStandardsIgnoreEnd
+                        'defaults' => [
+                            'controller' => 'Suggest\Controller',
+                            'action'     => 'suggest',
+                        ],
+                    ],
+                ],
             ],
         ],
     ],

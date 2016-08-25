@@ -23,4 +23,15 @@ class Suggestion extends Friend implements SuggestionInterface
         unset($array['friend_id']);
         return $array;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function exchangeArray(array $array)
+    {
+        $array['suggest_id'] = isset($array['suggest_id'])? $array['suggest_id'] : null;
+        $array['friend_status'] = isset($array['friend_status'])? $array['friend_status'] : null;
+
+        parent::exchangeArray($array);
+    }
 }
