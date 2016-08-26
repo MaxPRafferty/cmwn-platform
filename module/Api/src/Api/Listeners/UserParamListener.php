@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: chaitu
- * Date: 8/10/16
- * Time: 11:13 AM
- */
 
 namespace Api\Listeners;
 
