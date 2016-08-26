@@ -1,5 +1,5 @@
 box:
-  id: cmwn/platform-api
+  id: cmwn/platform-api:0.1
   username: $DOCKER_USER
   password: $DOCKER_PASS
   tag: latest
@@ -52,12 +52,12 @@ deploy:
       code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
     - script:
       name: Running Zend-Tool
-      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip"
+      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
     - s3sync:
       key-id: $AWS_KEY
       key-secret: $AWS_SECRET
       bucket-url: $AWS_BUCKET_URL
-      source-dir: data/build/artifact
+      source-dir: data/build/artifact/
     - github-create-release:
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
