@@ -1,4 +1,3 @@
-## This container if for buiding on wercker
 FROM php:7.0-fpm
 MAINTAINER Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
 

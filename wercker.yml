@@ -1,5 +1,5 @@
 box:
-  id: cmwn/platform-api
+  id: cmwn/platform-api:0.1
   username: $DOCKER_USER
   password: $DOCKER_PASS
   tag: latest
@@ -36,33 +36,47 @@ build:
     - slack-notifier:
       url: $SLACK_URL
 
-deploy:
+release:
   steps:
     - script:
-      name: Setting version number
-      code: export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
+      name: Version bump, Changelog and prep
+      code: |-
+        echo "Bumping version"
+        chmod ugo+x $PWD/bin/version_bump.sh $PWD/bin/changelog.sh
+        export VERSION="$($PWD/bin/version_bump.sh patch)"
+        echo "Bumped version to $VERSION"
+        echo "Creating changelog"
+        $PWD/bin/changelog.sh
+        echo "Created Change log"
+        mkdir -p data/build/artifact
+        echo "Created directory for artifact"
     - script:
-      name: Creating package directory
-      code: mkdir -p data/build/artifact
-    - script:
-      name: On Production?
-      code: export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
-    - script:
-      name: Creating package name
-      code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
+      name: Commiting new version number
+      code: |-
+        git checkout $WERCKER_GIT_BRANCH
+        git config --global user.email hal-9000@changemyworldnow.com
+        git config --global user.name "wercker"
+        git fetch $GIT_REMOTE
+        git add composer.json CHANGELOG.md
+        git commit -m 'Version bump [ci skip]'
+        git push -f $GIT_REMOTE $WERCKER_GIT_BRANCH
     - script:
       name: Running Zend-Tool
-      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip"
+      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
     - s3sync:
+      name: Uploading package to Amazon S3
       key-id: $AWS_KEY
       key-secret: $AWS_SECRET
       bucket-url: $AWS_BUCKET_URL
-      source-dir: data/build/artifact
+      source-dir: data/build/artifact/
     - github-create-release:
+      name: Creating release on github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
-      draft: $DRAFT
+      title: $VERSION
     - github-upload-asset:
+      name: Adding build artifact to tag
       token: $MC_GITHUB_TOKEN
+      tag: $VERSION
       file: data/build/artifact/platform-api-$VERSION.zip
-      filename: $PACKAGE.zip
+      filename: platform-api-$VERSION.zip
