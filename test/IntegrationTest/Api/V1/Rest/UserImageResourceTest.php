@@ -79,22 +79,17 @@ class UserImageResourceTest extends TestCase
      */
     public function testItShouldFetchPendingImage()
     {
-        $this->markTestIncomplete("should be pending image but returns approved image");
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser('other_principal');
 
-        $this->dispatch('/user/english_student/image');
+        $this->dispatch('/user/other_principal/image');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.user-image');
         $this->assertControllerName('api\v1\rest\userimage\controller');
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
-        $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $body['image_id']);
-        $this->assertEquals(
-            'https://res.cloudinary.com/changemyworldnow/image/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg',
-            $body['url']
-        );
+        $this->assertEquals('profiles/qwertyuiop', $body['image_id']);
     }
 
     /**
