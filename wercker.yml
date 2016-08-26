@@ -64,5 +64,6 @@ deploy:
       draft: $DRAFT
     - github-upload-asset:
       token: $MC_GITHUB_TOKEN
+      tag: $VERSION
       file: data/build/artifact/platform-api-$VERSION.zip
       filename: $PACKAGE.zip
