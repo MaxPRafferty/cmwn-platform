@@ -100,6 +100,12 @@ return [
             'api.rest.skribble-notify' => [
                 'POST' => 'skribble.notice',
             ],
+            'api.rest.flag'            => [
+                'GET'    => ['view.all.flagged.images', 'view.flagged.image'],
+                'POST'   => 'flag.image',
+                'PUT'    => 'edit.flag',
+                'DELETE' => 'delete.flag'
+            ],
         ],
     ],
 ];

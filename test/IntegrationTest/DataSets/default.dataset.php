@@ -469,5 +469,14 @@ return [
             'image_id' => 'profiles/dwtm7optf0qq62vcveef',
         ],
     ],
+    'image_flags'   => [
+        [
+            'flag_id' => 'asdf',
+            'flagger' => 'math_student',
+            'flaggee' => 'english_student',
+            'url'     => '/asdf',
+            'reason'  => 'inappropriate'
+        ]
+    ],
     'user_saves'    => [],
 ];
