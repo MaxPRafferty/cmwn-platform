@@ -1659,7 +1659,7 @@ return array(
                 'error_message' => 'Invalid Meta data',
             ),
             4 => array(
-                'required' => false,
+                'required' => true,
                 'validators' => array(
                     0 => array(
                         'name' => 'Application\\Utils\\TypeValidator',

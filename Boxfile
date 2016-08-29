@@ -9,8 +9,6 @@ global:
 
 build:
   before_exec:
-    - 'rm -rf puphet'
-    - 'rm -rf Vagrantfile'
     - 'rm -rf public/index.html'
     - 'rm -rf html'
   exec:

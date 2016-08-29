@@ -49,7 +49,10 @@ class PermController extends AbstractConsoleController implements RbacAwareInter
         }
 
         $table->setDecorator(new Csv());
-        file_put_contents($csvString, $table->__toString());
+        $perms = preg_replace('/( {2,}),/', ',', $table->__toString());
+        $perms = preg_replace('/,,/', '', $perms);
+        $perms = preg_replace('/^,|\n,/', PHP_EOL, $perms);
+        file_put_contents($csvString, $perms);
         return $this->getResponse();
     }
 }

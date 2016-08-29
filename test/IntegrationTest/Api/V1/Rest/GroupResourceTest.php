@@ -215,11 +215,12 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @dataProvider adultDataProvider
      */
-    public function testItShouldReturnGroupData()
+    public function testItShouldReturnGroupDataForAdults($adult)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser($adult);
 
         $this->dispatch('/group/school');
         $this->assertMatchedRouteName('api.rest.group');
@@ -232,6 +233,21 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('school', $body['group_id']);
         $this->assertEquals('district', $body['organization_id']);
         $this->assertEquals('Gina\'s School', $body['title']);
+    }
+
+    /**
+     * @test
+     * @dataProvider childDataProvider
+     */
+    public function testItShouldReturnDenyGroupDataForChildren($child)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($child);
+
+        $this->dispatch('/group/school');
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(403);
     }
 
     /**
@@ -314,8 +330,9 @@ class GroupResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket GAME-932
      */
-    public function testItShouldNotCreateGroupWithInvalidType()
+    public function testItNotShouldCreateGroupWhenTheTypeIsMissing()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
@@ -324,13 +341,68 @@ class GroupResourceTest extends TestCase
             'organization_id' => 'district',
             'title'           => 'Joni School',
             'description'     => 'this is new school',
-            'type'            => 'not-real',
             'meta'            => ['code' => 'test'],
         ];
         $this->dispatch('/group', 'POST', $postData);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
         $this->assertResponseStatusCode(422);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertEquals(
+            [
+                'validation_messages' => [
+                    'type' => [
+                        0 => 'Invalid group type',
+                    ],
+                ],
+                'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title'               => 'Unprocessable Entity',
+                'status'              => 422,
+                'detail'              => 'Failed Validation',
+            ],
+            $body,
+            'POST to group/ failed to return correct error messages with invalid type'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCreateGroupWithInvalidData()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+
+        $this->dispatch('/group', 'POST', []);
+        $this->assertMatchedRouteName('api.rest.group');
+        $this->assertControllerName('api\v1\rest\group\controller');
+        $this->assertResponseStatusCode(422);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertEquals(
+            [
+                'validation_messages' => [
+                    'type'            => [
+                        0 => 'Invalid group type',
+                    ],
+                    'organization_id' => [
+                        0 => 'Invalid Organization or not found'
+                    ],
+                    'title'           => [
+                        0 => 'Invalid Title'
+                    ],
+                    'description'     => [
+                        0 => 'Invalid Description'
+                    ],
+                ],
+                'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                'title'               => 'Unprocessable Entity',
+                'status'              => 422,
+                'detail'              => 'Failed Validation',
+            ],
+            $body,
+            'POST to group/ failed to return correct error messages with empty data'
+        );
     }
 
     /**
@@ -577,6 +649,42 @@ class GroupResourceTest extends TestCase
             'English Teacher' => [
                 'english_teacher',
                 403,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function childDataProvider()
+    {
+        return [
+            'English Student' => [
+                'english_student',
+            ],
+            'Math Student'    => [
+                'math_student',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function adultDataProvider()
+    {
+        return [
+            'English Teacher' => [
+                'english_teacher',
+            ],
+            'Math Teacher'    => [
+                'math_teacher',
+            ],
+            'Principal'       => [
+                'principal',
+            ],
+            'Super'           => [
+                'super_user',
             ],
         ];
     }

@@ -64,6 +64,7 @@ return [
             'external_id'     => null,
             'parent_id'       => null,
             'depth'           => '0',
+            'network_id'      => 'school',
         ],
         [
             'group_id'        => 'school',
@@ -80,6 +81,7 @@ return [
             'external_id'     => null,
             'parent_id'       => null,
             'depth'           => '0',
+            'network_id'      => 'school',
         ],
         [
             'group_id'        => 'english',
@@ -96,6 +98,7 @@ return [
             'external_id'     => null,
             'parent_id'       => 'school',
             'depth'           => '1',
+            'network_id'      => 'school',
         ],
         [
             'group_id'        => 'math',
@@ -112,6 +115,7 @@ return [
             'external_id'     => null,
             'parent_id'       => 'school',
             'depth'           => '1',
+            'network_id'      => 'school',
         ],
         [
             'group_id'        => 'other_math',
@@ -128,6 +132,7 @@ return [
             'external_id'     => null,
             'parent_id'       => 'other_school',
             'depth'           => '1',
+            'network_id'      => 'other_school',
         ],
     ],
     'images'        => [
