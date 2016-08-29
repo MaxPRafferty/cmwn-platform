@@ -307,7 +307,6 @@ return [
                     'edit.user.child',
                     'pick.username',
                     'save.game',
-                    'skribble.notice',
                     'update.password',
                     'update.skribble',
                     'view.flip',
