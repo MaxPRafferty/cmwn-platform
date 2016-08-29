@@ -45,7 +45,6 @@ deploy:
         export PACKAGE="$(echo "platform-api-$VERSION-$(git rev-parse --short HEAD)")"
         export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
         echo "Creating package $PACKAGE for verson: $VERSION"
-        if [ $DRAFT = 'true' ]; then echo "Its a draft"; else echo "This is not a draft"; fi
         mkdir -p data/build/artifact
     - script:
       name: Running Zend-Tool
@@ -60,7 +59,6 @@ deploy:
       name: Creating release on github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
-      draft: $DRAFT
     - github-upload-asset:
       name: Uploading build to github
       token: $MC_GITHUB_TOKEN
