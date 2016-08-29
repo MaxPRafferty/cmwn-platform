@@ -2,7 +2,7 @@
 // @@codingStandardsIgnoreStart
 use Phinx\Migration\AbstractMigration;
 
-class GroupParentId extends AbstractMigration
+class AddNormalizedColumnAndUniqueUsername extends AbstractMigration
 {
     /**
      * Change Method.
@@ -27,16 +27,11 @@ class GroupParentId extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('groups', ['id' => false, 'primary_key' => ['group_id']]);
-        $table->addColumn('parent_id', 'string', ['null' => true])
-            ->update();
-
-        $table->addForeignKey(
-            'parent_id',
-            'groups',
-            'group_id',
-            ['delete' => 'SET_NULL', 'update'=> 'NO_ACTION']
-        )
+        $table = $this->table('users', ['id' => false, 'primary_key' => ['user_id']]);
+        $table
+            ->addColumn('normalized_username', 'string', ['null' => true])
+            ->addIndex(['username'], ['unique' => true])
+            ->addIndex(['normalized_username'], ['unique' => true])
             ->update();
     }
 }

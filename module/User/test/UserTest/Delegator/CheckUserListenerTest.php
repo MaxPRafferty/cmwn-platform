@@ -65,7 +65,8 @@ class CheckUserListenerTest extends TestCase
                 $expectedPredicate = new PredicateSet([
                     new PredicateSet([
                         new Operator('email', Operator::OP_EQ, 'chuck@manchuck.com'),
-                        new Operator('username', Operator::OP_EQ, 'manchuck')
+                        new Operator('username', Operator::OP_EQ, 'manchuck'),
+                        new Operator('normalized_username', Operator::OP_EQ, 'manchuck')
                     ], PredicateSet::OP_OR),
 
                     new Operator('user_id', Operator::OP_NE, md5('foobar'))
@@ -101,7 +102,8 @@ class CheckUserListenerTest extends TestCase
                 $expectedPredicate = new PredicateSet([
                     new PredicateSet([
                         new Operator('email', Operator::OP_EQ, 'chuck@manchuck.com'),
-                        new Operator('username', Operator::OP_EQ, 'manchuck')
+                        new Operator('username', Operator::OP_EQ, 'manchuck'),
+                        new Operator('normalized_username', Operator::OP_EQ, 'manchuck')
                     ], PredicateSet::OP_OR),
 
                     new Operator('user_id', Operator::OP_NE, md5('foobar'))

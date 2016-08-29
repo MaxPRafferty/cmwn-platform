@@ -15,11 +15,13 @@ return array(
         9 => 'Api\\Listeners\\UserHalLinksListener',
         10 => 'Api\\Listeners\\TemplateLinkListener',
         11 => 'Api\\Listeners\\GameRouteListener',
+        12 => 'Api\\Listeners\\UserParamListener'
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
             'Api\\Listeners\\TemplateLinkListener' => 'Api\\Listeners\\TemplateLinkListener',
+            'Api\\Listeners\\UserParamListener' => 'Api\\Listeners\\UserParamListener',
         ),
         'factories' => array(
             'Api\\Listeners\\UserHalLinksListener' => 'Api\\Factory\\UserHalLinksListenerFactory',
@@ -1469,7 +1471,12 @@ return array(
             ),
             6 => array(
                 'required' => false,
-                'validators' => array(),
+                'validators' => array(
+                    0 => array (
+                        'name' => 'User\\UpdateUsernameValidator',
+                        'options' => array(),
+                    ),
+                ),
                 'filters' => array(),
                 'name' => 'username',
                 'description' => 'Users name',
@@ -1480,6 +1487,10 @@ return array(
                 'validators' => array(
                     0 => array(
                         'name' => 'Zend\\Validator\\EmailAddress',
+                        'options' => array(),
+                    ),
+                    1 => array (
+                        'name' => 'User\\UpdateEmailValidator',
                         'options' => array(),
                     ),
                 ),
