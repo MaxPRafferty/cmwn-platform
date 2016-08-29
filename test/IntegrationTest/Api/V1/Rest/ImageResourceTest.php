@@ -83,6 +83,7 @@ class ImageResourceTest extends TestCase
         $image = $this->imageService->fetchImageForUser($userId, false);
         $this->assertInstanceOf(Image::class, $image);
         $this->assertEquals('foobar', $image->getImageId());
+        $this->assertEquals(0, $image->getModerationStatus());
     }
 
     /**
@@ -93,7 +94,6 @@ class ImageResourceTest extends TestCase
         return [
             'Math Student'    => ['user_id' => 'math_student'],
             'English Teacher' => ['user_id' => 'english_teacher'],
-            'Principal'       => ['user_id' => 'principal'],
             'Super'           => ['user_id' => 'super_user'],
         ];
     }

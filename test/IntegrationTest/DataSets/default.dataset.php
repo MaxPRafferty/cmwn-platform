@@ -184,9 +184,18 @@ return [
             'image_id'          => 'profiles/qwertyuiop',
             'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
                 '/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
-            'moderation_status' => '-1',
-            'created'           => '2016-06-14 00:07:53',
-            'updated'           => '2016-04-14 00:07:53',
+            'moderation_status' => '0',
+            'created'           => '2016-04-14 00:07:53',
+            'updated'           => '2016-06-14 00:07:53',
+            'type'              => null,
+        ],
+        [
+            'image_id'          => 'profiles/principal',
+            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
+                '/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
+            'moderation_status' => '1',
+            'created'           => '2016-04-14 00:07:53',
+            'updated'           => '2016-06-14 00:07:53',
             'type'              => null,
         ],
     ],
@@ -480,6 +489,10 @@ return [
         [
             'user_id'  => 'other_principal',
             'image_id' => 'profiles/qwertyuiop',
+        ],
+        [
+            'user_id'  => 'principal',
+            'image_id' => 'profiles/principal',
         ],
     ],
     'user_saves'    => [],
