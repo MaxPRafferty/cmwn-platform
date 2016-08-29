@@ -77,7 +77,7 @@ class UserImageResourceTest extends TestCase
      * @test
      * @ticket CORE-894
      */
-    public function testItShouldFetchPendingImage()
+    public function testItShouldFetchPendingImageForMeUser()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('other_principal');
@@ -90,6 +90,24 @@ class UserImageResourceTest extends TestCase
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
         $this->assertEquals('profiles/qwertyuiop', $body['image_id']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchApprovedImageForOtherUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('principal');
+
+        $this->dispatch('/user/english_student/image');
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user-image');
+        $this->assertControllerName('api\v1\rest\userimage\controller');
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('image_id', $body);
+        $this->assertArrayHasKey('url', $body);
+        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $body['image_id']);
     }
 
     /**
