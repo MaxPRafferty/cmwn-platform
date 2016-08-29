@@ -95,6 +95,7 @@ class UserImageResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-954
      */
     public function testItShouldFetchApprovedImageForOtherUser()
     {
