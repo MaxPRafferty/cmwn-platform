@@ -39,30 +39,30 @@ build:
 deploy:
   steps:
     - script:
-      name: Setting version number
-      code: export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
+      name: Setting VERSION, PACKAGE and DRAFT
+      code: |-
+        export VERSION="$(cat composer.json | php -r 'echo json_decode(file_get_contents("php://stdin"))->version;')"
+        export PACKAGE="$(echo -n "platform-api-$VERSION-$(git rev-parse --short HEAD)")"
+        export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
     - script:
       name: Creating package directory
       code: mkdir -p data/build/artifact
     - script:
-      name: On Production?
-      code: export DRAFT="$(if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "true" ; else echo -n "false" ; fi)"
-    - script:
-      name: Creating package name
-      code: export PACKAGE="$(echo -n "platform-api-$VERSION" && if [ "$WERCKER_GIT_BRANCH" != "master" ]; then echo -n "-$WERCKER_GIT_BRANCH" ; fi)"
-    - script:
       name: Running Zend-Tool
       code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
     - s3sync:
+      name: Uploading package to Amazon S3
       key-id: $AWS_KEY
       key-secret: $AWS_SECRET
       bucket-url: $AWS_BUCKET_URL
       source-dir: data/build/artifact/
     - github-create-release:
+      name: Creating release on github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
       draft: $DRAFT
     - github-upload-asset:
+      name: Uploading build to github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
       file: data/build/artifact/platform-api-$VERSION.zip
