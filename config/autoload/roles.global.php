@@ -311,6 +311,7 @@ return [
                     'update.password',
                     'update.skribble',
                     'view.flip',
+                    'view.games',
                     'view.profile.image',
                     'view.skribble',
                     'view.user.child',
