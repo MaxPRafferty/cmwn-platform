@@ -51,9 +51,7 @@ class FeedResourceTest extends TestCase
         $feeds = $body['_embedded']['feed'];
 
         foreach ($feeds as $feed) {
-            if ($feed['type']!=='game') {
-                continue;
-            }
+            $this->assertEquals('game', $feed['type']);
             $this->assertEquals(null, $feed['sender']);
         }
     }
@@ -75,9 +73,6 @@ class FeedResourceTest extends TestCase
         $feeds = $body['_embedded']['feed'];
 
         foreach ($feeds as $feed) {
-            if ($feed['type']!=='game') {
-                continue;
-            }
             $this->assertArrayHasKey('_links', $feed);
             $this->assertArrayHasKey('games', $feed['_links']);
         }
