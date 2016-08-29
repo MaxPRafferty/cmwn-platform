@@ -7,6 +7,7 @@ use Api\Links\FriendLink;
 use Api\Links\GameLink;
 use Api\Links\PasswordLink;
 use Api\Links\SaveGameLink;
+use Api\Links\SkribbleLink;
 use Api\Links\UserLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
@@ -125,6 +126,10 @@ class MeEntity extends UserEntity implements TokenEntityInterface
 
         if (!$links->has('friend') && !empty($this->getUserId())) {
             $links->add(new FriendLink($this->getUserId()));
+        }
+
+        if (!$links->has('skribbles') && !empty($this->getUserId())) {
+            $links->add(new SkribbleLink($this->getUserId()));
         }
     }
 
