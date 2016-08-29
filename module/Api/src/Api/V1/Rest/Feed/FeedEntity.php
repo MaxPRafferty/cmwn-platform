@@ -5,12 +5,13 @@ namespace Api\V1\Rest\Feed;
 use Api\FeedEntityInterface;
 use Api\Links\GameLink;
 use Game\Game;
+use Game\GameInterface;
 
 /**
  * Class FeedEntity
  * @package Api\V1\Rest\Feed
  */
-class FeedEntity extends Game implements FeedEntityInterface
+class FeedEntity extends Game implements FeedEntityInterface, GameInterface
 {
     /**
      * @inheritdoc
