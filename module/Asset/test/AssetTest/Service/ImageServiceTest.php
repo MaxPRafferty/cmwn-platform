@@ -145,7 +145,7 @@ class ImageServiceTest extends TestCase
         ];
 
         $image   = new Image($imageData);
-        $image->setModerationStatus(1);
+        $image->setModerationStatus(-1);
         $result = new ResultSet();
         $result->initialize([$imageData]);
         $this->tableGateway->shouldReceive('select')
