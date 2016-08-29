@@ -57,7 +57,8 @@ class SecurityGroupService implements SecurityGroupServiceInterface
             $requestedUser = $this->userService->fetchUser($requestedUser);
         }
 
-        // Same user FTW!
+        // TODO Remove this from here.  getRoleFromDb will not make the call if the
+        // user ids match
         if ($activeUser->getUserId() === $requestedUser->getUserId()) {
             return 'me.' . strtolower($activeUser->getType());
         }
