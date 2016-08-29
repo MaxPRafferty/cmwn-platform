@@ -293,12 +293,10 @@ class FriendServiceTest extends TestCase
     {
         $result = new ResultSet();
         $result->initialize([]);
+        $this->setExpectedException(NotFriendsException::class);
         $this->tableGateway
             ->shouldReceive('selectWith')
             ->andReturn($result);
-        $this->assertEquals(
-            $this->friendService->fetchFriendStatusForUser($this->user, $this->friend),
-            FriendInterface::CAN_FRIEND
-        );
+        $this->friendService->fetchFriendStatusForUser($this->user, $this->friend);
     }
 }
