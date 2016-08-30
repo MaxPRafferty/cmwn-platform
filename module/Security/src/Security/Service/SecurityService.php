@@ -119,16 +119,12 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     }
 
     /**
-     * Saves the temp code to a user
-     *
-     * @param $code
-     * @param UserInterface $user
-     * @return bool
+     * @inheritdoc
      */
-    public function saveCodeToUser($code, $user)
+    public function saveCodeToUser($code, $user, $days = 1)
     {
         $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $expires = new \DateTime('+3 days');
+        $expires = new \DateTime(sprintf('+%d days', abs($days)));
         $this->gateway->update(
             ['code'    => $code, 'code_expires' => (string) $expires->format("Y-m-d H:i:s")],
             ['user_id' => $userId]
