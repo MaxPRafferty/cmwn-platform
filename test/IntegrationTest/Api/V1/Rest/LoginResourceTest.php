@@ -10,13 +10,13 @@ use Zend\Json\Json;
 
 /**
  * Test LoginResourceTest
+ *
  * @group DB
  * @group IntegrationTest
  * @group API
  * @group User
  * @group Login
  */
-
 class LoginResourceTest extends TestCase
 {
     /**
@@ -38,6 +38,7 @@ class LoginResourceTest extends TestCase
     public function getDataSet()
     {
         $data = include __DIR__ . '/../../../DataSets/login.dataset.php';
+
         return new ArrayDataSet($data);
     }
 
@@ -49,7 +50,7 @@ class LoginResourceTest extends TestCase
     {
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => $login, 'password' => 'business']
         );
         $this->assertMatchedRouteName('api.rest.login');
@@ -64,7 +65,7 @@ class LoginResourceTest extends TestCase
     {
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => 'english_student', 'password' => 'foo']
         );
         $this->assertResponseStatusCode(401);
@@ -77,7 +78,7 @@ class LoginResourceTest extends TestCase
     {
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => 'foo', 'password' => 'foo']
         );
         $this->assertResponseStatusCode(401);
@@ -91,11 +92,11 @@ class LoginResourceTest extends TestCase
         $this->securityService->saveCodeToUser('xyz', 'english_teacher');
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => 'english_teacher', 'password' => 'xyz']
         );
         $this->assertResponseStatusCode(401);
-        
+
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('detail', $body);
         $this->assertEquals('RESET_PASSWORD', $body['detail']);
@@ -109,7 +110,7 @@ class LoginResourceTest extends TestCase
         $this->securityService->saveCodeToUser('xyz', 'english_teacher');
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => 'english_teacher', 'password' => 'business']
         );
         $this->assertResponseStatusCode(201);
@@ -125,7 +126,7 @@ class LoginResourceTest extends TestCase
         $this->securityService->saveCodeToUser('xyz', 'english_teacher');
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => 'english_teacher', 'password' => 'foo']
         );
         $this->assertResponseStatusCode(401);
@@ -142,7 +143,7 @@ class LoginResourceTest extends TestCase
     {
         $this->dispatch(
             '/login',
-            POST,
+            'POST',
             ['username' => 'math_student', 'password' => 'pqr']
         );
         $this->assertResponseStatusCode(401);
@@ -164,7 +165,6 @@ class LoginResourceTest extends TestCase
             1 => [
                 'user' => 'english_student@ginasink.com',
             ],
-
         ];
     }
 }
