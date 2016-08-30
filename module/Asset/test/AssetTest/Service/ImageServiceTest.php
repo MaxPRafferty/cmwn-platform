@@ -145,6 +145,7 @@ class ImageServiceTest extends TestCase
         ];
 
         $image   = new Image($imageData);
+        $image->setModerationStatus(-1);
         $result = new ResultSet();
         $result->initialize([$imageData]);
         $this->tableGateway->shouldReceive('select')
@@ -157,7 +158,7 @@ class ImageServiceTest extends TestCase
                 $expected = $image->getArrayCopy();
                 unset($expected['is_moderated']);
                 unset($expected['deleted']);
-                $expected['moderation_status'] = 1;
+                $expected['moderation_status'] = -1;
                 $this->assertArrayNotHasKey('deleted', $data);
 
                 $this->assertEquals($expected, $data);

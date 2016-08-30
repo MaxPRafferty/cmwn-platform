@@ -130,6 +130,35 @@ class UserServiceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldFetchUserByUsername()
+    {
+        $user = $this->userService->fetchUserByUsername('english_student');
+
+        $this->assertInstanceOf(Child::class, $user, 'Child was not returned from fetch');
+
+        $expectedData = [
+            'user_id'      => 'english_student',
+            'username'     => 'english_student',
+            'email'        => 'english_student@ginasink.com',
+            'type'         => 'CHILD',
+            'first_name'   => 'John',
+            'middle_name'  => 'D',
+            'last_name'    => 'Yoder',
+            'gender'       => 'M',
+            'meta'         => [],
+            'birthdate'    => '2016-04-15 11:58:15',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+            'deleted'      => null,
+            'external_id'  => '8675309',
+        ];
+
+        $this->assertEquals($expectedData, $user->getArrayCopy(), 'Data was not set correctly from the database');
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldThrowExceptionWhenUserNotFound()
     {
         $this->setExpectedException(NotFoundException::class);

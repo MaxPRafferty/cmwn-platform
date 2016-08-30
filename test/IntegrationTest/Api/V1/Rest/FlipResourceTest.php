@@ -124,6 +124,15 @@ class FlipResourceTest extends TestCase
             'Super User' => [
                 'super_user'
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidUserDataProvider()
+    {
+        return [
             'English Teacher' => [
                 'english_teacher'
             ],

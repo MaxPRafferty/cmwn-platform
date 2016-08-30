@@ -98,6 +98,8 @@ class UserServiceDelegatorTest extends TestCase
             ->andReturn(true)
             ->once();
 
+        $this->userService->shouldReceive('fetchAll')
+            ->once();
 
         $this->delegator->createUser($this->user);
 
@@ -160,6 +162,8 @@ class UserServiceDelegatorTest extends TestCase
         $this->userService->shouldReceive('createUser')
             ->with($this->user)
             ->never();
+        $this->userService->shouldReceive('fetchAll')
+            ->once();
 
         $this->delegator->getEventManager()->attach('save.new.user', function (Event $event) {
             $event->stopPropagation(true);
@@ -303,6 +307,40 @@ class UserServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.user.email.post',
                 'target' => $this->userService,
                 'params' => ['user' => $this->user, 'email' => $this->user->getEmail()]
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchUserByUsername()
+    {
+        $this->userService->shouldReceive('fetchUserByUsername')
+            ->with($this->user->getUserName())
+            ->andReturn($this->user)
+            ->once();
+
+        $this->assertSame(
+            $this->user,
+            $this->delegator->fetchUserByUsername($this->user->getUserName())
+        );
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.username',
+                'target' => $this->userService,
+                'params' => ['username' => $this->user->getUserName()]
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.username.post',
+                'target' => $this->userService,
+                'params' => ['user' => $this->user, 'username' => $this->user->getUserName()]
             ],
             $this->calledEvents[1]
         );

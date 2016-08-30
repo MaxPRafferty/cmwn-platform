@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+
     "hash": "2b3edb7b6f59dfb72291600ca7538bba",
     "content-hash": "c6a01755e1d9d236570e1c647b0895e5",
     "packages": [
@@ -6889,6 +6890,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "rollbar/rollbar": 20,
+        "zfcampus/zf-content-validation": 20,
         "zendframework/zftool": 20,
         "zendframework/zend-developer-tools": 20
     },

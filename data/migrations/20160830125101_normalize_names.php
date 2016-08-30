@@ -1,8 +1,8 @@
 <?php
-// @@codingStandardsIgnoreStart
+
 use Phinx\Migration\AbstractMigration;
 
-class GroupParentId extends AbstractMigration
+class NormalizeNames extends AbstractMigration
 {
     /**
      * Change Method.
@@ -27,16 +27,10 @@ class GroupParentId extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('groups', ['id' => false, 'primary_key' => ['group_id']]);
-        $table->addColumn('parent_id', 'string', ['null' => true])
-            ->update();
-
-        $table->addForeignKey(
-            'parent_id',
-            'groups',
-            'group_id',
-            ['delete' => 'SET_NULL', 'update'=> 'NO_ACTION']
-        )
-            ->update();
+        $this->execute(
+            'UPDATE users ' .
+            'SET normalized_username = REPLACE(username, \'-\', \'\') ' .
+            'WHERE type = \'CHILD\' AND normalized_username IS NULL'
+        );
     }
 }
