@@ -10,6 +10,8 @@ use Import\Importer\Nyc\Parser\DoeParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use IntegrationTest\TestHelper;
+use Security\Authorization\Rbac;
+use Security\Authorization\RbacAwareInterface;
 use Security\Service\SecurityServiceInterface;
 use User\Service\UserServiceInterface;
 
@@ -42,6 +44,11 @@ class NycDoeTestImporterSetup
      * @var SecurityServiceInterface
      */
     protected static $securityService;
+
+    /**
+     * @var Rbac
+     */
+    protected static $rbac;
 
     /**
      * @return UserServiceInterface
@@ -92,6 +99,18 @@ class NycDoeTestImporterSetup
     }
 
     /**
+     * @return Rbac
+     */
+    public static function getRbac()
+    {
+        if (static::$rbac === null) {
+            static::$rbac = TestHelper::getServiceManager()->get(Rbac::class);
+        }
+
+        return static::$rbac;
+    }
+
+    /**
      * @return StudentRegistry
      */
     public static function getStudentRegistry()
@@ -121,7 +140,7 @@ class NycDoeTestImporterSetup
     public static function getParser()
     {
         DoeParser::clear();
-        return new DoeParser(
+        $parser = new DoeParser(
             static::getClassroomRegistry(),
             static::getTeacherRegistry(),
             static::getStudentRegistry(),
@@ -129,6 +148,9 @@ class NycDoeTestImporterSetup
             static::getGroupService(),
             static::getSecurityService()
         );
+
+        $parser->setRbac(static::getRbac());
+        return $parser;
     }
 
     /**

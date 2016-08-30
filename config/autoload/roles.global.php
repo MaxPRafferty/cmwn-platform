@@ -156,36 +156,6 @@ return [
                 ],
             ],
 
-            // deprecated role
-            'group_admin.adult' => [
-                'entity_bits' => [
-                    'group.school' => Rbac::SCOPE_UPDATE,
-                    'group.class'  => Rbac::SCOPE_UPDATE,
-                    'me'           => Rbac::SCOPE_UPDATE,
-                    'child'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
-                    'adult'        => Rbac::SCOPE_REMOVE,
-                ],
-                'permissions' => [
-                    'add.group.user',
-                    'child.code',
-                    'edit.group',
-                    'edit.user.child',
-                    'remove.group.user',
-                    'remove.user.adult',
-                    'remove.user.child',
-                    'view.group',
-                    'view.group.users',
-                    'view.org.users',
-                    'view.profile.image',
-                    'view.user.adult',
-                    'view.user.adult',
-                    'view.user.child',
-                    'view.user.child',
-                    'view.user.groups',
-                    'view.user.orgs',
-                ],
-            ],
-
             'principal.adult' => [
                 'entity_bits' => [
                     'group.school' => Rbac::SCOPE_UPDATE,
@@ -339,8 +309,7 @@ return [
                 ],
             ],
 
-            // todo make this into neighbor.child?
-            'child'    => [
+            'neighbor.child'    => [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
