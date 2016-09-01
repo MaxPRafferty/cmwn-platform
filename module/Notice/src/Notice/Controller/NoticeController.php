@@ -139,7 +139,6 @@ class NoticeController extends AbstractConsoleController implements LoggerAwareI
             }
             $this->getLogger()->notice("Sending email");
             $this->getMailService()->send();
-
         } catch (\Exception $processException) {
             $this->getLogger()->emerg(
                 sprintf('Error when trying to process: %s', $processException->getMessage()),
