@@ -93,6 +93,26 @@ class UserImageResourceTest extends TestCase
     }
 
     /**
+     * Test for reopened ticket CORE-957
+     * @test
+     * @ticket CORE-957
+     */
+    public function testItShouldFetchApprovedImageForMeUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('other_principal');
+
+        $this->dispatch('/user/other_principal/image');
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user-image');
+        $this->assertControllerName('api\v1\rest\userimage\controller');
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('image_id', $body);
+        $this->assertArrayHasKey('url', $body);
+        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $body['image_id']);
+    }
+
+    /**
      * @test
      * @ticket CORE-954
      */
