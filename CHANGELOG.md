@@ -1,3 +1,8 @@
+Version - 0.3.2
+----
+
+- b8596cc: Version bump [ci skip]
+
 Version - 0.3.1
 ----
 
