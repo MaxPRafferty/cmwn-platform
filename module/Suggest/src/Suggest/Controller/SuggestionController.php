@@ -4,16 +4,16 @@
 namespace Suggest\Controller;
 
 use Application\Utils\NoopLoggerAwareTrait;
-use AssetManager\Controller\ConsoleController;
-use Suggest\Engine\SuggestionEngine;
-use Zend\Log\Filter\Priority;
-use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
-use Zend\Log\Writer\Stream;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\Console\Simple;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Log\Logger;
+use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
 use Zend\Console\Request as ConsoleRequest;
+use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Log\Filter\Priority;
+use Zend\Log\Formatter\Simple;
+use Zend\Log\Writer\Stream;
+use Suggest\Engine\SuggestionEngine;
 
 /**
  * Class SuggestionController
@@ -52,15 +52,15 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
         $routeMatch = $event->getRouteMatch();
 
         $writer = new Stream(STDOUT);
-//        $writer->setFormatter(new Simple('%priorityName%: %message%'));
-//
-//        $priority = Logger::NOTICE;
-//        $verbose  = $routeMatch->getParam('verbose') || $routeMatch->getParam('v');
-//        $debug    = $routeMatch->getParam('debug') || $routeMatch->getParam('d');
-//
-//        $priority = $verbose ? Logger::INFO : $priority;
-//        $priority = $debug ? Logger::DEBUG : $priority;
-//        $writer->addFilter(new Priority(['priority' => $priority]));
+        $writer->setFormatter(new Simple('%priorityName%: %message%'));
+
+        $priority = Logger::NOTICE;
+        $verbose  = $routeMatch->getParam('verbose') || $routeMatch->getParam('v');
+        $debug    = $routeMatch->getParam('debug') || $routeMatch->getParam('d');
+
+        $priority = $verbose ? Logger::INFO : $priority;
+        $priority = $debug ? Logger::DEBUG : $priority;
+        $writer->addFilter(new Priority(['priority' => $priority]));
         $this->getLogger()->addWriter($writer);
 
         return parent::onDispatch($event);
@@ -90,8 +90,6 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
             $job->exchangeArray([
                 'user_id'         => $userId,
             ]);
-
-            //$job->setLogger($this->getLogger());
 
             $this->getLogger()->notice('Suggestion Engine configured.  Performing suggestions');
             $job->perform();

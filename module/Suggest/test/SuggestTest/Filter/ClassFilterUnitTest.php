@@ -64,12 +64,6 @@ class ClassFilterUnitTest extends TestCase
             ->andReturn([$suggest]);
         $container = $this->classFilter->getSuggestions($user);
 
-        $actualId = [];
-        foreach ($container as $suggestion) {
-            $actualId[] = $suggestion->getUserId();
-        }
-
-        $expected = ["english_teacher"];
-        $this->assertEquals($actualId, $expected);
+        $this->assertTrue($container->offsetExists('english_teacher'));
     }
 }

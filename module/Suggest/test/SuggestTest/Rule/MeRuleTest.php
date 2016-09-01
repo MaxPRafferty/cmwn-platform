@@ -63,11 +63,7 @@ class MeRuleTest extends \PHPUnit_Framework_TestCase
     public function testItShouldRemoveSuggestionIfMeUser()
     {
         $this->meRule->apply($this->container, $this->user);
-        $expectedIds = ['english_teacher'];
-        $actualIds = [];
-        foreach ($this->container as $suggestion) {
-            $actualIds[] = $suggestion->getUserId();
-        }
-        $this->assertEquals($expectedIds, $actualIds);
+        $this->assertFalse($this->container->offsetExists($this->user->getUserId()));
+        $this->assertTrue($this->container->offsetExists('english_teacher'));
     }
 }
