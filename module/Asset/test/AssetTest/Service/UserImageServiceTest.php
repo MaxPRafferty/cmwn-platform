@@ -151,7 +151,6 @@ class UserImageServiceTest extends TestCase
 
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
-                $where->addPredicate(new Operator('i.moderation_status', '=', 0));
                 $select->where($where);
                 $select->order('i.created DESC');
 
