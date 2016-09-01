@@ -13,13 +13,8 @@ class SuggestionContainer extends \ArrayObject
      */
     public function merge(SuggestionContainer $mergeContainer)
     {
-        $mergeSuggestions = $mergeContainer->getArrayCopy();
-        $thisSuggestions = $this->getArrayCopy();
-        foreach ($mergeSuggestions as $userId => $suggestion) {
-            if (!array_key_exists($userId, $thisSuggestions)) {
-                $thisSuggestions[$userId] = $suggestion;
-            }
+        foreach ($mergeContainer->getIterator() as $userId => $suggestion) {
+            $this->offsetSet($userId, $suggestion);
         }
-        $this->exchangeArray($thisSuggestions);
     }
 }

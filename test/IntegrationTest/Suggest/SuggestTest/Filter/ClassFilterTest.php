@@ -57,12 +57,9 @@ class ClassFilterTest extends TestCase
     public function testItShouldSuggestAllTheUsersInTheClass()
     {
         $container = $this->classFilter->getSuggestions($this->user);
-        $actualIds = [];
-        foreach ($container as $suggestion) {
-            $actualIds[] = $suggestion->getUserId();
-        }
-        $expectedIds = ['english_teacher', 'other_student', 'english_student', 'math_student'];
-
-        $this->assertEquals($actualIds, $expectedIds);
+        $this->assertTrue($container->offsetExists('math_student'));
+        $this->assertTrue($container->offsetExists('english_student'));
+        $this->assertTrue($container->offsetExists('other_student'));
+        $this->assertTrue($container->offsetExists('english_teacher'));
     }
 }

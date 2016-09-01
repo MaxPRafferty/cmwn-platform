@@ -65,11 +65,6 @@ class TypeRuleUnitTest extends TestCase
     {
         $this->typeRule->apply($this->container, $this->user);
 
-        $expectedIds = ['math_student'];
-        $actualIds = [];
-        foreach ($this->container as $suggestion) {
-            $actualIds[] = $suggestion->getUserId();
-        }
-        $this->assertEquals($expectedIds, $actualIds);
+        $this->assertFalse($this->container->offsetExists('english_teacher'));
     }
 }

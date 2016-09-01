@@ -78,12 +78,7 @@ class FriendRuleUnitTest extends TestCase
             ->once();
         $this->friendRule->apply($this->container, $this->user);
 
-        $expectedIds = [];
-        $actualIds = [];
-        foreach ($this->container as $suggestion) {
-            $actualIds[] = $suggestion->getUserId();
-        }
-        $this->assertEquals($expectedIds, $actualIds);
+        $this->assertFalse($this->container->offsetExists('math_student'));
     }
 
     /**
@@ -96,11 +91,6 @@ class FriendRuleUnitTest extends TestCase
             ->once();
         $this->friendRule->apply($this->container, $this->user);
 
-        $expectedIds = ['math_student'];
-        $actualIds = [];
-        foreach ($this->container as $suggestion) {
-            $actualIds[] = $suggestion->getUserId();
-        }
-        $this->assertEquals($expectedIds, $actualIds);
+        $this->assertTrue($this->container->offsetExists('math_student'));
     }
 }
