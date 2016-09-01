@@ -169,6 +169,7 @@ class TokenResourceTest extends TestCase
                     'password',
                     'profile',
                     'self',
+                    'skribbles',
                     'suggested_friends',
                     'user',
                     'user_flip',
