@@ -70,6 +70,7 @@ class UserImageService implements UserImageServiceInterface
 
         $where = new Where();
         $where->addPredicate(new Operator('u.user_id', '=', $userId));
+        $where->addPredicate(new Operator('i.moderation_status', Operator::OP_NE, -1));
         $status = $approvedOnly === true ? 1 : 0;
 
         if ($approvedOnly) {

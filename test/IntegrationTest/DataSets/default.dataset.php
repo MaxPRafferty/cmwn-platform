@@ -181,6 +181,15 @@ return [
             'type'              => null,
         ],
         [
+            'image_id'          => 'profiles',
+            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
+                '/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
+            'moderation_status' => '-1',
+            'created'           => '2016-05-14 00:07:53',
+            'updated'           => '2016-04-14 00:07:53',
+            'type'              => null,
+        ],
+        [
             'image_id'          => 'profiles/qwertyuiop',
             'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
                 '/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
@@ -489,6 +498,10 @@ return [
         [
             'user_id'  => 'english_student',
             'image_id' => 'profiles/principal',
+        ],
+        [
+            'user_id'  => 'english_student',
+            'image_id' => 'profiles',
         ],
         [
             'user_id'  => 'other_principal',
