@@ -51,8 +51,8 @@ return array(
             'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
             'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
             'Api\\V1\\Rest\\Friend\\FriendResource' => 'Api\\V1\\Rest\\Friend\\FriendResourceFactory',
-            'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
+            'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Reset\\ResetResource' => 'Api\\V1\\Rest\\Reset\\ResetResourceFactory',
             'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource' =>
                 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResourceFactory',
@@ -675,15 +675,18 @@ return array(
             'route_name' => 'api.rest.suggest',
             'route_identifier_name' => 'suggest_id',
             'collection_name' => 'suggest',
-            'entity_http_methods' => array(),
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
             'collection_http_methods' => array(
                 0 => 'GET',
+                1 => 'POST',
             ),
             'collection_query_whitelist' => array(),
             'page_size' => 25,
             'page_size_param' => 'per_page',
             'entity_class' => 'Api\\V1\\Rest\\Suggest\\SuggestEntity',
-            'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestCollection',
+            'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestionCollection',
             'service_name' => 'Suggest',
         ),
         'Api\\V1\\Rest\\Reset\\Controller' => array(
@@ -1048,11 +1051,11 @@ return array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
-            'Api\\V1\\Rest\\Friend\\Controller' => array(
+            'Api\\V1\\Rest\\Suggest\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
-            'Api\\V1\\Rest\\Suggest\\Controller' => array(
+            'Api\\V1\\Rest\\Friend\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1453,6 +1456,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Friend\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Friend\\Validator',
+        ),
+        'Api\\V1\\Rest\\Suggest\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Suggest\\Validator',
         ),
         'Api\\V1\\Rest\\Reset\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Reset\\Validator',
@@ -1898,6 +1904,7 @@ return array(
                 'description' => 'The user_id',
             ),
         ),
+        'Api\\V1\\Rest\\Suggest\\Validator' => array(),
         'Api\\V1\\Rest\\Reset\\Validator' => array(
             0 => array(
                 'required' => true,

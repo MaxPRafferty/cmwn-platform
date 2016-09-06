@@ -1,15 +1,15 @@
 <?php
 
-namespace Friend\Delegator;
+namespace Suggest\Delegator;
 
-use Friend\Service\SuggestedFriendService;
+use Suggest\Service\SuggestedService;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class SuggestedFriendServiceDelegatorFactory
  */
-class SuggestedFriendServiceDelegatorFactory implements DelegatorFactoryInterface
+class SuggestedServiceDelegatorFactory implements DelegatorFactoryInterface
 {
     /**
      * A factory that creates delegates of a given service
@@ -23,8 +23,8 @@ class SuggestedFriendServiceDelegatorFactory implements DelegatorFactoryInterfac
      */
     public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
     {
-        /** @var SuggestedFriendService $realService */
+        /** @var SuggestedService $realService */
         $realService = call_user_func($callback);
-        return new SuggestedFriendServiceDelegator($realService);
+        return new SuggestedServiceDelegator($realService);
     }
 }
