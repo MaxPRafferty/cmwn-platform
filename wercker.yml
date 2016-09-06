@@ -74,12 +74,9 @@ release:
       name: Creating release on github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
-<<<<<<< Updated upstream
-=======
     - github-upload-asset:
       name: Uploading build to github
       token: $MC_GITHUB_TOKEN
->>>>>>> Stashed changes
       title: $VERSION
     - github-upload-asset:
       name: Adding build artifact to tag
