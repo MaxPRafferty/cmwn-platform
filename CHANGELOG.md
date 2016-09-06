@@ -1,3 +1,9 @@
+Version - 0.3.4
+----
+
+- dcecef4: Version bump [ci skip]
+- d34c7a0: merge
+
 Version - 0.3.3
 ----
 
