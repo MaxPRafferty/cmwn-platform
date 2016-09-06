@@ -162,6 +162,7 @@ class TokenResourceTest extends TestCase
             'English Student' => [
                 'user'  => 'english_student',
                 'links' => [
+                    'feed',
                     'flip',
                     'friend',
                     'games',
