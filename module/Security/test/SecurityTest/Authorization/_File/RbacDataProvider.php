@@ -109,61 +109,6 @@ return [
         ],
     ],
 
-    // deprecated role
-    'Group Admin' => [
-        'role'    => 'group_admin.adult',
-        'allowed' => [
-            'add.group.user',
-            'child.code',
-            'edit.group',
-            'edit.user.child',
-            'remove.group.user',
-            'remove.user.adult',
-            'remove.user.child',
-            'view.group',
-            'view.group.users',
-            'view.org.users',
-            'view.profile.image',
-            'view.user.adult',
-            'view.user.child',
-            'view.user.groups',
-            'view.user.orgs',
-        ],
-
-        'denied' => [
-            'adult.code',
-            'attach.profile.image',
-            'can.friend',
-            'create.child.group',
-            'create.group',
-            'create.org',
-            'create.skribble',
-            'create.user',
-            'create.user.flip',
-            'delete.skribble',
-            'edit.org',
-            'edit.user.adult',
-            'import',
-            'pick.username',
-            'remove.child.group',
-            'remove.group',
-            'remove.org',
-            'save.game',
-            'skribble.notice',
-            'update.password',
-            'update.skribble',
-            'view.all.groups',
-            'view.all.orgs',
-            'view.all.users',
-            'view.child.groups',
-            'view.flip',
-            'view.games',
-            'view.org',
-            'view.skribble',
-            'view.user.flip',
-        ],
-    ],
-
     'Principal' => [
         'role'    => 'principal.adult',
         'allowed' => [
@@ -327,7 +272,7 @@ return [
         ],
     ],
 
-    'Neighbor' => [
+    'Neighbor Adult' => [
         'role'    => 'neighbor.adult',
         'allowed' => [
             'view.flip',
@@ -487,8 +432,8 @@ return [
         ],
     ],
 
-    'Child' => [
-        'role'    => 'child',
+    'Neighbor Child' => [
+        'role'    => 'neighbor.child',
         'allowed' => [
             'can.friend',
             'child.code',

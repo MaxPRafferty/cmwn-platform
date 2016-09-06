@@ -4,6 +4,8 @@ namespace Import\Importer\Nyc\Parser;
 
 use Import\ActionInterface;
 use Import\ParserInterface;
+use Security\Authorization\Rbac;
+use Security\Authorization\RbacAwareInterface;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerInterface;
@@ -11,12 +13,17 @@ use Zend\Log\LoggerInterface;
 /**
  * Class AbstractParser
  */
-abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
+abstract class AbstractParser implements ParserInterface, LoggerAwareInterface, RbacAwareInterface
 {
     /**
      * @var LoggerInterface
      */
     protected static $logger;
+
+    /**
+     * @var RbacAwareInterface
+     */
+    protected static $rbac;
 
     /**
      * @var string[] errors that were generated during processing
@@ -61,6 +68,16 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface
     public function setLogger(LoggerInterface $logger)
     {
         static::$logger = $logger;
+    }
+
+    public function setRbac(Rbac $rbac)
+    {
+        static::$rbac = $rbac;
+    }
+
+    public function getRbac()
+    {
+        return self::$rbac;
     }
 
     /**

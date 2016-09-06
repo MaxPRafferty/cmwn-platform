@@ -70,7 +70,8 @@ class ImageResource extends AbstractResourceListener implements LoggerAwareInter
         $image   = $this->service->fetchImage($imageId);
         $code    = $image::statusToNumber($this->getInputFilter()->getValue('moderation_status'));
 
-        $image->setModerated($code);
+        $image->setModerated(true);
+        $image->setModerationStatus($code);
         $this->service->saveImage($image);
         return new ApiProblem(200, 'Ok');
     }
