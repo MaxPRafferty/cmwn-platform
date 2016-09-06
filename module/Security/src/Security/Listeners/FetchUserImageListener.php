@@ -58,7 +58,7 @@ class FetchUserImageListener implements AuthenticationServiceAwareInterface
 
         $userId = $user instanceof UserInterface? $user->getUserId() : $user;
 
-        $approvedOnly = ($userId === $loggedIn->getUserId()) ? false : true;
+        $approvedOnly = ($userId !== $loggedIn->getUserId());
 
         $event->setParam('approved_only', $approvedOnly);
     }
