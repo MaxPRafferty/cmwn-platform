@@ -1,3 +1,8 @@
+Version - 0.2.2
+----
+
+- 8da541a: Added missing token for build file
+
 Version - 0.2.1
 ----
 
