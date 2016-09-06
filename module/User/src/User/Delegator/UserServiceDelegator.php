@@ -5,7 +5,6 @@ namespace User\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
-use Security\Listeners\UserUpdateListener;
 use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -177,6 +176,32 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             'fetch.user.external.post',
             $this->realService,
             ['external_id' => $externalId, 'user' => $return]
+        );
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
+     * Fetch user from db by username
+     *
+     * @param $username
+     * @return \User\Adult|\User\Child
+     * @throws NotFoundException
+     */
+    public function fetchUserByUsername($username)
+    {
+        $event    = new Event('fetch.user.username', $this->realService, ['username' => $username]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchUserByUsername($username);
+        $event    = new Event(
+            'fetch.user.username.post',
+            $this->realService,
+            ['username' => $username, 'user' => $return]
         );
         $this->getEventManager()->trigger($event);
         return $return;
