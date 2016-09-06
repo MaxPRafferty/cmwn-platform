@@ -1,3 +1,8 @@
+Version - 0.3.3
+----
+
+- d34c7a0: merge
+
 Version - 0.3.2
 ----
 
