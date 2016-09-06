@@ -126,4 +126,14 @@ interface ImageInterface
      * @return $this
      */
     public function setCreated($created);
+
+    /**
+     * @return integer
+     */
+    public function getModerationStatus();
+
+    /**
+     * @param integer $moderationStatus
+     */
+    public function setModerationStatus($moderationStatus);
 }
