@@ -1,3 +1,8 @@
+Version - 0.3.5
+----
+
+- 47fc7d3: Version bump [ci skip]
+
 Version - 0.3.4
 ----
 
