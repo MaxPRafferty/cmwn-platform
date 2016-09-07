@@ -2,15 +2,19 @@
 
 namespace Job\Service;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Job\Feature\JobQueueFeatureInterface;
 use Job\JobInterface;
+use Zend\Log\LoggerAwareInterface;
 
 /**
  * Class JobService
  * @codeCoverageIgnore
  */
-class JobService implements JobServiceInterface
+class JobService implements JobServiceInterface, LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     /**
      * @param $job
      * @return string
@@ -26,10 +30,14 @@ class JobService implements JobServiceInterface
      */
     public function sendJob(JobInterface $job)
     {
-        return \Resque::enqueue(
-            $this->getJobQueue($job),
-            get_class($job),
-            $job->getArrayCopy()
-        );
+        try {
+            return $returnJob =  \Resque::enqueue(
+                $this->getJobQueue($job),
+                get_class($job),
+                $job->getArrayCopy()
+            );
+        } catch (\Exception $redisException) {
+            $this->getLogger()->crit($redisException->getMessage());
+        }
     }
 }
