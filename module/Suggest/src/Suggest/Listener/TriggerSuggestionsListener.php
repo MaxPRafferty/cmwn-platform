@@ -1,7 +1,9 @@
 <?php
 
-namespace Security\Listeners;
+namespace Suggest\Listener;
 
+use Job\JobInterface;
+use Job\Service\JobServiceInterface;
 use Suggest\Engine\SuggestionEngine;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -25,12 +27,19 @@ class TriggerSuggestionsListener
     protected $suggestionEngine;
 
     /**
+     * @var JobServiceInterface
+     */
+    protected $jobService;
+
+    /**
      * TriggerSuggestionsListener constructor.
      * @param SuggestionEngine $suggestionEngine
+     * @param JobServiceInterface $jobService
      */
-    public function __construct($suggestionEngine)
+    public function __construct($suggestionEngine, $jobService)
     {
         $this->suggestionEngine = $suggestionEngine;
+        $this->jobService = $jobService;
     }
 
     /**
@@ -41,7 +50,7 @@ class TriggerSuggestionsListener
         $this->listeners[] = $events->attach(
             UserServiceInterface::class,
             'save.new.user.post',
-            [$this,'triggerSuggestions']
+            [$this,'triggerSuggestionJob']
         );
     }
 
@@ -56,19 +65,19 @@ class TriggerSuggestionsListener
     /**
      * @param Event $event
      */
-    public function triggerSuggestions(Event $event)
+    public function triggerSuggestionJob(Event $event)
     {
         $user = $event->getParam('user');
         if (!$user instanceof UserInterface) {
             return;
         }
 
-        if (!$this->suggestionEngine instanceof SuggestionEngine) {
+        if (!$this->suggestionEngine instanceof JobInterface) {
             return;
         }
 
         $this->suggestionEngine->exchangeArray(['user_id' => $user->getUserId()]);
 
-        $this->suggestionEngine->perform();
+        $this->jobService->sendJob($this->suggestionEngine);
     }
 }

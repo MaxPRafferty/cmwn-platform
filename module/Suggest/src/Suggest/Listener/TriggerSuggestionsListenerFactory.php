@@ -1,8 +1,8 @@
 <?php
 
-namespace Security\Factory;
+namespace Suggest\Listener;
 
-use Security\Listeners\TriggerSuggestionsListener;
+use Job\Service\JobServiceInterface;
 use Suggest\Engine\SuggestionEngine;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -19,7 +19,8 @@ class TriggerSuggestionsListenerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $suggestionEngine = $serviceLocator->get(SuggestionEngine::class);
+        $jobService = $serviceLocator->get(JobServiceInterface::class);
 
-        return new TriggerSuggestionsListener($suggestionEngine);
+        return new TriggerSuggestionsListener($suggestionEngine, $jobService);
     }
 }

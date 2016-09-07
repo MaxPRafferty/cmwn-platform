@@ -54,8 +54,6 @@ return [
                 \Security\Factory\GroupServiceListenerFactory::class,
             \Security\Listeners\OrgServiceListener::class           =>
                 \Security\Factory\OrgServiceListenerFactory::class,
-            \Security\Listeners\TriggerSuggestionsListener::class =>
-                \Security\Factory\TriggerSuggestionsListenerFactory::class,
 
             \Zend\Authentication\Adapter\Http::class =>
                 \Security\Factory\BasicAuthAdapterFactory::class,
@@ -94,7 +92,6 @@ return [
         \Security\Listeners\UpdateSession::class,
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
-        \Security\Listeners\TriggerSuggestionsListener::class,
     ],
 
     'console' => [
