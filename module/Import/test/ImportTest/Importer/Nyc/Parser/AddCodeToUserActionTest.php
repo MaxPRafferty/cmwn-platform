@@ -77,7 +77,7 @@ class AddCodeToUserActionTest extends TestCase
     {
         $this->securityService->shouldReceive('saveCodeToUser')
             ->once()
-            ->with('foo_bar', $this->user);
+            ->with('foo_bar', $this->user, 30);
 
         $action = new AddCodeToUserAction($this->userAware, $this->securityService, 'foo_bar');
         $this->assertEquals(2, $action->priority(), 'AddCodeToUserAction has wrong priority');
