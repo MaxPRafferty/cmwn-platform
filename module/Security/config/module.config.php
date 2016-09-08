@@ -49,6 +49,7 @@ return [
 
             \Security\Authorization\Assertions\UserAssertion::class =>
                 \Security\Factory\UserAssertionFactory::class,
+
             \Security\Listeners\GroupServiceListener::class         =>
                 \Security\Factory\GroupServiceListenerFactory::class,
             \Security\Listeners\OrgServiceListener::class           =>

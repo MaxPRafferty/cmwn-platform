@@ -2,6 +2,7 @@
 
 namespace Suggest\Engine;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Job\JobInterface;
 use Suggest\Filter\FilterCollection;
 use Suggest\InvalidArgumentException;
@@ -10,13 +11,16 @@ use Suggest\Service\SuggestedServiceInterface;
 use Suggest\SuggestionContainer;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
+use Zend\Log\LoggerAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class SuggestionEngine
  */
-class SuggestionEngine implements JobInterface
+class SuggestionEngine implements JobInterface, LoggerAwareInterface
 {
+    use NoopLoggerAwareTrait;
+
     const MAX_CAPACITY = 100;
     /**
      * @var ServiceLocatorInterface
