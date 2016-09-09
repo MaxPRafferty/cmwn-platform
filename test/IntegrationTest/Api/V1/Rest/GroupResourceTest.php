@@ -544,6 +544,7 @@ class GroupResourceTest extends TestCase
 
     /* @test
      * @ticket CORE-1062
+     * @ticket CORE-1124
      */
     public function testItShouldFetchChildGroups()
     {
@@ -563,7 +564,6 @@ class GroupResourceTest extends TestCase
 
         $expectedGroupIds = [
             'english',
-            'math',
         ];
         $actualGroupIds   = [];
 

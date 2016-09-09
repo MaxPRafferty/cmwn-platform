@@ -206,6 +206,8 @@ class UserGroupService implements UserGroupServiceInterface
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
+        $sql = new \Zend\Db\Sql\Sql($this->pivotTable->getAdapter());
+        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->pivotTable->getAdapter(),
