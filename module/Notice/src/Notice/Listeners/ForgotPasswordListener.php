@@ -5,10 +5,8 @@ namespace Notice\Listeners;
 use AcMailer\Service\MailServiceAwareTrait;
 use Forgot\Service\ForgotServiceInterface;
 use Notice\EmailModel\ForgotEmailModel;
-
 use Notice\NoticeInterface;
 use User\Child;
-
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -24,6 +22,20 @@ class ForgotPasswordListener implements NoticeInterface
      * @var \Zend\Stdlib\CallbackHandler[]
      */
     protected $listeners = [];
+
+    /**
+     * @var ForgotEmailModel
+     */
+    protected $emailModel;
+
+    /**
+     * ForgotPasswordListener constructor.
+     * @param ForgotEmailModel $emailModel
+     */
+    public function __construct($emailModel)
+    {
+        $this->emailModel = $emailModel;
+    }
 
     /**
      * @param SharedEventManagerInterface $manager
@@ -69,8 +81,10 @@ class ForgotPasswordListener implements NoticeInterface
 
         $this->getMailService()->getMessage()->setTo($user->getEmail());
         $this->getMailService()->getMessage()->setSubject('Reset Password Code');
+        $this->emailModel->setVariable('user', $user->getArrayCopy());
+        $this->emailModel->setVariable('code', $event->getParam('code'));
         $this->getMailService()->setTemplate(
-            new ForgotEmailModel($user, $event->getParam('code'))
+            $this->emailModel
         );
 
         $this->getMailService()->send();

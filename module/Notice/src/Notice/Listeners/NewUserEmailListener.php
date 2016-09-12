@@ -24,6 +24,20 @@ class NewUserEmailListener implements NoticeInterface
     protected $listeners = [];
 
     /**
+     * @var NewUserModel
+     */
+    protected $emailModel;
+
+    /**
+     * NewUserEmailListener constructor.
+     * @param NewUserModel $emailModel
+     */
+    public function __construct($emailModel)
+    {
+        $this->emailModel = $emailModel;
+    }
+
+    /**
      * @param SharedEventManagerInterface $manager
      * @codeCoverageIgnore
      */
@@ -67,7 +81,8 @@ class NewUserEmailListener implements NoticeInterface
 
         $this->getMailService()->getMessage()->setTo($user->getEmail());
         $this->getMailService()->getMessage()->setSubject('Welcome to Change my world now');
-        $this->getMailService()->setTemplate(new NewUserModel($user));
+        $this->emailModel->setVariable('user', $user->getArrayCopy());
+        $this->getMailService()->setTemplate($this->emailModel);
         $this->getMailService()->send();
     }
 }
