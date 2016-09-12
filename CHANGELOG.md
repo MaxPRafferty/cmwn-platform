@@ -1,3 +1,10 @@
+Version - 0.3.6
+----
+
+- 7995bd4: updatedImportSuccessText
+- 5faceac: addingDefaultEmailLayoutAndChangingImages
+- 5ad3b55: Version bump [ci skip]
+
 Version - 0.3.5
 ----
 
