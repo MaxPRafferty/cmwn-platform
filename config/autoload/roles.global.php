@@ -372,6 +372,7 @@ return [
                     'view.flip',
                     'view.games',
                     'view.group',
+                    'view.user.groups',
                     'view.group.users',
                     'view.profile.image',
                     'view.user.adult',
