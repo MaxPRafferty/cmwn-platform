@@ -27,6 +27,8 @@ return [
             \Suggest\Engine\SuggestionEngine::class => \Suggest\Engine\SuggestionEngineFactory::class,
             \Suggest\Filter\ClassFilter::class => \Suggest\Filter\ClassFilterFactory::class,
             \Suggest\Rule\FriendRule::class => \Suggest\Rule\FriendRuleFactory::class,
+            \Suggest\Listener\TriggerSuggestionsListener::class =>
+                \Suggest\Listener\TriggerSuggestionsListenerFactory::class
         ],
         'delegators' => [
             \Suggest\Service\SuggestedService::class          => [
@@ -39,6 +41,10 @@ return [
         'factories' => [
             'Suggest\Controller' => \Suggest\Controller\SuggestionControllerFactory::class,
         ],
+    ],
+
+    'shared-listeners' => [
+        \Suggest\Listener\TriggerSuggestionsListener::class,
     ],
 
     'console' => [

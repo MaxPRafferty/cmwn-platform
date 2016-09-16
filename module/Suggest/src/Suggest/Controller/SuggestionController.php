@@ -36,7 +36,7 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
     /**
      * SuggestionController constructor.
      *
-     * @param ServiceLocatorInterface $suggestionEngine
+     * @param SuggestionEngine $suggestionEngine
      */
     public function __construct($suggestionEngine)
     {
