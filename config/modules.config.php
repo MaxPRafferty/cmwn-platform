@@ -5,8 +5,8 @@
  * The previous config file has been stored in ./config/modules.config.old
  */
 return [
-    'AwsModule',
     'Application',
+    'AwsModule',
     'User',
     'Org',
     'Game',

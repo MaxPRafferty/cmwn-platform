@@ -4,7 +4,6 @@ namespace Application\Log;
 
 use Application\Log\Rollbar\Writer;
 use Interop\Container\ContainerInterface;
-use Zend\Log\Filter\Priority;
 use Zend\Log\LoggerAbstractServiceFactory;
 use Zend\Log\Writer\Noop;
 
