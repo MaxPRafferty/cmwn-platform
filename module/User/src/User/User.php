@@ -328,4 +328,13 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
         $this->gender = $gender;
         return $this;
     }
+
+    /**
+     * @param string $username
+     * @return string
+     */
+    public static function normalizeUsername($username)
+    {
+        return strtolower(preg_replace('/((?![a-zA-Z0-9]+).)/', '', $username));
+    }
 }

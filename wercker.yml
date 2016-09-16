@@ -74,7 +74,6 @@ release:
       name: Creating release on github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
-      title: $VERSION
     - github-upload-asset:
       name: Adding build artifact to tag
       token: $MC_GITHUB_TOKEN

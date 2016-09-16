@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: chaitu
- * Date: 7/7/16
- * Time: 2:22 PM
- */
 
 namespace Security\Listeners;
 

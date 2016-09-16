@@ -218,6 +218,5 @@ class DevSeed extends AbstractSeed
                 );
             }
         }
-
     }
 }

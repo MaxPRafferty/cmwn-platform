@@ -70,18 +70,36 @@ class UserImageResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
 
         $this->assertArrayHasKey('image_id', $body, 'Missing image_id from response body for user image');
-        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $body['image_id'], 'Incorrect image_id returned for user');
+        $this->assertEquals('profiles/dwtm7optf0qq62vcveefa', $body['image_id'], 'Incorrect image_id returned for user');
     }
 
     /**
      * @test
      * @ticket CORE-894
      */
-    public function testItShouldFetchPendingImage()
+    public function testItShouldFetchPendingImageForMeUser()
     {
-        $this->markTestIncomplete("should be pending image but returns approved image");
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
+        $this->logInUser('other_principal');
+
+        $this->dispatch('/user/other_principal/image');
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user-image');
+        $this->assertControllerName('api\v1\rest\userimage\controller');
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('image_id', $body);
+        $this->assertArrayHasKey('url', $body);
+        $this->assertEquals('profiles/qwertyuiop', $body['image_id']);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-954
+     */
+    public function testItShouldFetchApprovedImageForOtherUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('principal');
 
         $this->dispatch('/user/english_student/image');
         $this->assertResponseStatusCode(200);
@@ -90,11 +108,27 @@ class UserImageResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
-        $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $body['image_id']);
-        $this->assertEquals(
-            'https://res.cloudinary.com/changemyworldnow/image/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg',
-            $body['url']
-        );
+        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $body['image_id']);
+    }
+
+    /**
+     * Test for reopened ticket CORE-957
+     * @test
+     * @ticket CORE-957
+     */
+    public function testItShouldFetchApprovedImageForMeUser()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('other_principal');
+
+        $this->dispatch('/user/other_principal/image');
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user-image');
+        $this->assertControllerName('api\v1\rest\userimage\controller');
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('image_id', $body);
+        $this->assertArrayHasKey('url', $body);
+        $this->assertEquals('profiles/qwertyuiop', $body['image_id']);
     }
 
     /**
@@ -141,7 +175,7 @@ class UserImageResourceTest extends TestCase
 
         $this->dispatch(
             '/user/math_student/image',
-            POST,
+            'POST',
             ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
         );
         $this->assertMatchedRouteName('api.rest.user-image');
@@ -164,7 +198,7 @@ class UserImageResourceTest extends TestCase
 
         $this->dispatch(
             '/user/math_student/image',
-            POST,
+            'POST',
             ['image_id' => 'profiles/bar', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
         );
         $this->assertResponseStatusCode(403);

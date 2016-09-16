@@ -15,6 +15,10 @@ use User\Adult;
  * @group Service
  * @group SecurityService
  * @group Authentication
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SecurityServiceTest extends TestCase
 {
@@ -129,7 +133,6 @@ class SecurityServiceTest extends TestCase
         ];
 
         $this->tableGateway->shouldReceive('select')
-            ->with(['username' => 'manchuck'])
             ->andReturn(new \ArrayIterator([new \ArrayObject($userData)]))
             ->once();
 
@@ -149,7 +152,6 @@ class SecurityServiceTest extends TestCase
             'User not Found'
         );
         $this->tableGateway->shouldReceive('select')
-            ->with(['username' => 'manchuck'])
             ->andReturn(new \ArrayIterator([]))
             ->once();
 
@@ -210,5 +212,74 @@ class SecurityServiceTest extends TestCase
             ->once();
 
         $this->assertTrue($this->securityService->setSuper('abcdef', false));
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1162
+     */
+    public function testItShouldSetTheCodeToExpireInOneDayByDefault()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($set, $where) {
+                $this->assertTrue(is_array($set));
+                $this->assertArrayHasKey('code', $set);
+                $this->assertArrayHasKey('code_expires', $set);
+                $this->assertEquals('foobar', $set['code']);
+
+                $now = new \DateTimeImmutable('+1 Days');
+                $expires = new \DateTimeImmutable($set['code_expires']);
+                $this->assertEquals($now->format('Ymd'), $expires->format('Ymd'));
+
+                $this->assertEquals(['user_id' => 'student'], $where);
+            })
+            ->once();
+        $this->assertTrue($this->securityService->saveCodeToUser('foobar', 'student'));
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1162
+     */
+    public function testItShouldSetTheCodeToExpireInThirtyDays()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($set, $where) {
+                $this->assertTrue(is_array($set));
+                $this->assertArrayHasKey('code', $set);
+                $this->assertArrayHasKey('code_expires', $set);
+                $this->assertEquals('foobar', $set['code']);
+
+                $now = new \DateTimeImmutable('+30 Days');
+                $expires = new \DateTimeImmutable($set['code_expires']);
+                $this->assertEquals($now->format('Ymd'), $expires->format('Ymd'));
+
+                $this->assertEquals(['user_id' => 'student'], $where);
+            })
+            ->once();
+        $this->assertTrue($this->securityService->saveCodeToUser('foobar', 'student', 30));
+    }
+
+    /**
+     * @test
+     * @ticket CORE-1162
+     */
+    public function testItShouldSetTheCodeToExpireInWithPositiveDays()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($set, $where) {
+                $this->assertTrue(is_array($set));
+                $this->assertArrayHasKey('code', $set);
+                $this->assertArrayHasKey('code_expires', $set);
+                $this->assertEquals('foobar', $set['code']);
+
+                $now = new \DateTimeImmutable('+15 Days');
+                $expires = new \DateTimeImmutable($set['code_expires']);
+                $this->assertEquals($now->format('Ymd'), $expires->format('Ymd'));
+
+                $this->assertEquals(['user_id' => 'student'], $where);
+            })
+            ->once();
+        $this->assertTrue($this->securityService->saveCodeToUser('foobar', 'student', -15));
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Notice\EmailModel;
 
-use User\UserInterface;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -13,12 +12,13 @@ class NewUserModel extends ViewModel
     /**
      * NewUserModel constructor.
      *
-     * @param UserInterface $user
+     * @param array $variables
      * @param array $options
      */
-    public function __construct(UserInterface $user, $options = [])
+    public function __construct($variables, $options = [])
     {
-        parent::__construct($user->getArrayCopy(), $options);
-        $this->setTemplate('email/user/new.' . strtolower($user->getType()) . '.phtml');
+        $type = $variables['user']['type'];
+        parent::__construct($variables, $options);
+        $this->setTemplate('email/user/new.' . strtolower($type) . '.phtml');
     }
 }

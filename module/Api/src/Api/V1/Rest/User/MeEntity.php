@@ -2,11 +2,13 @@
 
 namespace Api\V1\Rest\User;
 
+use Api\Links\FeedLink;
 use Api\Links\FlipLink;
 use Api\Links\FriendLink;
 use Api\Links\GameLink;
 use Api\Links\PasswordLink;
 use Api\Links\SaveGameLink;
+use Api\Links\SkribbleLink;
 use Api\Links\UserLink;
 use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
@@ -125,6 +127,14 @@ class MeEntity extends UserEntity implements TokenEntityInterface
 
         if (!$links->has('friend') && !empty($this->getUserId())) {
             $links->add(new FriendLink($this->getUserId()));
+        }
+
+        if (!$links->has('skribbles') && !empty($this->getUserId())) {
+            $links->add(new SkribbleLink($this->getUserId()));
+        }
+
+        if (!$links->has('feed') && !empty($this->getUserId())) {
+            $links->add(new FeedLink($this->getUserId()));
         }
     }
 

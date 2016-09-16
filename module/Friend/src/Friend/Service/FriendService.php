@@ -184,18 +184,14 @@ class FriendService implements FriendServiceInterface
 
     /**
      * Fetches the current friend status of a user
-     *
+     * @throws NotFriendsException
      * @param UserInterface $user
      * @param UserInterface $friend
      * @return string
      */
     public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
     {
-        try {
-            $result = $this->fetchFriendForUser($user, $friend, new \ArrayObject());
-        } catch (NotFriendsException $notFriends) {
-            return FriendInterface::CAN_FRIEND;
-        }
+        $result = $this->fetchFriendForUser($user, $friend, new \ArrayObject());
 
         $currentStatus = $result->offsetGet('uf_status');
         if ($currentStatus === FriendInterface::FRIEND) {

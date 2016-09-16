@@ -2,24 +2,11 @@
 
 namespace Api\V1\Rest\Suggest;
 
-use Api\V1\Rest\Friend\FriendEntity;
+use Suggest\Suggestion;
 
 /**
  * Class SuggestEntity
  */
-class SuggestEntity extends FriendEntity
+class SuggestEntity extends Suggestion
 {
-    /**
-     * Replaces the user_id with friend_id
-     *
-     * @return string[]
-     */
-    public function getArrayCopy()
-    {
-        $array = parent::getArrayCopy();
-        $array['suggest_id']    = $this->getUserId();
-        $array['friend_status'] = $this->getFriendStatus();
-        unset($array['friend_id']);
-        return $array;
-    }
 }

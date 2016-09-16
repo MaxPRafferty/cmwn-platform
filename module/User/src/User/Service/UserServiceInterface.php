@@ -31,6 +31,16 @@ interface UserServiceInterface
      */
     public function fetchUserByExternalId($externalId);
 
+
+    /**
+     * Fetch user from db by username
+     *
+     * @param $username
+     * @return \User\Adult|\User\Child
+     * @throws NotFoundException
+     */
+    public function fetchUserByUsername($username);
+
     /**
      * Fetches one user from the DB using the email
      *
