@@ -1,3 +1,8 @@
+Version - 0.3.7
+----
+
+- 6e6d51b: Version bump [ci skip]
+
 Version - 0.3.6
 ----
 
