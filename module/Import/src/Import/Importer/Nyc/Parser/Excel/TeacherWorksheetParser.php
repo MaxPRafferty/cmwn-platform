@@ -87,6 +87,7 @@ class TeacherWorksheetParser extends AbstractExcelParser
     /**
      * PreProcess a file
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @todo Break up ?
      */
     public function preProcess()
@@ -143,6 +144,15 @@ class TeacherWorksheetParser extends AbstractExcelParser
                 ->setEmail($rowData['EMAIL'])
                 ->setGender($rowData['SEX'])
                 ->setRole($rowData['TYPE']);
+            $role = $teacher->getRole().'.adult';
+            if ($this->getRbac()->getRole($role)->getName() === 'guest') {
+                $this->addError(
+                    sprintf('Teacher has invalid type <b>"%s"</b>', $rowData['TYPE']),
+                    static::SHEET_NAME,
+                    $rowNumber
+                );
+                continue;
+            }
 
             if ($this->teacherRegistry->offsetExists($teacher->getEmail())) {
                 $this->getClassForTeacher(

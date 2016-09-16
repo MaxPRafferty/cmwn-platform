@@ -8,7 +8,9 @@ use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
+use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
+use Security\Authorization\Rbac;
 
 /**
  * Test DoeParserTest
@@ -53,6 +55,11 @@ class DoeParserTest extends TestCase
      * @var \Mockery\MockInterface|\Security\Service\SecurityServiceInterface
      */
     protected $securityService;
+
+    /**
+     * @var Rbac
+     */
+    protected $rbac;
 
     /**
      * @var Group
@@ -129,6 +136,14 @@ class DoeParserTest extends TestCase
     /**
      * @before
      */
+    public function setUpRbac()
+    {
+        $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
+    }
+
+    /**
+     * @before
+     */
     public function setUpSchoolGroup()
     {
         $this->school = new Group();
@@ -155,6 +170,8 @@ class DoeParserTest extends TestCase
         $parser->setSchool($this->school);
         $parser->setStudentCode('foo_bar');
         $parser->setTeacherCode('baz_bat');
+        $parser->setRbac($this->rbac);
+
         return $parser;
     }
 
