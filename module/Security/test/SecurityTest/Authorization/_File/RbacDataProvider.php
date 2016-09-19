@@ -543,6 +543,7 @@ return [
             'view.user.adult',
             'view.user.child',
             'view.user.flip',
+            'view.user.groups',
         ],
 
         'denied' => [
@@ -579,7 +580,6 @@ return [
             'view.org',
             'view.org.users',
             'view.skribble',
-            'view.user.groups',
             'view.user.orgs',
         ],
     ],
