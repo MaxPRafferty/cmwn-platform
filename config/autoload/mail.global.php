@@ -17,7 +17,8 @@ $mailPass = getenv('MAIL_PASSWORD')
     ? getenv('MAIL_PASSWORD')
     : '1014d39a5059ac';
 
-
+$dbName = getenv('IMAGE_LINK');
+$dbName = empty($dbName) ? 'api.changemyworldnow.com' : $dbName;
 return [
     'acmailer_options' => [
 
@@ -143,10 +144,10 @@ return [
                  *
                  * Default content is an empty string.
                  */
-                //'body' => [
+                'body' => [
                     //'content' => '',
                     //'charset' => 'utf-8',
-                    //'use_template' => false,
+                    'use_template' => true,
 
                     /*
                      * Defines information to create the email body from a view partial.
@@ -166,8 +167,8 @@ return [
                      *
                      * By default no children are used
                      */
-                    //'template' => [
-                    //    'path'          => 'ac-mailer/mail-templates/layout',
+                    'template' => [
+                        //'path'          => 'email/layout/default.phtml',
                     //    'params'        => [],
                     //    'children'      => [
                     //        'content'   => [
@@ -175,13 +176,15 @@ return [
                     //            'params' => [],
                     //        ]
                     //    ],
-                    //    'default_layout' => [
-                    //        'path' => null,
-                    //        'params' => [],
-                    //        'template_capture_to' => 'content'
-                    //    ]
-                    //],
-                //],
+                        'default_layout' => [
+                            'path' => 'email/layout/default.phtml',
+                            'params' => [
+                                'image_domain' => $dbName
+                            ],
+                            'template_capture_to' => 'content'
+                        ]
+                    ],
+                ],
 
                 /**
                  * Attachments config.
