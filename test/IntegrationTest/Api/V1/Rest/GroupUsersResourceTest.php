@@ -100,9 +100,10 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
      * @param $group
      *
      * @ticket       CORE-1184
+     * @ticket       CORE-2191
      * @dataProvider childDataProvider
      */
-    public function testItShouldDenyReturningUsersAGroupForAdults($user, $group)
+    public function testItShouldReturnGroupForChild($user, $group)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($user);
@@ -110,7 +111,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
         $this->dispatch('/group/' . $group . '/users');
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
-        $this->assertResponseStatusCode(403);
+        $this->assertResponseStatusCode(200);
     }
 
     /**
