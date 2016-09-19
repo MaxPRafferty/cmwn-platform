@@ -1,3 +1,8 @@
+Version - 0.3.8
+----
+
+- 54e9844: Version bump [ci skip]
+
 Version - 0.3.7
 ----
 
