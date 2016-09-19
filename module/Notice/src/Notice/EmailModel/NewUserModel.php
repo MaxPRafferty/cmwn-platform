@@ -17,8 +17,6 @@ class NewUserModel extends ViewModel
      */
     public function __construct($variables, $options = [])
     {
-        $type = $variables['user']['type'];
         parent::__construct($variables, $options);
-        $this->setTemplate('email/user/new.' . strtolower($type) . '.phtml');
     }
 }
