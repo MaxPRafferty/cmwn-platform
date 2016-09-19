@@ -21,7 +21,6 @@ use IntegrationTest\TestHelper;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-
 class UserImageResourceTest extends TestCase
 {
     /**
@@ -39,10 +38,12 @@ class UserImageResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -59,9 +60,8 @@ class UserImageResourceTest extends TestCase
     public function testItShouldAllowNeighborsToSeeProfileImages()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('other_teacher');
-
-        $this->dispatch('/user/other_principal/image');
+        $this->logInUser('english_teacher');
+        $this->dispatch('/user/principal/image');
 
         $this->assertResponseStatusCode(200);
         $this->assertNotRedirect();
@@ -70,7 +70,7 @@ class UserImageResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
 
         $this->assertArrayHasKey('image_id', $body, 'Missing image_id from response body for user image');
-        $this->assertEquals('profiles/dwtm7optf0qq62vcveefa', $body['image_id'], 'Incorrect image_id returned for user');
+        $this->assertEquals('principal', $body['image_id'], 'Incorrect image_id returned for user');
     }
 
     /**
@@ -108,27 +108,7 @@ class UserImageResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
-        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $body['image_id']);
-    }
-
-    /**
-     * Test for reopened ticket CORE-957
-     * @test
-     * @ticket CORE-957
-     */
-    public function testItShouldFetchApprovedImageForMeUser()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('other_principal');
-
-        $this->dispatch('/user/other_principal/image');
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.user-image');
-        $this->assertControllerName('api\v1\rest\userimage\controller');
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('image_id', $body);
-        $this->assertArrayHasKey('url', $body);
-        $this->assertEquals('profiles/qwertyuiop', $body['image_id']);
+        $this->assertEquals('english_pending', $body['image_id']);
     }
 
     /**
@@ -212,13 +192,13 @@ class UserImageResourceTest extends TestCase
         return [
             0 => [
                 'other_teacher',
-                '/user/other_principal/image'
+                '/user/other_principal/image',
             ],
             1 => [
                 'math_student',
                 '/user/math_student/image',
                 'POST',
-                ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
+                ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg'],
             ],
         ];
     }

@@ -18,6 +18,7 @@ return [
             'remove.user.adult'    => 'Delete an Adult user',
             'remove.user.child'    => 'Delete a Child user',
             'can.friend'           => 'Can friend users',
+            'view.feed'            => 'Can view feed',
 
             // Flip
             'create.user.flip'     => 'Earn a flip',
@@ -292,6 +293,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.games',
+                    'view.feed',
                 ],
             ],
 
@@ -311,6 +313,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'view.feed',
                 ],
             ],
 
@@ -346,6 +349,7 @@ return [
                     'view.flip',
                     'view.games',
                     'view.group',
+                    'view.user.groups',
                     'view.group.users',
                     'view.profile.image',
                     'view.user.adult',

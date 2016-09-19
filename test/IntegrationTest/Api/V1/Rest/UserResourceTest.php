@@ -372,7 +372,7 @@ class UserResourceTest extends TestCase
         $this->assertArrayHasKey('image', $decoded['_embedded']);
         $this->assertArrayHasKey('image_id', $decoded['_embedded']['image']);
 
-        $this->assertEquals('profiles/drkynjsedoegxb0hwvch', $decoded['_embedded']['image']['image_id']);
+        $this->assertEquals('english_pending', $decoded['_embedded']['image']['image_id']);
     }
 
     /**
@@ -403,7 +403,7 @@ class UserResourceTest extends TestCase
         $this->assertArrayHasKey('image', $decoded['_embedded']);
         $this->assertArrayHasKey('image_id', $decoded['_embedded']['image']);
 
-        $this->assertEquals('profiles/dwtm7optf0qq62vcveef', $decoded['_embedded']['image']['image_id']);
+        $this->assertEquals('english_approved', $decoded['_embedded']['image']['image_id']);
     }
 
     /**

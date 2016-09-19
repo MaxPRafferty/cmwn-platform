@@ -10,6 +10,7 @@ use User\Child;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\View\Exception;
 
 /**
  * Class ForgotPasswordListener
@@ -83,9 +84,13 @@ class ForgotPasswordListener implements NoticeInterface
         $this->getMailService()->getMessage()->setSubject('Reset Password Code');
         $this->emailModel->setVariable('user', $user->getArrayCopy());
         $this->emailModel->setVariable('code', $event->getParam('code'));
-        $this->getMailService()->setTemplate(
-            $this->emailModel
-        );
+        try {
+            $this->getMailService()->setTemplate(
+                $this->emailModel
+            );
+        } catch (Exception\RuntimeException $e) {
+            return;
+        }
 
         $this->getMailService()->send();
         return null;

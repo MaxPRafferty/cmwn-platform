@@ -238,8 +238,9 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      * @dataProvider childDataProvider
+     * @ticket CORE-2191
      */
-    public function testItShouldReturnDenyGroupDataForChildren($child)
+    public function testItShouldReturnGroupDataForChildren($child)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($child);
@@ -247,7 +248,14 @@ class GroupResourceTest extends TestCase
         $this->dispatch('/group/school');
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
-        $this->assertResponseStatusCode(403);
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('group_id', $body);
+        $this->assertArrayHasKey('organization_id', $body);
+        $this->assertArrayHasKey('title', $body);
+        $this->assertEquals('school', $body['group_id']);
+        $this->assertEquals('district', $body['organization_id']);
+        $this->assertEquals('Gina\'s School', $body['title']);
     }
 
     /**
