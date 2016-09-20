@@ -4,6 +4,7 @@ namespace Import\Controller;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Import\ImporterInterface;
+use Import\ProcessorErrorException;
 use Job\Feature\DryRunInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
@@ -99,7 +100,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
             $this->getLogger()->debug('Turning on Debug');
             $type = $request->getParam('type');
             if (!$this->services->has($type)) {
-                $this->getLogger()->alert(sprintf('Importer "%s" not found in services: ', $type));
+                $this->getLogger()->crit(sprintf('Importer "%s" not found in services: ', $type));
 
                 return;
             }
@@ -116,6 +117,8 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 $job->setDryRun($request->getParam('dry-run', false));
             }
 
+            $job->setLogger($this->getLogger());
+
             $job->exchangeArray([
                 'file'         => $request->getParam('file'),
                 'teacher_code' => $request->getParam('teacherCode'),
@@ -124,14 +127,17 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 'email'        => $request->getParam('email'),
             ]);
 
-            $job->setLogger($this->getLogger());
-
             $this->getLogger()->notice('Importer configured.  Performing import');
             $job->perform();
-        } catch (\Exception $processException) {
-            $this->getLogger()->emerg(
+        } catch (ProcessorErrorException $processException) {
+            $this->getLogger()->info(
+                $processException->getMessage(),
+                ['trace' => $processException->getTraceAsString()]
+            );
+        } catch (\Throwable $processException) {
+            $this->getLogger()->crit(
                 sprintf('Error when trying to process: %s', $processException->getMessage()),
-                $processException->getTrace()
+                ['exception' => $processException]
             );
         }
     }

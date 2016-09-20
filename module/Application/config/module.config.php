@@ -56,6 +56,9 @@ return [
         'invokables' => [
             'Application\Controller\Index' => \Application\Controller\IndexController::class,
         ],
+        'initializers'       => [
+            \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
+        ],
     ],
 
     'view_manager' => [

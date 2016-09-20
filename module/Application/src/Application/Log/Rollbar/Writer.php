@@ -30,7 +30,7 @@ class Writer extends AbstractWriter
      */
     public function __construct(\RollbarNotifier $rollbar, ServiceLocatorInterface $services, $options = null)
     {
-        $this->rollbar = $rollbar;
+        $this->rollbar  = $rollbar;
         $this->services = $services;
         parent::__construct($options);
     }
@@ -39,6 +39,7 @@ class Writer extends AbstractWriter
      * Write a message to the log.
      *
      * @param  array $event Event data
+     *
      * @return void
      */
     protected function doWrite(array $event)
@@ -48,8 +49,20 @@ class Writer extends AbstractWriter
         }
 
         $this->rollbar->person_fn = [$this, 'getIdentity'];
-        $extra = array_diff_key($event, ['message' =>'', 'priorityName' => '', 'priority' => 0]);
-        $this->rollbar->report_message($event['message'], $event['priorityName'], $extra);
+        $extra                    = array_diff_key($event, ['message' => '', 'priorityName' => '', 'priority' => 0]);
+        $exceptionFound           = false;
+
+        array_walk_recursive($extra, function ($item) use (&$exceptionFound) {
+            if ($item instanceof \Throwable) {
+                $this->rollbar->report_exception($item);
+
+                $exceptionFound = true;
+            }
+        });
+
+        if (!$exceptionFound) {
+            $this->rollbar->report_message($event['message'], $event['priorityName'], $extra);
+        }
     }
 
     /**
@@ -93,7 +106,7 @@ class Writer extends AbstractWriter
             return [
                 'id'       => $user->getUserId(),
                 'username' => $user->getUserName(),
-                'email'    => $user->getEmail()
+                'email'    => $user->getEmail(),
             ];
         } catch (\Exception $authException) {
             return [];
