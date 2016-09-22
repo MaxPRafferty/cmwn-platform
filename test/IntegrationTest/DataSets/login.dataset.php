@@ -307,6 +307,27 @@ return [
             'external_id'  => null,
             'normalized_username' => 'superuser'
         ],
+        [
+            'user_id' => 'fancy-lion002',
+            'username' => 'fancy-lion002',
+            'email' => 'fancy-lion002@ginasink.com',
+            'code' => NULL,
+            'type' => 'CHILD',
+            'password' => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name' => 'Fancy',
+            'middle_name' => NULL,
+            'last_name' => 'Lion',
+            'gender' => 'F',
+            'meta' => NULL,
+            'birthdate' => '2016-04-27 10:48:42',
+            'created' => '2016-04-27 10:48:44',
+            'updated' => '2016-04-27 10:48:46',
+            'deleted' => NULL,
+            'code_expires' => NULL,
+            'super' => '0',
+            'external_id' => NULL,
+            'normalized_username' => 'fancylion002'
+        ],
     ],
     'user_friends'  => [],
     'user_groups'   => [
