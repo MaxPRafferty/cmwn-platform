@@ -28,7 +28,9 @@ return [
             \Suggest\Filter\ClassFilter::class => \Suggest\Filter\ClassFilterFactory::class,
             \Suggest\Rule\FriendRule::class => \Suggest\Rule\FriendRuleFactory::class,
             \Suggest\Listener\TriggerSuggestionsListener::class =>
-                \Suggest\Listener\TriggerSuggestionsListenerFactory::class
+                \Suggest\Listener\TriggerSuggestionsListenerFactory::class,
+            \Suggest\Listener\DeleteSuggestionListener::class =>
+                \Suggest\Listener\DeleteSuggestionListenerFactory::class
         ],
         'delegators' => [
             \Suggest\Service\SuggestedService::class          => [
@@ -45,6 +47,7 @@ return [
 
     'shared-listeners' => [
         \Suggest\Listener\TriggerSuggestionsListener::class,
+        \Suggest\Listener\DeleteSuggestionListener::class,
     ],
 
     'console' => [
