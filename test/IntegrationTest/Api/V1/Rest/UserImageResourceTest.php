@@ -80,16 +80,16 @@ class UserImageResourceTest extends TestCase
     public function testItShouldFetchPendingImageForMeUser()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('other_principal');
+        $this->logInUser('principal');
 
-        $this->dispatch('/user/other_principal/image');
+        $this->dispatch('/user/principal/image');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.user-image');
         $this->assertControllerName('api\v1\rest\userimage\controller');
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
-        $this->assertEquals('profiles/qwertyuiop', $body['image_id']);
+        $this->assertEquals('principal', $body['image_id']);
     }
 
     /**
@@ -108,7 +108,7 @@ class UserImageResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('image_id', $body);
         $this->assertArrayHasKey('url', $body);
-        $this->assertEquals('english_pending', $body['image_id']);
+        $this->assertEquals('english_approved', $body['image_id']);
     }
 
     /**

@@ -6,8 +6,6 @@ use User\UserInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
-use ZF\ApiProblem\ApiProblem;
-use ZF\ApiProblem\ApiProblemResponse;
 use ZF\ContentNegotiation\ParameterDataContainer;
 
 /**

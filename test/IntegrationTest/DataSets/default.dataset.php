@@ -505,4 +505,5 @@ return [
         ],
     ],
     'user_saves'    => [],
+    'user_suggestions'    => [],
 ];

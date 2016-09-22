@@ -3,6 +3,7 @@
 namespace User\Delegator;
 
 use Application\Exception\DuplicateEntryException;
+use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\User;
 use User\UserInterface;

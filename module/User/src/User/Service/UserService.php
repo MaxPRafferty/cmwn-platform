@@ -234,4 +234,13 @@ class UserService implements UserServiceInterface
         $this->userTableGateway->delete(['user_id' => $user->getUserId()]);
         return true;
     }
+
+    /**
+     * @param string $username
+     * @return string
+     */
+    public static function normalizeUsername($username)
+    {
+        return strtolower(preg_replace('/((?![a-zA-Z0-9]+).)/', '', $username));
+    }
 }

@@ -44,7 +44,11 @@ class LoginResourceTest extends TestCase
 
     /**
      * @test
+<<<<<<< HEAD
      * @ticket CORE-1165
+=======
+     * @ticker CORE-1165
+>>>>>>> 86ea486... Ditto 0.2
      * @dataProvider loginDataProvider
      */
     public function testItShouldLoginUser($login)
