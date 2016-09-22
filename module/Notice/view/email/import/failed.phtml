@@ -1,29 +1,40 @@
 <?php // @codingStandardsIgnoreStart ?>
-<h1>You’re Almost There! (Something Just Needs To Be Changed)</h1>
 
-<p>First, the Bad News: The information contained within your import was not uploaded.</p>
+<div mc:edit="std_content00">
+    <span class="center"><img src="https://<?= $image_domain ?>/img/email/import/import_failed.png" alt="You Are Almost There! Something just needs to be changed." width="100%" style="font-weight:bold;color:#01b5ff;font-size:50px;padding-bottom:10px"></span><br><br>
+    <br>
+    <b><i>First, the Bad News:</i></b> The information contained within your import was not uploaded.
+    <br>
+    <br>
+    <b><i>Now, the Good News:</i></b> This is totally fixable! Below is information detailing the errors found on your upload spreadsheet— please review, make the necessary corrections, and re-upload your spreadsheet again.
+    <br>
+    <br>
+    Once your import has been accepted, you’ll receive a confirmation email. Then you’re good to go!
+    <br>
+    <br>
+    If you continue to receive this message and can’t resolve the issue, our customer service department will be delighted to assist you at <font color='#01b5ff'> 646.861.0571</font>.  Hours: 9am - 7pm EST.
 
-<p>Now the Good News: This is totally fixable! Below is information detailing the errors found on your upload spreadsheet— please review, make the necessary corrections, and re-upload your spreadsheet again.</p
+    <br><br>
 
-<p>Once your import has been accepted, you’ll receive a confirmation email. Then you’re good to go!</p>
 
-<p>If you continue to receive this message and can’t resolve the issue, our customer service department will be delighted to assist you at 646.861.0571.</p>
-
-<p>Sincerely,</p>
-<p>The Change My World Now Team</p>
-
-<h4>Here are the errors we found:</h4>
-<ol>
-<?php foreach ($errors as $errorMsg): ?>
-    <li><?= $errorMsg ?></li>
-<?php endforeach; ?>
-</ol>
-
-<?php if (count($warnings) > 0): ?>
-<h4>Here are some warnings that you could fix:</h4>
+    <span class = "h4">Here are the errors we found:</span>
     <ol>
-        <?php foreach ($warnings as $warnMsg): ?>
-            <li><?= $warnMsg ?></li>
+        <?php
+        foreach ($errors as $errorMsg):
+            ?>
+            <li><?= $errorMsg ?></li>
         <?php endforeach; ?>
     </ol>
-<?php endif; ?>
+
+    <?php if (count($warnings) > 0): ?>
+        <span class = "h4">Here are some warnings that you could fix:</span>
+        <ol>
+            <?php foreach ($warnings as $warnMsg): ?>
+                <li><?= $warnMsg ?></li>
+            <?php endforeach; ?>
+        </ol>
+    <?php endif; ?>
+    <br><br>
+    Sincerely,<br>
+    <em>The Change My World Now Team</em>
+</div>

@@ -2,6 +2,7 @@
 
 namespace NoticeTest\Listeners;
 
+use Notice\EmailModel\ForgotEmailModel;
 use Notice\Listeners\ForgotPasswordListener;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
@@ -55,7 +56,7 @@ class ForgotPasswordListenerTest extends TestCase
      */
     public function setUpListener()
     {
-        $this->listener = new ForgotPasswordListener();
+        $this->listener = new ForgotPasswordListener(new ForgotEmailModel([]));
         $this->listener->setMailService($this->mailService);
     }
 

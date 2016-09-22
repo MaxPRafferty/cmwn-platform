@@ -42,6 +42,11 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
     protected $moderated = false;
 
     /**
+     * @var int
+     */
+    protected $moderationStatus;
+
+    /**
      * Image constructor.
      * @param array|null $options
      */
@@ -193,6 +198,22 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
     {
         $this->type = $type;
         return $this;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getModerationStatus()
+    {
+        return $this->moderationStatus === null ? 0 : $this->moderationStatus;
+    }
+
+    /**
+     * @param integer $moderationStatus
+     */
+    public function setModerationStatus($moderationStatus)
+    {
+        $this->moderationStatus = $moderationStatus;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Notice\EmailModel;
 
-use User\UserInterface;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -12,19 +11,12 @@ class ForgotEmailModel extends ViewModel
 {
     /**
      * ForgotEmailModel constructor.
-     *
-     * @param UserInterface $user
-     * @param string $code
+     * @param array $variables
      * @param array $options
      */
-    public function __construct(UserInterface $user, $code, $options = [])
+    public function __construct($variables, $options = [])
     {
-        $vars = [
-            'user' => $user->getArrayCopy(),
-            'code' => $code
-        ];
-
-        parent::__construct($vars, $options);
+        parent::__construct($variables, $options);
         $this->setTemplate('email/user/forgot.password.phtml');
     }
 }

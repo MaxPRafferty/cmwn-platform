@@ -113,6 +113,7 @@ class UserImageServiceTest extends TestCase
 
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
+                $where->addPredicate(new Operator('i.moderation_status', Operator::OP_NE, -1));
                 $where->addPredicate(new Operator('i.moderation_status', '=', 1));
                 $select->where($where);
                 $select->order('i.created DESC');
@@ -137,7 +138,7 @@ class UserImageServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldRemoveModerationStatusWhenApprovedOnlyIsFalse()
+    public function testItShouldSetModerationStatusZeroWhenApprovedOnlyIsFalse()
     {
         $expectedImage = new Image();
         $this->tableGateway->shouldReceive('selectWith')
@@ -151,6 +152,7 @@ class UserImageServiceTest extends TestCase
 
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
+                $where->addPredicate(new Operator('i.moderation_status', Operator::OP_NE, -1));
                 $select->where($where);
                 $select->order('i.created DESC');
 
@@ -188,6 +190,7 @@ class UserImageServiceTest extends TestCase
 
                 $where = new Where();
                 $where->addPredicate(new Operator('u.user_id', '=', 'foo'));
+                $where->addPredicate(new Operator('i.moderation_status', Operator::OP_NE, -1));
                 $where->addPredicate(new Operator('i.moderation_status', '=', 1));
                 $select->where($where);
                 $select->order('i.created DESC');

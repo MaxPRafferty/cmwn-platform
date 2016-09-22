@@ -18,6 +18,7 @@ return [
             'remove.user.adult'    => 'Delete an Adult user',
             'remove.user.child'    => 'Delete a Child user',
             'can.friend'           => 'Can friend users',
+            'view.feed'            => 'Can view feed',
 
             // Flip
             'create.user.flip'     => 'Earn a flip',
@@ -28,6 +29,7 @@ return [
             'create.child.group'   => 'Create a sub group',
             'create.group'         => 'Create a group',
             'view.group'           => 'View Group',
+            'view.child.groups'    => 'View all the child groups from a parent',
             'view.user.groups'     => 'View Groups the user belongs too',
             'view.all.groups'      => 'View all Groups',
             'edit.group'           => 'Edit a Group',
@@ -105,6 +107,7 @@ return [
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
+                    'view.child.groups',
                     'view.flip',
                     'view.games',
                     'view.group',
@@ -141,6 +144,7 @@ return [
                     'remove.group.user',
                     'remove.user.adult',
                     'remove.user.child',
+                    'view.child.groups',
                     'view.flip',
                     'view.games',
                     'view.group',
@@ -207,6 +211,7 @@ return [
                     'remove.group.user',
                     'remove.user.adult',
                     'remove.user.child',
+                    'view.child.groups',
                     'view.flip',
                     'view.games',
                     'view.group',
@@ -223,7 +228,7 @@ return [
 
             'asst_principal.adult' => [
                 'entity_bits' => [
-                    'group.school' => Rbac::SCOPE_UPDATE ,
+                    'group.school' => Rbac::SCOPE_UPDATE,
                     'group.class'  => Rbac::SCOPE_UPDATE,
                     'adult'        => Rbac::SCOPE_REMOVE,
                     'child'        => Rbac::SCOPE_UPDATE | Rbac::SCOPE_REMOVE,
@@ -236,12 +241,13 @@ return [
                     'create.child.group',
                     'create.group',
                     'edit.group',
-                    'edit.user.child',
                     'edit.user.adult',
+                    'edit.user.child',
                     'import',
                     'remove.group.user',
                     'remove.user.adult',
                     'remove.user.child',
+                    'view.child.groups',
                     'view.flip',
                     'view.games',
                     'view.group',
@@ -317,6 +323,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.games',
+                    'view.feed',
                 ],
             ],
 
@@ -336,6 +343,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'view.feed',
                 ],
             ],
 
@@ -372,6 +380,7 @@ return [
                     'view.flip',
                     'view.games',
                     'view.group',
+                    'view.user.groups',
                     'view.group.users',
                     'view.profile.image',
                     'view.user.adult',

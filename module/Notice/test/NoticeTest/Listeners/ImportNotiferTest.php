@@ -6,7 +6,6 @@ use Notice\EmailModel\ImportSuccessModel;
 use Notice\Listeners\ImportListener;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
-use Zend\Log\Logger;
 
 /**
  * Test ImportNotiferTest

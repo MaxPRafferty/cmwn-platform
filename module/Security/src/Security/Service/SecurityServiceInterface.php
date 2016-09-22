@@ -58,8 +58,9 @@ interface SecurityServiceInterface
     /**
      * Saves the temp code to a user
      *
-     * @param $code
-     * @param UserInterface|string $user
+     * @param string $code The temporary code for the user
+     * @param UserInterface|string $user The user to save the code to
+     * @parma int $days Number of days the code is active for
      */
-    public function saveCodeToUser($code, $user);
+    public function saveCodeToUser($code, $user, $days = 1);
 }

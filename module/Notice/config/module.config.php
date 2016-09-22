@@ -8,17 +8,14 @@ return [
     ],
 
     'service_manager' => [
-        'invokables'   => [
-
-            \Notice\Listeners\NewUserEmailListener::class   => \Notice\Listeners\NewUserEmailListener::class,
-            \Notice\Listeners\ForgotPasswordListener::class => \Notice\Listeners\ForgotPasswordListener::class,
-        ],
         'initializers' => [
             \Notice\Factory\MailServiceAwareInitializer::class => \Notice\Factory\MailServiceAwareInitializer::class,
         ],
         'factories'    => [
             \Notice\NotifierListener::class         => \Notice\Factory\NotifierListenerFactory::class,
             \Notice\Listeners\ImportListener::class => \Notice\Factory\ImportListenerFactory::class,
+            \Notice\Listeners\ForgotPasswordListener::class => \Notice\Factory\ForgotPasswordListenerFactory::class,
+            \Notice\Listeners\NewUserEmailListener::class => \Notice\Factory\NewUserListenerFactory::class,
         ],
     ],
 
@@ -27,6 +24,29 @@ return [
             \Notice\Listeners\ImportListener::class,
             \Notice\Listeners\NewUserEmailListener::class,
             \Notice\Listeners\ForgotPasswordListener::class,
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            'Notice\Controller' => \Notice\Controller\NoticeControllerFactory::class,
+        ],
+    ],
+
+    'console' => [
+        'router' => [
+            'routes' => [
+                'send-mail' => [
+                    'options' => [
+                        // @codingStandardsIgnoreStart
+                        'route'    => 'sendMail --template= --email= [--verbose|-v] [--debug|-d]',
+                        // @codingStandardsIgnoreEnd
+                        'defaults' => [
+                            'controller' => 'Notice\Controller',
+                            'action'     => 'sendMail',
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
 ];
