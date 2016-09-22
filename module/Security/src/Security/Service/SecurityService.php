@@ -5,7 +5,7 @@ namespace Security\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\NoopLoggerAwareTrait;
 use Security\SecurityUser;
-use User\User;
+use User\Service\UserService;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
@@ -67,7 +67,12 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
 
         $rowSet = $this->gateway->select($predicateSet);
         $row    = $rowSet->current();
+        if ($row) {
+            return new SecurityUser($row->getArrayCopy());
+        }
 
+        $rowSet = $this->gateway->select(['normalized_username' => UserService::normalizeUsername($username)]);
+        $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
         }

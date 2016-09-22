@@ -535,7 +535,7 @@ class UserResourceTest extends TestCase
             'last_name'   => 'Fredickson',
             'gender'      => 'M',
             'meta'        => '[]',
-            'type'        => 'ADULT',
+            'type'        => 'CHILD',
             'username'    => 'english_teacher',
             'email'       => 'english_student@ginasink.com',
             'birthdate'   => '2016-04-15',
@@ -543,13 +543,6 @@ class UserResourceTest extends TestCase
 
         $this->dispatch('/user/english_teacher', 'PUT', $putData, true);
         $this->assertResponseStatusCode(422);
-
-        $body = $this->getResponse()->getContent();
-        $body = Json::decode($body, Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('validation_messages', $body);
-        $this->assertArrayHasKey('email', $body['validation_messages']);
-        $emailMessage = $body['validation_messages']['email'];
-        $this->assertEquals('Invalid Email', $emailMessage[0]);
     }
 
     /**

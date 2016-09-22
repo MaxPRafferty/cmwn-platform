@@ -3,6 +3,7 @@
 namespace User\Delegator;
 
 use Application\Exception\DuplicateEntryException;
+use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\User;
 use User\UserInterface;
@@ -65,7 +66,7 @@ class CheckUserListener implements ListenerAggregateInterface
                 new Operator(
                     'normalized_username',
                     Operator::OP_EQ,
-                    User::normalizeUsername($user->getUserName())
+                    UserService::normalizeUsername($user->getUserName())
                 )
             ], PredicateSet::OP_OR)
         ]);
