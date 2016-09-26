@@ -107,7 +107,7 @@ class FlagServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldThrowExceptionWhenFLagNotFound()
+    public function testItShouldThrowExceptionWhenFlagNotFound()
     {
         $this->setExpectedException(NotFoundException::class);
         $this->flagService->fetchFlag('foo');
