@@ -24,6 +24,7 @@ return [
             \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
             \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
             \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
+            \Security\Listeners\FetchUserImageListener::class => \Security\Listeners\FetchUserImageListener::class,
         ],
 
         'factories' => [
@@ -91,6 +92,7 @@ return [
         \Security\Listeners\UpdateSession::class,
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
+        \Security\Listeners\FetchUserImageListener::class,
     ],
 
     'console' => [

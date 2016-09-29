@@ -183,6 +183,32 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     }
 
     /**
+     * Fetch user from db by username
+     *
+     * @param $username
+     * @return \User\Adult|\User\Child
+     * @throws NotFoundException
+     */
+    public function fetchUserByUsername($username)
+    {
+        $event    = new Event('fetch.user.username', $this->realService, ['username' => $username]);
+        $response = $this->getEventManager()->trigger($event);
+
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchUserByUsername($username);
+        $event    = new Event(
+            'fetch.user.username.post',
+            $this->realService,
+            ['username' => $username, 'user' => $return]
+        );
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
      * Fetches one user from the DB using the email
      *
      * @param $email

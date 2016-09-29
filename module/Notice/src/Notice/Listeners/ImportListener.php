@@ -13,6 +13,7 @@ use Notice\NotificationAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
+use Zend\View\Exception;
 
 /**
  * Class ImportNotifer
@@ -134,7 +135,11 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
         $this->getMailService()->getMessage()->setSubject('User import Success');
 
         $this->successModel->setVariable('warnings', $parser->getWarnings());
-        $this->getMailService()->setTemplate($this->successModel);
+        try {
+            $this->getMailService()->setTemplate($this->successModel);
+        } catch (Exception\RuntimeException $e) {
+            return;
+        }
 
         $this->getMailService()->send();
         return null;

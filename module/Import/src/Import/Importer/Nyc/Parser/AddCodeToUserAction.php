@@ -60,7 +60,7 @@ class AddCodeToUserAction implements ActionInterface
      */
     public function execute()
     {
-        $this->securityService->saveCodeToUser($this->code, $this->user->getUser());
+        $this->securityService->saveCodeToUser($this->code, $this->user->getUser(), 30);
     }
 
     /**
