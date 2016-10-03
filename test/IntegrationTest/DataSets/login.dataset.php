@@ -1,4 +1,7 @@
 <?php
+/**
+ * @codingStandardsIgnoreStart
+ */
 return [
     'flips'         => [],
     'organizations' => [
@@ -134,6 +137,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'englishstudent'
         ],
         [
             'user_id'      => 'english_teacher',
@@ -154,6 +158,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'englishteacher'
         ],
         [
             'user_id'      => 'math_student',
@@ -174,6 +179,7 @@ return [
             'code_expires' => (string)(new \DateTime('-3 days'))->format("Y-m-d H:i:s"),
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'mathstudent'
         ],
         [
             'user_id'      => 'math_teacher',
@@ -194,6 +200,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'mathteacher'
         ],
         [
             'user_id'      => 'other_principal',
@@ -214,6 +221,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'otherprincipal'
         ],
         [
             'user_id'      => 'other_student',
@@ -234,6 +242,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'otherstudent'
         ],
         [
             'user_id'      => 'other_teacher',
@@ -254,6 +263,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'otherteacher'
         ],
         [
             'user_id'      => 'principal',
@@ -274,6 +284,7 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
+            'normalized_username' => 'principal'
         ],
         [
             'user_id'      => 'super_user',
@@ -294,6 +305,28 @@ return [
             'code_expires' => null,
             'super'        => '1',
             'external_id'  => null,
+            'normalized_username' => 'superuser'
+        ],
+        [
+            'user_id' => 'fancy-lion002',
+            'username' => 'fancy-lion002',
+            'email' => 'fancy-lion002@ginasink.com',
+            'code' => NULL,
+            'type' => 'CHILD',
+            'password' => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name' => 'Fancy',
+            'middle_name' => NULL,
+            'last_name' => 'Lion',
+            'gender' => 'F',
+            'meta' => NULL,
+            'birthdate' => '2016-04-27 10:48:42',
+            'created' => '2016-04-27 10:48:44',
+            'updated' => '2016-04-27 10:48:46',
+            'deleted' => NULL,
+            'code_expires' => NULL,
+            'super' => '0',
+            'external_id' => NULL,
+            'normalized_username' => 'fancylion002'
         ],
     ],
     'user_friends'  => [],

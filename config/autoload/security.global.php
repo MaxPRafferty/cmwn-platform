@@ -100,6 +100,9 @@ return [
             'api.rest.skribble-notify' => [
                 'POST' => 'skribble.notice',
             ],
+            'api.rest.feed' => [
+                'GET'  => 'view.feed',
+            ],
         ],
     ],
 ];

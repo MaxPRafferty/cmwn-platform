@@ -9,7 +9,9 @@ use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
+use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
+use Security\Authorization\Rbac;
 use User\Adult;
 
 /**
@@ -46,6 +48,11 @@ class TeacherWorksheetParserTest extends TestCase
      * @var ClassRoomRegistry
      */
     protected $classRegistry;
+
+    /**
+     * @var Rbac
+     */
+    protected $rbac;
 
     /**
      * @before
@@ -87,13 +94,23 @@ class TeacherWorksheetParserTest extends TestCase
     }
 
     /**
+     * @before
+     */
+    public function setUpRbac()
+    {
+        $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
+    }
+
+    /**
      * @param \PHPExcel_Worksheet $sheet
      * @return TeacherWorksheetParser
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)
     {
         AbstractParser::clear();
-        return new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
+        $parser = new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
+        $parser->setRbac($this->rbac);
+        return $parser;
     }
 
     /**
@@ -384,6 +401,45 @@ class TeacherWorksheetParserTest extends TestCase
         $parser->preProcess();
 
         $expectedErrors = ['Sheet <b>"Teachers"</b> Row: <b>2</b> Teacher has invalid email <b>"foo-bar"</b>'];
+
+        $this->assertTrue(
+            $parser->hasErrors(),
+            'Parser did not produce any errors when a teacher has invalid a email'
+        );
+
+        $this->assertSame(
+            $expectedErrors,
+            $parser->getErrors(),
+            'Parser did not report correct error messages when a teacher  has invalid a email'
+        );
+
+        $this->assertFalse(
+            $parser->hasWarnings(),
+            'Parser is reporting warnings when this file should not have any'
+        );
+
+        $this->assertSame(
+            [],
+            $parser->getWarnings(),
+            'Parser reported warnings that It should not have'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldErrorWhenTeacherHasInvalidType()
+    {
+        $reader = \PHPExcel_IOFactory::load(__DIR__ . '/_files/teacher_invalid_type.xlsx');
+        $sheet  = $reader->getSheet(0);
+        $parser = $this->getParser($sheet);
+
+        $parser->preProcess();
+
+        $expectedErrors = [
+            0 => 'Sheet <b>"Teachers"</b> Row: <b>2</b> Teacher has invalid type <b>"Foo Bar"</b>',
+            1 => 'Sheet <b>"Teachers"</b> Row: <b>3</b> Teacher has invalid type <b>"Assistant Principal"</b>',
+        ];
 
         $this->assertTrue(
             $parser->hasErrors(),

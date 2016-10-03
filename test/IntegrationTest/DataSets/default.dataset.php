@@ -163,21 +163,48 @@ return [
     ],
     'images'        => [
         [
-            'image_id'          => 'profiles/drkynjsedoegxb0hwvch',
+            'image_id'          => 'english_pending',
             'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
-                '/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg',
+                '/upload/v1460592471/english_pending.jpg',
             'moderation_status' => '0',
-            'created'           => '2016-05-05 20:14:18',
-            'updated'           => '2016-05-05 20:14:18',
+            'created'           => '2016-05-14 00:07:53',
+            'updated'           => '2016-05-14 00:07:53',
             'type'              => null,
         ],
         [
-            'image_id'          => 'profiles/dwtm7optf0qq62vcveef',
+            'image_id'          => 'english_approved',
             'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
-                '/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
+            '/upload/v1460592535/english_approved',
             'moderation_status' => '1',
-            'created'           => '2016-04-14 00:07:53',
-            'updated'           => '2016-04-14 00:07:53',
+            'created'           => '2016-04-05 20:14:18',
+            'updated'           => '2016-04-06 20:14:18',
+            'type'              => null,
+        ],
+        [
+            'image_id'          => 'english_rejected',
+            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
+                '/upload/v1460592471/profiles/english_rejected.jpg',
+            'moderation_status' => '-1',
+            'created'           => '2016-04-01 00:07:53',
+            'updated'           => '2016-04-02 00:07:53',
+            'type'              => null,
+        ],
+        [
+            'image_id'          => 'english_previous_approved',
+            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
+                '/upload/v1460592471/english_previous_approved.jpg',
+            'moderation_status' => '1',
+            'created'           => '2016-03-14 00:07:53',
+            'updated'           => '2016-03-15 00:07:53',
+            'type'              => null,
+        ],
+        [
+            'image_id'          => 'principal',
+            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
+                '/upload/v1460592471/principal.jpg',
+            'moderation_status' => '1',
+            'created'           => '2016-06-14 00:07:53',
+            'updated'           => '2016-06-15 00:07:53',
             'type'              => null,
         ],
     ],
@@ -458,16 +485,25 @@ return [
     'user_images'   => [
         [
             'user_id'  => 'english_student',
-            'image_id' => 'profiles/drkynjsedoegxb0hwvch',
+            'image_id' => 'english_approved',
         ],
         [
             'user_id'  => 'english_student',
-            'image_id' => 'profiles/dwtm7optf0qq62vcveef',
+            'image_id' => 'english_pending',
         ],
         [
-            'user_id'  => 'other_principal',
-            'image_id' => 'profiles/dwtm7optf0qq62vcveef',
+            'user_id'  => 'english_student',
+            'image_id' => 'english_rejected',
+        ],
+        [
+            'user_id'  => 'english_student',
+            'image_id' => 'english_previous_approved',
+        ],
+        [
+            'user_id'  => 'principal',
+            'image_id' => 'principal',
         ],
     ],
     'user_saves'    => [],
+    'user_suggestions'    => [],
 ];

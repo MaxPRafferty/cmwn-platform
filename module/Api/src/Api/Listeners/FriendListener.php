@@ -6,10 +6,14 @@ use Api\Links\FriendLink;
 use Api\Links\SuggestLink;
 use Api\V1\Rest\User\MeEntity;
 use Friend\FriendInterface;
+use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\Assertions\DefaultAssertion;
+use Suggest\NotFoundException;
+use Suggest\Service\SuggestedService;
+use Suggest\Service\SuggestedServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -32,6 +36,11 @@ class FriendListener implements AuthenticationServiceAwareInterface
     protected $friendService;
 
     /**
+     * @var SuggestedService
+     */
+    protected $suggestedService;
+
+    /**
      * @var array
      */
     protected $listeners = [];
@@ -40,10 +49,12 @@ class FriendListener implements AuthenticationServiceAwareInterface
      * FriendListener constructor.
      *
      * @param FriendServiceInterface $friendService
+     * @param SuggestedServiceInterface $suggestedService
      */
-    public function __construct(FriendServiceInterface $friendService)
+    public function __construct(FriendServiceInterface $friendService, SuggestedServiceInterface $suggestedService)
     {
         $this->friendService = $friendService;
+        $this->suggestedService = $suggestedService;
     }
 
     /**
@@ -130,7 +141,17 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $status = $this->friendService->fetchFriendStatusForUser($authUser, $realEntity);
+        try {
+            $status = $this->friendService->fetchFriendStatusForUser($authUser, $realEntity);
+        } catch (NotFriendsException $nf) {
+            try {
+                $this->suggestedService->fetchSuggestedFriendForUser($authUser, $realEntity);
+                $status = FriendInterface::CAN_FRIEND;
+            } catch (NotFoundException $nf) {
+                $status = FriendInterface::CANT_FRIEND;
+            }
+        }
+
         $realEntity->setFriendStatus($status);
 
         if ($realEntity instanceof MeEntity && $realEntity->getType() === UserInterface::TYPE_CHILD) {

@@ -39,6 +39,13 @@ build:
 release:
   steps:
     - script:
+      name: Init git
+      code: |-
+        git checkout $WERCKER_GIT_BRANCH
+        git config --global user.email hal-9000@changemyworldnow.com
+        git config --global user.name "wercker"
+        git fetch $GIT_REMOTE
+    - script:
       name: Version bump, Changelog and prep
       code: |-
         echo "Bumping version"
@@ -53,10 +60,6 @@ release:
     - script:
       name: Commiting new version number
       code: |-
-        git checkout $WERCKER_GIT_BRANCH
-        git config --global user.email hal-9000@changemyworldnow.com
-        git config --global user.name "wercker"
-        git fetch $GIT_REMOTE
         git add composer.json CHANGELOG.md
         git commit -m 'Version bump [ci skip]'
         git push -f $GIT_REMOTE $WERCKER_GIT_BRANCH
@@ -74,10 +77,6 @@ release:
       name: Creating release on github
       token: $MC_GITHUB_TOKEN
       tag: $VERSION
-    - github-upload-asset:
-      name: Uploading build to github
-      token: $MC_GITHUB_TOKEN
-      title: $VERSION
     - github-upload-asset:
       name: Adding build artifact to tag
       token: $MC_GITHUB_TOKEN

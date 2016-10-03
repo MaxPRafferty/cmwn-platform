@@ -1,5 +1,5 @@
 <?php
-
+// @@codingStandardsIgnoreStart
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
@@ -46,7 +46,5 @@ class Skribble extends AbstractMigration
             ->addForeignKey('created_by', 'users', 'user_id', ['delete' => 'CASCADE'])
             ->addForeignKey('friend_to', 'users', 'user_id', ['delete' => 'CASCADE'])
             ->create();
-
-
     }
 }

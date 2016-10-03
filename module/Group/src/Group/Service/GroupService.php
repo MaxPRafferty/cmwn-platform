@@ -5,7 +5,6 @@ namespace Group\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Group\Group;
-use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
 use Zend\Db\Adapter\Driver\Pdo\Connection;
@@ -336,6 +335,8 @@ class GroupService implements GroupServiceInterface
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
+        $sql = new \Zend\Db\Sql\Sql($this->groupTableGateway->getAdapter());
+        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->groupTableGateway->getAdapter(),
