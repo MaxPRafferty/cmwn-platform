@@ -30,4 +30,5 @@ return [
     'ZF\\Versioning',
     'Api',
     'Security',
+    'Flag',
 ];
