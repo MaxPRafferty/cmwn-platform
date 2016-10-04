@@ -10,7 +10,7 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'suggest-cli' => [
+                'suggest-cron' => [
                     'options' => [
                         'route'    => 'cron:suggest [--verbose|-v] [--debug|-d]',
                         'defaults' => [
