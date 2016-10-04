@@ -5,6 +5,7 @@ namespace IntegrationTest\Api\V1\Rest;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use User\Child;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
@@ -415,6 +416,59 @@ class UserResourceTest extends TestCase
 
         $this->setExpectedException(NotFoundException::class);
         $this->loadUserFromDb('english_student');
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldCreateUserWithUserData()
+    {
+        $this->markTestIncomplete("Allow user resource to post from this end point with the following values set");
+
+        $date = new \DateTime();
+        $postData = [
+            'email'       => 'child@changemyworldnow.com',
+            'first_name'  => 'foo',
+            'middle_name' => 'bar',
+            'last_name'   => 'trump',
+            'gender'      => 'male',
+            'birthdate'   => $date->format("Y-m-d H:i:s"),
+            'type'        => Child::TYPE_CHILD,
+            'meta'        => [],
+            'external_id' => null,
+        ];
+
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user', 'POST', $postData);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldFetchUserByExternalId()
+    {
+        $this->markTestIncomplete("Allow user resource to fetch by external id by setting a route param externalId");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?externalId=foo');
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldFetchUserByEmail()
+    {
+        $this->markTestIncomplete("Allow user resource to fetch user by email by setting a route param email");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?email=foo@ginasink.com');
     }
 
     /**
