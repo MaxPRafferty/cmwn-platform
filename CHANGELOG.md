@@ -1,3 +1,9 @@
+Version - 0.4.3
+----
+
+- 9cbb5e2: Adjusted config for suggestion cron
+- cef8e08: Version bump [ci skip]
+
 Version - 0.4.2
 ----
 
