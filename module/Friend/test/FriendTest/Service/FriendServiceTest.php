@@ -122,7 +122,7 @@ class FriendServiceTest extends TestCase
         $status = [
             'uf_user_id' => 'friend',
             'uf_friend_id' => 'user',
-            'uf_status' => FriendInterface::PENDING
+            'friend_status' => FriendInterface::PENDING
         ];
         $result = new ResultSet();
         $result->initialize([$status]);
@@ -152,7 +152,7 @@ class FriendServiceTest extends TestCase
         $status = [
             'uf_user_id' => 'user',
             'uf_friend_id' => 'friend',
-            'uf_status' => FriendInterface::FRIEND
+            'friend_status' => FriendInterface::FRIEND
         ];
 
         $result = new ResultSet();
@@ -162,7 +162,7 @@ class FriendServiceTest extends TestCase
         $where = [
             'user_id' => $status['uf_user_id'],
             'friend_id' => $status['uf_friend_id'],
-            'status' => $status['uf_status']
+            'status' => $status['friend_status']
         ];
         $this->tableGateway
             ->shouldReceive('delete')
@@ -196,7 +196,7 @@ class FriendServiceTest extends TestCase
         $row = [
             'uf_user_id' => $this->user->getUserId(),
             'uf_friend_id' => $this->friend->getUserId(),
-            'uf_status' => FriendInterface::FRIEND
+            'friend_status' => FriendInterface::FRIEND
         ];
         $result->initialize([$row]);
         $this->tableGateway
@@ -232,7 +232,7 @@ class FriendServiceTest extends TestCase
         $row = [
             'uf_user_id' => $this->user->getUserId(),
             'uf_friend_id' => $this->friend->getUserId(),
-            'uf_status' => FriendInterface::FRIEND
+            'friend_status' => FriendInterface::FRIEND
         ];
         $result->initialize([$row]);
         $this->tableGateway
@@ -251,9 +251,9 @@ class FriendServiceTest extends TestCase
     {
         $result = new ResultSet();
         $row = [
-            'uf_user_id' => $this->user->getUserId(),
+            'user_id' => $this->user->getUserId(),
             'uf_friend_id' => $this->friend->getUserId(),
-            'uf_status' => FriendInterface::PENDING
+            'friend_status' => FriendInterface::PENDING
         ];
         $result->initialize([$row]);
         $this->tableGateway
@@ -272,9 +272,9 @@ class FriendServiceTest extends TestCase
     {
         $result = new ResultSet();
         $row = [
-            'uf_user_id' => $this->friend->getUserId(),
+            'user_id' => $this->friend->getUserId(),
             'uf_friend_id' => $this->user->getUserId(),
-            'uf_status' => FriendInterface::REQUESTED
+            'friend_status' => FriendInterface::REQUESTED
         ];
         $result->initialize([$row]);
         $this->tableGateway

@@ -1,6 +1,6 @@
 <?php
 
-namespace SuggestCron\Controller;
+namespace Suggest\Controller;
 
 use Job\Service\JobServiceInterface;
 use Suggest\Engine\SuggestionEngine;

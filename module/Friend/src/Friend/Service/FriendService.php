@@ -55,7 +55,7 @@ class FriendService implements FriendServiceInterface
         $where  = $this->createWhere($where);
 
         $select = new Select(['uf' => 'user_friends']);
-        $select->columns(['uf_user_id' => 'user_id', 'uf_friend_id' => 'friend_id', 'uf_status' => 'status']);
+        $select->columns(['uf_user_id' => 'user_id', 'uf_friend_id' => 'friend_id', 'friend_status' => 'status']);
         $select->join(
             ['u' => 'users'],
             new Expression('u.user_id = uf.friend_id OR u.user_id = uf.user_id'),
@@ -108,11 +108,11 @@ class FriendService implements FriendServiceInterface
 
         $isAccepting = $userId == $currentStatus['uf_friend_id'];
 
-        if ($isAccepting && $currentStatus['uf_status'] === FriendInterface::PENDING) {
+        if ($isAccepting && $currentStatus['friend_status'] === FriendInterface::PENDING) {
             $where = [
                 'user_id'   => $currentStatus['uf_user_id'],
                 'friend_id' => $currentStatus['uf_friend_id'],
-                'status'    => $currentStatus['uf_status'],
+                'status'    => $currentStatus['friend_status'],
             ];
 
             $this->tableGateway->update(
@@ -139,7 +139,7 @@ class FriendService implements FriendServiceInterface
             $where = [
                 'user_id'   => $currentStatus['uf_user_id'],
                 'friend_id' => $currentStatus['uf_friend_id'],
-                'status'    => $currentStatus['uf_status'],
+                'status'    => $currentStatus['friend_status'],
             ];
             $this->tableGateway->delete($where);
         } catch (NotFriendsException $notFriends) {
@@ -193,7 +193,7 @@ class FriendService implements FriendServiceInterface
     {
         $result = $this->fetchFriendForUser($user, $friend, new \ArrayObject());
 
-        $currentStatus = $result->offsetGet('uf_status');
+        $currentStatus = $result->offsetGet('friend_status');
         if ($currentStatus === FriendInterface::FRIEND) {
             return FriendInterface::FRIEND;
         }
@@ -223,7 +223,7 @@ class FriendService implements FriendServiceInterface
         $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
 
         $select = new Select(['uf' => 'user_friends']);
-        $select->columns(['uf_user_id' => 'user_id', 'uf_friend_id' => 'friend_id', 'uf_status' => 'status']);
+        $select->columns(['uf_user_id' => 'user_id', 'uf_friend_id' => 'friend_id', 'friend_status' => 'status']);
         $select->join(
             ['u' => 'users'],
             new Expression('u.user_id = uf.friend_id OR u.user_id = uf.user_id'),

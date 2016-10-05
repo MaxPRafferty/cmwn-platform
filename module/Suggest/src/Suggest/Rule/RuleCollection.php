@@ -3,6 +3,8 @@
 namespace Suggest\Rule;
 
 use Suggest\InvalidArgumentException;
+use Suggest\SuggestionContainer;
+use User\UserInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -54,6 +56,10 @@ class RuleCollection implements SuggestedRuleCompositeInterface
         $this->rules[] = $rule;
     }
 
+    /**
+     * @param SuggestionContainer $suggestionContainer
+     * @param UserInterface $currentUser
+     */
     public function apply($suggestionContainer, $currentUser)
     {
         foreach ($this->rules as $rule) {

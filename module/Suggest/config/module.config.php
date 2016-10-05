@@ -41,7 +41,8 @@ return [
 
     'controllers' => [
         'factories' => [
-            'Suggest\Controller' => \Suggest\Controller\SuggestionControllerFactory::class,
+            'Suggest\Controller\SuggestionController' => \Suggest\Controller\SuggestionControllerFactory::class,
+            'Suggest\Controller\SuggestCronController' => \Suggest\Controller\SuggestCronControllerFactory::class,
         ],
     ],
 
@@ -59,8 +60,18 @@ return [
                         'route'    => 'suggest --user_id= [--verbose|-v] [--debug|-d]',
                         // @codingStandardsIgnoreEnd
                         'defaults' => [
-                            'controller' => 'Suggest\Controller',
+                            'controller' => 'Suggest\Controller\SuggestionController',
                             'action'     => 'suggest',
+                        ],
+                    ],
+                ],
+
+                'suggest-cron' => [
+                    'options' => [
+                        'route'    => 'cron:suggest [--verbose|-v] [--debug|-d]',
+                        'defaults' => [
+                            'controller' => 'Suggest\Controller\SuggestCronController',
+                            'action'     => 'suggestCron',
                         ],
                     ],
                 ],

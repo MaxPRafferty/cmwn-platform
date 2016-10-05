@@ -40,18 +40,11 @@ class UpdatePasswordResource extends AbstractResourceListener implements Authent
     public function create($data)
     {
         $data = (array) $data;
-        if (!$this->authService->hasIdentity()) {
-            return new ApiProblem(401, 'Not Authorized');
-        }
 
         try {
             $securityUser = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePassword) {
             $securityUser = $changePassword->getUser();
-        }
-
-        if (!$securityUser instanceof SecurityUser) {
-            return new ApiProblem(401, 'Not Authorized');
         }
 
         $this->securityService->savePasswordToUser($securityUser, $data['password']);

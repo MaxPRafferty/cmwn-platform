@@ -63,6 +63,7 @@ return array(
             'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource' =>
                 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
             'Api\\V1\\Rest\\Feed\\FeedResource' => 'Api\\V1\\Rest\\Feed\\FeedResourceFactory',
+            'Api\\V1\\Rest\\GameData\\GameDataResource' => 'Api\\V1\\Rest\\GameData\\GameDataResourceFactory',
         ),
     ),
     'router' => array(
@@ -259,9 +260,18 @@ return array(
             'api.rest.save-game' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/user/:user_id/game/:game_id',
+                    'route' => '/user/:user_id/game[/:game_id]',
                     'defaults' => array(
                         'controller' => 'Api\\V1\\Rest\\SaveGame\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.game-data' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/game-data[/:game_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\GameData\\Controller',
                     ),
                 ),
             ),
@@ -331,6 +341,7 @@ return array(
             23 => 'api.rest.skribble',
             24 => 'api.rest.skribble-notify',
             25 => 'api.rest.feed',
+            26 => 'api.rest.game-data',
         ),
     ),
     'zf-rest' => array(
@@ -731,13 +742,15 @@ return array(
                 1 => 'GET',
                 2 => 'POST',
             ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
             'collection_query_whitelist' => array(),
             'page_size' => 25,
             'page_size_param' => 'per_page',
             'entity_class' => 'Api\\V1\\Rest\\SaveGame\\SaveGameEntity',
             'collection_class' => 'Api\\V1\\Rest\\SaveGame\\SaveGameCollection',
             'service_name' => 'SaveGame',
-            'collection_http_methods' => array(),
         ),
         'Api\\V1\\Rest\\Media\\Controller' => array(
             'listener' => 'Api\\V1\\Rest\\Media\\MediaResource',
@@ -819,6 +832,27 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Feed\\FeedCollection',
             'service_name' => 'Feed',
         ),
+        'Api\\V1\\Rest\\GameData\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\GameData\\GameDataResource',
+            'route_name' => 'api.rest.game-data',
+            'route_identifier_name' => 'game_id',
+            'collection_name' => 'game-data',
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+            ),
+            'page_size' => 25,
+            'page_size_param' => 'per_page',
+            'entity_class' => 'Api\\V1\\Rest\\GameData\\GameDataEntity',
+            'collection_class' => 'Api\\V1\\Rest\\GameData\\GameDataCollection',
+            'service_name' => 'GameData',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -848,6 +882,7 @@ return array(
             'Api\\V1\\Rest\\Skribble\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\SkribbleNotify\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Feed\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\GameData\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -980,6 +1015,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\GameData\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1084,6 +1124,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Feed\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\GameData\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1417,6 +1461,18 @@ return array(
                 'route_identifier_name' => 'feed_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
                 'max_depth' => 2,
+            ),
+            'Api\\V1\\Rest\\GameData\\GameDataEntity' => array(
+                'route_name' => 'api.rest.game-data',
+                'route_identifier_name' => 'game_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+                'max_depth' => 2,
+            ),
+            'Api\\V1\\Rest\\GameData\\GameDataCollection' => array(
+                'entity_identifier_name' => 'game_id',
+                'route_name' => 'api.rest.game-data',
+                'route_identifier_name' => 'game_id',
+                'is_collection' => true,
             ),
         ),
     ),

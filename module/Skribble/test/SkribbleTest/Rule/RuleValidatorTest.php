@@ -25,7 +25,6 @@ class RuleValidatorTest extends TestCase
      */
     public function testItShouldPassValidRules()
     {
-        $this->markTestSkipped('bcmath not installed');
         $json          = file_get_contents(__DIR__ . '/../_files/valid.skribble.json');
         $skribbleData  = Json::decode($json, Json::TYPE_ARRAY);
 
@@ -67,8 +66,9 @@ class RuleValidatorTest extends TestCase
     /**
      * @test
      * @dataProvider overFlowProvider
+     * TODO Test when rules are being validated
      */
-    public function testItShouldFailWithOverflowException($overFlow)
+    public function testItShouldFailWithOverflowException()
     {
         $this->markTestIncomplete('Need to improve rules validating');
         $validator = new RuleValidator();
