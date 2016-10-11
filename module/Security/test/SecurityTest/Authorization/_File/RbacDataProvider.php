@@ -390,7 +390,6 @@ return [
         'allowed' => [
             'attach.profile.image',
             'edit.user.adult',
-            'save.game',
             'update.password',
             'view.feed',
             'view.flip',
@@ -424,6 +423,7 @@ return [
             'remove.org',
             'remove.user.adult',
             'remove.user.child',
+            'save.game',
             'skribble.notice',
             'update.skribble',
             'view.all.groups',

@@ -304,7 +304,6 @@ return [
                 'permissions' => [
                     'attach.profile.image',
                     'edit.user.adult',
-                    'save.game',
                     'update.password',
                     'view.flip',
                     'view.games',
