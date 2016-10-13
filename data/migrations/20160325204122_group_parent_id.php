@@ -1,5 +1,5 @@
 <?php
-
+// @@codingStandardsIgnoreStart
 use Phinx\Migration\AbstractMigration;
 
 class GroupParentId extends AbstractMigration
@@ -38,6 +38,5 @@ class GroupParentId extends AbstractMigration
             ['delete' => 'SET_NULL', 'update'=> 'NO_ACTION']
         )
             ->update();
-
     }
 }

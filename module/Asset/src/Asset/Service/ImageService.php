@@ -76,7 +76,7 @@ class ImageService implements ImageServiceInterface
         $image->setUpdated(new \DateTime());
         $data = $image->getArrayCopy();
 
-        $data['moderation_status'] = (int) $image->isModerated();
+        $data['moderation_status'] = $image->getModerationStatus() ;
         unset($data['is_moderated']);
         unset($data['deleted']);
 
@@ -98,7 +98,7 @@ class ImageService implements ImageServiceInterface
         $image->setUpdated(new \DateTime());
         $data = $image->getArrayCopy();
 
-        $data['moderation_status'] = (int) $image->isModerated();
+        $data['moderation_status'] = $image->getModerationStatus();
         unset($data['is_moderated']);
         unset($data['deleted']);
 

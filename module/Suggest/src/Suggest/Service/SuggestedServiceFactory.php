@@ -1,15 +1,16 @@
 <?php
 
-namespace Friend\Service;
+namespace Suggest\Service;
 
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class SuggestedFriendServiceFactory
  */
-class SuggestedFriendServiceFactory implements FactoryInterface
+class SuggestedServiceFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -20,7 +21,9 @@ class SuggestedFriendServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var Adapter $adapter */
-        $adapter   = $serviceLocator->get(Adapter::class);
-        return new SuggestedFriendService($adapter);
+        $adapter = $serviceLocator->get(Adapter::class);
+        return new SuggestedService(
+            new TableGateway('user_suggestions', $adapter)
+        );
     }
 }

@@ -5,11 +5,12 @@ namespace Notice\Listeners;
 use AcMailer\Service\MailServiceAwareTrait;
 use Notice\EmailModel\NewUserModel;
 use Notice\NoticeInterface;
-use User\Child;
 use User\Service\UserServiceInterface;
+use User\User;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\View\Exception;
 
 /**
  * Class UserEmailListener
@@ -22,6 +23,20 @@ class NewUserEmailListener implements NoticeInterface
      * @var \Zend\Stdlib\CallbackHandler[]
      */
     protected $listeners = [];
+
+    /**
+     * @var NewUserModel
+     */
+    protected $emailModel;
+
+    /**
+     * NewUserEmailListener constructor.
+     * @param NewUserModel $emailModel
+     */
+    public function __construct($emailModel)
+    {
+        $this->emailModel = $emailModel;
+    }
 
     /**
      * @param SharedEventManagerInterface $manager
@@ -61,13 +76,21 @@ class NewUserEmailListener implements NoticeInterface
             return;
         }
 
-        if ($user instanceof Child) {
+        if ($user->getType() === null || $user->getType() === User::TYPE_CHILD) {
             return;
         }
 
         $this->getMailService()->getMessage()->setTo($user->getEmail());
         $this->getMailService()->getMessage()->setSubject('Welcome to Change my world now');
-        $this->getMailService()->setTemplate(new NewUserModel($user));
+        $type = $user->getType();
+        $this->emailModel->setTemplate('email/user/new.' . strtolower($type) . '.phtml');
+
+        try {
+            $this->getMailService()->setTemplate($this->emailModel);
+        } catch (Exception\RuntimeException $e) {
+            return;
+        }
+
         $this->getMailService()->send();
     }
 }

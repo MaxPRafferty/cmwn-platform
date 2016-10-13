@@ -2,10 +2,12 @@
 
 namespace Friend;
 
+use \User\UserInterface;
+
 /**
  * Interface FriendInterface
  */
-interface FriendInterface
+interface FriendInterface extends UserInterface
 {
     const CAN_FRIEND  = 'CAN_FRIEND';
     const FRIEND      = 'FRIEND';

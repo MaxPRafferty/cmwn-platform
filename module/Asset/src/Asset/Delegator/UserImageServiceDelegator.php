@@ -2,6 +2,7 @@
 
 namespace Asset\Delegator;
 
+use Application\Utils\ServiceTrait;
 use Asset\ImageInterface;
 use Asset\Service\UserImageService;
 use Asset\Service\UserImageServiceInterface;
@@ -16,6 +17,12 @@ use Zend\EventManager\EventManagerAwareTrait;
 class UserImageServiceDelegator implements UserImageServiceInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
+    use ServiceTrait;
+
+    /**
+     * @var array Adds the Importer interface the shared manager
+     */
+    protected $eventIdentifier = [UserImageServiceInterface::class];
 
     /**
      * @var UserImageService
@@ -75,6 +82,8 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
         if ($this->getEventManager()->trigger($event)->stopped()) {
             return false;
         }
+
+        $approvedOnly = $event->getParam('approved_only');
 
         try {
             $return = $this->realService->fetchImageForUser($user, $approvedOnly);
