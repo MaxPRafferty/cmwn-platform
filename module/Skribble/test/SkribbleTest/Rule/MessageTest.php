@@ -23,7 +23,6 @@ class MessageTest extends TestCase
      */
     public function testItShouldHydrateCorrectly()
     {
-        $this->markTestSkipped('bcmath not installed');
         $expected = [
             'media_id'   => '70116576425',
             'name'       => 'img_dogs_1-01.png',
@@ -84,7 +83,6 @@ class MessageTest extends TestCase
      */
     public function testItShouldBeAbleToHydrateItSelf()
     {
-        $this->markTestSkipped('bcmath not installed');
         $expected = new Message([
             'media_id'   => '70116576425',
             'name'       => 'img_dogs_1-01.png',

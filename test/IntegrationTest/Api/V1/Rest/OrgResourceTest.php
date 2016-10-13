@@ -178,6 +178,17 @@ class OrgResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.org');
         $this->assertControllerName('api\v1\rest\org\controller');
         $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('org', $body['_embedded']);
+        $orgs = $body['_embedded']['org'];
+        $expected = ['district'];
+        $actual = [];
+        foreach ($orgs as $org) {
+            $actual[] = $org['org_id'];
+        }
+
+        $this->assertEquals($actual, $expected);
     }
 
     /**

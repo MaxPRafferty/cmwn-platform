@@ -1,6 +1,6 @@
 <?php
 
-namespace SuggestCron\Controller;
+namespace Suggest\Controller;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Job\JobInterface;

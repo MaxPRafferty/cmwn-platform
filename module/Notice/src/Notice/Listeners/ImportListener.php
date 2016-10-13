@@ -104,10 +104,6 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
      */
     protected function notifyError(ParserInterface $parser)
     {
-        if (!$parser instanceof NotificationAwareInterface) {
-            return null;
-        }
-
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
         $this->getMailService()->getMessage()->setSubject('User import error');
         $this->getMailService()->setTemplate(
@@ -127,10 +123,6 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
      */
     protected function notifySuccess(ParserInterface $parser)
     {
-        if (!$parser instanceof NotificationAwareInterface) {
-            return null;
-        }
-
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
         $this->getMailService()->getMessage()->setSubject('User import Success');
 

@@ -42,7 +42,6 @@ class UpdatePasswordResourceTest extends TestCase
      */
     public function testItShouldChangePasswordForCodeUser()
     {
-        $this->markTestIncomplete("Not checked");
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser('english_student');
 
@@ -121,5 +120,19 @@ class UpdatePasswordResourceTest extends TestCase
         $this->assertEquals('english_student', $user->getUserId());
         $this->assertTrue($user->comparePassword('business'), 'The Password changed');
         $this->assertFalse($user->comparePassword('Apple0007'), 'The Password changed');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShould401WhenUserNotLoggedIn()
+    {
+        $this->injectValidCsrfToken();
+        $this->dispatch(
+            '/password',
+            'POST',
+            ['password' => 'Apple0007', 'password_confirmation' => 'Apple0007']
+        );
+        $this->assertResponseStatusCode(401);
     }
 }

@@ -81,4 +81,16 @@ class SaveGameResource extends AbstractResourceListener
         $this->saveService->fetchSaveGameForUser($user, $gameId, $entity);
         return $entity;
     }
+
+    /**
+     * @param array $params
+     * @return mixed|ApiProblem
+     */
+    public function fetchAll($params = [])
+    {
+        /** @var UserInterface $user */
+        $user   = $this->getEvent()->getRouteParam('user');
+        $saves = $this->saveService->fetchAllSaveGamesForUser($user, null, new SaveGameEntity());
+        return new SaveGameCollection($saves);
+    }
 }

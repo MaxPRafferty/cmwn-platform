@@ -128,13 +128,12 @@ class NoticeController extends AbstractConsoleController implements LoggerAwareI
                 case 'new_user':
                     $this->getMailService()->getMessage()->setSubject('new user');
                     $this->getLogger()->notice("in new user");
-                    $this->getMailService()
-                        ->setTemplate(
-                            new NewUserModel([
-                                'image_domain' => $config['options']['image_domain'],
-                                'user' => ['user_id' => 'foo', 'email' => 'joni@ginasink.com', 'type' => 'Adult'],
-                            ])
-                        );
+                    $emailModel = new NewUserModel([
+                        'image_domain' => $config['options']['image_domain'],
+                        'user' => ['user_id' => 'foo', 'email' => 'joni@ginasink.com', 'type' => 'Adult'],
+                    ]);
+                    $emailModel->setTemplate('email/user/new.adult.phtml');
+                    $this->getMailService()->setTemplate($emailModel);
                     break;
             }
             $this->getLogger()->notice("Sending email");

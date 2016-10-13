@@ -8,12 +8,17 @@ use Game\GameInterface;
 use Game\SaveGame;
 use Game\SaveGameInterface;
 use User\UserInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
+use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class SaveGameService
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SaveGameService implements SaveGameServiceInterface
 {
@@ -103,5 +108,45 @@ class SaveGameService implements SaveGameServiceInterface
         $prototype->exchangeArray((array) $row);
 
         return $prototype;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAllSaveGamesForUser($user, $where = null, $prototype = null)
+    {
+        $where = $this->createWhere($where);
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        $where->addPredicate(new Operator('user_id', '=', $userId));
+        $select = new Select(['sg' => $this->tableGateway->getTable()]);
+        $select->where($where);
+        $select->order("sg.created ASC");
+        return new DbSelect(
+            $select,
+            $this->tableGateway->getAdapter(),
+            $resultSet
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAllSaveGameData($where = null, $prototype = null)
+    {
+        $where = $this->createWhere($where);
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        $select = new Select(['sg' => $this->tableGateway->getTable()]);
+        $select->where($where);
+        $select->order("sg.created DESC");
+        return new DbSelect(
+            $select,
+            $this->tableGateway->getAdapter(),
+            $resultSet
+        );
     }
 }

@@ -58,38 +58,6 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     }
 
     /**
-     * Fetches all the orgs for a user
-     *
-     * @param string|UserInterface $user
-     * @param null $where
-     * @param bool $paginate
-     * @param null $prototype
-     * @return mixed|HydratingResultSet|DbSelect
-     * @deprecated
-     */
-    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
-    {
-        $where    = !$where instanceof PredicateInterface ? new Where($where) : $where;
-        $event    = new Event(
-            'fetch.user.orgs',
-            $this->realService,
-            ['user' => $user, 'where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
-        );
-
-        $response = $this->getEventManager()->trigger($event);
-        if ($response->stopped()) {
-            return $response->last();
-        }
-
-        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
-        $event->setName('fetch.user.orgs.post');
-        $event->setParam('orgs', $return);
-        $this->getEventManager()->trigger($event);
-
-        return $return;
-    }
-
-    /**
      * @param OrganizationInterface $org
      * @return mixed
      */

@@ -31,5 +31,4 @@ return [
     'Api',
     'Security',
     'Suggest',
-    'SuggestCron',
 ];
