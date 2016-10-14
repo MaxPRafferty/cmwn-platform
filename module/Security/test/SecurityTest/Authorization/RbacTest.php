@@ -5,6 +5,8 @@ namespace SecurityTest\Authorization;
 use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Rbac;
+use SecurityTest\Authorization\Rbac\RbacDataProvider;
+use Zend\Permissions\Rbac\RoleInterface;
 
 /**
  * Test RbacTest
@@ -168,6 +170,15 @@ class RbacTest extends TestCase
      */
     public function rolePermissionProvider()
     {
-        return include __DIR__ . '/_File/RbacDataProvider.php';
+        $config = TestHelper::getServiceManager()->get('config');
+        $config = isset($config['cmwn-roles']) ? $config['cmwn-roles'] : [];
+        $rbac = TestHelper::getServiceManager()->get(Rbac::class);
+        $roleNames = [];
+        /**@var RoleInterface $rbacRole*/
+        foreach ($rbac as $rbacRole) {
+            $roleNames[] = $rbacRole->getName();
+        }
+        $rbacProvider = new RbacDataProvider($roleNames, $config);
+        return $rbacProvider->getIterator()->getArrayCopy();
     }
 }

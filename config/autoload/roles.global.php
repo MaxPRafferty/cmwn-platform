@@ -292,7 +292,6 @@ return [
                     'view.user.child',
                     'view.user.flip',
                     'view.user.groups',
-                    'view.games',
                     'view.feed',
                 ],
             ],
