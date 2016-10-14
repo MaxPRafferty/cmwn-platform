@@ -5,7 +5,11 @@ namespace Security\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\NoopLoggerAwareTrait;
 use Security\SecurityUser;
+use User\User;
+use User\Service\UserService;
 use User\UserInterface;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Log\LoggerAwareInterface;
 
@@ -57,7 +61,18 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      */
     public function fetchUserByUserName($username)
     {
-        $rowSet = $this->gateway->select(['username' => $username]);
+        $predicateSet = new PredicateSet([
+            new Operator('username', Operator::OP_EQ, $username),
+            new Operator('normalized_username', Operator::OP_EQ, User::normalizeUsername($username))
+        ], PredicateSet::OP_OR);
+
+        $rowSet = $this->gateway->select($predicateSet);
+        $row    = $rowSet->current();
+        if ($row) {
+            return new SecurityUser($row->getArrayCopy());
+        }
+
+        $rowSet = $this->gateway->select(['normalized_username' => UserService::normalizeUsername($username)]);
         $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("User not Found");
@@ -110,16 +125,12 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     }
 
     /**
-     * Saves the temp code to a user
-     *
-     * @param $code
-     * @param UserInterface $user
-     * @return bool
+     * @inheritdoc
      */
-    public function saveCodeToUser($code, $user)
+    public function saveCodeToUser($code, $user, $days = 1)
     {
         $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $expires = new \DateTime('+3 days');
+        $expires = new \DateTime(sprintf('+%d days', abs($days)));
         $this->gateway->update(
             ['code'    => $code, 'code_expires' => (string) $expires->format("Y-m-d H:i:s")],
             ['user_id' => $userId]

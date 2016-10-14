@@ -15,11 +15,13 @@ return array(
         9 => 'Api\\Listeners\\UserHalLinksListener',
         10 => 'Api\\Listeners\\TemplateLinkListener',
         11 => 'Api\\Listeners\\GameRouteListener',
+        12 => 'Api\\Listeners\\UserParamListener'
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
             'Api\\Listeners\\TemplateLinkListener' => 'Api\\Listeners\\TemplateLinkListener',
+            'Api\\Listeners\\UserParamListener' => 'Api\\Listeners\\UserParamListener',
         ),
         'factories' => array(
             'Api\\Listeners\\UserHalLinksListener' => 'Api\\Factory\\UserHalLinksListenerFactory',
@@ -49,8 +51,8 @@ return array(
             'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
             'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
             'Api\\V1\\Rest\\Friend\\FriendResource' => 'Api\\V1\\Rest\\Friend\\FriendResourceFactory',
-            'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Suggest\\SuggestResource' => 'Api\\V1\\Rest\\Suggest\\SuggestResourceFactory',
+            'Api\\Listeners\\FriendListener' => 'Api\\Factory\\FriendListenerFactory',
             'Api\\V1\\Rest\\Reset\\ResetResource' => 'Api\\V1\\Rest\\Reset\\ResetResourceFactory',
             'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResource' =>
                 'Api\\V1\\Rest\\UpdatePassword\\UpdatePasswordResourceFactory',
@@ -60,6 +62,7 @@ return array(
             'Api\\V1\\Rest\\Skribble\\SkribbleResource' => 'Api\\V1\\Rest\\Skribble\\SkribbleResourceFactory',
             'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource' =>
                 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
+            'Api\\V1\\Rest\\Feed\\FeedResource' => 'Api\\V1\\Rest\\Feed\\FeedResourceFactory',
         ),
     ),
     'router' => array(
@@ -289,6 +292,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.feed' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/feed[/:feed_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\Feed\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -318,6 +330,7 @@ return array(
             22 => 'api.rest.media',
             23 => 'api.rest.skribble',
             24 => 'api.rest.skribble-notify',
+            25 => 'api.rest.feed',
         ),
     ),
     'zf-rest' => array(
@@ -662,15 +675,18 @@ return array(
             'route_name' => 'api.rest.suggest',
             'route_identifier_name' => 'suggest_id',
             'collection_name' => 'suggest',
-            'entity_http_methods' => array(),
+            'entity_http_methods' => array(
+                0 => 'GET',
+            ),
             'collection_http_methods' => array(
                 0 => 'GET',
+                1 => 'POST',
             ),
             'collection_query_whitelist' => array(),
             'page_size' => 25,
             'page_size_param' => 'per_page',
             'entity_class' => 'Api\\V1\\Rest\\Suggest\\SuggestEntity',
-            'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestCollection',
+            'collection_class' => 'Api\\V1\\Rest\\Suggest\\SuggestionCollection',
             'service_name' => 'Suggest',
         ),
         'Api\\V1\\Rest\\Reset\\Controller' => array(
@@ -784,6 +800,25 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyCollection',
             'service_name' => 'SkribbleNotify',
         ),
+        'Api\\V1\\Rest\\Feed\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Feed\\FeedResource',
+            'route_name' => 'api.rest.feed',
+            'route_identifier_name' => 'feed_id',
+            'collection_name' => 'feed',
+            'entity_http_methods' => array(),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+            ),
+            'page_size' => 25,
+            'page_size_param' => 'per_page',
+            'entity_class' => 'Api\\V1\\Rest\\Feed\\FeedEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Feed\\FeedCollection',
+            'service_name' => 'Feed',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -812,6 +847,7 @@ return array(
             'Api\\V1\\Rest\\Media\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Skribble\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\SkribbleNotify\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Feed\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -939,6 +975,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\Feed\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1010,11 +1051,11 @@ return array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
-            'Api\\V1\\Rest\\Friend\\Controller' => array(
+            'Api\\V1\\Rest\\Suggest\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
-            'Api\\V1\\Rest\\Suggest\\Controller' => array(
+            'Api\\V1\\Rest\\Friend\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1039,6 +1080,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Feed\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1354,6 +1399,25 @@ return array(
                 'route_identifier_name' => 'skribble_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Feed\\FeedEntity' => array(
+                'route_name' => 'api.rest.feed',
+                'route_identifier_name' => 'feed_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+                'max_depth' => 3,
+                //TODO Add a test to check if the image of the semder is correctly sent
+            ),
+            'Api\\V1\\Rest\\Feed\\FeedCollection' => array(
+                'entity_identifier_name' => 'feed_id',
+                'route_name' => 'api.rest.feed',
+                'route_identifier_name' => 'feed_id',
+                'is_collection' => true,
+            ),
+            'Api\\V1\\Rest\\Feed\\SenderEntity' => array(
+                'route_name' => 'api.rest.feed',
+                'route_identifier_name' => 'feed_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+                'max_depth' => 2,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -1393,6 +1457,9 @@ return array(
         'Api\\V1\\Rest\\Friend\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Friend\\Validator',
         ),
+        'Api\\V1\\Rest\\Suggest\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Suggest\\Validator',
+        ),
         'Api\\V1\\Rest\\Reset\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Reset\\Validator',
         ),
@@ -1408,6 +1475,7 @@ return array(
         'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\SkribbleNotify\\Validator',
         ),
+
     ),
     'input_filter_specs' => array(
         'Api\\V1\\Rest\\User\\Validator' => array(
@@ -1469,7 +1537,12 @@ return array(
             ),
             6 => array(
                 'required' => false,
-                'validators' => array(),
+                'validators' => array(
+                    0 => array (
+                        'name' => 'User\\UpdateUsernameValidator',
+                        'options' => array(),
+                    ),
+                ),
                 'filters' => array(),
                 'name' => 'username',
                 'description' => 'Users name',
@@ -1480,6 +1553,10 @@ return array(
                 'validators' => array(
                     0 => array(
                         'name' => 'Zend\\Validator\\EmailAddress',
+                        'options' => array(),
+                    ),
+                    1 => array (
+                        'name' => 'User\\UpdateEmailValidator',
                         'options' => array(),
                     ),
                 ),
@@ -1827,6 +1904,7 @@ return array(
                 'description' => 'The user_id',
             ),
         ),
+        'Api\\V1\\Rest\\Suggest\\Validator' => array(),
         'Api\\V1\\Rest\\Reset\\Validator' => array(
             0 => array(
                 'required' => true,

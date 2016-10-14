@@ -6,14 +6,15 @@ use Friend\Service\FriendServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
+use Suggest\Engine\SuggestionEngine;
 use Zend\Json\Json;
 
 /**
- * Test FriendResourceTest
+ * Test SuggestResourceTest
  *
- * @group Friend
+ * @group Suggest
  * @group IntegrationTest
- * @group FriendService
+ * @group SuggestedService
  * @group DB
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -28,6 +29,11 @@ class SuggestResourceTest extends TestCase
     protected $friendService;
 
     /**
+     * @var SuggestionEngine
+     */
+    protected $suggestionEngine;
+
+    /**
      * @return ArrayDataSet
      */
     public function getDataSet()
@@ -40,9 +46,10 @@ class SuggestResourceTest extends TestCase
     /**
      * @before
      */
-    public function setUpFriendService()
+    public function setUpServices()
     {
         $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
+        $this->suggestionEngine = TestHelper::getServiceManager()->get(SuggestionEngine::class);
     }
 
     /**
@@ -85,8 +92,9 @@ class SuggestResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-
-        $this->friendService->attachFriendToUser('english_student', 'math_student');
+        $this->friendService->attachFriendToUser('math_student', 'english_student');
+        $this->suggestionEngine->setUser('english_student');
+        $this->suggestionEngine->perform();
         $this->dispatch('/user/english_student/suggest');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.suggest');
@@ -100,14 +108,12 @@ class SuggestResourceTest extends TestCase
         foreach ($body['_embedded']['suggest'] as $suggestData) {
             $actualSuggestion[] = [
                 'user_id' => $suggestData['suggest_id'],
-                'status'  => $suggestData['friend_status'],
             ];
         }
 
         $expected = [
             [
                 'user_id' => 'other_student',
-                'status'  => 'CAN_FRIEND',
             ],
         ];
 
@@ -123,7 +129,8 @@ class SuggestResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-
+        $this->suggestionEngine->setUser('english_student');
+        $this->suggestionEngine->perform();
         $this->dispatch('/user/english_student/suggest');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.suggest');
@@ -137,18 +144,15 @@ class SuggestResourceTest extends TestCase
         foreach ($body['_embedded']['suggest'] as $suggestData) {
             $actualSuggestion[] = [
                 'user_id' => $suggestData['suggest_id'],
-                'status'  => $suggestData['friend_status'],
             ];
         }
 
         $expected = [
             [
-                'user_id' => 'other_student',
-                'status'  => 'CAN_FRIEND',
+                'user_id' => 'math_student',
             ],
             [
-                'user_id' => 'math_student',
-                'status'  => 'CAN_FRIEND',
+                'user_id' => 'other_student',
             ],
         ];
 
@@ -165,7 +169,8 @@ class SuggestResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
         $this->friendService->attachFriendToUser('english_student', 'math_student');
-
+        $this->suggestionEngine->setUser('math_student');
+        $this->suggestionEngine->perform();
         $this->dispatch('/user/math_student/suggest');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.suggest');
@@ -179,18 +184,12 @@ class SuggestResourceTest extends TestCase
         foreach ($body['_embedded']['suggest'] as $suggestData) {
             $actualSuggestion[] = [
                 'user_id' => $suggestData['suggest_id'],
-                'status'  => $suggestData['friend_status'],
             ];
         }
 
         $expected = [
             [
                 'user_id' => 'other_student',
-                'status'  => 'CAN_FRIEND',
-            ],
-            [
-                'user_id' => 'english_student',
-                'status'  => 'NEEDS_YOUR_ACCEPTANCE',
             ],
         ];
 

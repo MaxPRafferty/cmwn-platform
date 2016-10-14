@@ -1,5 +1,5 @@
 <?php
-
+// @@codingStandardsIgnoreStart
 use Phinx\Migration\AbstractMigration;
 
 /**
@@ -48,6 +48,5 @@ class GroupRoles extends AbstractMigration
             $table->addColumn('role', 'string')
                 ->save();
         }
-
     }
 }
