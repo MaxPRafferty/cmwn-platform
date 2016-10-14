@@ -60,6 +60,10 @@ Modifying the test to attach the listener to an event manager and let the event 
 Suggest Cron Job which injects suggest Jobs for users in the database
 Adding the console usage messages and refactoring the commands
 
+=======
+Version - 0.3.9
+----
+
 - d2a865b: Ditto 0.2Fixes:
 
 1. Students now have 'view.groups' permission

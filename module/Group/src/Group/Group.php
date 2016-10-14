@@ -390,6 +390,6 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     public function setNetworkId($networkId)
     {
-        $this->networkId = $networkId;
+        $this->networkId = (string) $networkId;
     }
 }

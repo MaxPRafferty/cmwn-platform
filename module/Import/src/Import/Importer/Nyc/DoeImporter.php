@@ -9,6 +9,7 @@ use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\ImporterInterface;
+use Import\ProcessorErrorException;
 use Job\Feature\DryRunInterface;
 use Job\Feature\DryRunTrait;
 use Notice\NotificationAwareInterface;
@@ -186,7 +187,7 @@ class DoeImporter implements
             $this->getLogger()->info('Pre-processing');
             $this->parser->preProcess();
             if ($this->parser->hasErrors()) {
-                throw new \Exception('Parser has errors');
+                throw new ProcessorErrorException('Parser has errors');
             }
 
             $this->getLogger()->info('Pre-processing complete');
@@ -218,12 +219,12 @@ class DoeImporter implements
             $this->getLogger()->notice('Done Executing Actions');
             $event->setName('nyc.import.excel.complete');
             $this->getEventManager()->trigger($event);
-        } catch (\Exception $processException) {
+        } catch (ProcessorErrorException $processException) {
             $this->getLogger()->crit('Exception: ' . $processException->getMessage());
             $this->getLogger()->alert('Processor has errors', $this->parser->getErrors());
             $event->setName('nyc.import.excel.error');
             $this->getEventManager()->trigger($event);
-            return;
+            throw $processException;
         }
     }
 

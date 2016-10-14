@@ -2,7 +2,10 @@ version: '2'
 services:
   php:
     container_name: cmwn_api_php
-    image: cmwn/platform-api:0.2
+    image: cmwn/platform-api:0.3
+    expose:
+      - "9000"
+      - "9001"
     environment:
       CACHE1_HOST: cmwn_api_redis
       DATABASE1_NAME: cmwn
@@ -12,6 +15,7 @@ services:
       APP_ENV: 'dev'
       USE_ZEND_ALLOC: 0
       PHP_IDE_CONFIG: "serverName=api-local.changemyworldnow.com"
+      PHP_XDEBUG_ENABLED: 1
       XDEBUG_CONFIG: "remote_enable=1 remote_mode=req remote_port=9001 remote_connect_back=0 remote_host=127.0.0.1"
     volumes:
       - ./:/var/www/

@@ -41,10 +41,13 @@ class ListenersAggregate
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        foreach ($this->getListeners() as $listener) {
+        foreach ($this->config as $serviceKey) {
+            $listener = $this->services->get($serviceKey);
             if (method_exists($listener, 'attachShared')) {
                 $listener->attachShared($events);
             }
+
+            array_push($this->listeners, $listener);
         }
     }
 
@@ -53,24 +56,10 @@ class ListenersAggregate
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        foreach ($this->getListeners() as $listener) {
+        foreach ($this->listeners as $listener) {
             if (method_exists($listener, 'detachShared')) {
                 $listener->detachShared($events);
             }
         }
-    }
-
-    /**
-     * @return array
-     */
-    protected function getListeners()
-    {
-        if (empty($this->listeners)) {
-            foreach ($this->config as $serviceKey) {
-                $this->listeners[] = $this->services->get($serviceKey);
-            }
-        }
-
-        return $this->listeners;
     }
 }
