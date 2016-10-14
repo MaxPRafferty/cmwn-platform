@@ -91,6 +91,27 @@ class SaveGameResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-2351
+     * @dataProvider usersNotAllowedToSaveGamesProvider
+     */
+    public function testItShouldNotSaveGameStatusForMeAdult($userName)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($userName);
+
+        $this->dispatch(
+            '/user/' .$userName . '/game/monarch',
+            'POST',
+            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+        );
+
+        $this->assertResponseStatusCode(403);
+        $this->assertMatchedRouteName('api.rest.save-game');
+        $this->assertControllerName('api\v1\rest\savegame\controller');
+    }
+
+    /**
+     * @test
      * @dataProvider usersAllowedToSaveGamesProvider
      * @fixme Test for super user when route listener checks permission for super users
      */
@@ -265,17 +286,8 @@ class SaveGameResourceTest extends TestCase
             'English student' => [
                 'user_name' => 'english_student',
             ],
-            'English teacher' => [
-                'user_name' => 'english_teacher',
-            ],
             'Math student'    => [
                 'user_name' => 'math_student',
-            ],
-            'Math teacher'    => [
-                'user_name' => 'math_teacher',
-            ],
-            'Principal'       => [
-                'user_name' => 'principal',
             ],
             'Super User'      => [
                 'user_name' => 'super_user',
@@ -283,6 +295,23 @@ class SaveGameResourceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
+    public function usersNotAllowedToSaveGamesProvider()
+    {
+        return [
+            'English Teacher' => [
+                'user_name' => 'english_teacher',
+            ],
+            'Math teacher'    => [
+                'user_name' => 'math_teacher',
+            ],
+            'Principal'       => [
+                'user_name' => 'principal',
+            ],
+        ];
+    }
     /**
      * @return array
      */
