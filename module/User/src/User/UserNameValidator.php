@@ -34,6 +34,10 @@ class UserNameValidator extends AbstractValidator
      */
     public function isValid($value)
     {
+        if (!strpos($value, UserName::SEPARATOR)) {
+            return false;
+        }
+
         if (!$value instanceof UserName) {
             list($left, $right) = explode(UserName::SEPARATOR, $value, 2);
             $value = new UserName($left, $right);

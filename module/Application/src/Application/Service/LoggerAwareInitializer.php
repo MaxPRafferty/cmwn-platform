@@ -6,6 +6,7 @@ use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\ServiceManager\InitializerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class LoggerAwareInitializer
@@ -26,6 +27,10 @@ class LoggerAwareInitializer implements InitializerInterface
         if (!$instance instanceof LoggerAwareInterface) {
             return;
         }
+
+        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
+            ? $serviceLocator->getServiceLocator()
+            : $serviceLocator;
 
         if (!$serviceLocator->has('Log\App')) {
             return ;

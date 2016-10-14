@@ -2,6 +2,7 @@
 
 namespace IntegrationTest\Service;
 
+use Application\Exception\DuplicateEntryException;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use IntegrationTest\TestHelper;
@@ -33,12 +34,54 @@ class UserServiceTest extends TestCase
     protected $userService;
 
     /**
+     * @var UserInterface
+     */
+    protected $child;
+
+    /**
+     * @var UserInterface
+     */
+    protected $adult;
+
+    /**
      * @before
      */
     public function setUpFriendService()
     {
         $this->logInUser('super_user');
         $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpChild()
+    {
+        $this->child = new Child([
+                'username'     => 'foo_student',
+                'email'        => 'foo@ginasink.com',
+                'type'         => 'CHILD',
+                'first_name'   => 'John',
+                'last_name'    => 'Yoder',
+                'created'      => '2016-04-27 10:48:44',
+                'updated'      => '2016-04-27 10:48:46',
+            ]);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpAdult()
+    {
+        $this->adult = new Adult([
+            'username'     => 'bar_teacher',
+            'email'        => 'bar@ginasink.com',
+            'type'         => 'ADULT',
+            'first_name'   => 'Johnny',
+            'last_name'    => 'Bar',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+        ]);
     }
 
     /**
@@ -246,7 +289,6 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldCreateChildRecord()
     {
-        $this->markTestIncomplete('this test should fail right now as $this->child is invalid');
         $this->userService->createUser($this->child);
 
         $this->assertInstanceOf(Child::class, $this->userService->fetchUser($this->child->getUserId()));
@@ -257,7 +299,6 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldCreateAdultRecord()
     {
-        $this->markTestIncomplete('this test should fail right now as $this->adult is invalid');
         $this->userService->createUser($this->adult);
 
         $this->assertInstanceOf(Adult::class, $this->userService->fetchUser($this->adult->getUserId()));
@@ -268,8 +309,9 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldNotCreateChildRecordOnInvalidRecord()
     {
-        $this->markTestIncomplete('Currently there is no validation');
         $this->userService->createUser($this->child);
+
+        $this->setExpectedException(DuplicateEntryException::class);
         $this->assertFalse($this->userService->createUser($this->child));
     }
 
@@ -278,7 +320,9 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldCreateAdultRecordOnInvalidRecord()
     {
-        $this->markTestIncomplete('currently there is no validation');
+        $this->userService->createUser($this->adult);
+
+        $this->setExpectedException(DuplicateEntryException::class);
         $this->assertFalse($this->userService->createUser($this->adult));
     }
 
@@ -301,7 +345,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldNotUpdateAdultWhenUserInvalid()
     {
-        $this->markTestIncomplete('The delegator is not validating information');
+        $this->setExpectedException(NotFoundException::class);
         $user = new Adult();
         $user->setUserId('englihs_teacher');
         $this->assertFalse($this->userService->updateUser($user));

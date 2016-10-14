@@ -80,6 +80,7 @@ class FeedResourceTest extends TestCase
 
     /**
      * @test
+     * TODO This test will be used when more types of feed are added
      */
     public function testItShouldCheckIfImageIsBeingSentCorrectly()
     {

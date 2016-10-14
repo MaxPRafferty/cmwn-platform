@@ -328,6 +328,27 @@ return [
             'external_id' => NULL,
             'normalized_username' => 'fancylion002'
         ],
+        [
+            'user_id'      => 'deleted_user',
+            'username'     => 'deleted_user',
+            'email'        => 'deluser@ginasink.com',
+            'code'         => null,
+            'type'         => 'ADULT',
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'   => 'Kirk',
+            'middle_name'  => 'S',
+            'last_name'    => 'West',
+            'gender'       => 'M',
+            'meta'         => null,
+            'birthdate'    => '2016-04-15 11:49:08',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+            'deleted'      => '2016-04-27 10:48:46',
+            'code_expires' => null,
+            'super'        => '0',
+            'external_id'  => null,
+            'normalized_username' => 'deleteduser'
+        ],
     ],
     'user_friends'  => [],
     'user_groups'   => [

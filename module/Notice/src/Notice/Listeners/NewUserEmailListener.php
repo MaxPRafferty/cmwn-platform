@@ -76,7 +76,7 @@ class NewUserEmailListener implements NoticeInterface
             return;
         }
 
-        if ($user->getType() === null || $user->getType() === User::TYPE_CHILD) {
+        if ($user->getType() === null || $user->getType() !== User::TYPE_ADULT) {
             return;
         }
 

@@ -212,7 +212,8 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         try {
             $return = $this->realService->fetchGroupsForUser($user, $where, $prototype);
         } catch (\Exception $fetchException) {
-            $eventParams['exception'] = $fetchException;
+            //FIXME re-throw the exception
+            $event->setParam('exception', $fetchException);
             $event->setName('fetch.user.group.error');
             $this->getEventManager()->trigger($event);
 
@@ -242,7 +243,8 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         try {
             $return = $this->realService->fetchOrganizationsForUser($user, $prototype);
         } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
+            //FIXME re-throw the exception
+            $event->setParam('exception', $attachException);
             $event->setName('fetch.user.orgs.error');
             $this->getEventManager()->trigger($event);
 
@@ -274,9 +276,9 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         try {
             $return = $this->realService->fetchAllUsersForUser($user, $where, $prototype);
             $event->setParam('result', $return);
-            $event->setName('fetch.all.user.users');
+            $event->setName('fetch.all.user.users.post');
         } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
+            $event->setParam('exception', $attachException);
             $event->setName('fetch.all.user.users.error');
             $this->getEventManager()->trigger($event);
             return false; //FIXME throw exception again

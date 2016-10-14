@@ -8,9 +8,12 @@ use Game\SaveGame;
 use Game\SaveGameInterface;
 use Game\Service\SaveGameService;
 use Game\Service\SaveGameServiceInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class SaveGameDelegator
@@ -107,6 +110,57 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
                 'where'     => $where
             ]
         );
+        $response = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+        $return = $this->realService->fetchSaveGameForUser($user, $game, $prototype, $where);
+        $event->setParam('game_data', $return);
+        $event->setName('fetch.user.save.game.post');
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAllSaveGamesForUser($user, $where = null, $prototype = null)
+    {
+        $event = new Event(
+            'fetch.user.saves',
+            $this->realService,
+            [
+                'user'      => $user,
+                'prototype' => $prototype,
+                'where'     => $where
+            ]
+        );
+        $response = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->fetchAllSaveGamesForUser($user, $where, $prototype);
+        $event->setParam('user-saves', $return);
+        $event->setName('fetch.user.saves.post');
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAllSaveGameData($where = null, $prototype = null)
+    {
+        $event = new Event(
+            'fetch.game-data',
+            $this->realService,
+            [
+                'where' => $where,
+                'prototype' => $prototype
+            ]
+        );
 
         $response = $this->getEventManager()->trigger($event);
 
@@ -114,9 +168,10 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
             return $response->last();
         }
 
-        $return = $this->realService->fetchSaveGameForUser($user, $game, $prototype, $where);
-        $event->setParam('game_data', $return);
-        $event->setName('fetch.user.save.game.post');
+        $return = $this->realService->fetchAllSaveGameData($where, $prototype);
+
+        $event->setParam('game-data', $return);
+        $event->setName('fetch.game-data.post');
         $this->getEventManager()->trigger($event);
 
         return $return;

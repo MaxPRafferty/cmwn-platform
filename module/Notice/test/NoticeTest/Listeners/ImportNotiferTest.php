@@ -156,4 +156,13 @@ class ImportNotiferTest extends TestCase
         $this->assertEmpty($this->listener->notify($event));
         $this->assertFalse($event->propagationIsStopped(), 'Listener should not stop propagation');
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldCheckParserInNotify()
+    {
+        $event = new Event('nyc.import.excel.complete');
+        $this->assertNull($this->listener->notify($event));
+    }
 }

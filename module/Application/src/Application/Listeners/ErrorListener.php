@@ -5,6 +5,7 @@ namespace Application\Listeners;
 use Application\Utils\NoopLoggerAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -34,14 +35,14 @@ class ErrorListener implements LoggerAwareInterface
     public function attachShared(SharedEventManagerInterface $events)
     {
         $this->listeners[] = $events->attach(
-            '\Zend\Mvc\Application',
+            Application::class,
             MvcEvent::EVENT_DISPATCH_ERROR,
             [$this, 'dispatchError'],
             PHP_INT_MAX
         );
 
         $this->listeners[] = $events->attach(
-            '\Zend\Mvc\Application',
+            Application::class,
             MvcEvent::EVENT_RENDER_ERROR,
             [$this, 'renderError'],
             PHP_INT_MAX
@@ -64,10 +65,12 @@ class ErrorListener implements LoggerAwareInterface
     public function dispatchError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
-        $this->getLogger()->crit(
-            sprintf('Dispatch Error: %s', $exception->getMessage()),
-            $exception->getTrace()
-        );
+        if ($exception) {
+            $this->getLogger()->crit(
+                sprintf('Dispatch Error: %s', $exception->getMessage()),
+                ['exception' => $exception]
+            );
+        }
     }
 
     /**
@@ -76,10 +79,12 @@ class ErrorListener implements LoggerAwareInterface
     public function renderError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
-        $this->getLogger()->crit(
-            sprintf('Render Error: %s', $exception->getMessage()),
-            $exception->getTrace()
-        );
+        if ($exception) {
+            $this->getLogger()->crit(
+                sprintf('Render Error: %s', $exception->getMessage()),
+                ['exception' => $exception]
+            );
+        }
     }
 
     /**
@@ -88,11 +93,6 @@ class ErrorListener implements LoggerAwareInterface
      */
     protected function getException(MvcEvent $mvcEvent)
     {
-        $exception = $mvcEvent->getParam('exception');
-        if (!$exception instanceof \Exception) {
-            $exception = new \Exception('An Error occurred with no exception this is bad: ' . $mvcEvent->getError());
-        }
-
-        return $exception;
+        return $mvcEvent->getParam('exception', false);
     }
 }

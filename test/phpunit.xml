@@ -19,8 +19,9 @@
         timeoutForLargeTests="60">
     <php>
         <ini name="date.timezone" value="UTC"/>
+        <ini name="memory_limit" value="-1"/>
         <ini name="display_errors" value="true"/>
-        <ini name="error_reporting" value="E_ALL | E_STRICT | E_DEPRECATED"/>
+        <ini name="error_reporting" value="32767"/>
         <const name="TEST_MODE" value="true"/>
     </php>
     <testsuites>
