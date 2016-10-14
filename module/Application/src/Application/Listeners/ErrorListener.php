@@ -65,10 +65,12 @@ class ErrorListener implements LoggerAwareInterface
     public function dispatchError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
-        $this->getLogger()->crit(
-            sprintf('Dispatch Error: %s', $exception->getMessage()),
-            ['exception' => $exception]
-        );
+        if ($exception) {
+            $this->getLogger()->crit(
+                sprintf('Dispatch Error: %s', $exception->getMessage()),
+                ['exception' => $exception]
+            );
+        }
     }
 
     /**
@@ -77,10 +79,12 @@ class ErrorListener implements LoggerAwareInterface
     public function renderError(MvcEvent $mvcEvent)
     {
         $exception = $this->getException($mvcEvent);
-        $this->getLogger()->crit(
-            sprintf('Render Error: %s', $exception->getMessage()),
-            ['exception' => $exception]
-        );
+        if ($exception) {
+            $this->getLogger()->crit(
+                sprintf('Render Error: %s', $exception->getMessage()),
+                ['exception' => $exception]
+            );
+        }
     }
 
     /**
@@ -89,6 +93,6 @@ class ErrorListener implements LoggerAwareInterface
      */
     protected function getException(MvcEvent $mvcEvent)
     {
-        return $mvcEvent->getParam('exception');
+        return $mvcEvent->getParam('exception', false);
     }
 }
