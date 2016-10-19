@@ -59,6 +59,9 @@ return [
         'initializers'       => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],
+        'factories' => [
+            'Application\Controller\Redis' => \Application\Controller\RedisControllerFactory::class,
+        ]
     ],
 
     'view_manager' => [
@@ -75,6 +78,22 @@ return [
         ],
         'template_path_stack'      => [
             realpath(__DIR__ . '/../view'),
+        ],
+    ],
+
+    'console' => [
+        'router' => [
+            'routes' => [
+                'redis' => [
+                    'options' => [
+                        'route'    => 'redis:delete [--all] [--key=] [--verbose|-v] [--debug|-v]',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Redis',
+                            'action'     => 'redisDelete',
+                        ],
+                    ],
+                ],
+            ]
         ],
     ],
 ];
