@@ -1,3 +1,14 @@
+Version - 0.4.4
+----
+
+- 15930e1: Quick hotfixUpdated docker for native docker
+Fixed condition when the MvcEvent will not have an exception set (happens on 404)
+
+- 400d07a: Fixing release/snorlax fixing skipped and incomplete tests adding tests to increase code coverage refactoring suggestion engine fixing the notice controller combining suggest and suggestCron modules removing unnecessary checks from the resources made changes requested by chuck
+- 4412f5f: Wercker deployAdded deploy script and updated wercker
+
+- 9dcfa02: Version bump [ci skip]
+
 Version - 0.4.3
 ----
 
