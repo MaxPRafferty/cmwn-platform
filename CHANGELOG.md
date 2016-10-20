@@ -1,3 +1,8 @@
+Version - 0.4.5
+----
+
+- 7515682: Version bump [ci skip]
+
 Version - 0.4.4
 ----
 
