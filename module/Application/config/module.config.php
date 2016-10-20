@@ -21,18 +21,20 @@ return [
     ],
     'service_manager' => [
         'invokables'         => [
-            \Application\Listeners\ErrorListener::class => \Application\Listeners\ErrorListener::class,
+            \Application\Listeners\ErrorListener::class          => \Application\Listeners\ErrorListener::class,
+            \Application\Listeners\CacheExceptionListener::class =>
+                \Application\Listeners\CacheExceptionListener::class,
         ],
         'initializers'       => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],
         'factories'          => [
-            \Application\Listeners\ListenersAggregate::class  =>
+            \Application\Listeners\ListenersAggregate::class =>
                 \Application\Listeners\ListenersAggregateFactory::class,
-            \Application\Log\Rollbar\Options::class           => \Application\Log\Rollbar\OptionsFactory::class,
-            'Application\Log\Rollbar\Notifier'                => \Application\Log\Rollbar\NotifierFactory::class,
-            \Application\Log\Rollbar\Writer::class            => \Application\Log\Rollbar\WriterFactory::class,
-            \Zend\Http\Client::class                          => \Application\Factory\HttpClientFactory::class,
+            \Application\Log\Rollbar\Options::class          => \Application\Log\Rollbar\OptionsFactory::class,
+            'Application\Log\Rollbar\Notifier'               => \Application\Log\Rollbar\NotifierFactory::class,
+            \Application\Log\Rollbar\Writer::class           => \Application\Log\Rollbar\WriterFactory::class,
+            \Zend\Http\Client::class                         => \Application\Factory\HttpClientFactory::class,
         ],
         'abstract_factories' => [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
@@ -44,6 +46,7 @@ return [
 
     'shared-listeners' => [
         \Application\Listeners\ErrorListener::class,
+        \Application\Listeners\CacheExceptionListener::class,
     ],
 
     'controllers' => [
@@ -52,6 +55,9 @@ return [
         ],
         'invokables' => [
             'Application\Controller\Index' => \Application\Controller\IndexController::class,
+        ],
+        'initializers'       => [
+            \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],
     ],
 

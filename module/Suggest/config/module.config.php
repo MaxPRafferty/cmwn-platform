@@ -28,7 +28,9 @@ return [
             \Suggest\Filter\ClassFilter::class => \Suggest\Filter\ClassFilterFactory::class,
             \Suggest\Rule\FriendRule::class => \Suggest\Rule\FriendRuleFactory::class,
             \Suggest\Listener\TriggerSuggestionsListener::class =>
-                \Suggest\Listener\TriggerSuggestionsListenerFactory::class
+                \Suggest\Listener\TriggerSuggestionsListenerFactory::class,
+            \Suggest\Listener\DeleteSuggestionListener::class =>
+                \Suggest\Listener\DeleteSuggestionListenerFactory::class
         ],
         'delegators' => [
             \Suggest\Service\SuggestedService::class          => [
@@ -39,12 +41,14 @@ return [
 
     'controllers' => [
         'factories' => [
-            'Suggest\Controller' => \Suggest\Controller\SuggestionControllerFactory::class,
+            'Suggest\Controller\SuggestionController' => \Suggest\Controller\SuggestionControllerFactory::class,
+            'Suggest\Controller\SuggestCronController' => \Suggest\Controller\SuggestCronControllerFactory::class,
         ],
     ],
 
     'shared-listeners' => [
         \Suggest\Listener\TriggerSuggestionsListener::class,
+        \Suggest\Listener\DeleteSuggestionListener::class,
     ],
 
     'console' => [
@@ -56,8 +60,18 @@ return [
                         'route'    => 'suggest --user_id= [--verbose|-v] [--debug|-d]',
                         // @codingStandardsIgnoreEnd
                         'defaults' => [
-                            'controller' => 'Suggest\Controller',
+                            'controller' => 'Suggest\Controller\SuggestionController',
                             'action'     => 'suggest',
+                        ],
+                    ],
+                ],
+
+                'suggest-cron' => [
+                    'options' => [
+                        'route'    => 'cron:suggest [--verbose|-v] [--debug|-d]',
+                        'defaults' => [
+                            'controller' => 'Suggest\Controller\SuggestCronController',
+                            'action'     => 'suggestCron',
                         ],
                     ],
                 ],

@@ -121,7 +121,7 @@ class AttachFriendValidatorTest extends TestCase
         $row = [
             'uf_user_id' => 'math_student',
             'uf_friend_id' => 'english_student',
-            'uf_status' => FriendInterface::PENDING
+            'friend_status' => FriendInterface::PENDING
         ];
         $this->friendService->shouldReceive('fetchFriendForUser')
             ->andReturn($hydrator->hydrate($row, new \ArrayObject()));
@@ -147,7 +147,7 @@ class AttachFriendValidatorTest extends TestCase
         $row = [
             'uf_user_id' => 'math_student',
             'uf_friend_id' => 'english_student',
-            'uf_status' => FriendInterface::FRIEND
+            'friend_status' => FriendInterface::FRIEND
         ];
         $this->friendService->shouldReceive('fetchFriendForUser')
             ->andReturn($hydrator->hydrate($row, new \ArrayObject()));

@@ -21,6 +21,11 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     use EventManagerAwareTrait;
 
     /**
+     * @var array Adds the Importer interface the shared manager
+     */
+    protected $eventIdentifier = [FriendServiceInterface::class];
+
+    /**
      * @var FriendService
      */
     protected $realService;

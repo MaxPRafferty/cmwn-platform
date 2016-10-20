@@ -38,7 +38,7 @@ return [
                 'send-mail' => [
                     'options' => [
                         // @codingStandardsIgnoreStart
-                        'route'    => 'sendMail --template= --email= [--verbose|-v] [--debug|-d]',
+                        'route'    => 'sendmail --template= --email= [--verbose|-v] [--debug|-d]',
                         // @codingStandardsIgnoreEnd
                         'defaults' => [
                             'controller' => 'Notice\Controller',

@@ -8,9 +8,11 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use User\Adult;
 use User\User;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class UserGroupServiceDelegatorTest
@@ -485,5 +487,281 @@ class UserGroupServiceDelegatorTest extends TestCase
             ],
             $this->calledEvents[1]
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchAllUsersForUser()
+    {
+        $resultSet = new ResultSet([]);
+        $this->groupService->shouldReceive('fetchAllUsersForUser')
+            ->with($this->user, null, null)
+            ->andReturn($resultSet)
+            ->once();
+
+        $this->delegator->fetchAllUsersForUser($this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.user.users',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.user.users.post',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => $resultSet],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchAllUsersForUserWhenEventStopped()
+    {
+        $this->delegator->getEventManager()->attach('fetch.all.user.users', function (Event $event) {
+            $event->stopPropagation(true);
+
+            return false;
+        });
+
+        $this->groupService->shouldReceive('fetchAllUsersForUser')
+            ->never();
+
+        $this->delegator->fetchAllUsersForUser($this->user);
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.user.users',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchAllUsersForUserWhenException()
+    {
+        $exception = new \Exception();
+        $this->groupService->shouldReceive('fetchAllUsersForUser')
+            ->with($this->user, null, null)
+            ->andThrow($exception)
+            ->once();
+
+        $this->delegator->fetchAllUsersForUser($this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.user.users',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.user.users.error',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'exception' => $exception],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchOrganizationsForUser()
+    {
+        $resultSet = new ResultSet([]);
+        $this->groupService->shouldReceive('fetchOrganizationsForUser')
+            ->with($this->user, null)
+            ->andReturn($resultSet)
+            ->once();
+
+        $this->delegator->fetchOrganizationsForUser($this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.orgs',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.orgs.post',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchOrganizationsForUserWhenEventStopped()
+    {
+        $this->delegator->getEventManager()->attach('fetch.user.orgs', function (Event $event) {
+            $event->stopPropagation(true);
+
+            return false;
+        });
+
+        $this->groupService->shouldReceive('fetchOrganizationsForUser')
+            ->never();
+
+        $this->delegator->fetchOrganizationsForUser($this->user);
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.orgs',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchOrganizationsForUserWhenException()
+    {
+        $exception = new \Exception();
+        $this->groupService->shouldReceive('fetchOrganizationsForUser')
+            ->with($this->user, null)
+            ->andThrow($exception)
+            ->once();
+
+        $this->delegator->fetchOrganizationsForUser($this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.orgs',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.orgs.error',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user, 'exception' => $exception],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchGroupsForUser()
+    {
+        $resultSet = new ResultSet([]);
+        $this->groupService->shouldReceive('fetchGroupsForUser')
+            ->with($this->user, null, null)
+            ->andReturn($resultSet)
+            ->once();
+
+        $this->delegator->fetchGroupsForUser($this->user);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.group',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.group.post',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchGroupsForUserWhenEventStopped()
+    {
+        $this->delegator->getEventManager()->attach('fetch.user.group', function (Event $event) {
+            $event->stopPropagation(true);
+
+            return false;
+        });
+
+        $this->groupService->shouldReceive('fetchGroupsForUser')
+            ->never();
+
+        $this->delegator->fetchGroupsForUser($this->user);
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.group',
+                'target' => $this->groupService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchGroupsForUserWhenException()
+    {
+        $exception = new \Exception();
+        $this->groupService->shouldReceive('fetchGroupsForUser')
+            ->with($this->user, null, null)
+            ->andThrow($exception)
+            ->once();
+
+        try {
+            $this->delegator->fetchGroupsForUser($this->user);
+            $this->fail("Did not rethrow exception");
+        } catch (\Exception $e) {
+            $this->assertEquals(2, count($this->calledEvents));
+            $this->assertEquals(
+                [
+                    'name'   => 'fetch.user.group',
+                    'target' => $this->groupService,
+                    'params' => ['user' => $this->user],
+                ],
+                $this->calledEvents[0]
+            );
+            $this->assertEquals(
+                [
+                    'name'   => 'fetch.user.group.error',
+                    'target' => $this->groupService,
+                    'params' => ['user' => $this->user, 'exception' => $exception],
+                ],
+                $this->calledEvents[1]
+            );
+        }
     }
 }

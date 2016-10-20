@@ -8,6 +8,7 @@ use Zend\Validator\AbstractValidator;
 
 /**
  * Class AreFriendsValidator
+ * TODO Implement for skribble validation
  */
 class AreFriendsValidator extends AbstractValidator implements ValidatorInterface
 {

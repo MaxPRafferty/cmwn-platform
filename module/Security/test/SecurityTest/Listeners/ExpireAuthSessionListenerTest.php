@@ -78,7 +78,7 @@ class ExpireAuthSessionListenerTest extends TestCase
             ->once();
 
         $this->assertEquals($this->listener->onRoute(), new ApiProblemResponse(new ApiProblem(401, 'Expired')));
-        $this->assertEquals($this->container->offsetExists(), false);
+        $this->assertEquals($this->container->offsetExists('last_seen'), false);
     }
 
     /**

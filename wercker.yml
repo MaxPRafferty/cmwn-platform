@@ -68,8 +68,8 @@ release:
       code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
     - s3sync:
       name: Uploading package to Amazon S3
-      key-id: $AWS_KEY
-      key-secret: $AWS_SECRET
+      key-id: $AWS_ACCESS_KEY_ID
+      key-secret: $AWS_SECRET_ACCESS_KEY
       bucket-url: $AWS_BUCKET_URL
       source-dir: data/build/artifact/
       delete-removed: false
@@ -83,3 +83,66 @@ release:
       tag: $VERSION
       file: data/build/artifact/platform-api-$VERSION.zip
       filename: platform-api-$VERSION.zip
+
+draft-release:
+  steps:
+    - script:
+      name: Preparing release
+      code: |-
+        export SHORT_HASH=$(git log -n 1 --abbrev-commit | head -n 1 | sed -e 's/^commit //')
+        mkdir -p data/build/artifact
+        echo "Created directory for artifact"
+        $PWD/bin/version_bump.sh --print-current
+        export VERSION="$($PWD/bin/version_bump.sh --print-current)-$SHORT_HASH"
+        echo "$VERSION"
+    - script:
+      name: Init git
+      code: |-
+        git checkout $WERCKER_GIT_BRANCH
+        git config --global user.email hal-9000@changemyworldnow.com
+        git config --global user.name "wercker"
+        git fetch $GIT_REMOTE
+    - script:
+      name: Running Zend-Tool
+      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
+    - s3sync:
+      name: Uploading package to Amazon S3
+      key-id: $AWS_ACCESS_KEY_ID
+      key-secret: $AWS_SECRET_ACCESS_KEY
+      bucket-url: $AWS_BUCKET_URL
+      source-dir: data/build/artifact/
+      delete-removed: false
+    - github-create-release:
+      name: Creating release on github
+      token: $MC_GITHUB_TOKEN
+      tag: $VERSION
+      draft: true
+    - github-upload-asset:
+      name: Adding build artifact to tag
+      token: $MC_GITHUB_TOKEN
+      tag: $VERSION
+      file: data/build/artifact/platform-api-$VERSION.zip
+      filename: platform-api-$VERSION.zip
+
+deploy:
+  box: python:2.7
+  steps:
+    - script:
+      name: Preparing release
+      code: |-
+        export SHORT_HASH=$(git log -n 1 --abbrev-commit | head -n 1 | sed -e 's/^commit //')
+        $PWD/bin/version_bump.sh --print-current
+        export VERSION="$($PWD/bin/version_bump.sh --print-current)-$SHORT_HASH"
+    - script:
+      name: Installing pips
+      code: |-
+        pip install boto3
+        export DEPLOY='true'
+    - script:
+      name: Running deploy
+      code: |-
+        echo "Deploying $DEPLOY_APP_NAME @ $VERSION to $DEPLOY_ENV"
+        python bin/deploy.py $VERSION $DEPLOY_APP_NAME $DEPLOY_ENV -v
+  after-steps:
+    - slack-notifier:
+      url: $SLACK_URL
