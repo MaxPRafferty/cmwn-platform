@@ -1,3 +1,10 @@
+Version - 0.4.6
+----
+
+- 67bcca7: check env for python
+- 08b0bee: Updated Deploy to check ENV for base image AMI id
+- 307480c: Version bump [ci skip]
+
 Version - 0.4.5
 ----
 
