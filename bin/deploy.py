@@ -40,6 +40,10 @@ class CmwDeploy:
         self.valid_env = ['qa', 'staging', 'production', 'demo', 'lab']
         self.deploy_target = None
 
+        default_ami = os.getenv('AWS_BASE_AMI');
+        if default_ami is None:
+            default_ami = 'ami-c481fad3' # Base Amazon AMI
+
         # load in arguments
         parser = argparse.ArgumentParser(description='Deploys skribble to to environment', prog='deploy')
         parser.add_argument('version', help='The version to deploy')
@@ -47,7 +51,7 @@ class CmwDeploy:
         parser.add_argument('env', help='Where to deploy the application')
         parser.add_argument('-t', '--target', help='run the deploy to target instance')
         parser.add_argument('-k', '--keep', help='Leave the instance running', action='store_true')
-        parser.add_argument('--ami', help='AMI to use when creating instance', default="ami-02327015")
+        parser.add_argument('--ami', help='AMI to use when creating instance', default=default_ami)
         parser.add_argument('--vpc', help='VPC id', default="vpc-00ef3867")
         parser.add_argument('--security-group', help='Security group to use when creating instance',
                             default="sg-906e08ea,sg-a5ef8ade,sg-33620449")
