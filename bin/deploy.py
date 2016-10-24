@@ -1,4 +1,4 @@
-#!/usr/local/bin/python python
+#!/usr/bin/env python
 """
 Runs the deploy of code to AWS
 """
