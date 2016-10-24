@@ -18,6 +18,7 @@ use ZF\Rest\AbstractResourceListener;
  * Class ImportResource
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @deprecated
  */
 class ImportResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
 {

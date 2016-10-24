@@ -1,0 +1,14 @@
+<?php
+// @codingStandardsIgnoreStart
+?>
+<div style="background-color: red; color: white">
+    There were some errors in your file
+    <ul>
+        <?php foreach($messages as $field => $message): ?>
+        <li>
+            <strong><?= $field ?>:</strong>
+            <?= is_array($message) ? implode(",", $message) : $message ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+</div>

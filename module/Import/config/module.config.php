@@ -40,7 +40,29 @@ return [
 
     'controllers' => [
         'factories' => [
-            'Import\Controller' => \Import\Controller\ImportControllerFactory::class,
+            'Import\Controller'                        => \Import\Controller\ImportControllerFactory::class,
+            \Import\Controller\UploadController::class => \Import\Controller\UploadControllerFactory::class,
+        ],
+    ],
+
+    'router'      => [
+        'routes' => [
+            'api.rest.import' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/group/:group_id/import',
+                    'defaults' => [
+                        'controller' => \Import\Controller\UploadController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'view_manager' => [
+        'template_path_stack' => [
+            __DIR__ . '/../view',
         ],
     ],
 
