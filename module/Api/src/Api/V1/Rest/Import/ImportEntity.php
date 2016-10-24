@@ -6,6 +6,7 @@ use Zend\Stdlib\ArraySerializableInterface;
 
 /**
  * Class ImportEntity
+ * @deprecated
  */
 class ImportEntity implements ArraySerializableInterface
 {

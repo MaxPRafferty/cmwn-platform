@@ -8,6 +8,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ImportResourceFactory
+ * @deprecated
  */
 class ImportResourceFactory implements FactoryInterface
 {
