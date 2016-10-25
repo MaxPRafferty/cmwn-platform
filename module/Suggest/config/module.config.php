@@ -57,7 +57,7 @@ return [
                 'suggest-cli' => [
                     'options' => [
                         // @codingStandardsIgnoreStart
-                        'route'    => 'suggest --user_id= [--verbose|-v] [--debug|-d]',
+                        'route'    => 'suggest --userId= [--verbose|-v] [--debug|-d]',
                         // @codingStandardsIgnoreEnd
                         'defaults' => [
                             'controller' => 'Suggest\Controller\SuggestionController',
