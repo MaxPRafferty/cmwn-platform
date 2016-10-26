@@ -9,7 +9,6 @@ use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
-use Security\SecurityUser;
 use Security\Service\SecurityOrgService;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;

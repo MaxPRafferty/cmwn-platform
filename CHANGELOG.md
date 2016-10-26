@@ -1,3 +1,21 @@
+Version - 0.4.7
+----
+
+- 2705ec2: Import page UpdateRemoved Import from Apigility
+Created Import Controller
+Created Import View
+Ported File upload to Import Module to allow returning HTML
+Fix for suggestion and suggestion cron
+
+- ec918c7: Version bump [ci skip]
+
+Version - 0.4.6
+----
+
+- 67bcca7: check env for python
+- 08b0bee: Updated Deploy to check ENV for base image AMI id
+- 307480c: Version bump [ci skip]
+
 Version - 0.4.5
 ----
 

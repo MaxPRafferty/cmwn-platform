@@ -46,7 +46,6 @@ return array(
             'Api\\V1\\Rest\\GroupUsers\\GroupUsersResource' => 'Api\\V1\\Rest\\GroupUsers\\GroupUsersResourceFactory',
             'Api\\V1\\Rest\\OrgUsers\\OrgUsersResource' => 'Api\\V1\\Rest\\OrgUsers\\OrgUsersResourceFactory',
             'Api\\V1\\Rest\\UserImage\\UserImageResource' => 'Api\\V1\\Rest\\UserImage\\UserImageResourceFactory',
-            'Api\\V1\\Rest\\Import\\ImportResource' => 'Api\\V1\\Rest\\Import\\ImportResourceFactory',
             'Api\\V1\\Rest\\UserName\\UserNameResource' => 'Api\\V1\\Rest\\UserName\\UserNameResourceFactory',
             'Api\\V1\\Rest\\Flip\\FlipResource' => 'Api\\V1\\Rest\\Flip\\FlipResourceFactory',
             'Api\\V1\\Rest\\FlipUser\\FlipUserResource' => 'Api\\V1\\Rest\\FlipUser\\FlipUserResourceFactory',
@@ -185,15 +184,6 @@ return array(
                     ),
                 ),
             ),
-            'api.rest.import' => array(
-                'type' => 'Segment',
-                'options' => array(
-                    'route' => '/group/:group_id/import',
-                    'defaults' => array(
-                        'controller' => 'Api\\V1\\Rest\\Import\\Controller',
-                    ),
-                ),
-            ),
             'api.rest.user-name' => array(
                 'type' => 'Segment',
                 'options' => array(
@@ -328,7 +318,6 @@ return array(
             10 => 'api.rest.group-users',
             11 => 'api.rest.org-users',
             12 => 'api.rest.user-image',
-            13 => 'api.rest.import',
             14 => 'api.rest.user-name',
             15 => 'api.rest.flip',
             16 => 'api.rest.flip-user',
@@ -590,22 +579,6 @@ return array(
             'entity_class' => 'Api\\V1\\Rest\\UserImage\\UserImageEntity',
             'collection_class' => 'Api\\V1\\Rest\\UserImage\\UserImageCollection',
             'service_name' => 'UserImage',
-        ),
-        'Api\\V1\\Rest\\Import\\Controller' => array(
-            'listener' => 'Api\\V1\\Rest\\Import\\ImportResource',
-            'route_name' => 'api.rest.import',
-            'route_identifier_name' => 'job_id',
-            'collection_name' => 'import',
-            'entity_http_methods' => array(),
-            'collection_http_methods' => array(
-                0 => 'POST',
-            ),
-            'collection_query_whitelist' => array(),
-            'page_size' => 25,
-            'page_size_param' => 'per_page',
-            'entity_class' => 'Api\\V1\\Rest\\Import\\ImportEntity',
-            'collection_class' => 'Api\\V1\\Rest\\Import\\ImportCollection',
-            'service_name' => 'Import',
         ),
         'Api\\V1\\Rest\\UserName\\Controller' => array(
             'listener' => 'Api\\V1\\Rest\\UserName\\UserNameResource',
@@ -869,7 +842,6 @@ return array(
             'Api\\V1\\Rest\\GroupUsers\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\OrgUsers\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UserImage\\Controller' => 'HalJson',
-            'Api\\V1\\Rest\\Import\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\UserName\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Flip\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\FlipUser\\Controller' => 'HalJson',
@@ -946,11 +918,6 @@ return array(
                 2 => 'application/json',
             ),
             'Api\\V1\\Rest\\UserImage\\Controller' => array(
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/hal+json',
-                2 => 'application/json',
-            ),
-            'Api\\V1\\Rest\\Import\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/hal+json',
                 2 => 'application/json',
@@ -1073,11 +1040,6 @@ return array(
             'Api\\V1\\Rest\\UserImage\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
-            ),
-            'Api\\V1\\Rest\\Import\\Controller' => array(
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/json',
-                2 => 'multipart/form-data',
             ),
             'Api\\V1\\Rest\\UserName\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
@@ -1293,18 +1255,6 @@ return array(
                 'route_identifier_name' => 'user_id',
                 'is_collection' => true,
             ),
-            'Api\\V1\\Rest\\Import\\ImportEntity' => array(
-                'entity_identifier_name' => 'job_id',
-                'route_name' => 'api.rest.import',
-                'route_identifier_name' => 'import_id',
-                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
-            ),
-            'Api\\V1\\Rest\\Import\\ImportCollection' => array(
-                'entity_identifier_name' => 'job_id',
-                'route_name' => 'api.rest.import',
-                'route_identifier_name' => 'import_id',
-                'is_collection' => true,
-            ),
             'Api\\V1\\Rest\\UserName\\UserNameEntity' => array(
                 'entity_identifier_name' => 'id',
                 'route_name' => 'api.rest.user-name',
@@ -1494,9 +1444,6 @@ return array(
         ),
         'Api\\V1\\Rest\\UserImage\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\UserImage\\Validator',
-        ),
-        'Api\\V1\\Rest\\Import\\Controller' => array(
-            'input_filter' => 'Api\\V1\\Rest\\Import\\Validator',
         ),
         'Api\\V1\\Rest\\Password\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Password\\Validator',
