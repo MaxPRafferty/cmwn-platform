@@ -129,6 +129,23 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
     }
 
     /**
+     * @test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldAttachUserToGroup()
+    {
+        $this->markTestIncomplete("Add an api route to post to this endpoint with (user_id||user)&&role passed in");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'user' => 'english_student',
+            'role' => 'student'
+        ];
+        $this->dispatch('/group/school/users', 'POST', $postData);
+    }
+
+    /**
      * @return array
      */
     public function changePasswordDataProvider()
