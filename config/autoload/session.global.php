@@ -11,6 +11,7 @@ $config = [
             'class'   => 'Zend\Session\Config\SessionConfig',
             'options' => [
                 'name'            => 'CMWN',
+                'cookie_lifetime' => 259200,
                 'cookie_httponly' => true,
                 'cookie_secure'   => true,
                 'cookie_domain'   => '.changemyworldnow.com',
@@ -22,6 +23,7 @@ $config = [
                 'name'    => 'redis',
                 'options' => [
                     'server' => 'tcp://' . $cacheHost . ':' . $cachePort,
+                    'ttl'     => 259200,
                 ],
             ],
         ],
