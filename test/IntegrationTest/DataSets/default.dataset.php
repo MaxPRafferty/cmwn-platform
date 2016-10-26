@@ -504,6 +504,15 @@ return [
             'image_id' => 'principal',
         ],
     ],
+    'image_flags'   => [
+        [
+            'flag_id' => 'asdf',
+            'flagger' => 'math_student',
+            'flaggee' => 'english_student',
+            'url'     => '/asdf',
+            'reason'  => 'inappropriate'
+        ]
+    ],
     'user_saves'    => [],
     'user_suggestions'    => [],
 ];

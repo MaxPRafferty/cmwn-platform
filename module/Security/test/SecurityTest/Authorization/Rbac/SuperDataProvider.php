@@ -55,5 +55,9 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.user.groups');
         $this->setAllowed('view.user.orgs');
         $this->setAllowed('view.game-data');
+        $this->setAllowed('flag.image');
+        $this->setAllowed('view.all.flagged.images');
+        $this->setAllowed('view.flagged.image');
+        $this->setAllowed('delete.flag');
     }
 }
