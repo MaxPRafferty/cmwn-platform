@@ -1,3 +1,14 @@
+Version - 0.4.7
+----
+
+- 2705ec2: Import page UpdateRemoved Import from Apigility
+Created Import Controller
+Created Import View
+Ported File upload to Import Module to allow returning HTML
+Fix for suggestion and suggestion cron
+
+- ec918c7: Version bump [ci skip]
+
 Version - 0.4.6
 ----
 
