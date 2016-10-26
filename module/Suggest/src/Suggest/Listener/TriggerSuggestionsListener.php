@@ -12,7 +12,7 @@ use Zend\EventManager\SharedEventManagerInterface;
 
 /**
  * Class TriggerSuggestionsListener
- * @package Security\Listeners
+ * @package Suggest\Listeners
  */
 class TriggerSuggestionsListener
 {

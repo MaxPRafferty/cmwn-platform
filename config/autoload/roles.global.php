@@ -52,6 +52,7 @@ return [
             'remove.org'           => 'Remove an Organization',
 
             // game
+            'view.game-data'       => 'View Save Game Data of a game',
             'view.games'           => 'View all Games',
             'save.game'            => 'Save Game progress',
 
@@ -109,6 +110,7 @@ return [
                     'view.all.users',
                     'view.child.groups',
                     'view.flip',
+                    'view.game-data',
                     'view.games',
                     'view.group',
                     'view.group.users',

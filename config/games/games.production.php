@@ -2,8 +2,6 @@
 
 $master = include __DIR__ . '/games.master.php';
 
-// make all games open instead
-
 $productionGames = [];
 
 $gameOnProduction = [
@@ -24,22 +22,18 @@ $gameOnProduction = [
     'reef-builder',
     'salad-rain',
     'sea-turtle',
-    'skribble',
     'tag-it',
     'turtle-hurdle',
     'twirl-n-swirl',
     'twirling-tower',
     'waterdrop',
+    'skribble',
 ];
 
 $comingSoonGames = [
-    'drought-out',
     'fire',
     'monarch',
-    'pedal-pusher',
-    'sea-turtle',
-    'tag-it',
-    'waterdrop',
+    'reef-builder',
 ];
 
 foreach ($master['games']['master'] as $gameId => $gameData) {

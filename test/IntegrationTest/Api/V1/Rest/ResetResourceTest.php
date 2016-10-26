@@ -53,11 +53,10 @@ class ResetResourceTest extends TestCase
      */
     public function testItShouldCheckChangePasswordException()
     {
-        $this->markTestIncomplete("not checked");
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser('english_teacher');
         $this->dispatch('/user/english_student/reset', 'POST', ['code' => 'apple0007']);
-        $this->assertResponseStatusCode(201);
+        $this->assertResponseStatusCode(401);
     }
 
     /**

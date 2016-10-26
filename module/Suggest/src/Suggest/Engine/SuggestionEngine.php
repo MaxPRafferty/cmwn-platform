@@ -6,6 +6,7 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Job\JobInterface;
 use Suggest\Filter\FilterCollection;
 use Suggest\InvalidArgumentException;
+use Suggest\Rule\RuleCollection;
 use Suggest\Rule\SuggestedRuleCompositeInterface;
 use Suggest\Service\SuggestedServiceInterface;
 use Suggest\SuggestionContainer;
@@ -128,13 +129,8 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
      */
     protected function applyRules($masterContainer)
     {
-        foreach ($this->rulesConfig as $rule) {
-            $rule = $this->service->get($rule);
-            if (!$rule instanceof SuggestedRuleCompositeInterface) {
-                throw new InvalidArgumentException("Invalid rule");
-            }
-            $rule->apply($masterContainer, $this->getUser());
-        }
+        $ruleCollection = new RuleCollection($this->service, $this->rulesConfig);
+        $ruleCollection->apply($masterContainer, $this->getUser());
     }
 
     /**

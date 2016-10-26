@@ -301,7 +301,7 @@ class GroupResourceTest extends TestCase
             'type'            => 'school',
             'meta'            => null,
         ];
-        $this->dispatch('/group', POST, $postData);
+        $this->dispatch('/group', 'POST', $postData);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
         $this->assertResponseStatusCode(500);
@@ -657,6 +657,10 @@ class GroupResourceTest extends TestCase
             'English Teacher' => [
                 'english_teacher',
                 403,
+            ],
+            'Super User' => [
+                'super_user',
+                404,
             ],
         ];
     }

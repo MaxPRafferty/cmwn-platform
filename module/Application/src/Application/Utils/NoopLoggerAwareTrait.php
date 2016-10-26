@@ -24,7 +24,7 @@ trait NoopLoggerAwareTrait
     }
 
     /**
-     * @return Logger
+     * @return LoggerInterface
      */
     public function getLogger()
     {

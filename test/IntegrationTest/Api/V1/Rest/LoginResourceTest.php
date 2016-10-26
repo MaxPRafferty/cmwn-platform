@@ -44,11 +44,7 @@ class LoginResourceTest extends TestCase
 
     /**
      * @test
-<<<<<<< HEAD
      * @ticket CORE-1165
-=======
-     * @ticker CORE-1165
->>>>>>> 86ea486... Ditto 0.2
      * @dataProvider loginDataProvider
      */
     public function testItShouldLoginUser($login)
@@ -63,6 +59,22 @@ class LoginResourceTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @test
+     * @dataProvider loginDataProvider
+     */
+    public function testItShouldLoginAlreadyLoggedInUser($login)
+    {
+        $this->logInUser($login);
+        $this->dispatch(
+            '/login',
+            'POST',
+            ['username' => $login, 'password' => 'business']
+        );
+        $this->assertMatchedRouteName('api.rest.login');
+        $this->assertControllerName('api\v1\rest\login\controller');
+        $this->assertResponseStatusCode(201);
+    }
     /**
      * @test
      */
@@ -151,6 +163,19 @@ class LoginResourceTest extends TestCase
             'POST',
             ['username' => 'math_student', 'password' => 'pqr']
         );
+        $this->assertResponseStatusCode(401);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('detail', $body);
+        $this->assertEquals('Invalid Login', $body['detail']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFailWhenDeletedUserAttemptsToLogin()
+    {
+        $this->dispatch('/login', 'POST', ['username' => 'deleted_user', 'password' => 'business']);
         $this->assertResponseStatusCode(401);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);

@@ -5,6 +5,7 @@ namespace GameTest\Delegator;
 use Game\Delegator\SaveGameDelegator;
 use Game\SaveGame;
 use \PHPUnit_Framework_TestCase as TestCase;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 
@@ -266,6 +267,151 @@ class SaveGameDelegatorTest extends TestCase
                     'game'      => 'monarch',
                     'prototype' => null,
                     'where'     => new Where(),
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchAllSaveGamesForUser()
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize($this->saveGame->getArrayCopy());
+        $this->service->shouldReceive('fetchAllSaveGamesForUser')
+            ->with('manchuck', null, null)
+            ->andReturn($resultSet)
+            ->once();
+        $this->delegator->fetchAllSaveGamesForUser('manchuck');
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.saves',
+                'target' => $this->service,
+                'params' => [
+                    'user'      => 'manchuck',
+                    'prototype' => null,
+                    'where'     => null,
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.saves.post',
+                'target' => $this->service,
+                'params' => [
+                    'user'      => 'manchuck',
+                    'prototype' => null,
+                    'where'     => null,
+                    'user-saves' => $resultSet
+                ],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotFetchSaveGamesForUserWhenEventStops()
+    {
+        $this->service->shouldReceive('fetchAllSaveGamesForUser')
+            ->never();
+
+        $return = new \stdClass();
+
+        $this->delegator->getEventManager()->attach('fetch.user.saves', function (Event $event) use (&$return) {
+            $event->stopPropagation(true);
+            return $return;
+        });
+
+        $this->assertSame($return, $this->delegator->fetchAllSaveGamesForUser('manchuck'));
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.saves',
+                'target' => $this->service,
+                'params' => [
+                    'user'      => 'manchuck',
+                    'prototype' => null,
+                    'where'     => null,
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchAllSaveGameData()
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize($this->saveGame->getArrayCopy());
+        $this->service->shouldReceive('fetchAllSaveGameData')
+            ->with(null, null)
+            ->andReturn($resultSet)
+            ->once();
+        $this->delegator->fetchAllSaveGameData();
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.game-data',
+                'target' => $this->service,
+                'params' => [
+                    'prototype' => null,
+                    'where'     => null,
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.game-data.post',
+                'target' => $this->service,
+                'params' => [
+                    'prototype' => null,
+                    'where'     => null,
+                    'game-data' => $resultSet
+                ],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotFetchAllSaveGameDataWhenEventStops()
+    {
+        $this->service->shouldReceive('fetchAllSaveGameData')
+            ->never();
+
+        $return = new \stdClass();
+
+        $this->delegator->getEventManager()->attach('fetch.game-data', function (Event $event) use (&$return) {
+            $event->stopPropagation(true);
+            return $return;
+        });
+
+        $this->assertSame($return, $this->delegator->fetchAllSaveGameData());
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.game-data',
+                'target' => $this->service,
+                'params' => [
+                    'prototype' => null,
+                    'where'     => null,
                 ],
             ],
             $this->calledEvents[0]

@@ -100,7 +100,7 @@ class AttachFriendValidator extends AbstractValidator implements ValidatorInterf
             return true;
         }
 
-        if ($status['uf_status'] !== FriendInterface::PENDING) {
+        if ($status['friend_status'] !== FriendInterface::PENDING) {
             $this->error(static::ALREADY_FRIENDS);
             return false;
         }

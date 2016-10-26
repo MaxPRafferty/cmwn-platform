@@ -69,11 +69,7 @@ class GroupResource extends AbstractResourceListener
      */
     public function fetch($groupId)
     {
-        try {
-            $group = $this->service->fetchGroup($groupId);
-        } catch (NotFoundException $notFound) {
-            return new ApiProblem(421, 'Routing error');
-        }
+        $group = $this->service->fetchGroup($groupId);
 
         $org = $this->orgService->fetchOrganization($group->getOrganizationId());
 

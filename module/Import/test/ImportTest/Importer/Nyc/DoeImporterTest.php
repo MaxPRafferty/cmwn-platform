@@ -5,6 +5,7 @@ namespace ImportTest\Importer\Nyc;
 use Group\Group;
 use Group\GroupInterface;
 use Import\Importer\Nyc\DoeImporter;
+use Import\ProcessorErrorException;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
 
@@ -103,7 +104,7 @@ class DoeImporterTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -158,7 +159,7 @@ class DoeImporterTest extends TestCase
     public function testItShouldSetFileNameUsingFiles()
     {
         $fileName = '/path/to/file.xsls';
-        $files = [
+        $files    = [
             'name'     => 'my file',
             'tmp_name' => $fileName,
             'type'     => 'foo/bar',
@@ -203,7 +204,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[0]
         );
@@ -212,7 +213,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.run',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[1]
         );
@@ -221,7 +222,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.complete',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[2]
         );
@@ -241,14 +242,19 @@ class DoeImporterTest extends TestCase
 
         $this->importer->setFileName($fileName);
         $this->importer->setGroup($this->school);
-        $this->importer->perform();
+        try {
+            $this->importer->perform();
+            $this->fail('Importer did not re-throw exception');
+        } catch (ProcessorErrorException $processException) {
+            // no op
+        }
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
                 'name'   => 'nyc.import.excel',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[0]
         );
@@ -257,7 +263,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.error',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[1]
         );
@@ -286,7 +292,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[0]
         );
@@ -321,7 +327,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[0]
         );
@@ -330,7 +336,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.run',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[1]
         );
@@ -339,7 +345,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.complete',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[2]
         );
@@ -374,7 +380,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[0]
         );
@@ -383,7 +389,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.run',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[1]
         );
@@ -392,7 +398,7 @@ class DoeImporterTest extends TestCase
             [
                 'name'   => 'nyc.import.excel.complete',
                 'target' => $this->parser,
-                'params' => []
+                'params' => [],
             ],
             $this->calledEvents[2]
         );

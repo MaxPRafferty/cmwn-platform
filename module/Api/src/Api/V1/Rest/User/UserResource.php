@@ -83,14 +83,6 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
             return new MeEntity($loggedInUser);
         }
 
-        if ($user === false) {
-            $user = $this->service->fetchUser($userId);
-        }
-
-        if ($user->getUserId() !== $userId) {
-            return new ApiProblem(409, 'Loaded user does not match requested user');
-        }
-
         return new UserEntity($user->getArrayCopy());
     }
 

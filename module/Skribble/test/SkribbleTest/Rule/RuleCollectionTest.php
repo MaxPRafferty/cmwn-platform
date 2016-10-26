@@ -65,7 +65,6 @@ class RuleCollectionTest extends TestCase
      */
     public function testItShouldBeAbleToHydrateItSelf()
     {
-        $this->markTestSkipped('bcmath not installed');
         $expected = new RuleCollection('items');
 
         $rule = new Item();

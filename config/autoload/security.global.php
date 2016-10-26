@@ -103,6 +103,9 @@ return [
             'api.rest.feed' => [
                 'GET'  => 'view.feed',
             ],
+            'api.rest.game-data' => [
+                'GET' => 'view.game-data',
+            ],
         ],
     ],
 ];
