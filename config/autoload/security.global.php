@@ -106,6 +106,12 @@ return [
             'api.rest.game-data' => [
                 'GET' => 'view.game-data',
             ],
+            'api.rest.flag'            => [
+                'GET'    => ['view.all.flagged.images', 'view.flagged.image'],
+                'POST'   => 'flag.image',
+                'PUT'    => 'edit.flag',
+                'DELETE' => 'delete.flag'
+            ],
         ],
     ],
 ];

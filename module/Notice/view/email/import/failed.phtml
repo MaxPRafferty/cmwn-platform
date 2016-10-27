@@ -1,7 +1,7 @@
 <?php // @codingStandardsIgnoreStart ?>
 
-<div mc:edit="std_content00">
-    <span class="center"><img src="https://<?= $image_domain ?>/img/email/import/import_failed.png" alt="You Are Almost There! Something just needs to be changed." width="100%" style="font-weight:bold;color:#01b5ff;font-size:50px;padding-bottom:10px"></span><br><br>
+<div style="color:#3b3b3b;font-family:Arial;font-size:17px;line-height:150%;text-align:left;border-left:30px solid #01b5ff;border-right:30px solid #01b5ff;padding:0 47.5px;min-width:440px">
+    <span style="text-align:center"><img src="https://<?= $image_domain ?>/img/email/import/import_failed.png" alt="You Are Almost There! Something just needs to be changed." width="100%" style="font-weight:bold;color:#01b5ff;font-size:50px;padding-bottom:10px;border:none;min-height:auto;line-height:100%;outline:none;text-decoration:none;text-transform:capitalize;display:inline" class="CToWUd"></span><br>
     <br>
     <b><i>First, the Bad News:</i></b> The information contained within your import was not uploaded.
     <br>
@@ -12,25 +12,26 @@
     Once your import has been accepted, you’ll receive a confirmation email. Then you’re good to go!
     <br>
     <br>
-    If you continue to receive this message and can’t resolve the issue, our customer service department will be delighted to assist you at <font color='#01b5ff'> 646.861.0571</font>.  Hours: 9am - 7pm EST.
+    If you continue to receive this message and can’t resolve the issue, our customer service department will be delighted to assist you at  <font color='#01b5ff'> 646.861.0571</font><br>
+    Hours: 9am - 7pm EST.
 
     <br><br>
 
 
     <span class = "h4">Here are the errors we found:</span>
-    <ol>
+    <ol style="margin-left:8px;padding-left:0">
         <?php
         foreach ($errors as $errorMsg):
             ?>
-            <li><?= $errorMsg ?></li>
+            <li style="margin-left:8px;padding-left:0;margin-bottom:20px"><?= $errorMsg ?></li>
         <?php endforeach; ?>
     </ol>
 
     <?php if (count($warnings) > 0): ?>
         <span class = "h4">Here are some warnings that you could fix:</span>
-        <ol>
+        <ol style="margin-left:8px;padding-left:0">
             <?php foreach ($warnings as $warnMsg): ?>
-                <li><?= $warnMsg ?></li>
+                <li style="margin-left:8px;padding-left:0;margin-bottom:20px"><?= $warnMsg ?></li>
             <?php endforeach; ?>
         </ol>
     <?php endif; ?>

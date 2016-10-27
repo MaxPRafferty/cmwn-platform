@@ -63,6 +63,7 @@ return array(
                 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
             'Api\\V1\\Rest\\Feed\\FeedResource' => 'Api\\V1\\Rest\\Feed\\FeedResourceFactory',
             'Api\\V1\\Rest\\GameData\\GameDataResource' => 'Api\\V1\\Rest\\GameData\\GameDataResourceFactory',
+            'Api\\V1\\Rest\\Flag\\FlagResource' => 'Api\\V1\\Rest\\Flag\\FlagResourceFactory',
         ),
     ),
     'router' => array(
@@ -301,6 +302,15 @@ return array(
                     ),
                 ),
             ),
+            'api.rest.flag' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/flag[/:flag_id]',
+                    'defaults' => array(
+                            'controller' => 'Api\\V1\\Rest\\Flag\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -331,6 +341,7 @@ return array(
             24 => 'api.rest.skribble-notify',
             25 => 'api.rest.feed',
             26 => 'api.rest.game-data',
+            27 => 'api.rest.flag'
         ),
     ),
     'zf-rest' => array(
@@ -826,6 +837,27 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\GameData\\GameDataCollection',
             'service_name' => 'GameData',
         ),
+        'Api\\V1\\Rest\\Flag\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\Flag\\FlagResource',
+            'route_name' => 'api.rest.flag',
+            'route_identifier_name' => 'flag_id',
+            'collection_name' => 'flags',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PUT',
+                2 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST'
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => 'page',
+            'entity_class' => 'Api\\V1\\Rest\\Flag\\FlagEntity',
+            'collection_class' => 'Api\\V1\\Rest\\Flag\\FlagCollection',
+            'service_name' => 'Flag',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -855,6 +887,7 @@ return array(
             'Api\\V1\\Rest\\SkribbleNotify\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Feed\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\GameData\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\Flag\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1090,6 +1123,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\GameData\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\Flag\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1424,6 +1461,18 @@ return array(
                 'route_identifier_name' => 'game_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\Flag\\FlagEntity' => array(
+                'entity_identifier_name' => 'flag_id',
+                'route_name' => 'api.rest.flag',
+                'route_identifier_name' => 'flag_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\Flag\\FlagCollection' => array(
+                'entity_identifier_name' => 'flag_id',
+                'route_name' => 'api.rest.flag',
+                'route_identifier_name' => 'flag_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -1478,7 +1527,9 @@ return array(
         'Api\\V1\\Rest\\SkribbleNotify\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\SkribbleNotify\\Validator',
         ),
-
+        'Api\\V1\\Rest\\Flag\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Flag\\Validator',
+        ),
     ),
     'input_filter_specs' => array(
         'Api\\V1\\Rest\\User\\Validator' => array(
@@ -2052,6 +2103,29 @@ return array(
                 'filters' => array(),
                 'name' => 'status',
                 'description' => 'The status of the skribble',
+            ),
+        ),
+        'Api\\V1\\Rest\\Flag\\Validator' => array(
+            1 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'flaggee',
+                'description' => 'The person whose image is flagged',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'url',
+                'description' => 'Url of the image flagged',
+            ),
+            3 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'reason',
+                'description' => 'Reason for flagging',
             ),
         ),
     ),

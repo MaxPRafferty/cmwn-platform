@@ -3,6 +3,7 @@
 namespace Api\V1\Rest\User;
 
 use Api\Links\FeedLink;
+use Api\Links\FlagLink;
 use Api\Links\FlipLink;
 use Api\Links\FriendLink;
 use Api\Links\GameLink;
@@ -107,6 +108,10 @@ class MeEntity extends UserEntity implements TokenEntityInterface
 
         if (!$links->has('save_game') && !empty($this->getUserId())) {
             $links->add(new SaveGameLink($this->getUserId()));
+        }
+
+        if (!$links->has('flags')) {
+            $links->add(new FlagLink());
         }
 
         $this->injectChildLinks($links);
