@@ -2,7 +2,7 @@
   "name": "cmwn/platform",
   "description": "API layer for CMWN",
   "license": "proprietary",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "minimum-stability": "stable",
   "config": {
     "process-timeout": 5000

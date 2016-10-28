@@ -1,3 +1,8 @@
+Version - 0.4.8
+----
+
+- a8ec288: Fixed typo in template Fixed Upload Controller Not sending job
+
 Version - 0.4.7
 ----
 
