@@ -101,11 +101,6 @@ draft-release:
       bucket-url: $AWS_BUCKET_URL
       source-dir: data/build/artifact/
       delete-removed: false
-    - github-create-release:
-      name: Creating release on github
-      token: $MC_GITHUB_TOKEN
-      tag: $VERSION
-      draft: true
     - github-upload-asset:
       name: Adding build artifact to tag
       token: $MC_GITHUB_TOKEN
