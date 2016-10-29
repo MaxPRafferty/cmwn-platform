@@ -48,21 +48,10 @@ release:
     - script:
       name: Version bump, Changelog and prep
       code: |-
-        echo "Bumping version"
-        chmod ugo+x $PWD/bin/version_bump.sh $PWD/bin/changelog.sh
-        export VERSION="$($PWD/bin/version_bump.sh patch)"
+        export VERSION="$($PWD/bin/version_bump.sh --print-current)"
         echo "Bumped version to $VERSION"
-        echo "Creating changelog"
-        $PWD/bin/changelog.sh
-        echo "Created Change log"
         mkdir -p data/build/artifact
         echo "Created directory for artifact"
-    - script:
-      name: Commiting new version number
-      code: |-
-        git add composer.json CHANGELOG.md
-        git commit -m 'Version bump [ci skip]'
-        git push -f $GIT_REMOTE $WERCKER_GIT_BRANCH
     - script:
       name: Running Zend-Tool
       code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
@@ -124,7 +113,7 @@ draft-release:
       file: data/build/artifact/platform-api-$VERSION.zip
       filename: platform-api-$VERSION.zip
 
-deploy:
+deploy-draft:
   box: python:2.7
   steps:
     - script:
@@ -133,6 +122,27 @@ deploy:
         export SHORT_HASH=$(git log -n 1 --abbrev-commit | head -n 1 | sed -e 's/^commit //')
         $PWD/bin/version_bump.sh --print-current
         export VERSION="$($PWD/bin/version_bump.sh --print-current)-$SHORT_HASH"
+    - script:
+      name: Installing pips
+      code: |-
+        pip install boto3
+        export DEPLOY='true'
+    - script:
+      name: Running deploy
+      code: |-
+        echo "Deploying $DEPLOY_APP_NAME @ $VERSION to $DEPLOY_ENV"
+        python bin/deploy.py $VERSION $DEPLOY_APP_NAME $DEPLOY_ENV -v
+  after-steps:
+    - slack-notifier:
+      url: $SLACK_URL
+
+deploy:
+  box: python:2.7
+  steps:
+    - script:
+      name: Preparing release
+      code: |-
+        export VERSION="$($PWD/bin/version_bump.sh --print-current)"
     - script:
       name: Installing pips
       code: |-
