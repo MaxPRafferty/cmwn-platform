@@ -3,6 +3,7 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use Security\Authorization\Rbac;
 use Zend\Json\Json;
 use IntegrationTest\TestHelper;
 use Org\Service\OrganizationServiceInterface;
@@ -28,11 +29,24 @@ class OrgResourceTest extends TestCase
     protected $orgService;
 
     /**
+     * @var Rbac
+     */
+    protected $rbac;
+
+    /**
      * @before
      */
-    public function setUpUserService()
+    public function setUpOrgService()
     {
         $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpRbac()
+    {
+        $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 
     /**
@@ -415,6 +429,60 @@ class OrgResourceTest extends TestCase
             ]
         );
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2525
+     * @group CORE-2525
+     */
+    public function testItShouldNotShowUserOrgLinkWhenUserDoesNotHavePermissionToViewOrgUsers()
+    {
+        $this->injectValidCsrfToken();
+        $user = $this->logInUser('principal');
+
+        $this->assertFalse(
+            $this->rbac->isGranted($user->getRole(), 'view.org.users'),
+            'This test cannot run with a user that has permission to view.org.users'
+        );
+
+        $this->dispatch('/org/district');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayNotHasKey(
+            'org_users',
+            $body['_links'],
+            'User with permission for view.org.users was given the HAL link for org_users'
+        );
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2525
+     * @group CORE-2525
+     */
+    public function testItShouldShowUserOrgLinkWhenUserHasPermissionToViewOrgUsers()
+    {
+        $this->injectValidCsrfToken();
+        $user = $this->logInUser('super_user');
+
+        $this->assertTrue(
+            $this->rbac->isGranted($user->getRole(), 'view.org.users'),
+            'This test cannot run with a user that does not permission to view.org.users'
+        );
+
+        $this->dispatch('/org/district');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayHasKey(
+            'org_users',
+            $body['_links'],
+            'User with permission for view.org.users was NOT given the HAL link for org_users'
+        );
     }
 
     /**
