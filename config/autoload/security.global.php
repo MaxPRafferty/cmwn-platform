@@ -106,6 +106,9 @@ return [
             'api.rest.game-data' => [
                 'GET' => 'view.game-data',
             ],
+            'sa.rest.settings' => [
+                'GET' => 'sa.settings',
+            ],
         ],
     ],
 ];

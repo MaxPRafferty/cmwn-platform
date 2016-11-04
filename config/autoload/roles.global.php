@@ -68,6 +68,9 @@ return [
             'delete.skribble'      => 'Delete Skribbles',
             'update.skribble'      => 'Update Skribbles',
             'skribble.notice'      => 'Notify Skribble status',
+
+            // god mode
+            'sa.settings'          => 'View God Mode Admin Dashboard'
         ],
         'roles'             => [
             'super' => [
@@ -122,6 +125,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'sa.settings',
                 ],
             ],
 

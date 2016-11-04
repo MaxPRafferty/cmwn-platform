@@ -122,6 +122,7 @@ class TokenResourceTest extends TestCase
                     'user',
                     'user_image',
                     'save_game',
+                    'sa_settings',
                 ],
                 'scope' => -1,
             ],

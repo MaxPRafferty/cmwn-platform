@@ -31,4 +31,5 @@ return [
     'Api',
     'Security',
     'Suggest',
+    'Sa',
 ];

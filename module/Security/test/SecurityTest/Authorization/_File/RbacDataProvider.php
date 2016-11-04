@@ -43,6 +43,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'sa.settings',
         ],
 
         'denied' => [
@@ -110,6 +111,7 @@ return [
             'view.feed',
             'view.game-data',
             'view.skribble',
+            'sa.settings',
         ],
     ],
 
@@ -167,6 +169,7 @@ return [
             'view.game-data',
             'view.org.users',
             'view.skribble',
+            'sa.settings',
         ],
     ],
 
@@ -223,6 +226,7 @@ return [
             'view.game-data',
             'view.org.users',
             'view.skribble',
+            'sa.settings',
         ],
     ],
 
@@ -279,6 +283,7 @@ return [
             'view.child.groups',
             'view.game-data',
             'view.skribble',
+            'sa.settings',
         ],
     ],
 
@@ -335,6 +340,7 @@ return [
             'view.user.child',
             'view.user.groups',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 
@@ -390,6 +396,7 @@ return [
             'view.org.users',
             'view.user.adult',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 
@@ -445,6 +452,7 @@ return [
             'view.org.users',
             'view.skribble',
             'view.user.child',
+            'sa.settings',
         ],
     ],
 
@@ -501,6 +509,7 @@ return [
             'view.skribble',
             'view.user.groups',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 
@@ -557,6 +566,7 @@ return [
             'view.org.users',
             'view.skribble',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 
@@ -613,6 +623,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 
@@ -668,6 +679,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 
@@ -725,6 +737,7 @@ return [
             'view.user.flip',
             'view.user.groups',
             'view.user.orgs',
+            'sa.settings',
         ],
     ],
 ];
