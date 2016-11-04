@@ -3,7 +3,6 @@
 namespace User\Delegator;
 
 use Application\Exception\DuplicateEntryException;
-use User\Service\UserService;
 use User\Service\UserServiceInterface;
 use User\User;
 use User\UserInterface;
@@ -54,6 +53,10 @@ class CheckUserListener implements ListenerAggregateInterface
 
         $user        = $event->getParam('user');
         if (!$user instanceof UserInterface) {
+            return;
+        }
+
+        if ($user->getType() === UserInterface::TYPE_CHILD) {
             return;
         }
 
