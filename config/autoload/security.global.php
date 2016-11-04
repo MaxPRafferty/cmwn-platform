@@ -112,6 +112,9 @@ return [
                 'PUT'    => 'edit.flag',
                 'DELETE' => 'delete.flag'
             ],
+            'sa.rest.settings' => [
+                'GET' => 'sa.settings',
+            ],
         ],
     ],
 ];
