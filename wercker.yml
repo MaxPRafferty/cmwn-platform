@@ -147,11 +147,6 @@ deploy:
       code: |-
         export VERSION="$($PWD/bin/version_bump.sh --print-current)"
     - script:
-      name: Installing pips
-      code: |-
-        pip install boto3
-        export DEPLOY='true'
-    - script:
       name: Running deploy
       code: |-
         echo "Deploying $DEPLOY_APP_NAME @ $VERSION to $DEPLOY_ENV"
