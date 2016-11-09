@@ -109,7 +109,11 @@ draft-release:
       filename: platform-api-$VERSION.zip
 
 deploy-draft:
-  box: cmwn/python
+  box:
+    id: cmwn/python
+    username: $DOCKER_USER
+    password: $DOCKER_PASS
+
   steps:
     - script:
       name: Preparing release
@@ -132,7 +136,10 @@ deploy-draft:
       url: $SLACK_URL
 
 deploy:
-  box: cmwn/python
+  box:
+    id: cmwn/python
+    username: $DOCKER_USER
+    password: $DOCKER_PASS
   steps:
     - script:
       name: Preparing release
