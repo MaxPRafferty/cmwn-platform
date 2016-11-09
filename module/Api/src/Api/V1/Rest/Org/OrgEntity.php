@@ -65,7 +65,6 @@ class OrgEntity extends Organization implements ScopeAwareInterface, LinkCollect
      */
     public function setLinks(LinkCollection $links)
     {
-        $links->add(new OrgUserLink($this));
         $this->links = $links;
     }
 

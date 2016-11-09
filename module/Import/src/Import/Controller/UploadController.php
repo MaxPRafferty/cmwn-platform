@@ -2,11 +2,15 @@
 
 namespace Import\Controller;
 
+use Group\GroupAwareInterface;
 use Group\Service\GroupServiceInterface;
 use Import\View\ImportView;
 use Job\Service\JobServiceInterface;
 use Import\ImporterInterface;
+use Notice\NotificationAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Exception\ChangePasswordException;
+use Security\SecurityUser;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\InputFilter\InputFilterAwareTrait;
 use Zend\InputFilter\InputFilterInterface;
@@ -103,6 +107,7 @@ class UploadController extends AbstractActionController
             );
         }
 
+        $this->jobService->sendJob($job);
         return new ImportView([]);
     }
 

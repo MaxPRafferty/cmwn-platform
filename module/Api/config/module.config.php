@@ -15,13 +15,15 @@ return array(
         9 => 'Api\\Listeners\\UserHalLinksListener',
         10 => 'Api\\Listeners\\TemplateLinkListener',
         11 => 'Api\\Listeners\\GameRouteListener',
-        12 => 'Api\\Listeners\\UserParamListener'
+        12 => 'Api\\Listeners\\UserParamListener',
+        13 => \Api\Listeners\OrgLinkListener::class,
     ),
     'service_manager' => array(
         'invokables' => array(
             'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
             'Api\\Listeners\\TemplateLinkListener' => 'Api\\Listeners\\TemplateLinkListener',
             'Api\\Listeners\\UserParamListener' => 'Api\\Listeners\\UserParamListener',
+            \Api\Listeners\OrgLinkListener::class => \Api\Listeners\OrgLinkListener::class,
         ),
         'factories' => array(
             'Api\\Listeners\\UserHalLinksListener' => 'Api\\Factory\\UserHalLinksListenerFactory',

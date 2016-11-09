@@ -63,7 +63,7 @@ return [
             'twirl-n-swirl'   => [
                 'game_id'     => 'twirl-n-swirl',
                 'title'       => 'Twirl n\' Swirl',
-                'description' => 'Ever wonder where things go when you flush? It’s not as simple as you think! Learn how you can help the environment—and avoid the plunger!',
+                'description' => 'Ever wonder where things go when you flush? It\'s not as simple as you think! Learn how you can help the environment and avoid the plunger!',
                 'coming_soon' => 0,
                 'meta'        => '{"desktop" : false, "unity" : false}',
             ],

@@ -1,3 +1,15 @@
+Version - 0.4.9
+----
+
+- 40aae34: Removing Boxfile to trigger a build
+- ee3825a: Version bump [ci skip]
+- a8ec288: Fixed typo in template Fixed Upload Controller Not sending job
+
+Version - 0.4.8
+----
+
+- a8ec288: Fixed typo in template Fixed Upload Controller Not sending job
+
 Version - 0.4.7
 ----
 
