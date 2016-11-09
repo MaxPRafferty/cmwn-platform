@@ -113,7 +113,7 @@ deploy-draft:
     id: cmwn/python
     username: $DOCKER_USER
     password: $DOCKER_PASS
-
+    entrypoint: /bin/bash -c
   steps:
     - script:
       name: Preparing release
@@ -140,6 +140,7 @@ deploy:
     id: cmwn/python
     username: $DOCKER_USER
     password: $DOCKER_PASS
+    entrypoint: /bin/bash -c
   steps:
     - script:
       name: Preparing release
