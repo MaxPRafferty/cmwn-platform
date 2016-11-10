@@ -120,7 +120,10 @@ class CheckUserListenerTest extends TestCase
         try {
             $listener->checkUniqueFields($event);
         } catch (DuplicateEntryException $dupeUser) {
-            $this->assertEquals('Invalid user', $dupeUser->getMessage());
+            $this->assertEquals(
+                'Invalid Username:(' . $this->user->getUserName() . ') or email(' . $this->user->getEmail() . ')',
+                $dupeUser->getMessage()
+            );
         }
 
         $this->assertTrue($event->propagationIsStopped());
