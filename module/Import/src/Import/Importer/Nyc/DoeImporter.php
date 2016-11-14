@@ -168,6 +168,7 @@ class DoeImporter implements
 
     /**
      * Performs the work for the job
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function perform()
     {
@@ -224,6 +225,14 @@ class DoeImporter implements
             $this->getLogger()->alert('Processor has errors', $this->parser->getErrors());
             $event->setName('nyc.import.excel.error');
             $this->getEventManager()->trigger($event);
+            throw $processException;
+        } catch (\Throwable $processException) {
+            if (strpos($processException->getMessage(), 'Could not open') !== false ||
+                strpos($processException->getMessage(), 'File does not exist') !== false
+            ) {
+                $event->setName('nyc.upload.excel.failed');
+                $this->getEventManager()->trigger($event);
+            }
             throw $processException;
         }
     }
