@@ -86,7 +86,7 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
                 return;
             }
 
-            $userId = $request->getParam('user_id');
+            $userId = $request->getParam('userId');
             $job->exchangeArray([
                 'user_id'         => $userId,
             ]);

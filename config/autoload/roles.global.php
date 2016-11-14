@@ -6,6 +6,7 @@ return [
         'permission_labels' => [
             // super
             'view.all.users'       => 'View all users',
+            'restore.db.state'     => 'Reset test users in the database',
 
             // user
             'create.user'          => 'Create a user',
@@ -53,6 +54,7 @@ return [
             'remove.org'           => 'Remove an Organization',
 
             // game
+            'view.game-data'       => 'View Save Game Data of a game',
             'view.games'           => 'View all Games',
             'save.game'            => 'Save Game progress',
 
@@ -61,6 +63,12 @@ return [
             'child.code'           => 'Send child reset code',
             'attach.profile.image' => 'Upload a profile image',
             'view.profile.image'   => 'View a users profile image',
+            'flag.image'           => 'Can flag images',
+            'view.all.flagged.images'  => 'Can view all flagged images',
+            'edit.flag'            => 'Edit flag',
+            'delete.flag'          => 'delete flag',
+            'view.flagged.image'   => 'view a flagged image using flag_id',
+
 
             // skribble
             'view.skribble'        => 'Read Skribbles',
@@ -91,10 +99,12 @@ return [
                     'create.group',
                     'create.org',
                     'create.user',
+                    'delete.flag',
                     'edit.group',
                     'edit.org',
                     'edit.user.adult',
                     'edit.user.child',
+                    'flag.image',
                     'import',
                     'pick.username',
                     'remove.child.group',
@@ -105,11 +115,14 @@ return [
                     'remove.user.child',
                     'skribble.notice',
                     'update.password',
+                    'view.all.flagged.images',
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
                     'view.all.child.groups',
+                    'view.flagged.image',
                     'view.flip',
+                    'view.game-data',
                     'view.games',
                     'view.group',
                     'view.group.users',
@@ -121,6 +134,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'restore.db.state',
                 ],
             ],
 
@@ -282,6 +296,7 @@ return [
                     'create.user.flip',
                     'delete.skribble',
                     'edit.user.child',
+                    'flag.image',
                     'pick.username',
                     'save.game',
                     'update.password',
@@ -293,7 +308,6 @@ return [
                     'view.user.child',
                     'view.user.flip',
                     'view.user.groups',
-                    'view.games',
                     'view.feed',
                 ],
             ],
@@ -305,6 +319,7 @@ return [
                 'permissions' => [
                     'attach.profile.image',
                     'edit.user.adult',
+                    'flag.image',
                     'update.password',
                     'view.flip',
                     'view.games',

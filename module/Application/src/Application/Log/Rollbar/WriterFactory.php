@@ -23,7 +23,7 @@ class WriterFactory implements FactoryInterface
         /** @var \RollbarNotifier $notifier */
         $notifier = $serviceLocator->get('Application\Log\Rollbar\Notifier');
         $options = $serviceLocator->get(Options::class);
-        $writer   =  new Writer($notifier);
+        $writer   =  new Writer($notifier, $serviceLocator, $options);
         $writer->addFilter(new Priority($options->getLogLevel()));
         return $writer;
     }

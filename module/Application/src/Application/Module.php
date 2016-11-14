@@ -8,11 +8,12 @@ namespace Application;
 
 use Application\Listeners\ListenersAggregate;
 use Application\Utils\StaticType;
+use Zend\Console\Adapter\AdapterInterface;
 use Zend\EventManager\SharedEventManager;
-use Zend\Log\Filter\Priority;
 use Zend\Log\Logger;
-use Zend\Log\Writer\Stream;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
+use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -22,7 +23,9 @@ use Zend\Mvc\MvcEvent;
  * @package Application
  * @codeCoverageIgnore
  */
-class Module implements ConfigProviderInterface
+class Module implements
+    ConfigProviderInterface,
+    ConsoleUsageProviderInterface
 {
     /**
      * @param MvcEvent $mvcEvent
@@ -82,5 +85,15 @@ class Module implements ConfigProviderInterface
         $sharedEvents = $service->get('SharedEventManager');
 
         $aggregate->attachShared($sharedEvents);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConsoleUsage(AdapterInterface $console)
+    {
+        return [
+            'redis:delete'   => 'delete cache',
+        ];
     }
 }

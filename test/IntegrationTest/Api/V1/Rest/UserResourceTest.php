@@ -5,6 +5,7 @@ namespace IntegrationTest\Api\V1\Rest;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use User\Child;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
@@ -500,6 +501,32 @@ class UserResourceTest extends TestCase
         $this->assertResponseStatusCode(422);
     }
 
+    /** test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldCreateUserWithUserData()
+    {
+        $this->markTestIncomplete("Allow user resource to post from this end point with the following values set");
+
+        $date = new \DateTime();
+        $postData = [
+            'email'       => 'child@changemyworldnow.com',
+            'first_name'  => 'foo',
+            'middle_name' => 'bar',
+            'last_name'   => 'trump',
+            'gender'      => 'male',
+            'birthdate'   => $date->format("Y-m-d H:i:s"),
+            'type'        => Child::TYPE_CHILD,
+            'meta'        => [],
+            'external_id' => null,
+        ];
+
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user', 'POST', $postData);
+    }
+
     /**
      * @test
      */
@@ -508,17 +535,28 @@ class UserResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $postData = [
-            'first_name'  => 'Chaithra',
-            'last_name'   => 'Yenikapati',
-            'gender'      => 'Female',
-            'meta'        => '[]',
-            'type'        => 'CHILD',
-            'username'    => 'wigglytuff-007',
-            'email'       => 'english_student@ginasink.com',
-            'birthdate'   => '1993-07-13',
+            'first_name' => 'Chaithra',
+            'last_name' => 'Yenikapati',
+            'gender' => 'Female',
+            'meta' => '[]',
+            'type' => 'CHILD',
+            'username' => 'wigglytuff-007',
+            'email' => 'english_student@ginasink.com',
+            'birthdate' => '1993-07-13',
         ];
         $this->dispatch('/user', 'POST', $postData);
         $this->assertResponseStatusCode(422);
+    }
+    /** test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldFetchUserByExternalId()
+    {
+        $this->markTestIncomplete("Allow user resource to fetch by external id by setting a route param externalId");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?externalId=foo');
     }
 
     /**
@@ -530,15 +568,15 @@ class UserResourceTest extends TestCase
         $this->logInUser('english_teacher');
 
         $putData = [
-            'first_name'  => 'Angelot',
+            'first_name' => 'Angelot',
             'middle_name' => 'M',
-            'last_name'   => 'Fredickson',
-            'gender'      => 'M',
-            'meta'        => '[]',
-            'type'        => 'ADULT',
-            'username'    => 'english_teacher',
-            'email'       => 'english_student@ginasink.com',
-            'birthdate'   => '2016-04-15',
+            'last_name' => 'Fredickson',
+            'gender' => 'M',
+            'meta' => '[]',
+            'type' => 'ADULT',
+            'username' => 'english_teacher',
+            'email' => 'english_student@ginasink.com',
+            'birthdate' => '2016-04-15',
         ];
 
         $this->dispatch('/user/english_teacher', 'PUT', $putData, true);
@@ -550,6 +588,18 @@ class UserResourceTest extends TestCase
         $this->assertArrayHasKey('email', $body['validation_messages']);
         $emailMessage = $body['validation_messages']['email'];
         $this->assertEquals('Invalid Email', $emailMessage[0]);
+    }
+
+    /** test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldFetchUserByEmail()
+    {
+        $this->markTestIncomplete("Allow user resource to fetch user by email by setting a route param email");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?email=foo@ginasink.com');
     }
 
     /**

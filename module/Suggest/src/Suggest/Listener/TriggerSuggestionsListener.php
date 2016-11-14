@@ -6,13 +6,14 @@ use Job\JobInterface;
 use Job\Service\JobServiceInterface;
 use Suggest\Engine\SuggestionEngine;
 use User\Service\UserServiceInterface;
+use User\User;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
  * Class TriggerSuggestionsListener
- * @package Security\Listeners
+ * @package Suggest\Listeners
  */
 class TriggerSuggestionsListener
 {
@@ -73,6 +74,10 @@ class TriggerSuggestionsListener
         }
 
         if (!$this->suggestionEngine instanceof JobInterface) {
+            return;
+        }
+
+        if ($user->getType() !== User::TYPE_CHILD) {
             return;
         }
 

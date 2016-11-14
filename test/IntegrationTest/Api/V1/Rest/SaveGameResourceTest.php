@@ -27,7 +27,6 @@ class SaveGameResourceTest extends TestCase
      * @var SaveGameServiceInterface
      */
     protected $saveService;
-
     /**
      * @before
      */
@@ -35,7 +34,6 @@ class SaveGameResourceTest extends TestCase
     {
         $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
     }
-
     /**
      * @test
      * @param string $user
@@ -50,7 +48,6 @@ class SaveGameResourceTest extends TestCase
         $this->logInChangePasswordUser($user);
         $this->assertChangePasswordException($url, $method, $params);
     }
-
     /**
      * @test
      * @dataProvider usersAllowedToSaveGamesProvider
@@ -59,36 +56,29 @@ class SaveGameResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
-
         $this->dispatch(
             '/user/' .$userName . '/game/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
-
         $body = $this->getResponse()->getContent();
-
         try {
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
             return;
         }
-
         $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
         $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
         $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
         $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
         $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-
         $this->assertEquals(['foo' => 'bar'], $decoded['data'], 'Data is incorrect for game');
         $this->assertEquals('1.1.1', $decoded['version'], 'Version number is incorrect');
     }
-
     /**
      * @test
      * @ticket CORE-2351
@@ -98,18 +88,15 @@ class SaveGameResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
-
         $this->dispatch(
             '/user/' .$userName . '/game/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(403);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
     }
-
     /**
      * @test
      * @dataProvider usersAllowedToSaveGamesProvider
@@ -120,25 +107,20 @@ class SaveGameResourceTest extends TestCase
         if ($userName === 'super_user') {
             $this->markTestSkipped('Currently the route listener will not check permission if user is super');
         }
-
         if ($userName === 'other_student') {
             $this->fail('In order for this to work, other_student cannot be provided');
         }
-
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
-
         $this->dispatch(
             '/user/other_student/game/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(403);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
     }
-
     /**
      * @test
      */
@@ -152,34 +134,27 @@ class SaveGameResourceTest extends TestCase
         $saveGame->setCreated($date);
         $saveGame->setData(['baz' => 'bat']);
         $this->saveService->saveGame($saveGame);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch('/user/english_student/game/monarch');
-
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
-
         $body = $this->getResponse()->getContent();
-
         try {
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
             return;
         }
-
         $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
         $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
         $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
         $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
         $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-
         $this->assertEquals(['baz' => 'bat'], $decoded['data'], 'Data is incorrect for game');
         $this->assertEquals('4.3.2.1', $decoded['version'], 'Version number is incorrect');
     }
-
     /**
      * @test
      */
@@ -190,17 +165,13 @@ class SaveGameResourceTest extends TestCase
             $this->fail('This requires no saved data for the english_student');
         } catch (NotFoundException $notFound) {
         }
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-
         $this->dispatch('/user/english_student/game/monarch');
-
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
     }
-
     /**
      * @test
      */
@@ -214,7 +185,6 @@ class SaveGameResourceTest extends TestCase
         $saveGame->setCreated($date);
         $saveGame->setData(['baz' => 'bat']);
         $this->saveService->saveGame($saveGame);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch(
@@ -222,30 +192,24 @@ class SaveGameResourceTest extends TestCase
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
-
         $body = $this->getResponse()->getContent();
-
         try {
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
             return;
         }
-
         $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
         $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
         $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
         $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
         $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-
         $this->assertEquals(['foo' => 'bar'], $decoded['data'], 'Data is incorrect for game');
         $this->assertEquals('1.1.1', $decoded['version'], 'Version number is incorrect');
     }
-
     /**
      * @test
      */
@@ -259,14 +223,12 @@ class SaveGameResourceTest extends TestCase
         $saveGame->setCreated($date);
         $saveGame->setData(['baz' => 'bat']);
         $this->saveService->saveGame($saveGame);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch(
             '/user/english_student/game/monarch',
             'DELETE'
         );
-
         $this->assertResponseStatusCode(204);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
@@ -276,7 +238,6 @@ class SaveGameResourceTest extends TestCase
         } catch (NotFoundException $notFound) {
         }
     }
-
     /**
      * @return array
      */
@@ -294,7 +255,6 @@ class SaveGameResourceTest extends TestCase
             ],
         ];
     }
-
     /**
      * @return array
      */

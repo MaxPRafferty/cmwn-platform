@@ -73,61 +73,6 @@ class OrganizationService implements OrganizationServiceInterface
     }
 
     /**
-     * SELECT o.*,
-     *  ug.group_id AS user_group_id,
-     *  g.group_id AS real_group_id
-     * FROM groups g
-     *   LEFT JOIN user_groups AS ug ON ug.user_id = :where2
-     *   LEFT JOIN organizations AS o ON o.org_id = g.organization_id
-     * WHERE (o.type = :where1 AND o.deleted IS NULL)
-     * GROUP BY o.org_id;
-     *
-     * @param string|UserInterface $user
-     * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null $prototype
-     * @return HydratingResultSet|DbSelect
-     */
-    public function fetchAllForUser($user, $where = null, $paginate = true, $prototype = null)
-    {
-        $where     = $this->createWhere($where);
-        $userId    = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $select    = new Select(['ug'  => 'user_groups']);
-
-        $select->columns(['user_group_id' => 'group_id']);
-        $select->join(
-            ['g' => 'groups'],
-            'g.group_id = ug.group_id',
-            ['real_group_id' => 'group_id'],
-            Select::JOIN_LEFT
-        );
-
-        $select->join(
-            ['o' => 'organizations'],
-            'o.org_id = g.organization_id',
-            ['*'],
-            Select::JOIN_LEFT
-        );
-
-        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
-        $select->where($where);
-        $select->group('o.org_id');
-        $select->order(['o.title']);
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        if ($paginate) {
-            return new DbSelect(
-                $select,
-                $this->orgTableGateway->getAdapter(),
-                $resultSet
-            );
-        }
-
-        $results = $this->orgTableGateway->select($where);
-        $resultSet->initialize($results);
-        return $resultSet;
-    }
-
-    /**
      * Saves an Organization
      *
      * If the org_id is null, then a new Organization is created

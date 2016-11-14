@@ -36,11 +36,9 @@ class OrgUsersResource extends AbstractResourceListener
     }
 
     /**
-     * Fetch a resource
-     *
-     * @return ApiProblem|mixed
+     * @inheritdoc
      */
-    public function fetchAll()
+    public function fetchAll($params = [])
     {
         $orgId = $this->getEvent()->getRouteParam('org_id', false);
 

@@ -39,7 +39,6 @@ class PasswordResourceTest extends TestCase
      */
     public function testItShouldCheckChangePasswordException()
     {
-        $this->markTestIncomplete("Not checked");
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser('english_student');
         $this->dispatch(
@@ -47,7 +46,7 @@ class PasswordResourceTest extends TestCase
             'POST',
             ['password' => 'apple0007', 'password_confirmation' => 'apple0007']
         );
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(401);
     }
 
     /**
@@ -74,5 +73,19 @@ class PasswordResourceTest extends TestCase
 
         $this->assertEquals('english_student', $user->getUserId());
         $this->assertTrue($user->comparePassword('apple0007'));
+    }
+    
+    /**
+     * @test
+     */
+    public function testItShouldNotAllowToResetPasswordIfNotLoggedIn()
+    {
+        $this->injectValidCsrfToken();
+        $this->dispatch(
+            '/user/english_student/password',
+            'POST',
+            ['password' => 'apple0007', 'password_confirmation' => 'apple0007']
+        );
+        $this->assertResponseStatusCode(401);
     }
 }

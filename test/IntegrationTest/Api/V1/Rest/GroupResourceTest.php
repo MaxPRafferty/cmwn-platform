@@ -301,7 +301,7 @@ class GroupResourceTest extends TestCase
             'type'            => 'school',
             'meta'            => null,
         ];
-        $this->dispatch('/group', POST, $postData);
+        $this->dispatch('/group', 'POST', $postData);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
         $this->assertResponseStatusCode(500);
@@ -586,6 +586,40 @@ class GroupResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldFetchGroupByExternalId()
+    {
+        $this->markTestIncomplete("Add api route to fetch group by external id");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/group?externalId=foo&networkId=bar');
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2331
+     * @group MissingApiRoute
+     */
+    public function testItShouldAddChildToGroup()
+    {
+        $this->markTestIncomplete("Create an API route for adding child group to parent");
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'organization_id' => 'district',
+            'title'           => 'Joni School',
+            'description'     => 'this is new school',
+            'type'            => 'school',
+            'meta'            => ['code' => 'test'],
+            'parent_id'       => 'parent\'s user_id'
+        ];
+        $this->dispatch('/group', 'POST', $postData);
+    }
+
+    /**
      * @return array
      */
     public function changePasswordDataProvider()
@@ -659,6 +693,10 @@ class GroupResourceTest extends TestCase
             'English Teacher' => [
                 'english_teacher',
                 403,
+            ],
+            'Super User' => [
+                'super_user',
+                404,
             ],
         ];
     }

@@ -51,15 +51,16 @@ class GroupUsersResource extends AbstractResourceListener
         return new GroupUsersCollection($this->userGroupService->fetchUsersForGroup($group, [], new UserEntity()));
     }
 
-    public function fetchAll()
+    /**
+     * @inheritdoc
+     */
+    public function fetchAll($params = [])
     {
         $groupId = $this->getEvent()->getRouteParam('group_id');
 
-        try {
-            $group = $this->groupService->fetchGroup($groupId);
-        } catch (NotFoundException $notFound) {
-            return new ApiProblem(421, 'Routing error');
-        }
+
+        $group = $this->groupService->fetchGroup($groupId);
+
 
         return new GroupUsersCollection($this->userGroupService->fetchUsersForGroup($group, [], new UserEntity()));
     }
