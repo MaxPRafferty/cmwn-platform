@@ -227,12 +227,9 @@ class DoeImporter implements
             $this->getEventManager()->trigger($event);
             throw $processException;
         } catch (\Throwable $processException) {
-            if (strpos($processException->getMessage(), 'Could not open') !== false ||
-                strpos($processException->getMessage(), 'File does not exist') !== false
-            ) {
-                $event->setName('nyc.upload.excel.failed');
-                $this->getEventManager()->trigger($event);
-            }
+            $this->getLogger()->alert($processException->getMessage());
+            $event->setName('nyc.upload.excel.failed');
+            $this->getEventManager()->trigger($event);
             throw $processException;
         }
     }

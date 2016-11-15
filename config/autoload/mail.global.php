@@ -1,29 +1,21 @@
 <?php
 
 
-//$mailHost = getenv('MAIL_HOST')
-//    ? getenv('MAIL_HOST')
-//    : 'mailtrap.io';
-//
-//$mailPort = getenv('MAIL_PORT')
-//    ? getenv('MAIL_PORT')
-//    : 2525;
-//
-//$mailUser = getenv('MAIL_USERNAME')
-//    ? getenv('MAIL_USERNAME')
-//    : '1fccb9203477e3';
-//
-//$mailPass = getenv('MAIL_PASSWORD')
-//    ? getenv('MAIL_PASSWORD')
-//    : '1014d39a5059ac';
+$mailHost = getenv('MAIL_HOST')
+    ? getenv('MAIL_HOST')
+    : 'mailtrap.io';
 
-$mailHost = 'smtp.mailgun.org';
+$mailPort = getenv('MAIL_PORT')
+    ? getenv('MAIL_PORT')
+    : 2525;
 
-$mailPort = 587;
+$mailUser = getenv('MAIL_USERNAME')
+    ? getenv('MAIL_USERNAME')
+    : '1fccb9203477e3';
 
-$mailUser = 'postmaster@changemyworldnow.com';
-
-$mailPass = '380b7593e7282eb0878a8200bc072bd5';
+$mailPass = getenv('MAIL_PASSWORD')
+    ? getenv('MAIL_PASSWORD')
+    : '1014d39a5059ac';
 
 $dbName = getenv('IMAGE_LINK');
 $dbName = empty($dbName) ? 'api.changemyworldnow.com' : $dbName;

@@ -129,7 +129,7 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
     protected function notifyUploadError(ParserInterface $parser)
     {
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
-        $this->getMailService()->getMessage()->setSubject('Upload Error');
+        $this->getMailService()->getMessage()->setSubject('Upload Failed');
         $this->successModel->setTemplate('email/import/upload.failed.phtml');
         $this->getMailService()->setTemplate($this->successModel);
 
