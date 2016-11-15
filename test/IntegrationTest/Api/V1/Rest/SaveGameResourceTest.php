@@ -27,7 +27,6 @@ class SaveGameResourceTest extends TestCase
      * @var SaveGameServiceInterface
      */
     protected $saveService;
-
     /**
      * @before
      */
@@ -35,7 +34,6 @@ class SaveGameResourceTest extends TestCase
     {
         $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
     }
-
     /**
      * @test
      * @param string $user
@@ -50,7 +48,6 @@ class SaveGameResourceTest extends TestCase
         $this->logInChangePasswordUser($user);
         $this->assertChangePasswordException($url, $method, $params);
     }
-
     /**
      * @test
      * @dataProvider usersAllowedToSaveGamesProvider
@@ -59,56 +56,71 @@ class SaveGameResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
-
         $this->dispatch(
             '/user/' .$userName . '/game/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
-
         $body = $this->getResponse()->getContent();
-
         try {
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
             return;
         }
-
         $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
         $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
         $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
         $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
         $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-
         $this->assertEquals(['foo' => 'bar'], $decoded['data'], 'Data is incorrect for game');
         $this->assertEquals('1.1.1', $decoded['version'], 'Version number is incorrect');
     }
-
     /**
      * @test
+     * @ticket CORE-2351
      * @dataProvider usersNotAllowedToSaveGamesProvider
      */
-    public function testItShouldNotSaveGameForOtherUsers($userName)
+    public function testItShouldNotSaveGameStatusForMeAdult($userName)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
-
+        $this->dispatch(
+            '/user/' .$userName . '/game/monarch',
+            'POST',
+            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+        );
+        $this->assertResponseStatusCode(403);
+        $this->assertMatchedRouteName('api.rest.save-game');
+        $this->assertControllerName('api\v1\rest\savegame\controller');
+    }
+    /**
+     * @test
+     * @dataProvider usersAllowedToSaveGamesProvider
+     * @fixme Test for super user when route listener checks permission for super users
+     */
+    public function testItShouldNotSaveGameForOtherUsers($userName)
+    {
+        if ($userName === 'super_user') {
+            $this->markTestSkipped('Currently the route listener will not check permission if user is super');
+        }
+        if ($userName === 'other_student') {
+            $this->fail('In order for this to work, other_student cannot be provided');
+        }
+        $this->injectValidCsrfToken();
+        $this->logInUser($userName);
         $this->dispatch(
             '/user/other_student/game/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(403);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
     }
-
     /**
      * @test
      */
@@ -122,88 +134,27 @@ class SaveGameResourceTest extends TestCase
         $saveGame->setCreated($date);
         $saveGame->setData(['baz' => 'bat']);
         $this->saveService->saveGame($saveGame);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch('/user/english_student/game/monarch');
-
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
-
         $body = $this->getResponse()->getContent();
-
         try {
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
             return;
         }
-
         $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
         $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
         $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
         $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
         $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-
         $this->assertEquals(['baz' => 'bat'], $decoded['data'], 'Data is incorrect for game');
         $this->assertEquals('4.3.2.1', $decoded['version'], 'Version number is incorrect');
     }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnAllSavesForUser()
-    {
-        $date = new \DateTime();
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('monarch');
-        $saveGame->setVersion('4.3.2.1');
-        $saveGame->setCreated($date);
-        $saveGame->setData(['baz' => 'bat']);
-        $this->saveService->saveGame($saveGame);
-
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('animal-id');
-        $saveGame->setVersion('4.3.2.0');
-        $saveGame->setCreated($date);
-        $saveGame->setData(['foo' => 'bar']);
-        $this->saveService->saveGame($saveGame);
-
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/game');
-
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
-
-        $body = $this->getResponse()->getContent();
-
-        try {
-            $decoded = Json::decode($body, Json::TYPE_ARRAY);
-        } catch (\Exception $jsonException) {
-            $this->fail('Error Decoding Response');
-            return;
-        }
-
-        $this->assertArrayHasKey('page_count', $decoded);
-        $this->assertArrayHasKey('_embedded', $decoded);
-        $this->assertArrayHasKey('save_game', $decoded['_embedded']);
-
-        $saveGameData = $decoded['_embedded']['save_game'];
-
-        $expected = ['monarch', 'animal-id'];
-        $actual = [];
-        foreach ($saveGameData as $game) {
-            $this->assertArrayHasKey('game_id', $game);
-            $actual[] = $game['game_id'];
-        }
-
-        $this->assertEquals($expected, $actual);
-    }
-
     /**
      * @test
      */
@@ -214,17 +165,13 @@ class SaveGameResourceTest extends TestCase
             $this->fail('This requires no saved data for the english_student');
         } catch (NotFoundException $notFound) {
         }
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-
         $this->dispatch('/user/english_student/game/monarch');
-
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
     }
-
     /**
      * @test
      */
@@ -238,7 +185,6 @@ class SaveGameResourceTest extends TestCase
         $saveGame->setCreated($date);
         $saveGame->setData(['baz' => 'bat']);
         $this->saveService->saveGame($saveGame);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch(
@@ -246,30 +192,24 @@ class SaveGameResourceTest extends TestCase
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
-
         $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
-
         $body = $this->getResponse()->getContent();
-
         try {
             $decoded = Json::decode($body, Json::TYPE_ARRAY);
         } catch (\Exception $jsonException) {
             $this->fail('Error Decoding Response');
             return;
         }
-
         $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
         $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
         $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
         $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
         $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-
         $this->assertEquals(['foo' => 'bar'], $decoded['data'], 'Data is incorrect for game');
         $this->assertEquals('1.1.1', $decoded['version'], 'Version number is incorrect');
     }
-
     /**
      * @test
      */
@@ -283,14 +223,12 @@ class SaveGameResourceTest extends TestCase
         $saveGame->setCreated($date);
         $saveGame->setData(['baz' => 'bat']);
         $this->saveService->saveGame($saveGame);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch(
             '/user/english_student/game/monarch',
             'DELETE'
         );
-
         $this->assertResponseStatusCode(204);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
@@ -300,7 +238,6 @@ class SaveGameResourceTest extends TestCase
         } catch (NotFoundException $notFound) {
         }
     }
-
     /**
      * @return array
      */
@@ -310,38 +247,22 @@ class SaveGameResourceTest extends TestCase
             'English student' => [
                 'user_name' => 'english_student',
             ],
-            'English teacher' => [
-                'user_name' => 'english_teacher',
-            ],
             'Math student'    => [
                 'user_name' => 'math_student',
-            ],
-            'Math teacher'    => [
-                'user_name' => 'math_teacher',
-            ],
-            'Principal'       => [
-                'user_name' => 'principal',
             ],
             'Super User'      => [
                 'user_name' => 'super_user',
             ],
         ];
     }
-
     /**
      * @return array
      */
     public function usersNotAllowedToSaveGamesProvider()
     {
         return [
-            'English student' => [
-                'user_name' => 'english_student',
-            ],
-            'English teacher' => [
+            'English Teacher' => [
                 'user_name' => 'english_teacher',
-            ],
-            'Math student'    => [
-                'user_name' => 'math_student',
             ],
             'Math teacher'    => [
                 'user_name' => 'math_teacher',
@@ -351,7 +272,6 @@ class SaveGameResourceTest extends TestCase
             ],
         ];
     }
-
     /**
      * @return array
      */
@@ -368,7 +288,7 @@ class SaveGameResourceTest extends TestCase
                 'POST',
                 ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
             ],
-            3 => [
+            0 => [
                 'english_student',
                 '/user/english_student/game/monarch',
                 'DELETE'

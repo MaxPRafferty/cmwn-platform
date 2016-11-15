@@ -6,6 +6,7 @@ return [
         'permission_labels' => [
             // super
             'view.all.users'       => 'View all users',
+            'restore.db.state'     => 'Reset test users in the database',
 
             // user
             'create.user'          => 'Create a user',
@@ -29,7 +30,8 @@ return [
             'create.child.group'   => 'Create a sub group',
             'create.group'         => 'Create a group',
             'view.group'           => 'View Group',
-            'view.child.groups'    => 'View all the child groups from a parent',
+            'view.all.child.groups'=> 'View all child groups from a parent',
+            'view.child.groups'    => 'View the child groups from a parent',
             'view.user.groups'     => 'View Groups the user belongs too',
             'view.all.groups'      => 'View all Groups',
             'edit.group'           => 'Edit a Group',
@@ -117,7 +119,7 @@ return [
                     'view.all.groups',
                     'view.all.orgs',
                     'view.all.users',
-                    'view.child.groups',
+                    'view.all.child.groups',
                     'view.flagged.image',
                     'view.flip',
                     'view.game-data',
@@ -132,6 +134,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'restore.db.state',
                 ],
             ],
 
@@ -316,7 +319,6 @@ return [
                     'attach.profile.image',
                     'edit.user.adult',
                     'flag.image',
-                    'save.game',
                     'update.password',
                     'view.flip',
                     'view.games',

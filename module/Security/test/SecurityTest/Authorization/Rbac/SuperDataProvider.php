@@ -41,7 +41,7 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.groups');
         $this->setAllowed('view.all.orgs');
         $this->setAllowed('view.all.users');
-        $this->setAllowed('view.child.groups');
+        $this->setAllowed('view.all.child.groups');
         $this->setAllowed('view.flip');
         $this->setAllowed('view.games');
         $this->setAllowed('view.group');
@@ -59,5 +59,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.flagged.images');
         $this->setAllowed('view.flagged.image');
         $this->setAllowed('delete.flag');
+        $this->setAllowed('restore.db.state');
     }
 }

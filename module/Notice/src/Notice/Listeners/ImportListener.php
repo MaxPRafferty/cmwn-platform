@@ -92,6 +92,11 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
             return null;
         }
 
+        if (strpos($event->getName(), 'upload.excel.failed') !== false) {
+            $this->getLogger()->info('Notifying Upload Error');
+            $this->notifyUploadError($parser);
+        }
+
         return null;
     }
 
@@ -109,6 +114,24 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
         $this->getMailService()->setTemplate(
             new ImportFailedModel(['errors' => $parser->getErrors(), 'warnings' => $parser->getWarnings()])
         );
+
+        $this->getMailService()->send();
+        return null;
+    }
+
+    /**
+     * Notifies on upload error
+     *
+     * @param ParserInterface $parser
+     * @throws \AcMailer\Exception\MailException
+     * @return null
+     */
+    protected function notifyUploadError(ParserInterface $parser)
+    {
+        $this->getMailService()->getMessage()->setTo($parser->getEmail());
+        $this->getMailService()->getMessage()->setSubject('Upload Failed');
+        $this->successModel->setTemplate('email/import/upload.failed.phtml');
+        $this->getMailService()->setTemplate($this->successModel);
 
         $this->getMailService()->send();
         return null;

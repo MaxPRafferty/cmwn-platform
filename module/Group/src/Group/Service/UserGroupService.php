@@ -5,6 +5,7 @@ namespace Group\Service;
 use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
+use Security\SecurityUser;
 use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
