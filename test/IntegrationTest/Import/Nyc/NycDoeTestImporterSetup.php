@@ -56,7 +56,7 @@ class NycDoeTestImporterSetup
     public static function getUserService()
     {
         if (static::$userService === null) {
-            static::$userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+            static::$userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
         }
 
         return static::$userService;
@@ -68,7 +68,7 @@ class NycDoeTestImporterSetup
     public static function getGroupService()
     {
         if (static::$groupService === null) {
-            static::$groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+            static::$groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
         }
 
         return static::$groupService;
@@ -80,7 +80,7 @@ class NycDoeTestImporterSetup
     public static function getUserGroupService()
     {
         if (static::$userGroupService === null) {
-            static::$userGroupService = TestHelper::getServiceManager()->get(UserGroupServiceInterface::class);
+            static::$userGroupService = TestHelper::getDbServiceManager()->get(UserGroupServiceInterface::class);
         }
 
         return static::$userGroupService;
@@ -92,7 +92,7 @@ class NycDoeTestImporterSetup
     public static function getSecurityService()
     {
         if (static::$securityService === null) {
-            static::$securityService = TestHelper::getServiceManager()->get(SecurityServiceInterface::class);
+            static::$securityService = TestHelper::getDbServiceManager()->get(SecurityServiceInterface::class);
         }
 
         return static::$securityService;
@@ -104,7 +104,7 @@ class NycDoeTestImporterSetup
     public static function getRbac()
     {
         if (static::$rbac === null) {
-            static::$rbac = TestHelper::getServiceManager()->get(Rbac::class);
+            static::$rbac = TestHelper::getDbServiceManager()->get(Rbac::class);
         }
 
         return static::$rbac;

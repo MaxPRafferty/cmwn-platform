@@ -78,13 +78,13 @@ class RestoreDbServiceTest extends AbstractApigilityTestCase
      */
     public function setUpServices()
     {
-        $this->restoreService = TestHelper::getServiceManager()->get(RestoreDbService::class);
-        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
-        $this->userImageService = TestHelper::getServiceManager()->get(UserImageServiceInterface::class);
-        $this->flipUserService = TestHelper::getServiceManager()->get(FlipUserServiceInterface::class);
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
-        $this->saveGameService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
-        $this->suggestedService = TestHelper::getServiceManager()->get(SuggestedServiceInterface::class);
+        $this->restoreService = TestHelper::getDbServiceManager()->get(RestoreDbService::class);
+        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
+        $this->userImageService = TestHelper::getDbServiceManager()->get(UserImageServiceInterface::class);
+        $this->flipUserService = TestHelper::getDbServiceManager()->get(FlipUserServiceInterface::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
+        $this->saveGameService = TestHelper::getDbServiceManager()->get(SaveGameServiceInterface::class);
+        $this->suggestedService = TestHelper::getDbServiceManager()->get(SuggestedServiceInterface::class);
     }
 
     /**
@@ -115,7 +115,7 @@ class RestoreDbServiceTest extends AbstractApigilityTestCase
 
         $this->assertEquals($userAfterRestore->getUserName(), $user['username']);
     }
-    
+
     /**
      * @test
      */
@@ -148,7 +148,7 @@ class RestoreDbServiceTest extends AbstractApigilityTestCase
 
         $this->assertEquals($flipResultSet->count(), 0);
     }
-    
+
     /**
      * @test
      */

@@ -44,7 +44,7 @@ class GroupResourceTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**

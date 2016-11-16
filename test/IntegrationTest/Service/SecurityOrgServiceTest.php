@@ -30,7 +30,7 @@ class SecurityOrgServiceTest extends TestCase
      */
     public function setUpService()
     {
-        $this->service = TestHelper::getServiceManager()->get(SecurityOrgService::class);
+        $this->service = TestHelper::getDbServiceManager()->get(SecurityOrgService::class);
     }
 
     /**

@@ -57,7 +57,7 @@ class FlagServiceTest extends TestCase
      */
     public function setUpFlagHydrator()
     {
-        $userService = TestHelper::getServiceManager()->get(UserService::class);
+        $userService = TestHelper::getDbServiceManager()->get(UserService::class);
 
         $this->flagHydrator = new FlagHydrator($userService);
     }
@@ -67,7 +67,7 @@ class FlagServiceTest extends TestCase
      */
     public function setUpFlagService()
     {
-        $this->flagService = TestHelper::getServiceManager()->get(FlagService::class);
+        $this->flagService = TestHelper::getDbServiceManager()->get(FlagService::class);
     }
 
     /**

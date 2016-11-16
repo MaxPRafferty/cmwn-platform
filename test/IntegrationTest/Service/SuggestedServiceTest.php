@@ -41,7 +41,7 @@ class SuggestedServiceTest extends TestCase
      */
     public function setUpSuggestedService()
     {
-        $this->suggestedService = TestHelper::getServiceManager()->get(SuggestedServiceInterface::class);
+        $this->suggestedService = TestHelper::getDbServiceManager()->get(SuggestedServiceInterface::class);
     }
 
     /**

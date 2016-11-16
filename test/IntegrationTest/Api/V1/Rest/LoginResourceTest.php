@@ -29,7 +29,7 @@ class LoginResourceTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
     }
 
     /**

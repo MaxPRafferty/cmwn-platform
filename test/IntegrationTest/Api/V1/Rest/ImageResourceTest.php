@@ -45,7 +45,7 @@ class ImageResourceTest extends TestCase
      */
     public function setUpImageService()
     {
-        $this->imageService = TestHelper::getServiceManager()->get(UserImageServiceInterface::class);
+        $this->imageService = TestHelper::getDbServiceManager()->get(UserImageServiceInterface::class);
     }
 
     /**

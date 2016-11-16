@@ -42,7 +42,7 @@ class ForgotResourceTest extends TestCase
      */
     public function setUpForgotService()
     {
-        $this->forgotService = TestHelper::getServiceManager()->get(ForgotServiceInterface::class);
+        $this->forgotService = TestHelper::getDbServiceManager()->get(ForgotServiceInterface::class);
     }
 
     /**
@@ -50,7 +50,7 @@ class ForgotResourceTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
     }
 
     /**

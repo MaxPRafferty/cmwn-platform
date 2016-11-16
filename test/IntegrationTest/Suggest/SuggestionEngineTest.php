@@ -48,7 +48,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
      */
     public function setUpEngine()
     {
-        $this->engine = TestHelper::getServiceManager()->get(SuggestionEngine::class);
+        $this->engine = TestHelper::getDbServiceManager()->get(SuggestionEngine::class);
     }
 
     /**
@@ -64,7 +64,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
      */
     public function setUpSuggestionService()
     {
-        $this->suggestedService = TestHelper::getServiceManager()->get(SuggestedServiceInterface::class);
+        $this->suggestedService = TestHelper::getDbServiceManager()->get(SuggestedServiceInterface::class);
     }
 
     /**
@@ -72,7 +72,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
      */
     public function setUpFriendService()
     {
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
     }
 
     /**

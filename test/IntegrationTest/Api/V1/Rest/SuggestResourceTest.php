@@ -46,8 +46,8 @@ class SuggestResourceTest extends TestCase
      */
     public function setUpServices()
     {
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
-        $this->suggestionEngine = TestHelper::getServiceManager()->get(SuggestionEngine::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
+        $this->suggestionEngine = TestHelper::getDbServiceManager()->get(SuggestionEngine::class);
     }
 
     /**

@@ -42,7 +42,7 @@ class SaveGameResourceTest extends TestCase
      */
     public function setUpSaveService()
     {
-        $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
+        $this->saveService = TestHelper::getDbServiceManager()->get(SaveGameServiceInterface::class);
     }
     /**
      * @test

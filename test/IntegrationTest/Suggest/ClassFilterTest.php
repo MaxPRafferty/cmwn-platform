@@ -36,7 +36,7 @@ class ClassFilterTest extends TestCase
      */
     public function setUpClassFilter()
     {
-        $this->classFilter = TestHelper::getServiceManager()->get(ClassFilter::class);
+        $this->classFilter = TestHelper::getDbServiceManager()->get(ClassFilter::class);
     }
 
     /**
@@ -44,7 +44,7 @@ class ClassFilterTest extends TestCase
      */
     public function setUpUser()
     {
-        $userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+        $userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
         $this->user = $userService->fetchUser('english_student');
     }
 

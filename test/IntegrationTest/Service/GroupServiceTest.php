@@ -36,7 +36,7 @@ class GroupServiceTest extends TestCase
      */
     public function setUpUserGroupService()
     {
-        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
@@ -59,7 +59,7 @@ class GroupServiceTest extends TestCase
         ]);
 
         /** @var OrganizationServiceInterface $orgService */
-        $orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+        $orgService = TestHelper::getDbServiceManager()->get(OrganizationServiceInterface::class);
         $orgService->createOrganization($district);
 
         $schoolOne = new Group([

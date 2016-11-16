@@ -49,7 +49,7 @@ class UserServiceTest extends TestCase
     public function setUpFriendService()
     {
         $this->logInUser('super_user');
-        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
     }
 
     /**

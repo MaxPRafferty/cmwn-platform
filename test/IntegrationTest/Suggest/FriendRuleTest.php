@@ -54,7 +54,7 @@ class FriendRuleTest extends TestCase
      */
     public function setUpFriendRule()
     {
-        $this->friendRule = TestHelper::getServiceManager()->get(FriendRule::class);
+        $this->friendRule = TestHelper::getDbServiceManager()->get(FriendRule::class);
     }
 
     /**
@@ -72,7 +72,7 @@ class FriendRuleTest extends TestCase
      */
     public function setUpFriendService()
     {
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
     }
 
     /**
