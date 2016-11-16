@@ -7,6 +7,7 @@ use Game\Service\SaveGameServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Class GameDataResourceTest
@@ -18,6 +19,14 @@ class GameDataResourceTest extends TestCase
      * @var SaveGameServiceInterface
      */
     protected $saveService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
+    }
 
     /**
      * @before

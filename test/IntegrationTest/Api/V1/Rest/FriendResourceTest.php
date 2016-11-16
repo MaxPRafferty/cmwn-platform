@@ -9,6 +9,7 @@ use IntegrationTest\TestHelper;
 use User\Child;
 use User\UserInterface;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test FriendResourceTest
@@ -38,6 +39,14 @@ class FriendResourceTest extends TestCase
      * @var UserInterface|Child
      */
     protected $friend;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/friends.dataset.php');
+    }
 
     /**
      * @before
@@ -92,7 +101,7 @@ class FriendResourceTest extends TestCase
         $this->assertResponseStatusCode(200);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        
+
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('friend', $body['_embedded']);
 
@@ -102,7 +111,7 @@ class FriendResourceTest extends TestCase
             $this->assertArrayHasKey('friend_id', $friend);
             array_push($actualId, $friend['friend_id']);
         }
-        
+
         $this->assertEquals(
             ['math_student'],
             $actualId,

@@ -7,18 +7,20 @@ use Flag\Flag;
 use Flag\Service\FlagService;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
+use IntegrationTest\DataSets\ArrayDataSet;
 use User\Child;
 use User\User;
 use Zend\Json\Json;
 
 /**
  * Class FlagResourceTest
+ *
  * @package IntegrationTest\Api\V1\Rest
- * @group Db
- * @group Flag
- * @group FlagResource
- * @group API
- * @group IntegrationTest
+ * @group   Db
+ * @group   Flag
+ * @group   FlagResource
+ * @group   API
+ * @group   IntegrationTest
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FlagResourceTest extends TestCase
@@ -27,6 +29,14 @@ class FlagResourceTest extends TestCase
      * @var FlagService
      */
     protected $flagService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/flag.dataset.php');
+    }
 
     /**
      * @before
@@ -38,10 +48,11 @@ class FlagResourceTest extends TestCase
 
     /**
      * @test
+     * @dataProvider basicDataProvider
      */
-    public function testItShouldCheckCsrf()
+    public function testItShouldCheckCsrf($user)
     {
-        $this->logInUser('super_user');
+        $this->logInUser($user);
         $this->dispatch('/flag');
         $this->assertResponseStatusCode(500);
     }
@@ -58,17 +69,16 @@ class FlagResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $user
-     * @param string $url
-     * @param string $method
-     * @param array $params
-     * @dataProvider changePasswordDataProvider
+     *
+     * @dataProvider basicDataProvider
      */
-    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    public function testItShouldCheckChangePasswordException($user)
     {
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException($url, $method, $params);
+        $this->assertChangePasswordException('/flag');
     }
 
     /**
@@ -92,17 +102,7 @@ class FlagResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
 
-        $postData = [
-            'flagger' => new Child(['user_id'=>'math_student']),
-            'flaggee' => new Child(['user_id'=>'english_student']),
-            'reason'  => 'bar',
-            'url'     => '/foo'
-        ];
-
-        $flag = new Flag($postData);
-        $this->flagService->saveFlag($flag);
-
-        $this->dispatch('/flag/' . $flag->getFlagId());
+        $this->dispatch('/flag/flagged-image');
         $this->assertControllerName('api\v1\rest\flag\controller');
         $this->assertMatchedRouteName('api.rest.flag');
         $this->assertResponseStatusCode(200);
@@ -110,39 +110,30 @@ class FlagResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
 
         $this->assertArrayHasKey('flag_id', $body, 'Invalid flag entity returned');
-        $this->assertEquals($flag->getFlagId(), $body['flag_id']);
         $this->assertArrayHasKey('reason', $body, 'Invalid flag entity returned');
-        $this->assertEquals($flag->getReason(), $body['reason']);
         $this->assertArrayHasKey('url', $body, 'Invalid flag entity returned');
-        $this->assertEquals($flag->getUrl(), $body['url']);
+
+        $this->assertEquals('flagged-image', $body['flag_id']);
+        $this->assertEquals('Offensive ;)', $body['reason']);
+        $this->assertEquals('http://read.bi/2clh0wi', $body['url']);
     }
 
     /**
      * @test
-     * @dataProvider loginDataProvider
+     * @dataProvider noAccessDataProvider
      */
     public function testItShouldNotAllowOthersToViewFlaggedImageById($login)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
 
-        $postData = [
-            'flagger' => new Child(['user_id'=>$login]),
-            'flaggee' => new Child(['user_id'=>'other_student']),
-            'reason'  => 'bar',
-            'url'     => '/foo'
-        ];
-
-        $flag = new Flag($postData);
-        $this->flagService->saveFlag($flag);
-
-        $this->dispatch('/flag/' . $flag->getFlagId());
+        $this->dispatch('/flag/flagged-image');
         $this->assertResponseStatusCode(403);
     }
 
     /**
      * @test
-     * @dataProvider loginDataProvider
+     * @dataProvider noAccessDataProvider
      */
     public function testItShouldNotAllowOthersToViewFlaggedImages($login)
     {
@@ -169,18 +160,28 @@ class FlagResourceTest extends TestCase
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('flags', $body['_embedded']);
+
         $flags = $body['_embedded']['flags'];
+
         $expected = [
-            ['math_student', 'english_student', '/asdf', 'inappropriate'],
+            [
+                'flag_id' => 'flagged-image',
+                'flagger' => 'math_student',
+                'flaggee' => 'english_student',
+                'url'     => 'http://read.bi/2clh0wi',
+                'reason'  => 'Offensive ;)',
+            ],
         ];
+
         $actual = [];
-        $index = 0;
         foreach ($flags as $flag) {
-            $actual[$index][] = $flag['flagger']['user_id'];
-            $actual[$index][] = $flag['flaggee']['user_id'];
-            $actual[$index][] = $flag['url'];
-            $actual[$index++][] = $flag['reason'];
+            $actualFlag = $flag;
+            unset($actualFlag['_links']);
+            $actualFlag['flagger'] = $flag['flagger']['user_id'];
+            $actualFlag['flaggee'] = $flag['flaggee']['user_id'];
+            array_push($actual, $actualFlag);
         }
+
         $this->assertEquals($expected, $actual);
     }
 
@@ -192,9 +193,9 @@ class FlagResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_teacher');
         $postData = [
-            'flaggee' => ['user_id'=>'english_student', 'type' => User::TYPE_CHILD],
+            'flaggee' => ['user_id' => 'english_student', 'type' => User::TYPE_CHILD],
             'reason'  => 'bar',
-            'url'     => '/foo'
+            'url'     => '/foo',
         ];
         $this->dispatch(
             '/flag',
@@ -243,54 +244,16 @@ class FlagResourceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldUpdateFlaggedImage()
-    {
-        $this->markTestIncomplete("No users can edit flag for now");
-        $this->injectValidCsrfToken();
-        $this->logInUser('math_student');
-        $postData = [
-            'flagger' => new Child(['user_id'=>'math_student']),
-            'flaggee' => new Child(['user_id'=>'english_student']),
-            'reason'  => 'bar',
-            'url'     => '/foo'
-        ];
-        $flag = new Flag($postData);
-        $this->flagService->saveFlag($flag);
-        $postData = array_merge($postData, $flag->getArrayCopy());
-        $postData['reason'] = 'troll';
-        $this->dispatch(
-            '/flag/'.$flag->getFlagId(),
-            'PUT',
-            $postData
-        );
-        $this->assertControllerName('api\v1\rest\flag\controller');
-        $this->assertMatchedRouteName('api.rest.flag');
-        $this->assertResponseStatusCode(200);
-        $flag = $this->flagService->fetchFlag($flag->getFlagId());
-        $this->assertEquals($flag->getReason(), 'troll');
-    }
-
-    /**
-     * @test
-     */
     public function testItShouldDeleteFlaggedImage()
     {
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
-        $postData = [
-            'flagger' => new Child(['user_id'=>'math_student']),
-            'flaggee' => new Child(['user_id'=>'english_student']),
-            'reason'  => 'bar',
-            'url'     => '/foo'
-        ];
-        $flag = new Flag($postData);
-        $this->flagService->saveFlag($flag);
 
-        $this->dispatch('/flag/' . $flag->getFlagId(), 'DELETE');
+        $this->dispatch('/flag/flagged-image', 'DELETE');
         $this->assertResponseStatusCode(200);
 
         try {
-            $this->flagService->fetchFlag($flag->getFlagId());
+            $this->flagService->fetchFlag('flagged-image');
             $this->fail("flag not deleted");
         } catch (NotFoundException $nf) {
             //noop
@@ -299,35 +262,15 @@ class FlagResourceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider loginDataProvider
+     * @dataProvider noAccessDataProvider
      */
     public function testItShouldNotAllowOthersToDeleteFlaggedImages($login)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
-        $postData = [
-            'flagger' => new Child(['user_id'=>$login]),
-            'flaggee' => new Child(['user_id'=>'english_student']),
-            'reason'  => 'bar',
-            'url'     => '/foo'
-        ];
-        $flag = new Flag($postData);
-        $this->flagService->saveFlag($flag);
 
-        $this->dispatch('/flag/' . $flag->getFlagId(), 'DELETE');
+        $this->dispatch('/flag/flagged-image', 'DELETE');
         $this->assertResponseStatusCode(403);
-    }
-
-    /**
-     * @return array
-     */
-    public function loginDataProvider()
-    {
-        return [
-            ['english_student'],
-            ['english_teacher'],
-            ['principal'],
-        ];
     }
 
     /**
@@ -337,7 +280,7 @@ class FlagResourceTest extends TestCase
     {
         return [
             [
-                'flaggee' => new Child(['user_id'=>'english_student']),
+                'flaggee' => new Child(['user_id' => 'english_student']),
                 'reason'  => null,
                 'url'     => null,
             ],
@@ -352,7 +295,7 @@ class FlagResourceTest extends TestCase
                 'url'     => null,
             ],
             [
-                'flaggee' => new Child(['user_id'=>'english_student']),
+                'flaggee' => new Child(['user_id' => 'english_student']),
                 'reason'  => 'bar',
                 'url'     => null,
             ],
@@ -372,16 +315,38 @@ class FlagResourceTest extends TestCase
     /**
      * @return array
      */
-    public function changePasswordDataProvider()
+    public function basicDataProvider()
     {
         return [
-            0 => [
+            'English Student' => [
                 'english_student',
-                '/flip'
             ],
-            1 => [
+            'Principal'       => [
+                'principal',
+            ],
+            'English Teacher' => [
+                'english_teacher',
+            ],
+            'Super User'      => [
+                'super_user',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function noAccessDataProvider()
+    {
+        return [
+            'English Student' => [
                 'english_student',
-                '/flip/polar-bear'
+            ],
+            'Principal'       => [
+                'principal',
+            ],
+            'English Teacher' => [
+                'english_teacher',
             ],
         ];
     }

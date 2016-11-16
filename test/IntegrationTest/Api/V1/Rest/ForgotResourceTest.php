@@ -7,6 +7,7 @@ use Forgot\Service\ForgotServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Security\Service\SecurityService;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test ForgotResourceTest
@@ -27,6 +28,14 @@ class ForgotResourceTest extends TestCase
      * @var SecurityService
      */
     protected $securityService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/flip.dataset.php');
+    }
 
     /**
      * @before
@@ -67,7 +76,7 @@ class ForgotResourceTest extends TestCase
             'User "english_teacher" did not get a random code generated'
         );
     }
-    
+
     /**
      * @test
      * @ticket CORE-672
@@ -91,7 +100,7 @@ class ForgotResourceTest extends TestCase
             'User "english_teacher" did not get a random code generated'
         );
     }
-    
+
     /**
      * @test
      * @ticket CORE-672

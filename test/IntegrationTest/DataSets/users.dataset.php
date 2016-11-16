@@ -1,22 +1,7 @@
 <?php
-/**
- * This is just a place holder from which you can copy into the dataset that you need
- */
+
 return [
-    'flips'            => [
-        [
-            'flip_id'     => 'polar-bear',
-            'title'       => 'Polar Bear',
-            'description' => 'The magnificent Polar Bear is in danger of becoming extinct.' .
-                '  Get the scoop and go offline for the science on how they stay warm!',
-        ],
-        [
-            'flip_id'     => 'sea-turtle',
-            'title'       => 'Sea Turtle',
-            'description' => 'Sea Turtles are wondrous creatures! Get cool turtle facts,' .
-                ' play flips and find out why they are endangered.',
-        ],
-    ],
+    'flips'            => [],
     'organizations'    => [
         [
             'org_id'      => 'district',
@@ -39,43 +24,7 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'            => [
-        [
-            'game_id'     => 'animal-id',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Animal ID',
-            'description' => 'Can you ID the different kinds of animals? Do you know what plants and animals
-                    belong together? Prove it and learn it right here!
-                ',
-            'deleted'     => null,
-            'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
-        ],
-        [
-            'game_id'     => 'be-bright',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Be Bright',
-            'description' => 'Become a Light Saver agent of change! This music video will kick your inner
-                    superhero into high gear!
-                ',
-            'deleted'     => null,
-            'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
-        ],
-        [
-            'game_id'     => 'Monarch',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Monarch',
-            'description' => 'Monarch Butterflies are crucial for the environment' .
-                ' yet they are endangered! This is your spot!',
-            'meta'        => '{"desktop" : false, "unity" : false}',
-            'deleted'     => null,
-            'coming_soon' => '0',
-        ],
-    ],
+    'games'            => [],
     'groups'           => [
         [
             'group_id'        => 'other_school',
@@ -210,28 +159,7 @@ return [
             'type'              => null,
         ],
     ],
-    'names'            => [
-        [
-            'name'     => 'active',
-            'position' => 'LEFT',
-            'count'    => '1',
-        ],
-        [
-            'name'     => 'adorable',
-            'position' => 'LEFT',
-            'count'    => '1',
-        ],
-        [
-            'name'     => 'albatross',
-            'position' => 'RIGHT',
-            'count'    => '1',
-        ],
-        [
-            'name'     => 'alligator',
-            'position' => 'RIGHT',
-            'count'    => '1',
-        ],
-    ],
+    'names'            => [],
     'users'            => [
         [
             'user_id'      => 'english_student',
@@ -414,33 +342,6 @@ return [
             'external_id'  => null,
         ],
     ],
-    'user_flips'       => [
-        [
-            'user_id' => 'english_student',
-            'flip_id' => 'polar-bear',
-            'earned'  => '2016-04-27 10:48:44',
-        ],
-        [
-            'user_id' => 'english_student',
-            'flip_id' => 'sea-turtle',
-            'earned'  => '2016-04-27 10:48:44',
-        ],
-        [
-            'user_id' => 'math_student',
-            'flip_id' => 'polar-bear',
-            'earned'  => '2016-04-27 10:48:44',
-        ],
-        [
-            'user_id' => 'math_student',
-            'flip_id' => 'sea-turtle',
-            'earned'  => '2016-04-27 10:48:44',
-        ],
-        [
-            'user_id' => 'math_student',
-            'flip_id' => 'polar-bear',
-            'earned'  => '2016-04-27 10:48:45',
-        ],
-    ],
     'user_friends'     => [],
     'user_groups'      => [
         [
@@ -506,15 +407,7 @@ return [
             'image_id' => 'principal',
         ],
     ],
-    'image_flags'      => [
-        [
-            'flag_id' => 'asdf',
-            'flagger' => 'math_student',
-            'flaggee' => 'english_student',
-            'url'     => '/asdf',
-            'reason'  => 'inappropriate',
-        ],
-    ],
+    'image_flags'      => [],
     'user_saves'       => [],
     'user_suggestions' => [],
 ];

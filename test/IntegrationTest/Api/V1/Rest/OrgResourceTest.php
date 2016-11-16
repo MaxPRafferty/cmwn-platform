@@ -8,6 +8,7 @@ use Zend\Json\Json;
 use IntegrationTest\TestHelper;
 use Org\Service\OrganizationServiceInterface;
 use Application\Exception\NotFoundException;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test OrgResourceTest
@@ -32,6 +33,14 @@ class OrgResourceTest extends TestCase
      * @var Rbac
      */
     protected $rbac;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
+    }
 
     /**
      * @before

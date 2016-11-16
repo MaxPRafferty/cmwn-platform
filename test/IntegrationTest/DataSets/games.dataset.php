@@ -1,23 +1,56 @@
 <?php
-/**
- * @codingStandardsIgnoreStart
- */
+
 return [
-    'flips'         => [],
-    'organizations' => [],
-    'games'         => [],
-    'groups'        => [],
-    'images'        => [],
-    'names'         => [],
-    'user_flips'    => [],
-    'users'         => [
+    'flips'            => [],
+    'organizations'    => [],
+    'games'            => [
+        [
+            'game_id'     => 'animal-id',
+            'created'     => '2016-04-13 00:00:00',
+            'updated'     => '2016-04-13 00:00:00',
+            'title'       => 'Animal ID',
+            'description' => 'Can you ID the different kinds of animals? Do you know what plants and animals
+                    belong together? Prove it and learn it right here!
+                ',
+            'deleted'     => null,
+            'meta'        => '{"desktop" : false, "unity" : false}',
+            'coming_soon' => '0',
+        ],
+        [
+            'game_id'     => 'be-bright',
+            'created'     => '2016-04-13 00:00:00',
+            'updated'     => '2016-04-13 00:00:00',
+            'title'       => 'Be Bright',
+            'description' => 'Become a Light Saver agent of change! This music video will kick your inner
+                    superhero into high gear!
+                ',
+            'deleted'     => null,
+            'meta'        => '{"desktop" : false, "unity" : false}',
+            'coming_soon' => '0',
+        ],
+        [
+            'game_id'     => 'Monarch',
+            'created'     => '2016-04-13 00:00:00',
+            'updated'     => '2016-04-13 00:00:00',
+            'title'       => 'Monarch',
+            'description' => 'Monarch Butterflies are crucial for the environment' .
+                ' yet they are endangered! This is your spot!',
+            'meta'        => '{"desktop" : false, "unity" : false}',
+            'deleted'     => null,
+            'coming_soon' => '0',
+        ],
+    ],
+    'groups'           => [],
+    'images'           => [],
+    'names'            => [],
+    'users'            => [
         [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
             'email'        => 'english_student@ginasink.com',
             'code'         => null,
             'type'         => 'CHILD',
-            'password'     => password_hash('business', PASSWORD_DEFAULT),
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
             'first_name'   => 'John',
             'middle_name'  => 'D',
             'last_name'    => 'Yoder',
@@ -29,8 +62,7 @@ return [
             'deleted'      => null,
             'code_expires' => null,
             'super'        => '0',
-            'external_id'  => null,
-            'normalized_username' => 'englishstudent'
+            'external_id'  => '8675309',
         ],
         [
             'user_id'      => 'english_teacher',
@@ -38,7 +70,7 @@ return [
             'email'        => 'english_teacher@ginasink.com',
             'code'         => null,
             'type'         => 'ADULT',
-            'password'     => password_hash('business', PASSWORD_DEFAULT),
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
             'first_name'   => 'Angelot',
             'middle_name'  => 'M',
             'last_name'    => 'Fredickson',
@@ -51,13 +83,12 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'englishteacher'
         ],
         [
             'user_id'      => 'math_student',
             'username'     => 'math_student',
             'email'        => 'math_student@ginasink.com',
-            'code'         => 'pqr',
+            'code'         => null,
             'type'         => 'CHILD',
             'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
             'first_name'   => 'WILLIS',
@@ -69,10 +100,9 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => (string)(new \DateTime('-3 days'))->format("Y-m-d H:i:s"),
+            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'mathstudent'
         ],
         [
             'user_id'      => 'math_teacher',
@@ -93,7 +123,6 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'mathteacher'
         ],
         [
             'user_id'      => 'other_principal',
@@ -114,7 +143,6 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'otherprincipal'
         ],
         [
             'user_id'      => 'other_student',
@@ -135,7 +163,6 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'otherstudent'
         ],
         [
             'user_id'      => 'other_teacher',
@@ -156,7 +183,6 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'otherteacher'
         ],
         [
             'user_id'      => 'principal',
@@ -177,7 +203,6 @@ return [
             'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
-            'normalized_username' => 'principal'
         ],
         [
             'user_id'      => 'super_user',
@@ -198,53 +223,13 @@ return [
             'code_expires' => null,
             'super'        => '1',
             'external_id'  => null,
-            'normalized_username' => 'superuser'
-        ],
-        [
-            'user_id' => 'fancy-lion002',
-            'username' => 'fancy-lion002',
-            'email' => 'fancy-lion002@ginasink.com',
-            'code' => NULL,
-            'type' => 'CHILD',
-            'password' => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
-            'first_name' => 'Fancy',
-            'middle_name' => NULL,
-            'last_name' => 'Lion',
-            'gender' => 'F',
-            'meta' => NULL,
-            'birthdate' => '2016-04-27 10:48:42',
-            'created' => '2016-04-27 10:48:44',
-            'updated' => '2016-04-27 10:48:46',
-            'deleted' => NULL,
-            'code_expires' => NULL,
-            'super' => '0',
-            'external_id' => NULL,
-            'normalized_username' => 'fancylion002'
-        ],
-        [
-            'user_id'      => 'deleted_user',
-            'username'     => 'deleted_user',
-            'email'        => 'deluser@ginasink.com',
-            'code'         => null,
-            'type'         => 'ADULT',
-            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
-            'first_name'   => 'Kirk',
-            'middle_name'  => 'S',
-            'last_name'    => 'West',
-            'gender'       => 'M',
-            'meta'         => null,
-            'birthdate'    => '2016-04-15 11:49:08',
-            'created'      => '2016-04-27 10:48:44',
-            'updated'      => '2016-04-27 10:48:46',
-            'deleted'      => '2016-04-27 10:48:46',
-            'code_expires' => null,
-            'super'        => '0',
-            'external_id'  => null,
-            'normalized_username' => 'deleteduser'
         ],
     ],
-    'user_friends'  => [],
-    'user_groups'   => [],
-    'user_images'   => [],
-    'user_saves'    => [],
+    'user_flips'       => [],
+    'user_friends'     => [],
+    'user_groups'      => [],
+    'user_images'      => [],
+    'image_flags'      => [],
+    'user_saves'       => [],
+    'user_suggestions' => [],
 ];

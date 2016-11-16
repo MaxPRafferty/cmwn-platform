@@ -38,9 +38,7 @@ class SuggestResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../../DataSets/suggest.dataset.php';
-
-        return new ArrayDataSet($data);
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/suggest.dataset.php');
     }
 
     /**

@@ -7,6 +7,7 @@ use IntegrationTest\TestHelper;
 use Security\ChangePasswordUser;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test UpdatePasswordResourceTest
@@ -26,6 +27,14 @@ class UpdatePasswordResourceTest extends TestCase
      * @var SecurityService
      */
     protected $securityService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/update-password.dataset.php');
+    }
 
     /**
      * @before

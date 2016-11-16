@@ -6,6 +6,7 @@ use Forgot\Service\ForgotServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Security\Service\SecurityService;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test ResetResourceTest
@@ -30,6 +31,14 @@ class ResetResourceTest extends TestCase
      * @var SecurityService
      */
     protected $securityService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/reset.dataset.php');
+    }
 
     /**
      * @before
