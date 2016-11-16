@@ -73,7 +73,7 @@ echo '[pre-commit] Running tests'
 echo '[pre-commit] ------------------'
 echo
 
-docker-compose run --rm php phpunit -c /var/www/test/phpunit.xml --stop-on-error --stop-on-failure
+docker-compose run --rm php phpunit -c /var/www/test/phpunit.xml --stop-on-error --stop-on-failure --testsuite=Unit
 if [ $? != 0 ]
 then
     >&2 echo "[pre-commit] Please fix your tests before committing"

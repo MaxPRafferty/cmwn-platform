@@ -3,6 +3,7 @@
 namespace FriendTest\Delegator;
 
 use Application\Utils\ServiceTrait;
+use Friend\Service\FriendServiceInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Friend\Delegator\FriendServiceDelegator;
 use User\UserInterface;
@@ -90,24 +91,18 @@ class FriendServiceDelegatorTest extends TestCase
     public function setUpDelegator()
     {
         $this->delegator = new FriendServiceDelegator($this->friendService);
-        $this->delegator->getEventManager()->clearListeners('fetch.all.friends');
-        $this->delegator->getEventManager()->clearListeners('fetch.all.friends.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.all.friends.error');
-        $this->delegator->getEventManager()->clearListeners('attach.friend');
-        $this->delegator->getEventManager()->clearListeners('attach.friend.post');
-        $this->delegator->getEventManager()->clearListeners('attach.friend.error');
-        $this->delegator->getEventManager()->clearListeners('detach.friend');
-        $this->delegator->getEventManager()->clearListeners('detach.friend.post');
-        $this->delegator->getEventManager()->clearListeners('detach.friend.error');
-        $this->delegator->getEventManager()->clearListeners('fetch.friend');
-        $this->delegator->getEventManager()->clearListeners('fetch.friend.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.friend.error');
-        $this->delegator->getEventManager()->clearListeners('fetch.friend.status');
-        $this->delegator->getEventManager()->clearListeners('fetch.friend.status.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.friend.status.error');
+        $this->delegator->getEventManager()->clearListeners('*');
+        if ($this->delegator->getEventManager()->getSharedManager()) {
+            $this->delegator->getEventManager()
+                ->getSharedManager()
+                ->clearListeners(FriendServiceInterface::class, 'attach.friend.post');
+            $this->delegator->getEventManager()
+                ->getSharedManager()
+                ->clearListeners(FriendServiceDelegator::class, 'attach.friend.post');
+        }
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
-    
+
     /**
      * @test
      */
@@ -145,6 +140,7 @@ class FriendServiceDelegatorTest extends TestCase
     {
         $this->friendService->shouldReceive('attachFriendToUser')
             ->once();
+
         $this->delegator->attachFriendToUser($this->user, $this->friend);
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -508,7 +504,7 @@ class FriendServiceDelegatorTest extends TestCase
         $this->friendService->shouldReceive('fetchFriendForUser')
             ->andThrow($exception)
             ->once();
-        
+
         try {
             $this->delegator->fetchFriendForUser($this->user, $this->friend);
             $this->fail("Exception was not rethrown");
@@ -558,7 +554,7 @@ class FriendServiceDelegatorTest extends TestCase
         } catch (\Exception $test) {
             //noop
         }
-        
+
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [

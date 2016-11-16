@@ -21,6 +21,11 @@ class TestHelper
     protected static $serviceManager;
 
     /**
+     * @var ServiceManager
+     */
+    protected static $dbServiceManager;
+
+    /**
      * @var \PDO
      */
     protected static $pdo;
@@ -55,6 +60,27 @@ class TestHelper
     }
 
     /**
+     * @before
+     * @return ServiceManager
+     */
+    public static function getDbServiceManager()
+    {
+        if (null !== static::$dbServiceManager) {
+            return static::$dbServiceManager;
+        }
+
+        static::$dbServiceManager = Application::init(static::getApplicationConfigWithDb())->getServiceManager();
+        static::$dbServiceManager->setAllowOverride(true);
+
+        $testLogger = new Logger();
+        $testLogger->addWriter(new Noop());
+
+        static::$dbServiceManager->setService('Log\App', $testLogger);
+        static::$dbServiceManager->setAllowOverride(false);
+        return static::$dbServiceManager;
+    }
+
+    /**
      * @return array
      */
     public static function getTestDbConfig()
@@ -74,10 +100,24 @@ class TestHelper
             ],
         ];
     }
+
     /**
      * @return string[]
      */
     public static function getApplicationConfig()
+    {
+        $appConfig = include __DIR__ . '/../../config/application.config.php';
+
+        $appConfig['module_listener_options']['config_cache_enabled'] = false;
+        $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
+
+        return $appConfig;
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getApplicationConfigWithDb()
     {
         $appConfig = include __DIR__ . '/../../config/application.config.php';
 
