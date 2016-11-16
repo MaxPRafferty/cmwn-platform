@@ -101,6 +101,8 @@ class SuggestionEngineTest extends AbstractDbTestCase
             $actualIds[] = $suggestion->getUserId();
         }
 
+        sort($actualIds);
+        sort($expectedIds);
         $this->assertEquals($expectedIds, $actualIds);
     }
 

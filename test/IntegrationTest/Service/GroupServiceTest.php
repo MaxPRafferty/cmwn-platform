@@ -4,6 +4,7 @@ namespace IntegrationTest\Service;
 
 use Group\Service\GroupServiceInterface;
 use Group\Group;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
@@ -30,6 +31,14 @@ class GroupServiceTest extends TestCase
      * @var GroupServiceInterface
      */
     protected $groupService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/group.dataset.php');
+    }
 
     /**
      * @before

@@ -69,6 +69,7 @@ class RestoreDbServiceTest extends AbstractApigilityTestCase
      */
     public function setUpActualData()
     {
+        $this->markTestSkipped('Not Implemented');
         $this->actualData = include __DIR__ . '/../../../config/autoload/test-data.global.php';
         $this->actualData = isset($this->actualData['test-data']) ? $this->actualData['test-data'] : [];
     }
@@ -92,7 +93,7 @@ class RestoreDbServiceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        $dataSet = include __DIR__ . '/../DataSets/restore.dataset.php';
+        $dataSet = include __DIR__ . '/../DataSets/empty.dataset.php';
         return new ArrayDataSet($dataSet);
     }
 

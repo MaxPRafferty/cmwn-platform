@@ -3,6 +3,7 @@
 namespace IntegrationTest\Service;
 
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Suggest\Service\SuggestedServiceInterface;
 use Suggest\Suggestion;
@@ -35,6 +36,14 @@ class SuggestedServiceTest extends TestCase
      * @var Suggestion
      */
     protected $suggestion;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
 
     /**
      * @before

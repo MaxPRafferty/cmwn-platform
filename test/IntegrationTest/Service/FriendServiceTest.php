@@ -9,6 +9,7 @@ use IntegrationTest\AbstractDbTestCase as TestCase;
 use User\Child;
 use User\UserInterface;
 use Zend\Paginator\Paginator;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test FriendServiceTest
@@ -36,6 +37,15 @@ class FriendServiceTest extends TestCase
      * @var UserInterface|Child
      */
     protected $friend;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/flag.dataset.php');
+    }
+
     /**
      * @before
      */
@@ -43,6 +53,7 @@ class FriendServiceTest extends TestCase
     {
         $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
     }
+
     /**
      * @before
      */

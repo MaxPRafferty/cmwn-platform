@@ -2,6 +2,7 @@
 
 namespace IntegrationTest\Service;
 
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Service\SecurityOrgService;
@@ -24,6 +25,14 @@ class SecurityOrgServiceTest extends TestCase
      * @var SecurityOrgService
      */
     protected $service;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/org.dataset.php');
+    }
 
     /**
      * @before

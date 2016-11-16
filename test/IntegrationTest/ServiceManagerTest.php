@@ -33,6 +33,7 @@ class ServiceManagerTest extends TestCase
         'Log\App',
         'ZF\Configuration\ConfigResource',
         'AwsModule\Session\SaveHandler\DynamoDb',
+        'Api\V1\Rest\RestoreDb\RestoreDbResource',
     ];
 
     /**

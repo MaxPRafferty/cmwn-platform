@@ -255,9 +255,6 @@ class SaveGameResourceTest extends TestCase
             'Math student'    => [
                 'user_name' => 'math_student',
             ],
-            'Super User'      => [
-                'user_name' => 'super_user',
-            ],
         ];
     }
     /**

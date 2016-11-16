@@ -5,6 +5,7 @@ namespace IntegrationTest\Service;
 use Application\Exception\DuplicateEntryException;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use User\Adult;
 use User\Child;
@@ -27,7 +28,6 @@ use Zend\Paginator\Paginator;
  */
 class UserServiceTest extends TestCase
 {
-
     /**
      * @var UserServiceInterface
      */
@@ -42,6 +42,14 @@ class UserServiceTest extends TestCase
      * @var UserInterface
      */
     protected $adult;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
 
     /**
      * @before

@@ -3,9 +3,11 @@
 namespace IntegrationTest\Suggest;
 
 use Friend\Service\FriendServiceInterface;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use Suggest\Rule\FriendRule;
+use Suggest\SuggestionContainer;
 use User\Child;
 use User\UserInterface;
 
@@ -40,6 +42,14 @@ class FriendRuleTest extends TestCase
      * @var FriendServiceInterface
      */
     protected $friendService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
 
     /**
      * @before

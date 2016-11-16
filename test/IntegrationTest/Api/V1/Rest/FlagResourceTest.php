@@ -3,7 +3,6 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use Application\Exception\NotFoundException;
-use Flag\Flag;
 use Flag\Service\FlagService;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;

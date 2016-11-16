@@ -5,6 +5,7 @@ namespace IntegrationTest\Service;
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use User\UserInterface;
 use Zend\Paginator\Paginator;
@@ -28,6 +29,14 @@ class UserGroupServiceTest extends TestCase
      * @var UserGroupServiceInterface
      */
     protected $userGroupService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
 
     /**
      * @before
