@@ -1,18 +1,23 @@
 <?php
 
-namespace SuggestTest\Rule;
+namespace IntegrationTest\Suggest;
 
 use Friend\Service\FriendServiceInterface;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use Suggest\Rule\FriendRule;
-use Suggest\SuggestionContainer;
 use User\Child;
 use User\UserInterface;
 
 /**
  * Class FriendRuleTest
  * @package SuggestTest\Rule
+ * @group Db
+ * @group IntegrationTest
+ * @group Friend
+ * @group Suggest
+ * @group SuggestionEngine
+ * @group SuggestService
  */
 class FriendRuleTest extends TestCase
 {

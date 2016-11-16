@@ -13,6 +13,11 @@ use Zend\Paginator\Paginator;
 /**
  * Class SuggestedServiceTest
  * @package IntegrationTest\Service
+ * @group Db
+ * @group IntegrationTest
+ * @group Friend
+ * @group Suggest
+ * @group SuggestService
  */
 class SuggestedServiceTest extends TestCase
 {

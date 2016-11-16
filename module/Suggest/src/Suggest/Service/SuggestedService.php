@@ -11,7 +11,7 @@ use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\Predicate;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -137,10 +137,10 @@ class SuggestedService implements SuggestedServiceInterface
 
     /**
      * @param String $userId
-     * @param Predicate $predicate
+     * @param PredicateInterface $predicate
      * @return Select
      */
-    protected function createSelect($userId, $predicate)
+    protected function createSelect($userId, PredicateInterface $predicate)
     {
         $select = new Select(['us' => 'user_suggestions']);
 

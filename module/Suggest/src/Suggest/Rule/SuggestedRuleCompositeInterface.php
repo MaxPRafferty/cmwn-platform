@@ -13,6 +13,8 @@ interface SuggestedRuleCompositeInterface
     /**
      * @param SuggestionContainer $suggestionContainer
      * @param UserInterface $currentUser
+     *
+     * @return
      */
-    public function apply($suggestionContainer, $currentUser);
+    public function apply(SuggestionContainer $suggestionContainer, UserInterface $currentUser);
 }
