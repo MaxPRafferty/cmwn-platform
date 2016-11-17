@@ -134,5 +134,4 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
         $this->getEventManager()->trigger($event);
         return $return;
     }
-
 }
