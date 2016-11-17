@@ -115,4 +115,24 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
         $this->getEventManager()->trigger($event);
         return $return;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteAllSuggestionsForUser($user)
+    {
+        $eventParams = ['user' => $user];
+        $event = new Event('delete.all.suggestion', $this->realService, $eventParams);
+        $response = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->deleteAllSuggestionsForUser($user);
+        $event->setName('delete.all.suggestion.post');
+
+        $this->getEventManager()->trigger($event);
+        return $return;
+    }
+
 }

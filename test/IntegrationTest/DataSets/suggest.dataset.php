@@ -302,6 +302,11 @@ return [
             'role'     => 'student',
         ],
         [
+            'user_id'  => 'english_student_1',
+            'group_id' => 'english',
+            'role'     => 'student',
+        ],
+        [
             'user_id'  => 'english_student_2',
             'group_id' => 'english',
             'role'     => 'student',

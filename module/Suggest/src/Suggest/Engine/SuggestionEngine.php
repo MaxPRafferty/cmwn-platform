@@ -7,7 +7,6 @@ use Job\JobInterface;
 use Suggest\Filter\FilterCollection;
 use Suggest\InvalidArgumentException;
 use Suggest\Rule\RuleCollection;
-use Suggest\Rule\SuggestedRuleCompositeInterface;
 use Suggest\Service\SuggestedServiceInterface;
 use Suggest\SuggestionContainer;
 use User\Service\UserServiceInterface;
@@ -90,6 +89,8 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
         if (!$this->getUser() instanceof UserInterface) {
             throw new \RuntimeException();
         }
+        
+        $this->suggestedService->deleteAllSuggestionsForUser($this->getUser());
         /**@var SuggestionContainer $masterContainer*/
         $masterContainer = new SuggestionContainer();
 
