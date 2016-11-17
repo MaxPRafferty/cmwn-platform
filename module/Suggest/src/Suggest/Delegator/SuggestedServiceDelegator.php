@@ -3,7 +3,6 @@
 namespace Suggest\Delegator;
 
 use Application\Utils\ServiceTrait;
-use Suggest\NotFoundException;
 use Suggest\Service\SuggestedService;
 use Suggest\Service\SuggestedServiceInterface;
 use Zend\EventManager\Event;

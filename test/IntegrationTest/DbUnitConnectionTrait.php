@@ -35,14 +35,19 @@ trait DbUnitConnectionTrait
 
     /**
      * @return ArrayDataSet
+     * @deprecated
      */
     public function getDataSet()
     {
+        trigger_error(
+            'This is now deprecated in the trait.  Each class MUST define a specific lean dataset',
+            E_USER_DEPRECATED
+        );
         if (static::$dataSet === null) {
-            $data = include __DIR__ . '/DataSets/default.dataset.php';
+            $data = include __DIR__ . '/DataSets/empty.dataset.php';
             static::$dataSet = new ArrayDataSet($data);
         }
-        
+
         return static::$dataSet;
     }
 }

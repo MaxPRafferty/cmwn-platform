@@ -4,9 +4,14 @@ namespace Suggest\Rule;
 
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
+use Suggest\SuggestionContainer;
+use User\UserInterface;
 
 /**
  * Class FriendRule
+ *
+ * Removes existing or pending friends from the suggestions
+ *
  * @package Suggest\Rule
  */
 class FriendRule implements SuggestedRuleCompositeInterface
@@ -26,29 +31,17 @@ class FriendRule implements SuggestedRuleCompositeInterface
     }
 
     /**
-     * @param \ArrayIterator $iterator
-     * @param $currentUser
-     * @return bool
-     */
-    public function checkIfAlreadyFriends($iterator, $currentUser)
-    {
-        try {
-            $suggestion = $iterator->current();
-            $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
-
-            $iterator->offsetUnset($suggestion->getUserId());
-        } catch (NotFriendsException $nf) {
-            //noop
-        }
-        return true;
-    }
-
-    /**
      * @inheritdoc
      */
-    public function apply($suggestionContainer, $currentUser)
+    public function apply(SuggestionContainer $suggestionContainer, UserInterface $currentUser)
     {
-        $iterator = new \ArrayIterator($suggestionContainer);
-        iterator_apply($iterator, [$this, "checkIfAlreadyFriends"], [$iterator, $currentUser]);
+        foreach ($suggestionContainer as $suggestion) {
+            try {
+                $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
+                $suggestionContainer->offsetUnset($suggestion->getUserId());
+            } catch (NotFriendsException $nf) {
+                //noop
+            }
+        }
     }
 }

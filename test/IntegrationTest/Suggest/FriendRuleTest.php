@@ -1,8 +1,9 @@
 <?php
 
-namespace SuggestTest\Rule;
+namespace IntegrationTest\Suggest;
 
 use Friend\Service\FriendServiceInterface;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use Suggest\Rule\FriendRule;
@@ -13,6 +14,12 @@ use User\UserInterface;
 /**
  * Class FriendRuleTest
  * @package SuggestTest\Rule
+ * @group Db
+ * @group IntegrationTest
+ * @group Friend
+ * @group Suggest
+ * @group SuggestionEngine
+ * @group SuggestService
  */
 class FriendRuleTest extends TestCase
 {
@@ -37,6 +44,14 @@ class FriendRuleTest extends TestCase
     protected $friendService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUser()
@@ -49,7 +64,7 @@ class FriendRuleTest extends TestCase
      */
     public function setUpFriendRule()
     {
-        $this->friendRule = TestHelper::getServiceManager()->get(FriendRule::class);
+        $this->friendRule = TestHelper::getDbServiceManager()->get(FriendRule::class);
     }
 
     /**
@@ -67,7 +82,7 @@ class FriendRuleTest extends TestCase
      */
     public function setUpFriendService()
     {
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
     }
 
     /**

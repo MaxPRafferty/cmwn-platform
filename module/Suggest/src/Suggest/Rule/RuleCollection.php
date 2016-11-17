@@ -60,7 +60,7 @@ class RuleCollection implements SuggestedRuleCompositeInterface
      * @param SuggestionContainer $suggestionContainer
      * @param UserInterface $currentUser
      */
-    public function apply($suggestionContainer, $currentUser)
+    public function apply(SuggestionContainer $suggestionContainer, UserInterface $currentUser)
     {
         foreach ($this->rules as $rule) {
             $rule->apply($suggestionContainer, $currentUser);

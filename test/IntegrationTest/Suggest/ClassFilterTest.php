@@ -1,6 +1,6 @@
 <?php
 
-namespace SuggestTest\Filter;
+namespace Suggest;
 
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use IntegrationTest\DataSets\ArrayDataSet;
@@ -12,6 +12,12 @@ use User\UserInterface;
 /**
  * Class ClassFilterTest
  * @package SuggestTest\Filter
+ * @group Db
+ * @group IntegrationTest
+ * @group Friend
+ * @group Suggest
+ * @group SuggestionEngine
+ * @group SuggestService
  */
 class ClassFilterTest extends TestCase
 {
@@ -30,7 +36,7 @@ class ClassFilterTest extends TestCase
      */
     public function setUpClassFilter()
     {
-        $this->classFilter = TestHelper::getServiceManager()->get(ClassFilter::class);
+        $this->classFilter = TestHelper::getDbServiceManager()->get(ClassFilter::class);
     }
 
     /**
@@ -38,7 +44,7 @@ class ClassFilterTest extends TestCase
      */
     public function setUpUser()
     {
-        $userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+        $userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
         $this->user = $userService->fetchUser('english_student');
     }
 
@@ -47,7 +53,7 @@ class ClassFilterTest extends TestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../../DataSets/friends.dataset.php';
+        $data = include __DIR__ . '/../DataSets/friends.dataset.php';
         return new ArrayDataSet($data);
     }
 

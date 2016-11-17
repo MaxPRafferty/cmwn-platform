@@ -7,7 +7,7 @@ use Asset\Image;
 use Asset\Service\UserImageServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
-use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test ImageResourceTest
@@ -30,12 +30,22 @@ class ImageResourceTest extends TestCase
      */
     protected $imageService;
 
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/image.dataset.php');
+    }
+
+
     /**
      * @before
      */
     public function setUpImageService()
     {
-        $this->imageService = TestHelper::getServiceManager()->get(UserImageServiceInterface::class);
+        $this->imageService = TestHelper::getDbServiceManager()->get(UserImageServiceInterface::class);
     }
 
     /**

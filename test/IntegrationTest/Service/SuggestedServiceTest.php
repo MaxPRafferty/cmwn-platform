@@ -3,6 +3,7 @@
 namespace IntegrationTest\Service;
 
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Suggest\Service\SuggestedServiceInterface;
 use Suggest\Suggestion;
@@ -13,6 +14,11 @@ use Zend\Paginator\Paginator;
 /**
  * Class SuggestedServiceTest
  * @package IntegrationTest\Service
+ * @group Db
+ * @group IntegrationTest
+ * @group Friend
+ * @group Suggest
+ * @group SuggestService
  */
 class SuggestedServiceTest extends TestCase
 {
@@ -32,11 +38,19 @@ class SuggestedServiceTest extends TestCase
     protected $suggestion;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpSuggestedService()
     {
-        $this->suggestedService = TestHelper::getServiceManager()->get(SuggestedServiceInterface::class);
+        $this->suggestedService = TestHelper::getDbServiceManager()->get(SuggestedServiceInterface::class);
     }
 
     /**

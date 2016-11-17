@@ -64,7 +64,6 @@ class TypeRuleUnitTest extends TestCase
     public function testItShouldRemoveSuggestionsOfDifferentType()
     {
         $this->typeRule->apply($this->container, $this->user);
-
         $this->assertFalse($this->container->offsetExists('english_teacher'));
     }
 }

@@ -38,6 +38,7 @@ class RestoreDbDelegatorTest extends \PHPUnit_Framework_TestCase implements Auth
      */
     public function setUpService()
     {
+        $this->markTestSkipped('This is a unit test it should not need a database');
         $this->service = \Mockery::mock('\RestoreDb\Service\RestoreDbService');
     }
 

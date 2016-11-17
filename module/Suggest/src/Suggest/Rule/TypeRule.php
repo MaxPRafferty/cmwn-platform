@@ -2,8 +2,13 @@
 
 namespace Suggest\Rule;
 
+use Suggest\SuggestionContainer;
+use User\UserInterface;
+
 /**
  * Class StaticFilterSuggestions
+ *
+ * Matches the types of users together
  * @package Suggest\Engine
  */
 class TypeRule implements SuggestedRuleCompositeInterface
@@ -11,13 +16,17 @@ class TypeRule implements SuggestedRuleCompositeInterface
     /**
      * @inheritdoc
      */
-    public function apply($suggestionContainer, $currentUser)
+    public function apply(SuggestionContainer $suggestionContainer, UserInterface $currentUser)
     {
-        $iterator = $suggestionContainer->getIterator();
+        /** @var UserInterface $suggestion */
+        foreach ($suggestionContainer as $suggestion) {
+            // Removed on a previous iteration
+            if (!$suggestionContainer->offsetExists($suggestion->getUserId())) {
+                continue;
+            }
 
-        foreach ($iterator as $key => $suggestion) {
-            if ($currentUser->getType()!= $suggestion->getType()) {
-                $iterator->offsetUnset($key);
+            if ($suggestion->getType() !== $currentUser->getType()) {
+                $suggestionContainer->offsetUnset($suggestion->getUserId());
             }
         }
     }
