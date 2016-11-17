@@ -7,6 +7,7 @@ use Zend\ServiceManager\ServiceManager;
 
 /**
  * Class ServiceManagerTest
+ *
  * @group IntegrationTest
  * @group ServiceManager
  */
@@ -47,6 +48,7 @@ class ServiceManagerTest extends TestCase
 
     /**
      * Parses the config to find all services configured in the service manager
+     *
      * @return array
      */
     public function servicesProvider()
@@ -76,6 +78,7 @@ class ServiceManagerTest extends TestCase
 
     /**
      * @param $service
+     *
      * @dataProvider servicesProvider
      */
     public function testItShouldBeAbleToLoadService($service)
@@ -83,7 +86,7 @@ class ServiceManagerTest extends TestCase
         try {
             $this->getServiceManager()->get($service);
         } catch (\Exception $serviceException) {
-            $previous = $serviceException;
+            $previous   = $serviceException;
             $prevString = '';
             while (null !== $previous) {
                 $prevString .= $previous->getMessage() . PHP_EOL . $previous->getTraceAsString();

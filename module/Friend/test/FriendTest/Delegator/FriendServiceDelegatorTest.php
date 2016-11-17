@@ -12,6 +12,7 @@ use User\Child;
 
 /**
  * Test FriendServiceDelegatorTest
+ *
  * @group Friend
  * @group Service
  * @group FriendService
@@ -57,7 +58,7 @@ class FriendServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -116,7 +117,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.friends',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null]
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendsForUser Is incorrect'
@@ -126,7 +127,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.friends.post',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => null]
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => null],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendsForUser Is incorrect'
@@ -148,7 +149,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for attachFriendToUser Is incorrect'
@@ -158,7 +159,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.friend.post',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[1],
             'Post event for attachFriendToUser Is incorrect'
@@ -179,7 +180,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for detachFriendFromUser Is incorrect'
@@ -189,7 +190,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.friend.post',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[1],
             'Post event for detachFriendFromUser Is incorrect'
@@ -209,7 +210,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendForUser Is incorrect'
@@ -219,7 +220,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend.post',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendForUser Is incorrect'
@@ -239,7 +240,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend.status',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendStatusForUser Is incorrect'
@@ -249,7 +250,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend.status.post',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'status' => null]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'status' => null],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendStatusForUser Is incorrect'
@@ -272,7 +273,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.friends',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null]
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendsForUser Is incorrect'
@@ -297,7 +298,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for attachFriendToUser Is incorrect'
@@ -320,9 +321,9 @@ class FriendServiceDelegatorTest extends TestCase
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
             [
-                'name' => 'detach.friend',
+                'name'   => 'detach.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for detachFriendFromUser Is incorrect'
@@ -346,7 +347,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendForUser Is incorrect'
@@ -370,7 +371,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend.status',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendStatusForUser Is incorrect'
@@ -397,7 +398,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.friends',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null]
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendsForUser Is incorrect'
@@ -408,11 +409,11 @@ class FriendServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.all.friends.error',
                 'target' => $this->friendService,
                 'params' => [
-                    'user' => $this->user,
-                    'where' => null,
+                    'user'      => $this->user,
+                    'where'     => null,
                     'prototype' => null,
-                    'exception' => $exception
-                ]
+                    'exception' => $exception,
+                ],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendsForUser Is incorrect'
@@ -440,7 +441,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for attachFriendToUser Is incorrect'
@@ -450,7 +451,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.friend.error',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'exception' => $exception]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'exception' => $exception],
             ],
             $this->calledEvents[1],
             'Post event for attachFriendToUser Is incorrect'
@@ -478,7 +479,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for detachFriendFromUser Is incorrect'
@@ -488,7 +489,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'detach.friend.error',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'exception' => $exception]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'exception' => $exception],
             ],
             $this->calledEvents[1],
             'Post event for detachFriendFromUser Is incorrect'
@@ -516,7 +517,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'prototype' => null],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendForUser Is incorrect'
@@ -527,11 +528,11 @@ class FriendServiceDelegatorTest extends TestCase
                 'name'   => 'fetch.friend.error',
                 'target' => $this->friendService,
                 'params' => [
-                    'user' => $this->user,
-                    'friend' => $this->friend,
+                    'user'      => $this->user,
+                    'friend'    => $this->friend,
                     'prototype' => null,
-                    'exception' => $exception
-                ]
+                    'exception' => $exception,
+                ],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendForUser Is incorrect'
@@ -560,7 +561,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend.status',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend]
+                'params' => ['user' => $this->user, 'friend' => $this->friend],
             ],
             $this->calledEvents[0],
             'Pre event for fetchFriendStatusForUser Is incorrect'
@@ -570,7 +571,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.friend.status.error',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'friend' => $this->friend, 'exception' => $exception]
+                'params' => ['user' => $this->user, 'friend' => $this->friend, 'exception' => $exception],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendStatusForUser Is incorrect'
