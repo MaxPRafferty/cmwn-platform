@@ -44,4 +44,13 @@ interface SuggestedServiceInterface
      * @return mixed
      */
     public function deleteSuggestionForUser($user, $suggestion);
+
+    /**
+     * Deletes all the suggestions for a user
+     *
+     * @param $user
+     *
+     * @return mixed
+     */
+    public function deleteAllSuggestionsForUser($user);
 }

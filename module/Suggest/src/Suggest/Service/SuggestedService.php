@@ -136,6 +136,22 @@ class SuggestedService implements SuggestedServiceInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function deleteAllSuggestionsForUser($user)
+    {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+
+        $where = new Where();
+        $firstPredicate = new PredicateSet();
+        $firstPredicate->addPredicate(new Operator('user_id', Operator::OP_EQ, $userId));
+        $firstPredicate->addPredicate(new Operator('suggest_id', Operator::OP_EQ, $userId));
+        $where->orPredicate($firstPredicate);
+
+        $this->tableGateway->delete($where);
+    }
+
+    /**
      * @param String $userId
      * @param PredicateInterface $predicate
      * @return Select

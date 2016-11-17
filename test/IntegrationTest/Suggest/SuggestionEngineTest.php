@@ -80,8 +80,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../DataSets/friends.dataset.php';
-        return new ArrayDataSet($data);
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/suggest.dataset.php');
     }
 
     /**
@@ -95,7 +94,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
         $suggestions = $suggestions->getItems(0, 100);
 
-        $expectedIds = ['math_student', 'other_student', 'english_student_1', 'english_student_2'];
+        $expectedIds = ['math_student', 'english_student_1', 'english_student_2'];
         $actualIds = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
@@ -115,12 +114,14 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
         $suggestions = $suggestions->getItems(0, 100);
 
-        $expectedIds = ['math_student'];
+        $expectedIds = ['math_student', 'english_student_1', 'english_student_2'];
         $actualIds = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }
 
+        sort($expectedIds);
+        sort($actualIds);
         $this->assertEquals($expectedIds, $actualIds);
 
         $this->friendService->attachFriendToUser($this->user, new Child(['user_id' => 'math_student']));
@@ -130,7 +131,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
         $suggestions = $suggestions->getItems(0, 100);
 
-        $expectedIds = ['other_student', 'english_student_1', 'english_student_2'];
+        $expectedIds = ['english_student_1', 'english_student_2'];
         $actualIds = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
@@ -154,7 +155,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
         $suggestions = $suggestions->getItems(0, 100);
 
-        $expectedIds = ['other_student', 'english_student_1', 'english_student_2'];
+        $expectedIds = ['english_student_1', 'english_student_2'];
         $actualIds = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
@@ -179,7 +180,33 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
         $suggestions = $suggestions->getItems(0, 100);
 
-        $expectedIds = ['other_student', 'english_student_1', 'english_student_2'];
+        $expectedIds = ['english_student_1', 'english_student_2'];
+        $actualIds = [];
+        foreach ($suggestions as $suggestion) {
+            $actualIds[] = $suggestion->getUserId();
+        }
+
+        sort($expectedIds);
+        sort($actualIds);
+
+        $this->assertEquals($expectedIds, $actualIds);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2669
+     */
+    public function testItShouldNotAddExistingFriendsInverse()
+    {
+        $mathStudent = new Child(['user_id' => 'math_student']);
+        $this->friendService->attachFriendToUser($mathStudent, $this->user);
+        $this->engine->setUser($mathStudent);
+        $this->engine->perform();
+
+        $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($mathStudent);
+        $suggestions = $suggestions->getItems(0, 100);
+
+        $expectedIds = ['english_student_1', 'english_student_2'];
         $actualIds = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
