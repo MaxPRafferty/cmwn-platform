@@ -89,7 +89,7 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
         if (!$this->getUser() instanceof UserInterface) {
             throw new \RuntimeException();
         }
-        
+
         $this->suggestedService->deleteAllSuggestionsForUser($this->getUser());
         /**@var SuggestionContainer $masterContainer*/
         $masterContainer = new SuggestionContainer();
