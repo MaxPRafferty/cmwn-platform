@@ -17,7 +17,7 @@ class SuggestionCollection extends \ArrayObject
      */
     public function offsetSet($suggestionId, $suggestion)
     {
-        if ($suggestion instanceof UserInterface) {
+        if (!$suggestion instanceof UserInterface) {
             throw new InvalidSuggestionException();
         }
 

@@ -34,18 +34,24 @@ class FriendRule implements RuleCompositeInterface
     /**
      * @inheritdoc
      */
-    public function apply(SuggestionCollection $suggestionContainer, UserInterface $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        iterator_apply(
-            $suggestionContainer,
-            function (UserInterface $suggestion) use (&$suggestionContainer, $currentUser) {
-                try {
-                    $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
-                    $suggestionContainer->offsetUnset($suggestion->getUserId());
-                } catch (NotFriendsException $nf) {
-                    //noop
-                }
+        $suggestIterator = $suggestionCollection->getIterator();
+        $suggestIterator->rewind();
+        do {
+            /** @var UserInterface $suggested */
+            $suggested = $suggestIterator->current();
+            $suggestIterator->next();
+            if ($suggested === null) {
+                break;
             }
-        );
+
+            try {
+                $this->friendService->fetchFriendStatusForUser($currentUser, $suggested);
+                $suggestionCollection->offsetUnset($suggested->getUserId());
+            } catch (NotFriendsException $notFriends) {
+                // noop
+            }
+        } while (true);
     }
 }

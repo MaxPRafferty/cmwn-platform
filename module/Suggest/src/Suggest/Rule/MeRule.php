@@ -16,10 +16,10 @@ class MeRule implements RuleCompositeInterface
     /**
      * @inheritdoc
      */
-    public function apply(SuggestionCollection $suggestionContainer, UserInterface $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        if ($suggestionContainer->offsetExists($currentUser->getUserId())) {
-            $suggestionContainer->offsetUnset($currentUser->getUserId());
+        if ($suggestionCollection->offsetExists($currentUser->getUserId())) {
+            $suggestionCollection->offsetUnset($currentUser->getUserId());
         }
     }
 }

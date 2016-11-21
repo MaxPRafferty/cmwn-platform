@@ -7,7 +7,6 @@ use Suggest\Rule\TypeRule;
 use Suggest\SuggestionCollection;
 use User\Adult;
 use User\Child;
-use User\UserInterface;
 
 /**
  * Class TypeRuleUnitTest
@@ -16,54 +15,25 @@ use User\UserInterface;
 class TypeRuleUnitTest extends TestCase
 {
     /**
-     * @var UserInterface
-     */
-    protected $user;
-
-    /**
-     * @var SuggestionCollection
-     */
-    protected $container;
-
-    /**
-     * @var TypeRule
-     */
-    protected $typeRule;
-
-    /**
-     * @before
-     */
-    public function setUpUser()
-    {
-        $this->user = new Child(['user_id' => 'english_student']);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpContainer()
-    {
-        $child = new Child(['user_id' => 'math_student']);
-        $adult = new Adult(['user_id' => 'english_teacher']);
-        $this->container = new SuggestionCollection();
-        $this->container->append($child);
-        $this->container->append($adult);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpTypeRule()
-    {
-        $this->typeRule = new TypeRule();
-    }
-
-    /**
      * @test
      */
     public function testItShouldRemoveSuggestionsOfDifferentType()
     {
-        $this->typeRule->apply($this->container, $this->user);
-        $this->assertFalse($this->container->offsetExists('english_teacher'));
+        $currentUser = new Child(['user_id' => 'current_user']);
+        $notFriends1 = new Child(['user_id' => 'not_friends']);
+        $adultUser   = new Adult(['user_id' => 'adult_user']);
+        $collection  = new SuggestionCollection();
+        $collection->append($adultUser);
+        $collection->append($notFriends1);
+
+        $rule = new TypeRule();
+
+        $rule->apply($collection, $currentUser);
+
+        $this->assertEquals(
+            ['not_friends' => $notFriends1],
+            $collection->getArrayCopy(),
+            'Adult was not removed from the suggestion collection'
+        );
     }
 }

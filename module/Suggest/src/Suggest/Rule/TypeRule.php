@@ -15,21 +15,21 @@ class TypeRule implements RuleCompositeInterface
     /**
      * @inheritdoc
      */
-    public function apply(SuggestionCollection $suggestionContainer, UserInterface $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        /** @var UserInterface $suggestion */
-        iterator_apply(
-            $suggestionContainer,
-            function (UserInterface $suggestion) use (&$suggestionContainer, $currentUser) {
-                // in case Removed on a previous iteration
-                if (!$suggestionContainer->offsetExists($suggestion->getUserId())) {
-                    return;
-                }
-
-                if ($suggestion->getType() !== $currentUser->getType()) {
-                    $suggestionContainer->offsetUnset($suggestion->getUserId());
-                }
+        $suggestIterator = $suggestionCollection->getIterator();
+        $suggestIterator->rewind();
+        do {
+            /** @var UserInterface $suggested */
+            $suggested = $suggestIterator->current();
+            $suggestIterator->next();
+            if ($suggested === null) {
+                break;
             }
-        );
+
+            if ($suggested->getType() !== $currentUser->getType()) {
+                $suggestionCollection->offsetUnset($suggested->getUserId());
+            }
+        } while (true);
     }
 }

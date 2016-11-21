@@ -27,7 +27,7 @@ class RuleCollection implements RuleCompositeInterface
     /**
      * @var RuleCompositeInterface[]
      */
-    protected static $rules;
+    protected static $rules = [];
 
     /**
      * RuleCollection constructor.
@@ -46,7 +46,7 @@ class RuleCollection implements RuleCompositeInterface
      */
     protected function createRulesFromConfig()
     {
-        if (null !== self::$rules) {
+        if (!empty(self::$rules)) {
             return;
         }
 
@@ -60,7 +60,7 @@ class RuleCollection implements RuleCompositeInterface
                 throw new InvalidRuleException();
             }
 
-            $this->addRule($ruleKey);
+            $this->addRule($rule);
         });
     }
 
@@ -73,16 +73,16 @@ class RuleCollection implements RuleCompositeInterface
     }
 
     /**
-     * @param SuggestionCollection $suggestionContainer
+     * @param SuggestionCollection $suggestionCollection
      * @param UserInterface $currentUser
      */
-    public function apply(SuggestionCollection $suggestionContainer, UserInterface $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
         $this->createRulesFromConfig();
         array_walk(
             self::$rules,
-            function (RuleCompositeInterface $rule) use (&$suggestionContainer, &$user) {
-                $rule->apply($suggestionContainer, $user);
+            function (RuleCompositeInterface $rule) use (&$suggestionCollection, &$currentUser) {
+                $rule->apply($suggestionCollection, $currentUser);
             }
         );
     }

@@ -13,10 +13,10 @@ interface RuleCompositeInterface
     /**
      * Applies a rule to every suggested friend in the suggestion container.
      *
-     * @param SuggestionCollection $suggestionContainer A container of suggestions
-     * @param UserInterface $currentUser                The user the engine is currently checking
+     * @param SuggestionCollection $suggestionCollection A container of suggestions
+     * @param UserInterface $currentUser                 The user the engine is currently checking
      *
      * @return
      */
-    public function apply(SuggestionCollection $suggestionContainer, UserInterface $currentUser);
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser);
 }
