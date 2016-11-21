@@ -4,7 +4,7 @@ namespace Suggest\Rule;
 
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\UserInterface;
 
 /**
@@ -14,7 +14,7 @@ use User\UserInterface;
  *
  * @package Suggest\Rule
  */
-class FriendRule implements SuggestedRuleCompositeInterface
+class FriendRule implements RuleCompositeInterface
 {
     /**
      * @var FriendServiceInterface
@@ -23,9 +23,10 @@ class FriendRule implements SuggestedRuleCompositeInterface
 
     /**
      * FriendRule constructor.
+     *
      * @param FriendServiceInterface $friendService
      */
-    public function __construct($friendService)
+    public function __construct(FriendServiceInterface $friendService)
     {
         $this->friendService = $friendService;
     }
@@ -33,15 +34,18 @@ class FriendRule implements SuggestedRuleCompositeInterface
     /**
      * @inheritdoc
      */
-    public function apply(SuggestionContainer $suggestionContainer, UserInterface $currentUser)
+    public function apply(SuggestionCollection $suggestionContainer, UserInterface $currentUser)
     {
-        foreach ($suggestionContainer as $suggestion) {
-            try {
-                $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
-                $suggestionContainer->offsetUnset($suggestion->getUserId());
-            } catch (NotFriendsException $nf) {
-                //noop
+        iterator_apply(
+            $suggestionContainer,
+            function (UserInterface $suggestion) use (&$suggestionContainer, $currentUser) {
+                try {
+                    $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
+                    $suggestionContainer->offsetUnset($suggestion->getUserId());
+                } catch (NotFriendsException $nf) {
+                    //noop
+                }
             }
-        }
+        );
     }
 }

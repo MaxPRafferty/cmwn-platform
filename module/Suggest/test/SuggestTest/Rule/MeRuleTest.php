@@ -4,7 +4,7 @@
 namespace SuggestTest\Rule;
 
 use Suggest\Rule\MeRule;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\Adult;
 use User\Child;
 use User\UserInterface;
@@ -21,7 +21,7 @@ class MeRuleTest extends \PHPUnit_Framework_TestCase
     protected $user;
 
     /**
-     * @var SuggestionContainer
+     * @var SuggestionCollection
      */
     protected $container;
 
@@ -43,7 +43,7 @@ class MeRuleTest extends \PHPUnit_Framework_TestCase
      */
     public function setUpContainer()
     {
-        $this->container = new SuggestionContainer();
+        $this->container = new SuggestionCollection();
         $this->container[$this->user->getUserId()] = $this->user;
         $adult = new Adult(['user_id' => 'english_teacher']);
         $this->container[$adult->getUserId()] = $adult;

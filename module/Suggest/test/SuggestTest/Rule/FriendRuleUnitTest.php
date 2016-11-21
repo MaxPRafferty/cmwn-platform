@@ -5,7 +5,7 @@ namespace SuggestTest\Rule;
 use Friend\NotFriendsException;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Rule\FriendRule;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\Child;
 use User\UserInterface;
 
@@ -31,7 +31,7 @@ class FriendRuleUnitTest extends TestCase
     protected $user;
 
     /**
-     * @var SuggestionContainer
+     * @var SuggestionCollection
      */
     protected $container;
 
@@ -64,7 +64,7 @@ class FriendRuleUnitTest extends TestCase
      */
     public function setUpContainer()
     {
-        $this->container = new SuggestionContainer();
+        $this->container = new SuggestionCollection();
         $friend = new Child(['user_id' => 'math_student']);
         $this->container[$friend->getUserId()] = $friend;
     }

@@ -43,7 +43,7 @@ class FriendServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/flag.dataset.php');
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/friends.dataset.php');
     }
 
     /**
@@ -193,5 +193,43 @@ class FriendServiceTest extends TestCase
             $actualId,
             'Friend List did not return correct number of friends'
         );
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2669
+     */
+    public function testItShouldHaveCorrectStatusForLeftFriend()
+    {
+        $status = $this->friendService->fetchFriendStatusForUser(
+            $this->user,
+            $this->friend
+        );
+
+        $this->assertEquals(FriendInterface::PENDING, $status);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2669
+     */
+    public function testItShouldHaveCorrectStatusForRightFriend()
+    {
+        $status = $this->friendService->fetchFriendStatusForUser(
+            $this->friend,
+            $this->user
+        );
+
+        $this->assertEquals(FriendInterface::REQUESTED, $status);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2669
+     */
+    public function testItShouldThrowExceptionWhenNotFriends()
+    {
+        $this->setExpectedException(NotFriendsException::class);
+        $this->friendService->fetchFriendStatusForUser($this->user, new Child(['user_id' => 'english_student_3']));
     }
 }

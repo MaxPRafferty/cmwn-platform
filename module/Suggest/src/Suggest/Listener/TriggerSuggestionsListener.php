@@ -12,7 +12,8 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
- * Class TriggerSuggestionsListener
+ * Creates a suggestion job for a user once the user is created
+ *
  * @package Suggest\Listeners
  */
 class TriggerSuggestionsListener

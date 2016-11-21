@@ -4,7 +4,7 @@ namespace SuggestTest\Rule;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Rule\TypeRule;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\Adult;
 use User\Child;
 use User\UserInterface;
@@ -21,7 +21,7 @@ class TypeRuleUnitTest extends TestCase
     protected $user;
 
     /**
-     * @var SuggestionContainer
+     * @var SuggestionCollection
      */
     protected $container;
 
@@ -45,7 +45,7 @@ class TypeRuleUnitTest extends TestCase
     {
         $child = new Child(['user_id' => 'math_student']);
         $adult = new Adult(['user_id' => 'english_teacher']);
-        $this->container = new SuggestionContainer();
+        $this->container = new SuggestionCollection();
         $this->container->append($child);
         $this->container->append($adult);
     }

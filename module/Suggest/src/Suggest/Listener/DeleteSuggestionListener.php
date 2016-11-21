@@ -8,7 +8,8 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
- * Class DeleteSuggestionListener
+ * Removes a suggestion if the user friends a user
+ *
  * @package Suggest\Listener
  */
 class DeleteSuggestionListener

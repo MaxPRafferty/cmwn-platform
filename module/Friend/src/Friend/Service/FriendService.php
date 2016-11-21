@@ -3,10 +3,12 @@
 namespace Friend\Service;
 
 use Application\Utils\ServiceTrait;
+use Friend\Friend;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use User\UserHydrator;
 use User\UserInterface;
+use Zend\Db\ResultSet\AbstractResultSet;
 use Zend\Db\ResultSet\HydratingResultSet;
 use \Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
@@ -191,23 +193,42 @@ class FriendService implements FriendServiceInterface
      */
     public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
     {
-        $result = $this->fetchFriendForUser($user, $friend, new \ArrayObject());
+        $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
 
-        $currentStatus = $result->offsetGet('friend_status');
-        if ($currentStatus === FriendInterface::FRIEND) {
-            return FriendInterface::FRIEND;
+        $select = new Select(['uf' => 'user_friends']);
+        $select->columns(['friend_status' => 'status', 'requesting' => 'user_id']);
+
+        $where = $this->createWhere([]);
+
+        $firstOr = new PredicateSet();
+        $firstOr->orPredicate(new Operator('uf.friend_id', '=', $userId));
+        $firstOr->orPredicate(new Operator('uf.user_id', '=', $userId));
+
+        $secondOr = new PredicateSet();
+        $secondOr->orPredicate(new Operator('uf.friend_id', '=', $friendId));
+        $secondOr->orPredicate(new Operator('uf.user_id', '=', $friendId));
+
+        $where->addPredicate($firstOr);
+        $where->addPredicate($secondOr);
+        $select->where($where);
+
+        /** @var AbstractResultSet $results */
+        $results  = $this->tableGateway->selectWith($select);
+        $results->rewind();
+        $row = $results->current();
+        // will only have friend or pending in the DB
+        switch ($row['friend_status']) {
+            case FriendInterface::FRIEND:
+                return FriendInterface::FRIEND;
+
+            case FriendInterface::PENDING:
+                return $user->getUserId() == $row['requesting']
+                    ? FriendInterface::PENDING
+                    : FriendInterface::REQUESTED;
         }
 
-        // pending at this point
-        if ($result->offsetGet('user_id') === $user->getUserId()) {
-            return FriendInterface::PENDING;
-        }
-
-        if ($result->offsetGet('uf_friend_id') === $user->getUserId()) {
-            return FriendInterface::REQUESTED;
-        }
-
-        return $currentStatus;
+        throw new NotFriendsException();
     }
 
     /**

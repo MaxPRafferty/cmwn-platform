@@ -7,7 +7,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use Suggest\Rule\FriendRule;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\Child;
 use User\UserInterface;
 
@@ -34,7 +34,7 @@ class FriendRuleTest extends TestCase
     protected $user;
 
     /**
-     * @var SuggestionContainer
+     * @var SuggestionCollection
      */
     protected $container;
 
@@ -72,7 +72,7 @@ class FriendRuleTest extends TestCase
      */
     public function setUpContainer()
     {
-        $this->container = new SuggestionContainer();
+        $this->container = new SuggestionCollection();
         $suggestion = new Child(['user_id' => 'other_student']);
         $this->container[$suggestion->getUserId()] = $suggestion;
     }

@@ -177,6 +177,26 @@ return [
             'external_id'  => null,
         ],
         [
+            'user_id'      => 'english_student_3',
+            'username'     => 'english_student_3',
+            'email'        => 'english_student_3@ginasink.com',
+            'code'         => null,
+            'type'         => 'CHILD',
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'   => 'John',
+            'middle_name'  => 'D',
+            'last_name'    => 'Yoder',
+            'gender'       => 'M',
+            'meta'         => null,
+            'birthdate'    => '2016-04-15 11:58:15',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+            'deleted'      => null,
+            'code_expires' => null,
+            'super'        => '0',
+            'external_id'  => null,
+        ],
+        [
             'user_id'      => 'english_teacher',
             'username'     => 'english_teacher',
             'email'        => 'english_teacher@ginasink.com',
@@ -337,7 +357,28 @@ return [
             'external_id'  => null,
         ],
     ],
-    'user_friends'     => [],
+    'user_friends'     => [
+        [
+            'user_id'   => 'english_student',
+            'friend_id' => 'math_student',
+            'status'    => 'PENDING',
+        ],
+        [
+            'user_id'   => 'english_student',
+            'friend_id' => 'english_student_1',
+            'status'    => 'PENDING',
+        ],
+        [
+            'user_id'   => 'math_student',
+            'friend_id' => 'english_student_1',
+            'status'    => 'FRIENDS',
+        ],
+        [
+            'user_id'   => 'english_student_2',
+            'friend_id' => 'math_student',
+            'status'    => 'FRIENDS',
+        ],
+    ],
     'user_suggestions' => [],
     'user_groups'      => [
         [
@@ -352,6 +393,11 @@ return [
         ],
         [
             'user_id'  => 'english_student_2',
+            'group_id' => 'english',
+            'role'     => 'student',
+        ],
+        [
+            'user_id'  => 'english_student_3',
             'group_id' => 'english',
             'role'     => 'student',
         ],
