@@ -320,4 +320,3 @@ class SuggestionEngineTest extends TestCase
         $this->assertEmpty($this->engine->perform());
     }
 }
-
