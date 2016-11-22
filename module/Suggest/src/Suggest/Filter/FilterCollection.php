@@ -2,7 +2,6 @@
 
 namespace Suggest\Filter;
 
-use Suggest\InvalidArgumentException;
 use Suggest\InvalidFilterException;
 use Suggest\SuggestionCollection;
 use User\UserInterface;
@@ -28,7 +27,7 @@ class FilterCollection implements FilterCompositeInterface
     /**
      * @var FilterCompositeInterface[] The built filters
      */
-    protected static $filters;
+    protected $filters = [];
 
     /**
      * FilterCollection constructor.
@@ -49,7 +48,7 @@ class FilterCollection implements FilterCompositeInterface
     {
         $this->createFiltersFromConfig();
         array_walk(
-            self::$filters,
+            $this->filters,
             function (FilterCompositeInterface $filter) use (&$suggestionContainer, &$user) {
                 $filter->getSuggestions($suggestionContainer, $user);
             }
@@ -61,13 +60,13 @@ class FilterCollection implements FilterCompositeInterface
      */
     protected function createFiltersFromConfig()
     {
-        if (null !== self::$filters) {
+        if (!empty($this->filters)) {
             return;
         }
 
         array_walk($this->filterConfig, function ($filterKey) {
             if (!$this->service->has($filterKey)) {
-                return;
+                throw new InvalidFilterException(sprintf('Missing filter: "%s" from services', $filterKey));
             }
 
             $filter = $this->service->get($filterKey);
@@ -84,6 +83,6 @@ class FilterCollection implements FilterCompositeInterface
      */
     public function addFilter(FilterCompositeInterface $filter)
     {
-        array_push(self::$filters, $filter);
+        array_push($this->filters, $filter);
     }
 }

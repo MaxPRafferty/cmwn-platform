@@ -63,11 +63,12 @@ class ClassFilter implements FilterCompositeInterface
     /**
      * @param GroupInterface $group
      */
-    protected function processGroup(GroupInterface $group)
+    public function processGroup(GroupInterface $group)
     {
         /** @var GroupInterface $group */
+        $users = $this->groupService->fetchUsersForGroup($group)->getItems(0, $this->userGroupLimit);
         array_walk(
-            $this->groupService->fetchUsersForGroup($group)->getItems(0, $this->userGroupLimit),
+            $users,
             [$this, 'processUser']
         );
     }
@@ -79,10 +80,12 @@ class ClassFilter implements FilterCompositeInterface
     {
         $this->container = $container;
         // Find all the groups $currentUser Belongs too
+        // TODO new service method to fetch by type
         $where = new Where();
-        $where->addPredicate(new Operator('g.type', Operator::OP_EQ, 'class'));
-        $groups = $this->groupService->fetchGroupsForUser($currentUser, $where, new Group());
-
-        array_walk($groups->getItems(0, $this->groupLimit), [$this, 'processGroup']);
+        $where->addPredicate(new Operator('g.type', '=', 'class'));
+        $groups = $this->groupService
+            ->fetchGroupsForUser($currentUser, $where, new Group())
+            ->getItems(0, $this->groupLimit);
+        array_walk($groups, [$this, 'processGroup']);
     }
 }

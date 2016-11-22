@@ -12,7 +12,12 @@ use User\Child;
 
 /**
  * Class FriendRuleUnitTest
- * @package SuggestTest\Rule
+ *
+ * @group User
+ * @group Suggest
+ * @group Rule
+ * @group UserService
+ * @group Friend
  */
 class FriendRuleTest extends TestCase
 {

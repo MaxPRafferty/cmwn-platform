@@ -13,11 +13,13 @@ use Zend\EventManager\Event;
 
 /**
  * Class SuggestedServiceDelegatorTest
- * @package SuggestTest\Delegator
+ *
+ * @group Delegator
+ * @group Service
+ * @group Suggest
  */
 class SuggestedServiceDelegatorTest extends TestCase
 {
-
     /**
      * @var \Mockery\MockInterface| \Suggest\Service\SuggestedService
      */
@@ -90,7 +92,7 @@ class SuggestedServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -101,23 +103,23 @@ class SuggestedServiceDelegatorTest extends TestCase
     {
         $resultSet = new ResultSet();
         $this->suggestedService->shouldReceive('fetchSuggestedFriendsForUser')
-           ->andReturn($resultSet);
+            ->andReturn($resultSet);
         $this->delegator->fetchSuggestedFriendsForUser($this->user);
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
-              'name' => 'fetch.suggested.friends',
-              'target'=> $this->suggestedService,
-              'params' => ['user' => $this->user, 'where' => new Where(), 'prototype' => null]
+                'name'   => 'fetch.suggested.friends',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'where' => new Where(), 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
 
         $this->assertEquals(
             [
-                'name' => 'fetch.suggested.friends.post',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'where' => new Where(), 'prototype' => null]
+                'name'   => 'fetch.suggested.friends.post',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'where' => new Where(), 'prototype' => null],
             ],
             $this->calledEvents[1]
         );
@@ -129,9 +131,10 @@ class SuggestedServiceDelegatorTest extends TestCase
     public function testItShouldNotCallFetchSuggestedFriendsWhenEventStops()
     {
         $this->suggestedService->shouldReceive('fetchSuggestedFriends')
-           ->never();
+            ->never();
         $this->delegator->getEventManager()->attach('fetch.suggested.friends', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
         $this->assertEquals(['foo' => 'bar'], $this->delegator->fetchSuggestedFriendsForUser($this->user));
@@ -140,7 +143,7 @@ class SuggestedServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.suggested.friends',
                 'target' => $this->suggestedService,
-                'params' => ['user' => $this->user, 'where' => new Where(), 'prototype' => null]
+                'params' => ['user' => $this->user, 'where' => new Where(), 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -157,18 +160,18 @@ class SuggestedServiceDelegatorTest extends TestCase
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
-                'name' => 'attach.suggested.friends',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion]
+                'name'   => 'attach.suggested.friends',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion],
             ],
             $this->calledEvents[0]
         );
 
         $this->assertEquals(
             [
-                'name' => 'attach.suggested.friends.post',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion]
+                'name'   => 'attach.suggested.friends.post',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion],
             ],
             $this->calledEvents[1]
         );
@@ -183,6 +186,7 @@ class SuggestedServiceDelegatorTest extends TestCase
             ->never();
         $this->delegator->getEventManager()->attach('attach.suggested.friends', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
         $this->assertEquals(
@@ -192,9 +196,9 @@ class SuggestedServiceDelegatorTest extends TestCase
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
             [
-                'name' => 'attach.suggested.friends',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion]
+                'name'   => 'attach.suggested.friends',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion],
             ],
             $this->calledEvents[0]
         );
@@ -211,18 +215,18 @@ class SuggestedServiceDelegatorTest extends TestCase
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
-                'name' => 'delete.suggestion',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion]
+                'name'   => 'delete.suggestion',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion],
             ],
             $this->calledEvents[0]
         );
 
         $this->assertEquals(
             [
-                'name' => 'delete.suggestion.post',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion]
+                'name'   => 'delete.suggestion.post',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion],
             ],
             $this->calledEvents[1]
         );
@@ -237,6 +241,7 @@ class SuggestedServiceDelegatorTest extends TestCase
             ->never();
         $this->delegator->getEventManager()->attach('delete.suggestion', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
         $this->assertEquals(
@@ -246,9 +251,66 @@ class SuggestedServiceDelegatorTest extends TestCase
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
             [
-                'name' => 'delete.suggestion',
-                'target'=> $this->suggestedService,
-                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion]
+                'name'   => 'delete.suggestion',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user, 'suggestion' => $this->suggestion],
+            ],
+            $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallDeleteAllSuggestionsForUser()
+    {
+        $this->suggestedService->shouldReceive('deleteAllSuggestionsForUser')
+            ->andReturn(true);
+        $this->delegator->deleteAllSuggestionsForUser($this->user);
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'delete.all.suggestions',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[0]
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'delete.all.suggestions.post',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallDeleteAllSuggestionsForUserWhenStopped()
+    {
+        $this->suggestedService->shouldReceive('deleteAllSuggestionsForUser')
+            ->never();
+
+        $this->delegator->getEventManager()->attach('delete.all.suggestions', function (Event $event) {
+            $event->stopPropagation(true);
+            return ['foo' => 'bar'];
+        });
+
+        $this->assertEquals(
+            ['foo' => 'bar'],
+            $this->delegator->deleteAllSuggestionsForUser($this->user, $this->suggestion)
+        );
+
+        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'delete.all.suggestions',
+                'target' => $this->suggestedService,
+                'params' => ['user' => $this->user],
             ],
             $this->calledEvents[0]
         );

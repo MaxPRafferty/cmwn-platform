@@ -18,6 +18,6 @@ class InvalidRuleException extends InvalidArgumentException
      */
     public function __construct($message = 'Invalid Rule Provided', $code = 500, Exception $previous = null)
     {
-        parent::__construct('Invalid Rule Provided', $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }

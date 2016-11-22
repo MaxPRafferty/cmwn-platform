@@ -25,6 +25,7 @@ use Zend\Paginator\Paginator;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserServiceTest extends TestCase
 {

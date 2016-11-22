@@ -18,6 +18,6 @@ class InvalidFilterException extends InvalidArgumentException
      */
     public function __construct($message = 'Invalid Filter Provided', $code = 500, Exception $previous = null)
     {
-        parent::__construct('Invalid Filter Provided', $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }

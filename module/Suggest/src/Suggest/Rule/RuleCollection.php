@@ -2,7 +2,6 @@
 
 namespace Suggest\Rule;
 
-use Suggest\InvalidArgumentException;
 use Suggest\InvalidRuleException;
 use Suggest\SuggestionCollection;
 use User\UserInterface;
@@ -27,7 +26,7 @@ class RuleCollection implements RuleCompositeInterface
     /**
      * @var RuleCompositeInterface[]
      */
-    protected static $rules = [];
+    protected $rules = [];
 
     /**
      * RuleCollection constructor.
@@ -46,13 +45,13 @@ class RuleCollection implements RuleCompositeInterface
      */
     protected function createRulesFromConfig()
     {
-        if (!empty(self::$rules)) {
+        if (!empty($this->rules)) {
             return;
         }
 
         array_walk($this->rulesConfig, function ($ruleKey) {
             if (!$this->service->has($ruleKey)) {
-                return;
+                throw new InvalidRuleException(sprintf('Missing rule: "%s" from services', $ruleKey));
             }
 
             $rule = $this->service->get($ruleKey);
@@ -69,7 +68,7 @@ class RuleCollection implements RuleCompositeInterface
      */
     public function addRule(RuleCompositeInterface $rule)
     {
-        array_push(self::$rules, $rule);
+        array_push($this->rules, $rule);
     }
 
     /**
@@ -80,7 +79,7 @@ class RuleCollection implements RuleCompositeInterface
     {
         $this->createRulesFromConfig();
         array_walk(
-            self::$rules,
+            $this->rules,
             function (RuleCompositeInterface $rule) use (&$suggestionCollection, &$currentUser) {
                 $rule->apply($suggestionCollection, $currentUser);
             }

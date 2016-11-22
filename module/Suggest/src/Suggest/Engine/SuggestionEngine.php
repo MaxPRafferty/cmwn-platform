@@ -16,6 +16,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class SuggestionEngine
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SuggestionEngine implements JobInterface, LoggerAwareInterface
 {
@@ -110,7 +112,7 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
     {
         if (!$this->getUser() instanceof UserInterface) {
             $this->getLogger()->crit('Missing user for suggestion engine');
-            throw new \RuntimeException();
+            throw new \RuntimeException('Missing user for suggestion engine');
         }
 
         $this->getLogger()->notice('Performing suggestions for: ' . $this->getUser());
@@ -132,11 +134,21 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
         $suggestionCount = 0;
         $iterator        = $this->collection->getIterator();
         $iterator->rewind();
-        while ($suggestionCount < self::MAX_CAPACITY && $iterator->current() !== null) {
+        do {
             $suggestionCount++;
-            $this->getLogger()->info(sprintf('Suggesting %s for %s', $iterator->current(), $this->getUser()));
-            $this->suggestedService->attachSuggestedFriendForUser($this->getUser(), $iterator->current());
-        }
+            if ($suggestionCount > self::MAX_CAPACITY) {
+                break;
+            }
+
+            $suggestedUser = $iterator->current();
+            $iterator->next();
+            if ($suggestedUser === null) {
+                break;
+            }
+
+            $this->getLogger()->info(sprintf('Suggesting %s for %s', $suggestedUser, $this->getUser()));
+            $this->suggestedService->attachSuggestedFriendForUser($this->getUser(), $suggestedUser);
+        } while (true);
     }
 
     /**

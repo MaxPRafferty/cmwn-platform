@@ -173,8 +173,6 @@ class RestoreDbServiceTest extends AbstractApigilityTestCase
         $this->suggestedService->deleteSuggestionForUser('student', 'english_student');
 
         $this->restoreService->runDbStateRestorer();
-
-        $this->suggestedService->fetchSuggestedFriendForUser('student', 'english_student');
     }
 
     /**

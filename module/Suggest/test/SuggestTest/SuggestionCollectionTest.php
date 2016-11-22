@@ -64,11 +64,11 @@ class SuggestionCollectionTest extends TestCase
             function (\Iterator $iterator) use (&$actual) {
                 array_push($actual, $iterator->current()->getUserId());
                 $iterator->next();
+
                 return true;
             },
             [$collection->getIterator()]
         );
-
 
         $this->assertEquals(
             ['foo', 'bar'],

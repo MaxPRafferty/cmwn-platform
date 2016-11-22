@@ -1,6 +1,6 @@
 <?php
 
-namespace Suggest;
+namespace IntegrationTest\Suggest;
 
 use Friend\Service\FriendServiceInterface;
 use IntegrationTest\AbstractDbTestCase;
@@ -10,10 +10,11 @@ use Suggest\Engine\SuggestionEngine;
 use Suggest\Service\SuggestedServiceInterface;
 use User\Child;
 use User\UserInterface;
+use Zend\Paginator\Paginator;
 
 /**
  * Class SuggestionEngineTest
- * @package SuggestTest\Engine
+ *
  * @group Db
  * @group IntegrationTest
  * @group Friend
@@ -94,8 +95,8 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
         $suggestions = $suggestions->getItems(0, 100);
 
-        $expectedIds = ['math_student', 'english_student_1', 'english_student_2'];
-        $actualIds = [];
+        $expectedIds = ['english_student_1', 'english_student_2'];
+        $actualIds   = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }
@@ -107,15 +108,14 @@ class SuggestionEngineTest extends AbstractDbTestCase
 
     /**
      * @test
+     * @ticket CORE-2669
      */
     public function testItShouldRemoveExistingSuggestionsForUser()
     {
         $this->suggestedService->attachSuggestedFriendForUser($this->user, new Child(['user_id' => 'math_student']));
-        $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
-        $suggestions = $suggestions->getItems(0, 100);
-
-        $expectedIds = ['math_student', 'english_student_1', 'english_student_2'];
-        $actualIds = [];
+        $suggestions = new Paginator($this->suggestedService->fetchSuggestedFriendsForUser($this->user));
+        $expectedIds = ['english_student_1', 'english_student_2', 'math_student'];
+        $actualIds   = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }
@@ -124,22 +124,23 @@ class SuggestionEngineTest extends AbstractDbTestCase
         sort($actualIds);
         $this->assertEquals($expectedIds, $actualIds);
 
-        $this->friendService->attachFriendToUser($this->user, new Child(['user_id' => 'math_student']));
         $this->engine->setUser($this->user);
         $this->engine->perform();
 
-        $suggestions = $this->suggestedService->fetchSuggestedFriendsForUser($this->user);
-        $suggestions = $suggestions->getItems(0, 100);
-
+        $suggestions = new Paginator($this->suggestedService->fetchSuggestedFriendsForUser($this->user));
         $expectedIds = ['english_student_1', 'english_student_2'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }
 
         sort($expectedIds);
         sort($actualIds);
-        $this->assertEquals($expectedIds, $actualIds);
+        $this->assertEquals(
+            $expectedIds,
+            $actualIds,
+            'It appears that the suggestion engine did not remove existing suggestions'
+        );
     }
 
     /**
@@ -156,7 +157,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $suggestions->getItems(0, 100);
 
         $expectedIds = ['english_student_1', 'english_student_2'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }
@@ -181,7 +182,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $suggestions->getItems(0, 100);
 
         $expectedIds = ['english_student_1', 'english_student_2'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }
@@ -207,7 +208,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
         $suggestions = $suggestions->getItems(0, 100);
 
         $expectedIds = ['english_student_1', 'english_student_2'];
-        $actualIds = [];
+        $actualIds   = [];
         foreach ($suggestions as $suggestion) {
             $actualIds[] = $suggestion->getUserId();
         }

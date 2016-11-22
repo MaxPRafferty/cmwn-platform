@@ -46,6 +46,7 @@ class TriggerSuggestionsListener
 
     /**
      * @param SharedEventManagerInterface $events
+     * @codeCoverageIgnore
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
@@ -58,6 +59,7 @@ class TriggerSuggestionsListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {

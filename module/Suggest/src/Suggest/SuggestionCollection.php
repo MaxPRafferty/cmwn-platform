@@ -23,18 +23,4 @@ class SuggestionCollection extends \ArrayObject
 
         parent::offsetSet($suggestion->getUserId(), $suggestion);
     }
-
-    /**
-     * Merges two collections
-     *
-     * @param SuggestionCollection $mergeContainer
-     */
-    public function merge(SuggestionCollection $mergeContainer)
-    {
-        iterator_apply($mergeContainer, function (UserInterface $suggestion) {
-            if (!$this->offsetExists($suggestion->getUserId())) {
-                $this->offsetSet($suggestion->getUserId(), $suggestion);
-            }
-        });
-    }
 }

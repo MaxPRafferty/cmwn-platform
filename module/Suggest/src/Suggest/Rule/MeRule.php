@@ -18,7 +18,7 @@ class MeRule implements RuleCompositeInterface
      */
     public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        if ($suggestionCollection->offsetExists($currentUser->getUserId())) {
+        if ($currentUser->getUserId() !== null && $suggestionCollection->offsetExists($currentUser->getUserId())) {
             $suggestionCollection->offsetUnset($currentUser->getUserId());
         }
     }

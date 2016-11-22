@@ -280,8 +280,8 @@ return [
             'suggest_id' => 'english_student_1',
         ],
         [
-            'user_id'    => 'english_student',
-            'suggest_id' => 'english_student_2',
+            'user_id'    => 'english_student_2',
+            'suggest_id' => 'english_student',
         ],
 
     ],
@@ -297,11 +297,6 @@ return [
             'role'     => 'teacher',
         ],
         [
-            'user_id'  => 'math_student',
-            'group_id' => 'english',
-            'role'     => 'student',
-        ],
-        [
             'user_id'  => 'english_student_1',
             'group_id' => 'english',
             'role'     => 'student',
@@ -311,6 +306,11 @@ return [
             'group_id' => 'english',
             'role'     => 'student',
         ],
+        [
+            'user_id'  => 'principal',
+            'group_id' => 'school',
+            'role'     => 'principal',
+        ]
     ],
     'user_images'      => [],
 ];

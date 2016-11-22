@@ -3,7 +3,6 @@
 namespace Friend\Service;
 
 use Application\Utils\ServiceTrait;
-use Friend\Friend;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use User\UserHydrator;
@@ -49,6 +48,7 @@ class FriendService implements FriendServiceInterface
      * @param string|UserInterface $user
      * @param null|array|PredicateInterface $where
      * @param null|UserInterface|object $prototype
+     *
      * @return DbSelect
      */
     public function fetchFriendsForUser($user, $where = null, $prototype = null)
@@ -74,8 +74,10 @@ class FriendService implements FriendServiceInterface
 
         $select->where($where);
         $select->order(['u.first_name', 'u.last_name']);
+
         $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
         $resultSet = new HydratingResultSet($hydrator, $prototype);
+
         return new DbSelect(
             $select,
             $this->tableGateway->getAdapter(),
@@ -88,6 +90,7 @@ class FriendService implements FriendServiceInterface
      *
      * @param string|UserInterface $user
      * @param string|UserInterface $friend
+     *
      * @return bool
      */
     public function attachFriendToUser($user, $friend)
@@ -102,7 +105,7 @@ class FriendService implements FriendServiceInterface
             $this->tableGateway->insert([
                 'user_id'   => $userId,
                 'friend_id' => $friendId,
-                'status'    => FriendInterface::PENDING
+                'status'    => FriendInterface::PENDING,
             ]);
 
             return true;
@@ -131,6 +134,7 @@ class FriendService implements FriendServiceInterface
      *
      * @param string|UserInterface $user
      * @param string|UserInterface $friend
+     *
      * @return bool
      */
     public function detachFriendFromUser($user, $friend)
@@ -138,7 +142,7 @@ class FriendService implements FriendServiceInterface
         try {
             /** @var \ArrayObject $currentStatus */
             $currentStatus = $this->fetchFriendForUser($user, $friend, new \ArrayObject());
-            $where = [
+            $where         = [
                 'user_id'   => $currentStatus['uf_user_id'],
                 'friend_id' => $currentStatus['uf_friend_id'],
                 'status'    => $currentStatus['friend_status'],
@@ -164,16 +168,17 @@ class FriendService implements FriendServiceInterface
      * @param UserInterface|string $friend
      * @param null|object $prototype
      * @param null|string status
+     *
      * @throws NotFriendsException
      * @return object|UserInterface
      */
     public function fetchFriendForUser($user, $friend, $prototype = null, $status = null)
     {
-        $select   = $this->createSelectForFriendsList($user, $friend);
+        $select    = $this->createSelectForFriendsList($user, $friend);
         $prototype = null === $prototype ? new \ArrayObject() : $prototype;
-        $hydrator = new ArraySerializable();
+        $hydrator  = new ArraySerializable();
         /** @var \Iterator|\Countable $results */
-        $results  = $this->tableGateway->selectWith($select);
+        $results = $this->tableGateway->selectWith($select);
 
         if (count($results) < 1) {
             throw new NotFriendsException();
@@ -181,14 +186,18 @@ class FriendService implements FriendServiceInterface
 
         $results->rewind();
         $row = $results->current();
+
         return $hydrator->hydrate($row->getArrayCopy(), $prototype);
     }
 
     /**
      * Fetches the current friend status of a user
+     *
      * @throws NotFriendsException
+     *
      * @param UserInterface $user
      * @param UserInterface $friend
+     *
      * @return string
      */
     public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
@@ -214,7 +223,7 @@ class FriendService implements FriendServiceInterface
         $select->where($where);
 
         /** @var AbstractResultSet $results */
-        $results  = $this->tableGateway->selectWith($select);
+        $results = $this->tableGateway->selectWith($select);
         $results->rewind();
         $row = $results->current();
         // will only have friend or pending in the DB
@@ -236,6 +245,7 @@ class FriendService implements FriendServiceInterface
      *
      * @param UserInterface|string $user
      * @param UserInterface|string $friend
+     *
      * @return Select
      */
     protected function createSelectForFriendsList($user, $friend)

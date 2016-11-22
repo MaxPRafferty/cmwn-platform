@@ -10,7 +10,10 @@ use User\Child;
 
 /**
  * Class TypeRuleUnitTest
- * @package SuggestTest\Rule
+ *
+ * @group User
+ * @group Suggest
+ * @group Rule
  */
 class TypeRuleUnitTest extends TestCase
 {
@@ -20,8 +23,8 @@ class TypeRuleUnitTest extends TestCase
     public function testItShouldRemoveSuggestionsOfDifferentType()
     {
         $currentUser = new Child(['user_id' => 'current_user']);
-        $notFriends1 = new Child(['user_id' => 'not_friends']);
         $adultUser   = new Adult(['user_id' => 'adult_user']);
+        $notFriends1 = new Child(['user_id' => 'not_friends']);
         $collection  = new SuggestionCollection();
         $collection->append($adultUser);
         $collection->append($notFriends1);

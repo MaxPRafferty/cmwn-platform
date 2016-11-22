@@ -9,7 +9,9 @@ use User\Child;
 /**
  * Class MeRuleTest
  *
- * @package SuggestTest\Rule
+ * @group User
+ * @group Suggest
+ * @group Rule
  */
 class MeRuleTest extends \PHPUnit_Framework_TestCase
 {

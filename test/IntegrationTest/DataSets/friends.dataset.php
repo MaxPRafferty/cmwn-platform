@@ -360,11 +360,6 @@ return [
     'user_friends'     => [
         [
             'user_id'   => 'english_student',
-            'friend_id' => 'math_student',
-            'status'    => 'PENDING',
-        ],
-        [
-            'user_id'   => 'english_student',
             'friend_id' => 'english_student_1',
             'status'    => 'PENDING',
         ],
