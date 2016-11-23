@@ -14,6 +14,4 @@ return [
     'options' => [
         'image_domain' => $dbName,
     ],
-
-    'allow-reset' => false // allows the /restore endpoint to be called
 ];

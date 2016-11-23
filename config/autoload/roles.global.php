@@ -6,7 +6,7 @@ return [
         'permission_labels' => [
             // super
             'view.all.users'       => 'View all users',
-            'restore.db.state'     => 'Reset test users in the database',
+            'Restore.db.state'     => 'Reset test users in the database',
 
             // user
             'create.user'          => 'Create a user',
@@ -134,7 +134,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
-                    'restore.db.state',
+                    'Restore.db.state',
                 ],
             ],
 

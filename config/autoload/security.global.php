@@ -112,7 +112,7 @@ return [
                 'PUT'    => 'edit.flag',
                 'DELETE' => 'delete.flag'
             ],
-            'api.rest.restore' => [
+            'restore.rest' => [
                 'GET' => 'restore.db.state',
             ],
         ],

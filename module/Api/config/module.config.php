@@ -66,7 +66,6 @@ return array(
             'Api\\V1\\Rest\\Feed\\FeedResource' => 'Api\\V1\\Rest\\Feed\\FeedResourceFactory',
             'Api\\V1\\Rest\\GameData\\GameDataResource' => 'Api\\V1\\Rest\\GameData\\GameDataResourceFactory',
             'Api\\V1\\Rest\\Flag\\FlagResource' => 'Api\\V1\\Rest\\Flag\\FlagResourceFactory',
-            'Api\\V1\\Rest\\RestoreDb\\RestoreDbResource' => 'Api\\V1\\Rest\\RestoreDb\\RestoreDbResourceFactory',
         ),
     ),
     'router' => array(
@@ -314,15 +313,6 @@ return array(
                     ),
                 ),
             ),
-            'api.rest.restore' => array(
-                'type' => 'Segment',
-                'options' => array(
-                    'route' => '/restore',
-                    'defaults' => array(
-                        'controller' => 'Api\\V1\\Rest\\RestoreDb\\Controller',
-                    ),
-                ),
-            ),
         ),
     ),
     'zf-versioning' => array(
@@ -354,7 +344,6 @@ return array(
             25 => 'api.rest.feed',
             26 => 'api.rest.game-data',
             27 => 'api.rest.flag',
-            28 => 'api.rest.restore',
         ),
     ),
     'zf-rest' => array(
@@ -871,22 +860,6 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Flag\\FlagCollection',
             'service_name' => 'Flag',
         ),
-        'Api\\V1\\Rest\\RestoreDb\\Controller' => array(
-            'listener' => 'Api\\V1\\Rest\\RestoreDb\\RestoreDbResource',
-            'route_name' => 'api.rest.restore',
-            'route_identifier_name' => 'restore_id',
-            'collection_name' => 'restore',
-            'entity_http_methods' => array(),
-            'collection_http_methods' => array(
-                0 => 'GET',
-            ),
-            'collection_query_whitelist' => array(),
-            'page_size' => 25,
-            'page_size_param' => 'per_page',
-            'entity_class' => 'Api\\V1\\Rest\\RestoreDb\\RestoreDbEntity',
-            'collection_class' => 'Api\\V1\\Rest\\RestoreDb\\RestoreDbCollection',
-            'service_name' => 'RestoreDb',
-        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -917,7 +890,6 @@ return array(
             'Api\\V1\\Rest\\Feed\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\GameData\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Flag\\Controller' => 'HalJson',
-            'Api\\V1\\Rest\\RestoreDb\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1050,11 +1022,6 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
-            'Api\\V1\\Rest\\RestoreDb\\Controller' => array(
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/hal+json',
-                2 => 'application/json',
-            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1162,10 +1129,6 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Flag\\Controller' => array(
-                0 => 'application/vnd.api.v1+json',
-                1 => 'application/json',
-            ),
-            'Api\\V1\\Rest\\RestoreDb\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1510,18 +1473,6 @@ return array(
                 'entity_identifier_name' => 'flag_id',
                 'route_name' => 'api.rest.flag',
                 'route_identifier_name' => 'flag_id',
-                'is_collection' => true,
-            ),
-            'Api\\V1\\Rest\\RestoreDb\\RestoreDbEntity' => array(
-                'entity_identifier_name' => 'id',
-                'route_name' => 'api.rest.restore',
-                'route_identifier_name' => 'restore_id',
-                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
-            ),
-            'Api\\V1\\Rest\\RestoreDb\\RestoreDbCollection' => array(
-                'entity_identifier_name' => 'id',
-                'route_name' => 'api.rest.restore',
-                'route_identifier_name' => 'restore_id',
                 'is_collection' => true,
             ),
         ),

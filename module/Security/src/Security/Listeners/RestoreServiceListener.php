@@ -37,7 +37,7 @@ class RestoreServiceListener implements AuthenticationServiceAwareInterface, Rba
     {
         $this->listeners[] = $events->attach(
             RestoreDbServiceInterface::class,
-            'restore.db.state',
+            'Restore.db.state',
             [$this, 'restoreDbState']
         );
     }
@@ -65,7 +65,7 @@ class RestoreServiceListener implements AuthenticationServiceAwareInterface, Rba
             $user = $changePassword->getUser();
         }
 
-        if (!$this->getRbac()->isGranted($user->getRole(), 'restore.db.state')) {
+        if (!$this->getRbac()->isGranted($user->getRole(), 'Restore.db.state')) {
             throw new NotAuthorizedException;
         }
     }

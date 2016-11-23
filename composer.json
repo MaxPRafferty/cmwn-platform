@@ -7,6 +7,12 @@
   "config": {
     "process-timeout": 5000
   },
+  "repositories": [
+    {
+      "url": "git@github.com:ginasink/cmwn-api-restore.git",
+      "type": "git"
+    }
+  ],
   "require": {
     "php": "~5.6 || ~7.0",
     "ext-redis": "*",
@@ -47,7 +53,6 @@
     "acelaya/zf2-acmailer": "~5.0",
     "phpoffice/phpexcel": "~1.8",
     "chrisboulton/php-resque": "~1.2",
-    "rollbar/rollbar": "dev-master@dev",
     "aws/aws-sdk-php-zf2": "2.*",
     "robmorgan/phinx": "0.6.4",
     "zfcampus/zf-content-validation": "~1.0-dev"
@@ -65,6 +70,7 @@
     "zfcampus/zf-apigility-admin-ui": "1.2.2",
     "zfcampus/zf-deploy": "~1.0",
     "fzaninotto/faker": "~1.5",
-    "zendframework/zend-test": "~2.6"
+    "zendframework/zend-test": "~2.6",
+    "cmwn/restore": "dev-master"
   }
 }

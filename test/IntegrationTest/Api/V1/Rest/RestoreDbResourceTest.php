@@ -69,11 +69,6 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
     protected $orgService;
 
     /**
-     * @var bool allowReset
-     */
-    protected $allowReset;
-
-    /**
      * @before
      */
     public function setUpServices()
@@ -87,7 +82,6 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
         $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
         $config = TestHelper::getServiceManager()->get('config');
-        $this->allowReset = isset($config['allow-reset']) && $config['allow-reset'];
     }
 
     /**
@@ -106,10 +100,6 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
-
-        if (!$this->allowReset) {
-            $this->markTestSkipped('cannot test when flag is not set');
-        }
     }
     
     /**
@@ -121,7 +111,7 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $this->logInUser('english_student');
         $this->dispatch('/restore');
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(403);
     }
 
@@ -133,13 +123,8 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $statusCode = 200;
-        if (!$this->allowReset) {
-            $statusCode = 412;
-        }
 
         $this->dispatch('/restore');
-        $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
         $this->assertResponseStatusCode($statusCode);
     }
 
@@ -166,10 +151,10 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $this->assertEquals('foo', $userBefore->getFirstName());
         $this->assertEquals('bar', $userBefore->getLastName());
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
 
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $userAfter = $this->userService->fetchUser('english_student');
@@ -192,17 +177,17 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
             $image = $this->userImageService->fetchImageForUser('math_student');
             $this->assertEquals('principal', $image->getImageId());
 
-            $this->dispatch('/restore');
+            $this->dispatch('/Restore');
 
             try {
                 $this->userImageService->fetchImageForUser('math_student');
-                $this->fail('it did not restore user_images');
+                $this->fail('it did not Restore user_images');
             } catch (NotFoundException $notFound) {
                 //noop
             }
 
             $this->assertControllerName('api\v1\rest\restoredb\controller');
-            $this->assertMatchedRouteName('api.rest.restore');
+            $this->assertMatchedRouteName('api.rest.Restore');
             $this->assertResponseStatusCode(200);
         }
     }
@@ -221,15 +206,15 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
 
             $this->friendService->fetchFriendForUser('english_student', 'math_student');
 
-            $this->dispatch('/restore');
+            $this->dispatch('/Restore');
 
             $this->assertControllerName('api\v1\rest\restoredb\controller');
-            $this->assertMatchedRouteName('api.rest.restore');
+            $this->assertMatchedRouteName('api.rest.Restore');
             $this->assertResponseStatusCode(200);
 
             try {
                 $this->friendService->fetchFriendForUser('english_student', 'math_student');
-                $this->fail('it did not restore friends table');
+                $this->fail('it did not Restore friends table');
             } catch (NotFriendsException $notFriend) {
                 //noop
             }
@@ -249,10 +234,10 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $resultSet = $this->flipUserService->fetchEarnedFlipsForUser('other_student');
         $this->assertEquals($resultSet->count(), 1);
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
 
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $resultSet = $this->flipUserService->fetchEarnedFlipsForUser('other_student');
@@ -281,10 +266,10 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $resultSet = $this->saveGameService->fetchAllSaveGamesForUser('english_student');
         $this->assertEquals(1, $resultSet->count());
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
 
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $resultSet = $this->saveGameService->fetchAllSaveGamesForUser('english_student');
@@ -307,15 +292,15 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
             $this->assertInstanceOf(Suggestion::class, $suggestion);
             $this->assertEquals($suggestion->getUserId(), 'math_student');
 
-            $this->dispatch('/restore');
+            $this->dispatch('/Restore');
 
             $this->assertControllerName('api\v1\rest\restoredb\controller');
-            $this->assertMatchedRouteName('api.rest.restore');
+            $this->assertMatchedRouteName('api.rest.Restore');
             $this->assertResponseStatusCode(200);
 
             try {
                 $this->suggestedService->fetchSuggestedFriendForUser('english_student', 'math_student');
-                $this->fail('it did not restore db for suggestions');
+                $this->fail('it did not Restore db for suggestions');
             } catch (\Suggest\NotFoundException $notFound) {
                 //noop
             }
@@ -331,10 +316,10 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
 
         $beforeUser = $this->userService->fetchUser('chaithra');
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
 
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterUser = $this->userService->fetchUser('chaithra');
@@ -351,9 +336,9 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
 
         $beforeGroup = $this->groupService->fetchGroup('chaithra_school');
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterGroup = $this->groupService->fetchGroup('chaithra_school');
@@ -370,9 +355,9 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
 
         $beforeOrg = $this->orgService->fetchOrganization('chaithra');
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterOrg = $this->orgService->fetchOrganization('chaithra');
@@ -389,9 +374,9 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
 
         $beforeImage = $this->userImageService->fetchImageForUser('chaithra', 'english_approved');
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterImage = $this->userImageService->fetchImageForUser('chaithra', 'english_approved');
@@ -409,9 +394,9 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $beforeFlips = $this->flipUserService->fetchEarnedFlipsForUser('chaithra');
         $beforeFlips = $beforeFlips->getItems(0, $beforeFlips->count());
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterFlips = $this->flipUserService->fetchEarnedFlipsForUser('chaithra');
@@ -429,9 +414,9 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
 
         $beforeSuggestions = $this->suggestedService->fetchSuggestedFriendForUser('chaithra', 'foo_bar');
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterSuggestions = $this->suggestedService->fetchSuggestedFriendForUser('chaithra', 'foo_bar');
@@ -449,10 +434,10 @@ class RestoreDbResourceTest extends AbstractApigilityTestCase
         $beforeSaveGames = $this->saveGameService->fetchAllSaveGamesForUser('chaithra');
         $beforeSaveGames = $beforeSaveGames->getItems(0, $beforeSaveGames->count());
 
-        $this->dispatch('/restore');
+        $this->dispatch('/Restore');
 
         $this->assertControllerName('api\v1\rest\restoredb\controller');
-        $this->assertMatchedRouteName('api.rest.restore');
+        $this->assertMatchedRouteName('api.rest.Restore');
         $this->assertResponseStatusCode(200);
 
         $afterSaveGames = $this->saveGameService->fetchAllSaveGamesForUser('chaithra');
