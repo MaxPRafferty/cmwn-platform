@@ -6,7 +6,7 @@ return [
         'permission_labels' => [
             // super
             'view.all.users'       => 'View all users',
-            'Restore.db.state'     => 'Reset test users in the database',
+            'restore.db.state'     => 'Reset test users in the database',
 
             // user
             'create.user'          => 'Create a user',
@@ -76,6 +76,9 @@ return [
             'delete.skribble'      => 'Delete Skribbles',
             'update.skribble'      => 'Update Skribbles',
             'skribble.notice'      => 'Notify Skribble status',
+
+            // god mode
+            'sa.settings'          => 'View God Mode Admin Dashboard'
         ],
         'roles'             => [
             'super' => [
@@ -134,7 +137,8 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
-                    'Restore.db.state',
+                    'restore.db.state',
+                    'sa.settings',
                 ],
             ],
 

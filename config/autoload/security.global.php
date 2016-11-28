@@ -115,6 +115,9 @@ return [
             'restore.rest' => [
                 'GET' => 'restore.db.state',
             ],
+            'sa.rest.settings' => [
+                'GET' => 'sa.settings',
+            ],
         ],
     ],
 ];

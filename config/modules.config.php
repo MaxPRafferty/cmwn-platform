@@ -32,5 +32,6 @@ return [
     'Security',
     'Suggest',
     'Flag',
-    'Restore'
+    'Restore',
+    'Sa',
 ];
