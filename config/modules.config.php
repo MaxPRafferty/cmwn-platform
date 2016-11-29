@@ -32,5 +32,4 @@ return [
     'Security',
     'Suggest',
     'Flag',
-    'RestoreDb',
 ];
