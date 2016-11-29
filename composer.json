@@ -47,7 +47,7 @@
     "acelaya/zf2-acmailer": "~5.0",
     "phpoffice/phpexcel": "~1.8",
     "chrisboulton/php-resque": "~1.2",
-    "rollbar/rollbar": "dev-master@dev",
+    "rollbar/rollbar": "v0.18.2",
     "aws/aws-sdk-php-zf2": "2.*",
     "robmorgan/phinx": "0.6.4",
     "zfcampus/zf-content-validation": "~1.0-dev"
