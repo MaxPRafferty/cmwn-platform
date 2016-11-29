@@ -41,7 +41,7 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.groups');
         $this->setAllowed('view.all.orgs');
         $this->setAllowed('view.all.users');
-        $this->setAllowed('view.child.groups');
+        $this->setAllowed('view.all.child.groups');
         $this->setAllowed('view.flip');
         $this->setAllowed('view.games');
         $this->setAllowed('view.group');
