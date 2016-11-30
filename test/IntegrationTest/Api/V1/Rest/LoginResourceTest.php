@@ -29,7 +29,7 @@ class LoginResourceTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
     }
 
     /**
@@ -37,9 +37,7 @@ class LoginResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../../DataSets/login.dataset.php';
-
-        return new ArrayDataSet($data);
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/login.dataset.php');
     }
 
     /**

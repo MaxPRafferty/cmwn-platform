@@ -8,6 +8,7 @@ use Game\Service\SaveGameServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test SaveGameResourceTest
@@ -27,12 +28,21 @@ class SaveGameResourceTest extends TestCase
      * @var SaveGameServiceInterface
      */
     protected $saveService;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/save.dataset.php');
+    }
+
     /**
      * @before
      */
     public function setUpSaveService()
     {
-        $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
+        $this->saveService = TestHelper::getDbServiceManager()->get(SaveGameServiceInterface::class);
     }
     /**
      * @test
@@ -104,12 +114,7 @@ class SaveGameResourceTest extends TestCase
      */
     public function testItShouldNotSaveGameForOtherUsers($userName)
     {
-        if ($userName === 'super_user') {
-            $this->markTestSkipped('Currently the route listener will not check permission if user is super');
-        }
-        if ($userName === 'other_student') {
-            $this->fail('In order for this to work, other_student cannot be provided');
-        }
+
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
         $this->dispatch(
@@ -249,9 +254,6 @@ class SaveGameResourceTest extends TestCase
             ],
             'Math student'    => [
                 'user_name' => 'math_student',
-            ],
-            'Super User'      => [
-                'user_name' => 'super_user',
             ],
         ];
     }

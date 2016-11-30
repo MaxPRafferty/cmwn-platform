@@ -9,6 +9,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class TriggerSuggestionsListenerFactory
+ *
  * @package Security\Factory
  */
 class TriggerSuggestionsListenerFactory implements FactoryInterface
@@ -18,9 +19,9 @@ class TriggerSuggestionsListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $suggestionEngine = $serviceLocator->get(SuggestionEngine::class);
-        $jobService = $serviceLocator->get(JobServiceInterface::class);
-
-        return new TriggerSuggestionsListener($suggestionEngine, $jobService);
+        return new TriggerSuggestionsListener(
+            $serviceLocator->get(SuggestionEngine::class),
+            $serviceLocator->get(JobServiceInterface::class)
+        );
     }
 }

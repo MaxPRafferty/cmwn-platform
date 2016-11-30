@@ -38,9 +38,7 @@ class SkribbleResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../../DataSets/skribble.dataset.php';
-
-        return new ArrayDataSet($data);
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/skribble.dataset.php');
     }
 
     /**
@@ -48,7 +46,7 @@ class SkribbleResourceTest extends TestCase
      */
     public function setUpSkribbleService()
     {
-        $this->skribbleService = TestHelper::getServiceManager()->get(SkribbleServiceInterface::class);
+        $this->skribbleService = TestHelper::getDbServiceManager()->get(SkribbleServiceInterface::class);
     }
 
     /**

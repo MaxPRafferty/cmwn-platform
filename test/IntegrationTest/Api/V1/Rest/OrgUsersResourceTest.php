@@ -8,6 +8,7 @@ use User\Adult;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test OrgUsersResourceTest
@@ -29,11 +30,19 @@ class OrgUsersResourceTest extends TestCase
     protected $userService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserService()
     {
-        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
     }
 
     /**

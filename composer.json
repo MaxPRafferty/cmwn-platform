@@ -56,6 +56,7 @@
     "mockery/mockery": "0.9.*",
     "phpunit/phpunit": "~4.0",
     "phpunit/dbunit": "~2.0",
+    "phpunit/php-token-stream": "1.4.9",
     "zfcampus/zf-development-mode": "~2.0",
     "squizlabs/php_codesniffer": "2.5.1",
     "phpmd/phpmd": "2.3.2",
@@ -66,5 +67,49 @@
     "zfcampus/zf-deploy": "~1.0",
     "fzaninotto/faker": "~1.5",
     "zendframework/zend-test": "~2.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Api\\": "module\\Api\\src\\Api",
+      "Application\\": "module\\Application\\src\\Application",
+      "Asset\\": "module\\Asset\\src\\Asset",
+      "Flip\\": "module\\Flip\\src\\Flip",
+      "Flag\\": "module\\Flag\\src\\Flag",
+      "Forgot\\": "module\\Forgot\\src\\Forgot",
+      "Friend\\": "module\\Friend\\src\\Friend",
+      "Game\\": "module\\Game\\src\\Game",
+      "Group\\": "module\\Group\\src\\Group",
+      "Import\\": "module\\Import\\src\\Import",
+      "Job\\": "module\\Job\\src\\Job",
+      "Media\\": "module\\Media\\src\\Media",
+      "Notice\\": "module\\Notice\\src\\Notice",
+      "Org\\": "module\\Org\\src\\Org",
+      "Security\\": "module\\Security\\src\\Security",
+      "Skribble\\": "module\\Skribble\\src\\Skribble",
+      "Suggest\\": "module\\Suggest\\src\\Suggest",
+      "User\\": "module\\User\\src\\User"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ApplicationTest\\": "module\\Application\\test\\ApplicationTest",
+      "AssetTest\\": "module\\Asset\\test\\AssetTest",
+      "FlipTest\\": "module\\Flip\\test\\FlipTest",
+      "FlagTest\\": "module\\Flag\\test\\FlagTest",
+      "ForgotTest\\": "module\\Forgot\\test\\ForgotTest",
+      "FriendTest\\": "module\\Friend\\test\\FriendTest",
+      "GameTest\\": "module\\Game\\test\\GameTest",
+      "GroupTest\\": "module\\Group\\test\\GroupTest",
+      "ImportTest\\": "module\\Import\\test\\ImportTest",
+      "JobTest\\": "module\\Job\\test\\JobTest",
+      "MediaTest\\": "module\\Media\\test\\MediaTest",
+      "NoticeTest\\": "module\\Notice\\test\\NoticeTest",
+      "OrgTest\\": "module\\Org\\test\\OrgTest",
+      "SecurityTest\\": "module\\Security\\test\\SecurityTest",
+      "SkribbleTest\\": "module\\Skribble\\test\\SkribbleTest",
+      "SuggestTest\\": "module\\Suggest\\test\\SuggestTest",
+      "UserTest\\": "module\\User\\test\\UserTest",
+      "IntegrationTest\\": "test\\IntegrationTest"
+    }
   }
 }
