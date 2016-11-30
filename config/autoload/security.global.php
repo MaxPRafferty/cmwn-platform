@@ -112,6 +112,9 @@ return [
                 'PUT'    => 'edit.flag',
                 'DELETE' => 'delete.flag'
             ],
+            'api.rest.group-reset' => [
+                'POST' => 'reset.group.code'
+            ],
         ],
     ],
 ];

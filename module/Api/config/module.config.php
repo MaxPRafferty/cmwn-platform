@@ -66,6 +66,7 @@ return array(
             'Api\\V1\\Rest\\Feed\\FeedResource' => 'Api\\V1\\Rest\\Feed\\FeedResourceFactory',
             'Api\\V1\\Rest\\GameData\\GameDataResource' => 'Api\\V1\\Rest\\GameData\\GameDataResourceFactory',
             'Api\\V1\\Rest\\Flag\\FlagResource' => 'Api\\V1\\Rest\\Flag\\FlagResourceFactory',
+            'Api\\V1\\Rest\\GroupReset\\GroupResetResource' => 'Api\\V1\\Rest\\GroupReset\\GroupResetResourceFactory',
         ),
     ),
     'router' => array(
@@ -309,7 +310,16 @@ return array(
                 'options' => array(
                     'route' => '/flag[/:flag_id]',
                     'defaults' => array(
-                            'controller' => 'Api\\V1\\Rest\\Flag\\Controller',
+                        'controller' => 'Api\\V1\\Rest\\Flag\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.group-reset' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/group/:group_id/reset',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\GroupReset\\Controller',
                     ),
                 ),
             ),
@@ -344,6 +354,7 @@ return array(
             25 => 'api.rest.feed',
             26 => 'api.rest.game-data',
             27 => 'api.rest.flag',
+            28 => 'api.rest.group-reset'
         ),
     ),
     'zf-rest' => array(
@@ -860,6 +871,24 @@ return array(
             'collection_class' => 'Api\\V1\\Rest\\Flag\\FlagCollection',
             'service_name' => 'Flag',
         ),
+        'Api\\V1\\Rest\\GroupReset\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\GroupReset\\GroupResetResource',
+            'route_name' => 'api.rest.group-reset',
+            'route_identifier_name' => 'group_id',
+            'collection_name' => 'group-reset',
+            'entity_http_methods' => array(
+                1 => 'POST',
+            ),
+            'collection_http_methods' => array(
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => 'per_page',
+            'entity_class' => 'Api\\V1\\Rest\\GroupReset\\GroupResetEntity',
+            'collection_class' => 'Api\\V1\\Rest\\GroupReset\\GroupResetCollection',
+            'service_name' => 'GroupReset',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -890,6 +919,7 @@ return array(
             'Api\\V1\\Rest\\Feed\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\GameData\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Flag\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\GroupReset\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1022,6 +1052,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\GroupReset\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Api\\V1\\Rest\\User\\Controller' => array(
@@ -1129,6 +1164,10 @@ return array(
                 1 => 'application/json',
             ),
             'Api\\V1\\Rest\\Flag\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\GroupReset\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ),
@@ -1475,6 +1514,18 @@ return array(
                 'route_identifier_name' => 'flag_id',
                 'is_collection' => true,
             ),
+            'Api\\V1\\Rest\\GroupReset\\GroupResetEntity' => array(
+                'entity_identifier_name' => 'group_id',
+                'route_name' => 'api.rest.group-reset',
+                'route_identifier_name' => 'group_id',
+                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+            ),
+            'Api\\V1\\Rest\\GroupReset\\GroupResetCollection' => array(
+                'entity_identifier_name' => 'group_id',
+                'route_name' => 'api.rest.group-reset',
+                'route_identifier_name' => 'group_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-content-validation' => array(
@@ -1531,6 +1582,9 @@ return array(
         ),
         'Api\\V1\\Rest\\Flag\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Flag\\Validator',
+        ),
+        'Api\\V1\\Rest\\GroupReset\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\GroupReset\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -2152,6 +2206,22 @@ return array(
                 'filters' => array(),
                 'name' => 'reason',
                 'description' => 'Reason for flagging',
+            ),
+        ),
+        'Api\\V1\\Rest\\GroupReset\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\Regex',
+                        'options' => array(
+                            'pattern' => '/^([a-zA-Z])[a-zA-Z0-9]{7,}$/',
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'code',
+                'description' => 'The temporary code to use',
             ),
         ),
     ),

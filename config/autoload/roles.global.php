@@ -42,6 +42,7 @@ return [
             'add.group.user'       => 'Add user to group',
             'remove.group.user'    => 'Remove user from group',
             'view.group.users'     => 'View Group users',
+            'reset.group.code'     => 'Reset code for users of a group',
 
             // organizations
             'create.org'           => 'Create an Organization',
@@ -133,6 +134,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -170,6 +172,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -206,6 +209,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -242,6 +246,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -269,6 +274,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 

@@ -64,4 +64,11 @@ interface SecurityServiceInterface
      * @param \DateTime|null $start date the code becomes active
      */
     public function saveCodeToUser($code, $user, $days = 1, \DateTime $start = null);
+
+    /**
+     * @param string $code
+     * @param string $groupId
+     * @return mixed
+     */
+    public function saveCodeToGroup($code, $groupId);
 }
