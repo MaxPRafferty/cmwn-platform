@@ -43,7 +43,7 @@ class FriendServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/flag.dataset.php');
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/friends.dataset.php');
     }
 
     /**
@@ -74,7 +74,7 @@ class FriendServiceTest extends TestCase
     public function testItShouldAttachFriendsWithCorrectStatues()
     {
         try {
-            $this->friendService->fetchFriendStatusForUser($this->user, $this->friend);
+            $status = $this->friendService->fetchFriendStatusForUser($this->user, $this->friend);
             $this->fail('This test requires that math_student and english_student are not friends');
         } catch (NotFriendsException $nf) {
             //noop
@@ -98,6 +98,7 @@ class FriendServiceTest extends TestCase
             'When friend accepts request, status must change to friend'
         );
     }
+
     /**
      * @test
      */
@@ -156,42 +157,61 @@ class FriendServiceTest extends TestCase
         } catch (NotFriendsException $nf) {
             //noop
         }
+
         $this->friendService->attachFriendToUser($this->user, $this->friend);
         $friendList = new Paginator($this->friendService->fetchFriendsForUser($this->user));
         $actualId   = [];
+
         /** @var UserInterface $friend */
         foreach ($friendList as $friend) {
             $this->assertInstanceOf(UserInterface::class, $friend);
             array_push($actualId, $friend->getUserId());
         }
+
         $this->assertEquals(
-            [$this->friend->getUserId()],
+            ['english_student_1', $this->friend->getUserId()],
             $actualId,
             'Friend List did not return correct number of friends'
         );
     }
+
     /**
      * @test
+     * @ticket CORE-2669
      */
-    public function testItShouldReturnCorrectFriendsWhenFetchingAllFriendsByFriendId()
+    public function testItShouldHaveCorrectStatusForLeftFriend()
     {
-        try {
-            $this->friendService->fetchFriendStatusForUser($this->user, $this->friend);
-        } catch (NotFriendsException $nf) {
-            //noop
-        }
-        $this->friendService->attachFriendToUser($this->user, $this->friend);
-        $friendList = new Paginator($this->friendService->fetchFriendsForUser($this->friend));
-        $actualId   = [];
-        /** @var UserInterface $friend */
-        foreach ($friendList as $friend) {
-            $this->assertInstanceOf(UserInterface::class, $friend);
-            array_push($actualId, $friend->getUserId());
-        }
-        $this->assertEquals(
-            [$this->user->getUserId()],
-            $actualId,
-            'Friend List did not return correct number of friends'
+        $friend = new Child(['user_id' => 'english_student_1']);
+        $status = $this->friendService->fetchFriendStatusForUser(
+            $this->user,
+            $friend
         );
+
+        $this->assertEquals(FriendInterface::PENDING, $status);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2669
+     */
+    public function testItShouldHaveCorrectStatusForRightFriend()
+    {
+        $friend = new Child(['user_id' => 'english_student_1']);
+        $status = $this->friendService->fetchFriendStatusForUser(
+            $friend,
+            $this->user
+        );
+
+        $this->assertEquals(FriendInterface::REQUESTED, $status);
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2669
+     */
+    public function testItShouldThrowExceptionWhenNotFriends()
+    {
+        $this->setExpectedException(NotFriendsException::class);
+        $this->friendService->fetchFriendStatusForUser($this->user, new Child(['user_id' => 'english_student_3']));
     }
 }

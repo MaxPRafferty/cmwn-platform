@@ -2,7 +2,6 @@
 
 namespace FriendTest\Service;
 
-use Application\Utils\ServiceTrait;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendService;
@@ -14,9 +13,14 @@ use Zend\Hydrator\ArraySerializable;
 
 /**
  * Test FriendServiceTest
+ *
  * @group FriendService
  * @group Friend
  * @group Service
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FriendServiceTest extends TestCase
 {
@@ -51,7 +55,7 @@ class FriendServiceTest extends TestCase
 
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')
-                            ->andReturn('user_friends')->byDefault();
+            ->andReturn('user_friends')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
 
@@ -103,9 +107,9 @@ class FriendServiceTest extends TestCase
             ->once()
             ->andReturnUsing(function ($actual) {
                 $expected = [
-                    'user_id' => 'user',
+                    'user_id'   => 'user',
                     'friend_id' => 'friend',
-                    'status' => FriendInterface::PENDING
+                    'status'    => FriendInterface::PENDING,
                 ];
                 $this->assertEquals($expected, $actual);
             });
@@ -120,9 +124,9 @@ class FriendServiceTest extends TestCase
     public function testItShouldAddFriendIfStatusIsPending()
     {
         $status = [
-            'uf_user_id' => 'friend',
-            'uf_friend_id' => 'user',
-            'friend_status' => FriendInterface::PENDING
+            'uf_user_id'    => 'friend',
+            'uf_friend_id'  => 'user',
+            'friend_status' => FriendInterface::PENDING,
         ];
         $result = new ResultSet();
         $result->initialize([$status]);
@@ -135,24 +139,24 @@ class FriendServiceTest extends TestCase
             ->andReturnUsing(function ($where, $actual) {
                 $this->assertEquals(['status' => FriendInterface::FRIEND], $where);
                 $expected = [
-                    'user_id' => 'friend',
+                    'user_id'   => 'friend',
                     'friend_id' => 'user',
-                    'status' => FriendInterface::PENDING
+                    'status'    => FriendInterface::PENDING,
                 ];
                 $this->assertEquals($expected, $actual);
             })->once();
         $this->assertTrue($this->friendService->attachFriendToUser($this->user, $this->friend));
     }
-    
+
     /**
      * @test
      */
     public function testItShouldDetachFriendFromUserIfFriends()
     {
         $status = [
-            'uf_user_id' => 'user',
-            'uf_friend_id' => 'friend',
-            'friend_status' => FriendInterface::FRIEND
+            'uf_user_id'    => 'user',
+            'uf_friend_id'  => 'friend',
+            'friend_status' => FriendInterface::FRIEND,
         ];
 
         $result = new ResultSet();
@@ -160,9 +164,9 @@ class FriendServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturn($result)->once();
         $where = [
-            'user_id' => $status['uf_user_id'],
+            'user_id'   => $status['uf_user_id'],
             'friend_id' => $status['uf_friend_id'],
-            'status' => $status['friend_status']
+            'status'    => $status['friend_status'],
         ];
         $this->tableGateway
             ->shouldReceive('delete')
@@ -193,10 +197,9 @@ class FriendServiceTest extends TestCase
     public function testItShouldFetchFriendForUser()
     {
         $result = new ResultSet();
-        $row = [
-            'uf_user_id' => $this->user->getUserId(),
-            'uf_friend_id' => $this->friend->getUserId(),
-            'friend_status' => FriendInterface::FRIEND
+        $row    = [
+            'uf_user_id'    => $this->user->getUserId(),
+            'friend_status' => FriendInterface::FRIEND,
         ];
         $result->initialize([$row]);
         $this->tableGateway
@@ -229,10 +232,9 @@ class FriendServiceTest extends TestCase
     public function testItShouldFetchFriendStatusForUserFriend()
     {
         $result = new ResultSet();
-        $row = [
-            'uf_user_id' => $this->user->getUserId(),
-            'uf_friend_id' => $this->friend->getUserId(),
-            'friend_status' => FriendInterface::FRIEND
+        $row    = [
+            'uf_user_id'    => $this->user->getUserId(),
+            'friend_status' => FriendInterface::FRIEND,
         ];
         $result->initialize([$row]);
         $this->tableGateway
@@ -250,10 +252,9 @@ class FriendServiceTest extends TestCase
     public function testItShouldFetchFriendStatusForUserPending()
     {
         $result = new ResultSet();
-        $row = [
-            'user_id' => $this->user->getUserId(),
-            'uf_friend_id' => $this->friend->getUserId(),
-            'friend_status' => FriendInterface::PENDING
+        $row    = [
+            'requesting'    => $this->user->getUserId(),
+            'friend_status' => FriendInterface::PENDING,
         ];
         $result->initialize([$row]);
         $this->tableGateway
@@ -271,15 +272,15 @@ class FriendServiceTest extends TestCase
     public function testItShouldFetchFriendStatusForUserRequested()
     {
         $result = new ResultSet();
-        $row = [
-            'user_id' => $this->friend->getUserId(),
-            'uf_friend_id' => $this->user->getUserId(),
-            'friend_status' => FriendInterface::REQUESTED
+        $row    = [
+            'requesting'    => $this->friend->getUserId(),
+            'friend_status' => FriendInterface::PENDING,
         ];
         $result->initialize([$row]);
         $this->tableGateway
             ->shouldReceive('selectWith')
             ->andReturn($result);
+
         $this->assertEquals(
             $this->friendService->fetchFriendStatusForUser($this->user, $this->friend),
             FriendInterface::REQUESTED

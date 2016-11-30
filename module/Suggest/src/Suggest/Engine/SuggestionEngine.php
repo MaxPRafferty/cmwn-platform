@@ -8,7 +8,7 @@ use Suggest\Filter\FilterCollection;
 use Suggest\InvalidArgumentException;
 use Suggest\Rule\RuleCollection;
 use Suggest\Service\SuggestedServiceInterface;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\Log\LoggerAwareInterface;
@@ -16,12 +16,18 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class SuggestionEngine
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SuggestionEngine implements JobInterface, LoggerAwareInterface
 {
     use NoopLoggerAwareTrait;
 
+    /**
+     * Max number of suggestions to build
+     */
     const MAX_CAPACITY = 100;
+
     /**
      * @var ServiceLocatorInterface
      */
@@ -36,28 +42,46 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
      * @var SuggestedServiceInterface
      */
     protected $suggestedService;
-    /**
-     * @var array
-     */
-    protected $rulesConfig;
 
     /**
-     * @var array
+     * @var RuleCollection
      */
-    protected $filtersConfig;
+    protected $rules;
+
+    /**
+     * @var FilterCollection
+     */
+    protected $filters;
+
+    /**
+     * @var UserServiceInterface
+     */
+    protected $userService;
+
+    /**
+     * @var SuggestionCollection
+     */
+    protected $collection;
 
     /**
      * SuggestionEngine constructor.
-     * @param ServiceLocatorInterface $locator
+     *
+     * @param RuleCollection $ruleCollection
+     * @param FilterCollection $filterCollection
      * @param SuggestedServiceInterface $suggestedService
-     * @param array $config
+     * @param UserServiceInterface $userService
      */
-    public function __construct($locator, $suggestedService, $config)
-    {
-        $this->service = $locator;
+    public function __construct(
+        RuleCollection $ruleCollection,
+        FilterCollection $filterCollection,
+        SuggestedServiceInterface $suggestedService,
+        UserServiceInterface $userService
+    ) {
+        $this->rules            = $ruleCollection;
+        $this->filters          = $filterCollection;
         $this->suggestedService = $suggestedService;
-        $this->rulesConfig = isset($config['rules']) ? $config['rules'] : [];
-        $this->filtersConfig = isset($config['filters']) ? $config['filters'] : [];
+        $this->userService      = $userService;
+        $this->collection       = new SuggestionCollection();
     }
 
     /**
@@ -73,10 +97,10 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
      */
     public function setUser($user)
     {
-        if (!$user instanceof UserInterface) {
-            $userService = $this->service->get(UserServiceInterface::class);
-            $user = $userService->fetchUser($user);
+        if (null !== $user && !$user instanceof UserInterface) {
+            $user = $this->userService->fetchUser($user);
         }
+
         $this->user = $user;
     }
 
@@ -87,51 +111,44 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
     public function perform()
     {
         if (!$this->getUser() instanceof UserInterface) {
-            throw new \RuntimeException();
+            $this->getLogger()->crit('Missing user for suggestion engine');
+            throw new \RuntimeException('Missing user for suggestion engine');
         }
 
+        $this->getLogger()->notice('Performing suggestions for: ' . $this->getUser());
+        $this->getLogger()->debug('Deleting current suggestions');
         $this->suggestedService->deleteAllSuggestionsForUser($this->getUser());
-        /**@var SuggestionContainer $masterContainer*/
-        $masterContainer = new SuggestionContainer();
 
-        $this->getFilterSuggestions($masterContainer);
-        $this->applyRules($masterContainer);
-        if (count($masterContainer) > SuggestionEngine::MAX_CAPACITY) {
-            $masterContainer->exchangeArray(
-                array_rand($masterContainer->getArrayCopy(), SuggestionEngine::MAX_CAPACITY)
-            );
-        }
-        $this->attachSuggestions($masterContainer);
-    }
+        $this->getLogger()->debug('Running filters');
+        $this->filters->getSuggestions($this->collection, $this->getUser());
 
-    /**
-     * @param SuggestionContainer $masterContainer
-     */
-    protected function attachSuggestions($masterContainer)
-    {
-        foreach ($masterContainer as $key => $suggestion) {
-            $this->suggestedService->attachSuggestedFriendForUser($this->getUser(), $suggestion);
-        }
-    }
+        $this->getLogger()->debug('Applying rules');
+        $this->rules->apply($this->collection, $this->getUser());
 
-    /**
-     * @param SuggestionContainer $masterContainer
-     * @throws InvalidArgumentException
-     */
-    protected function getFilterSuggestions($masterContainer)
-    {
-        $filterCollection = new FilterCollection($this->service, $this->filtersConfig);
-        $masterContainer->merge($filterCollection->getSuggestions($this->user));
-    }
+        $this->getLogger()->debug(sprintf('Found %d suggestions', $this->collection->count()));
 
-    /**
-     * @param SuggestionContainer $masterContainer
-     * @throws InvalidArgumentException
-     */
-    protected function applyRules($masterContainer)
-    {
-        $ruleCollection = new RuleCollection($this->service, $this->rulesConfig);
-        $ruleCollection->apply($masterContainer, $this->getUser());
+        // This is forward thinking to allow the collection to
+        // decide how to weight suggestions
+        $this->collection->asort();
+
+        $suggestionCount = 0;
+        $iterator        = $this->collection->getIterator();
+        $iterator->rewind();
+        do {
+            $suggestionCount++;
+            if ($suggestionCount > self::MAX_CAPACITY) {
+                break;
+            }
+
+            $suggestedUser = $iterator->current();
+            $iterator->next();
+            if ($suggestedUser === null) {
+                break;
+            }
+
+            $this->getLogger()->info(sprintf('Suggesting %s for %s', $suggestedUser, $this->getUser()));
+            $this->suggestedService->attachSuggestedFriendForUser($this->getUser(), $suggestedUser);
+        } while (true);
     }
 
     /**
@@ -140,7 +157,7 @@ class SuggestionEngine implements JobInterface, LoggerAwareInterface
     public function getArrayCopy()
     {
         return [
-            'user_id' => $this->getUser()!==null? $this->getUser()->getUserId() : null,
+            'user_id' => $this->getUser() !== null ? $this->getUser()->getUserId() : null,
         ];
     }
 

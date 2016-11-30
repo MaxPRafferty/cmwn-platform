@@ -4,7 +4,7 @@ namespace Suggest\Rule;
 
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\UserInterface;
 
 /**
@@ -14,7 +14,7 @@ use User\UserInterface;
  *
  * @package Suggest\Rule
  */
-class FriendRule implements SuggestedRuleCompositeInterface
+class FriendRule implements RuleCompositeInterface
 {
     /**
      * @var FriendServiceInterface
@@ -23,9 +23,10 @@ class FriendRule implements SuggestedRuleCompositeInterface
 
     /**
      * FriendRule constructor.
+     *
      * @param FriendServiceInterface $friendService
      */
-    public function __construct($friendService)
+    public function __construct(FriendServiceInterface $friendService)
     {
         $this->friendService = $friendService;
     }
@@ -33,15 +34,24 @@ class FriendRule implements SuggestedRuleCompositeInterface
     /**
      * @inheritdoc
      */
-    public function apply(SuggestionContainer $suggestionContainer, UserInterface $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        foreach ($suggestionContainer as $suggestion) {
-            try {
-                $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
-                $suggestionContainer->offsetUnset($suggestion->getUserId());
-            } catch (NotFriendsException $nf) {
-                //noop
+        $suggestIterator = $suggestionCollection->getIterator();
+        $suggestIterator->rewind();
+        do {
+            /** @var UserInterface $suggested */
+            $suggested = $suggestIterator->current();
+            $suggestIterator->next();
+            if ($suggested === null) {
+                break;
             }
-        }
+
+            try {
+                $this->friendService->fetchFriendStatusForUser($currentUser, $suggested);
+                $suggestionCollection->offsetUnset($suggested->getUserId());
+            } catch (NotFriendsException $notFriends) {
+                // noop
+            }
+        } while (true);
     }
 }

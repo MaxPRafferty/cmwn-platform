@@ -92,9 +92,6 @@ class FriendResourceTest extends TestCase
      */
     public function testItShouldReturnCorrectFriendListForUser()
     {
-        $this->friendService->attachFriendToUser($this->user, $this->friend);
-        $this->friendService->attachFriendToUser($this->friend, $this->user);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch('/user/english_student/friend');
@@ -113,7 +110,7 @@ class FriendResourceTest extends TestCase
         }
 
         $this->assertEquals(
-            ['math_student'],
+            ['english_student_1'],
             $actualId,
             'Service did not return correct friends'
         );
@@ -124,9 +121,6 @@ class FriendResourceTest extends TestCase
      */
     public function testItShouldReturnCorrectFriendListForFriend()
     {
-        $this->friendService->attachFriendToUser($this->user, $this->friend);
-        $this->friendService->attachFriendToUser($this->friend, $this->user);
-
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
         $this->dispatch('/user/english_student/friend');
@@ -145,7 +139,7 @@ class FriendResourceTest extends TestCase
         }
 
         $this->assertEquals(
-            ['math_student'],
+            ['english_student_1'],
             $actualId,
             'Service did not return correct friends'
         );
