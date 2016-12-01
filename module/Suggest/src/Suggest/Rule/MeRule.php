@@ -2,20 +2,24 @@
 
 namespace Suggest\Rule;
 
+use Suggest\SuggestionCollection;
+use User\UserInterface;
+
 /**
- * Class MeRule
+ * Class Me Rule
+ *
+ * Prevents suggesting their self as a friend
  * @package Suggest\Rule
  */
-class MeRule implements SuggestedRuleCompositeInterface
+class MeRule implements RuleCompositeInterface
 {
     /**
      * @inheritdoc
      */
-    public function apply($suggestionContainer, $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        $iterator = $suggestionContainer->getIterator();
-        if ($iterator->offsetExists($currentUser->getUserId())) {
-            $iterator->offsetUnset($currentUser->getUserId());
+        if ($currentUser->getUserId() !== null && $suggestionCollection->offsetExists($currentUser->getUserId())) {
+            $suggestionCollection->offsetUnset($currentUser->getUserId());
         }
     }
 }

@@ -4,6 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test TokenResourceTest
@@ -19,6 +20,14 @@ use Zend\Json\Json;
  */
 class TokenResourceTest extends TestCase
 {
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/token.dataset.php');
+    }
+
     /**
      * @test
      *

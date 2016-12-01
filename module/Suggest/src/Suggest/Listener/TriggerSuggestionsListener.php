@@ -12,7 +12,8 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
- * Class TriggerSuggestionsListener
+ * Creates a suggestion job for a user once the user is created
+ *
  * @package Suggest\Listeners
  */
 class TriggerSuggestionsListener
@@ -45,6 +46,7 @@ class TriggerSuggestionsListener
 
     /**
      * @param SharedEventManagerInterface $events
+     * @codeCoverageIgnore
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
@@ -57,6 +59,7 @@ class TriggerSuggestionsListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {

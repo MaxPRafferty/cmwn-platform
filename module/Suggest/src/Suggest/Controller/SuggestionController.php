@@ -9,7 +9,6 @@ use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Log\Filter\Priority;
 use Zend\Log\Formatter\Simple;
 use Zend\Log\Writer\Stream;

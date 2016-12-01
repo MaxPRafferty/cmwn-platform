@@ -2,13 +2,13 @@
 
 return [
     'suggestion-engine' => [
-        'rules' => [
-            'friend-rule'  =>  \Suggest\Rule\FriendRule::class,
-            'type-rule'    =>  \Suggest\Rule\TypeRule::class,
-            'me-rule'      =>  \Suggest\Rule\MeRule::class,
+        'rules'   => [
+            'me-rule'     => \Suggest\Rule\MeRule::class,
+            'type-rule'   => \Suggest\Rule\TypeRule::class,
+            'friend-rule' => \Suggest\Rule\FriendRule::class,
         ],
         'filters' => [
-            'class-filter' =>  \Suggest\Filter\ClassFilter::class,
-        ]
-    ]
+            'class-filter' => \Suggest\Filter\ClassFilter::class,
+        ],
+    ],
 ];

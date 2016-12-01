@@ -5,16 +5,15 @@ namespace Suggest\Filter;
 use Group\Group;
 use Group\GroupInterface;
 use Group\Service\UserGroupServiceInterface;
-use Suggest\Suggestion;
-use Suggest\SuggestionContainer;
+use Suggest\SuggestionCollection;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Where;
 
 /**
- * Class ClassRule
+ * Returns all the users in the same class
  */
-class ClassFilter implements SuggestedFilterCompositeInterface
+class ClassFilter implements FilterCompositeInterface
 {
     /**
      * @var UserGroupServiceInterface
@@ -22,67 +21,71 @@ class ClassFilter implements SuggestedFilterCompositeInterface
     protected $groupService;
 
     /**
-     * @var SuggestionContainer
+     * @var SuggestionCollection
      */
     protected $container;
 
     /**
-     * ClassRule constructor.
-     * @param UserGroupServiceInterface $groupService
+     * @var int Number of groups to limit
      */
-    public function __construct(UserGroupServiceInterface $groupService)
+    protected $groupLimit = 10;
+
+    /**
+     * @var int Number of users to limit in each group
+     */
+    protected $userGroupLimit = 50;
+
+    /**
+     * ClassFilter constructor.
+     *
+     * @param UserGroupServiceInterface $groupService
+     * @param int $groupLimit
+     * @param int $userGroupLimit
+     */
+    public function __construct(UserGroupServiceInterface $groupService, $groupLimit = 10, $userGroupLimit = 50)
     {
-        $this->groupService = $groupService;
+        $this->groupService   = $groupService;
+        $this->groupLimit     = abs($groupLimit);
+        $this->userGroupLimit = abs($userGroupLimit);
     }
 
     /**
-     * @param UserInterface array $users
+     * @param UserInterface $user
      */
-    protected function processUsers($users)
+    protected function processUser(UserInterface $user)
     {
-        /**@var UserInterface $user*/
-        foreach ($users as $user) {
-            $suggestion = new Suggestion($user->getArrayCopy());
-            $this->container[$user->getUserId()] = $suggestion;
+        $userId = $user->getUserId();
+        if (!$this->container->offsetExists($userId)) {
+            $this->container->offsetSet($userId, $user);
         }
     }
 
     /**
-     * @param $groups
+     * @param GroupInterface $group
      */
-    protected function processGroups($groups)
+    public function processGroup(GroupInterface $group)
     {
         /** @var GroupInterface $group */
-        foreach ($groups as $group) {
-            $users = $this->groupService->fetchUsersForGroup($group);
-            $users = $users->getItems(0, 50);
-            $this->processUsers($users);
-        }
-    }
-
-    /**
-     * @param $currentUser
-     */
-    protected function buildSuggestions($currentUser)
-    {
-        $this->container = new SuggestionContainer();
-        $where = new Where();
-        $where->addPredicate(new Operator('g.type', Operator::OP_EQ, 'class'));
-        $groups = $this->groupService->fetchGroupsForUser($currentUser, $where, new Group());
-
-        $groups = $groups->getItems(0, 10);
-        if ($groups === null) {
-            return;
-        }
-        $this->processGroups($groups);
+        $users = $this->groupService->fetchUsersForGroup($group)->getItems(0, $this->userGroupLimit);
+        array_walk(
+            $users,
+            [$this, 'processUser']
+        );
     }
 
     /**
      * @inheritdoc
      */
-    public function getSuggestions($currentUser)
+    public function getSuggestions(SuggestionCollection $container, UserInterface $currentUser)
     {
-        $this->buildSuggestions($currentUser);
-        return $this->container;
+        $this->container = $container;
+        // Find all the groups $currentUser Belongs too
+        // TODO new service method to fetch by type
+        $where = new Where();
+        $where->addPredicate(new Operator('g.type', '=', 'class'));
+        $groups = $this->groupService
+            ->fetchGroupsForUser($currentUser, $where, new Group())
+            ->getItems(0, $this->groupLimit);
+        array_walk($groups, [$this, 'processGroup']);
     }
 }

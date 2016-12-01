@@ -17,7 +17,6 @@ class FriendRuleFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $friendService = $serviceLocator->get(FriendService::class);
-        return new FriendRule($friendService);
+        return new FriendRule($serviceLocator->get(FriendService::class));
     }
 }

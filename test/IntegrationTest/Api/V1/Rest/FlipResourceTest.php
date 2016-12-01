@@ -4,6 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * @group DB
@@ -16,6 +17,14 @@ use Zend\Json\Json;
  */
 class FlipResourceTest extends TestCase
 {
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/flip.dataset.php');
+    }
+
     /**
      * @test
      * @param string $user

@@ -4,12 +4,17 @@ namespace Suggest\Rule;
 
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
+use Suggest\SuggestionCollection;
+use User\UserInterface;
 
 /**
  * Class FriendRule
+ *
+ * Removes existing or pending friends from the suggestions
+ *
  * @package Suggest\Rule
  */
-class FriendRule implements SuggestedRuleCompositeInterface
+class FriendRule implements RuleCompositeInterface
 {
     /**
      * @var FriendServiceInterface
@@ -18,37 +23,35 @@ class FriendRule implements SuggestedRuleCompositeInterface
 
     /**
      * FriendRule constructor.
+     *
      * @param FriendServiceInterface $friendService
      */
-    public function __construct($friendService)
+    public function __construct(FriendServiceInterface $friendService)
     {
         $this->friendService = $friendService;
     }
 
     /**
-     * @param \ArrayIterator $iterator
-     * @param $currentUser
-     * @return bool
-     */
-    public function checkIfAlreadyFriends($iterator, $currentUser)
-    {
-        try {
-            $suggestion = $iterator->current();
-            $this->friendService->fetchFriendStatusForUser($currentUser, $suggestion);
-
-            $iterator->offsetUnset($suggestion->getUserId());
-        } catch (NotFriendsException $nf) {
-            //noop
-        }
-        return true;
-    }
-
-    /**
      * @inheritdoc
      */
-    public function apply($suggestionContainer, $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        $iterator = new \ArrayIterator($suggestionContainer);
-        iterator_apply($iterator, [$this, "checkIfAlreadyFriends"], [$iterator, $currentUser]);
+        $suggestIterator = $suggestionCollection->getIterator();
+        $suggestIterator->rewind();
+        do {
+            /** @var UserInterface $suggested */
+            $suggested = $suggestIterator->current();
+            $suggestIterator->next();
+            if ($suggested === null) {
+                break;
+            }
+
+            try {
+                $this->friendService->fetchFriendStatusForUser($currentUser, $suggested);
+                $suggestionCollection->offsetUnset($suggested->getUserId());
+            } catch (NotFriendsException $notFriends) {
+                // noop
+            }
+        } while (true);
     }
 }
