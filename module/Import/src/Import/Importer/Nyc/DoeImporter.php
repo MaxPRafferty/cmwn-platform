@@ -221,7 +221,7 @@ class DoeImporter implements
             $event->setName('nyc.import.excel.complete');
             $this->getEventManager()->trigger($event);
         } catch (ProcessorErrorException $processException) {
-            $this->getLogger()->alert('Processor has errors', $this->parser->getErrors());
+            $this->getLogger()->warn('Processor has errors', $this->parser->getErrors());
             $event->setName('nyc.import.excel.error');
             $this->getEventManager()->trigger($event);
             throw $processException;
