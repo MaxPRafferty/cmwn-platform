@@ -22,7 +22,7 @@ trait LoginUserTrait
     public function logInUser($userName)
     {
         /** @var SecurityService $userService */
-        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $userService = TestHelper::getDbServiceManager()->get(SecurityService::class);
 
         $user = $userService->fetchUserByUserName($userName);
         $this->getAuthService()->getStorage()->write($user);
@@ -45,7 +45,7 @@ trait LoginUserTrait
      */
     protected function getAuthService()
     {
-        return TestHelper::getServiceManager()->get(AuthenticationService::class);
+        return TestHelper::getDbServiceManager()->get(AuthenticationService::class);
     }
 
     /**

@@ -25,6 +25,7 @@ return [
             \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
             \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
             \Security\Listeners\FetchUserImageListener::class => \Security\Listeners\FetchUserImageListener::class,
+            \Security\Listeners\RestoreServiceListener::class => \Security\Listeners\RestoreServiceListener::class
         ],
 
         'factories' => [
@@ -94,6 +95,7 @@ return [
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
         \Security\Listeners\FetchUserImageListener::class,
+        \Security\Listeners\RestoreServiceListener::class,
     ],
 
     'console' => [

@@ -5,6 +5,7 @@ namespace IntegrationTest\Service;
 use Application\Exception\DuplicateEntryException;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractDbTestCase as TestCase;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use User\Adult;
 use User\Child;
@@ -24,10 +25,10 @@ use Zend\Paginator\Paginator;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserServiceTest extends TestCase
 {
-
     /**
      * @var UserServiceInterface
      */
@@ -44,12 +45,20 @@ class UserServiceTest extends TestCase
     protected $adult;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpFriendService()
     {
         $this->logInUser('super_user');
-        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
     }
 
     /**

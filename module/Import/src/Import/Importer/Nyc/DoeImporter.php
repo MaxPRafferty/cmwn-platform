@@ -168,6 +168,7 @@ class DoeImporter implements
 
     /**
      * Performs the work for the job
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function perform()
     {
@@ -220,9 +221,13 @@ class DoeImporter implements
             $event->setName('nyc.import.excel.complete');
             $this->getEventManager()->trigger($event);
         } catch (ProcessorErrorException $processException) {
-            $this->getLogger()->crit('Exception: ' . $processException->getMessage());
             $this->getLogger()->alert('Processor has errors', $this->parser->getErrors());
             $event->setName('nyc.import.excel.error');
+            $this->getEventManager()->trigger($event);
+            throw $processException;
+        } catch (\Throwable $processException) {
+            $this->getLogger()->alert($processException->getMessage());
+            $event->setName('nyc.upload.excel.failed');
             $this->getEventManager()->trigger($event);
             throw $processException;
         }

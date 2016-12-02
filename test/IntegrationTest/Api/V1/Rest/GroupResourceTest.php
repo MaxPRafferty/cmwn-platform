@@ -7,6 +7,7 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test GroupResourceTest
@@ -31,11 +32,19 @@ class GroupResourceTest extends TestCase
     protected $groupService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserService()
     {
-        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
@@ -550,16 +559,21 @@ class GroupResourceTest extends TestCase
         $this->assertResponseStatusCode(403);
     }
 
-    /* @test
+    /**
+     * @test
+     * @param $user
+     * @param $expectedGroupIds
      * @ticket CORE-1062
      * @ticket CORE-1124
+     * @ticket CORE-2378
+     * @dataProvider childGroupDataProvider
      */
-    public function testItShouldFetchChildGroups()
+    public function testItShouldFetchChildGroups($user, $parent, $expectedGroupIds)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_teacher');
+        $this->logInUser($user);
 
-        $this->dispatch('/group?type=class&parent=school');
+        $this->dispatch('/group?type=class&parent=' . $parent);
         $this->assertMatchedRouteName('api.rest.group');
         $this->assertControllerName('api\v1\rest\group\controller');
         $this->assertResponseStatusCode(200);
@@ -570,9 +584,6 @@ class GroupResourceTest extends TestCase
         $groupList = $body['_embedded'];
         $this->assertArrayHasKey('group', $groupList);
 
-        $expectedGroupIds = [
-            'english',
-        ];
         $actualGroupIds   = [];
 
         foreach ($groupList['group'] as $groupData) {
@@ -731,6 +742,40 @@ class GroupResourceTest extends TestCase
             ],
             'Super'           => [
                 'super_user',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function childGroupDataProvider()
+    {
+        return [
+            'English Student' => [
+                'english_student',
+                'school',
+                ['english']
+            ],
+            'Super User for Math'    => [
+                'super_user',
+                'school',
+                ['english', 'math']
+            ],
+            'Super User for Other Math'    => [
+                'super_user',
+                'other_school',
+                ['other_math']
+            ],
+            'English Teacher'    => [
+                'english_teacher',
+                'school',
+                ['english']
+            ],
+            'Principal'    => [
+                'principal',
+                'school',
+                ['english', 'math']
             ],
         ];
     }

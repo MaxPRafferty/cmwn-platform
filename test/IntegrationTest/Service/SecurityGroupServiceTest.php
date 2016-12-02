@@ -2,6 +2,7 @@
 
 namespace IntegrationTest\Service;
 
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use Security\Service\SecurityGroupService;
@@ -30,11 +31,19 @@ class SecurityGroupServiceTest extends TestCase
     protected $userGroupService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/group.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserGroupService()
     {
-        $this->userGroupService = TestHelper::getServiceManager()->get(SecurityGroupServiceInterface::class);
+        $this->userGroupService = TestHelper::getDbServiceManager()->get(SecurityGroupServiceInterface::class);
     }
 
     /**

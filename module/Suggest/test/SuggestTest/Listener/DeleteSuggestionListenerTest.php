@@ -11,6 +11,11 @@ use Zend\EventManager\EventManager;
 
 /**
  * Class DeleteSuggestionListenerTest
+ *
+ * @group Suggest
+ * @group Listener
+ * @group User
+ * @group UserService
  */
 class DeleteSuggestionListenerTest extends TestCase
 {
@@ -64,6 +69,7 @@ class DeleteSuggestionListenerTest extends TestCase
             ->with('english_student', 'math_student')
             ->once();
 
-        $eventManager->trigger($event);
+        $response = $eventManager->trigger($event);
+        $this->assertFalse($response->stopped());
     }
 }
