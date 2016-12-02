@@ -26,7 +26,7 @@ class GameResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php`');
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
     }
 
     /**
@@ -34,8 +34,7 @@ class GameResourceTest extends TestCase
      */
     public function setUpService()
     {
-        $this->markTestIncomplete('wait for it');
-        $this->service = TestHelper::getServiceManager()->get(GameServiceInterface::class);
+        $this->service = TestHelper::getDbServiceManager()->get(GameServiceInterface::class);
     }
 
     /**
