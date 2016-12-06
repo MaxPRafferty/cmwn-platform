@@ -48,9 +48,14 @@ class SecurityUser extends User
     protected $code;
 
     /**
-     * @var int
+     * @var \DateTime
      */
     protected $codeExpires;
+
+    /**
+     * @var \DateTime
+     */
+    protected $codeStarts;
 
     /**
      * @var string
@@ -89,8 +94,9 @@ class SecurityUser extends User
         $defaults = [
             'code'         => null,
             'code_expires' => null,
+            'code_starts'  => null,
             'password'     => null,
-            'super'        => false
+            'super'        => false,
         ];
 
         $array = array_merge($defaults, $array);
@@ -99,7 +105,8 @@ class SecurityUser extends User
         $this->password    = $array['password'];
         $this->code        = $array['code'];
         $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
-        $this->super       = (bool) $array['super'];
+        $this->codeStarts  = DateTimeFactory::factory($array['code_starts']);
+        $this->super       = (bool)$array['super'];
     }
 
     /**
@@ -116,11 +123,13 @@ class SecurityUser extends User
      * Sets the type
      *
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -128,6 +137,7 @@ class SecurityUser extends User
      * Verifies the password
      *
      * @param $password
+     *
      * @return bool
      */
     public function comparePassword($password)
@@ -139,6 +149,7 @@ class SecurityUser extends User
      * Compare string to a code
      *
      * @param $code
+     *
      * @return string
      */
     public function compareCode($code)
@@ -147,8 +158,19 @@ class SecurityUser extends User
             return static::CODE_INVALID;
         }
 
+        if ($this->codeExpires === null) {
+            return static::CODE_INVALID;
+        }
+
         $now = DateTimeFactory::factory('now');
-        if ($this->codeExpires === null || $now->format("Y-m-d H:i:s") > $this->codeExpires->format("Y-m-d H:i:s")) {
+        if ($this->codeExpires === null || $now->getTimestamp() > $this->codeExpires->getTimestamp()) {
+            return static::CODE_EXPIRED;
+        }
+
+        // Since we are adding the code starts we only check the start date if set
+        if (($this->codeStarts !== null) &&
+            ($now->getTimestamp() < $this->codeStarts->getTimestamp())
+        ) {
             return static::CODE_EXPIRED;
         }
 
@@ -176,13 +198,15 @@ class SecurityUser extends User
     }
 
     /**
-     * @param $type|GroupInterface
+     * @param $type |GroupInterface
+     *
      * @return $this
      */
     public function addGroupType($type)
     {
-        $type = $type instanceof GroupInterface ? $type->getType() : $type;
+        $type                    = $type instanceof GroupInterface ? $type->getType() : $type;
         $this->groupTypes[$type] = $type;
+
         return $this;
     }
 

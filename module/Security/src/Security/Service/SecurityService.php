@@ -27,6 +27,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
 
     /**
      * SecurityService constructor.
+     *
      * @param TableGateway $gateway
      */
     public function __construct(TableGateway $gateway)
@@ -38,6 +39,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      * Fetches a user by the email
      *
      * @param $email
+     *
      * @return SecurityUser
      * @throws NotFoundException
      */
@@ -56,6 +58,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      * Fetches a user by the user name
      *
      * @param $username
+     *
      * @return SecurityUser
      * @throws NotFoundException
      */
@@ -63,7 +66,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     {
         $predicateSet = new PredicateSet([
             new Operator('username', Operator::OP_EQ, $username),
-            new Operator('normalized_username', Operator::OP_EQ, User::normalizeUsername($username))
+            new Operator('normalized_username', Operator::OP_EQ, User::normalizeUsername($username)),
         ], PredicateSet::OP_OR);
 
         $rowSet = $this->gateway->select($predicateSet);
@@ -86,6 +89,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      *
      * @param $user
      * @param $password
+     *
      * @return bool
      */
     public function savePasswordToUser($user, $password)
@@ -96,7 +100,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
 
         $this->gateway->update(
             ['password' => static::encryptPassword($password), 'code' => null, 'code_expires' => null],
-            ['user_id'  => $userId]
+            ['user_id' => $userId]
         );
 
         return true;
@@ -107,6 +111,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      *
      * @param $user
      * @param bool $super
+     *
      * @return bool
      */
     public function setSuper($user, $super = true)
@@ -117,7 +122,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
         $this->getLogger()->notice('Setting user to be a super user: ' . $userId);
 
         $this->gateway->update(
-            ['super'   => $bit],
+            ['super' => $bit],
             ['user_id' => $userId]
         );
 
@@ -127,12 +132,21 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     /**
      * @inheritdoc
      */
-    public function saveCodeToUser($code, $user, $days = 1)
+    public function saveCodeToUser($code, $user, $days = 1, \DateTime $start = null)
     {
         $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $expires = new \DateTime(sprintf('+%d days', abs($days)));
+        $start   = null === $start ? new \DateTime('now') : $start;
+        $start->setTime(00, 00, 00);
+
+        $expires = clone $start;
+        $expires->add(new \DateInterval(sprintf('P%dD', abs($days))));
+        $expires->setTime(23, 59, 59);
         $this->gateway->update(
-            ['code'    => $code, 'code_expires' => (string) $expires->format("Y-m-d H:i:s")],
+            [
+                'code'         => $code,
+                'code_expires' => (string)$expires->format("Y-m-d H:i:s"),
+                'code_starts'  => (string)$start->format("Y-m-d H:i:s"),
+            ],
             ['user_id' => $userId]
         );
 
@@ -143,6 +157,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      * Encrypts the password
      *
      * @param $password
+     *
      * @return mixed
      */
     public static function encryptPassword($password)

@@ -105,7 +105,7 @@ class SecurityServiceTest extends TestCase
             'username'     => 'manchuck',
             'code'         => null,
             'code_expires' => 'now',
-            'email'        => 'chuck@manchuck.com'
+            'email'        => 'chuck@manchuck.com',
         ];
 
         $this->tableGateway->shouldReceive('select')
@@ -129,7 +129,7 @@ class SecurityServiceTest extends TestCase
             'username'     => 'manchuck',
             'code'         => null,
             'code_expires' => 'now',
-            'email'        => 'chuck@manchuck.com'
+            'email'        => 'chuck@manchuck.com',
         ];
 
         $this->tableGateway->shouldReceive('select')
@@ -231,9 +231,10 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code_expires', $set);
                 $this->assertEquals('foobar', $set['code']);
 
-                $now = new \DateTimeImmutable('+1 Days');
+                $now = new \DateTime('+1 Days');
+                $now->setTime(23, 59, 59);
                 $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('Ymd'), $expires->format('Ymd'));
+                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })
@@ -254,9 +255,10 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code_expires', $set);
                 $this->assertEquals('foobar', $set['code']);
 
-                $now = new \DateTimeImmutable('+30 Days');
+                $now = new \DateTime('+30 Days');
+                $now->setTime(23, 59, 59);
                 $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('Ymd'), $expires->format('Ymd'));
+                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })
@@ -277,13 +279,39 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code_expires', $set);
                 $this->assertEquals('foobar', $set['code']);
 
-                $now = new \DateTimeImmutable('+15 Days');
+                $now = new \DateTime('+15 Days');
+                $now->setTime(23, 59, 59);
                 $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('Ymd'), $expires->format('Ymd'));
+                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })
             ->once();
         $this->assertTrue($this->securityService->saveCodeToUser('foobar', 'student', -15));
+    }
+
+    /**
+     * @test
+     * @ticket CORE-2713
+     */
+    public function testItShouldSetTheCodeToExpireFromStartDate()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->andReturnUsing(function ($set, $where) {
+                $this->assertTrue(is_array($set));
+                $this->assertArrayHasKey('code', $set);
+                $this->assertArrayHasKey('code_expires', $set);
+                $this->assertEquals('foobar', $set['code']);
+
+                $now = new \DateTime('tomorrow');
+                $now->setTime(23, 59, 59);
+                $now->add(new \DateInterval('P5D'));
+                $expires = new \DateTimeImmutable($set['code_expires']);
+                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
+
+                $this->assertEquals(['user_id' => 'student'], $where);
+            })
+            ->once();
+        $this->assertTrue($this->securityService->saveCodeToUser('foobar', 'student', 5, new \DateTime('tomorrow')));
     }
 }
