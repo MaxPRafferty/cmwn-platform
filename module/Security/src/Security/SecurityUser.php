@@ -2,9 +2,9 @@
 
 namespace Security;
 
-use Application\Utils\Date\DateTimeFactory;
 use Group\GroupInterface;
-
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\ValidationData;
 use User\User;
 
 /**
@@ -48,16 +48,6 @@ class SecurityUser extends User
     protected $code;
 
     /**
-     * @var \DateTime
-     */
-    protected $codeExpires;
-
-    /**
-     * @var \DateTime
-     */
-    protected $codeStarts;
-
-    /**
      * @var string
      */
     protected $type;
@@ -92,21 +82,17 @@ class SecurityUser extends User
     public function exchangeArray(array $array)
     {
         $defaults = [
-            'code'         => null,
-            'code_expires' => null,
-            'code_starts'  => null,
-            'password'     => null,
-            'super'        => false,
+            'code'     => null,
+            'password' => null,
+            'super'    => false,
         ];
 
         $array = array_merge($defaults, $array);
         parent::exchangeArray($array);
 
-        $this->password    = $array['password'];
-        $this->code        = $array['code'];
-        $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
-        $this->codeStarts  = DateTimeFactory::factory($array['code_starts']);
-        $this->super       = (bool)$array['super'];
+        $this->password = $array['password'];
+        $this->code     = $array['code'];
+        $this->super    = (bool)$array['super'];
     }
 
     /**
@@ -154,27 +140,23 @@ class SecurityUser extends User
      */
     public function compareCode($code)
     {
-        if ($code !== $this->code) {
+        if (null === $this->code) {
             return static::CODE_INVALID;
         }
+        try {
+            $config       = new Configuration();
+            $compareToken = $config->getParser()->parse($this->code);
+            $validator    = new ValidationData();
+            $validator->setId($code);
 
-        if ($this->codeExpires === null) {
-            return static::CODE_INVALID;
+            return $compareToken->validate($validator)
+                ? static::CODE_VALID
+                : static::CODE_EXPIRED;
+
+        } catch (\Exception $jwtException) {
         }
 
-        $now = DateTimeFactory::factory('now');
-        if ($this->codeExpires === null || $now->getTimestamp() > $this->codeExpires->getTimestamp()) {
-            return static::CODE_EXPIRED;
-        }
-
-        // Since we are adding the code starts we only check the start date if set
-        if (($this->codeStarts !== null) &&
-            ($now->getTimestamp() < $this->codeStarts->getTimestamp())
-        ) {
-            return static::CODE_EXPIRED;
-        }
-
-        return static::CODE_VALID;
+        return static::CODE_INVALID;
     }
 
     /**

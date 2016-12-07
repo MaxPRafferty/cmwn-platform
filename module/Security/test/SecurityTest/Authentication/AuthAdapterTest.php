@@ -3,6 +3,7 @@
 namespace SecurityTest\Authentication;
 
 use Application\Exception\NotFoundException;
+use Lcobucci\JWT\Configuration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\ChangePasswordUser;
@@ -167,15 +168,19 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldAllowLoginWithCodeUser()
     {
-        $codeExpires = new \DateTime('+2 Days');
-        $codeStarts  = new \DateTime('-2 Days');
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() - 50)
+            ->expiresAt(time() + 50)
+            ->identifiedBy('nom-nom-nom')
+            ->getToken();
+
         $authUser    = new SecurityUser([
             'user_id'      => 'man-chuck',
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
-            'code'         => 'nom-nom-nom',
-            'code_expires' => $codeExpires,
-            'code_starts'  => $codeStarts,
+            'code'         => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -202,15 +207,19 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldDenyLoginWhenCodeIsExpired()
     {
-        $codeExpires = new \DateTime('-1 Day');
-        $codeStarts  = new \DateTime('-2 Days');
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() - 150)
+            ->expiresAt(time() - 50)
+            ->identifiedBy('nom-nom-nom')
+            ->getToken();
+
         $authUser    = new SecurityUser([
             'user_id'      => 'man-chuck',
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
-            'code'         => 'nom-nom-nom',
-            'code_expires' => $codeExpires,
-            'code_starts'  => $codeStarts,
+            'code'         => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -237,15 +246,19 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldDenyLoginWhenCodeIsOutsideWindow()
     {
-        $codeExpires = new \DateTime('+2 Days');
-        $codeStarts  = new \DateTime('+1 Day');
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() + 150)
+            ->expiresAt(time() + 250)
+            ->identifiedBy('nom-nom-nom')
+            ->getToken();
+
         $authUser    = new SecurityUser([
             'user_id'      => 'man-chuck',
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
-            'code'         => 'nom-nom-nom',
-            'code_expires' => $codeExpires,
-            'code_starts'  => $codeStarts,
+            'code'         => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -271,13 +284,18 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldDenyLoginWhenCodeHasNoStartDate()
     {
-        $codeExpires = new \DateTime('+2 Days');
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->expiresAt(time() + 50)
+            ->identifiedBy('nom-nom-nom')
+            ->getToken();
+
         $authUser    = new SecurityUser([
             'user_id'      => 'man-chuck',
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
-            'code'         => 'nom-nom-nom',
-            'code_expires' => $codeExpires,
+            'code'         => $token->__toString(),
         ]);
 
         $this->assertEquals(

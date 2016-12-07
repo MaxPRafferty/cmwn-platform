@@ -1893,6 +1893,30 @@ return array(
                 'name' => 'teacher_code',
                 'description' => 'Teacher Access Code',
             ),
+            4 => array(
+                'required' => false,
+                'allow_empty' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => \Application\Utils\Date\DateGreaterThanValidator::class,
+                        'options' => array(
+                            'startDate' => 'now',
+                        ),
+                    ),
+                ),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\ToNull',
+                        'options' => array(),
+                    ),
+                    1 => array(
+                        'name' => \Application\Utils\Date\ToDateFilter::class,
+                        'options' => array(),
+                    ),
+                ),
+                'name' => 'code_start',
+                'description' => 'Start Date for Access Codes',
+            ),
         ),
         'Api\\V1\\Rest\\Password\\Validator' => array(
             0 => array(

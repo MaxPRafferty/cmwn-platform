@@ -16,7 +16,7 @@ interface SecurityServiceInterface
      * Encrypts the password
      *
      * @param $password
-     * @return mixed
+     * @return string
      */
     public static function encryptPassword($password);
 
@@ -58,7 +58,7 @@ interface SecurityServiceInterface
     /**
      * Saves the temp code to a user
      *
-     * @param $code The temporary code for the user
+     * @param string $code The temporary code for the user
      * @param UserInterface|string $user
      * @param int $days number of days the code is active for
      * @param \DateTime|null $start date the code becomes active

@@ -2,6 +2,7 @@
 
 namespace SecurityTest\Service;
 
+use Lcobucci\JWT\Configuration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
@@ -221,6 +222,7 @@ class SecurityServiceTest extends TestCase
     /**
      * @test
      * @ticket CORE-1162
+     * @ticket CORE-2713
      */
     public function testItShouldSetTheCodeToExpireInOneDayByDefault()
     {
@@ -228,13 +230,28 @@ class SecurityServiceTest extends TestCase
             ->andReturnUsing(function ($set, $where) {
                 $this->assertTrue(is_array($set));
                 $this->assertArrayHasKey('code', $set);
-                $this->assertArrayHasKey('code_expires', $set);
-                $this->assertEquals('foobar', $set['code']);
+                $this->assertArrayNotHasKey('code_expires', $set);
 
-                $now = new \DateTime('+1 Days');
-                $now->setTime(23, 59, 59);
-                $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
+                $start  = new \DateTime('now');
+                $start->setTime(00, 00, 00);
+
+                $expires = clone $start;
+                $expires->add(new \DateInterval('P1D'));
+                $expires->setTime(23, 59, 59);
+                $jwtConfig = new Configuration();
+                $token     = $jwtConfig->createBuilder()
+                    ->canOnlyBeUsedBy('student')
+                    ->issuedAt(time())
+                    ->canOnlyBeUsedAfter($start->getTimestamp())
+                    ->expiresAt($expires->getTimestamp())
+                    ->identifiedBy('foobar')
+                    ->getToken();
+
+                $this->assertEquals(
+                    $set['code'],
+                    $token->__toString(),
+                    'Invalid JWT token set'
+                );
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })
@@ -245,6 +262,7 @@ class SecurityServiceTest extends TestCase
     /**
      * @test
      * @ticket CORE-1162
+     * @ticket CORE-2713
      */
     public function testItShouldSetTheCodeToExpireInThirtyDays()
     {
@@ -252,13 +270,28 @@ class SecurityServiceTest extends TestCase
             ->andReturnUsing(function ($set, $where) {
                 $this->assertTrue(is_array($set));
                 $this->assertArrayHasKey('code', $set);
-                $this->assertArrayHasKey('code_expires', $set);
-                $this->assertEquals('foobar', $set['code']);
+                $this->assertArrayNotHasKey('code_expires', $set);
 
-                $now = new \DateTime('+30 Days');
-                $now->setTime(23, 59, 59);
-                $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
+                $start  = new \DateTime('now');
+                $start->setTime(00, 00, 00);
+
+                $expires = clone $start;
+                $expires->add(new \DateInterval('P30D'));
+                $expires->setTime(23, 59, 59);
+                $jwtConfig = new Configuration();
+                $token     = $jwtConfig->createBuilder()
+                    ->canOnlyBeUsedBy('student')
+                    ->issuedAt(time())
+                    ->canOnlyBeUsedAfter($start->getTimestamp())
+                    ->expiresAt($expires->getTimestamp())
+                    ->identifiedBy('foobar')
+                    ->getToken();
+
+                $this->assertEquals(
+                    $set['code'],
+                    $token->__toString(),
+                    'Invalid JWT token set'
+                );
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })
@@ -276,13 +309,28 @@ class SecurityServiceTest extends TestCase
             ->andReturnUsing(function ($set, $where) {
                 $this->assertTrue(is_array($set));
                 $this->assertArrayHasKey('code', $set);
-                $this->assertArrayHasKey('code_expires', $set);
-                $this->assertEquals('foobar', $set['code']);
+                $this->assertArrayNotHasKey('code_expires', $set);
 
-                $now = new \DateTime('+15 Days');
-                $now->setTime(23, 59, 59);
-                $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
+                $start  = new \DateTime('now');
+                $start->setTime(00, 00, 00);
+
+                $expires = clone $start;
+                $expires->add(new \DateInterval('P15D'));
+                $expires->setTime(23, 59, 59);
+                $jwtConfig = new Configuration();
+                $token     = $jwtConfig->createBuilder()
+                    ->canOnlyBeUsedBy('student')
+                    ->issuedAt(time())
+                    ->canOnlyBeUsedAfter($start->getTimestamp())
+                    ->expiresAt($expires->getTimestamp())
+                    ->identifiedBy('foobar')
+                    ->getToken();
+
+                $this->assertEquals(
+                    $set['code'],
+                    $token->__toString(),
+                    'Invalid JWT token set'
+                );
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })
@@ -300,14 +348,28 @@ class SecurityServiceTest extends TestCase
             ->andReturnUsing(function ($set, $where) {
                 $this->assertTrue(is_array($set));
                 $this->assertArrayHasKey('code', $set);
-                $this->assertArrayHasKey('code_expires', $set);
-                $this->assertEquals('foobar', $set['code']);
+                $this->assertArrayNotHasKey('code_expires', $set);
 
-                $now = new \DateTime('tomorrow');
-                $now->setTime(23, 59, 59);
-                $now->add(new \DateInterval('P5D'));
-                $expires = new \DateTimeImmutable($set['code_expires']);
-                $this->assertEquals($now->format('YmdHis'), $expires->format('YmdHis'));
+                $start  = new \DateTime('tomorrow');
+                $start->setTime(00, 00, 00);
+
+                $expires = clone $start;
+                $expires->add(new \DateInterval('P5D'));
+                $expires->setTime(23, 59, 59);
+                $jwtConfig = new Configuration();
+                $token     = $jwtConfig->createBuilder()
+                    ->canOnlyBeUsedBy('student')
+                    ->issuedAt(time())
+                    ->canOnlyBeUsedAfter($start->getTimestamp())
+                    ->expiresAt($expires->getTimestamp())
+                    ->identifiedBy('foobar')
+                    ->getToken();
+
+                $this->assertEquals(
+                    $set['code'],
+                    $token->__toString(),
+                    'Invalid JWT token set'
+                );
 
                 $this->assertEquals(['user_id' => 'student'], $where);
             })

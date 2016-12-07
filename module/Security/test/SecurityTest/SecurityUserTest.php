@@ -2,6 +2,7 @@
 
 namespace SecurityTest;
 
+use Lcobucci\JWT\Configuration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 
@@ -20,21 +21,16 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldCompareCorrectPasswordAndSetSomeData()
     {
-        $date     = new \DateTime();
         $userData = [
             'user_id'      => 'abcd-efgh',
             'username'     => 'manchuck',
             'email'        => 'chuck@manchuck.com',
-            'code'         => 'some_code',
-            'code_expires' => $date->format("Y-m-d H:i:s"),
             'password'     => password_hash('foobar', PASSWORD_DEFAULT),
         ];
 
         $user = new SecurityUser($userData);
-
         $this->assertEquals($userData['username'], $user->getUserName());
         $this->assertEquals($userData['email'], $user->getEmail());
-        $this->assertEquals($userData['code'], $user->getCode());
         $this->assertEquals($userData['user_id'], $user->getUserId());
         $this->assertTrue($user->comparePassword('foobar'));
     }
@@ -42,16 +38,45 @@ class SecurityUserTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldPassCode()
+    {
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time())
+            ->expiresAt(time() + 50)
+            ->identifiedBy('some_code')
+            ->getToken();
+
+        $userData = [
+            'user_id'  => 'abcd-efgh',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
+        ];
+
+        $user = new SecurityUser($userData);
+        $this->assertEquals(SecurityUser::CODE_VALID, $user->compareCode('some_code'));
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldFailCodeWhenPastExpiration()
     {
-        $date     = new \DateTime("yesterday");
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() - 180)
+            ->expiresAt(time() - 50)
+            ->identifiedBy('some_code')
+            ->getToken();
+
         $userData = [
-            'user_id'      => 'abcd-efgh',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => 'some_code',
-            'code_expires' => $date->format("Y-m-d H:i:s"),
-            'password'     => password_hash('foobar', PASSWORD_DEFAULT),
+            'user_id'  => 'abcd-efgh',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ];
 
         $user = new SecurityUser($userData);
@@ -63,37 +88,23 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldFailCodeWhenThereIsAMisMatch()
     {
-        $date     = new \DateTime("yesterday");
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() - 50)
+            ->expiresAt(time() + 50)
+            ->identifiedBy('some_code')
+            ->getToken();
+
         $userData = [
-            'user_id'      => 'abcd-efgh',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => 'some_code',
-            'code_expires' => $date->format("Y-m-d H:i:s"),
-            'password'     => password_hash('foobar', PASSWORD_DEFAULT),
+            'user_id'  => 'abcd-efgh',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ];
 
         $user = new SecurityUser($userData);
-        $this->assertEquals(SecurityUser::CODE_INVALID, $user->compareCode('not the code'));
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldPassCode()
-    {
-        $date     = new \DateTime("tomorrow");
-        $userData = [
-            'user_id'      => 'abcd-efgh',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => 'some_code',
-            'code_expires' => $date->format("Y-m-d H:i:s"),
-            'password'     => password_hash('foobar', PASSWORD_DEFAULT),
-        ];
-
-        $user = new SecurityUser($userData);
-        $this->assertEquals(SecurityUser::CODE_VALID, $user->compareCode('some_code'));
+        $this->assertEquals(SecurityUser::CODE_EXPIRED, $user->compareCode('not the code'));
     }
 
     /**
@@ -101,16 +112,19 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldPassCodeIfInWindow()
     {
-        $end      = new \DateTime("tomorrow");
-        $start    = new \DateTime('yesterday');
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() - 50)
+            ->expiresAt(time() + 50)
+            ->identifiedBy('some_code')
+            ->getToken();
+
         $userData = [
-            'user_id'      => 'abcd-efgh',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => 'some_code',
-            'code_expires' => $end->format("Y-m-d H:i:s"),
-            'code_starts'  => $start->format("Y-m-d H:i:s"),
-            'password'     => password_hash('foobar', PASSWORD_DEFAULT),
+            'user_id'  => 'abcd-efgh',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ];
 
         $user = new SecurityUser($userData);
@@ -120,18 +134,21 @@ class SecurityUserTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldFaileCodeIfInWindow()
+    public function testItShouldFailCodeIfNotInWindow()
     {
-        $end      = new \DateTime("-1 day");
-        $start    = new \DateTime('-2 days');
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy('abcd-efgh')
+            ->issuedAt(time() - 100)
+            ->expiresAt(time() - 50)
+            ->identifiedBy('some_code')
+            ->getToken();
+
         $userData = [
-            'user_id'      => 'abcd-efgh',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => 'some_code',
-            'code_expires' => $end->format("Y-m-d H:i:s"),
-            'code_starts'  => $start->format("Y-m-d H:i:s"),
-            'password'     => password_hash('foobar', PASSWORD_DEFAULT),
+            'user_id'  => 'abcd-efgh',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ];
 
         $user = new SecurityUser($userData);

@@ -3,7 +3,7 @@
 namespace Security\Service;
 
 use Application\Exception\NotFoundException;
-use Application\Utils\NoopLoggerAwareTrait;
+use Lcobucci\JWT\Configuration;
 use Security\SecurityUser;
 use User\User;
 use User\Service\UserService;
@@ -11,15 +11,12 @@ use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\Log\LoggerAwareInterface;
 
 /**
  * Class SecurityService
  */
-class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
+class SecurityService implements SecurityServiceInterface
 {
-    use NoopLoggerAwareTrait;
-
     /**
      * @var TableGateway
      */
@@ -32,16 +29,11 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      */
     public function __construct(TableGateway $gateway)
     {
-        $this->gateway = $gateway;
+        $this->gateway    = $gateway;
     }
 
     /**
-     * Fetches a user by the email
-     *
-     * @param $email
-     *
-     * @return SecurityUser
-     * @throws NotFoundException
+     * @inheritdoc
      */
     public function fetchUserByEmail($email)
     {
@@ -55,12 +47,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     }
 
     /**
-     * Fetches a user by the user name
-     *
-     * @param $username
-     *
-     * @return SecurityUser
-     * @throws NotFoundException
+     * @inheritdoc
      */
     public function fetchUserByUserName($username)
     {
@@ -85,18 +72,11 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     }
 
     /**
-     * Saves the encrypted password to a user
-     *
-     * @param $user
-     * @param $password
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function savePasswordToUser($user, $password)
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-
-        $this->getLogger()->notice('Saving new password to user: ' . $userId);
 
         $this->gateway->update(
             ['password' => static::encryptPassword($password), 'code' => null, 'code_expires' => null],
@@ -107,19 +87,12 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     }
 
     /**
-     * Sets the user as a super admin
-     *
-     * @param $user
-     * @param bool $super
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function setSuper($user, $super = true)
     {
         $bit    = $super ? 1 : 0;
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-
-        $this->getLogger()->notice('Setting user to be a super user: ' . $userId);
 
         $this->gateway->update(
             ['super' => $bit],
@@ -134,19 +107,24 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
      */
     public function saveCodeToUser($code, $user, $days = 1, \DateTime $start = null)
     {
-        $userId  = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $start   = null === $start ? new \DateTime('now') : $start;
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $start  = null === $start ? new \DateTime('now') : $start;
         $start->setTime(00, 00, 00);
 
         $expires = clone $start;
         $expires->add(new \DateInterval(sprintf('P%dD', abs($days))));
         $expires->setTime(23, 59, 59);
+        $jwtConfig = new Configuration();
+        $token     = $jwtConfig->createBuilder()
+            ->canOnlyBeUsedBy($userId)
+            ->issuedAt(time())
+            ->canOnlyBeUsedAfter($start->getTimestamp())
+            ->expiresAt($expires->getTimestamp())
+            ->identifiedBy($code)
+            ->getToken();
+
         $this->gateway->update(
-            [
-                'code'         => $code,
-                'code_expires' => (string)$expires->format("Y-m-d H:i:s"),
-                'code_starts'  => (string)$start->format("Y-m-d H:i:s"),
-            ],
+            ['code' => $token->__toString()],
             ['user_id' => $userId]
         );
 
@@ -154,11 +132,7 @@ class SecurityService implements SecurityServiceInterface, LoggerAwareInterface
     }
 
     /**
-     * Encrypts the password
-     *
-     * @param $password
-     *
-     * @return mixed
+     * @inheritdoc
      */
     public static function encryptPassword($password)
     {
