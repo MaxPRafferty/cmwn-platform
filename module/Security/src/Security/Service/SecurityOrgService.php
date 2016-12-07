@@ -17,7 +17,7 @@ use Zend\Db\Sql\Where;
  *
  * @package Security\Service
  */
-class SecurityOrgService
+class SecurityOrgService implements SecurityOrgServiceInterface
 {
     /**
      * @var Adapter
@@ -26,6 +26,7 @@ class SecurityOrgService
 
     /**
      * SecurityOrgService constructor.
+     *
      * @param Adapter $adapter
      */
     public function __construct(Adapter $adapter)
@@ -82,13 +83,14 @@ class SecurityOrgService
         );
 
         $select->where($where);
-        $sql   = new Sql($this->adapter);
-        $stmt  = $sql->prepareStatementForSqlObject($select);
-        $results  = $stmt->execute();
+        $sql     = new Sql($this->adapter);
+        $stmt    = $sql->prepareStatementForSqlObject($select);
+        $results = $stmt->execute();
 
         $results->rewind();
         $role = $results->current()['role'];
         $role = $role === null ? 'logged_in' : $role;
+
         return $role . '.' . strtolower($user->getType());
     }
 
@@ -120,6 +122,7 @@ class SecurityOrgService
         $results->rewind();
         $role = $results->current()['role'];
         $role = $role === null ? 'logged_in' : $role;
+
         return $role . '.' . strtolower($user->getType());
     }
 }
