@@ -22,6 +22,7 @@ use ZF\Hal\Link\LinkCollectionAwareInterface;
 /**
  * Class GroupRouteListener
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 class GroupRouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface
 {

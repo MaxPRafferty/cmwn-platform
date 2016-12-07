@@ -21,6 +21,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
  * @group IntegrationTest
  * @group Db
  * @package IntegrationTest\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FlagServiceTest extends TestCase
 {
