@@ -152,7 +152,6 @@ class SecurityUser extends User
             return $compareToken->validate($validator)
                 ? static::CODE_VALID
                 : static::CODE_EXPIRED;
-
         } catch (\Exception $jwtException) {
         }
 
