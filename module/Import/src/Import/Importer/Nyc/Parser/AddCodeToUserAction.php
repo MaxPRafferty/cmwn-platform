@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc\Parser;
 
+use Application\Utils\Date\DateTimeFactory;
 use Import\ActionInterface;
 use Security\Service\SecurityServiceInterface;
 use User\UserAwareInterface;
@@ -27,6 +28,11 @@ class AddCodeToUserAction implements ActionInterface
     protected $code;
 
     /**
+     * @var \DateTime
+     */
+    protected $codeStart;
+
+    /**
      * AddCodeToUserAction constructor.
      *
      * @param UserAwareInterface $user
@@ -38,6 +44,7 @@ class AddCodeToUserAction implements ActionInterface
         $this->user            = $user;
         $this->securityService = $securityService;
         $this->code            = $code;
+        $this->codeStart       = DateTimeFactory::factory('now');
     }
 
     /**
@@ -54,13 +61,21 @@ class AddCodeToUserAction implements ActionInterface
     }
 
     /**
+     * @param \DateTime $start
+     */
+    public function setCodeStart(\DateTime $start)
+    {
+        $this->codeStart = $start;
+    }
+
+    /**
      * Process the action
      *
      * @return void
      */
     public function execute()
     {
-        $this->securityService->saveCodeToUser($this->code, $this->user->getUser(), 30);
+        $this->securityService->saveCodeToUser($this->code, $this->user->getUser(), 30, $this->codeStart);
     }
 
     /**

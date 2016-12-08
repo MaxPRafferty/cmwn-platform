@@ -12,6 +12,7 @@ return [
                     'student_code',
                     'school',
                     'email',
+                    'code_start',
                 ],
             ],
         ],
@@ -72,7 +73,7 @@ return [
                 'import-file' => [
                     'options' => [
                         // @codingStandardsIgnoreStart
-                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= --email= [--verbose|-v] [--debug|-d] [--dry-run]',
+                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= --email= --start-date= [--verbose|-v] [--debug|-d] [--dry-run]',
                         // @codingStandardsIgnoreEnd
                         'defaults' => [
                             'controller' => 'Import\Controller',
