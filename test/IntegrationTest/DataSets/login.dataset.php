@@ -27,7 +27,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'englishstudent'
@@ -48,7 +48,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'englishteacher'
@@ -90,7 +90,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'mathteacher'
@@ -111,7 +111,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'otherprincipal'
@@ -132,7 +132,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'otherstudent'
@@ -153,7 +153,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'otherteacher'
@@ -174,7 +174,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'principal'
@@ -195,7 +195,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '1',
             'external_id'  => null,
             'normalized_username' => 'superuser'
@@ -237,7 +237,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => '2016-04-27 10:48:46',
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'deleteduser'
