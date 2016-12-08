@@ -79,7 +79,7 @@ class SecurityService implements SecurityServiceInterface
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 
         $this->gateway->update(
-            ['password' => static::encryptPassword($password), 'code' => null, 'code_expires' => null],
+            ['password' => static::encryptPassword($password), 'code' => null],
             ['user_id' => $userId]
         );
 
