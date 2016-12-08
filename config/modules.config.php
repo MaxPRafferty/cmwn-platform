@@ -32,4 +32,5 @@ return [
     'Security',
     'Suggest',
     'Flag',
+    'Feed',
 ];

@@ -73,6 +73,7 @@
       "Api\\": "module\\Api\\src\\Api",
       "Application\\": "module\\Application\\src\\Application",
       "Asset\\": "module\\Asset\\src\\Asset",
+      "Feed\\": "module\\Feed\\src\\Feed",
       "Flip\\": "module\\Flip\\src\\Flip",
       "Flag\\": "module\\Flag\\src\\Flag",
       "Forgot\\": "module\\Forgot\\src\\Forgot",

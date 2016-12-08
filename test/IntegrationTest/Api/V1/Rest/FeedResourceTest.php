@@ -33,7 +33,7 @@ class FeedResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException('/user/' . $user. '/feed', $method, $params);
+        $this->assertChangePasswordException('/feed', $method, $params);
     }
 
     /**
@@ -43,79 +43,34 @@ class FeedResourceTest extends TestCase
     public function testItShouldCheckIfUserIsLoggedIn($login)
     {
         $this->injectValidCsrfToken();
-        $this->dispatch('/user/' . $login . '/feed');
+        $this->dispatch('/feed');
         $this->assertResponseStatusCode(401);
     }
 
     /**
      * @test
      */
-    public function testItShouldHaveSenderNullIfFeedIsGame()
+    public function testItShouldFetchFeedById()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/feed');
+        $this->logInUser('super_user');
+        $this->dispatch('/feed/friend_feed');
         $this->assertResponseStatusCode(200);
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('feed', $body['_embedded']);
-
-        $feeds = $body['_embedded']['feed'];
-
-        foreach ($feeds as $feed) {
-            $this->assertEquals('game', $feed['type']);
-            $this->assertEquals(null, $feed['sender']);
-        }
+        $this->assertMatchedRouteName('api.rest.feed');
+        $this->assertControllerName('api\v1\rest\feed\controller');
     }
 
     /**
      * @test
      */
-    public function testItShouldAddGameLinkToTheFeed()
+    public function testItShouldFetchAllFeed()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/feed');
-        $this->assertResponseStatusCode(200);
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('feed', $body['_embedded']);
-
-        $feeds = $body['_embedded']['feed'];
-
-        foreach ($feeds as $feed) {
-            $this->assertArrayHasKey('_links', $feed);
-            $this->assertArrayHasKey('games', $feed['_links']);
-        }
-    }
-
-    /**
-     * @test
-     * TODO This test will be used when more types of feed are added
-     */
-    public function testItShouldCheckIfImageIsBeingSentCorrectly()
-    {
-        $this->markTestIncomplete("To be done once more types of feed are added");
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/feed');
-        $this->assertResponseStatusCode(200);
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('feed', $body['_embedded']);
-
-        $feeds = $body['_embedded']['feed'];
-
-        foreach ($feeds as $feed) {
-            if ($feed['type']==='game') {
-                continue;
-            }
-            $this->assertArrayHasKey('sender', $feed);
-            $this->assertArrayHasKey('image', $feed['sender']);
-        }
+        $this->logInUser('super_user');
+        $this->dispatch('/feed');
+        $this->assertResponseStatusCode(201);
+        $this->assertMatchedRouteName('api.rest.feed');
+        $this->assertControllerName('api\v1\rest\feed\controller');
     }
 
     /**

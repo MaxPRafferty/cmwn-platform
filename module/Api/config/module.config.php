@@ -17,6 +17,7 @@ return array(
         11 => 'Api\\Listeners\\GameRouteListener',
         12 => 'Api\\Listeners\\UserParamListener',
         13 => \Api\Listeners\OrgLinkListener::class,
+        14 => \Api\Listeners\InjectUserListener::class,
     ),
     'service_manager' => array(
         'invokables' => array(
@@ -35,6 +36,7 @@ return array(
             'Api\\Listeners\\OrgRouteListener' => 'Api\\Factory\\OrgRouteListenerFactory',
             'Api\\Listeners\\SuperMeListener' => 'Api\\Factory\\SuperMeListenerFactory',
             'Api\\Listeners\\UserImageListener' => 'Api\\Factory\\UserImageListenerFactory',
+            'Api\\Listeners\\InjectUserListener' => 'Api\\Factory\\InjectUserListenerFactory',
             'Api\\V1\\Rest\\User\\UserResource' => 'Api\\V1\\Rest\\User\\UserResourceFactory',
             'Api\\V1\\Rest\\Org\\OrgResource' => 'Api\\V1\\Rest\\Org\\OrgResourceFactory',
             'Api\\V1\\Rest\\Game\\GameResource' => 'Api\\V1\\Rest\\Game\\GameResourceFactory',
@@ -64,6 +66,7 @@ return array(
             'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResource' =>
                 'Api\\V1\\Rest\\SkribbleNotify\\SkribbleNotifyResourceFactory',
             'Api\\V1\\Rest\\Feed\\FeedResource' => 'Api\\V1\\Rest\\Feed\\FeedResourceFactory',
+            'Api\\V1\\Rest\\FeedUser\\FeedUserResource' => 'Api\\V1\\Rest\\FeedUser\\FeedUserResourceFactory',
             'Api\\V1\\Rest\\GameData\\GameDataResource' => 'Api\\V1\\Rest\\GameData\\GameDataResourceFactory',
             'Api\\V1\\Rest\\Flag\\FlagResource' => 'Api\\V1\\Rest\\Flag\\FlagResourceFactory',
         ),
@@ -298,9 +301,18 @@ return array(
             'api.rest.feed' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/user/:user_id/feed[/:feed_id]',
+                    'route' => '/feed[/:feed_id]',
                     'defaults' => array(
                         'controller' => 'Api\\V1\\Rest\\Feed\\Controller',
+                    ),
+                ),
+            ),
+            'api.rest.user-feed' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/user/:user_id/feed[/:feed_id]',
+                    'defaults' => array(
+                        'controller' => 'Api\\V1\\Rest\\FeedUser\\Controller',
                     ),
                 ),
             ),
@@ -342,8 +354,9 @@ return array(
             23 => 'api.rest.skribble',
             24 => 'api.rest.skribble-notify',
             25 => 'api.rest.feed',
-            26 => 'api.rest.game-data',
-            27 => 'api.rest.flag',
+            26 => 'api.rest.feed-user',
+            27 => 'api.rest.game-data',
+            28 => 'api.rest.flag',
         ),
     ),
     'zf-rest' => array(
@@ -804,9 +817,14 @@ return array(
             'route_name' => 'api.rest.feed',
             'route_identifier_name' => 'feed_id',
             'collection_name' => 'feed',
-            'entity_http_methods' => array(),
+            'entity_http_methods' => array(
+                0 => 'GET',
+                2 => 'PUT',
+                3 => 'DELETE'
+            ),
             'collection_http_methods' => array(
                 0 => 'GET',
+                1 => 'POST',
             ),
             'collection_query_whitelist' => array(
                 0 => 'page',
@@ -817,6 +835,31 @@ return array(
             'entity_class' => 'Api\\V1\\Rest\\Feed\\FeedEntity',
             'collection_class' => 'Api\\V1\\Rest\\Feed\\FeedCollection',
             'service_name' => 'Feed',
+        ),
+        'Api\\V1\\Rest\\FeedUser\\Controller' => array(
+            'listener' => 'Api\\V1\\Rest\\FeedUser\\FeedUserResource',
+            'route_name' => 'api.rest.feed-user',
+            'route_identifier_name' => 'feed_id',
+            'collection_name' => 'user-feed',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+                2 => 'PUT',
+                3 => 'DELETE'
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+            ),
+            'collection_query_whitelist' => array(
+                0 => 'page',
+                1 => 'per_page',
+                2 => 'read'
+            ),
+            'page_size' => 25,
+            'page_size_param' => 'per_page',
+            'entity_class' => 'Api\\V1\\Rest\\FeedUser\\FeedUserEntity',
+            'collection_class' => 'Api\\V1\\Rest\\FeedUser\\FeedUserCollection',
+            'service_name' => 'FeedUser',
         ),
         'Api\\V1\\Rest\\GameData\\Controller' => array(
             'listener' => 'Api\\V1\\Rest\\GameData\\GameDataResource',
@@ -888,6 +931,7 @@ return array(
             'Api\\V1\\Rest\\Skribble\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\SkribbleNotify\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Feed\\Controller' => 'HalJson',
+            'Api\\V1\\Rest\\FeedUser\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\GameData\\Controller' => 'HalJson',
             'Api\\V1\\Rest\\Flag\\Controller' => 'HalJson',
         ),
@@ -1017,6 +1061,11 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Api\\V1\\Rest\\FeedUser\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
             'Api\\V1\\Rest\\GameData\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/hal+json',
@@ -1123,6 +1172,11 @@ return array(
             'Api\\V1\\Rest\\Feed\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
+            ),
+            'Api\\V1\\Rest\\FeedUser\\Controller' => array(
+                0 => 'application/vnd.api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
             ),
             'Api\\V1\\Rest\\GameData\\Controller' => array(
                 0 => 'application/vnd.api.v1+json',
@@ -1437,7 +1491,6 @@ return array(
                 'route_identifier_name' => 'feed_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
                 'max_depth' => 3,
-                //TODO Add a test to check if the image of the semder is correctly sent
             ),
             'Api\\V1\\Rest\\Feed\\FeedCollection' => array(
                 'entity_identifier_name' => 'feed_id',
@@ -1445,11 +1498,17 @@ return array(
                 'route_identifier_name' => 'feed_id',
                 'is_collection' => true,
             ),
-            'Api\\V1\\Rest\\Feed\\SenderEntity' => array(
-                'route_name' => 'api.rest.feed',
+            'Api\\V1\\Rest\\FeedUser\\FeedUserEntity' => array(
+                'route_name' => 'api.rest.feed-user',
                 'route_identifier_name' => 'feed_id',
                 'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
-                'max_depth' => 2,
+                'max_depth' => 3,
+            ),
+            'Api\\V1\\Rest\\FeedUser\\FeedUserCollection' => array(
+                'entity_identifier_name' => 'feed_id',
+                'route_name' => 'api.rest.feed-user',
+                'route_identifier_name' => 'feed_id',
+                'is_collection' => true,
             ),
             'Api\\V1\\Rest\\GameData\\GameDataEntity' => array(
                 'route_name' => 'api.rest.game-data',
@@ -1531,6 +1590,12 @@ return array(
         ),
         'Api\\V1\\Rest\\Flag\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Flag\\Validator',
+        ),
+        'Api\\V1\\Rest\\Feed\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Feed\\validator',
+        ),
+        'Api\\V1\\Rest\\FeedUser\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\FeedUser\\validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -2128,6 +2193,106 @@ return array(
                 'filters' => array(),
                 'name' => 'reason',
                 'description' => 'Reason for flagging',
+            ),
+        ),
+        'Api\\V1\\Rest\\Feed\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'type',
+                'description' => 'type of the feed',
+            ),
+            1 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'sender',
+                'description' => 'sender of the feed',
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'message',
+                'description' => 'message to be displayed',
+            ),
+            3 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'title',
+                'description' => 'title of the feed',
+            ),
+            4 => array(
+                'required' => false,
+                'validators' => array(
+                    'name' => 'Zend\\I18n\\Validator\\DateTime',
+                    'options' => array(
+                        'pattern' => 'yyyy-MM-dd HH:mm:ss',
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'posted',
+                'description' => 'date when the feed is to be posted',
+            ),
+            5 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'priority',
+                'description' => 'priority of the feed',
+            ),
+            6 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'type_version',
+                'description' => 'type of the feed',
+            ),
+            7 => array(
+                'required' => true,
+                'validators' => array(
+                    'name' => 'Zend\\Validator\\InArray',
+                    'options' => array(
+                        'haystack' => array(
+                            0 => 0,
+                            1 => 1,
+                        ),
+                    ),
+                ),
+                'filters' => array(),
+                'name' => 'visibility',
+                'description' => 'visibility level of the feed',
+            ),
+        ),
+        'Api\\V1\\Rest\\FeedUser\\Validator' => array(
+            0 => array(
+                'required' => false,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 0,
+                                1 => 1,
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\Boolean',
+                        'options' => array('type' => 'all'),
+                    ),
+                    1 => array(
+                        'name' => 'Zend\\Filter\\ToInt',
+                        'options' => array(),
+                    ),
+                ),
+                'name' => 'read_flag',
+                'description' => 'The Read flag for user feed',
+                'error_message' => 'Invalid read flag for user feed',
             ),
         ),
     ),

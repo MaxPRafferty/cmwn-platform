@@ -306,7 +306,6 @@ return [
                     'view.user.child',
                     'view.user.flip',
                     'view.user.groups',
-                    'view.feed',
                 ],
             ],
 
@@ -326,7 +325,6 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
-                    'view.feed',
                 ],
             ],
 
