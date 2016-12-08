@@ -153,7 +153,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            
+
             'super'        => '0',
             'external_id'  => '0002',
         ],

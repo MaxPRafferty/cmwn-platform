@@ -31,7 +31,7 @@ class JwtCode extends AbstractMigration
     {
         $table = $this->table('users');
         if ($table->hasColumn('code')) {
-            $table->changeColumn('code', 'text')
+            $table->changeColumn('code', 'text', ['null' => true])
                 ->update();
         }
 
