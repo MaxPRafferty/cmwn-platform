@@ -1,6 +1,6 @@
 <?php
 $dbName = getenv('IMAGE_LINK');
-$dbName = empty($dbName) ? 'media.changemyworldnow.com/f' : $dbName;
+$dbName = empty($dbName) ? 'https://media.changemyworldnow.com/f' : $dbName;
 
 return [
     'log' => [
