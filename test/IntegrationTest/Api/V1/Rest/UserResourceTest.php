@@ -182,6 +182,7 @@ class UserResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-2390
      */
     public function testItShouldCorrectlyPutMeUser()
     {
@@ -229,6 +230,7 @@ class UserResourceTest extends TestCase
         $this->assertEquals('Welzer', $afterUser->getLastName());
         $this->assertEquals('Female', $afterUser->getGender());
         $this->assertEquals($beforeUser->getCreated(), $afterUser->getCreated());
+        $this->assertEquals('adam@ginasink.com', $afterUser->getEmail());
     }
 
     /**
@@ -270,6 +272,7 @@ class UserResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-800
+     * @ticket CORE-2390
      */
     public function testItShouldAllowTeacherTooMakeChangesToStudent()
     {
@@ -302,12 +305,60 @@ class UserResourceTest extends TestCase
         $this->assertInstanceOf(UserInterface::class, $afterUser);
         $this->assertNotEquals($beforeUser, $afterUser);
 
-        $this->assertEquals('english_student', $afterUser->getUserName());
+        $this->assertEquals($beforeUser->getUserName(), $afterUser->getUserName());
         $this->assertEquals('Adam', $afterUser->getFirstName());
         $this->assertNull($afterUser->getMiddleName());
         $this->assertEquals('Welzer', $afterUser->getLastName());
         $this->assertEquals('Female', $afterUser->getGender());
         $this->assertEquals($beforeUser->getCreated(), $afterUser->getCreated());
+        $this->assertEquals($beforeUser->getEmail(), $afterUser->getEmail());
+    }
+
+    /**
+     * @test
+     * @ticket CORE-800
+     * @ticket CORE-2390
+     * @dataProvider updateDataProvider
+     */
+    public function testItShouldAllowSuperToMakeChangesToUsers($login)
+    {
+        $beforeUser = $this->loadUserFromDb($login);
+        $this->assertInstanceOf(UserInterface::class, $beforeUser);
+        $this->assertEquals($login, $beforeUser->getUserName());
+
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+
+        $putData = [
+            'first_name'  => 'Adam',
+            'last_name'   => 'Walzer',
+            'gender'      => 'Female',
+            'meta'        => '[]',
+            'type'        => 'CHILD',
+            'username'    => 'new_username',
+            'email'       => 'adam@ginasink.com',
+            'birthdate'   => '1982-05-13',
+        ];
+
+        $this->dispatch('/user/' . $login, 'PUT', $putData, true);
+        $this->assertResponseStatusCode(200);
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertNotRedirect();
+
+        $afterUser = $this->loadUserFromDb($login);
+
+        $this->assertInstanceOf(UserInterface::class, $afterUser);
+        $this->assertNotEquals($beforeUser, $afterUser);
+
+        $this->assertEquals('new_username', $afterUser->getUserName());
+        $this->assertEquals('Adam', $afterUser->getFirstName());
+        $this->assertNull($afterUser->getMiddleName());
+        $this->assertEquals('Walzer', $afterUser->getLastName());
+        $this->assertEquals('Female', $afterUser->getGender());
+        $this->assertEquals($beforeUser->getCreated(), $afterUser->getCreated());
+        $this->assertEquals('adam@ginasink.com', $afterUser->getEmail());
+        $this->assertEquals($beforeUser->getType(), $afterUser->getType());
     }
 
     /**
@@ -644,14 +695,35 @@ class UserResourceTest extends TestCase
     public function loginDataProvider()
     {
         return [
-            'Super User' => [
-                'super_user'
-            ],
             'Principal' => [
                 'principal'
             ],
             'English Teacher' => [
                 'english_teacher'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function updateDataProvider()
+    {
+        return [
+            'Principal' => [
+                'principal'
+            ],
+            'English Student' => [
+                'english_student'
+            ],
+            'English Teacher' => [
+                'english_teacher'
+            ],
+            'other_student' => [
+                'other_student'
+            ],
+            'Other Teacher' => [
+                'other_teacher'
             ],
         ];
     }
