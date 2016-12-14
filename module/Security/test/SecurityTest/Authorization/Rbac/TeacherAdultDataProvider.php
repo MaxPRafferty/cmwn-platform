@@ -27,7 +27,6 @@ class TeacherAdultDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.group');
         $this->setAllowed('view.group.users');
         $this->setAllowed('view.org');
-        $this->setAllowed('view.org.users');
         $this->setAllowed('view.profile.image');
         $this->setAllowed('view.user.adult');
         $this->setAllowed('view.user.child');
