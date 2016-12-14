@@ -3,7 +3,7 @@
 namespace Security\Authorization;
 
 use Security\Service\SecurityGroupService;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -21,8 +21,8 @@ class RouteListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var \Security\Service\SecurityOrgService $orgService */
-        $orgService = $serviceLocator->get(SecurityOrgService::class);
+        /** @var \Security\Service\SecurityOrgServiceInterface $orgService */
+        $orgService = $serviceLocator->get(SecurityOrgServiceInterface::class);
 
         /** @var SecurityGroupService $groupService */
         $groupService = $serviceLocator->get(SecurityGroupService::class);

@@ -17,6 +17,14 @@ use Zend\Paginator\Paginator;
 /**
  * Test ImportBugFixesTest
  *
+ * @group Import
+ * @group Excel
+ * @group User
+ * @group Group
+ * @group Action
+ * @group NycImport
+ * @group IntegrationTest
+ * @group Db
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
