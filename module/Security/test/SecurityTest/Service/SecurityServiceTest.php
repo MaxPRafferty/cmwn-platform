@@ -7,6 +7,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
 use User\Adult;
+use Zend\Db\ResultSet\ResultSet;
 
 /**
  * Test SecurityServiceTest
@@ -375,5 +376,18 @@ class SecurityServiceTest extends TestCase
             })
             ->once();
         $this->assertTrue($this->securityService->saveCodeToUser('foobar', 'student', 5, new \DateTime('tomorrow')));
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldResetCodeForGroup()
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize([['user_id' => 'english_student'], ['user_id' => 'math_student']]);
+        $this->tableGateway->shouldReceive('selectWith')
+            ->andReturn($resultSet)->once();
+        $this->tableGateway->shouldReceive('update')->twice();
+        $this->securityService->saveCodeToGroup('foobar', 'school');
     }
 }
