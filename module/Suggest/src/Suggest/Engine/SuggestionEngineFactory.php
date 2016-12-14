@@ -2,7 +2,10 @@
 
 namespace Suggest\Engine;
 
-use Suggest\Service\SuggestedService;
+use Suggest\Filter\FilterCollection;
+use Suggest\Rule\RuleCollection;
+use Suggest\Service\SuggestedServiceInterface;
+use User\Service\UserServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -13,16 +16,15 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SuggestionEngineFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return SuggestionEngine
+     * @inheritdoc
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $suggestedService = $serviceLocator->get(SuggestedService::class);
-
-        $config = $serviceLocator->get('config');
-        $config = isset($config['suggestion-engine']) ? $config['suggestion-engine'] : [];
-
-        return new SuggestionEngine($serviceLocator, $suggestedService, $config);
+        return new SuggestionEngine(
+            $serviceLocator->get(RuleCollection::class),
+            $serviceLocator->get(FilterCollection::class),
+            $serviceLocator->get(SuggestedServiceInterface::class),
+            $serviceLocator->get(UserServiceInterface::class)
+        );
     }
 }

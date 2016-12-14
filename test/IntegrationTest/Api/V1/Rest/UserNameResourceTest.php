@@ -1,11 +1,12 @@
 <?php
 
-namespace IntegrationTest\Api;
+namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use User\Service\UserServiceInterface;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test UserNameResourceTest
@@ -28,11 +29,19 @@ class UserNameResourceTest extends TestCase
     protected $userService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/user-name.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserService()
     {
-        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
+        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
     }
 
     /**

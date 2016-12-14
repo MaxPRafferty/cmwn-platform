@@ -38,9 +38,7 @@ class SuggestResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../../DataSets/friends.dataset.php';
-
-        return new ArrayDataSet($data);
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/suggest.dataset.php');
     }
 
     /**
@@ -48,8 +46,8 @@ class SuggestResourceTest extends TestCase
      */
     public function setUpServices()
     {
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
-        $this->suggestionEngine = TestHelper::getServiceManager()->get(SuggestionEngine::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
+        $this->suggestionEngine = TestHelper::getDbServiceManager()->get(SuggestionEngine::class);
     }
 
     /**
@@ -62,40 +60,26 @@ class SuggestResourceTest extends TestCase
      *
      * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    public function testItShouldCheckChangePasswordException($user, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException($url, $method, $params);
+        $this->assertChangePasswordException('/user/' . $user. '/suggest', $method, $params);
     }
 
     /**
      * @test
+     * @ticket CORE-701
+     * @ticket CORE-703
+     * @ticket CORE-2669
      * @ticket CORE-558
+     * @dataProvider suggestedFriendsProvider
      */
-    public function testItShouldAllowChildToAccessSuggestEndpoint()
+    public function testItShouldReturnSuggestionsForChild($user, $expected)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/suggest');
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.suggest');
-        $this->assertControllerName('api\v1\rest\suggest\controller');
-    }
-
-    /**
-     * @test
-     * @ticket CORE-701
-     * @ticket CORE-703
-     */
-    public function testItShouldReturnSuggestionsWhenUserHasPendingRequest()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->friendService->attachFriendToUser('math_student', 'english_student');
-        $this->suggestionEngine->setUser('english_student');
-        $this->suggestionEngine->perform();
-        $this->dispatch('/user/english_student/suggest');
+        $this->logInUser($user);
+        $this->dispatch('/user/' . $user. '/suggest');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.suggest');
         $this->assertControllerName('api\v1\rest\suggest\controller');
@@ -106,92 +90,9 @@ class SuggestResourceTest extends TestCase
         $this->assertArrayHasKey('suggest', $body['_embedded']);
         $actualSuggestion = [];
         foreach ($body['_embedded']['suggest'] as $suggestData) {
-            $actualSuggestion[] = [
-                'user_id' => $suggestData['suggest_id'],
-            ];
+            $actualSuggestion[] = $suggestData['suggest_id'];
         }
 
-        $expected = [
-            [
-                'user_id' => 'other_student',
-            ],
-        ];
-
-        $this->assertEquals($expected, $actualSuggestion);
-    }
-
-    /**
-     * @test
-     * @ticket CORE-701
-     * @ticket CORE-703
-     */
-    public function testItShouldReturnSuggestionsWhenUserHasNoFriends()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->suggestionEngine->setUser('english_student');
-        $this->suggestionEngine->perform();
-        $this->dispatch('/user/english_student/suggest');
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.suggest');
-        $this->assertControllerName('api\v1\rest\suggest\controller');
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('suggest', $body['_embedded']);
-        $actualSuggestion = [];
-        foreach ($body['_embedded']['suggest'] as $suggestData) {
-            $actualSuggestion[] = [
-                'user_id' => $suggestData['suggest_id'],
-            ];
-        }
-
-        $expected = [
-            [
-                'user_id' => 'math_student',
-            ],
-            [
-                'user_id' => 'other_student',
-            ],
-        ];
-
-        $this->assertEquals($expected, $actualSuggestion);
-    }
-
-    /**
-     * @test
-     * @ticket CORE-701
-     * @ticket CORE-703
-     */
-    public function testItShouldReturnSuggestionsWhenUserHasRequestWaiting()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('math_student');
-        $this->friendService->attachFriendToUser('english_student', 'math_student');
-        $this->suggestionEngine->setUser('math_student');
-        $this->suggestionEngine->perform();
-        $this->dispatch('/user/math_student/suggest');
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.suggest');
-        $this->assertControllerName('api\v1\rest\suggest\controller');
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('suggest', $body['_embedded']);
-        $actualSuggestion = [];
-        foreach ($body['_embedded']['suggest'] as $suggestData) {
-            $actualSuggestion[] = [
-                'user_id' => $suggestData['suggest_id'],
-            ];
-        }
-
-        $expected = [
-            [
-                'user_id' => 'other_student',
-            ],
-        ];
 
         $this->assertEquals($expected, $actualSuggestion);
     }
@@ -199,50 +100,64 @@ class SuggestResourceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldDeleteSuggestionWhenUserIsFriended()
+    public function testItShouldReturnNotAuthorizedForAdult()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-
-        $this->suggestionEngine->setUser('english_student');
-        $this->suggestionEngine->perform();
-
-        $this->friendService->attachFriendToUser('english_student', 'math_student');
-
-        $this->dispatch('/user/english_student/suggest');
-        $this->assertResponseStatusCode(200);
+        $this->logInUser('english_teacher');
+        $this->dispatch('/user/english_teacher/suggest');
+        $this->assertResponseStatusCode(403);
         $this->assertMatchedRouteName('api.rest.suggest');
         $this->assertControllerName('api\v1\rest\suggest\controller');
+    }
 
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('suggest', $body['_embedded']);
-        $actualSuggestion = [];
-        foreach ($body['_embedded']['suggest'] as $suggestData) {
-            $actualSuggestion[] = [
-                'user_id' => $suggestData['suggest_id'],
-            ];
-        }
-
-        $expected = [
-            [
-                'user_id' => 'other_student',
+    /**
+     * @return array
+     */
+    public function suggestedFriendsProvider()
+    {
+        return [
+            'English Student' => [
+                'english_student',
+                ['english_student_1', 'english_student_2'],
+            ],
+            'Math Student' => [
+                'math_student',
+                [],
+            ],
+            'English Student 1' => [
+                'english_student_1',
+                ['english_student'],
+            ],
+            'English Student 2' => [
+                'english_student_2',
+                ['english_student'],
             ],
         ];
-
-        $this->assertEquals($expected, $actualSuggestion);
     }
-    
+
     /**
      * @return array
      */
     public function changePasswordDataProvider()
     {
         return [
-            0 => [
+            'English Student' => [
                 'english_student',
-                '/user/english_student/suggest',
+            ],
+            'English Student 1' => [
+                'english_student_1',
+            ],
+            'English Student 2' => [
+                'english_student_2',
+            ],
+            'Math Student' => [
+                'math_student',
+            ],
+            'Principal' => [
+                'principal',
+            ],
+            'English Teacher' => [
+                'english_teacher',
             ],
         ];
     }

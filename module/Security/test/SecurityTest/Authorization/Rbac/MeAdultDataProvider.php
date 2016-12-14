@@ -18,7 +18,6 @@ class MeAdultDataProvider extends AbstractRoleDataProvider
         parent::__construct('me.adult', $rolesConfig);
         $this->setAllowed('attach.profile.image');
         $this->setAllowed('edit.user.adult');
-        $this->setAllowed('save.game');
         $this->setAllowed('update.password');
         $this->setAllowed('view.flip');
         $this->setAllowed('view.games');

@@ -21,6 +21,11 @@ class TestHelper
     protected static $serviceManager;
 
     /**
+     * @var ServiceManager
+     */
+    protected static $dbServiceManager;
+
+    /**
      * @var \PDO
      */
     protected static $pdo;
@@ -51,7 +56,30 @@ class TestHelper
 
         static::$serviceManager->setService('Log\App', $testLogger);
         static::$serviceManager->setAllowOverride(false);
+
         return static::$serviceManager;
+    }
+
+    /**
+     * @before
+     * @return ServiceManager
+     */
+    public static function getDbServiceManager()
+    {
+        if (null !== static::$dbServiceManager) {
+            return static::$dbServiceManager;
+        }
+
+        static::$dbServiceManager = Application::init(static::getApplicationConfigWithDb())->getServiceManager();
+        static::$dbServiceManager->setAllowOverride(true);
+
+        $testLogger = new Logger();
+        $testLogger->addWriter(new Noop());
+
+        static::$dbServiceManager->setService('Log\App', $testLogger);
+        static::$dbServiceManager->setAllowOverride(false);
+
+        return static::$dbServiceManager;
     }
 
     /**
@@ -64,16 +92,17 @@ class TestHelper
 
         // Map phinx to zf2
         return [
-            'driver'   => 'Pdo',
-            'dsn'      => 'mysql:dbname=' . $envConfig['name'] . ';host=' . $envConfig['host'],
-            'database' => $envConfig['name'],
-            'username' => $envConfig['user'],
-            'password' => $envConfig['pass'],
+            'driver'         => 'Pdo',
+            'dsn'            => 'mysql:dbname=' . $envConfig['name'] . ';host=' . $envConfig['host'],
+            'database'       => $envConfig['name'],
+            'username'       => $envConfig['user'],
+            'password'       => $envConfig['pass'],
             'driver_options' => [
-                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
             ],
         ];
     }
+
     /**
      * @return string[]
      */
@@ -81,12 +110,25 @@ class TestHelper
     {
         $appConfig = include __DIR__ . '/../../config/application.config.php';
 
-        $appConfig['module_listener_options']['config_cache_enabled'] = false;
+        $appConfig['module_listener_options']['config_cache_enabled']     = false;
+        $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
+
+        return $appConfig;
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getApplicationConfigWithDb()
+    {
+        $appConfig = include __DIR__ . '/../../config/application.config.php';
+
+        $appConfig['module_listener_options']['config_cache_enabled']     = false;
         $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
 
         $appConfig['service_manager'] = [
             'initializers' => [
-                'InjectTestAdapter' => InjectTestAdapterInitializer::class
+                'InjectTestAdapter' => InjectTestAdapterInitializer::class,
             ],
         ];
 
@@ -103,11 +145,13 @@ class TestHelper
 
     /**
      * @param $key
+     *
      * @return string[]
      */
     public static function getConfigKey($key)
     {
         $config = static::getConfig();
+
         return isset($config[$key]) ? $config[$key] : [];
     }
 
@@ -120,6 +164,7 @@ class TestHelper
         $routes       = $routerConfig['routes'];
 
         unset($routes['zf-apigility']);
+
         return $routes;
     }
 

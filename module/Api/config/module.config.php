@@ -343,7 +343,7 @@ return array(
             24 => 'api.rest.skribble-notify',
             25 => 'api.rest.feed',
             26 => 'api.rest.game-data',
-            27 => 'api.rest.flag'
+            27 => 'api.rest.flag',
         ),
     ),
     'zf-rest' => array(

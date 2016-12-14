@@ -19,21 +19,23 @@ return [
         'invokables' => [
             \Suggest\Delegator\SuggestedServiceDelegatorFactory::class =>
                 \Suggest\Delegator\SuggestedServiceDelegatorFactory::class,
-            \Suggest\Rule\TypeRule::class => \Suggest\Rule\TypeRule::class,
-            \Suggest\Rule\MeRule::class => \Suggest\Rule\MeRule::class,
+            \Suggest\Rule\TypeRule::class                              => \Suggest\Rule\TypeRule::class,
+            \Suggest\Rule\MeRule::class                                => \Suggest\Rule\MeRule::class,
         ],
         'factories'  => [
-            \Suggest\Service\SuggestedService::class  => \Suggest\Service\SuggestedServiceFactory::class,
-            \Suggest\Engine\SuggestionEngine::class => \Suggest\Engine\SuggestionEngineFactory::class,
-            \Suggest\Filter\ClassFilter::class => \Suggest\Filter\ClassFilterFactory::class,
-            \Suggest\Rule\FriendRule::class => \Suggest\Rule\FriendRuleFactory::class,
+            \Suggest\Service\SuggestedService::class            => \Suggest\Service\SuggestedServiceFactory::class,
+            \Suggest\Engine\SuggestionEngine::class             => \Suggest\Engine\SuggestionEngineFactory::class,
+            \Suggest\Filter\ClassFilter::class                  => \Suggest\Filter\ClassFilterFactory::class,
+            \Suggest\Rule\FriendRule::class                     => \Suggest\Rule\FriendRuleFactory::class,
             \Suggest\Listener\TriggerSuggestionsListener::class =>
                 \Suggest\Listener\TriggerSuggestionsListenerFactory::class,
-            \Suggest\Listener\DeleteSuggestionListener::class =>
-                \Suggest\Listener\DeleteSuggestionListenerFactory::class
+            \Suggest\Listener\DeleteSuggestionListener::class   =>
+                \Suggest\Listener\DeleteSuggestionListenerFactory::class,
+            \Suggest\Rule\RuleCollection::class                 => \Suggest\Rule\RuleCollectionFactory::class,
+            \Suggest\Filter\FilterCollection::class             => \Suggest\Filter\FilterCollectionFactory::class,
         ],
         'delegators' => [
-            \Suggest\Service\SuggestedService::class          => [
+            \Suggest\Service\SuggestedService::class => [
                 \Suggest\Delegator\SuggestedServiceDelegatorFactory::class,
             ],
         ],
@@ -41,7 +43,7 @@ return [
 
     'controllers' => [
         'factories' => [
-            'Suggest\Controller\SuggestionController' => \Suggest\Controller\SuggestionControllerFactory::class,
+            'Suggest\Controller\SuggestionController'  => \Suggest\Controller\SuggestionControllerFactory::class,
             'Suggest\Controller\SuggestCronController' => \Suggest\Controller\SuggestCronControllerFactory::class,
         ],
     ],

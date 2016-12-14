@@ -6,12 +6,14 @@ use Job\JobInterface;
 use Job\Service\JobServiceInterface;
 use Suggest\Engine\SuggestionEngine;
 use User\Service\UserServiceInterface;
+use User\User;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
- * Class TriggerSuggestionsListener
+ * Creates a suggestion job for a user once the user is created
+ *
  * @package Suggest\Listeners
  */
 class TriggerSuggestionsListener
@@ -44,6 +46,7 @@ class TriggerSuggestionsListener
 
     /**
      * @param SharedEventManagerInterface $events
+     * @codeCoverageIgnore
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
@@ -56,6 +59,7 @@ class TriggerSuggestionsListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
@@ -73,6 +77,10 @@ class TriggerSuggestionsListener
         }
 
         if (!$this->suggestionEngine instanceof JobInterface) {
+            return;
+        }
+
+        if ($user->getType() !== User::TYPE_CHILD) {
             return;
         }
 

@@ -2,8 +2,8 @@
 
 namespace Suggest\Service;
 
-use Suggest\NotFoundException;
 use User\UserInterface;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -23,9 +23,9 @@ interface SuggestedServiceInterface
     /**
      * Fetches the suggested users for a user
      *
-     * @param UserInterface $user
-     * @param null $where
-     * @param null $prototype
+     * @param UserInterface|string $user
+     * @param array|PredicateInterface $where
+     * @param mixed $prototype
      * @return DbSelect
      */
     public function fetchSuggestedFriendsForUser($user, $where = null, $prototype = null);
@@ -44,4 +44,13 @@ interface SuggestedServiceInterface
      * @return mixed
      */
     public function deleteSuggestionForUser($user, $suggestion);
+
+    /**
+     * Deletes all the suggestions for a user
+     *
+     * @param $user
+     *
+     * @return mixed
+     */
+    public function deleteAllSuggestionsForUser($user);
 }
