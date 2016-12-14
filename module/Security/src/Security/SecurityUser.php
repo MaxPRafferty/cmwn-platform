@@ -169,16 +169,6 @@ class SecurityUser extends User
     }
 
     /**
-     * gets the code expiration date of user
-     *
-     * @return int
-     */
-    public function getExpiration()
-    {
-        return $this->codeExpires;
-    }
-
-    /**
      * Tests if the user is a super admin or not
      *
      * @return bool
