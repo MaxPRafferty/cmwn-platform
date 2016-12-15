@@ -4,6 +4,7 @@
 namespace Suggest\Controller;
 
 use Suggest\Engine\SuggestionEngine;
+use User\Service\UserServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -24,6 +25,7 @@ class SuggestionControllerFactory implements FactoryInterface
             ? $serviceLocator->getServiceLocator()
             : $serviceLocator;
         $suggestionEngine = $serviceLocator->get(SuggestionEngine::class);
-        return new SuggestionController($suggestionEngine);
+        $userService = $serviceLocator->get(UserServiceInterface::class);
+        return new SuggestionController($suggestionEngine, $userService);
     }
 }
