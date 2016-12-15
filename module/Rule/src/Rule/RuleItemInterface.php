@@ -14,7 +14,7 @@ interface RuleItemInterface
      *
      * @param UserInterface $user
      */
-    public function setActiveUser(UserInterface $user): void;
+    public function setActiveUser(UserInterface $user);
 
     /**
      * Gets the Active user that triggered the event
@@ -35,5 +35,5 @@ interface RuleItemInterface
      *
      * @param array $data
      */
-    public function exchangeArray(array $data): void;
+    public function exchangeArray(array $data);
 }

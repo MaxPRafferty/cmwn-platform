@@ -129,4 +129,98 @@ class EitherSpecificationTest extends TestCase
             'Either Rule Specification satisfied when all rules are not happy'
         );
     }
+
+
+    /**
+     * @test
+     */
+    public function testItShouldSatisfyALargeNumberOfRulesWhenAllAreHappy()
+    {
+        /** @var \Mockery\MockInterface|RuleItemInterface $event */
+        $event = \Mockery::mock(RuleItemInterface::class);
+        $rules = [];
+        foreach (range(0, 999) as $ruleCount) {
+            $rule = \Mockery::mock(RuleInterface::class);
+            $rule->shouldReceive('isSatisfiedBy')
+                ->with($event)
+                ->andReturn(true)
+                ->once();
+            array_push($rules, $rule);
+        }
+
+        $eitherRule = new EitherSpecification(...$rules);
+
+        $this->assertTrue(
+            $eitherRule->isSatisfiedBy($event),
+            'And Rule Specification did not satisfy 1000 rules'
+        );
+
+        $this->assertEquals(
+            1000,
+            $eitherRule->timesSatisfied(),
+            '100% of These rules should be satisfied'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldSatisfyALargeNumberOfRulesWithTwentyPercentAreHappy()
+    {
+        /** @var \Mockery\MockInterface|RuleItemInterface $event */
+        $event = \Mockery::mock(RuleItemInterface::class);
+        $rules = [];
+        foreach (range(0, 999) as $ruleCount) {
+            $rule = \Mockery::mock(RuleInterface::class);
+            $rule->shouldReceive('isSatisfiedBy')
+                ->with($event)
+                ->andReturn($ruleCount % 5 == 0)
+                ->once();
+            array_push($rules, $rule);
+        }
+
+        $eitherRule = new EitherSpecification(...$rules);
+
+        $this->assertTrue(
+            $eitherRule->isSatisfiedBy($event),
+            'Either Rule Specification was not satisfied all rules when 80% are not happy'
+        );
+
+        $this->assertEquals(
+            200,
+            $eitherRule->timesSatisfied(),
+            '20% of these rules should have passed'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotSatisfyALargeNumberOfRulesWhenNoneAreHappy()
+    {
+        /** @var \Mockery\MockInterface|RuleItemInterface $event */
+        $event = \Mockery::mock(RuleItemInterface::class);
+        $rules = [];
+        foreach (range(0, 999) as $ruleCount) {
+            $rule = \Mockery::mock(RuleInterface::class);
+            $rule->shouldReceive('isSatisfiedBy')
+                ->with($event)
+                ->andReturn(false)
+                ->once();
+            array_push($rules, $rule);
+        }
+
+        $eitherRule = new EitherSpecification(...$rules);
+
+        $this->assertFalse(
+            $eitherRule->isSatisfiedBy($event),
+            'Either Rule Specification not satisfied all rules when all rules are not happy'
+        );
+
+        $this->assertEquals(
+            0,
+            $eitherRule->timesSatisfied(),
+            'None of these rules should have have passed'
+        );
+    }
 }

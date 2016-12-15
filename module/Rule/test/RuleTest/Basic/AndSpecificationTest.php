@@ -159,4 +159,66 @@ class AndSpecificationTest extends TestCase
             'And Rule Specification satisfied when all rules are not happy'
         );
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldSatisfyArrayOfRulesWhenAllAreHappy()
+    {
+        /** @var \Mockery\MockInterface|RuleItemInterface $event */
+        $event = \Mockery::mock(RuleItemInterface::class);
+        $rules = [];
+        foreach (range(0, 999) as $ruleCount) {
+            $rule = \Mockery::mock(RuleInterface::class);
+            $rule->shouldReceive('isSatisfiedBy')
+                ->with($event)
+                ->andReturn(true)
+                ->once();
+            array_push($rules, $rule);
+        }
+
+        $andRule = new AndSpecification(...$rules);
+
+        $this->assertTrue(
+            $andRule->isSatisfiedBy($event),
+            'And Rule Specification did not satisfy 1000 rules'
+        );
+
+        $this->assertEquals(
+            1000,
+            $andRule->timesSatisfied(),
+            '100% of These rules should be satisfied'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotSatisfyArrayOfRulesWhenSomeAreNotHappy()
+    {
+        /** @var \Mockery\MockInterface|RuleItemInterface $event */
+        $event = \Mockery::mock(RuleItemInterface::class);
+        $rules = [];
+        foreach (range(0, 999) as $ruleCount) {
+            $rule = \Mockery::mock(RuleInterface::class);
+            $rule->shouldReceive('isSatisfiedBy')
+                ->with($event)
+                ->andReturn($ruleCount % 5 == 0)
+                ->once();
+            array_push($rules, $rule);
+        }
+
+        $andRule = new AndSpecification(...$rules);
+
+        $this->assertFalse(
+            $andRule->isSatisfiedBy($event),
+            'And Rule Specification satisfied all rules when 80% are not happy'
+        );
+
+        $this->assertEquals(
+            200,
+            $andRule->timesSatisfied(),
+            '20% of these rules should have passed'
+        );
+    }
 }
