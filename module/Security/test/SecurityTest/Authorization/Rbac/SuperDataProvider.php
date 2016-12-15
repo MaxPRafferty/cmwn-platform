@@ -60,5 +60,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.flagged.image');
         $this->setAllowed('delete.flag');
         $this->setAllowed('sa.settings');
+        $this->setAllowed('reset.group.code');
     }
 }

@@ -27,6 +27,7 @@ use Zend\Paginator\Adapter\DbSelect;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SkribbleServiceTest extends TestCase
 {

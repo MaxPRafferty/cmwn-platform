@@ -12,7 +12,7 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
@@ -30,7 +30,7 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
     protected $listeners = [];
 
     /**
-     * @var SecurityOrgService
+     * @var SecurityOrgServiceInterface
      */
     protected $securityOrgService;
 
@@ -41,11 +41,13 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
 
     /**
      * OrgServiceListener constructor.
-     * @param SecurityOrgService $securityOrgService
+     * @param SecurityOrgServiceInterface $securityOrgService
      * @param UserGroupServiceInterface $userGroupService
      */
-    public function __construct(SecurityOrgService $securityOrgService, UserGroupServiceInterface $userGroupService)
-    {
+    public function __construct(
+        SecurityOrgServiceInterface $securityOrgService,
+        UserGroupServiceInterface $userGroupService
+    ) {
         $this->securityOrgService = $securityOrgService;
         $this->userGroupService = $userGroupService;
     }
@@ -61,6 +63,7 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
             [$this, 'fetchAll']
         );
 
+        // TODO I do not think this needs to be the SecurityOrgService it does not dispatch events
         $this->listeners[] = $events->attach(
             SecurityOrgService::class,
             'fetch.org.post',
@@ -101,7 +104,7 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
         }
 
         $event->stopPropagation(true);
-        
+
         return $this->userGroupService->fetchOrganizationsForUser(
             $user,
             $event->getParam('prototype')
@@ -127,7 +130,7 @@ class OrgServiceListener implements RbacAwareInterface, AuthenticationServiceAwa
         }
 
         $user->setRole($this->securityOrgService->getRoleForOrg($orgId, $user));
-        
+
         if (!$this->getRbac()->isGranted($user->getRole(), 'view.org')) {
             throw new NotAuthorizedException;
         }

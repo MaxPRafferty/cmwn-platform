@@ -115,6 +115,9 @@ return [
             'sa.rest.settings' => [
                 'GET' => 'sa.settings',
             ],
+            'api.rest.group-reset' => [
+                'POST' => 'reset.group.code'
+            ],
         ],
     ],
 ];

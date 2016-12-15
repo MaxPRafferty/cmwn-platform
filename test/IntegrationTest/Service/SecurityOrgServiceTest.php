@@ -5,7 +5,7 @@ namespace IntegrationTest\Service;
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use User\Adult;
 
 /**
@@ -22,7 +22,7 @@ use User\Adult;
 class SecurityOrgServiceTest extends TestCase
 {
     /**
-     * @var SecurityOrgService
+     * @var SecurityOrgServiceInterface
      */
     protected $service;
 
@@ -39,7 +39,7 @@ class SecurityOrgServiceTest extends TestCase
      */
     public function setUpService()
     {
-        $this->service = TestHelper::getDbServiceManager()->get(SecurityOrgService::class);
+        $this->service = TestHelper::getDbServiceManager()->get(SecurityOrgServiceInterface::class);
     }
 
     /**
