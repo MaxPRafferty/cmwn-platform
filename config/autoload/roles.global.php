@@ -56,6 +56,10 @@ return [
             // game
             'view.game-data'       => 'View Save Game Data of a game',
             'view.games'           => 'View all Games',
+            'view.game'            => 'View a game',
+            'create.game'          => 'Create a new game',
+            'update.game'          => 'Update existing game details',
+            'delete.game'          => 'delete game',
             'save.game'            => 'Save Game progress',
 
             // misc
@@ -138,6 +142,11 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'sa.settings',
+                    'restore.db.state',
+                    'create.game',
+                    'view.game',
+                    'update.game',
+                    'delete.game',
                     'reset.group.code',
                 ],
             ],

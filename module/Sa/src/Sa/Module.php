@@ -2,15 +2,14 @@
 
 namespace Sa;
 
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use ZF\Apigility\Provider\ApigilityProviderInterface;
 
 /**
  * Class Module
  * @package Sa
  */
-class Module implements ApigilityProviderInterface, ConfigProviderInterface
+
+class Module implements ConfigProviderInterface
 {
     /**
      * @return mixed

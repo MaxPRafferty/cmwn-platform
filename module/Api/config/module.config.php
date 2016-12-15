@@ -415,9 +415,14 @@ return array(
             'route_name' => 'api.rest.game',
             'route_identifier_name' => 'game_id',
             'collection_name' => 'game',
-            'entity_http_methods' => array(),
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PUT',
+                2 => 'DELETE',
+            ),
             'collection_http_methods' => array(
                 0 => 'GET',
+                1 => 'POST'
             ),
             'collection_query_whitelist' => array(
                 0 => 'page',
@@ -1583,6 +1588,9 @@ return array(
         'Api\\V1\\Rest\\Flag\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\Flag\\Validator',
         ),
+        'Api\\V1\\Rest\\Game\\Controller' => array(
+            'input_filter' => 'Api\\V1\\Rest\\Game\\Validator',
+        ),
         'Api\\V1\\Rest\\GroupReset\\Controller' => array(
             'input_filter' => 'Api\\V1\\Rest\\GroupReset\\Validator',
         ),
@@ -2206,6 +2214,60 @@ return array(
                 'filters' => array(),
                 'name' => 'reason',
                 'description' => 'Reason for flagging',
+            ),
+        ),
+        'Api\\V1\\Rest\\Game\\Validator' => array(
+            0 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'title',
+                'description' => 'title of the game'
+            ),
+            1 => array(
+                'required' => true,
+                'validators' => array(),
+                'filters' => array(),
+                'name' => 'description',
+                'description' => 'description of the game'
+            ),
+            2 => array(
+                'required' => true,
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\InArray',
+                        'options' => array(
+                            'haystack' => array(
+                                0 => 0,
+                                1 => 1,
+                            ),
+                        ),
+                    ),
+                ),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\Boolean',
+                        'options' => array('type' => 'all'),
+                    ),
+                    1 => array(
+                        'name' => 'Zend\\Filter\\ToInt',
+                        'options' => array(),
+                    ),
+                ),
+                'name' => 'coming_soon',
+                'description' => 'if the game is coming soon'
+            ),
+            3 => array(
+                'required' => false,
+                'validators' => array(),
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Application\\Utils\\MetaFilter',
+                        'options' => array(),
+                    ),
+                ),
+                'name' => 'meta',
+                'description' => 'meta data for game',
             ),
         ),
         'Api\\V1\\Rest\\GroupReset\\Validator' => array(

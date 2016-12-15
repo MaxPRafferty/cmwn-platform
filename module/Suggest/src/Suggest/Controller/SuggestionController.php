@@ -4,6 +4,8 @@
 namespace Suggest\Controller;
 
 use Application\Utils\NoopLoggerAwareTrait;
+use User\Service\UserServiceInterface;
+use User\UserInterface;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
@@ -28,6 +30,11 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
     protected $suggestionEngine;
 
     /**
+     * @var UserServiceInterface
+     */
+    protected $userService;
+
+    /**
      * @var Logger
      */
     protected $logger;
@@ -36,10 +43,12 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
      * SuggestionController constructor.
      *
      * @param SuggestionEngine $suggestionEngine
+     * @param UserServiceInterface $userService
      */
-    public function __construct($suggestionEngine)
+    public function __construct($suggestionEngine, $userService)
     {
         $this->suggestionEngine = $suggestionEngine;
+        $this->userService = $userService;
     }
 
     /**
@@ -78,6 +87,13 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
             $this->getLogger()->debug('Turning on Debug');
 
             $job = $this->suggestionEngine;
+            $userId = $request->getParam('userId');
+
+            $user = $this->userService->fetchUser($userId);
+
+            if ($user->getType() !== UserInterface::TYPE_CHILD) {
+                return;
+            }
 
             if (!$job instanceof SuggestionEngine) {
                 $this->getLogger()->alert(sprintf('Invalid suggestion engine: %s', $this->suggestionEngine));
@@ -85,7 +101,6 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
                 return;
             }
 
-            $userId = $request->getParam('userId');
             $job->exchangeArray([
                 'user_id'         => $userId,
             ]);
