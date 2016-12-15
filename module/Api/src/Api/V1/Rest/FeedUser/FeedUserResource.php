@@ -30,7 +30,9 @@ class FeedUserResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
-        return new FeedUserCollection($this->feedUserService->fetchAllFeedForUser($userId, new FeedUserEntity([])));
+        $result =
+            new FeedUserCollection($this->feedUserService->fetchAllFeedForUser($userId, null, new FeedUserEntity([])));
+        return $result;
     }
 
     /**@inheritdoc */

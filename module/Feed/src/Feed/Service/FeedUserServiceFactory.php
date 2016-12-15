@@ -18,6 +18,6 @@ class FeedUserServiceFactory implements FactoryInterface
     {
         $adapter = $serviceLocator->get(Adapter::class);
 
-        return new FeedService(new TableGateway('user_feed', $adapter));
+        return new FeedUserService(new TableGateway('user_feed', $adapter));
     }
 }

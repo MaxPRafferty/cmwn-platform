@@ -17,7 +17,7 @@ class FeedUserDelegatorFactory implements DelegatorFactoryInterface
      */
     public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
     {
-        $feedUserService = $serviceLocator->get(FeedUserService::class);
+        $feedUserService = call_user_func($callback);
         return new FeedUserDelegator($feedUserService);
     }
 }

@@ -307,7 +307,7 @@ return array(
                     ),
                 ),
             ),
-            'api.rest.user-feed' => array(
+            'api.rest.feed-user' => array(
                 'type' => 'Segment',
                 'options' => array(
                     'route' => '/user/:user_id/feed[/:feed_id]',

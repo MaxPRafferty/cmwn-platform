@@ -7,10 +7,10 @@ use IntegrationTest\DataSets\ArrayDataSet;
 use Zend\Json\Json;
 
 /**
- * Class FeedResourceTest
+ * Class FeedUserResourceTest
  * @package IntegrationTest\Api\V1\Rest
  */
-class FeedResourceTest extends TestCase
+class FeedUserResourceTest extends TestCase
 {
     /**
      * @return ArrayDataSet
@@ -33,7 +33,7 @@ class FeedResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException('/feed', $method, $params);
+        $this->assertChangePasswordException('/user/'. $user .'/feed', $method, $params);
     }
 
     /**
@@ -46,20 +46,16 @@ class FeedResourceTest extends TestCase
         $this->assertResponseStatusCode(401);
     }
 
-    /**
-     * @test
-     */
-    public function testItShouldFetchFeedById()
+    public function testItShouldFetchFeedForUser()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/feed/es_friend_feed');
+        $this->logInUser('english_student');
+        $this->dispatch('/user/english_student/feed/es_friend_feed');
         $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.feed');
-        $this->assertControllerName('api\v1\rest\feed\controller');
+        $this->assertMatchedRouteName('api.rest.feed-user');
+        $this->assertControllerName('api\v1\rest\feeduser\controller');
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
         $this->assertArrayHasKey('feed_id', $body);
         $this->assertArrayHasKey('sender', $body);
         $this->assertArrayHasKey('title', $body);
@@ -69,40 +65,31 @@ class FeedResourceTest extends TestCase
         $this->assertArrayHasKey('visibility', $body);
         $this->assertArrayHasKey('type', $body);
         $this->assertArrayHasKey('type_version', $body);
+        $this->assertEquals('es_friend_feed', $body['feed_id']);
     }
 
     /**
      * @test
+     * @dataProvider feedDataProvider
      */
-    public function testItShouldFetchAllFeed()
+    public function testItShouldFetchAllFeedForUserWithDescendingOrderOfPriority($login, $expectedFeed)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/feed');
+        $this->logInUser($login);
+        $this->dispatch('/user/' . $login .'/feed');
         $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.feed');
-        $this->assertControllerName('api\v1\rest\feed\controller');
-
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey("_embedded", $body);
+
+        $this->assertArrayHasKey('_embedded', $body);
+
         $body = $body['_embedded'];
-        $this->assertArrayHasKey('feed', $body);
+        $this->assertArrayHasKey('user-feed', $body);
 
-        $feeds = $body['feed'];
+        $userFeeds = $body['user-feed'];
 
-        $expected = [
-            'es_friend_feed',
-            'ms_friend_feed',
-            'es_game_feed',
-            'ms_game_feed',
-            'os_game_feed',
-            'es_flip_feed',
-            'ms_flip_feed',
-            'os_flip_feed',
-        ];
-        $actual = [];
+        $actualFeed = [];
 
-        foreach ($feeds as $body) {
+        foreach ($userFeeds as $body) {
             $this->assertArrayHasKey('feed_id', $body);
             $this->assertArrayHasKey('sender', $body);
             $this->assertArrayHasKey('title', $body);
@@ -113,34 +100,30 @@ class FeedResourceTest extends TestCase
             $this->assertArrayHasKey('type', $body);
             $this->assertArrayHasKey('type_version', $body);
 
-            $actual[] = $body['feed_id'];
+            $actualFeed[] = $body['feed_id'];
         }
-        $this->assertEquals($expected, $actual);
-    }
 
-    /**
-     * @test
-     * @dataProvider loginDataProvider
-     */
-    public function testItShouldNotAllowOthersToAccessFeed($login)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($login);
-        $this->dispatch('/feed');
-        $this->assertResponseStatusCode(403);
-        $this->assertMatchedRouteName('api.rest.feed');
-        $this->assertControllerName('api\v1\rest\feed\controller');
+        $this->assertEquals($expectedFeed, $actualFeed);
     }
 
     /**
      * @return array
      */
-    public function loginDataProvider()
+    public function feedDataProvider()
     {
         return [
-            'English Student' => ['english_student'],
-            'English Teacher' => ['english_teacher'],
-            'Principal' => ['principal'],
+            [
+                'english_student',
+                ['es_friend_feed', 'es_game_feed', 'es_flip_feed'],
+            ],
+            [
+                'math_student',
+                ['ms_friend_feed', 'ms_game_feed', 'ms_flip_feed'],
+            ],
+            [
+                'other_student',
+                ['os_game_feed', 'os_flip_feed'],
+            ],
         ];
     }
 

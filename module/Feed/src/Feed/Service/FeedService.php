@@ -43,7 +43,7 @@ class FeedService implements FeedServiceInterface
      */
     public function createFeed(FeedInterface $feed)
     {
-        $feed->setFeedId(Uuid::uuid1());
+        $feed->setFeedId(Uuid::uuid1()->toString());
         $feed->setCreated(new \DateTime);
 
         $data = $feed->getArrayCopy();
@@ -87,7 +87,7 @@ class FeedService implements FeedServiceInterface
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         $select = new Select(['ft' => $this->tableGateway->getTable()]);
         $select->where($where);
-        $select->order('created DESC');
+        $select->order('priority DESC');
         return new DbSelect(
             $select,
             $this->tableGateway->getAdapter(),

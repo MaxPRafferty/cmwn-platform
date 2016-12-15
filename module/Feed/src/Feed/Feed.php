@@ -6,7 +6,6 @@ use Application\Utils\Date\DateCreatedTrait;
 use Application\Utils\Date\DateDeletedTrait;
 use Application\Utils\Date\DateUpdatedTrait;
 use Application\Utils\MetaDataTrait;
-use User\UserHydrator;
 use User\UserInterface;
 use Zend\Filter\StaticFilter;
 
@@ -25,11 +24,6 @@ class Feed extends \ArrayObject implements FeedInterface
     const TYPE_GAME = 'GAME';
     const TYPE_FLIP = 'FLIP';
     const TYPE_SKRIBBLE = 'SKRIBBLE';
-
-    /**
-     * @var UserHydrator
-     */
-    protected $hydrator;
 
     /**
      * @var string
@@ -82,7 +76,6 @@ class Feed extends \ArrayObject implements FeedInterface
      */
     public function __construct(array $array = [])
     {
-        $this->hydrator = new UserHydrator();
         $this->exchangeArray($array);
     }
 
@@ -101,6 +94,9 @@ class Feed extends \ArrayObject implements FeedInterface
             'visibility'   => null,
             'type'         => null,
             'type_version' => null,
+            'created'      => null,
+            'updated'      => null,
+            'deleted'      => null,
         ];
 
         $array = array_merge($defaults, $array);
@@ -128,6 +124,9 @@ class Feed extends \ArrayObject implements FeedInterface
             'visibility'   => $this->getVisibility(),
             'type'         => $this->getType(),
             'type_version' => $this->getTypeVersion(),
+            'created'      => $this->getCreated() !== null ? $this->getCreated()->format("Y-m-d H:i:s") : null,
+            'updated'      => $this->getUpdated() !== null ? $this->getUpdated()->format("Y-m-d H:i:s") : null,
+            'deleted'      => $this->getDeleted() !== null ? $this->getDeleted()->format("Y-m-d H:i:s") : null,
         ];
     }
 

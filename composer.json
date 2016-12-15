@@ -110,7 +110,8 @@
       "SkribbleTest\\": "module\\Skribble\\test\\SkribbleTest",
       "SuggestTest\\": "module\\Suggest\\test\\SuggestTest",
       "UserTest\\": "module\\User\\test\\UserTest",
-      "IntegrationTest\\": "test\\IntegrationTest"
+      "IntegrationTest\\": "test\\IntegrationTest",
+      "FeedTest\\": "module\\Feed\\test\\FeedTest"
     }
   }
 }

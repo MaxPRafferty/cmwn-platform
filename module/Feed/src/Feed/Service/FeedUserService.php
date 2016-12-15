@@ -85,7 +85,7 @@ class FeedUserService implements FeedUserServiceInterface
             throw new NotFoundException('Feed not found');
         }
 
-        $userFeed = new UserFeed($row);
+        $userFeed = new UserFeed($row->getArrayCopy());
         return $userFeed;
     }
 
@@ -96,17 +96,19 @@ class FeedUserService implements FeedUserServiceInterface
     {
         $userId = $user instanceof UserInterface? $user->getUserId() : $user;
         $select = new Select(['uf' => $this->tableGateWay->getTable()]);
+        $select->columns(['read_flag']);
         $select->join(
             ['f' => 'feed'],
             'uf.feed_id = f.feed_id'
         );
+
+        $select->order(['f.priority DESC']);
 
         $where = $this->createWhere($where);
         $where->isNull('f.deleted');
         $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, $userId));
 
         $select->where($where);
-        $select->order('f.priority DESC');
 
         $prototype = $prototype === null ? new UserFeed([]) : $prototype;
 
