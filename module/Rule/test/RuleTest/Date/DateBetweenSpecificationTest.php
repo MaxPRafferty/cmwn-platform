@@ -2,6 +2,7 @@
 
 namespace RuleTest\Date;
 
+use Application\Utils\Date\DateTimeFactory;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Date\DateBetweenSpecification;
 use Rule\RuleItemInterface;
@@ -65,6 +66,27 @@ class DateBetweenSpecificationTest extends TestCase
         $this->assertFalse(
             $rule->isSatisfiedBy($item),
             'Date Between Rule was satisfied when current date is after end date'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldForABirthday()
+    {
+        /** @var \Mockery\MockInterface|RuleItemInterface $item */
+        $item      = \Mockery::mock(RuleItemInterface::class);
+        $birthday  = DateTimeFactory::factory('now');
+        $startDate = clone $birthday;
+        $endDate   = clone $birthday;
+
+        $startDate->setTime(0, 0, 0);
+        $endDate->setTime(23, 59, 59);
+        $rule = new DateBetweenSpecification($startDate, $endDate);
+
+        $this->assertTrue(
+            $rule->isSatisfiedBy($item),
+            'Date Between Rule was not satisfied for a birthday'
         );
     }
 }

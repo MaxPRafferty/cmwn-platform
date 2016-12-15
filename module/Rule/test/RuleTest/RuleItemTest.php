@@ -4,7 +4,6 @@ namespace RuleTest;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\RuleItem;
-use User\Adult;
 
 /**
  * Test RuleItemTest
@@ -20,20 +19,20 @@ class RuleItemTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldCloneActiveUser()
+    public function testItShouldCloneObjects()
     {
-        $user = new Adult();
-        $item = new RuleItem($user);
+        $user = new \stdClass();
+        $item = new RuleItem(['active_user' => $user]);
 
         $this->assertEquals(
             $user,
-            $item->getActiveUser(),
+            $item->getParam('active_user'),
             'Rule Item did not return an equivalent active user'
         );
 
         $this->assertNotSame(
             $user,
-            $item->getActiveUser(),
+            $item->getParam('active_user'),
             'Rule Item returned the same user.  ' .
             'This is bad we don\'t want to give rule specifications the ability to change the active user'
         );

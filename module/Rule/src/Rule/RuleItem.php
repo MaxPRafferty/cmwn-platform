@@ -2,18 +2,11 @@
 
 namespace Rule;
 
-use User\UserInterface;
-
 /**
  * Class RuleItem
  */
 class RuleItem implements RuleItemInterface
 {
-    /**
-     * @var UserInterface
-     */
-    protected $activeUser;
-
     /**
      * @var array
      */
@@ -22,28 +15,19 @@ class RuleItem implements RuleItemInterface
     /**
      * @inheritDoc
      */
-    public function __construct(UserInterface $activeUser = null, array $data = [])
+    public function __construct(array $data = [])
     {
         $this->exchangeArray($data);
-        if (null !== $activeUser) {
-            $this->setActiveUser($activeUser);
-        }
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
-    public function setActiveUser(UserInterface $user)
+    public function getParam(string $param, $default = null)
     {
-        $this->activeUser = $user;
-    }
+        $value = $this->data[$param] ?? $default;
 
-    /**
-     * @inheritDoc
-     */
-    public function getActiveUser(): UserInterface
-    {
-        return clone $this->activeUser;
+        return is_object($value) ? clone $value : $value;
     }
 
     /**

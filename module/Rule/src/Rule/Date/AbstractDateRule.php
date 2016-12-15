@@ -35,8 +35,8 @@ abstract class AbstractDateRule implements RuleInterface
     protected function compare(\DateTime $leftDate, $operator, \DateTime $rightDate = null): bool
     {
         // Normalize the date to correct for time zones
-        $leftDate  = $this->normalizeDate(DateTimeFactory::factory($leftDate));
-        $rightDate = $this->normalizeDate($rightDate ?? $this->getCurrentDate());
+        $leftDate  = DateTimeFactory::factory($leftDate);
+        $rightDate = $rightDate ?? $this->getCurrentDate();
 
         switch ($operator) {
             case static::OPERATOR_GREATER_THAN:
@@ -71,25 +71,9 @@ abstract class AbstractDateRule implements RuleInterface
     protected function modDates(\DateTime $leftDate, \DateTime $rightDate = null): int
     {
         // Normalize the date to correct for time zones
-        $leftDate  = $this->normalizeDate(DateTimeFactory::factory($leftDate));
-        $rightDate = $this->normalizeDate($rightDate ?? $this->getCurrentDate());
+        $leftDate  = DateTimeFactory::factory($leftDate);
+        $rightDate = $rightDate ?? $this->getCurrentDate();
 
         return $leftDate->getTimestamp() % $rightDate->getTimestamp();
-    }
-
-    /**
-     * Rules will only have a resolution of hours.
-     *
-     * To ensure timestamps are close, we change the min and seconds to 00
-     *
-     * @param \DateTime $date
-     *
-     * @return \DateTime
-     */
-    protected function normalizeDate(\DateTime $date): \DateTime
-    {
-        $date->setDate($date->format('H'), 0, 0);
-
-        return $date;
     }
 }

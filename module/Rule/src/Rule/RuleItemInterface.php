@@ -2,26 +2,20 @@
 
 namespace Rule;
 
-use User\UserInterface;
-
 /**
  * A Rule item is an expanded event that is use to satisfy rules
  */
 interface RuleItemInterface
 {
     /**
-     * Sets the current user that is triggering the event
+     * Gets an item parameter
      *
-     * @param UserInterface $user
-     */
-    public function setActiveUser(UserInterface $user);
-
-    /**
-     * Gets the Active user that triggered the event
+     * @param string $param
+     * @param null $default default value to return if $param is not set
      *
-     * @return UserInterface
+     * @return mixed
      */
-    public function getActiveUser(): UserInterface;
+    public function getParam(string $param, $default = null);
 
     /**
      * Gets all the data for the Item
