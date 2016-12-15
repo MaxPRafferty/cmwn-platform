@@ -2,6 +2,7 @@
 
 namespace Sa\V1\Rest\SuperAdminSettings;
 
+use Api\Links\GameLink;
 use Api\Links\UserLink;
 use ZF\Hal\Entity;
 
@@ -17,8 +18,13 @@ class SuperAdminSettingsEntity extends Entity
     public function __construct()
     {
         parent::__construct([]);
+
         $userLink = new UserLink();
         $userLink->setProps(['label' => 'Manage Users']);
+
+        $gameLink = new GameLink();
+        $gameLink->setProps(['label' => 'Manage Games']);
         $this->getLinks()->add($userLink);
+        $this->getLinks()->add($gameLink);
     }
 }
