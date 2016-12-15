@@ -12,6 +12,7 @@ use ZF\ContentNegotiation\Request;
  * Class AbstractApigilityTestCase
  *
  * @method Request getRequest()
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
 abstract class AbstractApigilityTestCase extends TestCase
 {
