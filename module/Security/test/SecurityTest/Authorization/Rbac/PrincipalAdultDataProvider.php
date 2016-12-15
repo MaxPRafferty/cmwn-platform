@@ -40,5 +40,6 @@ class PrincipalAdultDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.user.flip');
         $this->setAllowed('view.user.groups');
         $this->setAllowed('view.user.orgs');
+        $this->setAllowed('reset.group.code');
     }
 }

@@ -6,10 +6,8 @@ use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
-use Security\Authentication\AuthenticationServiceAwareInterface;
-use Security\Authentication\AuthenticationServiceAwareTrait;
-use Security\Exception\ChangePasswordException;
-use Security\SecurityUser;
+use User\UserInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -17,18 +15,12 @@ use ZF\Rest\AbstractResourceListener;
 /**
  * Class ImportResource
  *
+ * Triggers the job to import a file to a group
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @deprecated
  */
-class ImportResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
+class ImportResource extends AbstractResourceListener
 {
-    use AuthenticationServiceAwareTrait;
-
-    /**
-     * @var JobServiceInterface
-     */
-    protected $jobService;
-
     /**
      * @var ServiceLocatorInterface
      */
@@ -36,17 +28,16 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
 
     /**
      * ImportResource constructor.
-     * @param JobServiceInterface $jobService
+     *
      * @param ServiceLocatorInterface $services
      */
-    public function __construct(JobServiceInterface $jobService, ServiceLocatorInterface $services)
+    public function __construct(ServiceLocatorInterface $services)
     {
-        $this->jobService = $jobService;
         $this->services   = $services;
     }
 
     /**
-     * Create a resource
+     * Creates a new import job and sends it to the job service
      *
      * @param  mixed $data
      * @return ApiProblem|mixed
@@ -54,58 +45,64 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
     public function create($data)
     {
         $type = $this->getInputFilter()->getValue('type');
-        $job  = $this->services->get($type);
-
-        if (!$job instanceof ImporterInterface) {
+        if (!$this->services->has($type)) {
             return new ApiProblem(500, 'Invalid importer type');
+        }
+
+        $job  = $this->services->get($type);
+        if (!$job instanceof ImporterInterface) {
+            return new ApiProblem(500, 'Not a valid importer');
         }
 
         $job->exchangeArray($this->getInputFilter()->getValues());
 
-        $user = $this->getUser();
-        if ($job instanceof NotificationAwareInterface && $user instanceof SecurityUser) {
-            $job->setEmail($user->getEmail());
+        if ($job instanceof NotificationAwareInterface) {
+            $job->setEmail($this->getUser()->getEmail());
         }
 
         if ($job instanceof GroupAwareInterface) {
-            $job->setGroup(
-                $this->getGroup(
-                    $this->getEvent()->getRouteParam('group_id')
-                )
-            );
+            $job->setGroup($this->getGroup());
         }
 
-        $token = $this->jobService->sendJob($job);
+        $token = $this->getJobService()->sendJob($job);
         return new ImportEntity($token);
     }
 
     /**
-     * @param $groupId
+     * Loads the group from the
      *
      * @return \Group\GroupInterface
      */
-    protected function getGroup($groupId)
+    protected function getGroup()
     {
-        /** @var GroupServiceInterface $groupService */
-        $groupService = $this->services->get(GroupServiceInterface::class);
-        return $groupService->fetchGroup($groupId);
+        return $this->services
+            ->get(GroupServiceInterface::class)
+            ->fetchGroup($this->getEvent()->getRouteParam('group_id'));
     }
 
     /**
-     * @return mixed|null|\Security\ChangePasswordUser
+     * Gets the user from the authentication service
+     *
+     * @return UserInterface|null
      */
     protected function getUser()
     {
-        if (!$this->getAuthenticationService()->hasIdentity()) {
+        /** @var AuthenticationServiceInterface $authService */
+        $authService = $this->services->get(AuthenticationServiceInterface::class);
+        if (!$authService->hasIdentity()) {
             return null;
         }
 
-        try {
-            $identity = $this->getAuthenticationService()->getIdentity();
-        } catch (ChangePasswordException $changePassword) {
-            $identity = $changePassword->getUser();
-        }
+        // do not catch the change password here
+        // we want to force the user to change their password
+        return $authService->getIdentity();
+    }
 
-        return $identity;
+    /**
+     * @return JobServiceInterface
+     */
+    protected function getJobService()
+    {
+        return $this->services->get(JobServiceInterface::class);
     }
 }
