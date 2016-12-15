@@ -24,7 +24,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => '8675309',
         ],
@@ -44,7 +44,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -64,7 +64,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -84,7 +84,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -104,7 +104,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -124,7 +124,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '1',
             'external_id'  => null,
         ],

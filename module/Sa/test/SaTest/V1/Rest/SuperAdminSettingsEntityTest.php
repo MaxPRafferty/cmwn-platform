@@ -35,6 +35,7 @@ class SuperAdminSettingsEntityTest extends TestCase
         $this->assertInstanceOf(LinkCollection::class, $links);
         $this->assertTrue($links->has('user'));
         $this->assertTrue($links->has('games'));
-        $this->assertEquals($links->count(), 2);
+        $this->assertTrue($links->has('game-data'));
+        $this->assertEquals($links->count(), 3);
     }
 }

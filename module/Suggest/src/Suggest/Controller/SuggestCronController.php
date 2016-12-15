@@ -9,6 +9,7 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\SecurityUser;
 use User\Service\UserServiceInterface;
+use User\UserInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Log\LoggerAwareInterface;
@@ -111,8 +112,6 @@ class SuggestCronController extends ConsoleController implements
             $users = $this->userService->fetchAll();
             $users = $users->getItems(0, $users->count());
 
-
-
             if (!$this->suggestionEngine instanceof JobInterface) {
                 $this->getLogger()->alert(sprintf('Invalid suggestion engine: %s', $this->suggestionEngine));
 
@@ -122,6 +121,9 @@ class SuggestCronController extends ConsoleController implements
             /**@var \User\UserInterface $user*/
             foreach ($users as $user) {
                 $job = $this->suggestionEngine;
+                if ($user->getType() !== UserInterface::TYPE_CHILD) {
+                    continue;
+                }
                 $job->exchangeArray([
                    'user_id' => $user->getUserId(),
                 ]);

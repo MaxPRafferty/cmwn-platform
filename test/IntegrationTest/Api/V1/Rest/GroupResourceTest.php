@@ -242,6 +242,9 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('school', $body['group_id']);
         $this->assertEquals('district', $body['organization_id']);
         $this->assertEquals('Gina\'s School', $body['title']);
+
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayHasKey('group_reset', $body['_links']);
     }
 
     /**
@@ -265,6 +268,10 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('school', $body['group_id']);
         $this->assertEquals('district', $body['organization_id']);
         $this->assertEquals('Gina\'s School', $body['title']);
+
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayNotHasKey('group_reset', $body['_links']);
+
     }
 
     /**

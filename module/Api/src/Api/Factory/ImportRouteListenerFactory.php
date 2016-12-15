@@ -3,7 +3,7 @@
 namespace Api\Factory;
 
 use Api\Listeners\ImportRouteListener;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -13,15 +13,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class ImportRouteListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritdoc
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var SecurityOrgService $ordService */
-        $orgService = $serviceLocator->get(SecurityOrgService::class);
+        /** @var SecurityOrgServiceInterface $orgService */
+        $orgService = $serviceLocator->get(SecurityOrgServiceInterface::class);
         return new ImportRouteListener($orgService);
     }
 }

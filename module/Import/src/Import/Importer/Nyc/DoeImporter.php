@@ -3,10 +3,12 @@
 namespace Import\Importer\Nyc;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\NoopLoggerAwareTrait;
 use Group\GroupAwareInterface;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
+use Import\Importer\Nyc\Parser\AddCodeToUserAction;
 use Import\Importer\Nyc\Parser\DoeParser;
 use Import\ImporterInterface;
 use Import\ProcessorErrorException;
@@ -69,6 +71,11 @@ class DoeImporter implements
     protected $school;
 
     /**
+     * @var \DateTime
+     */
+    protected $codeStart;
+
+    /**
      * @var GroupServiceInterface
      */
     protected $groupService;
@@ -83,6 +90,7 @@ class DoeImporter implements
     {
         $this->parser       = $parser;
         $this->groupService = $groupService;
+        $this->codeStart    = DateTimeFactory::factory('now');
     }
 
     /**
@@ -122,16 +130,32 @@ class DoeImporter implements
     /**
      * @return GroupInterface
      */
-    protected function getSchool()
+    public function getSchool()
     {
         return $this->school;
+    }
+
+    /**
+     * @param \DateTime|string|int $startDate
+     */
+    public function setCodeStart($startDate)
+    {
+        $this->codeStart = DateTimeFactory::factory($startDate ?? 'now');
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCodeStart()
+    {
+        return $this->codeStart;
     }
 
     /**
      * @param $school
      * @throws \Exception
      */
-    protected function setSchool($school)
+    public function setSchool($school)
     {
         if ($school !== null && !$school instanceof GroupInterface) {
             $this->getLogger()->debug('Loading school from database');
@@ -213,6 +237,10 @@ class DoeImporter implements
                     continue;
                 }
 
+                if (null !== $this->codeStart && $currentAction instanceof AddCodeToUserAction) {
+                    $currentAction->setCodeStart($this->codeStart);
+                }
+
                 $currentAction->execute();
                 $this->getLogger()->debug('Action executed');
             }
@@ -247,6 +275,7 @@ class DoeImporter implements
             'student_code' => $this->studentCode,
             'school'       => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null,
             'email'        => $this->getEmail(),
+            'code_start'   => $this->getCodeStart() !== null ? $this->getCodeStart()->format("Y-m-d H:i:s") : null,
         ];
     }
 
@@ -264,6 +293,7 @@ class DoeImporter implements
             'student_code' => null,
             'school'       => null,
             'email'        => null,
+            'code_start'   => null,
         ];
 
         $data = array_merge($defaults, $data);
@@ -274,5 +304,6 @@ class DoeImporter implements
 
         $this->setSchool($data['school']);
         $this->setEmail($data['email']);
+        $this->setCodeStart($data['code_start']);
     }
 }
