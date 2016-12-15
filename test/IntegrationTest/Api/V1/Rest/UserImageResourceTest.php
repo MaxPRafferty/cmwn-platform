@@ -6,6 +6,7 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
 use Asset\Service\UserImageServiceInterface;
 use IntegrationTest\TestHelper;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test UserImageResourceTest
@@ -29,11 +30,19 @@ class UserImageResourceTest extends TestCase
     protected $userImageService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/user-image.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserService()
     {
-        $this->userImageService = TestHelper::getServiceManager()->get(UserImageServiceInterface::class);
+        $this->userImageService = TestHelper::getDbServiceManager()->get(UserImageServiceInterface::class);
     }
 
     /**
@@ -190,13 +199,15 @@ class UserImageResourceTest extends TestCase
     public function changePasswordDataProvider()
     {
         return [
-            0 => [
-                'other_teacher',
-                '/user/other_principal/image',
-            ],
-            1 => [
+            'Math student' => [
                 'math_student',
                 '/user/math_student/image',
+                'POST',
+                ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg'],
+            ],
+            'Math teacher' => [
+                'math_teacher',
+                '/user/math_teacher/image',
                 'POST',
                 ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg'],
             ],

@@ -4,116 +4,9 @@
  */
 return [
     'flips'         => [],
-    'organizations' => [
-        [
-            'org_id'      => 'district',
-            'title'       => 'Gina\'s District',
-            'description' => null,
-            'meta'        => null,
-            'created'     => '2016-04-27 10:48:44',
-            'updated'     => '2016-04-27 10:48:46',
-            'deleted'     => null,
-            'type'        => 'district',
-        ],
-        [
-            'org_id'      => 'manchuck',
-            'title'       => 'MANCHUCK\'S district',
-            'description' => null,
-            'meta'        => null,
-            'created'     => '2016-04-27 10:48:44',
-            'updated'     => '2016-04-27 10:48:46',
-            'deleted'     => null,
-            'type'        => 'district',
-        ],
-    ],
+    'organizations' => [],
     'games'         => [],
-    'groups'        => [
-        [
-            'group_id'        => 'other_school',
-            'organization_id' => 'manchuck',
-            'title'           => 'MC School',
-            'description'     => null,
-            'meta'            => null,
-            'head'            => '1',
-            'tail'            => '4',
-            'created'         => '2016-04-15 15:52:36',
-            'updated'         => '0000-00-00 00:00:00',
-            'deleted'         => null,
-            'type'            => 'school',
-            'external_id'     => null,
-            'parent_id'       => null,
-            'depth'           => '0',
-            'network_id'      => 'other_school',
-        ],
-        [
-            'group_id'        => 'school',
-            'organization_id' => 'district',
-            'title'           => 'Gina\'s School',
-            'description'     => null,
-            'meta'            => null,
-            'head'            => '1',
-            'tail'            => '6',
-            'created'         => '2016-04-15 15:46:07',
-            'updated'         => '0000-00-00 00:00:00',
-            'deleted'         => null,
-            'type'            => 'school',
-            'external_id'     => null,
-            'parent_id'       => null,
-            'depth'           => '0',
-            'network_id'      => 'school',
-        ],
-        [
-            'group_id'        => 'english',
-            'organization_id' => 'district',
-            'title'           => 'English Class',
-            'description'     => null,
-            'meta'            => null,
-            'head'            => '4',
-            'tail'            => '5',
-            'created'         => '2016-04-15 15:47:02',
-            'updated'         => '0000-00-00 00:00:00',
-            'deleted'         => null,
-            'type'            => 'class',
-            'external_id'     => null,
-            'parent_id'       => 'school',
-            'depth'           => '1',
-            'network_id'      => 'school',
-        ],
-        [
-            'group_id'        => 'math',
-            'organization_id' => 'district',
-            'title'           => 'Math Class',
-            'description'     => null,
-            'meta'            => null,
-            'head'            => '2',
-            'tail'            => '3',
-            'created'         => '2016-04-15 15:46:03',
-            'updated'         => '0000-00-00 00:00:00',
-            'deleted'         => null,
-            'type'            => 'class',
-            'external_id'     => null,
-            'parent_id'       => 'school',
-            'depth'           => '1',
-            'network_id'      => 'school',
-        ],
-        [
-            'group_id'        => 'other_math',
-            'organization_id' => 'manchuck',
-            'title'           => 'MC Math',
-            'description'     => null,
-            'meta'            => null,
-            'head'            => '2',
-            'tail'            => '3',
-            'created'         => '2016-04-15 15:53:06',
-            'updated'         => '0000-00-00 00:00:00',
-            'deleted'         => null,
-            'type'            => 'class',
-            'external_id'     => null,
-            'parent_id'       => 'other_school',
-            'depth'           => '1',
-            'network_id'      => 'school',
-        ],
-    ],
+    'groups'        => [],
     'images'        => [],
     'names'         => [],
     'user_flips'    => [],
@@ -134,7 +27,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'englishstudent'
@@ -155,7 +48,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'englishteacher'
@@ -197,7 +90,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'mathteacher'
@@ -218,7 +111,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'otherprincipal'
@@ -239,7 +132,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'otherstudent'
@@ -260,7 +153,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'otherteacher'
@@ -281,7 +174,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'principal'
@@ -302,7 +195,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '1',
             'external_id'  => null,
             'normalized_username' => 'superuser'
@@ -344,55 +237,14 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => '2016-04-27 10:48:46',
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
             'normalized_username' => 'deleteduser'
         ],
     ],
     'user_friends'  => [],
-    'user_groups'   => [
-        [
-            'user_id'  => 'english_student',
-            'group_id' => 'english',
-            'role'     => 'student',
-        ],
-        [
-            'user_id'  => 'english_teacher',
-            'group_id' => 'english',
-            'role'     => 'teacher',
-        ],
-        [
-            'user_id'  => 'math_student',
-            'group_id' => 'math',
-            'role'     => 'student',
-        ],
-        [
-            'user_id'  => 'math_teacher',
-            'group_id' => 'math',
-            'role'     => 'teacher',
-        ],
-        [
-            'user_id'  => 'other_teacher',
-            'group_id' => 'other_math',
-            'role'     => 'teacher',
-        ],
-        [
-            'user_id'  => 'other_student',
-            'group_id' => 'other_math',
-            'role'     => 'student',
-        ],
-        [
-            'user_id'  => 'other_principal',
-            'group_id' => 'other_school',
-            'role'     => 'principal',
-        ],
-        [
-            'user_id'  => 'principal',
-            'group_id' => 'school',
-            'role'     => 'principal',
-        ],
-    ],
+    'user_groups'   => [],
     'user_images'   => [],
     'user_saves'    => [],
 ];

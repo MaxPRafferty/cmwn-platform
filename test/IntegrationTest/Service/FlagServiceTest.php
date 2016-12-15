@@ -12,6 +12,7 @@ use IntegrationTest\TestHelper;
 use User\Child;
 use User\Service\UserService;
 use User\UserInterface;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Class FlagServiceTest
@@ -20,6 +21,7 @@ use User\UserInterface;
  * @group IntegrationTest
  * @group Db
  * @package IntegrationTest\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FlagServiceTest extends TestCase
 {
@@ -37,6 +39,14 @@ class FlagServiceTest extends TestCase
      * @var Flag
      */
     protected $flag;
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/flag.dataset.php');
+    }
 
     /**
      * @before
@@ -57,7 +67,7 @@ class FlagServiceTest extends TestCase
      */
     public function setUpFlagHydrator()
     {
-        $userService = TestHelper::getServiceManager()->get(UserService::class);
+        $userService = TestHelper::getDbServiceManager()->get(UserService::class);
 
         $this->flagHydrator = new FlagHydrator($userService);
     }
@@ -67,7 +77,7 @@ class FlagServiceTest extends TestCase
      */
     public function setUpFlagService()
     {
-        $this->flagService = TestHelper::getServiceManager()->get(FlagService::class);
+        $this->flagService = TestHelper::getDbServiceManager()->get(FlagService::class);
     }
 
     /**
@@ -81,9 +91,9 @@ class FlagServiceTest extends TestCase
         $this->assertInstanceOf(FlagInterface::class, $flag);
         $this->assertInstanceOf(UserInterface::class, $flag->getFlagger());
         $this->assertInstanceOf(UserInterface::class, $flag->getFlaggee());
-        $this->assertEquals('asdf', $flag->getFlagId());
-        $this->assertEquals('/asdf', $flag->getUrl());
-        $this->assertEquals('inappropriate', $flag->getReason());
+        $this->assertEquals('flagged-image', $flag->getFlagId());
+        $this->assertEquals('http://read.bi/2clh0wi', $flag->getUrl());
+        $this->assertEquals('Offensive ;)', $flag->getReason());
         $this->assertEquals('english_student', $flag->getFlaggee()->getUserId());
         $this->assertEquals('math_student', $flag->getFlagger()->getUserId());
     }
@@ -93,13 +103,13 @@ class FlagServiceTest extends TestCase
      */
     public function testItShouldFetchFlagById()
     {
-        $flag = $this->flagService->fetchFlag('asdf');
+        $flag = $this->flagService->fetchFlag('flagged-image');
         $this->assertInstanceOf(FlagInterface::class, $flag);
         $this->assertInstanceOf(UserInterface::class, $flag->getFlagger());
         $this->assertInstanceOf(UserInterface::class, $flag->getFlaggee());
-        $this->assertEquals('asdf', $flag->getFlagId());
-        $this->assertEquals('/asdf', $flag->getUrl());
-        $this->assertEquals('inappropriate', $flag->getReason());
+        $this->assertEquals('flagged-image', $flag->getFlagId());
+        $this->assertEquals('http://read.bi/2clh0wi', $flag->getUrl());
+        $this->assertEquals('Offensive ;)', $flag->getReason());
         $this->assertEquals('english_student', $flag->getFlaggee()->getUserId());
         $this->assertEquals('math_student', $flag->getFlagger()->getUserId());
     }
@@ -155,7 +165,7 @@ class FlagServiceTest extends TestCase
      */
     public function testItShouldDeleteFlag()
     {
-        $flag = $this->flagService->fetchFlag('asdf');
+        $flag = $this->flagService->fetchFlag('flagged-image');
         $this->flagService->deleteFlag($flag);
         $flags = $this->flagService->fetchAll();
         $this->assertEquals(0, $flags->count());

@@ -6,6 +6,7 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test PasswordResourceTest
@@ -26,11 +27,19 @@ class PasswordResourceTest extends TestCase
     protected $securityService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/password.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
     }
 
     /**
@@ -74,7 +83,7 @@ class PasswordResourceTest extends TestCase
         $this->assertEquals('english_student', $user->getUserId());
         $this->assertTrue($user->comparePassword('apple0007'));
     }
-    
+
     /**
      * @test
      */

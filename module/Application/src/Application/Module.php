@@ -12,7 +12,6 @@ use Zend\Console\Adapter\AdapterInterface;
 use Zend\EventManager\SharedEventManager;
 use Zend\Log\Logger;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use Zend\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -55,20 +54,6 @@ class Module implements
     public function getConfig()
     {
         return include __DIR__ . '/../../config/module.config.php';
-    }
-
-    /**
-     * @return array
-     */
-    public function getAutoloaderConfig()
-    {
-        return [
-            'Zend\Loader\StandardAutoloader' => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__,
-                ],
-            ],
-        ];
     }
 
     /**

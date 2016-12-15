@@ -3,7 +3,6 @@
 namespace Api;
 
 use Api\Listeners\OrgRouteListener;
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\Apigility\Provider\ApigilityProviderInterface;
@@ -12,7 +11,7 @@ use ZF\Apigility\Provider\ApigilityProviderInterface;
  * Class Module
  * @package Api
  */
-class Module implements ApigilityProviderInterface, ConfigProviderInterface, AutoloaderProviderInterface
+class Module implements ApigilityProviderInterface, ConfigProviderInterface
 {
     /**
      * @return mixed
@@ -20,20 +19,6 @@ class Module implements ApigilityProviderInterface, ConfigProviderInterface, Aut
     public function getConfig()
     {
         return include __DIR__ . '/../../config/module.config.php';
-    }
-
-    /**
-     * @return array
-     */
-    public function getAutoloaderConfig()
-    {
-        return [
-            'ZF\Apigility\Autoloader' => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__,
-                ],
-            ],
-        ];
     }
 
     /**

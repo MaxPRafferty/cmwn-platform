@@ -112,6 +112,12 @@ return [
                 'PUT'    => 'edit.flag',
                 'DELETE' => 'delete.flag'
             ],
+            'sa.rest.settings' => [
+                'GET' => 'sa.settings',
+            ],
+            'api.rest.group-reset' => [
+                'POST' => 'reset.group.code'
+            ],
         ],
     ],
 ];

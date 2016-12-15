@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: chaitu
- * Date: 6/28/16
- * Time: 2:27 PM
- */
 
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
-use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test LogoutResourceTest
@@ -18,6 +12,15 @@ use Zend\Json\Json;
 
 class LogoutResourceTest extends TestCase
 {
+
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/login.dataset.php');
+    }
+
     /**
      * @test
      */
@@ -25,7 +28,7 @@ class LogoutResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-        
+
         $this->dispatch('/logout');
         $this->assertMatchedRouteName('api.rest.logout');
         $this->assertControllerName('api\v1\rest\logout\controller');

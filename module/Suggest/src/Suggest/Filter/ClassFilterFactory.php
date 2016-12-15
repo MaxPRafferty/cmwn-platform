@@ -17,7 +17,6 @@ class ClassFilterFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $userGroupService = $serviceLocator->get(UserGroupService::class);
-        return new ClassFilter($userGroupService);
+        return new ClassFilter($serviceLocator->get(UserGroupService::class));
     }
 }

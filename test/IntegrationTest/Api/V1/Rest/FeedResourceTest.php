@@ -4,6 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Class FeedResourceTest
@@ -12,26 +13,38 @@ use Zend\Json\Json;
 class FeedResourceTest extends TestCase
 {
     /**
-     * @test
+     * @return ArrayDataSet
      */
-    public function testItShouldCheckIfUserIsLoggedIn()
+    public function getDataSet()
     {
-        $this->injectValidCsrfToken();
-        $this->dispatch('/user/english_student/feed');
-        $this->assertResponseStatusCode(401);
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/feed.dataset.php');
     }
 
     /**
      * @test
-     * @param $login
-     * @dataProvider loginDataProvider
+     *
+     * @param string $user
+     * @param string $method
+     * @param array $params
+     *
+     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldAccessFeedEndPoint($login)
+    public function testItShouldCheckChangePasswordException($user, $method = 'GET', $params = [])
     {
         $this->injectValidCsrfToken();
-        $this->logInUser($login);
-        $this->dispatch('/user/' .$login. '/feed');
-        $this->assertResponseStatusCode(200);
+        $this->logInChangePasswordUser($user);
+        $this->assertChangePasswordException('/user/' . $user. '/feed', $method, $params);
+    }
+
+    /**
+     * @test
+     * @dataProvider changePasswordDataProvider
+     */
+    public function testItShouldCheckIfUserIsLoggedIn($login)
+    {
+        $this->injectValidCsrfToken();
+        $this->dispatch('/user/' . $login . '/feed');
+        $this->assertResponseStatusCode(401);
     }
 
     /**
@@ -111,10 +124,28 @@ class FeedResourceTest extends TestCase
     public function loginDataProvider()
     {
         return [
-            ['english_student'],
-            ['english_teacher'],
-            ['principal'],
-            ['super_user'],
+            'English Student' => ['english_student'],
+            'English Teacher' => ['english_teacher'],
+            'Principal' => ['principal'],
+            'Super Admin' => ['super_user'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function changePasswordDataProvider()
+    {
+        return [
+            'English Student' => [
+                'english_student',
+            ],
+            'Principal' => [
+                'principal',
+            ],
+            'English Teacher' => [
+                'english_teacher',
+            ],
         ];
     }
 }

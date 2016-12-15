@@ -1,7 +1,9 @@
 <?php
-
+/**
+ * This is just a place holder from which you can copy into the dataset that you need
+ */
 return [
-    'flips'         => [
+    'flips'            => [
         [
             'flip_id'     => 'polar-bear',
             'title'       => 'Polar Bear',
@@ -15,7 +17,7 @@ return [
                 ' play flips and find out why they are endangered.',
         ],
     ],
-    'organizations' => [
+    'organizations'    => [
         [
             'org_id'      => 'district',
             'title'       => 'Gina\'s District',
@@ -37,7 +39,7 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'         => [
+    'games'            => [
         [
             'game_id'     => 'animal-id',
             'created'     => '2016-04-13 00:00:00',
@@ -74,7 +76,7 @@ return [
             'coming_soon' => '0',
         ],
     ],
-    'groups'        => [
+    'groups'           => [
         [
             'group_id'        => 'other_school',
             'organization_id' => 'manchuck',
@@ -161,7 +163,7 @@ return [
             'network_id'      => 'other_school',
         ],
     ],
-    'images'        => [
+    'images'           => [
         [
             'image_id'          => 'english_pending',
             'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
@@ -174,7 +176,7 @@ return [
         [
             'image_id'          => 'english_approved',
             'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
-            '/upload/v1460592535/english_approved',
+                '/upload/v1460592535/english_approved',
             'moderation_status' => '1',
             'created'           => '2016-04-05 20:14:18',
             'updated'           => '2016-04-06 20:14:18',
@@ -208,7 +210,7 @@ return [
             'type'              => null,
         ],
     ],
-    'names'         => [
+    'names'            => [
         [
             'name'     => 'active',
             'position' => 'LEFT',
@@ -230,7 +232,7 @@ return [
             'count'    => '1',
         ],
     ],
-    'users'         => [
+    'users'            => [
         [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
@@ -247,7 +249,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => '8675309',
         ],
@@ -267,7 +268,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -287,7 +287,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -307,7 +306,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -327,7 +325,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -347,7 +344,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -367,7 +363,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -387,7 +382,6 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -407,12 +401,11 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
             'super'        => '1',
             'external_id'  => null,
         ],
     ],
-    'user_flips'    => [
+    'user_flips'       => [
         [
             'user_id' => 'english_student',
             'flip_id' => 'polar-bear',
@@ -439,8 +432,8 @@ return [
             'earned'  => '2016-04-27 10:48:45',
         ],
     ],
-    'user_friends'  => [],
-    'user_groups'   => [
+    'user_friends'     => [],
+    'user_groups'      => [
         [
             'user_id'  => 'english_student',
             'group_id' => 'english',
@@ -482,7 +475,7 @@ return [
             'role'     => 'principal',
         ],
     ],
-    'user_images'   => [
+    'user_images'      => [
         [
             'user_id'  => 'english_student',
             'image_id' => 'english_approved',
@@ -504,15 +497,15 @@ return [
             'image_id' => 'principal',
         ],
     ],
-    'image_flags'   => [
+    'image_flags'      => [
         [
             'flag_id' => 'asdf',
             'flagger' => 'math_student',
             'flaggee' => 'english_student',
             'url'     => '/asdf',
-            'reason'  => 'inappropriate'
-        ]
+            'reason'  => 'inappropriate',
+        ],
     ],
-    'user_saves'    => [],
-    'user_suggestions'    => [],
+    'user_saves'       => [],
+    'user_suggestions' => [],
 ];

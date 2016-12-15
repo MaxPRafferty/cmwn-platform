@@ -25,8 +25,10 @@
         <const name="TEST_MODE" value="true"/>
     </php>
     <testsuites>
-        <testsuite name="CMWN Tests">
+        <testsuite name="Unit">
             <directory>../module/*/test</directory>
+        </testsuite>
+        <testsuite name="Integration">
             <directory>./IntegrationTest</directory>
         </testsuite>
     </testsuites>

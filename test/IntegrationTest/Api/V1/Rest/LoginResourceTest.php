@@ -29,7 +29,7 @@ class LoginResourceTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
     }
 
     /**
@@ -37,9 +37,7 @@ class LoginResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../../DataSets/login.dataset.php';
-
-        return new ArrayDataSet($data);
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/login.dataset.php');
     }
 
     /**
@@ -106,7 +104,7 @@ class LoginResourceTest extends TestCase
      */
     public function testItShouldGoToChangePasswordUponCode()
     {
-        $this->securityService->saveCodeToUser('xyz', 'english_teacher');
+        $this->securityService->saveCodeToUser('xyz', 'english_teacher', 2);
         $this->dispatch(
             '/login',
             'POST',

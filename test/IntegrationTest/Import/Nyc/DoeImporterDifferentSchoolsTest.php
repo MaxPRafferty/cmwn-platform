@@ -48,9 +48,9 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     public function setUpLoggedInUser()
     {
         /** @var SecurityService $userService */
-        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $userService = TestHelper::getDbServiceManager()->get(SecurityService::class);
         $user        = $userService->fetchUserByUserName('super_user');
-        $authService = TestHelper::getServiceManager()->get(AuthenticationService::class);
+        $authService = TestHelper::getDbServiceManager()->get(AuthenticationService::class);
         $authService->getStorage()->write($user);
     }
 
