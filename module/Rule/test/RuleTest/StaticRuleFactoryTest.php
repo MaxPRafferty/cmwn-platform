@@ -82,7 +82,7 @@ class StaticRuleFactoryTest extends TestCase
     public function testItShouldCreateRuleFromContainerWithNoOptions()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $container  = \Mockery::mock(ContainerInterface::class);
+        $container    = \Mockery::mock(ContainerInterface::class);
         $expectedRule = new TestSerializedRule();
         $container->shouldReceive('get')->with(TestSerializedRule::class)->andReturn($expectedRule);
 
@@ -104,7 +104,7 @@ class StaticRuleFactoryTest extends TestCase
     public function testItShouldCreateRuleFromContainerWithTextOptions()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $container  = \Mockery::mock(ContainerInterface::class);
+        $container    = \Mockery::mock(ContainerInterface::class);
         $expectedRule = new TestSerializedRule();
         $container->shouldReceive('get')->with(TestSerializedRule::class)->andReturn($expectedRule);
 
@@ -133,7 +133,7 @@ class StaticRuleFactoryTest extends TestCase
     public function testItShouldCreateRuleFromContainerWithNonTextOptions()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $container  = \Mockery::mock(ContainerInterface::class);
+        $container    = \Mockery::mock(ContainerInterface::class);
         $expectedRule = new TestSerializedRule();
         $container->shouldReceive('get')->with(TestSerializedRule::class)->andReturn($expectedRule);
 
@@ -162,10 +162,9 @@ class StaticRuleFactoryTest extends TestCase
     public function testItShouldBuildFromContainerWithBuild()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $container  = \Mockery::mock(ContainerInterface::class);
+        $container    = \Mockery::mock(ContainerInterface::class);
         $expectedRule = new TestSerializedRule();
         $container->shouldReceive('get')->with(TestSerializedRule::class)->andReturn($expectedRule);
-
 
         $actualRule = StaticRuleFactory::buildRule(
             $container,
@@ -200,6 +199,30 @@ class StaticRuleFactoryTest extends TestCase
             DateAfterRule::class,
             $rule,
             'Rule Factory did not build the rule from the class name with options'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldBuildFromClassWithBuildWhenContainerMissingService()
+    {
+        /** @var \Mockery\MockInterface|ContainerInterface $container */
+        $container          = \Mockery::mock(ContainerInterface::class);
+        $expectedRule       = new TestSerializedRule();
+        $expectedRule->data = ['foo' => 'bar'];
+        $container->shouldReceive('get')->with(TestSerializedRule::class)->andThrow(new \Exception());
+
+        $actualRule = StaticRuleFactory::buildRule(
+            $container,
+            TestSerializedRule::class,
+            ['foo' => 'bar']
+        );
+
+        $this->assertEquals(
+            $expectedRule,
+            $actualRule,
+            'Rule Factory did not get the rule from the container'
         );
     }
 

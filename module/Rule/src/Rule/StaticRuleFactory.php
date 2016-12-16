@@ -3,9 +3,9 @@
 namespace Rule;
 
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\NotFoundException;
 use Rule\Exception\InvalidArgumentException;
 use Rule\Exception\RuntimeException;
+
 /**
  * Class StaticRuleFactory
  */
@@ -74,8 +74,8 @@ class StaticRuleFactory
     /**
      * Builds a rule using either by the class or from the container
      *
-     * @param $paramOne ContainerInterface|string Container or classname
-     * @param $paramTwo string|array Options or class name to pass in
+     * @param $paramOne   ContainerInterface|string Container or classname
+     * @param $paramTwo   string|array Options or class name to pass in
      * @param $parmaThree array The options
      *
      * @return RuleInterface
@@ -93,8 +93,9 @@ class StaticRuleFactory
             if ($args[0] instanceof ContainerInterface) {
                 return static::buildRuleFromContainer(...$args);
             }
-        } catch (NotFoundException $notFound) {
+        } catch (\Exception $notFound) {
             // This is not the exception you're looking for
+            unset($args[0]);
         }
 
         return static::buildRuleFromClass(...$args);

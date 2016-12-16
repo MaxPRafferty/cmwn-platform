@@ -5,7 +5,9 @@ namespace Rule\Engine;
 use Interop\Container\ContainerInterface;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Item\RuleItemInterface;
+use Rule\RuleCollection;
 use Rule\RuleCollectionInterface;
+use Rule\StaticRuleFactory;
 
 /**
  * Class ArraySpecification
@@ -16,6 +18,21 @@ class ArraySpecification implements EngineSpecificationInterface
      * @var array
      */
     protected $spec;
+
+    /**
+     * @var RuleCollectionInterface
+     */
+    protected $rules;
+
+    /**
+     * @var ActionCollectionInterface
+     */
+    protected $actions;
+
+    /**
+     * @var RuleItemInterface
+     */
+    protected $ruleItem;
 
     public function __construct(array $spec)
     {
@@ -59,7 +76,14 @@ class ArraySpecification implements EngineSpecificationInterface
      */
     public function getRules(ContainerInterface $services): RuleCollectionInterface
     {
-        // TODO: Implement getRules() method.
+        if (null === $this->rules) {
+            $this->rules = new RuleCollection();
+            array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
+                $this->rules->append(StaticRuleFactory::buildRule($services, ...array_values($ruleSpec)));
+            });
+        }
+
+        return $this->rules;
     }
 
     /**
