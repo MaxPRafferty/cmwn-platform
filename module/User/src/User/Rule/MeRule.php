@@ -3,7 +3,7 @@
 namespace User\Rule;
 
 use Rule\RuleInterface;
-use Rule\RuleItemInterface;
+use Rule\Item\RuleItemInterface;
 use Rule\TimesSatisfiedTrait;
 use User\UserInterface;
 

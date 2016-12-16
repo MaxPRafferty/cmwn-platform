@@ -3,9 +3,10 @@
 namespace RuleTest\Basic;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Basic\EitherSpecification;
-use Rule\RuleItemInterface;
-use Rule\RuleInterface;
+use Rule\Basic\NeverSatisfiedRule;
+use Rule\Item\BasicRuleItem;
 
 /**
  * Test EitherSpecificationTest
@@ -23,15 +24,8 @@ class EitherSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyWithTwoRules()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        $item    = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne = \Mockery::mock(RuleInterface::class);
-        $ruleTwo = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
+        $ruleOne = new AlwaysSatisfiedRule();
+        $ruleTwo = new AlwaysSatisfiedRule();
 
         $eitherRule = new EitherSpecification(
             $ruleOne,
@@ -39,7 +33,7 @@ class EitherSpecificationTest extends TestCase
         );
 
         $this->assertTrue(
-            $eitherRule->isSatisfiedBy($item),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'Either Rule Specification did not satisfy 2 rules that are satisfied'
         );
     }
@@ -49,15 +43,8 @@ class EitherSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyRulesWhenNoneAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        $item    = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne = \Mockery::mock(RuleInterface::class);
-        $ruleTwo = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
+        $ruleOne = new NeverSatisfiedRule();
+        $ruleTwo = new NeverSatisfiedRule();
 
         $eitherRule = new EitherSpecification(
             $ruleOne,
@@ -65,7 +52,7 @@ class EitherSpecificationTest extends TestCase
         );
 
         $this->assertFalse(
-            $eitherRule->isSatisfiedBy($item),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'Either Rule Specification satisfied 2 rules where one is not satisfied'
         );
     }
@@ -75,18 +62,9 @@ class EitherSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyThreeRulesWhenOneIsHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleThree */
-        $item      = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne   = \Mockery::mock(RuleInterface::class);
-        $ruleTwo   = \Mockery::mock(RuleInterface::class);
-        $ruleThree = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleThree->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
+        $ruleOne   = new NeverSatisfiedRule();
+        $ruleTwo   = new AlwaysSatisfiedRule();
+        $ruleThree = new NeverSatisfiedRule();
 
         $eitherRule = new EitherSpecification(
             $ruleOne,
@@ -95,7 +73,7 @@ class EitherSpecificationTest extends TestCase
         );
 
         $this->assertTrue(
-            $eitherRule->isSatisfiedBy($item),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'Either Rule Specification did not satisfy 3 rules that are satisfied'
         );
     }
@@ -105,18 +83,9 @@ class EitherSpecificationTest extends TestCase
      */
     public function testItShouldNotSatisfyThreeRulesWhenNoneAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleThree */
-        $item      = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne   = \Mockery::mock(RuleInterface::class);
-        $ruleTwo   = \Mockery::mock(RuleInterface::class);
-        $ruleThree = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleThree->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
+        $ruleOne   = new NeverSatisfiedRule();
+        $ruleTwo   = new NeverSatisfiedRule();
+        $ruleThree = new NeverSatisfiedRule();
 
         $eitherRule = new EitherSpecification(
             $ruleOne,
@@ -125,33 +94,21 @@ class EitherSpecificationTest extends TestCase
         );
 
         $this->assertFalse(
-            $eitherRule->isSatisfiedBy($item),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'Either Rule Specification satisfied when all rules are not happy'
         );
     }
-
 
     /**
      * @test
      */
     public function testItShouldSatisfyALargeNumberOfRulesWhenAllAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $event */
-        $event = \Mockery::mock(RuleItemInterface::class);
-        $rules = [];
-        foreach (range(0, 999) as $ruleCount) {
-            $rule = \Mockery::mock(RuleInterface::class);
-            $rule->shouldReceive('isSatisfiedBy')
-                ->with($event)
-                ->andReturn(true)
-                ->once();
-            array_push($rules, $rule);
-        }
-
+        $rules      = array_fill(0, 1000, new AlwaysSatisfiedRule());
         $eitherRule = new EitherSpecification(...$rules);
 
         $this->assertTrue(
-            $eitherRule->isSatisfiedBy($event),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification did not satisfy 1000 rules'
         );
 
@@ -167,22 +124,16 @@ class EitherSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyALargeNumberOfRulesWithTwentyPercentAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $event */
-        $event = \Mockery::mock(RuleItemInterface::class);
-        $rules = [];
-        foreach (range(0, 999) as $ruleCount) {
-            $rule = \Mockery::mock(RuleInterface::class);
-            $rule->shouldReceive('isSatisfiedBy')
-                ->with($event)
-                ->andReturn($ruleCount % 5 == 0)
-                ->once();
-            array_push($rules, $rule);
-        }
+        $rules = array_merge(
+            array_fill(0, 200, new AlwaysSatisfiedRule()),
+            array_fill(0, 800, new NeverSatisfiedRule())
+        );
 
+        shuffle($rules);
         $eitherRule = new EitherSpecification(...$rules);
 
         $this->assertTrue(
-            $eitherRule->isSatisfiedBy($event),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'Either Rule Specification was not satisfied all rules when 80% are not happy'
         );
 
@@ -198,22 +149,11 @@ class EitherSpecificationTest extends TestCase
      */
     public function testItShouldNotSatisfyALargeNumberOfRulesWhenNoneAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $event */
-        $event = \Mockery::mock(RuleItemInterface::class);
-        $rules = [];
-        foreach (range(0, 999) as $ruleCount) {
-            $rule = \Mockery::mock(RuleInterface::class);
-            $rule->shouldReceive('isSatisfiedBy')
-                ->with($event)
-                ->andReturn(false)
-                ->once();
-            array_push($rules, $rule);
-        }
-
+        $rules      = array_fill(0, 1000, new NeverSatisfiedRule());
         $eitherRule = new EitherSpecification(...$rules);
 
         $this->assertFalse(
-            $eitherRule->isSatisfiedBy($event),
+            $eitherRule->isSatisfiedBy(new BasicRuleItem()),
             'Either Rule Specification not satisfied all rules when all rules are not happy'
         );
 

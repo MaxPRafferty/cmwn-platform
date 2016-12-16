@@ -3,9 +3,10 @@
 namespace RuleTest\Basic;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Basic\AndSpecification;
-use Rule\RuleItemInterface;
-use Rule\RuleInterface;
+use Rule\Basic\NeverSatisfiedRule;
+use Rule\Item\BasicRuleItem;
 
 /**
  * Test AndSpecificationTest
@@ -23,15 +24,8 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyTwoRules()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        $item    = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne = \Mockery::mock(RuleInterface::class);
-        $ruleTwo = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
+        $ruleOne = new AlwaysSatisfiedRule();
+        $ruleTwo = new AlwaysSatisfiedRule();
 
         $andRule = new AndSpecification(
             $ruleOne,
@@ -39,7 +33,7 @@ class AndSpecificationTest extends TestCase
         );
 
         $this->assertTrue(
-            $andRule->isSatisfiedBy($item),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification did not satisfy 2 rules that are satisfied'
         );
     }
@@ -49,15 +43,8 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldNotSatisfyRulesWhenOneIsNotHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        $item    = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne = \Mockery::mock(RuleInterface::class);
-        $ruleTwo = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
+        $ruleOne = new AlwaysSatisfiedRule();
+        $ruleTwo = new NeverSatisfiedRule();
 
         $andRule = new AndSpecification(
             $ruleOne,
@@ -65,7 +52,7 @@ class AndSpecificationTest extends TestCase
         );
 
         $this->assertFalse(
-            $andRule->isSatisfiedBy($item),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification satisfied 2 rules where one is not satisfied'
         );
     }
@@ -75,18 +62,9 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyThreeRules()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleThree */
-        $item      = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne   = \Mockery::mock(RuleInterface::class);
-        $ruleTwo   = \Mockery::mock(RuleInterface::class);
-        $ruleThree = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleThree->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
+        $ruleOne   = new AlwaysSatisfiedRule();
+        $ruleTwo   = new AlwaysSatisfiedRule();
+        $ruleThree = new AlwaysSatisfiedRule();
 
         $andRule = new AndSpecification(
             $ruleOne,
@@ -95,7 +73,7 @@ class AndSpecificationTest extends TestCase
         );
 
         $this->assertTrue(
-            $andRule->isSatisfiedBy($item),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification did not satisfy 3 rules that are satisfied'
         );
     }
@@ -105,18 +83,9 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldNotSatisfyThreeRulesWhenTwoAreNotHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleThree */
-        $item      = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne   = \Mockery::mock(RuleInterface::class);
-        $ruleTwo   = \Mockery::mock(RuleInterface::class);
-        $ruleThree = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleThree->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
+        $ruleOne   = new AlwaysSatisfiedRule();
+        $ruleTwo   = new NeverSatisfiedRule();
+        $ruleThree = new NeverSatisfiedRule();
 
         $andRule = new AndSpecification(
             $ruleOne,
@@ -125,7 +94,7 @@ class AndSpecificationTest extends TestCase
         );
 
         $this->assertFalse(
-            $andRule->isSatisfiedBy($item),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification satisfied 2 rules where 2 are not satisfied'
         );
     }
@@ -135,18 +104,9 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldNotSatisfyThreeRulesWhenNoneAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleOne */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleTwo */
-        /** @var \Mockery\MockInterface|RuleInterface $ruleThree */
-        $item      = \Mockery::mock(RuleItemInterface::class);
-        $ruleOne   = \Mockery::mock(RuleInterface::class);
-        $ruleTwo   = \Mockery::mock(RuleInterface::class);
-        $ruleThree = \Mockery::mock(RuleInterface::class);
-
-        $ruleOne->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleTwo->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-        $ruleThree->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
+        $ruleOne   = new NeverSatisfiedRule();
+        $ruleTwo   = new NeverSatisfiedRule();
+        $ruleThree = new NeverSatisfiedRule();
 
         $andRule = new AndSpecification(
             $ruleOne,
@@ -155,7 +115,7 @@ class AndSpecificationTest extends TestCase
         );
 
         $this->assertFalse(
-            $andRule->isSatisfiedBy($item),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification satisfied when all rules are not happy'
         );
     }
@@ -165,22 +125,11 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldSatisfyArrayOfRulesWhenAllAreHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $event */
-        $event = \Mockery::mock(RuleItemInterface::class);
-        $rules = [];
-        foreach (range(0, 999) as $ruleCount) {
-            $rule = \Mockery::mock(RuleInterface::class);
-            $rule->shouldReceive('isSatisfiedBy')
-                ->with($event)
-                ->andReturn(true)
-                ->once();
-            array_push($rules, $rule);
-        }
-
+        $rules   = array_fill(0, 1000, new AlwaysSatisfiedRule());
         $andRule = new AndSpecification(...$rules);
 
         $this->assertTrue(
-            $andRule->isSatisfiedBy($event),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification did not satisfy 1000 rules'
         );
 
@@ -196,22 +145,16 @@ class AndSpecificationTest extends TestCase
      */
     public function testItShouldNotSatisfyArrayOfRulesWhenSomeAreNotHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $event */
-        $event = \Mockery::mock(RuleItemInterface::class);
-        $rules = [];
-        foreach (range(0, 999) as $ruleCount) {
-            $rule = \Mockery::mock(RuleInterface::class);
-            $rule->shouldReceive('isSatisfiedBy')
-                ->with($event)
-                ->andReturn($ruleCount % 5 == 0)
-                ->once();
-            array_push($rules, $rule);
-        }
+        $rules = array_merge(
+            array_fill(0, 200, new AlwaysSatisfiedRule()),
+            array_fill(0, 800, new NeverSatisfiedRule())
+        );
 
+        shuffle($rules);
         $andRule = new AndSpecification(...$rules);
 
         $this->assertFalse(
-            $andRule->isSatisfiedBy($event),
+            $andRule->isSatisfiedBy(new BasicRuleItem()),
             'And Rule Specification satisfied all rules when 80% are not happy'
         );
 

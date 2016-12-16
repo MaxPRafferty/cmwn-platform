@@ -3,7 +3,8 @@
 namespace UserTest\Rule;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\RuleItem;
+use Rule\Item\BasicRuleItem;
+use Rule\Provider\BasicValueProvider;
 use User\Child;
 use User\Rule\BirthdayRule;
 
@@ -25,7 +26,9 @@ class BirthdayRuleTest extends TestCase
     {
         $user = new Child();
         $user->setBirthdate(new \DateTime('now'));
-        $ruleItem = new RuleItem(['check_user' => $user]);
+        $ruleItem = new BasicRuleItem(
+            new BasicValueProvider('check_user', $user)
+        );
         $rule     = new BirthdayRule();
         $this->assertTrue(
             $rule->isSatisfiedBy($ruleItem),
@@ -40,7 +43,9 @@ class BirthdayRuleTest extends TestCase
     {
         $user = new Child();
         $user->setBirthdate(new \DateTime('tomorrow'));
-        $ruleItem = new RuleItem(['check_user' => $user]);
+        $ruleItem = new BasicRuleItem(
+            new BasicValueProvider('check_user', $user)
+        );
         $rule     = new BirthdayRule();
         $this->assertFalse(
             $rule->isSatisfiedBy($ruleItem),
@@ -55,7 +60,9 @@ class BirthdayRuleTest extends TestCase
     {
         $user = new Child();
         $user->setBirthdate(new \DateTime('yesterday'));
-        $ruleItem = new RuleItem(['check_user' => $user]);
+        $ruleItem = new BasicRuleItem(
+            new BasicValueProvider('check_user', $user)
+        );
         $rule     = new BirthdayRule();
         $this->assertFalse(
             $rule->isSatisfiedBy($ruleItem),
@@ -68,7 +75,7 @@ class BirthdayRuleTest extends TestCase
      */
     public function testItShouldNotBeSatisfiedWhenCheckUserIsMissing()
     {
-        $ruleItem = new RuleItem();
+        $ruleItem = new BasicRuleItem();
         $rule     = new BirthdayRule();
         $this->assertFalse(
             $rule->isSatisfiedBy($ruleItem),

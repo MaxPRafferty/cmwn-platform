@@ -2,7 +2,7 @@
 
 namespace Rule\Basic;
 
-use Rule\RuleItemInterface;
+use Rule\Item\RuleItemInterface;
 use Rule\RuleInterface;
 use Rule\TimesSatisfiedTrait;
 

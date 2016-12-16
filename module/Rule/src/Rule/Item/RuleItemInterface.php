@@ -1,6 +1,6 @@
 <?php
 
-namespace Rule;
+namespace Rule\Item;
 
 /**
  * A Rule item is an expanded event that is use to satisfy rules
@@ -16,18 +16,4 @@ interface RuleItemInterface
      * @return mixed
      */
     public function getParam(string $param, $default = null);
-
-    /**
-     * Gets all the data for the Item
-     *
-     * @return array
-     */
-    public function getArrayCopy(): array;
-
-    /**
-     * Sets the data for the object
-     *
-     * @param array $data
-     */
-    public function exchangeArray(array $data);
 }

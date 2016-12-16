@@ -1,9 +1,10 @@
 <?php
 
-namespace RuleTest;
+namespace RuleTest\Item;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\RuleItem;
+use Rule\Item\BasicRuleItem;
+use Rule\Provider\BasicValueProvider;
 
 /**
  * Test RuleItemTest
@@ -14,7 +15,7 @@ use Rule\RuleItem;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RuleItemTest extends TestCase
+class BasicRuleItemTest extends TestCase
 {
     /**
      * @test
@@ -22,7 +23,7 @@ class RuleItemTest extends TestCase
     public function testItShouldCloneObjects()
     {
         $user = new \stdClass();
-        $item = new RuleItem(['active_user' => $user]);
+        $item = new BasicRuleItem(new BasicValueProvider('active_user', $user));
 
         $this->assertEquals(
             $user,
@@ -35,30 +36,6 @@ class RuleItemTest extends TestCase
             $item->getParam('active_user'),
             'Rule Item returned the same user.  ' .
             'This is bad we don\'t want to give rule specifications the ability to change the active user'
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnArrays()
-    {
-        $data = ['foo' => 'bar'];
-        $item = new RuleItem();
-        $item->exchangeArray($data);
-
-        $this->assertEquals(
-            $data,
-            $item->getArrayCopy(),
-            'Rule Item did not return an equivalent data array'
-        );
-
-        $data['baz'] = 'bat';
-        $this->assertEquals(
-            ['foo' => 'bar'],
-            $item->getArrayCopy(),
-            'Rule Item returned the data array by reference.  ' .
-            'This is bad we don\'t want to give rule specifications the ability to change the data in the item'
         );
     }
 }

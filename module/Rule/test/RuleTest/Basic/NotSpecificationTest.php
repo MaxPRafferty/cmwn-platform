@@ -3,9 +3,10 @@
 namespace RuleTest\Basic;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Basic\NeverSatisfiedRule;
 use Rule\Basic\NotSpecification;
-use Rule\RuleItemInterface;
-use Rule\RuleInterface;
+use Rule\Item\BasicRuleItem;
 
 /**
  * Test NotSpecificationTest
@@ -23,17 +24,10 @@ class NotSpecificationTest extends TestCase
      */
     public function testItShouldBeSatisfiedWhenDifferentRuleIsNotHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $rule */
-        $item = \Mockery::mock(RuleItemInterface::class);
-        $rule = \Mockery::mock(RuleInterface::class);
-
-        $rule->shouldReceive('isSatisfiedBy')->with($item)->andReturn(false)->once();
-
-        $notRule = new NotSpecification($rule);
+        $notRule = new NotSpecification(new NeverSatisfiedRule());
 
         $this->assertTrue(
-            $notRule->isSatisfiedBy($item),
+            $notRule->isSatisfiedBy(new BasicRuleItem()),
             'Not Rule Specification is not satisfied when other rule is not happy'
         );
     }
@@ -43,17 +37,10 @@ class NotSpecificationTest extends TestCase
      */
     public function testItShouldNotBeSatisfiedWhenDifferentRuleIsHappy()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        /** @var \Mockery\MockInterface|RuleInterface $rule */
-        $item = \Mockery::mock(RuleItemInterface::class);
-        $rule = \Mockery::mock(RuleInterface::class);
-
-        $rule->shouldReceive('isSatisfiedBy')->with($item)->andReturn(true)->once();
-
-        $notRule = new NotSpecification($rule);
+        $notRule = new NotSpecification(new AlwaysSatisfiedRule());
 
         $this->assertFalse(
-            $notRule->isSatisfiedBy($item),
+            $notRule->isSatisfiedBy(new BasicRuleItem()),
             'Not Rule Specification is satisfied when other rule is happy'
         );
     }

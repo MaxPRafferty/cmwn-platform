@@ -2,6 +2,8 @@
 
 namespace Rule;
 
+use Rule\Item\RuleItemInterface;
+
 /**
  * Basic contract for a rule
  */

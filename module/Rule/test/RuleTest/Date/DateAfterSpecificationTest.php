@@ -4,7 +4,7 @@ namespace RuleTest\Date;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Date\DateAfterSpecification;
-use Rule\RuleItemInterface;
+use Rule\Item\BasicRuleItem;
 
 /**
  * Test DateAfterSpecificationTest
@@ -22,13 +22,11 @@ class DateAfterSpecificationTest extends TestCase
      */
     public function testItShouldBeSatisfiedWhenCurrentDateIsAfterStartDate()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        $item      = \Mockery::mock(RuleItemInterface::class);
         $startDate = new \DateTime('-1 hour');
         $rule      = new DateAfterSpecification($startDate);
 
         $this->assertTrue(
-            $rule->isSatisfiedBy($item),
+            $rule->isSatisfiedBy(new BasicRuleItem()),
             'Date After Rule was not satisfied when start date earlier than now'
         );
     }
@@ -38,13 +36,11 @@ class DateAfterSpecificationTest extends TestCase
      */
     public function testItShouldNotBeSatisfiedWhenCurrentDateIsBeforeStartDate()
     {
-        /** @var \Mockery\MockInterface|RuleItemInterface $item */
-        $item      = \Mockery::mock(RuleItemInterface::class);
         $startDate = new \DateTime('+1 hour');
         $rule      = new DateAfterSpecification($startDate);
 
         $this->assertFalse(
-            $rule->isSatisfiedBy($item),
+            $rule->isSatisfiedBy(new BasicRuleItem()),
             'Date After Rule was satisfied when start date later than now'
         );
     }

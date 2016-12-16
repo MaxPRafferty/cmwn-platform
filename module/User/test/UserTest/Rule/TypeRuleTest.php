@@ -3,7 +3,8 @@
 namespace UserTest\Rule;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\RuleItem;
+use Rule\Item\BasicRuleItem;
+use Rule\Provider\BasicValueProvider;
 use User\Child;
 use User\Rule\TypeRule;
 use User\UserInterface;
@@ -25,7 +26,9 @@ class TypeRuleTest extends TestCase
     public function testItShouldBeSatisfiedWhenUserMatchesType()
     {
         $user     = new Child();
-        $ruleItem = new RuleItem(['check_user' => $user]);
+        $ruleItem = new BasicRuleItem(
+            new BasicValueProvider('check_user', $user)
+        );
 
         $rule = new TypeRule(UserInterface::TYPE_CHILD);
         $this->assertTrue(
@@ -40,7 +43,9 @@ class TypeRuleTest extends TestCase
     public function testItShouldNotBeSatisfiedWhenUserDoesNotMatchType()
     {
         $user     = new Child();
-        $ruleItem = new RuleItem(['check_user' => $user]);
+        $ruleItem = new BasicRuleItem(
+            new BasicValueProvider('check_user', $user)
+        );
 
         $rule = new TypeRule(UserInterface::TYPE_ADULT);
         $this->assertFalse(
@@ -54,7 +59,7 @@ class TypeRuleTest extends TestCase
      */
     public function testItShouldNotBeSatisfiedWhenCheckUserIsNotInRuleItem()
     {
-        $ruleItem  = new RuleItem();
+        $ruleItem  = new BasicRuleItem();
         $childRule = new TypeRule(UserInterface::TYPE_CHILD);
         $this->assertFalse(
             $childRule->isSatisfiedBy($ruleItem),

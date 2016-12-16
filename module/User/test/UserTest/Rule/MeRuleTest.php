@@ -3,7 +3,8 @@
 namespace UserTest\Rule;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\RuleItem;
+use Rule\Item\BasicRuleItem;
+use Rule\Provider\BasicValueProvider;
 use User\Adult;
 use User\Rule\MeRule;
 
@@ -25,8 +26,11 @@ class MeRuleTest extends TestCase
     {
         $activeUser = new Adult(['user_id' => 'foo-bar']);
         $checkUser  = new Adult(['user_id' => 'foo-bar']);
-        $item       = new RuleItem(['active_user' => $activeUser, 'check_user' => $checkUser]);
         $rule       = new MeRule();
+        $item       = new BasicRuleItem(
+            new BasicValueProvider('check_user', $checkUser),
+            new BasicValueProvider('active_user', $activeUser)
+        );
 
         $this->assertTrue(
             $rule->isSatisfiedBy($item),
@@ -41,8 +45,11 @@ class MeRuleTest extends TestCase
     {
         $activeUser = new Adult(['user_id' => 'foo-bar']);
         $checkUser  = new Adult(['user_id' => 'baz-bat']);
-        $item       = new RuleItem(['active_user' => $activeUser, 'check_user' => $checkUser]);
         $rule       = new MeRule();
+        $item       = new BasicRuleItem(
+            new BasicValueProvider('check_user', $checkUser),
+            new BasicValueProvider('active_user', $activeUser)
+        );
 
         $this->assertFalse(
             $rule->isSatisfiedBy($item),
@@ -55,9 +62,11 @@ class MeRuleTest extends TestCase
      */
     public function testItShouldNotBeSatisfiedWhenMissingTheActiveUser()
     {
-        $checkUser  = new Adult(['user_id' => 'baz-bat']);
-        $item       = new RuleItem(['check_user' => $checkUser]);
-        $rule       = new MeRule();
+        $checkUser = new Adult(['user_id' => 'baz-bat']);
+        $rule      = new MeRule();
+        $item      = new BasicRuleItem(
+            new BasicValueProvider('check_user', $checkUser)
+        );
 
         $this->assertFalse(
             $rule->isSatisfiedBy($item),
@@ -71,8 +80,10 @@ class MeRuleTest extends TestCase
     public function testItShouldNotBeSatisfiedWhenMissingTheCheckUser()
     {
         $activeUser = new Adult(['user_id' => 'foo-bar']);
-        $item       = new RuleItem(['active_user' => $activeUser]);
         $rule       = new MeRule();
+        $item       = new BasicRuleItem(
+            new BasicValueProvider('active_user', $activeUser)
+        );
 
         $this->assertFalse(
             $rule->isSatisfiedBy($item),
