@@ -4,7 +4,7 @@ namespace RuleTest\Basic;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Basic\AndSpecification;
+use Rule\Basic\AndRule;
 use Rule\Basic\NeverSatisfiedRule;
 use Rule\Item\BasicRuleItem;
 
@@ -27,7 +27,7 @@ class AndSpecificationTest extends TestCase
         $ruleOne = new AlwaysSatisfiedRule();
         $ruleTwo = new AlwaysSatisfiedRule();
 
-        $andRule = new AndSpecification(
+        $andRule = new AndRule(
             $ruleOne,
             $ruleTwo
         );
@@ -46,7 +46,7 @@ class AndSpecificationTest extends TestCase
         $ruleOne = new AlwaysSatisfiedRule();
         $ruleTwo = new NeverSatisfiedRule();
 
-        $andRule = new AndSpecification(
+        $andRule = new AndRule(
             $ruleOne,
             $ruleTwo
         );
@@ -66,7 +66,7 @@ class AndSpecificationTest extends TestCase
         $ruleTwo   = new AlwaysSatisfiedRule();
         $ruleThree = new AlwaysSatisfiedRule();
 
-        $andRule = new AndSpecification(
+        $andRule = new AndRule(
             $ruleOne,
             $ruleTwo,
             $ruleThree
@@ -87,7 +87,7 @@ class AndSpecificationTest extends TestCase
         $ruleTwo   = new NeverSatisfiedRule();
         $ruleThree = new NeverSatisfiedRule();
 
-        $andRule = new AndSpecification(
+        $andRule = new AndRule(
             $ruleOne,
             $ruleTwo,
             $ruleThree
@@ -108,7 +108,7 @@ class AndSpecificationTest extends TestCase
         $ruleTwo   = new NeverSatisfiedRule();
         $ruleThree = new NeverSatisfiedRule();
 
-        $andRule = new AndSpecification(
+        $andRule = new AndRule(
             $ruleOne,
             $ruleTwo,
             $ruleThree
@@ -126,7 +126,7 @@ class AndSpecificationTest extends TestCase
     public function testItShouldSatisfyArrayOfRulesWhenAllAreHappy()
     {
         $rules   = array_fill(0, 1000, new AlwaysSatisfiedRule());
-        $andRule = new AndSpecification(...$rules);
+        $andRule = new AndRule(...$rules);
 
         $this->assertTrue(
             $andRule->isSatisfiedBy(new BasicRuleItem()),
@@ -151,7 +151,7 @@ class AndSpecificationTest extends TestCase
         );
 
         shuffle($rules);
-        $andRule = new AndSpecification(...$rules);
+        $andRule = new AndRule(...$rules);
 
         $this->assertFalse(
             $andRule->isSatisfiedBy(new BasicRuleItem()),

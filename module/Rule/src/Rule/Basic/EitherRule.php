@@ -7,9 +7,9 @@ use Rule\RuleInterface;
 use Rule\TimesSatisfiedTrait;
 
 /**
- * A collection of rule(s) must all be satisfied in order to satisfy this rule
+ * A Specification that is satisfied when one rule is satisfied
  */
-class AndSpecification implements RuleInterface
+class EitherRule implements RuleInterface
 {
     use TimesSatisfiedTrait;
 
@@ -19,7 +19,7 @@ class AndSpecification implements RuleInterface
     protected $rules;
 
     /**
-     * AndSpecification constructor.
+     * EitherSpecification constructor.
      *
      * @param RuleInterface[] ...$rules
      */
@@ -39,6 +39,6 @@ class AndSpecification implements RuleInterface
             }
         }
 
-        return $this->timesSatisfied() == count($this->rules);
+        return $this->timesSatisfied() > 0;
     }
 }

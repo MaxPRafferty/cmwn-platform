@@ -7,25 +7,25 @@ use Rule\RuleInterface;
 use Rule\TimesSatisfiedTrait;
 
 /**
- * Rule that states the current date is before the specified date
+ * Rule that states the current date must be after the specified date
  */
-class DateBeforeSpecification extends AbstractDateRule implements RuleInterface
+class DateAfterRule extends AbstractDateRule implements RuleInterface
 {
     use TimesSatisfiedTrait;
 
     /**
      * @var \DateTime
      */
-    protected $endDate;
+    protected $startDate;
 
     /**
      * DateStartSpecification constructor.
      *
-     * @param \DateTime $endDate
+     * @param \DateTime $startDate
      */
-    public function __construct(\DateTime $endDate)
+    public function __construct(\DateTime $startDate)
     {
-        $this->endDate = $endDate;
+        $this->startDate = $startDate;
     }
 
     /**
@@ -33,7 +33,7 @@ class DateBeforeSpecification extends AbstractDateRule implements RuleInterface
      */
     public function isSatisfiedBy(RuleItemInterface $event): bool
     {
-        if ($this->compare($this->endDate, static::OPERATOR_LESS_THAN_EQUALS)) {
+        if ($this->compare($this->startDate, static::OPERATOR_GREATER_THAN)) {
             $this->timesSatisfied++;
         }
 

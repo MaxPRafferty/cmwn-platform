@@ -9,7 +9,7 @@ use Rule\TimesSatisfiedTrait;
 /**
  * This rule will be satisfied when another rule is not satisfied
  */
-class NotSpecification implements RuleInterface
+class NotRule implements RuleInterface
 {
     use TimesSatisfiedTrait;
 

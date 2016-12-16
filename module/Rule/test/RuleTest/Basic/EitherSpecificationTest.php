@@ -4,7 +4,7 @@ namespace RuleTest\Basic;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Basic\EitherSpecification;
+use Rule\Basic\EitherRule;
 use Rule\Basic\NeverSatisfiedRule;
 use Rule\Item\BasicRuleItem;
 
@@ -27,7 +27,7 @@ class EitherSpecificationTest extends TestCase
         $ruleOne = new AlwaysSatisfiedRule();
         $ruleTwo = new AlwaysSatisfiedRule();
 
-        $eitherRule = new EitherSpecification(
+        $eitherRule = new EitherRule(
             $ruleOne,
             $ruleTwo
         );
@@ -46,7 +46,7 @@ class EitherSpecificationTest extends TestCase
         $ruleOne = new NeverSatisfiedRule();
         $ruleTwo = new NeverSatisfiedRule();
 
-        $eitherRule = new EitherSpecification(
+        $eitherRule = new EitherRule(
             $ruleOne,
             $ruleTwo
         );
@@ -66,7 +66,7 @@ class EitherSpecificationTest extends TestCase
         $ruleTwo   = new AlwaysSatisfiedRule();
         $ruleThree = new NeverSatisfiedRule();
 
-        $eitherRule = new EitherSpecification(
+        $eitherRule = new EitherRule(
             $ruleOne,
             $ruleTwo,
             $ruleThree
@@ -87,7 +87,7 @@ class EitherSpecificationTest extends TestCase
         $ruleTwo   = new NeverSatisfiedRule();
         $ruleThree = new NeverSatisfiedRule();
 
-        $eitherRule = new EitherSpecification(
+        $eitherRule = new EitherRule(
             $ruleOne,
             $ruleTwo,
             $ruleThree
@@ -105,7 +105,7 @@ class EitherSpecificationTest extends TestCase
     public function testItShouldSatisfyALargeNumberOfRulesWhenAllAreHappy()
     {
         $rules      = array_fill(0, 1000, new AlwaysSatisfiedRule());
-        $eitherRule = new EitherSpecification(...$rules);
+        $eitherRule = new EitherRule(...$rules);
 
         $this->assertTrue(
             $eitherRule->isSatisfiedBy(new BasicRuleItem()),
@@ -130,7 +130,7 @@ class EitherSpecificationTest extends TestCase
         );
 
         shuffle($rules);
-        $eitherRule = new EitherSpecification(...$rules);
+        $eitherRule = new EitherRule(...$rules);
 
         $this->assertTrue(
             $eitherRule->isSatisfiedBy(new BasicRuleItem()),
@@ -150,7 +150,7 @@ class EitherSpecificationTest extends TestCase
     public function testItShouldNotSatisfyALargeNumberOfRulesWhenNoneAreHappy()
     {
         $rules      = array_fill(0, 1000, new NeverSatisfiedRule());
-        $eitherRule = new EitherSpecification(...$rules);
+        $eitherRule = new EitherRule(...$rules);
 
         $this->assertFalse(
             $eitherRule->isSatisfiedBy(new BasicRuleItem()),

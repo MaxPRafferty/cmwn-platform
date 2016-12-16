@@ -2,12 +2,12 @@
 
 namespace Rule\Date;
 
-use Rule\Basic\AndSpecification;
+use Rule\Basic\AndRule;
 
 /**
  * Rule that states the date must be between 2 specified
  */
-class DateBetweenSpecification extends AndSpecification
+class DateBetweenRule extends AndRule
 {
     /**
      * @inheritDoc
@@ -15,8 +15,8 @@ class DateBetweenSpecification extends AndSpecification
     public function __construct(\DateTime $dateStart, \DateTime $dateEnd)
     {
         parent::__construct(
-            new DateAfterSpecification($dateStart),
-            new DateBeforeSpecification($dateEnd)
+            new DateAfterRule($dateStart),
+            new DateBeforeRule($dateEnd)
         );
     }
 }

@@ -2,7 +2,7 @@
 
 namespace User\Rule;
 
-use Rule\Date\DateBetweenSpecification;
+use Rule\Date\DateBetweenRule;
 use Rule\RuleInterface;
 use Rule\Item\RuleItemInterface;
 use Rule\TimesSatisfiedTrait;
@@ -30,7 +30,7 @@ class BirthdayRule implements RuleInterface
 
         $startDate->setTime(0, 0, 0);
         $endDate->setTime(23, 59, 59); // Leap Seconds who needs them
-        $between = new DateBetweenSpecification($startDate, $endDate);
+        $between = new DateBetweenRule($startDate, $endDate);
 
         if ($between->isSatisfiedBy($event)) {
             $this->timesSatisfied++;

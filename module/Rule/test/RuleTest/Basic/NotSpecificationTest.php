@@ -5,7 +5,7 @@ namespace RuleTest\Basic;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Basic\NeverSatisfiedRule;
-use Rule\Basic\NotSpecification;
+use Rule\Basic\NotRule;
 use Rule\Item\BasicRuleItem;
 
 /**
@@ -24,7 +24,7 @@ class NotSpecificationTest extends TestCase
      */
     public function testItShouldBeSatisfiedWhenDifferentRuleIsNotHappy()
     {
-        $notRule = new NotSpecification(new NeverSatisfiedRule());
+        $notRule = new NotRule(new NeverSatisfiedRule());
 
         $this->assertTrue(
             $notRule->isSatisfiedBy(new BasicRuleItem()),
@@ -37,7 +37,7 @@ class NotSpecificationTest extends TestCase
      */
     public function testItShouldNotBeSatisfiedWhenDifferentRuleIsHappy()
     {
-        $notRule = new NotSpecification(new AlwaysSatisfiedRule());
+        $notRule = new NotRule(new AlwaysSatisfiedRule());
 
         $this->assertFalse(
             $notRule->isSatisfiedBy(new BasicRuleItem()),

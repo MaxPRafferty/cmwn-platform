@@ -4,7 +4,7 @@ namespace RuleTest\Date;
 
 use Application\Utils\Date\DateTimeFactory;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Date\DateBetweenSpecification;
+use Rule\Date\DateBetweenRule;
 use Rule\Item\BasicRuleItem;
 
 /**
@@ -25,7 +25,7 @@ class DateBetweenSpecificationTest extends TestCase
     {
         $startDate = new \DateTime('-1 hour');
         $endDate   = new \DateTime('+1 hour');
-        $rule      = new DateBetweenSpecification($startDate, $endDate);
+        $rule      = new DateBetweenRule($startDate, $endDate);
 
         $this->assertTrue(
             $rule->isSatisfiedBy(new BasicRuleItem()),
@@ -40,7 +40,7 @@ class DateBetweenSpecificationTest extends TestCase
     {
         $startDate = new \DateTime('+1 hour');
         $endDate   = new \DateTime('+2 hours');
-        $rule      = new DateBetweenSpecification($startDate, $endDate);
+        $rule      = new DateBetweenRule($startDate, $endDate);
 
         $this->assertFalse(
             $rule->isSatisfiedBy(new BasicRuleItem()),
@@ -55,7 +55,7 @@ class DateBetweenSpecificationTest extends TestCase
     {
         $startDate = new \DateTime('-2 hours');
         $endDate   = new \DateTime('-1 hour');
-        $rule      = new DateBetweenSpecification($startDate, $endDate);
+        $rule      = new DateBetweenRule($startDate, $endDate);
 
         $this->assertFalse(
             $rule->isSatisfiedBy(new BasicRuleItem()),
@@ -74,7 +74,7 @@ class DateBetweenSpecificationTest extends TestCase
 
         $startDate->setTime(0, 0, 0);
         $endDate->setTime(23, 59, 59);
-        $rule = new DateBetweenSpecification($startDate, $endDate);
+        $rule = new DateBetweenRule($startDate, $endDate);
 
         $this->assertTrue(
             $rule->isSatisfiedBy(new BasicRuleItem()),

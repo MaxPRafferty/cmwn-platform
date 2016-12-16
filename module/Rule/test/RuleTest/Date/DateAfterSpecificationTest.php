@@ -3,7 +3,7 @@
 namespace RuleTest\Date;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Date\DateAfterSpecification;
+use Rule\Date\DateAfterRule;
 use Rule\Item\BasicRuleItem;
 
 /**
@@ -23,7 +23,7 @@ class DateAfterSpecificationTest extends TestCase
     public function testItShouldBeSatisfiedWhenCurrentDateIsAfterStartDate()
     {
         $startDate = new \DateTime('-1 hour');
-        $rule      = new DateAfterSpecification($startDate);
+        $rule      = new DateAfterRule($startDate);
 
         $this->assertTrue(
             $rule->isSatisfiedBy(new BasicRuleItem()),
@@ -37,7 +37,7 @@ class DateAfterSpecificationTest extends TestCase
     public function testItShouldNotBeSatisfiedWhenCurrentDateIsBeforeStartDate()
     {
         $startDate = new \DateTime('+1 hour');
-        $rule      = new DateAfterSpecification($startDate);
+        $rule      = new DateAfterRule($startDate);
 
         $this->assertFalse(
             $rule->isSatisfiedBy(new BasicRuleItem()),
