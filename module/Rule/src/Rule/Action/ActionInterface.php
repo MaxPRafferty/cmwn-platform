@@ -1,6 +1,8 @@
 <?php
 
-namespace Rule;
+namespace Rule\Action;
+
+use Rule\Item\RuleItemInterface;
 
 /**
  * An action that happens when a rule or set of rules are satisfied
@@ -12,5 +14,5 @@ interface ActionInterface
      *
      * @param RuleItemInterface $item
      */
-    public function execute(RuleItemInterface $item): void;
+    public function __invoke(RuleItemInterface $item);
 }

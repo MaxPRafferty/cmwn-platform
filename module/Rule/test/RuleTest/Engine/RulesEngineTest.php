@@ -2,8 +2,12 @@
 
 namespace RuleTest\Engine;
 
+use Api\Links\SaveGameLink;
 use Application\Utils\Date\DateTimeFactory;
+use Group\GroupInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
+use Rule\Basic\AlwaysSatisfiedRule;
+use ZF\Hal\Plugin\Hal;
 
 /**
  * Test RulesEngineTest
@@ -28,118 +32,162 @@ class RulesEngineTest extends TestCase
         $endDate = clone $startDate;
         $endDate->setTime(23, 59, 59);
 
-        $config = [
-            'name' => 'Earn a flip on christmas',
-
-            'event' => [
-                'identifier' => '\\Security\\Authentication\\AuthenticationService',
-                'event'      => 'login.post',
-            ],
-
-            'rules' => [
-                [
-                    'name'    => '\\Rule\\\Date\\\DateBetweenSpecification',
-                    'options' => [
-                        'start_date' => $startDate,
-                        'end_date'   => $endDate,
+        $engineConfig = [
+            [
+                'id'          => 'earn-flip-on-christmas',
+                'name'        => 'Earn a flip on christmas',
+                'when'        => [
+                    'identifier' => '\\Security\\Authentication\\AuthenticationService',
+                    'event'      => 'login.post',
+                ],
+                'rules'       => [
+                    [
+                        'name'    => '\\Rule\\\Date\\\DateBetweenSpecification',
+                        'options' => [
+                            'start_date' => $startDate,
+                            'end_date'   => $endDate,
+                        ],
+                    ],
+                    [
+                        'name'     => '\\Flip\\Rule\\Earned',
+                        'options'  => [
+                            'flip_id' => 'merry-christmas',
+                        ],
+                        'operator' => 'not',
                     ],
                 ],
-                [
-                    'name'     => '\\Flip\\Rule\\Earned',
-                    'options'  => [
-                        'flip_id' => 'merry-christmas',
+                'actions'     => [
+                    [
+                        'name'    => '\\Flip\\Rule\\Actions\\EarnFlipAction',
+                        'options' => [
+                            'flip_id' => 'merry-christmas',
+                            'user'    => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                        ],
                     ],
-                    'operator' => 'not',
-                    'group'    => 'my-group',
-                ],
-            ],
-
-            'actions' => [
-                [
-                    'name'    => '\\Flip\\Rule\\Actions\\EarnFlipAction',
-                    'options' => [
-                        'flip_id' => 'merry-christmas',
-                        'user'    => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                    [
+                        'name'    => '\\Notice\\Rule\\Actions\\NotifyFriendsAction',
+                        'options' => [
+                            'message-template' => 'friend-earned-flip',
+                            'user'             => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                        ],
                     ],
                 ],
-                [
-                    'name'    => '\\Notice\\Rule\\Actions\\NotifyFriendsAction',
-                    'options' => [
-                        'message-template' => 'friend-earned-flip',
-                        'user'             => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                'item_params' => [
+                    'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                    'check_user'  => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                ],
+            ],
+            [
+                'id'          => 'notify-friend-accepted',
+                'name'        => 'Friend accepted request',
+                'when'        => [
+                    'identifier' => '\\Friend\\Service\\FriendServiceInterface',
+                    'event'      => 'attach.friend.post',
+                ],
+                'rules'       => [
+                    [
+                        'name' => '\\Friend\\Rule\\FriendAccepted',
                     ],
                 ],
-            ],
-
-            'item_data' => [
-                'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
-            ],
-        ];
-
-        $config = [
-            'name' => 'Friend accepted request',
-
-            'event' => [
-                'identifier' => '\\Friend\\Service\\FriendServiceInterface',
-                'event'      => 'attach.friend.post',
-            ],
-
-            'rules' => [
-                [
-                    'name' => '\\Friend\\Rule\\FriendAccepted',
-                ],
-            ],
-
-            'actions' => [
-                [
-                    'name'    => '\\Notice\\Rule\\Actions\\FriendAcceptedAction',
-                    'options' => [
-                        'message-template' => 'friend-accepted-you',
-                        'user'             => '\\Security\\Rule\\Provider\\ActiveUserProvider',
-                        'friend_user'      => '\\Friend\\Rule\\Provider\\FriendedUserProvider',
+                'actions'     => [
+                    [
+                        'name'    => '\\Notice\\Rule\\Actions\\FriendAcceptedAction',
+                        'options' => [
+                            'message-template' => 'friend-accepted-you',
+                            'user'             => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                            'friend_user'      => '\\Friend\\Rule\\Provider\\FriendedUserProvider',
+                        ],
                     ],
                 ],
-            ],
-
-            'item_data' => [
-                'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
-                'friend_user' => '\\Friend\\Rule\\Provider\\FriendUserProvider',
-            ],
-        ];
-
-        $config = [
-            'name' => 'Earn a flip when your first Friend accepts your request',
-
-            'event' => [
-                'identifier' => '\\Friend\\Service\\FriendServiceInterface',
-                'event'      => 'attach.friend.post',
-            ],
-
-            'rules' => [
-                [
-                    'name' => '\\Friend\\Rule\\FriendAccepted',
+                'item_params' => [
+                    'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                    'friend_user' => '\\Friend\\Rule\\Provider\\FriendUserProvider',
                 ],
-                [
-                    'name'     => '\\Flip\\Rule\\Earned',
-                    'options'  => [
-                        'flip_id' => 'you-got-friends',
+            ],
+            [
+                'id'          => 'earn-flip-when-friend-accepted',
+                'name'        => 'Earn a flip when your first Friend accepts your request',
+                'when'        => [
+                    'identifier' => '\\Friend\\Service\\FriendServiceInterface',
+                    'event'      => 'attach.friend.post',
+                ],
+                'rules'       => [
+                    [
+                        'name' => '\\Friend\\Rule\\FriendAccepted',
                     ],
-                    'operator' => 'not',
-                ],
-            ],
-
-            'actions' => [
-                [
-                    'name'    => '\\Friend\\Rule\\Actions\\FriendAcceptedAction',
-                    'options' => [
-                        'flip_id' => 'you-got-friends',
-                        'user'    => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                    [
+                        'name'     => '\\Flip\\Rule\\Earned',
+                        'options'  => [
+                            'flip_id' => 'you-got-friends',
+                        ],
+                        'operator' => 'not',
                     ],
                 ],
+                'actions'     => [
+                    [
+                        'name'    => '\\Friend\\Rule\\Actions\\FriendAcceptedAction',
+                        'options' => [
+                            'flip_id' => 'you-got-friends',
+                            'user'    => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                        ],
+                    ],
+                ],
+                'item_params' => [
+                    'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                ],
             ],
 
-            'item_data' => [
-                'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+            [
+                'id'          => 'add-save-game-hal',
+                'name'        => 'Add the save game hal link',
+                'when'        => [
+                    'identifier' => Hal::class,
+                    'event'      => 'render.entity',
+                ],
+                'rules'       => [
+                    [
+                        'name'    => '\\Security\\Rule\\HasPermission',
+                        'options' => [
+                            'permission' => 'save.game',
+                        ],
+                    ],
+                ],
+                'actions'     => [
+                    [
+                        'name'    => '\\Api\\Rules\\Actions\\AddLinkAction',
+                        'options' => [
+                            'link' => SaveGameLink::class,
+                        ],
+                    ],
+                ],
+                'item_params' => [
+                    'active_user' => '\\Security\\Rule\\Provider\\ActiveUserProvider',
+                ],
+            ],
+            [
+                'id'          => 'add-group-hals',
+                'name'        => 'Add the group type hal links',
+                'when'        => [
+                    'identifier' => Hal::class,
+                    'event'      => 'render.entity',
+                ],
+                'rules'       => [
+                    [
+                        'name'    => '\\Api\\Rule\\HalTypeRule',
+                        'options' => [
+                            'type' => GroupInterface::class,
+                        ],
+                    ],
+                ],
+                'actions'     => [
+                    [
+                        'name' => '\\Api\\Rule\\Action\\AddGroupTypeLinks',
+                    ],
+                ],
+                'item_params' => [
+                    'group' => '\\Application\\Rule\\Provider\\HalEntityProvider',
+                    'links' => '\\Application\\Rule\\Provider\\HalLinksProvider',
+                ],
             ],
         ];
     }

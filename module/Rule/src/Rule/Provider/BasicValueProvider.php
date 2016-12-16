@@ -31,7 +31,7 @@ class BasicValueProvider implements ProviderInterface
     /**
      * @inheritDoc
      */
-    public function getName(EventInterface $event = null): string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -39,7 +39,7 @@ class BasicValueProvider implements ProviderInterface
     /**
      * @inheritDoc
      */
-    public function getValue(EventInterface $event = null)
+    public function getValue()
     {
         return $this->value;
     }

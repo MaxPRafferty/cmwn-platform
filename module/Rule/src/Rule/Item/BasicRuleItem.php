@@ -2,6 +2,7 @@
 
 namespace Rule\Item;
 
+use Rule\Provider\ProviderCollection;
 use Rule\Provider\ProviderInterface;
 
 /**
@@ -10,7 +11,7 @@ use Rule\Provider\ProviderInterface;
 class BasicRuleItem implements RuleItemInterface
 {
     /**
-     * @var \ArrayObject
+     * @var ProviderCollection
      */
     protected $data;
 
@@ -19,13 +20,7 @@ class BasicRuleItem implements RuleItemInterface
      */
     public function __construct(ProviderInterface ...$providers)
     {
-        $this->data = new \ArrayObject();
-        if ($providers === null) {
-            return;
-        }
-        array_walk($providers, function (ProviderInterface $provider) {
-            $this->data->offsetSet($provider->getName(), $provider->getValue());
-        });
+        $this->data = new ProviderCollection(...$providers);
     }
 
     /**
@@ -33,7 +28,6 @@ class BasicRuleItem implements RuleItemInterface
      */
     public function getParam(string $param, $default = null)
     {
-        $value = $this->data->offsetExists($param) ? $this->data->offsetGet($param) : $default;
-        return is_object($value) ? clone $value : $value;
+        return $this->data->offsetExists($param) ? $this->data->offsetGet($param) : $default;
     }
 }

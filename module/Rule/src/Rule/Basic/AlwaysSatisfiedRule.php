@@ -25,5 +25,4 @@ class AlwaysSatisfiedRule implements RuleInterface
     {
         return 1;
     }
-
 }

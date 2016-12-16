@@ -17,7 +17,7 @@ use Rule\Item\BasicRuleItem;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class EitherSpecificationTest extends TestCase
+class EitherRuleTest extends TestCase
 {
     /**
      * @test

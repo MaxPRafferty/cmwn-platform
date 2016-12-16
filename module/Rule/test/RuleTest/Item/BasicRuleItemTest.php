@@ -20,22 +20,15 @@ class BasicRuleItemTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldCloneObjects()
+    public function testItShouldNotCloneObjects()
     {
         $user = new \stdClass();
         $item = new BasicRuleItem(new BasicValueProvider('active_user', $user));
 
-        $this->assertEquals(
+        $this->assertSame(
             $user,
             $item->getParam('active_user'),
             'Rule Item did not return an equivalent active user'
-        );
-
-        $this->assertNotSame(
-            $user,
-            $item->getParam('active_user'),
-            'Rule Item returned the same user.  ' .
-            'This is bad we don\'t want to give rule specifications the ability to change the active user'
         );
     }
 }

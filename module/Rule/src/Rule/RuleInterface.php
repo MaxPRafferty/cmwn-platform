@@ -12,11 +12,11 @@ interface RuleInterface
     /**
      * Tests if the event satisfies a rule
      *
-     * @param RuleItemInterface $event
+     * @param RuleItemInterface $item
      *
      * @return bool
      */
-    public function isSatisfiedBy(RuleItemInterface $event): bool;
+    public function isSatisfiedBy(RuleItemInterface $item): bool;
 
     /**
      * The number of times this rule has been satisfied

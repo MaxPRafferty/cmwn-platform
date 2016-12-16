@@ -3,6 +3,7 @@
 namespace Rule\Basic;
 
 use Rule\Item\RuleItemInterface;
+use Rule\RuleCollection;
 use Rule\RuleInterface;
 use Rule\TimesSatisfiedTrait;
 
@@ -14,7 +15,7 @@ class EitherRule implements RuleInterface
     use TimesSatisfiedTrait;
 
     /**
-     * @var RuleInterface[]
+     * @var RuleCollection|RuleInterface[]
      */
     protected $rules;
 
@@ -25,7 +26,8 @@ class EitherRule implements RuleInterface
      */
     public function __construct(RuleInterface ...$rules)
     {
-        $this->rules = $rules;
+        $this->rules = new RuleCollection();
+        array_walk($rules, [$this->rules, 'append']);
     }
 
     /**
