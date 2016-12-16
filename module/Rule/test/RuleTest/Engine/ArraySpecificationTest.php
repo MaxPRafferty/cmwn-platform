@@ -7,6 +7,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\NoopAction;
 use Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Engine\ArraySpecification;
+use Rule\Provider\BasicValueProvider;
 use Rule\RuleCollectionInterface;
 
 /**
@@ -44,6 +45,7 @@ class ArraySpecificationTest extends TestCase
             ],
             'item_params' => [
                 'active_user' => 'MANCHUCK',
+                BasicValueProvider::class
             ],
         ];
 
