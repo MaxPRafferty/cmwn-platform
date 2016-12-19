@@ -166,7 +166,7 @@ class StaticRuleFactoryTest extends TestCase
         $expectedRule = new TestSerializedRule();
         $container->shouldReceive('get')->with(TestSerializedRule::class)->andReturn($expectedRule);
 
-        $actualRule = StaticRuleFactory::buildRule(
+        $actualRule = StaticRuleFactory::build(
             $container,
             TestSerializedRule::class,
             ['foo' => 'bar']
@@ -190,7 +190,7 @@ class StaticRuleFactoryTest extends TestCase
      */
     public function testItShouldBuildFromClassWithBuild()
     {
-        $rule = StaticRuleFactory::buildRule(
+        $rule = StaticRuleFactory::build(
             DateAfterRule::class,
             [new \DateTime]
         );
@@ -213,7 +213,7 @@ class StaticRuleFactoryTest extends TestCase
         $expectedRule->data = ['foo' => 'bar'];
         $container->shouldReceive('get')->with(TestSerializedRule::class)->andThrow(new \Exception());
 
-        $actualRule = StaticRuleFactory::buildRule(
+        $actualRule = StaticRuleFactory::build(
             $container,
             TestSerializedRule::class,
             ['foo' => 'bar']
@@ -235,6 +235,6 @@ class StaticRuleFactoryTest extends TestCase
             InvalidArgumentException::class
         );
 
-        StaticRuleFactory::buildRule();
+        StaticRuleFactory::build();
     }
 }

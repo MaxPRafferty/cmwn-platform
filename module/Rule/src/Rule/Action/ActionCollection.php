@@ -5,7 +5,7 @@ namespace Rule\Action;
 use Rule\Item\RuleItemInterface;
 
 /**
- * Class ActionCollection
+ * A collection of actions
  */
 class ActionCollection implements ActionCollectionInterface
 {

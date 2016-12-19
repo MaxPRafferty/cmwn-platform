@@ -74,5 +74,4 @@ class ProviderCollection implements ProviderCollectionInterface
     {
         $this->parameters->offsetUnset($offset);
     }
-
 }

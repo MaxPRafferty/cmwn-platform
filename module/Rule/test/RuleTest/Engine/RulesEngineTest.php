@@ -6,7 +6,6 @@ use Api\Links\SaveGameLink;
 use Application\Utils\Date\DateTimeFactory;
 use Group\GroupInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Basic\AlwaysSatisfiedRule;
 use ZF\Hal\Plugin\Hal;
 
 /**
@@ -95,7 +94,7 @@ class RulesEngineTest extends TestCase
                         'options' => [
                             'message-template' => 'friend-accepted-you',
                             'user'             => '\\Security\\Rule\\Provider\\ActiveUserProvider',
-                            'friend_user'      => '\\Friend\\Rule\\Provider\\FriendedUserProvider',
+                            'friend_user'      => '\\Friend\\Rule\\Provider\\FriendUserProvider',
                         ],
                     ],
                 ],
@@ -191,5 +190,4 @@ class RulesEngineTest extends TestCase
             ],
         ];
     }
-
 }

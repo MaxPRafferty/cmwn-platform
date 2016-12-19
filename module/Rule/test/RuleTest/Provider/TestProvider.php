@@ -24,5 +24,4 @@ class TestProvider implements ProviderInterface
     {
         return 'bar';
     }
-
 }

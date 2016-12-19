@@ -6,6 +6,8 @@ use Rule\Item\RuleItemInterface;
 
 /**
  * An Action that does nothing
+ *
+ * @codeCoverageIgnore
  */
 class NoopAction implements ActionInterface
 {

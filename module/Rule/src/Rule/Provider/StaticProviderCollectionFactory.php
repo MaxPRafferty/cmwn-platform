@@ -3,7 +3,6 @@
 namespace Rule\Provider;
 
 use Interop\Container\ContainerInterface;
-use Rule\Exception\RuntimeException;
 
 /**
  * Class StaticProviderCollectionFactory
@@ -26,61 +25,9 @@ class StaticProviderCollectionFactory
                 return;
             }
 
-            // Get the provider from the container
-            if ($services->has($item)) {
-                $collection->append(static::createProviderFromContainer($services, $item));
-                return;
-            }
-
-            // If the name is a class then lets create the class
-            if (class_exists($item)) {
-                $collection->append(static::createProviderFromClass($item));
-                return;
-            }
-
-            // otherwise just make it a basic value provider
-            $collection->append(new BasicValueProvider($key, $item));
+            $collection->append(StaticProviderFactory::build($services, $item, $key));
         });
 
         return $collection;
-    }
-
-    /**
-     * Creates a provider from the class
-     *
-     * @param $name
-     *
-     * @return ProviderInterface
-     */
-    protected static function createProviderFromClass($name): ProviderInterface
-    {
-        $provider = new $name();
-        if (!$provider instanceof ProviderInterface) {
-            throw new RuntimeException(
-                sprintf('The Provider %s is not a valid provider', $name)
-            );
-        }
-
-        return $provider;
-    }
-
-    /**
-     * Creates the provider from a container
-     *
-     * @param ContainerInterface $services
-     * @param $name
-     *
-     * @return ProviderInterface
-     */
-    protected static function createProviderFromContainer(ContainerInterface $services, $name): ProviderInterface
-    {
-        $provider = $services->get($name);
-        if (!$provider instanceof ProviderInterface) {
-            throw new RuntimeException(
-                sprintf('The Provider %s is not a valid provider', $name)
-            );
-        }
-
-        return $provider;
     }
 }

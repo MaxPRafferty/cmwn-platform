@@ -2,8 +2,6 @@
 
 namespace Rule\Provider;
 
-use Zend\EventManager\EventInterface;
-
 /**
  * A Provider that will just pass through the value passed into it
  */
@@ -43,5 +41,4 @@ class BasicValueProvider implements ProviderInterface
     {
         return $this->value;
     }
-
 }

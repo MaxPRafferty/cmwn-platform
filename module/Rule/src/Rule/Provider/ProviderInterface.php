@@ -2,7 +2,6 @@
 
 namespace Rule\Provider;
 
-
 /**
  * A Rule Provider will supply data requested from rules into the Rule Item
  */

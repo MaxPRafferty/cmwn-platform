@@ -25,5 +25,4 @@ class NeverSatisfiedRule implements RuleInterface
     {
         return 0;
     }
-
 }

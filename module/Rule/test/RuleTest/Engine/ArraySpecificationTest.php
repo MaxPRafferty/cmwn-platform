@@ -81,6 +81,5 @@ class ArraySpecificationTest extends TestCase
             $rules,
             'Rules built are not a Collection of rules'
         );
-
     }
 }

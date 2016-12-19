@@ -22,7 +22,7 @@ interface EngineSpecificationInterface
     public function getId(): string;
 
     /**
-     * A Human readable name of thie specification
+     * A Human readable name of this specification
      *
      * @return string
      */

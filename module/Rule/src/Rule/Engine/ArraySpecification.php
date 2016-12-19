@@ -4,13 +4,15 @@ namespace Rule\Engine;
 
 use Interop\Container\ContainerInterface;
 use Rule\Action\ActionCollectionInterface;
+use Rule\Item\BasicRuleItem;
 use Rule\Item\RuleItemInterface;
+use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\RuleCollection;
 use Rule\RuleCollectionInterface;
 use Rule\StaticRuleFactory;
 
 /**
- * Class ArraySpecification
+ * An Engine Specification that is built from an array
  */
 class ArraySpecification implements EngineSpecificationInterface
 {
@@ -34,6 +36,11 @@ class ArraySpecification implements EngineSpecificationInterface
      */
     protected $ruleItem;
 
+    /**
+     * Used to specify engine rules from an array
+     *
+     * @param array $spec
+     */
     public function __construct(array $spec)
     {
         $this->spec = $spec;
@@ -79,7 +86,7 @@ class ArraySpecification implements EngineSpecificationInterface
         if (null === $this->rules) {
             $this->rules = new RuleCollection();
             array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
-                $this->rules->append(StaticRuleFactory::buildRule($services, ...array_values($ruleSpec)));
+                $this->rules->append(StaticRuleFactory::build($services, ...array_values($ruleSpec)));
             });
         }
 
@@ -99,7 +106,12 @@ class ArraySpecification implements EngineSpecificationInterface
      */
     public function buildItem(ContainerInterface $services): RuleItemInterface
     {
-        // TODO: Implement buildItem() method.
-    }
+        if (null === $this->ruleItem) {
+            $this->ruleItem = new BasicRuleItem(
+                StaticProviderCollectionFactory::build($services, $this->spec['item_params'])
+            );
+        }
 
+        return $this->ruleItem;
+    }
 }

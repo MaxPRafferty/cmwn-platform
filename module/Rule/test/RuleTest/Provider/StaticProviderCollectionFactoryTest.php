@@ -7,6 +7,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Exception\RuntimeException;
 use Rule\Provider\BasicValueProvider;
 use Rule\Provider\StaticProviderCollectionFactory;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
 
 /**
  * Test StaticProviderCollectionFactoryTest
@@ -22,7 +23,7 @@ class StaticProviderCollectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldbuiltProviderCollectionWithSimpleArray()
+    public function testItShouldBuildProviderCollectionWithSimpleArray()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
         $container = \Mockery::mock(ContainerInterface::class);
@@ -63,7 +64,7 @@ class StaticProviderCollectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldbuiltProviderCollectionWithProviderInItems()
+    public function testItShouldBuildProviderCollectionWithProviderInItems()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
         $container = \Mockery::mock(ContainerInterface::class);
@@ -92,13 +93,14 @@ class StaticProviderCollectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldbuiltProviderCollectionWithProviderInServices()
+    public function testItShouldBuildProviderCollectionWithProviderInServices()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
         $container = \Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')
+            ->with(TestProvider::class)
             ->andReturn(true)
-            ->byDefault();
+            ->once();
 
         $container->shouldReceive('get')
             ->with(TestProvider::class)
@@ -125,12 +127,12 @@ class StaticProviderCollectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldbuiltProviderCollectionWithInvokableProvider()
+    public function testItShouldBuildProviderCollectionWithInvokableProvider()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
         $container = \Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('has')
-            ->andReturn(false)
+            ->andThrow(ServiceNotFoundException::class)
             ->byDefault();
 
         $items = [
@@ -167,9 +169,12 @@ class StaticProviderCollectionFactoryTest extends TestCase
             ->andReturn(false);
 
         $container->shouldReceive('has')
+            ->with('Rule\Provider\BasicValueProvider')
+            ->andReturn(false);
+
+        $container->shouldReceive('has')
             ->with('Baz\\Bat\\Provider')
-            ->andReturn(true)
-            ->once();
+            ->andReturn(true);
 
         $container->shouldReceive('get')
             ->with('Baz\\Bat\\Provider')
@@ -224,9 +229,7 @@ class StaticProviderCollectionFactoryTest extends TestCase
             ->with('foo-bar')
             ->andReturn(new \stdClass());
 
-        $items = [
-            'foo-bar',
-        ];
+        $items = ['foo-bar'];
 
         $this->setExpectedException(RuntimeException::class);
         StaticProviderCollectionFactory::build($container, $items);

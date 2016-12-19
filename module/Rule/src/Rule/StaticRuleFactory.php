@@ -74,18 +74,18 @@ class StaticRuleFactory
     /**
      * Builds a rule using either by the class or from the container
      *
-     * @param $paramOne   ContainerInterface|string Container or classname
+     * @param $paramOne   ContainerInterface|string Container or class name
      * @param $paramTwo   string|array Options or class name to pass in
-     * @param $parmaThree array The options
+     * @param $paramThree array The options
      *
      * @return RuleInterface
      */
-    public static function buildRule(): RuleInterface
+    public static function build(): RuleInterface
     {
         $args = func_get_args();
         if (count($args) < 1) {
             throw new InvalidArgumentException(
-                sprintf('Factory needs at least one argument to build')
+                sprintf('Rule Factory needs at least one argument to build')
             );
         }
 
