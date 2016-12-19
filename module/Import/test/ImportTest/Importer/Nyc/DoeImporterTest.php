@@ -2,6 +2,7 @@
 
 namespace ImportTest\Importer\Nyc;
 
+use Application\Utils\Date\DateTimeFactory;
 use Group\Group;
 use Group\GroupInterface;
 use Import\Importer\Nyc\DoeImporter;
@@ -113,6 +114,7 @@ class DoeImporterTest extends TestCase
      */
     public function testItShouldPassAlongFileInExchangeArray()
     {
+        $now = DateTimeFactory::factory('now');
         $this->groupService->shouldReceive('fetchGroup')
             ->with('school')
             ->once()
@@ -127,6 +129,7 @@ class DoeImporterTest extends TestCase
                 'student_code' => null,
                 'school'       => null,
                 'email'        => null,
+                'code_start'   => $now->format("Y-m-d H:i:s"),
             ],
             $this->importer->getArrayCopy()
         );
@@ -138,6 +141,7 @@ class DoeImporterTest extends TestCase
             'student_code' => 'sCode',
             'school'       => 'school',
             'email'        => 'chuck@manchuck.com',
+            'code_start'   => $now->format("Y-m-d H:i:s"),
         ]);
 
         $this->assertEquals(
@@ -148,6 +152,7 @@ class DoeImporterTest extends TestCase
                 'student_code' => 'sCode',
                 'school'       => $this->school->getGroupId(),
                 'email'        => 'chuck@manchuck.com',
+                'code_start'   => $now->format("Y-m-d H:i:s"),
             ],
             $this->importer->getArrayCopy()
         );

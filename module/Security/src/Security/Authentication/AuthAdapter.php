@@ -7,7 +7,6 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
-use Security\Service\SecurityOrgService;
 use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Exception\RuntimeException;
@@ -39,20 +38,13 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
     protected $password;
 
     /**
-     * @var SecurityOrgService
-     */
-    protected $orgService;
-
-    /**
      * AuthAdapter constructor.
      *
      * @param SecurityServiceInterface $service
-     * @param SecurityOrgService $orgService
      */
-    public function __construct(SecurityServiceInterface $service, SecurityOrgService $orgService)
+    public function __construct(SecurityServiceInterface $service)
     {
         $this->service    = $service;
-        $this->orgService = $orgService;
     }
 
     /**
@@ -146,9 +138,9 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 );
         }
 
-        $this->getLogger()->emerg('THIS IS THE BAD! SHOW THEM THE BAD', ['user_id' => $this->userId]);
         // @codeCoverageIgnoreStart
         // Hard to get here unless a new code status is added
+        $this->getLogger()->emerg('THIS IS THE BAD! SHOW THEM THE BAD', ['user_id' => $this->userId]);
         return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, new GuestUser());
     }
 }

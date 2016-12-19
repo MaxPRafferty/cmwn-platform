@@ -104,7 +104,7 @@ class LoginResourceTest extends TestCase
      */
     public function testItShouldGoToChangePasswordUponCode()
     {
-        $this->securityService->saveCodeToUser('xyz', 'english_teacher');
+        $this->securityService->saveCodeToUser('xyz', 'english_teacher', 2);
         $this->dispatch(
             '/login',
             'POST',

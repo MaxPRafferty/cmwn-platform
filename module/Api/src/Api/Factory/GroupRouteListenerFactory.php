@@ -4,6 +4,7 @@ namespace Api\Factory;
 
 use Api\Listeners\GroupRouteListener;
 use Group\Service\GroupServiceInterface;
+use Security\Service\SecurityOrgService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -24,6 +25,7 @@ class GroupRouteListenerFactory implements FactoryInterface
     {
         /** @var GroupServiceInterface $groupService */
         $groupService = $serviceLocator->get(GroupServiceInterface::class);
-        return new GroupRouteListener($groupService);
+        $orgService = $serviceLocator->get(SecurityOrgService::class);
+        return new GroupRouteListener($groupService, $orgService);
     }
 }

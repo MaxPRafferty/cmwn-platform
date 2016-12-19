@@ -12,7 +12,7 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -37,7 +37,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
     protected $userGroupService;
 
     /**
-     * @var SecurityOrgService $securityOrgService
+     * @var SecurityOrgServiceInterface $securityOrgService
      */
     protected $securityOrgService;
 
@@ -45,10 +45,12 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
      * GroupServiceListener constructor.
      *
      * @param UserGroupServiceInterface $userGroupService
-     * @param SecurityOrgService $securityOrgService
+     * @param SecurityOrgServiceInterface $securityOrgService
      */
-    public function __construct(UserGroupServiceInterface $userGroupService, SecurityOrgService $securityOrgService)
-    {
+    public function __construct(
+        UserGroupServiceInterface $userGroupService,
+        SecurityOrgServiceInterface $securityOrgService
+    ) {
         $this->userGroupService   = $userGroupService;
         $this->securityOrgService = $securityOrgService;
     }

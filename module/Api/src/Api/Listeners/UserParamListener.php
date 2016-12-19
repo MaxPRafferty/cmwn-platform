@@ -76,6 +76,9 @@ class UserParamListener
         }
 
         if ($user->getType() === UserInterface::TYPE_CHILD) {
+            if ($dataContainer->hasBodyParam('email')) {
+                return null;
+            }
             $dataContainer->setBodyParam('email', $user->getEmail());
         }
     }
