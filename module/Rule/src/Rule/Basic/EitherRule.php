@@ -5,20 +5,12 @@ namespace Rule\Basic;
 use Rule\Item\RuleItemInterface;
 use Rule\RuleCollection;
 use Rule\RuleInterface;
-use Rule\TimesSatisfiedTrait;
 
 /**
  * A Specification that is satisfied when one rule is satisfied
  */
-class EitherRule implements RuleInterface
+class EitherRule extends RuleCollection implements RuleInterface
 {
-    use TimesSatisfiedTrait;
-
-    /**
-     * @var RuleCollection|RuleInterface[]
-     */
-    protected $rules;
-
     /**
      * EitherSpecification constructor.
      *
@@ -26,8 +18,10 @@ class EitherRule implements RuleInterface
      */
     public function __construct(RuleInterface ...$rules)
     {
-        $this->rules = new RuleCollection();
-        array_walk($rules, [$this->rules, 'append']);
+        parent::__construct();
+        array_walk($rules, function (RuleInterface $rule) {
+            $this->append($rule);
+        });
     }
 
     /**
@@ -35,12 +29,7 @@ class EitherRule implements RuleInterface
      */
     public function isSatisfiedBy(RuleItemInterface $event): bool
     {
-        foreach ($this->rules as $rule) {
-            if ($rule->isSatisfiedBy($event)) {
-                $this->timesSatisfied++;
-            }
-        }
-
+        parent::isSatisfiedBy($event);
         return $this->timesSatisfied() > 0;
     }
 }

@@ -7,12 +7,24 @@ namespace Rule;
  */
 interface RuleCollectionInterface extends \IteratorAggregate, RuleInterface
 {
+    const OPERATOR_AND = 'and';
+    const OPERATOR_OR  = 'or';
+    const OPERATOR_NOT = 'not';
+
     /**
-     * Allows adding rules to the collection
+     * Adds rules to the collection
+     *
+     * This is designed to be a fluent object
      *
      * @param RuleInterface $rule
+     * @param string $operator
+     * @param null $orGroup
      *
      * @return RuleCollectionInterface
      */
-    public function append(RuleInterface $rule): RuleCollectionInterface;
+    public function append(
+        RuleInterface $rule,
+        string $operator = self::OPERATOR_AND,
+        string $orGroup = null
+    ): RuleCollectionInterface;
 }

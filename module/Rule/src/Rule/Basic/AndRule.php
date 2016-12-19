@@ -11,11 +11,6 @@ use Rule\RuleInterface;
 class AndRule extends RuleCollection implements RuleInterface
 {
     /**
-     * @var RuleCollection|RuleInterface[]
-     */
-    protected $rules;
-
-    /**
      * AndSpecification constructor.
      *
      * @param RuleInterface[] ...$rules
@@ -23,6 +18,8 @@ class AndRule extends RuleCollection implements RuleInterface
     public function __construct(RuleInterface ...$rules)
     {
         parent::__construct();
-        array_walk($rules, [$this, 'append']);
+        array_walk($rules, function (RuleInterface $rule) {
+            $this->append($rule);
+        });
     }
 }

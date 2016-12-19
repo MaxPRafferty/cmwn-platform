@@ -74,4 +74,12 @@ class ProviderCollection implements ProviderCollectionInterface
     {
         $this->parameters->offsetUnset($offset);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParam(string $param, $default = null)
+    {
+        return $this->offsetExists($param) ? $this->offsetGet($param) : $default;
+    }
 }

@@ -41,16 +41,20 @@ class RulesEngineTest extends TestCase
                 ],
                 'rules'       => [
                     [
-                        'name'    => '\\Rule\\\Date\\\DateBetweenSpecification',
-                        'options' => [
-                            'start_date' => $startDate,
-                            'end_date'   => $endDate,
+                        'rule' => [
+                            'name'    => '\\Rule\\\Date\\\DateBetweenSpecification',
+                            'options' => [
+                                'start_date' => $startDate,
+                                'end_date'   => $endDate,
+                            ],
                         ],
                     ],
                     [
-                        'name'     => '\\Flip\\Rule\\Earned',
-                        'options'  => [
-                            'flip_id' => 'merry-christmas',
+                        'rule'     => [
+                            'name'    => '\\Flip\\Rule\\Earned',
+                            'options' => [
+                                'flip_id' => 'merry-christmas',
+                            ],
                         ],
                         'operator' => 'not',
                     ],
@@ -85,7 +89,9 @@ class RulesEngineTest extends TestCase
                 ],
                 'rules'       => [
                     [
-                        'name' => '\\Friend\\Rule\\FriendAccepted',
+                        'rule' => [
+                            'name' => '\\Friend\\Rule\\FriendAccepted',
+                        ],
                     ],
                 ],
                 'actions'     => [
@@ -112,7 +118,9 @@ class RulesEngineTest extends TestCase
                 ],
                 'rules'       => [
                     [
-                        'name' => '\\Friend\\Rule\\FriendAccepted',
+                        'rule' => [
+                            'name' => '\\Friend\\Rule\\FriendAccepted',
+                        ],
                     ],
                     [
                         'name'     => '\\Flip\\Rule\\Earned',
@@ -145,9 +153,11 @@ class RulesEngineTest extends TestCase
                 ],
                 'rules'       => [
                     [
-                        'name'    => '\\Security\\Rule\\HasPermission',
-                        'options' => [
-                            'permission' => 'save.game',
+                        'rule' => [
+                            'name'    => '\\Security\\Rule\\HasPermission',
+                            'options' => [
+                                'permission' => 'save.game',
+                            ],
                         ],
                     ],
                 ],
@@ -172,9 +182,11 @@ class RulesEngineTest extends TestCase
                 ],
                 'rules'       => [
                     [
-                        'name'    => '\\Api\\Rule\\HalTypeRule',
-                        'options' => [
-                            'type' => GroupInterface::class,
+                        'rule' => [
+                            'name'    => '\\Api\\Rule\\HalTypeRule',
+                            'options' => [
+                                'type' => GroupInterface::class,
+                            ],
                         ],
                     ],
                 ],

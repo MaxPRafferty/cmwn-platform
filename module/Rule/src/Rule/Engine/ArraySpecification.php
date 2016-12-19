@@ -3,8 +3,11 @@
 namespace Rule\Engine;
 
 use Interop\Container\ContainerInterface;
+use Rule\Action\ActionCollection;
 use Rule\Action\ActionCollectionInterface;
-use Rule\Item\BasicRuleItem;
+use Rule\Action\ActionInterface;
+use Rule\Action\StaticActionFactory;
+use Rule\Basic\NotRule;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\RuleCollection;
@@ -83,12 +86,16 @@ class ArraySpecification implements EngineSpecificationInterface
      */
     public function getRules(ContainerInterface $services): RuleCollectionInterface
     {
-        if (null === $this->rules) {
-            $this->rules = new RuleCollection();
-            array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
-                $this->rules->append(StaticRuleFactory::build($services, ...array_values($ruleSpec)));
-            });
+        if (null !== $this->rules) {
+            return $this->rules;
         }
+
+        $this->rules = new RuleCollection();
+        array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
+            $operator = $ruleSpec['operator'] ?? 'and';
+            $rule = StaticRuleFactory::build($services, ...array_values($ruleSpec['rule']));
+            $this->rules->append($rule, $operator);
+        });
 
         return $this->rules;
     }
@@ -98,7 +105,19 @@ class ArraySpecification implements EngineSpecificationInterface
      */
     public function getActions(ContainerInterface $services): ActionCollectionInterface
     {
-        // TODO: Implement getActions() method.
+        if (null === $this->actions) {
+            $this->actions = new ActionCollection();
+            array_walk($this->spec['actions'], function ($actionSpec) use (&$services) {
+                if ($actionSpec instanceof ActionInterface) {
+                    $this->actions->append($actionSpec);
+                    return;
+                }
+
+                $this->actions->append(StaticActionFactory::build($services, $actionSpec));
+            });
+        }
+
+        return $this->actions;
     }
 
     /**
@@ -107,9 +126,7 @@ class ArraySpecification implements EngineSpecificationInterface
     public function buildItem(ContainerInterface $services): RuleItemInterface
     {
         if (null === $this->ruleItem) {
-            $this->ruleItem = new BasicRuleItem(
-                StaticProviderCollectionFactory::build($services, $this->spec['item_params'])
-            );
+            $this->ruleItem = StaticProviderCollectionFactory::build($services, $this->spec['item_params']);
         }
 
         return $this->ruleItem;
