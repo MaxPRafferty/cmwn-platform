@@ -1,6 +1,6 @@
 <?php
 
-namespace Rule\Engine;
+namespace Rule\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
 use Rule\Action\ActionCollectionInterface;
@@ -10,7 +10,7 @@ use Rule\RuleCollectionInterface;
 /**
  * A Specification the engine uses to build and run rules
  */
-interface EngineSpecificationInterface
+interface SpecificationInterface
 {
     /**
      * The identifier of this specification
@@ -27,13 +27,6 @@ interface EngineSpecificationInterface
      * @return string
      */
     public function getName(): string;
-
-    /**
-     * The identifier used by the engine to attach an event listener
-     *
-     * @return string
-     */
-    public function getSharedEventIdentifier(): string;
 
     /**
      * The Name of the event to listen for
