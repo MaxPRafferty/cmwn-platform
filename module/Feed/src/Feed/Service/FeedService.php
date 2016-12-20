@@ -110,7 +110,7 @@ class FeedService implements FeedServiceInterface
         $data = $feed->getArrayCopy();
         unset($data['feed_id']);
         $data['updated'] = new \DateTime();
-        $data['updated']->format('Y-m-d H-i-s');
+        $data['updated'] = $data['updated']->format('Y-m-d H-i-s');
         $data['posted'] = $data['posted'] instanceof \DateTime
             ? $data['posted']->format('Y-m-d H-i-s')
             : $data['posted'];

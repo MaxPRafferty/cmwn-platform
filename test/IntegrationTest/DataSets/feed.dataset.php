@@ -304,7 +304,7 @@ return [
     'feed'             => [
         [
             'feed_id'      => 'es_friend_feed',
-            'sender'       => 'english_student',
+            'sender'       => 'math_student',
             'title'        => 'Friendship Made',
             'message'      => 'became friends with',
             'priority'     => 5,
@@ -327,8 +327,8 @@ return [
         [
             'feed_id'      => 'es_flip_feed',
             'sender'       => 'english_student',
-            'title'        => 'Friendship Made',
-            'message'      => 'became friends with',
+            'title'        => 'Flip Earned',
+            'message'      => 'you earned a new flip',
             'priority'     => 3,
             'posted'       => '2016-04-15 11:49:08',
             'visibility'   => 2,
@@ -337,7 +337,7 @@ return [
         ],
         [
             'feed_id'      => 'ms_friend_feed',
-            'sender'       => 'math_student',
+            'sender'       => 'english_student',
             'title'        => 'Friendship Made',
             'message'      => 'became friends with',
             'priority'     => 5,
@@ -360,8 +360,8 @@ return [
         [
             'feed_id'      => 'ms_flip_feed',
             'sender'       => 'math_student',
-            'title'        => 'Friendship Made',
-            'message'      => 'became friends with',
+            'title'        => 'Flip Earned',
+            'message'      => 'you earned a new flip',
             'priority'     => 3,
             'posted'       => '2016-04-15 11:49:08',
             'visibility'   => 2,
@@ -382,8 +382,8 @@ return [
         [
             'feed_id'      => 'os_flip_feed',
             'sender'       => 'other_student',
-            'title'        => 'Friendship Made',
-            'message'      => 'became friends with',
+            'title'        => 'Flip Earned',
+            'message'      => 'you earned a new flip',
             'priority'     => 3,
             'posted'       => '2016-04-15 11:49:08',
             'visibility'   => 2,
