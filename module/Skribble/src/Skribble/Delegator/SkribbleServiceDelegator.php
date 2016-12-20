@@ -20,6 +20,11 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
     use EventManagerAwareTrait;
 
     /**
+     * @var array
+     */
+    protected $eventIdentifier = [SkribbleServiceInterface::class];
+
+    /**
      * @var SkribbleService
      */
     protected $realService;

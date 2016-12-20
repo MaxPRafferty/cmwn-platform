@@ -4,7 +4,7 @@ namespace IntegrationTest\Service;
 
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
-use \PHPUnit_Framework_TestCase as TestCase;
+use IntegrationTest\AbstractDbTestCase as TestCase;
 use Security\Service\SecurityOrgService;
 use User\Adult;
 

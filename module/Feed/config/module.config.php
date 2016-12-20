@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'shared-listeners' => [
+        'Feed\Listener\InjectFeedListener' => \Feed\Listener\InjectFeedListener::class
+    ],
     'service_manager' => [
         'aliases' => [
             \Feed\Service\FeedServiceInterface::class => \Feed\Service\FeedService::class,
@@ -17,7 +20,8 @@ return [
         ],
         'factories' => [
             \Feed\Service\FeedService::class => \Feed\Service\FeedServiceFactory::class,
-            \Feed\Service\FeedUserService::class => \Feed\Service\FeedUserServiceFactory::class
+            \Feed\Service\FeedUserService::class => \Feed\Service\FeedUserServiceFactory::class,
+            \Feed\Listener\InjectFeedListener::class => \Feed\Listener\InjectFeedListenerFactory::class,
         ],
         'delegators' => [
             \Feed\Service\FeedService::class => [

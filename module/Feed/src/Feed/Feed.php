@@ -20,11 +20,6 @@ class Feed extends \ArrayObject implements FeedInterface
     use DateDeletedTrait;
     use MetaDataTrait;
 
-    const TYPE_FRIEND = 'FRIEND';
-    const TYPE_GAME = 'GAME';
-    const TYPE_FLIP = 'FLIP';
-    const TYPE_SKRIBBLE = 'SKRIBBLE';
-
     /**
      * @var string
      */
@@ -94,6 +89,7 @@ class Feed extends \ArrayObject implements FeedInterface
             'visibility'   => null,
             'type'         => null,
             'type_version' => null,
+            'meta'         => [],
             'created'      => null,
             'updated'      => null,
             'deleted'      => null,
@@ -124,6 +120,7 @@ class Feed extends \ArrayObject implements FeedInterface
             'visibility'   => $this->getVisibility(),
             'type'         => $this->getType(),
             'type_version' => $this->getTypeVersion(),
+            'meta'         => $this->getMeta(),
             'created'      => $this->getCreated() !== null ? $this->getCreated()->format("Y-m-d H:i:s") : null,
             'updated'      => $this->getUpdated() !== null ? $this->getUpdated()->format("Y-m-d H:i:s") : null,
             'deleted'      => $this->getDeleted() !== null ? $this->getDeleted()->format("Y-m-d H:i:s") : null,

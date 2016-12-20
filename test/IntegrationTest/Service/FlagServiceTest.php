@@ -7,7 +7,7 @@ use Flag\Flag;
 use Flag\FlagHydrator;
 use Flag\FlagInterface;
 use Flag\Service\FlagService;
-use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use IntegrationTest\AbstractDbTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use User\Child;
 use User\Service\UserService;
@@ -21,6 +21,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
  * @group IntegrationTest
  * @group Db
  * @package IntegrationTest\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FlagServiceTest extends TestCase
 {

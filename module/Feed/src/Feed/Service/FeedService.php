@@ -13,6 +13,7 @@ use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Json\Json;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -50,6 +51,11 @@ class FeedService implements FeedServiceInterface
         $data['sender'] = $data['sender'] instanceof UserInterface? $data['sender']->getUserId() : $data['sender'];
         $data['created'] = $feed->getCreated()->format('Y-m-d H-i-s');
         $data['updated'] = $data['created'];
+        $data['posted']  = $data['posted'] === null
+            ? $data['created']
+            : ($data['posted'] instanceof \DateTime ? $data['posted']->format('Y-m-d H-i-s') : $data['posted']);
+
+        $data['meta'] = Json::encode($data['meta']);
         unset($data['deleted']);
 
         $this->tableGateway->insert($data);
@@ -105,6 +111,10 @@ class FeedService implements FeedServiceInterface
         unset($data['feed_id']);
         $data['updated'] = new \DateTime();
         $data['updated']->format('Y-m-d H-i-s');
+        $data['posted'] = $data['posted'] instanceof \DateTime
+            ? $data['posted']->format('Y-m-d H-i-s')
+            : $data['posted'];
+        $data['meta'] = Json::encode($data['meta']);
         $this->tableGateway->update($data, ['feed_id' => $feed->getFeedId()]);
         return true;
     }

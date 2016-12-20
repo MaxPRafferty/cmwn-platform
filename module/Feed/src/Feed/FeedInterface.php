@@ -10,6 +10,14 @@ use User\UserInterface;
  */
 interface FeedInterface
 {
+    const TYPE_FRIEND = 'FRIEND';
+    const TYPE_GAME = 'GAME';
+    const TYPE_FLIP = 'FLIP';
+    const TYPE_SKRIBBLE = 'SKRIBBLE';
+    const FLIP_EARNED = 'You have earned a new flip';
+    const FRIENDSHIP_MADE = 'You are now friends with';
+    const SKRIBBLE_RECEIVED = 'You received a skribble';
+
     /**
      * @return string
      */

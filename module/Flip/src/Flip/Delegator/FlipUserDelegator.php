@@ -18,6 +18,11 @@ class FlipUserDelegator implements FlipUserServiceInterface
     use ServiceTrait;
 
     /**
+     * @var array
+     */
+    protected $eventIdentifier = [FlipUserServiceInterface::class];
+
+    /**
      * @var FlipUserService
      */
     protected $realService;
