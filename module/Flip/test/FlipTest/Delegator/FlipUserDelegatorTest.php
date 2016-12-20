@@ -3,6 +3,7 @@
 namespace FlipTest\Delegator;
 
 use Flip\Delegator\FlipUserDelegator;
+use Flip\Service\FlipUserServiceInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
@@ -52,6 +53,7 @@ class FlipUserDelegatorTest extends TestCase
         $this->calledEvents = [];
         $this->delegator = new FlipUserDelegator($this->flipService);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->delegator->getEventManager()->getSharedManager()->clearListeners(FlipUserServiceInterface::class);
     }
 
     /**

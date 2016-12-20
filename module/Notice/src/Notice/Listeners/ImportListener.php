@@ -112,7 +112,11 @@ class ImportListener implements NoticeInterface, LoggerAwareInterface
         $this->getMailService()->getMessage()->setTo($parser->getEmail());
         $this->getMailService()->getMessage()->setSubject('User import error');
         $this->getMailService()->setTemplate(
-            new ImportFailedModel(['errors' => $parser->getErrors(), 'warnings' => $parser->getWarnings()])
+            new ImportFailedModel([
+                'image_domain' => $this->successModel->getVariable('image_domain'),
+                'errors' => $parser->getErrors(),
+                'warnings' => $parser->getWarnings()
+            ])
         );
 
         $this->getMailService()->send();

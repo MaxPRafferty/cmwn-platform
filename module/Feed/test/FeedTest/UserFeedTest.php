@@ -34,6 +34,7 @@ class UserFeedTest extends TestCase
             'created'      => '2016-04-15 11:49:08',
             'updated'      => '2016-04-15 11:49:08',
             'deleted'      => null,
+            'meta'         => [],
             'read_flag'    => 1,
         ];
     }
@@ -77,6 +78,7 @@ class UserFeedTest extends TestCase
             'created'      => null,
             'updated'      => null,
             'deleted'      => null,
+            'meta'         => [],
             'read_flag'    => null
         ];
 

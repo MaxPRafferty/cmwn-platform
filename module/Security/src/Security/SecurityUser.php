@@ -2,9 +2,9 @@
 
 namespace Security;
 
-use Application\Utils\Date\DateTimeFactory;
 use Group\GroupInterface;
-
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\ValidationData;
 use User\User;
 
 /**
@@ -48,11 +48,6 @@ class SecurityUser extends User
     protected $code;
 
     /**
-     * @var int
-     */
-    protected $codeExpires;
-
-    /**
      * @var string
      */
     protected $type;
@@ -87,19 +82,17 @@ class SecurityUser extends User
     public function exchangeArray(array $array)
     {
         $defaults = [
-            'code'         => null,
-            'code_expires' => null,
-            'password'     => null,
-            'super'        => false
+            'code'     => null,
+            'password' => null,
+            'super'    => false,
         ];
 
         $array = array_merge($defaults, $array);
         parent::exchangeArray($array);
 
-        $this->password    = $array['password'];
-        $this->code        = $array['code'];
-        $this->codeExpires = DateTimeFactory::factory($array['code_expires']);
-        $this->super       = (bool) $array['super'];
+        $this->password = $array['password'];
+        $this->code     = $array['code'];
+        $this->super    = (bool)$array['super'];
     }
 
     /**
@@ -116,11 +109,13 @@ class SecurityUser extends User
      * Sets the type
      *
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -128,6 +123,7 @@ class SecurityUser extends User
      * Verifies the password
      *
      * @param $password
+     *
      * @return bool
      */
     public function comparePassword($password)
@@ -139,20 +135,27 @@ class SecurityUser extends User
      * Compare string to a code
      *
      * @param $code
+     *
      * @return string
      */
     public function compareCode($code)
     {
-        if ($code !== $this->code) {
+        if (null === $this->code) {
             return static::CODE_INVALID;
         }
+        try {
+            $config       = new Configuration();
+            $compareToken = $config->getParser()->parse($this->code);
+            $validator    = new ValidationData();
+            $validator->setId($code);
 
-        $now = DateTimeFactory::factory('now');
-        if ($this->codeExpires === null || $now->format("Y-m-d H:i:s") > $this->codeExpires->format("Y-m-d H:i:s")) {
-            return static::CODE_EXPIRED;
+            return $compareToken->validate($validator)
+                ? static::CODE_VALID
+                : static::CODE_EXPIRED;
+        } catch (\Exception $jwtException) {
         }
 
-        return static::CODE_VALID;
+        return static::CODE_INVALID;
     }
 
     /**
@@ -176,13 +179,15 @@ class SecurityUser extends User
     }
 
     /**
-     * @param $type|GroupInterface
+     * @param $type |GroupInterface
+     *
      * @return $this
      */
     public function addGroupType($type)
     {
-        $type = $type instanceof GroupInterface ? $type->getType() : $type;
+        $type                    = $type instanceof GroupInterface ? $type->getType() : $type;
         $this->groupTypes[$type] = $type;
+
         return $this;
     }
 

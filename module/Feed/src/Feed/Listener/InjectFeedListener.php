@@ -23,6 +23,7 @@ use Zend\EventManager\SharedEventManagerInterface;
 /**
  * Class InjectFeedListener
  * @package Feed\Listener
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class InjectFeedListener implements AuthenticationServiceAwareInterface
 {

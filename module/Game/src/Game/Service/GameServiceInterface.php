@@ -3,7 +3,7 @@
 namespace Game\Service;
 
 use Application\Exception\NotFoundException;
-use Group\GroupInterface;
+use Game\GameInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Paginator\Adapter\DbSelect;
@@ -27,9 +27,29 @@ interface GameServiceInterface
     /**
      * Fetches one game from the DB using the id
      *
-     * @param $groupId
-     * @return GroupInterface
+     * @param $gameId
+     * @return GameInterface
      * @throws NotFoundException
      */
-    public function fetchGame($groupId);
+    public function fetchGame($gameId);
+
+    /**
+     * @param GameInterface $game
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function saveGame(GameInterface $game);
+
+    /**
+     * @param GameInterface $game
+     * @return bool
+     */
+    public function createGame(GameInterface $game);
+
+    /**
+     * @param GameInterface $game
+     * @param bool $soft
+     * @return bool
+     */
+    public function deleteGame(GameInterface $game, $soft = true);
 }

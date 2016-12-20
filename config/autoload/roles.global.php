@@ -43,6 +43,7 @@ return [
             'add.group.user'       => 'Add user to group',
             'remove.group.user'    => 'Remove user from group',
             'view.group.users'     => 'View Group users',
+            'reset.group.code'     => 'Reset code for users of a group',
 
             // organizations
             'create.org'           => 'Create an Organization',
@@ -56,6 +57,10 @@ return [
             // game
             'view.game-data'       => 'View Save Game Data of a game',
             'view.games'           => 'View all Games',
+            'view.game'            => 'View a game',
+            'create.game'          => 'Create a new game',
+            'update.game'          => 'Update existing game details',
+            'delete.game'          => 'delete game',
             'save.game'            => 'Save Game progress',
 
             // misc
@@ -76,6 +81,9 @@ return [
             'delete.skribble'      => 'Delete Skribbles',
             'update.skribble'      => 'Update Skribbles',
             'skribble.notice'      => 'Notify Skribble status',
+
+            // god mode
+            'sa.settings'          => 'View God Mode Admin Dashboard'
         ],
         'roles'             => [
             'super' => [
@@ -135,6 +143,13 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'view.feed',
+                    'sa.settings',
+                    'restore.db.state',
+                    'create.game',
+                    'view.game',
+                    'update.game',
+                    'delete.game',
+                    'reset.group.code',
                 ],
             ],
 
@@ -172,6 +187,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -208,6 +224,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -244,6 +261,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -265,13 +283,13 @@ return [
                     'view.group',
                     'view.group.users',
                     'view.org',
-                    'view.org.users',
                     'view.profile.image',
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'reset.group.code',
                 ],
             ],
 
@@ -347,7 +365,6 @@ return [
                     'view.group',
                     'view.group.users',
                     'view.org',
-                    'view.org.users',
                     'view.profile.image',
                     'view.user.adult',
                     'view.user.child',
