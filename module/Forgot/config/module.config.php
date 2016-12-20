@@ -5,12 +5,9 @@ return [
         'aliases'    => [
             \Forgot\Service\ForgotServiceInterface::class => \Forgot\Service\ForgotService::class,
         ],
-        'invokables' => [
-            \Forgot\Delegator\ForgotServiceDelegatorFactory::class =>
-                \Forgot\Delegator\ForgotServiceDelegatorFactory::class,
-
-        ],
         'factories'  => [
+            \Forgot\Delegator\ForgotServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Forgot\Service\ForgotService::class => \Forgot\Service\ForgotServiceFactory::class,
         ],
         'delegators' => [

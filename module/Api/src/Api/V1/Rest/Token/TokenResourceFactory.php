@@ -2,26 +2,20 @@
 
 namespace Api\V1\Rest\Token;
 
+use Interop\Container\ContainerInterface;
 use Security\Authentication\AuthenticationService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class TokenResourceFactory
- * @package Api\V1\Rest\Token
  */
 class TokenResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var AuthenticationService $authService */
-        $authService = $serviceLocator->get(AuthenticationService::class);
-        return new TokenResource($authService);
+        return new TokenResource($container->get(AuthenticationService::class));
     }
 }

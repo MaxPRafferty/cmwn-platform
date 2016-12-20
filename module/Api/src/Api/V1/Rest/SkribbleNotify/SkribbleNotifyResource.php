@@ -20,6 +20,8 @@ class SkribbleNotifyResource extends AbstractResourceListener
 
     /**
      * SkribbleNotifyResource constructor.
+     *
+     * @param SkribbleServiceInterface $skribbleService
      */
     public function __construct(SkribbleServiceInterface $skribbleService)
     {

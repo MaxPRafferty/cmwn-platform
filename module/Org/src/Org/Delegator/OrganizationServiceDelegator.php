@@ -8,10 +8,7 @@ use Application\Utils\ServiceTrait;
 use Org\Service\OrganizationService;
 use Org\Service\OrganizationServiceInterface;
 use Org\OrganizationInterface;
-use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -54,7 +51,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post'], 'o');
         $hideListener->setEntityParamKey('org');
 
-        $this->getEventManager()->attach($hideListener);
+        $hideListener->attach($this->getEventManager());
     }
 
     /**

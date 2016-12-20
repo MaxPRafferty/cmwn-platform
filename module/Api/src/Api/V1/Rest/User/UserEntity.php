@@ -2,12 +2,7 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\FlipLink;
-use Api\Links\ForgotLink;
-use Api\Links\GameLink;
-use Api\Links\PasswordLink;
 use Api\Links\ProfileLink;
-use Api\Links\ResetLink;
 use Api\Links\UserFlipLink;
 use Api\Links\UserImageLink;
 use Api\ScopeAwareInterface;

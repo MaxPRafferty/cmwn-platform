@@ -2,9 +2,8 @@
 
 namespace Game\Service;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class GameServiceFactory
@@ -14,15 +13,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class GameServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var TableGateway $tableGateway */
-        $tableGateway = $serviceLocator->get('GamesTable');
-        return new GameService($tableGateway);
+        return new GameService($container->get('GamesTable'));
     }
 }

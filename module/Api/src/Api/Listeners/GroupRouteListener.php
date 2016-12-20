@@ -64,6 +64,9 @@ class GroupRouteListener
         }
     }
 
+    /**
+     * @return ApiProblem
+     */
     public function onDispatch()
     {
         if ($this->exception !== null) {

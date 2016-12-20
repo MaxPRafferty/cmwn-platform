@@ -6,13 +6,12 @@ use Application\Exception\NotFoundException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
 use Zend\Hydrator\HydratorInterface;
-use Zend\Stdlib\Extractor\ExtractionInterface;
 
 /**
  * Class FlagHydrator
  * @package Flag
  */
-class FlagHydrator implements HydratorInterface, ExtractionInterface
+class FlagHydrator implements HydratorInterface
 {
     /**
      * @var UserServiceInterface

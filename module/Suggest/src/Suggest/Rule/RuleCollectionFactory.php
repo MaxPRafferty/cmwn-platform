@@ -2,23 +2,25 @@
 
 namespace Suggest\Rule;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class RuleCollectionFactory
+ *
+ * @todo port to rules enginex
  */
 class RuleCollectionFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config           = $serviceLocator->get('config');
+        $config           = $container->get('config');
         $suggestionConfig = isset($config['suggestion-engine']) ? $config['suggestion-engine'] : [];
         $rulesConfig      = isset($suggestionConfig['rules']) ? $suggestionConfig['rules'] : [];
 
-        return new RuleCollection($serviceLocator, $rulesConfig);
+        return new RuleCollection($container, $rulesConfig);
     }
 }

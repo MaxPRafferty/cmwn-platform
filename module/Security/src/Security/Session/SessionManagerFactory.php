@@ -2,31 +2,26 @@
 
 namespace Security\Session;
 
+use Interop\Container\ContainerInterface;
 use Zend\Cache\StorageFactory;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Session\SaveHandler\Cache;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
 
 /**
  * Class SessionManagerFactory
- * @package Security\Factory
- * @codeCoverageIgnore
+ * @todo Cleanup
  */
 class SessionManagerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $service
-     * @return SessionManager
-     * @todo break up
+     * @inheritDoc
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function createService(ServiceLocatorInterface $service)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $service->get('config');
+        $config = $container->get('config');
         if (!isset($config['session'])) {
             $sessionManager = new SessionManager();
             Container::setDefaultManager($sessionManager);
@@ -60,7 +55,6 @@ class SessionManagerFactory implements FactoryInterface
         }
 
         $sessionManager = new SessionManager($sessionConfig, $sessionStorage, $sessionSaveHandler);
-
         Container::setDefaultManager($sessionManager);
         return $sessionManager;
     }

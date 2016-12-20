@@ -4,26 +4,19 @@ namespace Api\Factory;
 
 use Api\Listeners\GroupRouteListener;
 use Group\Service\GroupServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class GroupRouteListenerFactory
- *
- * ${CARET}
  */
 class GroupRouteListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var GroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get(GroupServiceInterface::class);
-        return new GroupRouteListener($groupService);
+        return new GroupRouteListener($container->get(GroupServiceInterface::class));
     }
 }

@@ -3,27 +3,24 @@
 namespace Flag\Service;
 
 use Flag\FlagHydrator;
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FlagServiceFactory
- * @package Flag\Service
  */
 class FlagServiceFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return FlagService
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /**@var FlagHydrator $hydrator*/
-        $hydrator = $serviceLocator->get(FlagHydrator::class);
-        $adapter = $serviceLocator->get(Adapter::class);
-
-        return new FlagService(new TableGateway('image_flags', $adapter), $hydrator);
+        return new FlagService(
+            new TableGateway('image_flags', $container->get(Adapter::class)),
+            $container->get(FlagHydrator::class)
+        );
     }
 }

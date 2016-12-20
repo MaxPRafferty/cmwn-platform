@@ -74,11 +74,10 @@ class StaticRuleFactory
     /**
      * Builds a rule using either by the class or from the container
      *
-     * @param $paramOne   ContainerInterface|string Container or class name
-     * @param $paramTwo   string|array Options or class name to pass in
-     * @param $paramThree array The options
-     *
      * @return RuleInterface
+     * @internal param ContainerInterface|string $paramOne Container or class name
+     * @internal param array|string $paramTwo Options or class name to pass in
+     * @internal param array $paramThree The options
      */
     public static function build(): RuleInterface
     {

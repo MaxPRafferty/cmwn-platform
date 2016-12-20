@@ -42,8 +42,6 @@ class Module implements
             Logger::registerFatalErrorShutdownFunction($logger);
         }
 
-        $this->attachShared($mvcEvent);
-
         $config = $mvcEvent->getApplication()->getServiceManager()->get('Config');
         StaticType::setTypes(isset($config['cmwn-types']) ? $config['cmwn-types'] : []);
     }

@@ -13,6 +13,7 @@ use Zend\Json\Json;
 
 /**
  * Class MediaService
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class MediaService implements MediaServiceInterface
 {
@@ -154,9 +155,9 @@ class MediaService implements MediaServiceInterface
     }
 
     /**
-     * Decodes the json string from the request
+     * @param $prototype
      *
-     * @return MediaInterface|MediaCollection
+     * @return Media|MediaCollection|MediaInterface
      */
     protected function parseJsonFromRequest($prototype)
     {

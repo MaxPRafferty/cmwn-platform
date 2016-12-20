@@ -3,27 +3,24 @@
 namespace Security\Factory;
 
 use Group\Service\UserGroupService;
-use Group\Service\UserGroupServiceInterface;
+use Interop\Container\ContainerInterface;
 use Security\Listeners\OrgServiceListener;
 use Security\Service\SecurityOrgService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class OrgServiceListenerFactory
- * @package Security\Factory
  */
 class OrgServiceListenerFactory implements FactoryInterface
 {
     /**
      * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SecurityOrgService $securityOrgService */
-        $securityOrgService = $serviceLocator->get(SecurityOrgService::class);
-        /**@var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get(UserGroupService::class);
-        return new OrgServiceListener($securityOrgService, $userGroupService);
+        return new OrgServiceListener(
+            $container->get(SecurityOrgService::class),
+            $container->get(UserGroupService::class)
+        );
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Flip\Service;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FlipUserServiceFactory
@@ -13,17 +13,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FlipUserServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Adapter $adapter */
-        $adapter = $serviceLocator->get(Adapter::class);
+        // TODO Why not use the abstract factory for this?
         return new FlipUserService(
-            new TableGateway('user_flips', $adapter)
+            new TableGateway('user_flips', $container->get(Adapter::class))
         );
     }
 }

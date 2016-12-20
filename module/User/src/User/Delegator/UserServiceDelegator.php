@@ -52,8 +52,9 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
         $hideListener->setEntityParamKey('user');
         $hideListener->setDeletedField('u.deleted');
 
-        $this->getEventManager()->attach(new CheckUserListener());
-        $this->getEventManager()->attach($hideListener);
+        $checkUser = new CheckUserListener();
+        $checkUser->attach($this->getEventManager());
+        $hideListener->attach($this->getEventManager());
     }
 
     /**

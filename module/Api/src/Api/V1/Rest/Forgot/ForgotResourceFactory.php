@@ -2,8 +2,8 @@
 namespace Api\V1\Rest\Forgot;
 
 use Forgot\Service\ForgotServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ForgotResourceFactory
@@ -11,15 +11,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class ForgotResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var \Forgot\Service\ForgotServiceInterface $forgotService */
-        $forgotService = $serviceLocator->get(ForgotServiceInterface::class);
-        return new ForgotResource($forgotService);
+        return new ForgotResource($container->get(ForgotServiceInterface::class));
     }
 }

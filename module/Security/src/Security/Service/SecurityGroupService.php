@@ -3,7 +3,6 @@
 namespace Security\Service;
 
 use User\Service\UserServiceInterface;
-use User\User;
 use User\UserInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;

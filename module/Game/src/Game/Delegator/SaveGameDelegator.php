@@ -8,12 +8,9 @@ use Game\SaveGame;
 use Game\SaveGameInterface;
 use Game\Service\SaveGameService;
 use Game\Service\SaveGameServiceInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
-use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class SaveGameDelegator

@@ -1,24 +1,5 @@
 <?php
 
-
-$mailHost = getenv('MAIL_HOST')
-    ? getenv('MAIL_HOST')
-    : 'mailtrap.io';
-
-$mailPort = getenv('MAIL_PORT')
-    ? getenv('MAIL_PORT')
-    : 2525;
-
-$mailUser = getenv('MAIL_USERNAME')
-    ? getenv('MAIL_USERNAME')
-    : '1fccb9203477e3';
-
-$mailPass = getenv('MAIL_PASSWORD')
-    ? getenv('MAIL_PASSWORD')
-    : '1014d39a5059ac';
-
-$dbName = getenv('IMAGE_LINK');
-$dbName = empty($dbName) ? 'api.changemyworldnow.com' : $dbName;
 return [
     'acmailer_options' => [
 
@@ -179,7 +160,7 @@ return [
                         'default_layout' => [
                             'path' => 'email/layout/default.phtml',
                             'params' => [
-                                'image_domain' => $dbName
+                                'image_domain' => 'https://media.changemyworldnow.com/f'
                             ],
                             'template_capture_to' => 'content'
                         ]
@@ -226,14 +207,14 @@ return [
                  *
                  * Default value is localhost
                  */
-                'host' => $mailHost,
+                'host' => 'mailtrap.io',
 
                 /**
                  * Port of the mail server.
                  *
                  * Default value is 25
                  */
-                'port' => $mailPort,
+                'port' => 2525,
 
                 /**
                  * The connection class used for authentication.
@@ -250,14 +231,14 @@ return [
                      *
                      * Default value is an empty string
                      */
-                    'username' => $mailUser,
+                    'username' => '1fccb9203477e3',
 
                     /**
                      * The SMTP authentication credential.
                      *
                      * Default value is an empty string
                      */
-                    'password' => $mailPass,
+                    'password' => '1014d39a5059ac',
 
                     /**
                      * This defines the encryption type to be used, 'ssl' or 'tls'.

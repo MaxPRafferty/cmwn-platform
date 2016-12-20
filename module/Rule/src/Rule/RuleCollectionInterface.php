@@ -18,7 +18,7 @@ interface RuleCollectionInterface extends \IteratorAggregate, RuleInterface
      *
      * @param RuleInterface $rule
      * @param string $operator
-     * @param null $orGroup
+     * @param string|null $orGroup
      *
      * @return RuleCollectionInterface
      */

@@ -32,7 +32,8 @@ class AreFriendsValidator extends AbstractValidator implements ValidatorInterfac
     /**
      * AreFriendsValidator constructor.
      *
-     * @param FriendServiceInterface $options
+     * @param FriendServiceInterface $friendService
+     * @param $options
      */
     public function __construct(FriendServiceInterface $friendService, $options)
     {

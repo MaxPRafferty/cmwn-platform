@@ -2,6 +2,7 @@
 
 namespace IntegrationTest;
 
+use Asset\Service\ImageServiceInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\ServiceManager\ServiceManager;
 

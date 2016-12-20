@@ -10,10 +10,21 @@ use Rule\Item\RuleItemInterface;
  */
 class TestAction implements \Serializable, ActionInterface
 {
+    /**
+     * @var array
+     */
     public $constructData;
 
+    /**
+     * @var
+     */
     public $serializeData;
 
+    /**
+     * TestAction constructor.
+     *
+     * @param array ...$options
+     */
     public function __construct(...$options)
     {
         $this->constructData = $options;

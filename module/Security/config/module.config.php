@@ -20,19 +20,14 @@ return [
                 \Security\Authentication\AuthenticationService::class,
         ],
 
-        'invokables' => [
-            \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
-            \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
-            \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
-            \Security\Listeners\FetchUserImageListener::class => \Security\Listeners\FetchUserImageListener::class,
-            \Security\Listeners\RestoreServiceListener::class => \Security\Listeners\RestoreServiceListener::class
-        ],
-
         'factories' => [
+            \Security\Listeners\UpdateSession::class      => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\UserUpdateListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\RestoreServiceListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Guard\CsrfGuard::class             => \Security\Factory\CsrfGuardFactory::class,
             \Security\Guard\XsrfGuard::class             => \Security\Factory\XsrfGuardFactory::class,
             \Security\Authorization\RouteListener::class => \Security\Authorization\RouteListenerFactory::class,
-            \Zend\Session\SessionManager::class          => \Security\Session\SessionManagerFactory::class,
             \Security\Service\SecurityService::class     => \Security\Service\SecurityServiceFactory::class,
             \Security\Service\SecurityOrgService::class  => \Security\Service\SecurityOrgServiceFactory::class,
             \Security\Authentication\AuthAdapter::class  => \Security\Authentication\AuthAdapterFactory::class,
@@ -52,9 +47,9 @@ return [
             \Security\Authorization\Assertions\UserAssertion::class =>
                 \Security\Factory\UserAssertionFactory::class,
 
-            \Security\Listeners\GroupServiceListener::class         =>
+            \Security\Listeners\GroupServiceListener::class =>
                 \Security\Factory\GroupServiceListenerFactory::class,
-            \Security\Listeners\OrgServiceListener::class           =>
+            \Security\Listeners\OrgServiceListener::class   =>
                 \Security\Factory\OrgServiceListenerFactory::class,
 
             \Zend\Authentication\Adapter\Http::class =>
@@ -86,7 +81,6 @@ return [
         \Security\Listeners\OrgServiceListener::class,
         \Security\Listeners\GroupServiceListener::class,
         \Security\Authorization\RouteListener::class,
-        \Security\Guard\OriginGuard::class,
         \Security\Guard\XsrfGuard::class,
         \Security\Guard\CsrfGuard::class,
         \Security\Listeners\ExpireAuthSessionListener::class,

@@ -11,11 +11,9 @@ return [
         'aliases'    => [
             \Skribble\Service\SkribbleServiceInterface::class => \Skribble\Service\SkribbleService::class,
         ],
-        'invokables' => [
-            \Skribble\Delegator\SkribbleServiceDelegatorFactory::class =>
-                \Skribble\Delegator\SkribbleServiceDelegatorFactory::class,
-        ],
         'factories'  => [
+            \Skribble\Delegator\SkribbleServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Skribble\Service\SkribbleService::class => \Skribble\Service\SkribbleServiceFactory::class,
         ],
         'delegators' => [

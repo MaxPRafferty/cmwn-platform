@@ -2,7 +2,6 @@
 
 namespace Api\V1\Rest\Org;
 
-use Api\Links\OrgUserLink;
 use Api\ScopeAwareInterface;
 use Org\Organization;
 use Org\OrganizationInterface;
@@ -61,7 +60,6 @@ class OrgEntity extends Organization implements ScopeAwareInterface, LinkCollect
 
     /**
      * @param LinkCollection $links
-     * @return mixed
      */
     public function setLinks(LinkCollection $links)
     {

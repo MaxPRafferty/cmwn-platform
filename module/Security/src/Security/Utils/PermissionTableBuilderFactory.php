@@ -2,9 +2,9 @@
 
 namespace Security\Utils;
 
+use Interop\Container\ContainerInterface;
 use Security\Authorization\Rbac;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class PermissionTableBuilderFactory
@@ -14,9 +14,8 @@ class PermissionTableBuilderFactory implements FactoryInterface
     /**
      * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $rbac = $serviceLocator->get(Rbac::class);
-        return new PermissionTableFactory($rbac);
+        return new PermissionTableFactory($container->get(Rbac::class));
     }
 }

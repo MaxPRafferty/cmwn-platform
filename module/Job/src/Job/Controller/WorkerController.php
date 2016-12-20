@@ -3,6 +3,7 @@
 namespace Job\Controller;
 
 use Application\Utils\NoopLoggerAwareTrait;
+use Interop\Container\ContainerInterface;
 use Job\Service\ResqueWorker;
 use Security\Authentication\AuthenticationService;
 use Security\Authentication\AuthenticationServiceAwareInterface;
@@ -17,7 +18,6 @@ use Zend\Log\LoggerAwareInterface;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class WorkerController
@@ -30,7 +30,7 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
     use NoopLoggerAwareTrait;
 
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $services;
 
@@ -40,12 +40,12 @@ class WorkerController extends ConsoleController implements LoggerAwareInterface
     protected $logger;
 
     /**
-     * ImportController constructor.
+     * WorkerController constructor.
      *
-     * @param ServiceLocatorInterface $services
+     * @param ContainerInterface $services
      * @param AuthenticationService $authenticationService
      */
-    public function __construct(ServiceLocatorInterface $services, AuthenticationService $authenticationService)
+    public function __construct(ContainerInterface $services, AuthenticationService $authenticationService)
     {
         $this->services     = $services;
         $this->setAuthenticationService($authenticationService);

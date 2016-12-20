@@ -2,32 +2,24 @@
 
 namespace Security\Authentication;
 
+use Interop\Container\ContainerInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 /**
  * Class AuthenticationServiceAwareInitializer
- *
- * ${CARET}
  */
 class AuthenticationServiceAwareInitializer implements InitializerInterface
 {
     /**
-     * Initialize
-     *
-     * @param $instance
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if (!$instance instanceof AuthenticationServiceAwareInterface) {
             return;
         }
 
-        /** @var AuthenticationServiceInterface $authService */
-        $authService = $serviceLocator->get(AuthenticationServiceInterface::class);
-        $instance->setAuthenticationService($authService);
+        $instance->setAuthenticationService($container->get(AuthenticationServiceInterface::class));
     }
 }

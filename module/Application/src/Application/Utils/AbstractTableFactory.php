@@ -2,39 +2,31 @@
 
 namespace Application\Utils;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
 /**
  * Class AbstractTableFactory
- *
- * Creates a default table gateway based off the requested name
  */
 class AbstractTableFactory implements AbstractFactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $services
-     * @param $name
-     * @param $requestedName
-     * @return mixed
+     * @inheritDoc
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $services, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         return preg_match("/Table$/", $requestedName);
     }
 
     /**
-     * @param ServiceLocatorInterface $services
-     * @param $name
-     * @param $requestedName
-     * @return TableGateway
+     * @inheritDoc
      */
-    public function createServiceWithName(ServiceLocatorInterface $services, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         /** @var Adapter $adapter */
-        $adapter   = $services->get(Adapter::class);
+        $adapter   = $container->get(Adapter::class);
         $tableName = str_replace('Table', '', $requestedName);
         $tableName = strtolower($tableName);
         return new TableGateway($tableName, $adapter);

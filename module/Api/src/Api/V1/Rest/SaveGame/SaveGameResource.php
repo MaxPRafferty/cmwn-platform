@@ -5,7 +5,6 @@ namespace Api\V1\Rest\SaveGame;
 use Game\GameInterface;
 use Game\Service\SaveGameServiceInterface;
 use User\UserInterface;
-use Zend\Json\Json;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 

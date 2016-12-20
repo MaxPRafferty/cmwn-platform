@@ -2,10 +2,10 @@
 
 namespace Security\Authorization;
 
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityGroupService;
 use Security\Service\SecurityOrgService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class RouterListenerFactory
@@ -13,23 +13,17 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class RouteListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var \Security\Service\SecurityOrgService $orgService */
-        $orgService = $serviceLocator->get(SecurityOrgService::class);
-
-        /** @var SecurityGroupService $groupService */
-        $groupService = $serviceLocator->get(SecurityGroupService::class);
-
-        $config = $serviceLocator->get('config');
+        $config = $container->get('config');
         $config = isset($config['cmwn-security']) ? $config['cmwn-security'] : [];
 
-        return new RouteListener($config, $orgService, $groupService);
+        return new RouteListener(
+            $config,
+            $container->get(SecurityOrgService::class),
+            $container->get(SecurityGroupService::class)
+        );
     }
 }

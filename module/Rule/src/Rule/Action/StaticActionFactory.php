@@ -17,11 +17,10 @@ class StaticActionFactory
      *
      * The action will either be pulled from the Container or constructed from a class
      *
-     * @param ContainerInterface $services
-     * @param string $className
-     * @param array $options
-     *
      * @return ActionInterface
+     * @internal param ContainerInterface $services
+     * @internal param string $className
+     * @internal param array $options
      */
     public static function build(): ActionInterface
     {

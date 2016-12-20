@@ -3,22 +3,19 @@
 namespace Api\V1\Rest\GameData;
 
 use Game\Service\SaveGameServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class GameDataResourceFactory
- * @package Api\V1\Rest\GameData
  */
 class GameDataResourceFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /**@var SaveGameServiceInterface $saveGameService*/
-        $saveGameService = $serviceLocator->get(SaveGameServiceInterface::class);
-        return new GameDataResource($saveGameService);
+        return new GameDataResource($container->get(SaveGameServiceInterface::class));
     }
 }

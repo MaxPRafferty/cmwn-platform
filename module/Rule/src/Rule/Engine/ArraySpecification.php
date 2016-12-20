@@ -7,7 +7,6 @@ use Rule\Action\ActionCollection;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Action\ActionInterface;
 use Rule\Action\StaticActionFactory;
-use Rule\Basic\NotRule;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\RuleCollection;

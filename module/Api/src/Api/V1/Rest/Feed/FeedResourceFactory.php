@@ -3,14 +3,21 @@
 namespace Api\V1\Rest\Feed;
 
 use Game\Service\GameService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
+/**
+ * Class FeedResourceFactory
+ */
 class FeedResourceFactory implements FactoryInterface
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $gameService = $serviceLocator->get(GameService::class);
-        return new FeedResource($gameService);
+        return new FeedResource(
+            $container->get(GameService::class)
+        );
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Import\Importer\Nyc;
 
-use Application\Exception\NotFoundException;
 use Application\Utils\NoopLoggerAwareTrait;
 use Group\GroupAwareInterface;
 use Group\GroupInterface;

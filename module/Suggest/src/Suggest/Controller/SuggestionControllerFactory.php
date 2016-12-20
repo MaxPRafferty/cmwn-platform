@@ -1,29 +1,22 @@
 <?php
 
-
 namespace Suggest\Controller;
 
+use Interop\Container\ContainerInterface;
 use Suggest\Engine\SuggestionEngine;
-use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class SuggestionControllerFactory
- * @package Suggest\Controller
  */
 class SuggestionControllerFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return SuggestionController
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-        $suggestionEngine = $serviceLocator->get(SuggestionEngine::class);
-        return new SuggestionController($suggestionEngine);
+        return new SuggestionController($container->get(SuggestionEngine::class));
     }
 }

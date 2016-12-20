@@ -4,13 +4,13 @@ namespace Api\V1\Rest\Import;
 use Group\GroupAwareInterface;
 use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
+use Interop\Container\ContainerInterface;
 use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -30,16 +30,17 @@ class ImportResource extends AbstractResourceListener implements AuthenticationS
     protected $jobService;
 
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $services;
 
     /**
      * ImportResource constructor.
+     *
      * @param JobServiceInterface $jobService
-     * @param ServiceLocatorInterface $services
+     * @param ContainerInterface $services
      */
-    public function __construct(JobServiceInterface $jobService, ServiceLocatorInterface $services)
+    public function __construct(JobServiceInterface $jobService, ContainerInterface $services)
     {
         $this->jobService = $jobService;
         $this->services   = $services;

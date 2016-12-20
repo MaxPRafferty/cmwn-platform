@@ -2,10 +2,10 @@
 
 namespace Suggest\Rule;
 
+use Interop\Container\ContainerInterface;
 use Suggest\InvalidRuleException;
 use Suggest\SuggestionCollection;
 use User\UserInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class RuleCollection
@@ -14,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class RuleCollection implements RuleCompositeInterface
 {
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $service;
 
@@ -31,10 +31,10 @@ class RuleCollection implements RuleCompositeInterface
     /**
      * RuleCollection constructor.
      *
-     * @param ServiceLocatorInterface $service
+     * @param ContainerInterface $service
      * @param array $rulesConfig
      */
-    public function __construct(ServiceLocatorInterface $service, array $rulesConfig)
+    public function __construct(ContainerInterface $service, array $rulesConfig)
     {
         $this->service = $service;
         $this->rulesConfig = $rulesConfig;

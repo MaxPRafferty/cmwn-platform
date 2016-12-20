@@ -15,11 +15,10 @@ class StaticProviderFactory
     /**
      * Builds a provider
      *
-     * @param ContainerInterface $services
-     * @param string $name
-     * @param array $options
-     *
      * @return ProviderInterface
+     * @internal param ContainerInterface $services
+     * @internal param string $name
+     * @internal param array $options
      */
     public static function build(): ProviderInterface
     {

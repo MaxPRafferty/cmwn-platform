@@ -3,20 +3,19 @@
 namespace Suggest\Rule;
 
 use Friend\Service\FriendService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FriendRuleFactory
- * @package Suggest\Rule
  */
 class FriendRuleFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new FriendRule($serviceLocator->get(FriendService::class));
+        return new FriendRule($container->get(FriendService::class));
     }
 }
