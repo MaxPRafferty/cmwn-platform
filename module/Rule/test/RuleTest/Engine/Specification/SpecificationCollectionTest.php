@@ -117,8 +117,10 @@ class SpecificationCollectionTest extends TestCase
             ],
         ]);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A specification with the id foo-bar already exists');
+        $this->setExpectedException(
+            RuntimeException::class,
+            'A specification with the id foo-bar already exists'
+        );
         $collection = new SpecificationCollection();
         $collection->append($specOne)->append($specTwo);
     }
