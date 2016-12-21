@@ -22,6 +22,7 @@ return [
     'ZF\Rest',
     'ZF\ContentValidation',
     'ZF\Configuration',
+    'AcMailer',
     'Application',
     'AwsModule',
     'User',

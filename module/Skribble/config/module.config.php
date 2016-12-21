@@ -12,9 +12,10 @@ return [
             \Skribble\Service\SkribbleServiceInterface::class => \Skribble\Service\SkribbleService::class,
         ],
         'factories'  => [
-            \Skribble\Delegator\SkribbleServiceDelegatorFactory::class =>
-                \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Skribble\Service\SkribbleService::class => \Skribble\Service\SkribbleServiceFactory::class,
+//            \Skribble\Delegator\SkribbleServiceDelegatorFactory::class =>
+//                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Skribble\Service\SkribbleService::class                   =>
+                \Skribble\Service\SkribbleServiceFactory::class,
         ],
         'delegators' => [
             \Skribble\Service\SkribbleService::class => [

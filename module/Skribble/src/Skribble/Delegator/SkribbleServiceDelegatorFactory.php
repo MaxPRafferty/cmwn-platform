@@ -15,6 +15,6 @@ class SkribbleServiceDelegatorFactory implements DelegatorFactoryInterface
      */
     public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        new SkribbleServiceDelegator($callback());
+        return new SkribbleServiceDelegator($callback());
     }
 }

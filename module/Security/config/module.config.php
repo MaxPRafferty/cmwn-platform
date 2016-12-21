@@ -25,7 +25,6 @@ return [
             \Security\Listeners\UpdateSession::class      => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Listeners\UserUpdateListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Security\Listeners\RestoreServiceListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Guard\CsrfGuard::class             => \Security\Factory\CsrfGuardFactory::class,
             \Security\Guard\XsrfGuard::class             => \Security\Factory\XsrfGuardFactory::class,
             \Security\Authorization\RouteListener::class => \Security\Authorization\RouteListenerFactory::class,
@@ -90,7 +89,6 @@ return [
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
         \Security\Listeners\FetchUserImageListener::class,
-        \Security\Listeners\RestoreServiceListener::class,
     ],
 
     'console' => [
