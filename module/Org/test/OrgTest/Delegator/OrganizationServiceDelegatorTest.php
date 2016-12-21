@@ -58,7 +58,6 @@ class OrganizationServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('save.new.org');
         $this->delegator->getEventManager()->clearListeners('fetch.org.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.orgs');
-        $this->delegator->getEventManager()->getSharedManager()->clearListeners(OrganizationServiceInterface::class);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

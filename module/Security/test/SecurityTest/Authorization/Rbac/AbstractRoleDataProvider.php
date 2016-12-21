@@ -75,7 +75,7 @@ abstract class AbstractRoleDataProvider
     public function setAllowed($permission)
     {
         if (!in_array($permission, $this->allPermissions)) {
-            throw new \InvalidArgumentException("Pemission does not exist" . $permission);
+            throw new \InvalidArgumentException("Permission does not exist" . $permission);
         }
 
         if (in_array($permission, $this->getDenied())) {
@@ -99,7 +99,7 @@ abstract class AbstractRoleDataProvider
     public function setDenied($permission)
     {
         if (!in_array($permission, $this->allPermissions)) {
-            throw new \InvalidArgumentException("Pemission does not exist" . $permission);
+            throw new \InvalidArgumentException("Permission does not exist" . $permission);
         }
 
         if (in_array($permission, $this->getAllowed())) {

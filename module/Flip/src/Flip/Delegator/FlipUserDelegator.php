@@ -49,7 +49,7 @@ class FlipUserDelegator implements FlipUserServiceInterface
             ['where' => $where, 'prototype' => $prototype, 'user' => $user]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -57,7 +57,7 @@ class FlipUserDelegator implements FlipUserServiceInterface
         $return   = $this->realService->fetchEarnedFlipsForUser($user, $where, $prototype);
         $event->setName('fetch.user.flips.post');
         $event->setParam('flips', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -77,14 +77,14 @@ class FlipUserDelegator implements FlipUserServiceInterface
             ['user' => $user, 'flip' => $flip]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
 
         $return   = $this->realService->attachFlipToUser($user, $flip);
         $event->setName('attach.flip.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

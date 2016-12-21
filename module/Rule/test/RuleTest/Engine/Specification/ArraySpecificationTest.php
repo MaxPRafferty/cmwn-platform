@@ -1,6 +1,6 @@
 <?php
 
-namespace RuleTest\Engine;
+namespace RuleTest\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
@@ -8,7 +8,7 @@ use Rule\Action\ActionCollectionInterface;
 use Rule\Action\NoopAction;
 use Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Basic\NeverSatisfiedRule;
-use Rule\Engine\ArraySpecification;
+use Rule\Engine\Specification\ArraySpecification;
 use Rule\RuleCollectionInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 
@@ -36,10 +36,7 @@ class ArraySpecificationTest extends TestCase
         $spec = [
             'id'          => 'foo-bar',
             'name'        => 'This is a test that the foo will bar',
-            'when'        => [
-                'identifier' => 'manchuck',
-                'event'      => 'attach.friend.post',
-            ],
+            'when'        => 'some.event',
             'rules'       => [
                 [
                     'rule' => ['name' => AlwaysSatisfiedRule::class],
@@ -68,13 +65,7 @@ class ArraySpecificationTest extends TestCase
         );
 
         $this->assertEquals(
-            $spec['when']['identifier'],
-            $arraySpec->getSharedEventIdentifier(),
-            'The Event Id does not match the expected spec'
-        );
-
-        $this->assertEquals(
-            $spec['when']['event'],
+            $spec['when'],
             $arraySpec->getEventName(),
             'The Event name does not match the expected spec'
         );
@@ -119,10 +110,7 @@ class ArraySpecificationTest extends TestCase
         $spec = [
             'id'          => 'foo-bar',
             'name'        => 'This is a test that the foo will bar',
-            'when'        => [
-                'identifier' => 'manchuck',
-                'event'      => 'attach.friend.post',
-            ],
+            'when'        => 'some.event',
             'rules'       => [
                 [
                     'rule' => [

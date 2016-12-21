@@ -50,7 +50,7 @@ class GroupDelegator implements GroupServiceInterface
     public function updateGroup(GroupInterface $group)
     {
         $event    = new Event('update.group', $this->realService, ['group' => $group]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -59,13 +59,13 @@ class GroupDelegator implements GroupServiceInterface
         try {
             $return = $this->realService->updateGroup($group);
             $event->setName('update.group.post');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return $return;
         } catch (\Exception $groupException) {
             $event->setName('update.group.error');
             $event->setParam('exception', $groupException);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
         }
 
         throw $groupException;
@@ -83,8 +83,7 @@ class GroupDelegator implements GroupServiceInterface
 
         $hideListener->setEntityParamKey('group');
         $hideListener->setDeletedField('g.deleted');
-
-        $this->getEventManager()->attach($hideListener);
+        $hideListener->attach($this->getEventManager());
     }
 
     /**
@@ -112,7 +111,7 @@ class GroupDelegator implements GroupServiceInterface
     public function createGroup(GroupInterface $group)
     {
         $event    = new Event('save.group', $this->realService, ['group' => $group]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -121,12 +120,12 @@ class GroupDelegator implements GroupServiceInterface
         try {
             $return = $this->realService->createGroup($group);
             $event->setName('save.group.post');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             return $return;
         } catch (\Exception $groupException) {
             $event->setName('save.group.error');
             $event->setParam('exception', $groupException);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
         }
 
         throw $groupException;
@@ -143,7 +142,7 @@ class GroupDelegator implements GroupServiceInterface
     public function fetchGroup($groupId)
     {
         $event    = new Event('fetch.group', $this->realService, ['group_id' => $groupId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -151,7 +150,7 @@ class GroupDelegator implements GroupServiceInterface
 
         $return = $this->realService->fetchGroup($groupId);
         $event  = new Event('fetch.group.post', $this->realService, ['group_id' => $groupId, 'group' => $return]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -166,7 +165,7 @@ class GroupDelegator implements GroupServiceInterface
             $this->realService,
             ['network_id' => $networkId, 'external_id' => $externalId]
         );
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -175,7 +174,7 @@ class GroupDelegator implements GroupServiceInterface
         $return = $this->realService->fetchGroupByExternalId($networkId, $externalId);
         $event->setName('fetch.group.external.post');
         $event->setParam('group', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -193,7 +192,7 @@ class GroupDelegator implements GroupServiceInterface
     public function deleteGroup(GroupInterface $group, $soft = true)
     {
         $event    = new Event('delete.group', $this->realService, ['group' => $group, 'soft' => $soft]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -201,7 +200,7 @@ class GroupDelegator implements GroupServiceInterface
 
         $return = $this->realService->deleteGroup($group, $soft);
         $event  = new Event('delete.group.post', $this->realService, ['group' => $group, 'soft' => $soft]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -222,7 +221,7 @@ class GroupDelegator implements GroupServiceInterface
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -233,7 +232,7 @@ class GroupDelegator implements GroupServiceInterface
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'groups' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -251,7 +250,7 @@ class GroupDelegator implements GroupServiceInterface
     public function fetchChildTypes(GroupInterface $group)
     {
         $event    = new Event('fetch.child.group.types', $this->realService, ['group' => $group]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -261,7 +260,7 @@ class GroupDelegator implements GroupServiceInterface
 
         $event->setName('fetch.child.group.types.post');
         $event->setParam('types', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -284,7 +283,7 @@ class GroupDelegator implements GroupServiceInterface
             ['group' => $group, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -292,7 +291,7 @@ class GroupDelegator implements GroupServiceInterface
         $return = $this->realService->fetchChildGroups($group, $where, $prototype);
         $event->setName('fetch.child.groups.post');
         $event->setParam('result', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -305,7 +304,7 @@ class GroupDelegator implements GroupServiceInterface
     public function fetchGroupTypes()
     {
         $event    = new Event('fetch.group.types', $this->realService);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -314,7 +313,7 @@ class GroupDelegator implements GroupServiceInterface
         $return = $this->realService->fetchGroupTypes();
         $event->setName('fetch.group.types.post');
         $event->setParam('results', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

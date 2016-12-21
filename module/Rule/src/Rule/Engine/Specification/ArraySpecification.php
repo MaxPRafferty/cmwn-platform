@@ -1,12 +1,14 @@
 <?php
 
-namespace Rule\Engine;
+namespace Rule\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
 use Rule\Action\ActionCollection;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Action\ActionInterface;
 use Rule\Action\StaticActionFactory;
+use Rule\Exception\InvalidArgumentException;
+use Rule\Exception\RuntimeException;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\RuleCollection;
@@ -16,7 +18,7 @@ use Rule\StaticRuleFactory;
 /**
  * An Engine Specification that is built from an array
  */
-class ArraySpecification implements EngineSpecificationInterface
+class ArraySpecification implements SpecificationInterface
 {
     /**
      * @var array
@@ -45,6 +47,27 @@ class ArraySpecification implements EngineSpecificationInterface
      */
     public function __construct(array $spec)
     {
+        // Check that we have all the required key
+        foreach (['id', 'name', 'when', 'rules', 'actions'] as $required) {
+            if (!isset($spec[$required]) || empty($spec[$required])) {
+                throw new RuntimeException(sprintf(
+                    'Missing required key "%s" for "%s"',
+                    $required,
+                    static::class
+                ));
+            }
+        }
+
+        foreach (['rules', 'actions', 'item_params'] as $mustBeArray) {
+            if (isset($spec[$mustBeArray]) && !is_array($spec[$mustBeArray])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Key "%s" myst be an array for "%s"',
+                    $mustBeArray,
+                    static::class
+                ));
+            }
+        }
+
         $this->spec = $spec;
     }
 
@@ -67,17 +90,9 @@ class ArraySpecification implements EngineSpecificationInterface
     /**
      * @inheritDoc
      */
-    public function getSharedEventIdentifier(): string
-    {
-        return $this->spec['when']['identifier'];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getEventName(): string
     {
-        return $this->spec['when']['event'];
+        return $this->spec['when'];
     }
 
     /**
@@ -92,7 +107,7 @@ class ArraySpecification implements EngineSpecificationInterface
         $this->rules = new RuleCollection();
         array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
             $operator = $ruleSpec['operator'] ?? 'and';
-            $rule = StaticRuleFactory::build($services, ...array_values($ruleSpec['rule']));
+            $rule     = StaticRuleFactory::build($services, ...array_values($ruleSpec['rule']));
             $this->rules->append($rule, $operator);
         });
 
@@ -109,6 +124,7 @@ class ArraySpecification implements EngineSpecificationInterface
             array_walk($this->spec['actions'], function ($actionSpec) use (&$services) {
                 if ($actionSpec instanceof ActionInterface) {
                     $this->actions->append($actionSpec);
+
                     return;
                 }
 
@@ -125,7 +141,7 @@ class ArraySpecification implements EngineSpecificationInterface
     public function buildItem(ContainerInterface $services): RuleItemInterface
     {
         if (null === $this->ruleItem) {
-            $this->ruleItem = StaticProviderCollectionFactory::build($services, $this->spec['item_params']);
+            $this->ruleItem = StaticProviderCollectionFactory::build($services, $this->spec['item_params'] ?? []);
         }
 
         return $this->ruleItem;

@@ -65,7 +65,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function createUser(UserInterface $user)
     {
         $event    = new Event('save.new.user', $this->realService, ['user' => $user]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -74,7 +74,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
         try {
             $return = $this->realService->createUser($user);
             $event    = new Event('save.new.user.post', $this->realService, ['user' => $user]);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return $return;
         } catch (\Exception $createException) {
@@ -84,7 +84,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
                 ['user' => $user, 'error' => $createException]
             );
 
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             throw $createException;
         }
@@ -97,7 +97,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function updateUser(UserInterface $user)
     {
         $event    = new Event('save.user', $this->realService, ['user' => $user]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -106,7 +106,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
         $return = $this->realService->updateUser($user);
 
         $event    = new Event('save.user.post', $this->realService, ['user' => $user]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -120,7 +120,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function updateUserName(UserInterface $user, $username)
     {
         $event    = new Event('update.user.name', $this->realService, ['user' => $user, 'username' => $username]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -129,7 +129,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
         $return = $this->realService->updateUserName($user, $username);
 
         $event->setName('update.user.name.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -144,7 +144,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function fetchUser($userId)
     {
         $event    = new Event('fetch.user', $this->realService, ['user_id' => $userId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -152,7 +152,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
 
         $return = $this->realService->fetchUser($userId);
         $event    = new Event('fetch.user.post', $this->realService, ['user_id' => $userId, 'user' => $return]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -166,7 +166,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function fetchUserByExternalId($externalId)
     {
         $event    = new Event('fetch.user.external', $this->realService, ['external_id' => $externalId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -178,7 +178,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             $this->realService,
             ['external_id' => $externalId, 'user' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -192,7 +192,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function fetchUserByUsername($username)
     {
         $event    = new Event('fetch.user.username', $this->realService, ['username' => $username]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -204,7 +204,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             $this->realService,
             ['username' => $username, 'user' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -218,7 +218,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function fetchUserByEmail($email)
     {
         $event    = new Event('fetch.user.email', $this->realService, ['email' => $email]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -230,7 +230,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             $this->realService,
             ['email' => $email, 'user' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -246,7 +246,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
     public function deleteUser(UserInterface $user, $soft = true)
     {
         $event    = new Event('delete.user', $this->realService, ['user' => $user, 'soft' => $soft]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -254,7 +254,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
 
         $return = $this->realService->deleteUser($user, $soft);
         $event  = new Event('delete.user.post', $this->realService, ['user' => $user, 'soft' => $soft]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -273,7 +273,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -284,7 +284,7 @@ class UserServiceDelegator implements UserServiceInterface, EventManagerAwareInt
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'users' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

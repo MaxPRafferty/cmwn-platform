@@ -2,53 +2,31 @@
 
 namespace Rule\Engine;
 
-use Zend\EventManager\EventInterface;
+use Interop\Container\ContainerInterface;
+use Rule\Engine\Specification\SpecificationCollectionInterface;
+use Rule\Engine\Specification\SpecificationInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Stdlib\CallbackHandler;
 
 /**
- * Class Engine
+ * The rules engine in all it's glory
  */
 class Engine
 {
     /**
-     * @var EngineSpecificationInterface[]
-     */
-    protected $specs;
-
-    /**
-     * @var CallbackHandler
-     */
-    protected $listener;
-
-    /**
      * Engine constructor.
      *
-     * @param EngineSpecificationInterface[] ...$specs
-     */
-    public function __construct(EngineSpecificationInterface...$specs)
-    {
-        $this->specs = $specs;
-    }
-
-    /**
      * @param SharedEventManagerInterface $events
+     * @param ContainerInterface $container
+     * @param SpecificationCollectionInterface|SpecificationInterface[] $specs
      */
-    public function attachShared(SharedEventManagerInterface $events)
-    {
-        $this->listener = $events->attach('*', '*', [$this, 'handleEvent']);
-    }
-
-    /**
-     * @param SharedEventManagerInterface $events
-     */
-    public function detachShared(SharedEventManagerInterface $events)
-    {
-        $events->detach('*', $this->listener);
-    }
-
-    public function handleEvent(EventInterface $event)
-    {
-
+    public function __construct(
+        SharedEventManagerInterface $events,
+        ContainerInterface $container,
+        SpecificationCollectionInterface $specs
+    ) {
+        foreach ($specs as $spec) {
+            $events->attach('*', $spec->getEventName(), new EngineHandler($container, $spec));
+        }
     }
 }

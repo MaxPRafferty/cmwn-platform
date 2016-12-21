@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e55e8748cf4c33717c2fd6f9ee5c13fc",
-    "content-hash": "88c52b04f1184f274cdc0386aee407f1",
+    "hash": "c65ab7f153962920e1de014623ff62de",
+    "content-hash": "eb37b92a13420d540b892994a2595f86",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -76,16 +76,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.20.8",
+            "version": "3.20.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0e868349a6d834050f273540a8cb811bb7f6d1b7"
+                "reference": "b0d6f5694a6effb2f0c622b42a5c7bffb8949d04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0e868349a6d834050f273540a8cb811bb7f6d1b7",
-                "reference": "0e868349a6d834050f273540a8cb811bb7f6d1b7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b0d6f5694a6effb2f0c622b42a5c7bffb8949d04",
+                "reference": "b0d6f5694a6effb2f0c622b42a5c7bffb8949d04",
                 "shasum": ""
             },
             "require": {
@@ -152,7 +152,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-12-19 23:13:56"
+            "time": "2016-12-20 23:41:34"
         },
         {
             "name": "aws/aws-sdk-php-zf2",
@@ -301,58 +301,6 @@
             "time": "2012-10-13 07:28:16"
         },
         {
-            "name": "cloudinary/cloudinary_php",
-            "version": "1.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cloudinary/cloudinary_php.git",
-                "reference": "327f2db5767ceb8a19d51785e1b60e86674a6a2e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/327f2db5767ceb8a19d51785e1b60e86674a6a2e",
-                "reference": "327f2db5767ceb8a19d51785e1b60e86674a6a2e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.7.*"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src"
-                ],
-                "files": [
-                    "src/Helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Cloudinary",
-                    "homepage": "https://github.com/cloudinary/cloudinary_php/graphs/contributors"
-                }
-            ],
-            "description": "Cloudinary PHP SDK",
-            "homepage": "https://github.com/cloudinary/cloudinary_php",
-            "keywords": [
-                "cdn",
-                "cloud",
-                "cloudinary",
-                "image management",
-                "sdk"
-            ],
-            "time": "2016-10-27 22:02:47"
-        },
-        {
             "name": "container-interop/container-interop",
             "version": "1.1.0",
             "source": {
@@ -381,16 +329,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "dev-master",
+            "version": "6.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "dfadff37efcfd42230eef1350009898b7b9af40a"
+                "reference": "ebf29dee597f02f09f4d5bbecc68230ea9b08f60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/dfadff37efcfd42230eef1350009898b7b9af40a",
-                "reference": "dfadff37efcfd42230eef1350009898b7b9af40a",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ebf29dee597f02f09f4d5bbecc68230ea9b08f60",
+                "reference": "ebf29dee597f02f09f4d5bbecc68230ea9b08f60",
                 "shasum": ""
             },
             "require": {
@@ -439,11 +387,11 @@
                 "rest",
                 "web service"
             ],
-            "time": "2016-12-15 09:53:31"
+            "time": "2016-10-08 15:01:37"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "dev-master",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
@@ -655,26 +603,22 @@
         },
         {
             "name": "phpoffice/phpexcel",
-            "version": "1.8.x-dev",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PHPExcel.git",
-                "reference": "12f91aa2952a567b8f8f7adf5c9c1f170ed35748"
+                "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/12f91aa2952a567b8f8f7adf5c9c1f170ed35748",
-                "reference": "12f91aa2952a567b8f8f7adf5c9c1f170ed35748",
+                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
+                "reference": "372c7cbb695a6f6f1e62649381aeaa37e7e70b32",
                 "shasum": ""
             },
             "require": {
-                "ext-mbstring": "*",
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
-                "php": "^5.2|^7.0"
-            },
-            "require-dev": {
-                "squizlabs/php_codesniffer": "2.*"
+                "php": ">=5.2.0"
             },
             "type": "library",
             "autoload": {
@@ -684,7 +628,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1"
+                "LGPL"
             ],
             "authors": [
                 {
@@ -692,19 +636,18 @@
                     "homepage": "http://blog.maartenballiauw.be"
                 },
                 {
-                    "name": "Erik Tilt"
+                    "name": "Mark Baker"
                 },
                 {
                     "name": "Franck Lefevre",
-                    "homepage": "http://rootslabs.net"
+                    "homepage": "http://blog.rootslabs.net"
                 },
                 {
-                    "name": "Mark Baker",
-                    "homepage": "http://markbakeruk.net"
+                    "name": "Erik Tilt"
                 }
             ],
             "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
-            "homepage": "https://github.com/PHPOffice/PHPExcel",
+            "homepage": "http://phpexcel.codeplex.com",
             "keywords": [
                 "OpenXML",
                 "excel",
@@ -713,57 +656,11 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2016-10-03 10:33:09"
-        },
-        {
-            "name": "psr/cache",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/cache.git",
-                "reference": "78c5a01ddbf11cf731f1338a4f5aba23b14d5b47"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/cache/zipball/78c5a01ddbf11cf731f1338a4f5aba23b14d5b47",
-                "reference": "78c5a01ddbf11cf731f1338a4f5aba23b14d5b47",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Cache\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for caching libraries",
-            "keywords": [
-                "cache",
-                "psr",
-                "psr-6"
-            ],
-            "time": "2016-10-13 14:48:10"
+            "time": "2015-05-01 07:00:55"
         },
         {
             "name": "psr/http-message",
-            "version": "dev-master",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
@@ -813,7 +710,7 @@
         },
         {
             "name": "psr/log",
-            "version": "dev-master",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
@@ -860,7 +757,7 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "dev-master",
+            "version": "3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
@@ -1058,16 +955,16 @@
         },
         {
             "name": "symfony/config",
-            "version": "dev-master",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "57b166b08363eb51afde4bc8fd90953ecfa31ad3"
+                "reference": "b4ec9f099599cfc5b7f4d07bb2e910781a2be5e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/57b166b08363eb51afde4bc8fd90953ecfa31ad3",
-                "reference": "57b166b08363eb51afde4bc8fd90953ecfa31ad3",
+                "url": "https://api.github.com/repos/symfony/config/zipball/b4ec9f099599cfc5b7f4d07bb2e910781a2be5e4",
+                "reference": "b4ec9f099599cfc5b7f4d07bb2e910781a2be5e4",
                 "shasum": ""
             },
             "require": {
@@ -1083,7 +980,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1110,20 +1007,20 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2016-12-19 16:13:57"
+            "time": "2016-12-09 07:45:17"
         },
         {
             "name": "symfony/console",
-            "version": "dev-master",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "c7a20754419dd6bf34d016b2a5bc103b032f3b11"
+                "reference": "d12aa9ca20f4db83ec58410978dab6afcb9d6aaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c7a20754419dd6bf34d016b2a5bc103b032f3b11",
-                "reference": "c7a20754419dd6bf34d016b2a5bc103b032f3b11",
+                "url": "https://api.github.com/repos/symfony/console/zipball/d12aa9ca20f4db83ec58410978dab6afcb9d6aaa",
+                "reference": "d12aa9ca20f4db83ec58410978dab6afcb9d6aaa",
                 "shasum": ""
             },
             "require": {
@@ -1146,7 +1043,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1173,20 +1070,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-12-19 16:13:57"
+            "time": "2016-12-11 14:34:22"
         },
         {
             "name": "symfony/debug",
-            "version": "dev-master",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "fa5b1b68e9a368c366dbfbaf33fa0abb1560ad4b"
+                "reference": "9f923e68d524a3095c5a2ae5fc7220c7cbc12231"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/fa5b1b68e9a368c366dbfbaf33fa0abb1560ad4b",
-                "reference": "fa5b1b68e9a368c366dbfbaf33fa0abb1560ad4b",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/9f923e68d524a3095c5a2ae5fc7220c7cbc12231",
+                "reference": "9f923e68d524a3095c5a2ae5fc7220c7cbc12231",
                 "shasum": ""
             },
             "require": {
@@ -1203,7 +1100,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1230,20 +1127,20 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2016-12-19 16:13:57"
+            "time": "2016-11-16 22:18:16"
         },
         {
             "name": "symfony/filesystem",
-            "version": "dev-master",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "696d63087748bb651e69877a903ca389eb0db68a"
+                "reference": "8d4cf7561a5b17e5eb7a02b80d0b8f014a3796d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/696d63087748bb651e69877a903ca389eb0db68a",
-                "reference": "696d63087748bb651e69877a903ca389eb0db68a",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/8d4cf7561a5b17e5eb7a02b80d0b8f014a3796d4",
+                "reference": "8d4cf7561a5b17e5eb7a02b80d0b8f014a3796d4",
                 "shasum": ""
             },
             "require": {
@@ -1252,7 +1149,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1279,11 +1176,11 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-24 00:46:49"
+            "time": "2016-11-24 00:46:43"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "dev-master",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
@@ -1342,16 +1239,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "dev-master",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "f8c054eea2921142bed49cc957260652f80958e3"
+                "reference": "a7095af4b97a0955f85c8989106c249fa649011f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/f8c054eea2921142bed49cc957260652f80958e3",
-                "reference": "f8c054eea2921142bed49cc957260652f80958e3",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/a7095af4b97a0955f85c8989106c249fa649011f",
+                "reference": "a7095af4b97a0955f85c8989106c249fa649011f",
                 "shasum": ""
             },
             "require": {
@@ -1366,7 +1263,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1393,20 +1290,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-12-13 09:39:51"
+            "time": "2016-12-10 10:07:06"
         },
         {
             "name": "zendframework/zend-authentication",
-            "version": "dev-develop",
+            "version": "2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-authentication.git",
-                "reference": "796013de02b70e804489ea7858411f1b20baf5b9"
+                "reference": "1422dec160eb769c719cad2229847fcbf20a1405"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-authentication/zipball/796013de02b70e804489ea7858411f1b20baf5b9",
-                "reference": "796013de02b70e804489ea7858411f1b20baf5b9",
+                "url": "https://api.github.com/repos/zendframework/zend-authentication/zipball/1422dec160eb769c719cad2229847fcbf20a1405",
+                "reference": "1422dec160eb769c719cad2229847fcbf20a1405",
                 "shasum": ""
             },
             "require": {
@@ -1455,31 +1352,29 @@
                 "Authentication",
                 "zf2"
             ],
-            "time": "2016-04-27 18:55:45"
+            "time": "2016-02-28 15:02:34"
         },
         {
             "name": "zendframework/zend-cache",
-            "version": "dev-develop",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-cache.git",
-                "reference": "9de4c23684171cd88953d2a205987c70dbdda399"
+                "reference": "c98331b96d3b9d9b24cf32d02660602edb34d039"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/9de4c23684171cd88953d2a205987c70dbdda399",
-                "reference": "9de4c23684171cd88953d2a205987c70dbdda399",
+                "url": "https://api.github.com/repos/zendframework/zend-cache/zipball/c98331b96d3b9d9b24cf32d02660602edb34d039",
+                "reference": "c98331b96d3b9d9b24cf32d02660602edb34d039",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0",
-                "psr/cache": "^1.0",
+                "php": "^5.5 || ^7.0",
                 "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
                 "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
                 "zendframework/zend-stdlib": "^2.7 || ^3.0"
             },
             "require-dev": {
-                "cache/integration-tests": "^0.10.0",
                 "phpbench/phpbench": "^0.10.0",
                 "phpunit/phpunit": "^4.8",
                 "zendframework/zend-coding-standard": "~1.0.0",
@@ -1526,20 +1421,20 @@
                 "cache",
                 "zf2"
             ],
-            "time": "2016-12-16 13:16:52"
+            "time": "2016-12-16 11:35:47"
         },
         {
             "name": "zendframework/zend-config",
-            "version": "dev-develop",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-config.git",
-                "reference": "ef8e216e5a991d6a889c00e9d445d52a5beb01ea"
+                "reference": "2920e877a9f6dca9fa8f6bd3b1ffc2e19bb1e30d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-config/zipball/ef8e216e5a991d6a889c00e9d445d52a5beb01ea",
-                "reference": "ef8e216e5a991d6a889c00e9d445d52a5beb01ea",
+                "url": "https://api.github.com/repos/zendframework/zend-config/zipball/2920e877a9f6dca9fa8f6bd3b1ffc2e19bb1e30d",
+                "reference": "2920e877a9f6dca9fa8f6bd3b1ffc2e19bb1e30d",
                 "shasum": ""
             },
             "require": {
@@ -1550,7 +1445,7 @@
                 "fabpot/php-cs-fixer": "1.7.*",
                 "phpunit/phpunit": "~4.0",
                 "zendframework/zend-filter": "^2.6",
-                "zendframework/zend-i18n": "^2.6",
+                "zendframework/zend-i18n": "^2.5",
                 "zendframework/zend-json": "^2.6.1",
                 "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3"
             },
@@ -1582,20 +1477,20 @@
                 "config",
                 "zf2"
             ],
-            "time": "2016-03-07 15:48:18"
+            "time": "2016-02-04 23:01:10"
         },
         {
             "name": "zendframework/zend-console",
-            "version": "dev-develop",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-console.git",
-                "reference": "f6199a9aecc785f00095ccf660c0d31807dfd56d"
+                "reference": "cbbdfdfa0564aa20d1c6c6ef3daeafe6aec02360"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-console/zipball/f6199a9aecc785f00095ccf660c0d31807dfd56d",
-                "reference": "f6199a9aecc785f00095ccf660c0d31807dfd56d",
+                "url": "https://api.github.com/repos/zendframework/zend-console/zipball/cbbdfdfa0564aa20d1c6c6ef3daeafe6aec02360",
+                "reference": "cbbdfdfa0564aa20d1c6c6ef3daeafe6aec02360",
                 "shasum": ""
             },
             "require": {
@@ -1607,7 +1502,7 @@
                 "phpunit/phpunit": "^4.0",
                 "zendframework/zend-filter": "^2.6",
                 "zendframework/zend-json": "^2.6",
-                "zendframework/zend-validator": "^2.6"
+                "zendframework/zend-validator": "^2.5"
             },
             "suggest": {
                 "zendframework/zend-filter": "To support DefaultRouteMatcher usage",
@@ -1634,20 +1529,20 @@
                 "console",
                 "zf2"
             ],
-            "time": "2016-06-18 17:08:00"
+            "time": "2016-02-09 17:15:12"
         },
         {
             "name": "zendframework/zend-crypt",
-            "version": "dev-develop",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-crypt.git",
-                "reference": "2a39746a6721ce8c05909f5ae37c33c93cc5ade4"
+                "reference": "274cdcb77a2165d6aff36b606e9d1c687ba9386c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-crypt/zipball/2a39746a6721ce8c05909f5ae37c33c93cc5ade4",
-                "reference": "2a39746a6721ce8c05909f5ae37c33c93cc5ade4",
+                "url": "https://api.github.com/repos/zendframework/zend-crypt/zipball/274cdcb77a2165d6aff36b606e9d1c687ba9386c",
+                "reference": "274cdcb77a2165d6aff36b606e9d1c687ba9386c",
                 "shasum": ""
             },
             "require": {
@@ -1685,20 +1580,20 @@
                 "crypt",
                 "zf2"
             ],
-            "time": "2016-12-06 16:36:08"
+            "time": "2016-12-06 15:33:37"
         },
         {
             "name": "zendframework/zend-db",
-            "version": "dev-develop",
+            "version": "2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-db.git",
-                "reference": "b24e4dfd03a83fdc9f07d2b115c0cb54bb9a3ca5"
+                "reference": "5926a1a2e7e035546b690cb7d4c11a3c47db2c98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-db/zipball/b24e4dfd03a83fdc9f07d2b115c0cb54bb9a3ca5",
-                "reference": "b24e4dfd03a83fdc9f07d2b115c0cb54bb9a3ca5",
+                "url": "https://api.github.com/repos/zendframework/zend-db/zipball/5926a1a2e7e035546b690cb7d4c11a3c47db2c98",
+                "reference": "5926a1a2e7e035546b690cb7d4c11a3c47db2c98",
                 "shasum": ""
             },
             "require": {
@@ -1742,20 +1637,20 @@
                 "db",
                 "zf2"
             ],
-            "time": "2016-08-09 19:33:34"
+            "time": "2016-08-09 19:28:55"
         },
         {
             "name": "zendframework/zend-escaper",
-            "version": "dev-develop",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-escaper.git",
-                "reference": "724402ba0dc7d82eec30dac97efa669e69e0ae7c"
+                "reference": "2dcd14b61a72d8b8e27d579c6344e12c26141d4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-escaper/zipball/724402ba0dc7d82eec30dac97efa669e69e0ae7c",
-                "reference": "724402ba0dc7d82eec30dac97efa669e69e0ae7c",
+                "url": "https://api.github.com/repos/zendframework/zend-escaper/zipball/2dcd14b61a72d8b8e27d579c6344e12c26141d4e",
+                "reference": "2dcd14b61a72d8b8e27d579c6344e12c26141d4e",
                 "shasum": ""
             },
             "require": {
@@ -1786,20 +1681,20 @@
                 "escaper",
                 "zf2"
             ],
-            "time": "2016-06-30 19:50:10"
+            "time": "2016-06-30 19:48:38"
         },
         {
             "name": "zendframework/zend-eventmanager",
-            "version": "dev-develop",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-eventmanager.git",
-                "reference": "d0cb906b79bc5b73c7e39e500371b5652ef133b8"
+                "reference": "c3bce7b7d47c54040b9ae51bc55491c72513b75d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-eventmanager/zipball/d0cb906b79bc5b73c7e39e500371b5652ef133b8",
-                "reference": "d0cb906b79bc5b73c7e39e500371b5652ef133b8",
+                "url": "https://api.github.com/repos/zendframework/zend-eventmanager/zipball/c3bce7b7d47c54040b9ae51bc55491c72513b75d",
+                "reference": "c3bce7b7d47c54040b9ae51bc55491c72513b75d",
                 "shasum": ""
             },
             "require": {
@@ -1840,20 +1735,20 @@
                 "events",
                 "zf2"
             ],
-            "time": "2016-12-19 21:48:17"
+            "time": "2016-12-19 21:47:12"
         },
         {
             "name": "zendframework/zend-file",
-            "version": "dev-develop",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-file.git",
-                "reference": "38e2fe0d300c7a3873de3f8ebf7da5baed1eb694"
+                "reference": "8936999f244011525671db8d6e35a2f2232d5060"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-file/zipball/38e2fe0d300c7a3873de3f8ebf7da5baed1eb694",
-                "reference": "38e2fe0d300c7a3873de3f8ebf7da5baed1eb694",
+                "url": "https://api.github.com/repos/zendframework/zend-file/zipball/8936999f244011525671db8d6e35a2f2232d5060",
+                "reference": "8936999f244011525671db8d6e35a2f2232d5060",
                 "shasum": ""
             },
             "require": {
@@ -1896,20 +1791,20 @@
                 "file",
                 "zf2"
             ],
-            "time": "2016-04-28 19:22:43"
+            "time": "2016-04-28 19:21:43"
         },
         {
             "name": "zendframework/zend-filter",
-            "version": "dev-master",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-filter.git",
-                "reference": "c4bb5811390228e2ff0fe4fa9def1050f127da4c"
+                "reference": "84c50246428efb0a1e52868e162dab3e149d5b80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-filter/zipball/c4bb5811390228e2ff0fe4fa9def1050f127da4c",
-                "reference": "c4bb5811390228e2ff0fe4fa9def1050f127da4c",
+                "url": "https://api.github.com/repos/zendframework/zend-filter/zipball/84c50246428efb0a1e52868e162dab3e149d5b80",
+                "reference": "84c50246428efb0a1e52868e162dab3e149d5b80",
                 "shasum": ""
             },
             "require": {
@@ -1956,20 +1851,20 @@
                 "filter",
                 "zf2"
             ],
-            "time": "2016-04-18 18:33:41"
+            "time": "2016-04-18 18:32:43"
         },
         {
             "name": "zendframework/zend-http",
-            "version": "dev-develop",
+            "version": "2.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-http.git",
-                "reference": "8cd475b4d52aa31ed6205f69a0a72b60ed989a27"
+                "reference": "98b1cac0bc7a91497c5898184281abcd0e24c8d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-http/zipball/8cd475b4d52aa31ed6205f69a0a72b60ed989a27",
-                "reference": "8cd475b4d52aa31ed6205f69a0a72b60ed989a27",
+                "url": "https://api.github.com/repos/zendframework/zend-http/zipball/98b1cac0bc7a91497c5898184281abcd0e24c8d6",
+                "reference": "98b1cac0bc7a91497c5898184281abcd0e24c8d6",
                 "shasum": ""
             },
             "require": {
@@ -2006,20 +1901,20 @@
                 "http",
                 "zf2"
             ],
-            "time": "2016-08-08 15:10:07"
+            "time": "2016-08-08 15:01:54"
         },
         {
             "name": "zendframework/zend-hydrator",
-            "version": "dev-develop",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-hydrator.git",
-                "reference": "50c80e60cf9665cd53543ae4213ceb24621a797a"
+                "reference": "0ac0d3e569781f1895670b0c8d0dc7f25b8a3182"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-hydrator/zipball/50c80e60cf9665cd53543ae4213ceb24621a797a",
-                "reference": "50c80e60cf9665cd53543ae4213ceb24621a797a",
+                "url": "https://api.github.com/repos/zendframework/zend-hydrator/zipball/0ac0d3e569781f1895670b0c8d0dc7f25b8a3182",
+                "reference": "0ac0d3e569781f1895670b0c8d0dc7f25b8a3182",
                 "shasum": ""
             },
             "require": {
@@ -2068,20 +1963,20 @@
                 "hydrator",
                 "zf2"
             ],
-            "time": "2016-04-18 18:01:00"
+            "time": "2016-04-18 17:59:29"
         },
         {
             "name": "zendframework/zend-i18n",
-            "version": "dev-develop",
+            "version": "2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-i18n.git",
-                "reference": "0e6d3b340130e339a4c84ac5823bff87e7eb59a2"
+                "reference": "b2db0d8246a865c659f93199f90f5fc2cd2f3cd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-i18n/zipball/0e6d3b340130e339a4c84ac5823bff87e7eb59a2",
-                "reference": "0e6d3b340130e339a4c84ac5823bff87e7eb59a2",
+                "url": "https://api.github.com/repos/zendframework/zend-i18n/zipball/b2db0d8246a865c659f93199f90f5fc2cd2f3cd8",
+                "reference": "b2db0d8246a865c659f93199f90f5fc2cd2f3cd8",
                 "shasum": ""
             },
             "require": {
@@ -2135,7 +2030,7 @@
                 "i18n",
                 "zf2"
             ],
-            "time": "2016-06-07 21:11:51"
+            "time": "2016-06-07 21:08:30"
         },
         {
             "name": "zendframework/zend-i18n-resources",
@@ -2174,16 +2069,16 @@
         },
         {
             "name": "zendframework/zend-inputfilter",
-            "version": "dev-develop",
+            "version": "2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-inputfilter.git",
-                "reference": "4c4ed25a9c8e9ceab70693e0dd32937c6b2512e0"
+                "reference": "0cf1bdcd8858a8583965310a7dae63ad75bd1237"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-inputfilter/zipball/4c4ed25a9c8e9ceab70693e0dd32937c6b2512e0",
-                "reference": "4c4ed25a9c8e9ceab70693e0dd32937c6b2512e0",
+                "url": "https://api.github.com/repos/zendframework/zend-inputfilter/zipball/0cf1bdcd8858a8583965310a7dae63ad75bd1237",
+                "reference": "0cf1bdcd8858a8583965310a7dae63ad75bd1237",
                 "shasum": ""
             },
             "require": {
@@ -2225,20 +2120,20 @@
                 "inputfilter",
                 "zf2"
             ],
-            "time": "2016-08-18 18:42:05"
+            "time": "2016-08-18 18:40:34"
         },
         {
             "name": "zendframework/zend-json",
-            "version": "dev-develop",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-json.git",
-                "reference": "abef83ca145e842baf71158f17eaa9b80f543be9"
+                "reference": "f42a1588e75c2a3e338cd94c37906231e616daab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-json/zipball/abef83ca145e842baf71158f17eaa9b80f543be9",
-                "reference": "abef83ca145e842baf71158f17eaa9b80f543be9",
+                "url": "https://api.github.com/repos/zendframework/zend-json/zipball/f42a1588e75c2a3e338cd94c37906231e616daab",
+                "reference": "f42a1588e75c2a3e338cd94c37906231e616daab",
                 "shasum": ""
             },
             "require": {
@@ -2275,28 +2170,28 @@
                 "json",
                 "zf2"
             ],
-            "time": "2016-04-12 21:11:28"
+            "time": "2016-04-01 02:34:00"
         },
         {
             "name": "zendframework/zend-loader",
-            "version": "dev-develop",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-loader.git",
-                "reference": "dcacfc3bd1cb0721409d62dc309f5d29eb1f4631"
+                "reference": "c5fd2f071bde071f4363def7dea8dec7393e135c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-loader/zipball/dcacfc3bd1cb0721409d62dc309f5d29eb1f4631",
-                "reference": "dcacfc3bd1cb0721409d62dc309f5d29eb1f4631",
+                "url": "https://api.github.com/repos/zendframework/zend-loader/zipball/c5fd2f071bde071f4363def7dea8dec7393e135c",
+                "reference": "c5fd2f071bde071f4363def7dea8dec7393e135c",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5 || ^7.0"
+                "php": ">=5.3.23"
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "1.7.*",
-                "phpunit/phpunit": "^4.8"
+                "phpunit/phpunit": "~4.0"
             },
             "type": "library",
             "extra": {
@@ -2319,20 +2214,20 @@
                 "loader",
                 "zf2"
             ],
-            "time": "2016-05-05 14:59:09"
+            "time": "2015-06-03 14:05:47"
         },
         {
             "name": "zendframework/zend-log",
-            "version": "dev-develop",
+            "version": "2.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-log.git",
-                "reference": "836497934c819015a4b78c49dc7225325ad164e8"
+                "reference": "115d75db1f8fb29efbf1b9a49cb91c662b7195dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-log/zipball/836497934c819015a4b78c49dc7225325ad164e8",
-                "reference": "836497934c819015a4b78c49dc7225325ad164e8",
+                "url": "https://api.github.com/repos/zendframework/zend-log/zipball/115d75db1f8fb29efbf1b9a49cb91c662b7195dc",
+                "reference": "115d75db1f8fb29efbf1b9a49cb91c662b7195dc",
                 "shasum": ""
             },
             "require": {
@@ -2390,20 +2285,20 @@
                 "logging",
                 "zf2"
             ],
-            "time": "2016-08-11 13:46:22"
+            "time": "2016-08-11 13:44:10"
         },
         {
             "name": "zendframework/zend-mail",
-            "version": "dev-develop",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mail.git",
-                "reference": "208fed525eadf3a8169e5c42cbd8f6d796baf6c6"
+                "reference": "8210faa6865f94962f9a5c76269703bfdcf2fa4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mail/zipball/208fed525eadf3a8169e5c42cbd8f6d796baf6c6",
-                "reference": "208fed525eadf3a8169e5c42cbd8f6d796baf6c6",
+                "url": "https://api.github.com/repos/zendframework/zend-mail/zipball/8210faa6865f94962f9a5c76269703bfdcf2fa4c",
+                "reference": "8210faa6865f94962f9a5c76269703bfdcf2fa4c",
                 "shasum": ""
             },
             "require": {
@@ -2450,20 +2345,20 @@
                 "mail",
                 "zf2"
             ],
-            "time": "2016-12-19 22:47:57"
+            "time": "2016-12-19 22:46:35"
         },
         {
             "name": "zendframework/zend-math",
-            "version": "dev-develop",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-math.git",
-                "reference": "2953ac7bad3b7164353931e59d9b5e9367c4c968"
+                "reference": "fda3b4e6c3bb15c35adc6db38b2eacabaa243e65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-math/zipball/2953ac7bad3b7164353931e59d9b5e9367c4c968",
-                "reference": "2953ac7bad3b7164353931e59d9b5e9367c4c968",
+                "url": "https://api.github.com/repos/zendframework/zend-math/zipball/fda3b4e6c3bb15c35adc6db38b2eacabaa243e65",
+                "reference": "fda3b4e6c3bb15c35adc6db38b2eacabaa243e65",
                 "shasum": ""
             },
             "require": {
@@ -2500,20 +2395,20 @@
                 "math",
                 "zf2"
             ],
-            "time": "2016-09-15 14:09:56"
+            "time": "2016-04-28 17:37:42"
         },
         {
             "name": "zendframework/zend-mime",
-            "version": "dev-develop",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mime.git",
-                "reference": "ddbdd42f40d3f4308732a0c46ae96db8d96412a2"
+                "reference": "340769c3d962ac4d9d3cf9da7e75419368e56fcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/ddbdd42f40d3f4308732a0c46ae96db8d96412a2",
-                "reference": "ddbdd42f40d3f4308732a0c46ae96db8d96412a2",
+                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/340769c3d962ac4d9d3cf9da7e75419368e56fcc",
+                "reference": "340769c3d962ac4d9d3cf9da7e75419368e56fcc",
                 "shasum": ""
             },
             "require": {
@@ -2549,20 +2444,20 @@
                 "mime",
                 "zf2"
             ],
-            "time": "2016-04-20 21:10:07"
+            "time": "2016-04-20 21:02:01"
         },
         {
             "name": "zendframework/zend-modulemanager",
-            "version": "dev-develop",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-modulemanager.git",
-                "reference": "b1b9c4011d7ea3fcbf34286bbf30e93a3d8c4185"
+                "reference": "2a59ab9a0dd7699a55050dff659ab0f28272b46e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-modulemanager/zipball/b1b9c4011d7ea3fcbf34286bbf30e93a3d8c4185",
-                "reference": "b1b9c4011d7ea3fcbf34286bbf30e93a3d8c4185",
+                "url": "https://api.github.com/repos/zendframework/zend-modulemanager/zipball/2a59ab9a0dd7699a55050dff659ab0f28272b46e",
+                "reference": "2a59ab9a0dd7699a55050dff659ab0f28272b46e",
                 "shasum": ""
             },
             "require": {
@@ -2608,20 +2503,20 @@
                 "modulemanager",
                 "zf2"
             ],
-            "time": "2016-05-16 21:23:03"
+            "time": "2016-05-16 21:21:11"
         },
         {
             "name": "zendframework/zend-mvc",
-            "version": "dev-develop",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mvc.git",
-                "reference": "3cb6b789835728b5c051fb9b02c98039cb3ddd6d"
+                "reference": "e25f04a71b70985620f5ff3e762475848d049025"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mvc/zipball/3cb6b789835728b5c051fb9b02c98039cb3ddd6d",
-                "reference": "3cb6b789835728b5c051fb9b02c98039cb3ddd6d",
+                "url": "https://api.github.com/repos/zendframework/zend-mvc/zipball/e25f04a71b70985620f5ff3e762475848d049025",
+                "reference": "e25f04a71b70985620f5ff3e762475848d049025",
                 "shasum": ""
             },
             "require": {
@@ -2673,20 +2568,20 @@
                 "mvc",
                 "zf2"
             ],
-            "time": "2016-12-20 15:41:26"
+            "time": "2016-12-20 15:33:49"
         },
         {
             "name": "zendframework/zend-mvc-console",
-            "version": "dev-develop",
+            "version": "1.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mvc-console.git",
-                "reference": "8844681ac499e76200a63d5ee107e018f97b13af"
+                "reference": "a9b5559f129c2e6cc3f3f32e54c2daa02b336301"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mvc-console/zipball/8844681ac499e76200a63d5ee107e018f97b13af",
-                "reference": "8844681ac499e76200a63d5ee107e018f97b13af",
+                "url": "https://api.github.com/repos/zendframework/zend-mvc-console/zipball/a9b5559f129c2e6cc3f3f32e54c2daa02b336301",
+                "reference": "a9b5559f129c2e6cc3f3f32e54c2daa02b336301",
                 "shasum": ""
             },
             "require": {
@@ -2739,20 +2634,20 @@
                 "mvc",
                 "zf2"
             ],
-            "time": "2016-08-29 19:19:01"
+            "time": "2016-08-29 19:09:11"
         },
         {
             "name": "zendframework/zend-paginator",
-            "version": "dev-develop",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-paginator.git",
-                "reference": "724d736ea458dd8105a14afa237c45cbcb201a2d"
+                "reference": "42211f3e1e8230953c641e91fec5aa9fe964eb95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-paginator/zipball/724d736ea458dd8105a14afa237c45cbcb201a2d",
-                "reference": "724d736ea458dd8105a14afa237c45cbcb201a2d",
+                "url": "https://api.github.com/repos/zendframework/zend-paginator/zipball/42211f3e1e8230953c641e91fec5aa9fe964eb95",
+                "reference": "42211f3e1e8230953c641e91fec5aa9fe964eb95",
                 "shasum": ""
             },
             "require": {
@@ -2803,20 +2698,20 @@
                 "paginator",
                 "zf2"
             ],
-            "time": "2016-05-10 19:05:32"
+            "time": "2016-04-11 21:18:13"
         },
         {
             "name": "zendframework/zend-permissions-acl",
-            "version": "dev-develop",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-permissions-acl.git",
-                "reference": "ed0aad04d7fe196dcd7a8252e5475f693ceb7ac8"
+                "reference": "843bbd9c6f6d20b84dd0ce6c815d10397e98082b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-permissions-acl/zipball/ed0aad04d7fe196dcd7a8252e5475f693ceb7ac8",
-                "reference": "ed0aad04d7fe196dcd7a8252e5475f693ceb7ac8",
+                "url": "https://api.github.com/repos/zendframework/zend-permissions-acl/zipball/843bbd9c6f6d20b84dd0ce6c815d10397e98082b",
+                "reference": "843bbd9c6f6d20b84dd0ce6c815d10397e98082b",
                 "shasum": ""
             },
             "require": {
@@ -2852,24 +2747,24 @@
                 "acl",
                 "zf2"
             ],
-            "time": "2016-03-07 15:49:46"
+            "time": "2016-02-03 21:46:45"
         },
         {
             "name": "zendframework/zend-permissions-rbac",
-            "version": "dev-develop",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-permissions-rbac.git",
-                "reference": "e86ebe4adefaa04d9f208d88ed5d2aa7147c772c"
+                "reference": "4213a4889ae7d7607c7974124965d12d1c395115"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-permissions-rbac/zipball/e86ebe4adefaa04d9f208d88ed5d2aa7147c772c",
-                "reference": "e86ebe4adefaa04d9f208d88ed5d2aa7147c772c",
+                "url": "https://api.github.com/repos/zendframework/zend-permissions-rbac/zipball/4213a4889ae7d7607c7974124965d12d1c395115",
+                "reference": "4213a4889ae7d7607c7974124965d12d1c395115",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5"
+                "php": ">=5.3.23"
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "1.7.*",
@@ -2897,20 +2792,20 @@
                 "rbac",
                 "zf2"
             ],
-            "time": "2016-12-14 17:31:14"
+            "time": "2015-06-03 14:05:54"
         },
         {
             "name": "zendframework/zend-router",
-            "version": "dev-develop",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-router.git",
-                "reference": "360ead3181629093c236e045d9af147e30865248"
+                "reference": "03763610632a9022aff22a0e8f340852e68392a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-router/zipball/360ead3181629093c236e045d9af147e30865248",
-                "reference": "360ead3181629093c236e045d9af147e30865248",
+                "url": "https://api.github.com/repos/zendframework/zend-router/zipball/03763610632a9022aff22a0e8f340852e68392a1",
+                "reference": "03763610632a9022aff22a0e8f340852e68392a1",
                 "shasum": ""
             },
             "require": {
@@ -2958,20 +2853,20 @@
                 "routing",
                 "zf2"
             ],
-            "time": "2016-07-05 19:28:21"
+            "time": "2016-05-31 20:47:48"
         },
         {
             "name": "zendframework/zend-serializer",
-            "version": "dev-develop",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-serializer.git",
-                "reference": "a9d6c509454aaefcc26b082dde39df7885c9df73"
+                "reference": "ff74ea020f5f90866eb28365327e9bc765a61a6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-serializer/zipball/a9d6c509454aaefcc26b082dde39df7885c9df73",
-                "reference": "a9d6c509454aaefcc26b082dde39df7885c9df73",
+                "url": "https://api.github.com/repos/zendframework/zend-serializer/zipball/ff74ea020f5f90866eb28365327e9bc765a61a6e",
+                "reference": "ff74ea020f5f90866eb28365327e9bc765a61a6e",
                 "shasum": ""
             },
             "require": {
@@ -3015,20 +2910,20 @@
                 "serializer",
                 "zf2"
             ],
-            "time": "2016-07-19 19:51:49"
+            "time": "2016-06-21 17:01:55"
         },
         {
             "name": "zendframework/zend-servicemanager",
-            "version": "dev-develop",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-servicemanager.git",
-                "reference": "c995e059864c5d04054923298469600a049f5ca3"
+                "reference": "596a2cde85a92c3366514ae0f55ea32ef59536ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-servicemanager/zipball/c995e059864c5d04054923298469600a049f5ca3",
-                "reference": "c995e059864c5d04054923298469600a049f5ca3",
+                "url": "https://api.github.com/repos/zendframework/zend-servicemanager/zipball/596a2cde85a92c3366514ae0f55ea32ef59536ac",
+                "reference": "596a2cde85a92c3366514ae0f55ea32ef59536ac",
                 "shasum": ""
             },
             "require": {
@@ -3076,20 +2971,20 @@
                 "servicemanager",
                 "zf"
             ],
-            "time": "2016-12-19 20:05:54"
+            "time": "2016-12-19 20:04:51"
         },
         {
             "name": "zendframework/zend-session",
-            "version": "dev-master",
+            "version": "2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-session.git",
-                "reference": "db77b8b4643066c39922c77271e68539c2270df1"
+                "reference": "346e9709657b81a5d53d70ce754730a26d1f02f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-session/zipball/db77b8b4643066c39922c77271e68539c2270df1",
-                "reference": "db77b8b4643066c39922c77271e68539c2270df1",
+                "url": "https://api.github.com/repos/zendframework/zend-session/zipball/346e9709657b81a5d53d70ce754730a26d1f02f2",
+                "reference": "346e9709657b81a5d53d70ce754730a26d1f02f2",
                 "shasum": ""
             },
             "require": {
@@ -3142,20 +3037,20 @@
                 "session",
                 "zf2"
             ],
-            "time": "2016-07-05 18:33:54"
+            "time": "2016-07-05 18:32:50"
         },
         {
             "name": "zendframework/zend-stdlib",
-            "version": "dev-develop",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-stdlib.git",
-                "reference": "16818ed8ee2a92a503c43883dcb6263fe6283ee8"
+                "reference": "debedcfc373a293f9250cc9aa03cf121428c8e78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/16818ed8ee2a92a503c43883dcb6263fe6283ee8",
-                "reference": "16818ed8ee2a92a503c43883dcb6263fe6283ee8",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/debedcfc373a293f9250cc9aa03cf121428c8e78",
+                "reference": "debedcfc373a293f9250cc9aa03cf121428c8e78",
                 "shasum": ""
             },
             "require": {
@@ -3187,20 +3082,20 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2016-09-13 14:40:02"
+            "time": "2016-09-13 14:38:50"
         },
         {
             "name": "zendframework/zend-text",
-            "version": "dev-develop",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-text.git",
-                "reference": "f4564fd6c037d7b40b14a3a0067c740f7efc79fd"
+                "reference": "07ad9388e4d4f12620ad37b52a5b0e4ee7845f92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-text/zipball/f4564fd6c037d7b40b14a3a0067c740f7efc79fd",
-                "reference": "f4564fd6c037d7b40b14a3a0067c740f7efc79fd",
+                "url": "https://api.github.com/repos/zendframework/zend-text/zipball/07ad9388e4d4f12620ad37b52a5b0e4ee7845f92",
+                "reference": "07ad9388e4d4f12620ad37b52a5b0e4ee7845f92",
                 "shasum": ""
             },
             "require": {
@@ -3234,20 +3129,20 @@
                 "text",
                 "zf2"
             ],
-            "time": "2016-03-07 15:50:16"
+            "time": "2016-02-08 19:03:52"
         },
         {
             "name": "zendframework/zend-uri",
-            "version": "dev-develop",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-uri.git",
-                "reference": "ed906be3b402020fca728bd0f76519ef6dd02ab1"
+                "reference": "0bf717a239432b1a1675ae314f7c4acd742749ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-uri/zipball/ed906be3b402020fca728bd0f76519ef6dd02ab1",
-                "reference": "ed906be3b402020fca728bd0f76519ef6dd02ab1",
+                "url": "https://api.github.com/repos/zendframework/zend-uri/zipball/0bf717a239432b1a1675ae314f7c4acd742749ed",
+                "reference": "0bf717a239432b1a1675ae314f7c4acd742749ed",
                 "shasum": ""
             },
             "require": {
@@ -3281,20 +3176,20 @@
                 "uri",
                 "zf2"
             ],
-            "time": "2016-05-11 18:49:50"
+            "time": "2016-02-17 22:38:51"
         },
         {
             "name": "zendframework/zend-validator",
-            "version": "dev-develop",
+            "version": "2.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-validator.git",
-                "reference": "8422bb141aae5ae9ec6ec75cb6c5e723644e418d"
+                "reference": "8ec9f57a717dd37340308aa632f148a2c2be1cfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-validator/zipball/8422bb141aae5ae9ec6ec75cb6c5e723644e418d",
-                "reference": "8422bb141aae5ae9ec6ec75cb6c5e723644e418d",
+                "url": "https://api.github.com/repos/zendframework/zend-validator/zipball/8ec9f57a717dd37340308aa632f148a2c2be1cfc",
+                "reference": "8ec9f57a717dd37340308aa632f148a2c2be1cfc",
                 "shasum": ""
             },
             "require": {
@@ -3352,20 +3247,20 @@
                 "validator",
                 "zf2"
             ],
-            "time": "2016-06-23 13:47:21"
+            "time": "2016-06-23 13:44:31"
         },
         {
             "name": "zendframework/zend-view",
-            "version": "dev-develop",
+            "version": "2.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-view.git",
-                "reference": "f849076e57df6c8ec5397cd8d031401bda66ce9e"
+                "reference": "71b4ebd0c4c9a2d0e0438f9d3a435e08dd769ff8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-view/zipball/f849076e57df6c8ec5397cd8d031401bda66ce9e",
-                "reference": "f849076e57df6c8ec5397cd8d031401bda66ce9e",
+                "url": "https://api.github.com/repos/zendframework/zend-view/zipball/71b4ebd0c4c9a2d0e0438f9d3a435e08dd769ff8",
+                "reference": "71b4ebd0c4c9a2d0e0438f9d3a435e08dd769ff8",
                 "shasum": ""
             },
             "require": {
@@ -3439,20 +3334,20 @@
                 "view",
                 "zf2"
             ],
-            "time": "2016-06-30 22:29:38"
+            "time": "2016-06-30 22:28:07"
         },
         {
             "name": "zfcampus/zf-api-problem",
-            "version": "dev-develop",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-api-problem.git",
-                "reference": "6e5987b66ffc64fc57b6faad8ddc31c85a51c1c7"
+                "reference": "783067e20328a82d35eb20a3fb876121da80c89d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-api-problem/zipball/6e5987b66ffc64fc57b6faad8ddc31c85a51c1c7",
-                "reference": "6e5987b66ffc64fc57b6faad8ddc31c85a51c1c7",
+                "url": "https://api.github.com/repos/zfcampus/zf-api-problem/zipball/783067e20328a82d35eb20a3fb876121da80c89d",
+                "reference": "783067e20328a82d35eb20a3fb876121da80c89d",
                 "shasum": ""
             },
             "require": {
@@ -3496,20 +3391,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 20:39:50"
+            "time": "2016-10-11 20:38:29"
         },
         {
             "name": "zfcampus/zf-apigility",
-            "version": "dev-develop",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-apigility.git",
-                "reference": "ce3c0bad9ba65ad5eb8ac6930dea5f85023952bc"
+                "reference": "50d4294f3971fadf55c5885d4c2400f00a531398"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-apigility/zipball/ce3c0bad9ba65ad5eb8ac6930dea5f85023952bc",
-                "reference": "ce3c0bad9ba65ad5eb8ac6930dea5f85023952bc",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility/zipball/50d4294f3971fadf55c5885d4c2400f00a531398",
+                "reference": "50d4294f3971fadf55c5885d4c2400f00a531398",
                 "shasum": ""
             },
             "require": {
@@ -3569,20 +3464,20 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-07-28 13:48:49"
+            "time": "2016-07-28 13:47:39"
         },
         {
             "name": "zfcampus/zf-apigility-provider",
-            "version": "dev-develop",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-apigility-provider.git",
-                "reference": "d6c6c2dd6d36ab80c0e20524aa81a7e2829a486e"
+                "reference": "cb138d5f0a08fabac74b1f1410561464a890357f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-apigility-provider/zipball/d6c6c2dd6d36ab80c0e20524aa81a7e2829a486e",
-                "reference": "d6c6c2dd6d36ab80c0e20524aa81a7e2829a486e",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-provider/zipball/cb138d5f0a08fabac74b1f1410561464a890357f",
+                "reference": "cb138d5f0a08fabac74b1f1410561464a890357f",
                 "shasum": ""
             },
             "require": {
@@ -3615,20 +3510,20 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-07-13 18:05:03"
+            "time": "2016-07-13 18:03:54"
         },
         {
             "name": "zfcampus/zf-content-negotiation",
-            "version": "dev-develop",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-content-negotiation.git",
-                "reference": "7c85e663fc04de45f1bdae0c5b972697aa34153b"
+                "reference": "0f4e9a74157e92376c7f2349058ca1a9c286994e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-content-negotiation/zipball/7c85e663fc04de45f1bdae0c5b972697aa34153b",
-                "reference": "7c85e663fc04de45f1bdae0c5b972697aa34153b",
+                "url": "https://api.github.com/repos/zfcampus/zf-content-negotiation/zipball/0f4e9a74157e92376c7f2349058ca1a9c286994e",
+                "reference": "0f4e9a74157e92376c7f2349058ca1a9c286994e",
                 "shasum": ""
             },
             "require": {
@@ -3679,20 +3574,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 21:40:53"
+            "time": "2016-10-11 21:39:26"
         },
         {
             "name": "zfcampus/zf-content-validation",
-            "version": "dev-develop",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-content-validation.git",
-                "reference": "b33927268763fd3470d717c7a06018395620d44d"
+                "reference": "4efdee3d02998b205b94bc789a381dd057477980"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-content-validation/zipball/b33927268763fd3470d717c7a06018395620d44d",
-                "reference": "b33927268763fd3470d717c7a06018395620d44d",
+                "url": "https://api.github.com/repos/zfcampus/zf-content-validation/zipball/4efdee3d02998b205b94bc789a381dd057477980",
+                "reference": "4efdee3d02998b205b94bc789a381dd057477980",
                 "shasum": ""
             },
             "require": {
@@ -3740,20 +3635,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-08-18 20:34:37"
+            "time": "2016-08-18 20:33:08"
         },
         {
             "name": "zfcampus/zf-hal",
-            "version": "dev-develop",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-hal.git",
-                "reference": "6e68add1f41f66327f5f6ee6a0eee66f1a444647"
+                "reference": "37cd707f661a6e3804f6bb523cefb83430e889a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-hal/zipball/6e68add1f41f66327f5f6ee6a0eee66f1a444647",
-                "reference": "6e68add1f41f66327f5f6ee6a0eee66f1a444647",
+                "url": "https://api.github.com/repos/zfcampus/zf-hal/zipball/37cd707f661a6e3804f6bb523cefb83430e889a8",
+                "reference": "37cd707f661a6e3804f6bb523cefb83430e889a8",
                 "shasum": ""
             },
             "require": {
@@ -3801,20 +3696,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 21:48:44"
+            "time": "2016-07-28 14:13:49"
         },
         {
             "name": "zfcampus/zf-mvc-auth",
-            "version": "dev-develop",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-mvc-auth.git",
-                "reference": "8ddc0a738e50ac7053b96387e738d6fa75aefdbf"
+                "reference": "cb5ffdd5be60b6e59abf2fb94cf9339b642c66f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-mvc-auth/zipball/8ddc0a738e50ac7053b96387e738d6fa75aefdbf",
-                "reference": "8ddc0a738e50ac7053b96387e738d6fa75aefdbf",
+                "url": "https://api.github.com/repos/zfcampus/zf-mvc-auth/zipball/cb5ffdd5be60b6e59abf2fb94cf9339b642c66f3",
+                "reference": "cb5ffdd5be60b6e59abf2fb94cf9339b642c66f3",
                 "shasum": ""
             },
             "require": {
@@ -3861,20 +3756,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 18:21:41"
+            "time": "2016-09-30 15:49:02"
         },
         {
             "name": "zfcampus/zf-oauth2",
-            "version": "dev-develop",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-oauth2.git",
-                "reference": "1d70a6d9143ca6d9648747ebe504f8642636143a"
+                "reference": "55ab3e4242d6a53a158cf1a1edd04f35866b0ac4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-oauth2/zipball/1d70a6d9143ca6d9648747ebe504f8642636143a",
-                "reference": "1d70a6d9143ca6d9648747ebe504f8642636143a",
+                "url": "https://api.github.com/repos/zfcampus/zf-oauth2/zipball/55ab3e4242d6a53a158cf1a1edd04f35866b0ac4",
+                "reference": "55ab3e4242d6a53a158cf1a1edd04f35866b0ac4",
                 "shasum": ""
             },
             "require": {
@@ -3928,20 +3823,20 @@
                 "oauth2",
                 "zf2"
             ],
-            "time": "2016-10-11 18:23:07"
+            "time": "2016-07-10 23:11:53"
         },
         {
             "name": "zfcampus/zf-rest",
-            "version": "dev-develop",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-rest.git",
-                "reference": "268e1d94ea68ed069a67978faf2f18c90fd3977b"
+                "reference": "1ff0b85c93699958908c90e48e1c2887266d2cd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-rest/zipball/268e1d94ea68ed069a67978faf2f18c90fd3977b",
-                "reference": "268e1d94ea68ed069a67978faf2f18c90fd3977b",
+                "url": "https://api.github.com/repos/zfcampus/zf-rest/zipball/1ff0b85c93699958908c90e48e1c2887266d2cd3",
+                "reference": "1ff0b85c93699958908c90e48e1c2887266d2cd3",
                 "shasum": ""
             },
             "require": {
@@ -3994,20 +3889,20 @@
                 "zf2",
                 "zf3"
             ],
-            "time": "2016-10-11 21:17:44"
+            "time": "2016-10-11 21:16:15"
         },
         {
             "name": "zfcampus/zf-rpc",
-            "version": "dev-develop",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-rpc.git",
-                "reference": "aeac4a3a81e415797a60bb4256254dc569691135"
+                "reference": "f08db1e50d49eefbe908b50d38d3cf3d0dd181f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-rpc/zipball/aeac4a3a81e415797a60bb4256254dc569691135",
-                "reference": "aeac4a3a81e415797a60bb4256254dc569691135",
+                "url": "https://api.github.com/repos/zfcampus/zf-rpc/zipball/f08db1e50d49eefbe908b50d38d3cf3d0dd181f6",
+                "reference": "f08db1e50d49eefbe908b50d38d3cf3d0dd181f6",
                 "shasum": ""
             },
             "require": {
@@ -4052,20 +3947,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 19:49:29"
+            "time": "2016-10-11 19:47:59"
         },
         {
             "name": "zfcampus/zf-versioning",
-            "version": "dev-develop",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-versioning.git",
-                "reference": "948825083f0afab94a08cac8f5fb734274a21be7"
+                "reference": "c25b5e0e832bdfeca63edd3d8a426213e396aed5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-versioning/zipball/948825083f0afab94a08cac8f5fb734274a21be7",
-                "reference": "948825083f0afab94a08cac8f5fb734274a21be7",
+                "url": "https://api.github.com/repos/zfcampus/zf-versioning/zipball/c25b5e0e832bdfeca63edd3d8a426213e396aed5",
+                "reference": "c25b5e0e832bdfeca63edd3d8a426213e396aed5",
                 "shasum": ""
             },
             "require": {
@@ -4108,22 +4003,22 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 17:54:01"
+            "time": "2016-07-13 20:03:22"
         }
     ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
-            "version": "dev-master",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "416fb8ad1d095a87f1d21bc40711843cd122fd4a"
+                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/416fb8ad1d095a87f1d21bc40711843cd122fd4a",
-                "reference": "416fb8ad1d095a87f1d21bc40711843cd122fd4a",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/8e884e78f9f0eb1329e445619e04456e64d8051d",
+                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d",
                 "shasum": ""
             },
             "require": {
@@ -4164,24 +4059,24 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2016-03-31 10:24:22"
+            "time": "2015-06-14 21:17:01"
         },
         {
             "name": "hamcrest/hamcrest-php",
-            "version": "1.2.x-dev",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hamcrest/hamcrest-php.git",
-                "reference": "b72949ccf2f640e7de66ff7dd92d83f577ce782e"
+                "reference": "b37020aa976fa52d3de9aa904aa2522dc518f79c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/b72949ccf2f640e7de66ff7dd92d83f577ce782e",
-                "reference": "b72949ccf2f640e7de66ff7dd92d83f577ce782e",
+                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/b37020aa976fa52d3de9aa904aa2522dc518f79c",
+                "reference": "b37020aa976fa52d3de9aa904aa2522dc518f79c",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3|^7.0"
+                "php": ">=5.3.2"
             },
             "replace": {
                 "cordoval/hamcrest-php": "*",
@@ -4190,15 +4085,9 @@
             },
             "require-dev": {
                 "phpunit/php-file-iterator": "1.3.3",
-                "phpunit/phpunit": "~4.0",
-                "satooshi/php-coveralls": "^1.0"
+                "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
             "autoload": {
                 "classmap": [
                     "hamcrest"
@@ -4215,11 +4104,11 @@
             "keywords": [
                 "test"
             ],
-            "time": "2016-01-19 12:08:55"
+            "time": "2015-05-11 14:41:42"
         },
         {
             "name": "herrera-io/json",
-            "version": "dev-master",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kherge-abandoned/php-json.git",
@@ -4402,16 +4291,16 @@
         },
         {
             "name": "kherge/version",
-            "version": "dev-master",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kherge-abandoned/Version.git",
-                "reference": "046ec90aeb307ef57b8fb30905067f802b3f83d5"
+                "reference": "f07cf83f8ce533be8f93d2893d96d674bbeb7e30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kherge-abandoned/Version/zipball/046ec90aeb307ef57b8fb30905067f802b3f83d5",
-                "reference": "046ec90aeb307ef57b8fb30905067f802b3f83d5",
+                "url": "https://api.github.com/repos/kherge-abandoned/Version/zipball/f07cf83f8ce533be8f93d2893d96d674bbeb7e30",
+                "reference": "f07cf83f8ce533be8f93d2893d96d674bbeb7e30",
                 "shasum": ""
             },
             "require": {
@@ -4440,20 +4329,20 @@
             ],
             "description": "A parsing and comparison library for semantic versioning.",
             "homepage": "http://github.com/kherge/Version",
-            "time": "2013-05-17 14:37:21"
+            "time": "2012-08-16 17:13:03"
         },
         {
             "name": "mockery/mockery",
-            "version": "0.9.x-dev",
+            "version": "0.9.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "4de7969f4664da3cef1ccd83866c9f59378c3371"
+                "reference": "65d4ca18e15cb02eeb1e5336f884e46b9b905be0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/4de7969f4664da3cef1ccd83866c9f59378c3371",
-                "reference": "4de7969f4664da3cef1ccd83866c9f59378c3371",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/65d4ca18e15cb02eeb1e5336f884e46b9b905be0",
+                "reference": "65d4ca18e15cb02eeb1e5336f884e46b9b905be0",
                 "shasum": ""
             },
             "require": {
@@ -4505,7 +4394,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2016-12-19 14:50:55"
+            "time": "2016-09-30 12:09:40"
         },
         {
             "name": "myclabs/deep-copy",
@@ -4591,7 +4480,7 @@
         },
         {
             "name": "phpdocumentor/reflection-common",
-            "version": "dev-master",
+            "version": "1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
@@ -4802,7 +4691,7 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "dev-master",
+            "version": "v1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
@@ -4865,7 +4754,7 @@
         },
         {
             "name": "phpunit/dbunit",
-            "version": "dev-master",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/dbunit.git",
@@ -4920,7 +4809,7 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "4.0.x-dev",
+            "version": "4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
@@ -4983,7 +4872,7 @@
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "dev-master",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
@@ -5115,7 +5004,7 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "dev-master",
+            "version": "1.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
@@ -5164,16 +5053,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.x-dev",
+            "version": "5.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "77b2654b82eac43847f1b1e7a45c2df0acf3b8fa"
+                "reference": "af91da3f2671006ff5d0628023de3b7ac4d1ef09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/77b2654b82eac43847f1b1e7a45c2df0acf3b8fa",
-                "reference": "77b2654b82eac43847f1b1e7a45c2df0acf3b8fa",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/af91da3f2671006ff5d0628023de3b7ac4d1ef09",
+                "reference": "af91da3f2671006ff5d0628023de3b7ac4d1ef09",
                 "shasum": ""
             },
             "require": {
@@ -5242,7 +5131,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-12-20 14:49:04"
+            "time": "2016-12-13 16:19:44"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -5305,16 +5194,16 @@
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/code-unit-reverse-lookup.git",
-                "reference": "99805768a703b1b8200354f6cfe4269f4c5372b8"
+                "reference": "c36f5e7cfce482fde5bf8d10d41a53591e0198fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/code-unit-reverse-lookup/zipball/99805768a703b1b8200354f6cfe4269f4c5372b8",
-                "reference": "99805768a703b1b8200354f6cfe4269f4c5372b8",
+                "url": "https://api.github.com/repos/sebastianbergmann/code-unit-reverse-lookup/zipball/c36f5e7cfce482fde5bf8d10d41a53591e0198fe",
+                "reference": "c36f5e7cfce482fde5bf8d10d41a53591e0198fe",
                 "shasum": ""
             },
             "require": {
@@ -5346,29 +5235,29 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2016-12-06 20:00:09"
+            "time": "2016-02-13 06:45:14"
         },
         {
             "name": "sebastian/comparator",
-            "version": "dev-master",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "2f09d5a251c4a92d1a80518c2166b5d0d742bc63"
+                "reference": "6a1ed12e8b2409076ab22e3897126211ff8b1f7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/2f09d5a251c4a92d1a80518c2166b5d0d742bc63",
-                "reference": "2f09d5a251c4a92d1a80518c2166b5d0d742bc63",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/6a1ed12e8b2409076ab22e3897126211ff8b1f7f",
+                "reference": "6a1ed12e8b2409076ab22e3897126211ff8b1f7f",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3.3 || ^7.0",
-                "sebastian/diff": "^1.2",
-                "sebastian/exporter": "^1.2 || ^2.0"
+                "php": ">=5.3.3",
+                "sebastian/diff": "~1.2",
+                "sebastian/exporter": "~1.2 || ~2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8"
+                "phpunit/phpunit": "~4.4"
             },
             "type": "library",
             "extra": {
@@ -5410,20 +5299,20 @@
                 "compare",
                 "equality"
             ],
-            "time": "2016-12-10 08:07:52"
+            "time": "2016-11-19 09:18:40"
         },
         {
             "name": "sebastian/diff",
-            "version": "dev-master",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "d0814318784b7756fb932116acd19ee3b0cbe67a"
+                "reference": "13edfd8706462032c2f52b4b862974dd46b71c9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/d0814318784b7756fb932116acd19ee3b0cbe67a",
-                "reference": "d0814318784b7756fb932116acd19ee3b0cbe67a",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/13edfd8706462032c2f52b4b862974dd46b71c9e",
+                "reference": "13edfd8706462032c2f52b4b862974dd46b71c9e",
                 "shasum": ""
             },
             "require": {
@@ -5462,11 +5351,11 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2016-10-03 07:45:03"
+            "time": "2015-12-08 07:14:41"
         },
         {
             "name": "sebastian/environment",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
@@ -5516,7 +5405,7 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
@@ -5583,23 +5472,23 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "dev-master",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "ab3e5ce501d9d45288b53f885a54c87e0cdc7164"
+                "reference": "bc37d50fea7d017d3d340f230811c9f1d7280af4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/ab3e5ce501d9d45288b53f885a54c87e0cdc7164",
-                "reference": "ab3e5ce501d9d45288b53f885a54c87e0cdc7164",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/bc37d50fea7d017d3d340f230811c9f1d7280af4",
+                "reference": "bc37d50fea7d017d3d340f230811c9f1d7280af4",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0"
+                "php": ">=5.3.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7 || ^6.0"
+                "phpunit/phpunit": "~4.2"
             },
             "suggest": {
                 "ext-uopz": "*"
@@ -5607,7 +5496,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "1.0-dev"
                 }
             },
             "autoload": {
@@ -5630,11 +5519,11 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2016-12-12 08:07:45"
+            "time": "2015-10-12 03:26:01"
         },
         {
             "name": "sebastian/object-enumerator",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/object-enumerator.git",
@@ -5680,7 +5569,7 @@
         },
         {
             "name": "sebastian/recursion-context",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/recursion-context.git",
@@ -5733,16 +5622,16 @@
         },
         {
             "name": "sebastian/resource-operations",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/resource-operations.git",
-                "reference": "fadc83f7c41fb2924e542635fea47ae546816ece"
+                "reference": "ce990bb21759f94aeafd30209e8cfcdfa8bc3f52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/resource-operations/zipball/fadc83f7c41fb2924e542635fea47ae546816ece",
-                "reference": "fadc83f7c41fb2924e542635fea47ae546816ece",
+                "url": "https://api.github.com/repos/sebastianbergmann/resource-operations/zipball/ce990bb21759f94aeafd30209e8cfcdfa8bc3f52",
+                "reference": "ce990bb21759f94aeafd30209e8cfcdfa8bc3f52",
                 "shasum": ""
             },
             "require": {
@@ -5771,11 +5660,11 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2016-10-03 07:43:09"
+            "time": "2015-07-28 20:34:47"
         },
         {
             "name": "sebastian/version",
-            "version": "dev-master",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/version.git",
@@ -5941,16 +5830,16 @@
         },
         {
             "name": "symfony/dependency-injection",
-            "version": "dev-master",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "6277adb170cf01278d98b1808acfd620fd913df9"
+                "reference": "037054501c41007c93b6de1b5c7a7acb83523593"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/6277adb170cf01278d98b1808acfd620fd913df9",
-                "reference": "6277adb170cf01278d98b1808acfd620fd913df9",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/037054501c41007c93b6de1b5c7a7acb83523593",
+                "reference": "037054501c41007c93b6de1b5c7a7acb83523593",
                 "shasum": ""
             },
             "require": {
@@ -5973,7 +5862,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.3-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -6000,20 +5889,20 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2016-12-19 16:58:44"
+            "time": "2016-12-08 15:27:33"
         },
         {
             "name": "webmozart/assert",
-            "version": "dev-master",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "4a8bf11547e139e77b651365113fc12850c43d9a"
+                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/4a8bf11547e139e77b651365113fc12850c43d9a",
-                "reference": "4a8bf11547e139e77b651365113fc12850c43d9a",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/2db61e59ff05fe5126d152bd0655c9ea113e550f",
+                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f",
                 "shasum": ""
             },
             "require": {
@@ -6050,11 +5939,11 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-11-23 20:04:41"
+            "time": "2016-11-23 20:04:58"
         },
         {
             "name": "zendframework/zend-code",
-            "version": "dev-develop",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-code.git",
@@ -6107,16 +5996,16 @@
         },
         {
             "name": "zendframework/zend-component-installer",
-            "version": "dev-master",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-component-installer.git",
-                "reference": "ffe57bf273970ed2b903b8495dad7bd642cf6f34"
+                "reference": "e72934397b123282ebf2eb23f4cf57a6a9bdfeb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-component-installer/zipball/ffe57bf273970ed2b903b8495dad7bd642cf6f34",
-                "reference": "ffe57bf273970ed2b903b8495dad7bd642cf6f34",
+                "url": "https://api.github.com/repos/zendframework/zend-component-installer/zipball/e72934397b123282ebf2eb23f4cf57a6a9bdfeb1",
+                "reference": "e72934397b123282ebf2eb23f4cf57a6a9bdfeb1",
                 "shasum": ""
             },
             "require": {
@@ -6128,7 +6017,7 @@
                 "mikey179/vfsstream": "^1.6",
                 "phpunit/phpunit": "^4.7",
                 "roave/security-advisories": "dev-master",
-                "squizlabs/php_codesniffer": "^2.7"
+                "squizlabs/php_codesniffer": "^2.5"
             },
             "type": "composer-plugin",
             "extra": {
@@ -6147,20 +6036,20 @@
                 "BSD-3-Clause"
             ],
             "description": "Composer plugin for automating component registration in zend-mvc and Expressive applications",
-            "time": "2016-10-17 13:35:46"
+            "time": "2016-09-12 21:15:53"
         },
         {
             "name": "zendframework/zend-dom",
-            "version": "dev-develop",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-dom.git",
-                "reference": "95410835951829bb4936ebb9aa7879926d75f6a1"
+                "reference": "a9e145b2b52fe6de5a7a6b0ddb5c773c2c72d59e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-dom/zipball/95410835951829bb4936ebb9aa7879926d75f6a1",
-                "reference": "95410835951829bb4936ebb9aa7879926d75f6a1",
+                "url": "https://api.github.com/repos/zendframework/zend-dom/zipball/a9e145b2b52fe6de5a7a6b0ddb5c773c2c72d59e",
+                "reference": "a9e145b2b52fe6de5a7a6b0ddb5c773c2c72d59e",
                 "shasum": ""
             },
             "require": {
@@ -6192,20 +6081,20 @@
                 "dom",
                 "zf2"
             ],
-            "time": "2016-04-25 21:26:39"
+            "time": "2015-10-14 03:37:48"
         },
         {
             "name": "zendframework/zend-test",
-            "version": "dev-develop",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-test.git",
-                "reference": "6cf42f3f6874fec8ba422fb6240688012cf4be1b"
+                "reference": "f1ee9ae3f69446f19f4015826b7a70d5ff2f5644"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-test/zipball/6cf42f3f6874fec8ba422fb6240688012cf4be1b",
-                "reference": "6cf42f3f6874fec8ba422fb6240688012cf4be1b",
+                "url": "https://api.github.com/repos/zendframework/zend-test/zipball/f1ee9ae3f69446f19f4015826b7a70d5ff2f5644",
+                "reference": "f1ee9ae3f69446f19f4015826b7a70d5ff2f5644",
                 "shasum": ""
             },
             "require": {
@@ -6259,20 +6148,20 @@
                 "test",
                 "zf2"
             ],
-            "time": "2016-09-06 16:37:57"
+            "time": "2016-09-06 16:36:24"
         },
         {
             "name": "zfcampus/zf-apigility-admin",
-            "version": "dev-develop",
+            "version": "1.5.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-apigility-admin.git",
-                "reference": "8b683380c4e61026ff81c7d0f32ed10534d731c6"
+                "reference": "c4f48c44aecaac5a8fa5ff38086d710367f2c4e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin/zipball/8b683380c4e61026ff81c7d0f32ed10534d731c6",
-                "reference": "8b683380c4e61026ff81c7d0f32ed10534d731c6",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin/zipball/c4f48c44aecaac5a8fa5ff38086d710367f2c4e6",
+                "reference": "c4f48c44aecaac5a8fa5ff38086d710367f2c4e6",
                 "shasum": ""
             },
             "require": {
@@ -6340,20 +6229,20 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-10-12 15:50:25"
+            "time": "2016-10-12 15:48:48"
         },
         {
             "name": "zfcampus/zf-apigility-admin-ui",
-            "version": "dev-develop",
+            "version": "1.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-apigility-admin-ui.git",
-                "reference": "5e117ffce94e3221d488b8a0b98fb3964f70b754"
+                "reference": "20f5b79643c00fdc9b8e3ddd33d9700a9240ccd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin-ui/zipball/5e117ffce94e3221d488b8a0b98fb3964f70b754",
-                "reference": "5e117ffce94e3221d488b8a0b98fb3964f70b754",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin-ui/zipball/20f5b79643c00fdc9b8e3ddd33d9700a9240ccd6",
+                "reference": "20f5b79643c00fdc9b8e3ddd33d9700a9240ccd6",
                 "shasum": ""
             },
             "require": {
@@ -6391,20 +6280,20 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-12-19 17:48:11"
+            "time": "2016-12-19 17:46:02"
         },
         {
             "name": "zfcampus/zf-configuration",
-            "version": "dev-develop",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-configuration.git",
-                "reference": "d9baa2009a3958f5986d728628a77864e51ee5cc"
+                "reference": "51231865e277454595fd9dc9dadb9944a8c96bff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-configuration/zipball/d9baa2009a3958f5986d728628a77864e51ee5cc",
-                "reference": "d9baa2009a3958f5986d728628a77864e51ee5cc",
+                "url": "https://api.github.com/repos/zfcampus/zf-configuration/zipball/51231865e277454595fd9dc9dadb9944a8c96bff",
+                "reference": "51231865e277454595fd9dc9dadb9944a8c96bff",
                 "shasum": ""
             },
             "require": {
@@ -6446,20 +6335,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-08-13 15:18:52"
+            "time": "2016-08-13 15:17:08"
         },
         {
             "name": "zfcampus/zf-console",
-            "version": "dev-develop",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-console.git",
-                "reference": "f54febb550dc9b7f4ff93e83a92e5095ef5600e0"
+                "reference": "663c19e22240b4ea51b3d01950720f6db8dfd6f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-console/zipball/f54febb550dc9b7f4ff93e83a92e5095ef5600e0",
-                "reference": "f54febb550dc9b7f4ff93e83a92e5095ef5600e0",
+                "url": "https://api.github.com/repos/zfcampus/zf-console/zipball/663c19e22240b4ea51b3d01950720f6db8dfd6f0",
+                "reference": "663c19e22240b4ea51b3d01950720f6db8dfd6f0",
                 "shasum": ""
             },
             "require": {
@@ -6500,20 +6389,20 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-10-11 18:18:21"
+            "time": "2016-07-11 20:33:55"
         },
         {
             "name": "zfcampus/zf-deploy",
-            "version": "dev-develop",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-deploy.git",
-                "reference": "236eaa1e688d9e4cf13bf3adda45c14c33f1fee8"
+                "reference": "8208a60a7b52cf146004fcb8ad3c9051b537f4dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-deploy/zipball/236eaa1e688d9e4cf13bf3adda45c14c33f1fee8",
-                "reference": "236eaa1e688d9e4cf13bf3adda45c14c33f1fee8",
+                "url": "https://api.github.com/repos/zfcampus/zf-deploy/zipball/8208a60a7b52cf146004fcb8ad3c9051b537f4dc",
+                "reference": "8208a60a7b52cf146004fcb8ad3c9051b537f4dc",
                 "shasum": ""
             },
             "require": {
@@ -6552,7 +6441,7 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2016-07-12 17:34:31"
+            "time": "2016-07-12 17:31:21"
         }
     ],
     "aliases": [],
@@ -6560,7 +6449,7 @@
     "stability-flags": {
         "zendframework/zend-component-installer": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "~7.0",

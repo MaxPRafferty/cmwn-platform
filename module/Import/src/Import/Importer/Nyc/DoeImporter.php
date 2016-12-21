@@ -179,7 +179,7 @@ class DoeImporter implements
         $this->parser->setEmail($this->getEmail());
 
         try {
-            if ($this->getEventManager()->trigger($event)->stopped()) {
+            if ($this->getEventManager()->triggerEvent($event)->stopped()) {
                 $this->getLogger()->notice('Response caused processing to stop');
                 return;
             }
@@ -192,7 +192,7 @@ class DoeImporter implements
 
             $this->getLogger()->info('Pre-processing complete');
             $event->setName('nyc.import.excel.run');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             $actions = $this->parser->getActions();
             $actions->top();
@@ -218,16 +218,16 @@ class DoeImporter implements
 
             $this->getLogger()->notice('Done Executing Actions');
             $event->setName('nyc.import.excel.complete');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
         } catch (ProcessorErrorException $processException) {
             $this->getLogger()->alert('Processor has errors', $this->parser->getErrors());
             $event->setName('nyc.import.excel.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $processException;
         } catch (\Throwable $processException) {
             $this->getLogger()->alert($processException->getMessage());
             $event->setName('nyc.upload.excel.failed');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $processException;
         }
     }

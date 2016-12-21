@@ -50,7 +50,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
     {
         $eventParams = ['user' => $user, 'image' => $image];
         $event       = new Event('save.user.image', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
             throw $attachException;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -79,7 +79,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
     {
         $eventParams = ['user' => $user, 'approved_only' => $approvedOnly];
         $event       = new Event('fetch.user.image', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -94,7 +94,7 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
             throw $attachException;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 }

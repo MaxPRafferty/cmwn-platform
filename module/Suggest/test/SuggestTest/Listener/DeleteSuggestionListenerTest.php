@@ -69,7 +69,7 @@ class DeleteSuggestionListenerTest extends TestCase
             ->with('english_student', 'math_student')
             ->once();
 
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
         $this->assertFalse($response->stopped());
     }
 }
