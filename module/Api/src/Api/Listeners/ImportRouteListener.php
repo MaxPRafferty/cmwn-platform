@@ -9,7 +9,7 @@ use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
@@ -34,15 +34,15 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
     protected $role;
 
     /**
-     * @var SecurityOrgService
+     * @var SecurityOrgServiceInterface
      */
     protected $orgService;
 
     /**
      * ImportRouteListener constructor.
-     * @param SecurityOrgService $orgService
+     * @param SecurityOrgServiceInterface $orgService
      */
-    public function __construct(SecurityOrgService $orgService)
+    public function __construct(SecurityOrgServiceInterface $orgService)
     {
         $this->orgService = $orgService;
     }

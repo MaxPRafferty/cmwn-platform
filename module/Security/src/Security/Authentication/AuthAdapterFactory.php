@@ -3,7 +3,6 @@
 namespace Security\Authentication;
 
 use Interop\Container\ContainerInterface;
-use Security\Service\SecurityOrgService;
 use Security\Service\SecurityServiceInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
@@ -18,8 +17,7 @@ class AuthAdapterFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new AuthAdapter(
-            $container->get(SecurityServiceInterface::class),
-            $container->get(SecurityOrgService::class)
+            $container->get(SecurityServiceInterface::class)
         );
     }
 }

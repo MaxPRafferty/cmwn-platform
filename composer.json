@@ -2,7 +2,6 @@
   "name": "cmwn/platform",
   "description": "API layer for CMWN",
   "license": "proprietary",
-  "version": "0.6.0",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
@@ -46,7 +45,8 @@
     "chrisboulton/php-resque": "~1.2",
     "rollbar/rollbar": "v0.18.2",
     "aws/aws-sdk-php-zf2": "~4",
-    "robmorgan/phinx": "0.6.4"
+    "robmorgan/phinx": "0.6.4",
+    "lcobucci/jwt": "4.0.x-dev"
   },
   "require-dev": {
     "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
@@ -81,7 +81,8 @@
       "Security\\": "module\\Security\\src\\Security",
       "Skribble\\": "module\\Skribble\\src\\Skribble",
       "Suggest\\": "module\\Suggest\\src\\Suggest",
-      "User\\": "module\\User\\src\\User"
+      "User\\": "module\\User\\src\\User",
+      "Sa\\": "module\\Sa\\src\\Sa"
     }
   },
   "autoload-dev": {
@@ -104,6 +105,7 @@
       "SkribbleTest\\": "module\\Skribble\\test\\SkribbleTest",
       "SuggestTest\\": "module\\Suggest\\test\\SuggestTest",
       "UserTest\\": "module\\User\\test\\UserTest",
+      "SaTest\\": "module\\Sa\\test\\SaTest",
       "IntegrationTest\\": "test\\IntegrationTest"
     }
   }

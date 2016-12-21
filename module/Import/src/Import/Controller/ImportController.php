@@ -125,6 +125,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
                 'student_code' => $request->getParam('studentCode'),
                 'school'       => $request->getParam('school'),
                 'email'        => $request->getParam('email'),
+                'code_start'   => $request->getParam('codeStart'),
             ]);
 
             $this->getLogger()->notice('Importer configured.  Performing import');

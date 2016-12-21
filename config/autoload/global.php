@@ -11,6 +11,4 @@ return [
     'options' => [
         'image_domain' => 'https://media.changemyworldnow.com/f',
     ],
-
-    'allow-reset' => false // allows the /restore endpoint to be called
 ];

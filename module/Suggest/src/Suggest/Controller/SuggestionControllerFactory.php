@@ -5,6 +5,7 @@ namespace Suggest\Controller;
 use Interop\Container\ContainerInterface;
 use Suggest\Engine\SuggestionEngine;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use User\Service\UserServiceInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
@@ -17,6 +18,9 @@ class SuggestionControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new SuggestionController($container->get(SuggestionEngine::class));
+        return new SuggestionController(
+            $container->get(SuggestionEngine::class),
+            $container->get(UserServiceInterface::class)
+        );
     }
 }

@@ -4,8 +4,8 @@ namespace Api\Factory;
 
 use Api\Listeners\ImportRouteListener;
 use Interop\Container\ContainerInterface;
-use Security\Service\SecurityOrgService;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Security\Service\SecurityOrgServiceInterface;
 
 /**
  * Class ImportRouteListenerFactory
@@ -17,6 +17,6 @@ class ImportRouteListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ImportRouteListener($container->get(SecurityOrgService::class));
+        return new ImportRouteListener($container->get(SecurityOrgServiceInterface::class));
     }
 }

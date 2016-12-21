@@ -3,18 +3,32 @@
 namespace Api\Listeners;
 
 use Api\Links\GroupLink;
+use Api\Links\GroupResetLink;
 use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
+use Security\Authentication\AuthenticationServiceAwareInterface;
+use Security\Authentication\AuthenticationServiceAwareTrait;
+use Security\Authorization\RbacAwareInterface;
+use Security\Authorization\RbacAwareTrait;
+use Security\Exception\ChangePasswordException;
+use Security\Service\SecurityOrgService;
+use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Hal\Entity;
+use ZF\Hal\Link\LinkCollectionAwareInterface;
 
 /**
  * Class GroupRouteListener
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class GroupRouteListener
+class GroupRouteListener implements RbacAwareInterface, AuthenticationServiceAwareInterface
 {
+    use RbacAwareTrait;
+    use AuthenticationServiceAwareTrait;
+
     /**
      * @var array
      */
@@ -26,6 +40,11 @@ class GroupRouteListener
     protected $groupService;
 
     /**
+     * @var SecurityOrgService
+     */
+    protected $orgService;
+
+    /**
      * @var \Exception
      */
     protected $exception;
@@ -34,10 +53,12 @@ class GroupRouteListener
      * GroupRouteListener constructor.
      *
      * @param GroupServiceInterface $groupService
+     * @param SecurityOrgService $orgService
      */
-    public function __construct(GroupServiceInterface $groupService)
+    public function __construct(GroupServiceInterface $groupService, SecurityOrgService $orgService)
     {
         $this->groupService = $groupService;
+        $this->orgService = $orgService;
     }
 
     /**
@@ -52,6 +73,7 @@ class GroupRouteListener
             [$this, 'onDispatch'],
             PHP_INT_MAX
         );
+        $this->listeners[] = $events->attach('ZF\Hal\Plugin\Hal', 'renderEntity', [$this, 'onEntityRender']);
     }
 
     /**
@@ -94,6 +116,44 @@ class GroupRouteListener
         $types = $this->groupService->fetchChildTypes($realEntity);
         foreach ($types as $type) {
             $payload->getLinks()->add(new GroupLink($type, $realEntity->getGroupId()));
+        }
+    }
+
+    /**
+     * Adds a GroupResetLink if permission is granted to the user
+     * @param Event $event
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
+    public function onEntityRender(Event $event)
+    {
+        if (!$this->getAuthenticationService()->hasIdentity()) {
+            return;
+        }
+
+        $entity  = $event->getParam('entity');
+        if (!$entity instanceof Entity) {
+            return;
+        }
+
+        $realEntity = $entity->entity;
+
+        if (!$realEntity instanceof GroupInterface) {
+            return;
+        }
+
+        if (!$realEntity instanceof LinkCollectionAwareInterface) {
+            return;
+        }
+
+        try {
+            $user = $this->authService->getIdentity();
+        } catch (ChangePasswordException $changePassword) {
+            $user = $changePassword->getUser();
+        }
+
+        $role = $user->isSuper() ? $user->getRole() : $this->orgService->getRoleForGroup($realEntity, $user);
+        if ($this->getRbac()->isGranted($role, 'reset.group.code')) {
+            $realEntity->getLinks()->add(new GroupResetLink($realEntity));
         }
     }
 }

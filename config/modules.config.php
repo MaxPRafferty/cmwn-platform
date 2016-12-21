@@ -42,4 +42,5 @@ return [
     'Security',
     'Suggest',
     'Flag',
+    'Sa',
 ];

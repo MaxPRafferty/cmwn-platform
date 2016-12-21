@@ -2,11 +2,11 @@
 
 namespace Security\Factory;
 
-use Group\Service\UserGroupService;
+use Group\Service\UserGroupServiceInterface;
 use Interop\Container\ContainerInterface;
 use Security\Listeners\OrgServiceListener;
-use Security\Service\SecurityOrgService;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Security\Service\SecurityOrgServiceInterface;
 
 /**
  * Class OrgServiceListenerFactory
@@ -19,8 +19,8 @@ class OrgServiceListenerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new OrgServiceListener(
-            $container->get(SecurityOrgService::class),
-            $container->get(UserGroupService::class)
+            $container->get(SecurityOrgServiceInterface::class),
+            $container->get(UserGroupServiceInterface::class)
         );
     }
 }

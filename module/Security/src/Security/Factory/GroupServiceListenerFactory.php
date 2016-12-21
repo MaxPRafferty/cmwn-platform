@@ -5,8 +5,8 @@ namespace Security\Factory;
 use Group\Service\UserGroupServiceInterface;
 use Interop\Container\ContainerInterface;
 use Security\Listeners\GroupServiceListener;
-use Security\Service\SecurityOrgService;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Security\Service\SecurityOrgServiceInterface;
 
 /**
  * Class GroupServiceListenerFactory
@@ -20,7 +20,7 @@ class GroupServiceListenerFactory implements FactoryInterface
     {
         return new GroupServiceListener(
             $container->get(UserGroupServiceInterface::class),
-            $container->get(SecurityOrgService::class)
+            $container->get(SecurityOrgServiceInterface::class)
         );
     }
 }

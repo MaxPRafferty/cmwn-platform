@@ -18,6 +18,7 @@ return [
             \Security\Service\SecurityServiceInterface::class          => \Security\Service\SecurityService::class,
             \Zend\Authentication\AuthenticationService::class          =>
                 \Security\Authentication\AuthenticationService::class,
+            \Security\Service\SecurityOrgServiceInterface::class       => \Security\Service\SecurityOrgService::class,
         ],
 
         'factories' => [

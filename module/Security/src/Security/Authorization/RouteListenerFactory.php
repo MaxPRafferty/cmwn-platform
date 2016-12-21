@@ -3,8 +3,8 @@
 namespace Security\Authorization;
 
 use Interop\Container\ContainerInterface;
-use Security\Service\SecurityGroupService;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityGroupServiceInterface;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
@@ -22,8 +22,8 @@ class RouteListenerFactory implements FactoryInterface
 
         return new RouteListener(
             $config,
-            $container->get(SecurityOrgService::class),
-            $container->get(SecurityGroupService::class)
+            $container->get(SecurityOrgServiceInterface::class),
+            $container->get(SecurityGroupServiceInterface::class)
         );
     }
 }
