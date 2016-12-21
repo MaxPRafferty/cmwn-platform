@@ -6,6 +6,8 @@ use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Action\NoopAction;
+use Rule\Event\Provider\EventProvider;
+use Rule\Event\Provider\FromEventNameProvider;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Engine\Specification\ArraySpecification;
@@ -47,7 +49,7 @@ class ArraySpecificationTest extends TestCase
                 ['name' => NoopAction::class],
             ],
             'item_params' => [
-                'active_user' => 'MANCHUCK',
+                'active_user' => 'MANCHUCK'
             ],
         ];
 
@@ -71,7 +73,7 @@ class ArraySpecificationTest extends TestCase
             'The Event name does not match the expected spec'
         );
 
-        $item = $arraySpec->buildItem($container);
+        $item = $arraySpec->buildProvider($container);
         $this->assertEquals(
             'MANCHUCK',
             $item->getParam('active_user'),
@@ -130,7 +132,7 @@ class ArraySpecificationTest extends TestCase
 
         $rules = $arraySpec->getRules($container);
         $this->assertTrue(
-            $rules->isSatisfiedBy($arraySpec->buildItem($container)),
+            $rules->isSatisfiedBy($arraySpec->buildProvider($container)),
             'This rule set should be satisfied since the "not" operator was specified'
         );
     }

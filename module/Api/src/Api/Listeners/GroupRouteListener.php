@@ -107,7 +107,7 @@ class GroupRouteListener implements RbacAwareInterface, AuthenticationServiceAwa
             return;
         }
 
-        $realEntity = $payload->entity;
+        $realEntity = $payload->getEntity();
 
         if (!$realEntity instanceof GroupInterface) {
             return;
@@ -135,7 +135,7 @@ class GroupRouteListener implements RbacAwareInterface, AuthenticationServiceAwa
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
 
         if (!$realEntity instanceof GroupInterface) {
             return;

@@ -9,7 +9,7 @@ use Rule\Action\ActionInterface;
 use Rule\Action\StaticActionFactory;
 use Rule\Exception\InvalidArgumentException;
 use Rule\Exception\RuntimeException;
-use Rule\Item\RuleItemInterface;
+use Rule\Provider\ProviderCollectionInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\Rule\Collection\RuleCollection;
 use Rule\Rule\Collection\RuleCollectionInterface;
@@ -36,7 +36,7 @@ class ArraySpecification implements SpecificationInterface
     protected $actions;
 
     /**
-     * @var RuleItemInterface
+     * @var ProviderCollectionInterface
      */
     protected $ruleItem;
 
@@ -138,7 +138,7 @@ class ArraySpecification implements SpecificationInterface
     /**
      * @inheritDoc
      */
-    public function buildItem(ContainerInterface $services): RuleItemInterface
+    public function buildProvider(ContainerInterface $services): ProviderCollectionInterface
     {
         if (null === $this->ruleItem) {
             $this->ruleItem = StaticProviderCollectionFactory::build($services, $this->spec['item_params'] ?? []);

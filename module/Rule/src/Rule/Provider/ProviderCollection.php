@@ -2,6 +2,10 @@
 
 namespace Rule\Provider;
 
+use Rule\Event\Provider\EventProviderInterface;
+use Rule\Item\RuleItemInterface;
+use Zend\EventManager\EventInterface;
+
 /**
  * Class ProviderCollection
  */
@@ -11,6 +15,11 @@ class ProviderCollection implements ProviderCollectionInterface
      * @var \ArrayObject
      */
     protected $parameters;
+
+    /**
+     * @var array All the keys that are event providers
+     */
+    protected $eventProviders = [];
 
     /**
      * ProviderCollection constructor.
@@ -38,6 +47,10 @@ class ProviderCollection implements ProviderCollectionInterface
     {
         if (!$this->offsetExists($provider->getName())) {
             $this->offsetSet($provider->getName(), $provider->getValue());
+        }
+
+        if ($provider instanceof EventProviderInterface && !in_array($provider->getName(), $this->eventProviders)) {
+            array_push($this->eventProviders, $provider->getName());
         }
 
         return $this;
@@ -81,5 +94,17 @@ class ProviderCollection implements ProviderCollectionInterface
     public function getParam(string $param, $default = null)
     {
         return $this->offsetExists($param) ? $this->offsetGet($param) : $default;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setEvent(EventInterface $event): RuleItemInterface
+    {
+        array_walk($this->eventProviders, function ($providerName) use (&$event) {
+            $this->offsetGet($providerName)->setEvent($event);
+        });
+
+        return $this;
     }
 }

@@ -4,6 +4,8 @@ namespace Rule\Engine;
 
 use Interop\Container\ContainerInterface;
 use Rule\Engine\Specification\SpecificationInterface;
+use Rule\Event\EventRuleItem;
+use Rule\Item\BasicRuleItem;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -38,7 +40,8 @@ class EngineHandler
      */
     public function __invoke(EventInterface $event)
     {
-        $provider = $this->spec->buildItem($this->container);
+        $provider = $this->spec->buildProvider($this->container);
+        $provider->setEvent($event);
         if (!$this->spec->getRules($this->container)->isSatisfiedBy($provider)) {
             return;
         }

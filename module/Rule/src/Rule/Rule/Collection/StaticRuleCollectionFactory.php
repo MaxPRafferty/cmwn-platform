@@ -14,6 +14,19 @@ class StaticRuleCollectionFactory
     /**
      * Builds a collection of rules from an array
      *
+     * Each item should have the following keys:
+     *
+     * <code>
+     * [
+     *      'rule' => [
+     *          'name'    => Class or Service name of rule,
+     *          'options' => [ Options for rule class or service ],
+     *      ],
+     *      'operator' => and | or | not,
+     *      'or_group' => Name of the group when building a or rule
+     * ]
+     * </code>
+     *
      * @param ContainerInterface $services
      * @param $ruleSpec
      *
