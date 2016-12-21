@@ -4,6 +4,7 @@ namespace IntegrationTest\Service;
 
 use Group\Service\GroupServiceInterface;
 use Group\Group;
+use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
@@ -32,11 +33,19 @@ class GroupServiceTest extends TestCase
     protected $groupService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../DataSets/group.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserGroupService()
     {
-        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
@@ -59,7 +68,7 @@ class GroupServiceTest extends TestCase
         ]);
 
         /** @var OrganizationServiceInterface $orgService */
-        $orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
+        $orgService = TestHelper::getDbServiceManager()->get(OrganizationServiceInterface::class);
         $orgService->createOrganization($district);
 
         $schoolOne = new Group([

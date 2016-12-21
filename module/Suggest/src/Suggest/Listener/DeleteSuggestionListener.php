@@ -8,7 +8,8 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 
 /**
- * Class DeleteSuggestionListener
+ * Removes a suggestion if the user friends a user
+ *
  * @package Suggest\Listener
  */
 class DeleteSuggestionListener
@@ -25,6 +26,7 @@ class DeleteSuggestionListener
 
     /**
      * DeleteSuggestionListener constructor.
+     *
      * @param SuggestedServiceInterface $suggestedService
      */
     public function __construct(SuggestedServiceInterface $suggestedService)
@@ -34,6 +36,7 @@ class DeleteSuggestionListener
 
     /**
      * @param SharedEventManagerInterface $events
+     * @codeCoverageIgnore
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
@@ -46,6 +49,7 @@ class DeleteSuggestionListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
@@ -57,7 +61,7 @@ class DeleteSuggestionListener
      */
     public function deleteSuggestionIfFriend(Event $event)
     {
-        $user = $event->getParam('user');
+        $user   = $event->getParam('user');
         $friend = $event->getParam('friend');
 
         $this->suggestedService->deleteSuggestionForUser($user, $friend);

@@ -10,7 +10,7 @@ use Security\Exception\ChangePasswordException;
 use Security\OpenRouteTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityGroupService;
-use Security\Service\SecurityOrgService;
+use Security\Service\SecurityOrgServiceInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Log\LoggerAwareInterface;
@@ -35,7 +35,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     protected $routePerms = [];
 
     /**
-     * @var SecurityOrgService
+     * @var SecurityOrgServiceInterface
      */
     protected $orgService;
 
@@ -53,12 +53,12 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      * RouteListener constructor.
      *
      * @param array $config
-     * @param SecurityOrgService $orgService
+     * @param SecurityOrgServiceInterface $orgService
      * @param SecurityGroupService $groupService
      */
     public function __construct(
         array $config,
-        SecurityOrgService $orgService,
+        SecurityOrgServiceInterface $orgService,
         SecurityGroupService $groupService
     ) {
         $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);

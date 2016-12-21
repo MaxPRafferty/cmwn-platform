@@ -6,6 +6,7 @@ use Forgot\Service\ForgotServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Security\Service\SecurityService;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test ResetResourceTest
@@ -32,11 +33,19 @@ class ResetResourceTest extends TestCase
     protected $securityService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/reset.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpForgotService()
     {
-        $this->forgotService = TestHelper::getServiceManager()->get(ForgotServiceInterface::class);
+        $this->forgotService = TestHelper::getDbServiceManager()->get(ForgotServiceInterface::class);
     }
 
     /**
@@ -44,7 +53,7 @@ class ResetResourceTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
     }
 
     /**
@@ -79,8 +88,7 @@ class ResetResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\reset\controller');
 
         $user = $this->securityService->fetchUserByUserName('english_student');
-        $this->assertEquals(
-            'apple0007',
+        $this->assertNotNull(
             $user->getCode(),
             'User "english_student" did not get the correct code set'
         );
@@ -106,8 +114,7 @@ class ResetResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\reset\controller');
 
         $user = $this->securityService->fetchUserByUserName('english_teacher');
-        $this->assertEquals(
-            'apple0007',
+        $this->assertNotNull(
             $user->getCode(),
             'User "english_teacher" did not get the correct code set'
         );

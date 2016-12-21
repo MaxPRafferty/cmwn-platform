@@ -18,14 +18,14 @@ return [
             \Security\Service\SecurityServiceInterface::class          => \Security\Service\SecurityService::class,
             \Zend\Authentication\AuthenticationService::class          =>
                 \Security\Authentication\AuthenticationService::class,
+            \Security\Service\SecurityOrgServiceInterface::class       => \Security\Service\SecurityOrgService::class,
         ],
 
         'invokables' => [
-            \Security\Guard\OriginGuard::class            => \Security\Guard\OriginGuard::class,
-            \Security\Listeners\UpdateSession::class      => \Security\Listeners\UpdateSession::class,
-            \Security\Listeners\UserUpdateListener::class => \Security\Listeners\UserUpdateListener::class,
+            \Security\Guard\OriginGuard::class                => \Security\Guard\OriginGuard::class,
+            \Security\Listeners\UpdateSession::class          => \Security\Listeners\UpdateSession::class,
+            \Security\Listeners\UserUpdateListener::class     => \Security\Listeners\UserUpdateListener::class,
             \Security\Listeners\FetchUserImageListener::class => \Security\Listeners\FetchUserImageListener::class,
-            \Security\Listeners\RestoreServiceListener::class => \Security\Listeners\RestoreServiceListener::class
         ],
 
         'factories' => [
@@ -52,9 +52,9 @@ return [
             \Security\Authorization\Assertions\UserAssertion::class =>
                 \Security\Factory\UserAssertionFactory::class,
 
-            \Security\Listeners\GroupServiceListener::class         =>
+            \Security\Listeners\GroupServiceListener::class =>
                 \Security\Factory\GroupServiceListenerFactory::class,
-            \Security\Listeners\OrgServiceListener::class           =>
+            \Security\Listeners\OrgServiceListener::class   =>
                 \Security\Factory\OrgServiceListenerFactory::class,
 
             \Zend\Authentication\Adapter\Http::class =>
@@ -95,7 +95,6 @@ return [
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
         \Security\Listeners\FetchUserImageListener::class,
-        \Security\Listeners\RestoreServiceListener::class,
     ],
 
     'console' => [

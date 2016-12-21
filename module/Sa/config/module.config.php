@@ -6,8 +6,8 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            'Sa\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource'
-                => 'Sa\\Rest\\SuperAdminSettings\\SuperAdminSettingsResourceFactory',
+            'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource'
+                => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResourceFactory',
         ],
         'invokables' => [
             \Sa\Listeners\SaSettingsLinkListener::class => \Sa\Listeners\SaSettingsLinkListener::class,
@@ -20,7 +20,7 @@ return [
                 'options' => [
                     'route' => '/sa/settings[/:settings_id]',
                     'defaults' => [
-                        'controller' => 'Sa\\Rest\\SuperAdminSettings\\Controller',
+                        'controller' => 'Sa\\V1\\Rest\\SuperAdminSettings\\Controller',
                     ],
                 ],
             ],
@@ -32,8 +32,8 @@ return [
         ],
     ],
     'zf-rest' => [
-        'Sa\\Rest\\SuperAdminSettings\\Controller' => [
-            'listener' => 'Sa\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource',
+        'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => [
+            'listener' => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource',
             'route_name' => 'sa.rest.settings',
             'route_identifier_name' => 'settings_id',
             'collection_name' => 'settings',
@@ -44,24 +44,24 @@ return [
             'collection_query_whitelist' => [],
             'page_size' => 25,
             'page_size_param' => 'per_page',
-            'entity_class' => 'Sa\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity',
-            'collection_class' => 'Sa\\Rest\\SuperAdminSettings\\SuperAdminSettingsCollection',
+            'entity_class' => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity',
+            'collection_class' => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsCollection',
             'service_name' => 'SuperAdminSettings',
         ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
-            'Sa\\Rest\\SuperAdminSettings\\Controller' => 'HalJson',
+            'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
-            'Sa\\Rest\\SuperAdminSettings\\Controller' => [
+            'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => [
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
         ],
         'content_type_whitelist' => [
-            'Sa\\Rest\\SuperAdminSettings\\Controller' => [
+            'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => [
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/json',
             ],
@@ -69,7 +69,7 @@ return [
     ],
     'zf-hal' => [
         'metadata_map' => [
-            'Sa\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity' => [
+            'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity' => [
                 'entity_identifier_name' => 'settings_id',
                 'route_name' => 'api.rest.sa.settings',
                 'route_identifier_name' => 'settings_id',

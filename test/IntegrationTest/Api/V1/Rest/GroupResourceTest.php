@@ -7,6 +7,7 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test GroupResourceTest
@@ -31,11 +32,19 @@ class GroupResourceTest extends TestCase
     protected $groupService;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpUserService()
     {
-        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
@@ -233,6 +242,9 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('school', $body['group_id']);
         $this->assertEquals('district', $body['organization_id']);
         $this->assertEquals('Gina\'s School', $body['title']);
+
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayHasKey('group_reset', $body['_links']);
     }
 
     /**
@@ -256,6 +268,9 @@ class GroupResourceTest extends TestCase
         $this->assertEquals('school', $body['group_id']);
         $this->assertEquals('district', $body['organization_id']);
         $this->assertEquals('Gina\'s School', $body['title']);
+
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayNotHasKey('group_reset', $body['_links']);
     }
 
     /**
@@ -748,12 +763,12 @@ class GroupResourceTest extends TestCase
                 'school',
                 ['english']
             ],
-            'Super User'    => [
+            'Super User for Math'    => [
                 'super_user',
                 'school',
                 ['english', 'math']
             ],
-            'Other Super User'    => [
+            'Super User for Other Math'    => [
                 'super_user',
                 'other_school',
                 ['other_math']

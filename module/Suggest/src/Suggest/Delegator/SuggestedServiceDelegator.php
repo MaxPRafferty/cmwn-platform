@@ -3,7 +3,6 @@
 namespace Suggest\Delegator;
 
 use Application\Utils\ServiceTrait;
-use Suggest\NotFoundException;
 use Suggest\Service\SuggestedService;
 use Suggest\Service\SuggestedServiceInterface;
 use Zend\EventManager\Event;
@@ -24,6 +23,7 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
 
     /**
      * SuggestedServiceDelegator constructor.
+     *
      * @param SuggestedService $realService
      */
     public function __construct(SuggestedService $realService)
@@ -55,12 +55,13 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
         }
 
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 
     /**
-     * Fetches the suggested users for a user
      * @inheritdoc
+     * @todo Catch and throw error events
      */
     public function fetchSuggestedFriendsForUser($user, $where = null, $prototype = null)
     {
@@ -76,11 +77,13 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
         $event->setName('fetch.suggested.friends.post');
 
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 
     /**
      * @inheritdoc
+     * @todo Catch and throw error events
      */
     public function attachSuggestedFriendForUser($user, $suggestion)
     {
@@ -95,17 +98,19 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
         $event->setName('attach.suggested.friends.post');
 
         $this->getEventManager()->trigger($event);
+
         return $return;
     }
 
     /**
      * @inheritdoc
+     * @todo Catch and throw error events
      */
     public function deleteSuggestionForUser($user, $suggestion)
     {
         $eventParams = ['user' => $user, 'suggestion' => $suggestion];
-        $event = new Event('delete.suggestion', $this->realService, $eventParams);
-        $response = $this->getEventManager()->trigger($event);
+        $event       = new Event('delete.suggestion', $this->realService, $eventParams);
+        $response    = $this->getEventManager()->trigger($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -114,6 +119,28 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
         $event->setName('delete.suggestion.post');
 
         $this->getEventManager()->trigger($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritDoc
+     * @todo Catch and throw error events
+     */
+    public function deleteAllSuggestionsForUser($user)
+    {
+        $eventParams = ['user' => $user];
+        $event       = new Event('delete.all.suggestions', $this->realService, $eventParams);
+        $response    = $this->getEventManager()->trigger($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return = $this->realService->deleteAllSuggestionsForUser($user);
+        $event->setName('delete.all.suggestions.post');
+
+        $this->getEventManager()->trigger($event);
+
         return $return;
     }
 }

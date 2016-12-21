@@ -15,7 +15,11 @@ use Zend\EventManager\EventManager;
 
 /**
  * Class TriggerSuggestionListenerTest
- * @package SuggestTest\Listener
+ *
+ * @group Suggest
+ * @group User
+ * @group Listener
+ * @group UserService
  */
 class TriggerSuggestionListenerTest extends TestCase
 {
@@ -50,7 +54,7 @@ class TriggerSuggestionListenerTest extends TestCase
     {
         $this->listener = new TriggerSuggestionsListener($this->suggestionEngine, $this->jobService);
     }
-    
+
     /**
      * @test
      */
@@ -68,7 +72,8 @@ class TriggerSuggestionListenerTest extends TestCase
         $this->suggestionEngine->shouldReceive('exchangeArray')->once();
         $this->jobService->shouldReceive('sendJob')->once();
 
-        $eventManager->trigger($event);
+        $response = $eventManager->trigger($event);
+        $this->assertFalse($response->stopped());
     }
 
     /**
@@ -88,6 +93,7 @@ class TriggerSuggestionListenerTest extends TestCase
         $this->suggestionEngine->shouldReceive('exchangeArray')->never();
         $this->jobService->shouldReceive('sendJob')->never();
 
-        $eventManager->trigger($event);
+        $response = $eventManager->trigger($event);
+        $this->assertFalse($response->stopped());
     }
 }

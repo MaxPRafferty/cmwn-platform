@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'flips'         => [],
-    'organizations' => [
+    'flips'            => [],
+    'organizations'    => [
         [
             'org_id'      => 'district',
             'title'       => 'Gina\'s District',
@@ -24,31 +24,8 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'         => [
-        [
-            'game_id'     => 'animal-id',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Animal ID',
-            'description' => 'Can you ID the different kinds of animals? Do you know what plants and animals
-                    belong together? Prove it and learn it right here!
-                ',
-            'deleted'     => null,
-            'coming_soon' => '0',
-        ],
-        [
-            'game_id'     => 'be-bright',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Be Bright',
-            'description' => 'Become a Light Saver agent of change! This music video will kick your inner
-                    superhero into high gear!
-                ',
-            'deleted'     => null,
-            'coming_soon' => '0',
-        ],
-    ],
-    'groups'        => [
+    'games'            => [],
+    'groups'           => [
         [
             'group_id'        => 'other_school',
             'organization_id' => 'manchuck',
@@ -135,50 +112,10 @@ return [
             'network_id'      => 'other_school',
         ],
     ],
-    'images'        => [
-        [
-            'image_id'          => 'profiles/drkynjsedoegxb0hwvch',
-            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
-                '/upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg',
-            'moderation_status' => '0',
-            'created'           => '2016-05-05 20:14:18',
-            'updated'           => '2016-05-05 20:14:18',
-            'type'              => null,
-        ],
-        [
-            'image_id'          => 'profiles/dwtm7optf0qq62vcveef',
-            'url'               => 'https://res.cloudinary.com/changemyworldnow/image' .
-                '/upload/v1460592471/profiles/dwtm7optf0qq62vcveef.jpg',
-            'moderation_status' => '1',
-            'created'           => '2016-04-14 00:07:53',
-            'updated'           => '2016-04-14 00:07:53',
-            'type'              => null,
-        ],
-    ],
-    'names'         => [
-        [
-            'name'     => 'active',
-            'position' => 'LEFT',
-            'count'    => '1',
-        ],
-        [
-            'name'     => 'adorable',
-            'position' => 'LEFT',
-            'count'    => '1',
-        ],
-        [
-            'name'     => 'albatross',
-            'position' => 'RIGHT',
-            'count'    => '1',
-        ],
-        [
-            'name'     => 'alligator',
-            'position' => 'RIGHT',
-            'count'    => '1',
-        ],
-    ],
-    'user_flips'    => [],
-    'users'         => [
+    'images'           => [],
+    'names'            => [],
+    'user_flips'       => [],
+    'users'            => [
         [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
@@ -195,7 +132,67 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
+            'super'        => '0',
+            'external_id'  => null,
+        ],
+        [
+            'user_id'      => 'english_student_1',
+            'username'     => 'english_student_1',
+            'email'        => 'english_student_1@ginasink.com',
+            'code'         => null,
+            'type'         => 'CHILD',
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'   => 'John',
+            'middle_name'  => 'D',
+            'last_name'    => 'Yoder',
+            'gender'       => 'M',
+            'meta'         => null,
+            'birthdate'    => '2016-04-15 11:58:15',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+            'deleted'      => null,
+
+            'super'        => '0',
+            'external_id'  => null,
+        ],
+        [
+            'user_id'      => 'english_student_2',
+            'username'     => 'english_student_2',
+            'email'        => 'english_student_2@ginasink.com',
+            'code'         => null,
+            'type'         => 'CHILD',
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'   => 'John',
+            'middle_name'  => 'D',
+            'last_name'    => 'Yoder',
+            'gender'       => 'M',
+            'meta'         => null,
+            'birthdate'    => '2016-04-15 11:58:15',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+            'deleted'      => null,
+
+            'super'        => '0',
+            'external_id'  => null,
+        ],
+        [
+            'user_id'      => 'english_student_3',
+            'username'     => 'english_student_3',
+            'email'        => 'english_student_3@ginasink.com',
+            'code'         => null,
+            'type'         => 'CHILD',
+            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'   => 'John',
+            'middle_name'  => 'D',
+            'last_name'    => 'Yoder',
+            'gender'       => 'M',
+            'meta'         => null,
+            'birthdate'    => '2016-04-15 11:58:15',
+            'created'      => '2016-04-27 10:48:44',
+            'updated'      => '2016-04-27 10:48:46',
+            'deleted'      => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -215,7 +212,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -235,7 +232,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -255,7 +252,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -275,7 +272,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -295,7 +292,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -315,7 +312,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -335,7 +332,7 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '0',
             'external_id'  => null,
         ],
@@ -355,16 +352,47 @@ return [
             'created'      => '2016-04-27 10:48:44',
             'updated'      => '2016-04-27 10:48:46',
             'deleted'      => null,
-            'code_expires' => null,
+
             'super'        => '1',
             'external_id'  => null,
         ],
     ],
-    'user_friends'  => [],
+    'user_friends'     => [
+        [
+            'user_id'   => 'english_student',
+            'friend_id' => 'english_student_1',
+            'status'    => 'PENDING',
+        ],
+        [
+            'user_id'   => 'math_student',
+            'friend_id' => 'english_student_1',
+            'status'    => 'FRIENDS',
+        ],
+        [
+            'user_id'   => 'english_student_2',
+            'friend_id' => 'math_student',
+            'status'    => 'FRIENDS',
+        ],
+    ],
     'user_suggestions' => [],
-    'user_groups'   => [
+    'user_groups'      => [
         [
             'user_id'  => 'english_student',
+            'group_id' => 'english',
+            'role'     => 'student',
+        ],
+        [
+            'user_id'  => 'english_student_1',
+            'group_id' => 'english',
+            'role'     => 'student',
+        ],
+        [
+            'user_id'  => 'english_student_2',
+            'group_id' => 'english',
+            'role'     => 'student',
+        ],
+        [
+            'user_id'  => 'english_student_3',
             'group_id' => 'english',
             'role'     => 'student',
         ],
@@ -384,14 +412,5 @@ return [
             'role'     => 'student',
         ],
     ],
-    'user_images'   => [
-        [
-            'user_id'  => 'english_student',
-            'image_id' => 'profiles/drkynjsedoegxb0hwvch',
-        ],
-        [
-            'user_id'  => 'english_student',
-            'image_id' => 'profiles/dwtm7optf0qq62vcveef',
-        ],
-    ],
+    'user_images'      => [],
 ];

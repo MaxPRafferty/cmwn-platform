@@ -2,6 +2,7 @@
 
 namespace ImportTest\Importer\Nyc\Parser;
 
+use Application\Utils\Date\DateTimeFactory;
 use Import\Importer\Nyc\Parser\AddCodeToUserAction;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
@@ -75,11 +76,13 @@ class AddCodeToUserActionTest extends TestCase
      */
     public function testItShouldSaveCodeToUser()
     {
+        $codeStart = DateTimeFactory::factory('now');
         $this->securityService->shouldReceive('saveCodeToUser')
             ->once()
-            ->with('foo_bar', $this->user, 30);
+            ->with('foo_bar', $this->user, 30, $codeStart);
 
         $action = new AddCodeToUserAction($this->userAware, $this->securityService, 'foo_bar');
+        $action->setCodeStart($codeStart);
         $this->assertEquals(2, $action->priority(), 'AddCodeToUserAction has wrong priority');
         $action->execute();
     }

@@ -17,7 +17,6 @@ class DeleteSuggestionListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $suggestedService = $serviceLocator->get(SuggestedServiceInterface::class);
-        return new DeleteSuggestionListener($suggestedService);
+        return new DeleteSuggestionListener($serviceLocator->get(SuggestedServiceInterface::class));
     }
 }

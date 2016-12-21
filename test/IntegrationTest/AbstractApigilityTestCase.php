@@ -12,6 +12,7 @@ use ZF\ContentNegotiation\Request;
  * Class AbstractApigilityTestCase
  *
  * @method Request getRequest()
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
 abstract class AbstractApigilityTestCase extends TestCase
 {
@@ -30,7 +31,7 @@ abstract class AbstractApigilityTestCase extends TestCase
     public function setUp()
     {
         $this->setApplicationConfig(
-            TestHelper::getApplicationConfig()
+            TestHelper::getApplicationConfigWithDb()
         );
 
         parent::setUp();
@@ -66,7 +67,7 @@ abstract class AbstractApigilityTestCase extends TestCase
     public function injectValidCsrfToken()
     {
         /** @var CsrfGuard $xsrfGuard */
-        $xsrfGuard = TestHelper::getServiceManager()->get(CsrfGuard::class);
+        $xsrfGuard = TestHelper::getDbServiceManager()->get(CsrfGuard::class);
         $xsrfGuard->getSession()->offsetSet('hash', 'foobar');
 
         $this->getRequest()

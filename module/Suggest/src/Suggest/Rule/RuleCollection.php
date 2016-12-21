@@ -2,8 +2,8 @@
 
 namespace Suggest\Rule;
 
-use Suggest\InvalidArgumentException;
-use Suggest\SuggestionContainer;
+use Suggest\InvalidRuleException;
+use Suggest\SuggestionCollection;
 use User\UserInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -11,7 +11,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * Class RuleCollection
  * @package Suggest\Rule
  */
-class RuleCollection implements SuggestedRuleCompositeInterface
+class RuleCollection implements RuleCompositeInterface
 {
     /**
      * @var ServiceLocatorInterface
@@ -19,51 +19,70 @@ class RuleCollection implements SuggestedRuleCompositeInterface
     protected $service;
 
     /**
-     * @var array
+     * @var array List of rules to be applied
      */
-    protected $rules;
+    protected $rulesConfig = [];
 
     /**
-     * @param ServiceLocatorInterface
-     * @param array
+     * @var RuleCompositeInterface[]
      */
-    public function __construct($service, $rules)
+    protected $rules = [];
+
+    /**
+     * RuleCollection constructor.
+     *
+     * @param ServiceLocatorInterface $service
+     * @param array $rulesConfig
+     */
+    public function __construct(ServiceLocatorInterface $service, array $rulesConfig)
     {
         $this->service = $service;
-        $this->createRulesFromConfig($rules);
+        $this->rulesConfig = $rulesConfig;
     }
 
     /**
-     * @param $rules
+     * Creates the rules from the service
      */
-    protected function createRulesFromConfig($rules)
+    protected function createRulesFromConfig()
     {
-        foreach ($rules as $rule) {
-            $rule = $this->service->get($rule);
+        if (!empty($this->rules)) {
+            return;
+        }
+
+        array_walk($this->rulesConfig, function ($ruleKey) {
+            if (!$this->service->has($ruleKey)) {
+                throw new InvalidRuleException(sprintf('Missing rule: "%s" from services', $ruleKey));
+            }
+
+            $rule = $this->service->get($ruleKey);
+            if (!$rule instanceof RuleCompositeInterface) {
+                throw new InvalidRuleException();
+            }
 
             $this->addRule($rule);
-        }
+        });
     }
 
     /**
-     * @param $rule
+     * @param RuleCompositeInterface $rule
      */
-    public function addRule($rule)
+    public function addRule(RuleCompositeInterface $rule)
     {
-        if (!$rule instanceof SuggestedRuleCompositeInterface) {
-            throw new InvalidArgumentException("Invalid Rule");
-        }
-        $this->rules[] = $rule;
+        array_push($this->rules, $rule);
     }
 
     /**
-     * @param SuggestionContainer $suggestionContainer
+     * @param SuggestionCollection $suggestionCollection
      * @param UserInterface $currentUser
      */
-    public function apply($suggestionContainer, $currentUser)
+    public function apply(SuggestionCollection $suggestionCollection, UserInterface $currentUser)
     {
-        foreach ($this->rules as $rule) {
-            $rule->apply($suggestionContainer, $currentUser);
-        }
+        $this->createRulesFromConfig();
+        array_walk(
+            $this->rules,
+            function (RuleCompositeInterface $rule) use (&$suggestionCollection, &$currentUser) {
+                $rule->apply($suggestionCollection, $currentUser);
+            }
+        );
     }
 }

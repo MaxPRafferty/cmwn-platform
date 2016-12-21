@@ -17,6 +17,9 @@ return [
             \Game\Service\SaveGameService::class => [
                 \Game\Delegator\SaveGameDelegatorFactory::class,
             ],
+            \Game\Service\GameService::class => [
+                \Game\Delegator\GameDelegatorFactory::class,
+            ]
         ],
     ],
 ];

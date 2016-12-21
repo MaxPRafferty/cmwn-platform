@@ -82,7 +82,9 @@ class CheckUserListener implements ListenerAggregateInterface
 
         if (count($results) > 0) {
             $event->stopPropagation(true);
-            throw new DuplicateEntryException('Invalid user');
+            throw new DuplicateEntryException(
+                'Invalid Username:(' . $user->getUserName() . ') or email(' . $user->getEmail() . ')'
+            );
         }
     }
 }

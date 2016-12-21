@@ -9,6 +9,7 @@ use IntegrationTest\TestHelper;
 use User\Child;
 use User\UserInterface;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test FriendResourceTest
@@ -40,11 +41,19 @@ class FriendResourceTest extends TestCase
     protected $friend;
 
     /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/friends.dataset.php');
+    }
+
+    /**
      * @before
      */
     public function setUpFriendService()
     {
-        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
+        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
     }
 
     /**
@@ -83,16 +92,13 @@ class FriendResourceTest extends TestCase
      */
     public function testItShouldReturnCorrectFriendListForUser()
     {
-        $this->friendService->attachFriendToUser($this->user, $this->friend);
-        $this->friendService->attachFriendToUser($this->friend, $this->user);
-
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch('/user/english_student/friend');
         $this->assertResponseStatusCode(200);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        
+
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('friend', $body['_embedded']);
 
@@ -102,9 +108,9 @@ class FriendResourceTest extends TestCase
             $this->assertArrayHasKey('friend_id', $friend);
             array_push($actualId, $friend['friend_id']);
         }
-        
+
         $this->assertEquals(
-            ['math_student'],
+            ['english_student_1'],
             $actualId,
             'Service did not return correct friends'
         );
@@ -115,9 +121,6 @@ class FriendResourceTest extends TestCase
      */
     public function testItShouldReturnCorrectFriendListForFriend()
     {
-        $this->friendService->attachFriendToUser($this->user, $this->friend);
-        $this->friendService->attachFriendToUser($this->friend, $this->user);
-
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
         $this->dispatch('/user/english_student/friend');
@@ -136,7 +139,7 @@ class FriendResourceTest extends TestCase
         }
 
         $this->assertEquals(
-            ['math_student'],
+            ['english_student_1'],
             $actualId,
             'Service did not return correct friends'
         );

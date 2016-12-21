@@ -47,7 +47,10 @@ return [
                 'DELETE' => 'delete.org',
             ],
             'api.rest.game'            => [
-                'GET' => 'view.games',
+                'GET'    => ['view.games', 'view.game'],
+                'POST'   => 'create.game',
+                'PUT'    => 'update.game',
+                'DELETE' => 'delete.game',
             ],
             'api.rest.group'           => [
                 'GET'    => ['view.group', 'view.user.groups'],
@@ -106,17 +109,17 @@ return [
             'api.rest.game-data' => [
                 'GET' => 'view.game-data',
             ],
-            'api.rest.flag'            => [
+            'api.rest.flag' => [
                 'GET'    => ['view.all.flagged.images', 'view.flagged.image'],
                 'POST'   => 'flag.image',
                 'PUT'    => 'edit.flag',
                 'DELETE' => 'delete.flag'
             ],
-            'restore.rest' => [
-                'GET' => 'restore.db.state',
-            ],
             'sa.rest.settings' => [
                 'GET' => 'sa.settings',
+            ],
+            'api.rest.group-reset' => [
+                'POST' => 'reset.group.code'
             ],
         ],
     ],

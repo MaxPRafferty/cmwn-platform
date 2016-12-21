@@ -4,6 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase;
 use Zend\Json\Json;
+use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test GroupUsersResourceTest
@@ -17,6 +18,14 @@ use Zend\Json\Json;
  */
 class GroupUsersResourceTest extends AbstractApigilityTestCase
 {
+    /**
+     * @return ArrayDataSet
+     */
+    public function getDataSet()
+    {
+        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
+    }
+
     /**
      * @test
      *
