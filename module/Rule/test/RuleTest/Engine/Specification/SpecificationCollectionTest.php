@@ -4,7 +4,7 @@ namespace RuleTest\Engine\Specification;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\NoopAction;
-use Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Engine\Specification\ArraySpecification;
 use Rule\Engine\Specification\SpecificationCollection;
 use Rule\Exception\RuntimeException;
@@ -117,10 +117,8 @@ class SpecificationCollectionTest extends TestCase
             ],
         ]);
 
-        $this->setExpectedException(
-            RuntimeException::class,
-            'A specification with the id foo-bar already exists'
-        );
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A specification with the id foo-bar already exists');
         $collection = new SpecificationCollection();
         $collection->append($specOne)->append($specTwo);
     }

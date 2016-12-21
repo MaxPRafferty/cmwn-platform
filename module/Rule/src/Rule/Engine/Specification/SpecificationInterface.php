@@ -5,7 +5,7 @@ namespace Rule\Engine\Specification;
 use Interop\Container\ContainerInterface;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Item\RuleItemInterface;
-use Rule\RuleCollectionInterface;
+use Rule\Rule\Collection\RuleCollectionInterface;
 
 /**
  * A Specification the engine uses to build and run rules

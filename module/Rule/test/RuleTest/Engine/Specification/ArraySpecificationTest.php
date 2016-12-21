@@ -6,10 +6,10 @@ use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Action\NoopAction;
-use Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Basic\NeverSatisfiedRule;
+use Rule\Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Engine\Specification\ArraySpecification;
-use Rule\RuleCollectionInterface;
+use Rule\Rule\Collection\RuleCollectionInterface;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 
 /**
@@ -30,6 +30,7 @@ class ArraySpecificationTest extends TestCase
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
         $container = \Mockery::mock(ContainerInterface::class);
+        /** @noinspection PhpMethodParametersCountMismatchInspection */
         $container->shouldReceive('get')->andThrow(new ServiceNotFoundException())->byDefault();
         $container->shouldReceive('has')->andReturn(false)->byDefault();
 

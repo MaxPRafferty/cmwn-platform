@@ -1,8 +1,8 @@
 <?php
 
-namespace Rule\Date;
+namespace Rule\Rule\Date;
 
-use Rule\Basic\AndRule;
+use Rule\Rule\Basic\AndRule;
 
 /**
  * Rule that states the date must be between 2 specified

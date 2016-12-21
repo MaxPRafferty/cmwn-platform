@@ -1,12 +1,12 @@
 <?php
 
-namespace RuleTest;
+namespace RuleTest\Rule\Collection;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Basic\NeverSatisfiedRule;
+use Rule\Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Item\BasicRuleItem;
-use Rule\RuleCollection;
+use Rule\Rule\Collection\RuleCollection;
 
 /**
  * Test RuleCollectionTest
@@ -25,8 +25,8 @@ class RuleCollectionTest extends TestCase
     public function testItShouldAddAndRulesByDefault()
     {
         $collection = new RuleCollection();
-        $collection->append(new AlwaysSatisfiedRule());
-        $collection->append(new AlwaysSatisfiedRule());
+        $collection->append(new AlwaysSatisfiedRule())
+            ->append(new AlwaysSatisfiedRule());
 
         $this->assertTrue(
             $collection->isSatisfiedBy(new BasicRuleItem()),
@@ -46,8 +46,8 @@ class RuleCollectionTest extends TestCase
     public function testItShouldAddNotRulesByDefault()
     {
         $collection = new RuleCollection();
-        $collection->append(new NeverSatisfiedRule(), RuleCollection::OPERATOR_NOT);
-        $collection->append(new NeverSatisfiedRule(), RuleCollection::OPERATOR_NOT);
+        $collection->append(new NeverSatisfiedRule(), RuleCollection::OPERATOR_NOT)
+            ->append(new NeverSatisfiedRule(), RuleCollection::OPERATOR_NOT);
 
         $this->assertTrue(
             $collection->isSatisfiedBy(new BasicRuleItem()),

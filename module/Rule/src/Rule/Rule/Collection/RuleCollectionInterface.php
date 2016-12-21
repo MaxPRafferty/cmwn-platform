@@ -1,6 +1,8 @@
 <?php
 
-namespace Rule;
+namespace Rule\Rule\Collection;
+
+use Rule\Rule\RuleInterface;
 
 /**
  * An Interface that defines a collection of rules

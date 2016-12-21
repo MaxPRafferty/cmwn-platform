@@ -11,9 +11,9 @@ use Rule\Exception\InvalidArgumentException;
 use Rule\Exception\RuntimeException;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
-use Rule\RuleCollection;
-use Rule\RuleCollectionInterface;
-use Rule\StaticRuleFactory;
+use Rule\Rule\Collection\RuleCollection;
+use Rule\Rule\Collection\RuleCollectionInterface;
+use Rule\Rule\StaticRuleFactory;
 
 /**
  * An Engine Specification that is built from an array

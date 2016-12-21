@@ -1,11 +1,11 @@
 <?php
 
-namespace RuleTest\Basic;
+namespace RuleTest\Rule\Basic;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Basic\EitherRule;
-use Rule\Basic\NeverSatisfiedRule;
+use Rule\Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Rule\Basic\EitherRule;
+use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Item\BasicRuleItem;
 
 /**

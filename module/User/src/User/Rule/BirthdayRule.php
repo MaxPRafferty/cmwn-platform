@@ -2,10 +2,10 @@
 
 namespace User\Rule;
 
-use Rule\Date\DateBetweenRule;
-use Rule\RuleInterface;
+use Rule\Rule\Date\DateBetweenRule;
+use Rule\Rule\RuleInterface;
 use Rule\Item\RuleItemInterface;
-use Rule\TimesSatisfiedTrait;
+use Rule\Rule\TimesSatisfiedTrait;
 use User\UserInterface;
 
 /**
@@ -13,7 +13,7 @@ use User\UserInterface;
  */
 class BirthdayRule implements RuleInterface
 {
-    use TimesSatisfiedTrait;
+    use \Rule\Rule\TimesSatisfiedTrait;
 
     /**
      * @inheritDoc

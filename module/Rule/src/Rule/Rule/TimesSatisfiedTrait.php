@@ -1,6 +1,6 @@
 <?php
 
-namespace Rule;
+namespace Rule\Rule;
 
 /**
  * Helper trait that rules can use to implement the timesSatisfied

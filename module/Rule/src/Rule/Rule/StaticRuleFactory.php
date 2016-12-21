@@ -1,6 +1,6 @@
 <?php
 
-namespace Rule;
+namespace Rule\Rule;
 
 use Interop\Container\ContainerInterface;
 use Rule\Exception\InvalidArgumentException;

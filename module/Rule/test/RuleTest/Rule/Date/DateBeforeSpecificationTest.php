@@ -1,9 +1,9 @@
 <?php
 
-namespace RuleTest\Date;
+namespace RuleTest\Rule\Date;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Date\DateBeforeRule;
+use Rule\Rule\Date\DateBeforeRule;
 use Rule\Item\BasicRuleItem;
 
 /**

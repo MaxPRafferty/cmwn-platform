@@ -1,10 +1,10 @@
 <?php
 
-namespace Rule\Basic;
+namespace Rule\Rule\Basic;
 
 use Rule\Item\RuleItemInterface;
-use Rule\RuleCollection;
-use Rule\RuleInterface;
+use Rule\Rule\Collection\RuleCollection;
+use Rule\Rule\RuleInterface;
 
 /**
  * A Specification that is satisfied when one rule is satisfied

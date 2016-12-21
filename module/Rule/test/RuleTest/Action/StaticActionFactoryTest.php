@@ -119,7 +119,7 @@ class StaticActionFactoryTest extends TestCase
     public function testItShouldSerializeDataFromInvokable()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $actual   = StaticActionFactory::build(TestAction::class, 'foo-bar');
+        $actual = StaticActionFactory::build(TestAction::class, 'foo-bar');
         $this->assertInstanceOf(
             TestAction::class,
             $actual,
@@ -136,10 +136,10 @@ class StaticActionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldPassThroughDataIntoConstorFromInvokable()
+    public function testItShouldPassThroughDataIntoConstructorFromInvokable()
     {
         /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $actual   = StaticActionFactory::build(TestAction::class, ['foo', 'bar']);
+        $actual = StaticActionFactory::build(TestAction::class, ['foo', 'bar']);
         $this->assertInstanceOf(
             TestAction::class,
             $actual,
@@ -170,10 +170,8 @@ class StaticActionFactoryTest extends TestCase
             ->with(\stdClass::class)
             ->andReturn(new \stdClass());
 
-        $this->setExpectedException(
-            RuntimeException::class,
-            'The service stdClass is not a valid action'
-        );
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The service stdClass is not a valid action');
 
         StaticActionFactory::build($container, \stdClass::class);
     }
@@ -183,10 +181,8 @@ class StaticActionFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenInvokableIsNotARule()
     {
-        $this->setExpectedException(
-            RuntimeException::class,
-            'The class stdClass is not an action'
-        );
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The class stdClass is not an action');
 
         StaticActionFactory::build(\stdClass::class);
     }
@@ -196,10 +192,8 @@ class StaticActionFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenInvokableClassDoesNotExist()
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Class foobar is not found'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Class foobar is not found');
 
         StaticActionFactory::build('foobar');
     }

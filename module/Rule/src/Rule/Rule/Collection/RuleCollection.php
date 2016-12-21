@@ -1,11 +1,14 @@
 <?php
 
-namespace Rule;
+namespace Rule\Rule\Collection;
 
-use Rule\Basic\EitherRule;
-use Rule\Basic\NotRule;
+use Rule\Rule\Basic\EitherRule;
+use Rule\Rule\Basic\NotRule;
 use Rule\Exception\InvalidArgumentException;
 use Rule\Item\RuleItemInterface;
+use Rule\Rule\Collection;
+use Rule\Rule\RuleInterface;
+use Rule\Rule\TimesSatisfiedTrait;
 
 /**
  * A Collection of rules
@@ -53,7 +56,7 @@ class RuleCollection implements RuleCollectionInterface, \Countable
         RuleInterface $rule,
         string $operator = self::OPERATOR_AND,
         string $orGroup = null
-    ): RuleCollectionInterface {
+    ): Collection\RuleCollectionInterface {
         switch ($operator) {
             case static::OPERATOR_NOT:
                 $this->rules->append(new NotRule($rule));

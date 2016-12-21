@@ -1,10 +1,10 @@
 <?php
 
-namespace RuleTest\Date;
+namespace RuleTest\Rule\Date;
 
 use Application\Utils\Date\DateTimeFactory;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Date\DateBetweenRule;
+use Rule\Rule\Date\DateBetweenRule;
 use Rule\Item\BasicRuleItem;
 
 /**

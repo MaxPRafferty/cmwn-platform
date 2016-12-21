@@ -4,10 +4,10 @@ namespace RuleTest;
 
 use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Date\DateAfterRule;
+use Rule\Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Rule\Date\DateAfterRule;
 use Rule\Exception\InvalidArgumentException;
-use Rule\StaticRuleFactory;
+use Rule\Rule\StaticRuleFactory;
 
 /**
  * Test StaticRuleFactoryTest
@@ -231,9 +231,7 @@ class StaticRuleFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenBuildRuleHasNoParameters()
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class
-        );
+        $this->expectException(InvalidArgumentException::class);
 
         StaticRuleFactory::build();
     }

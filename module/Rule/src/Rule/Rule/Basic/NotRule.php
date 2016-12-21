@@ -1,10 +1,10 @@
 <?php
 
-namespace Rule\Basic;
+namespace Rule\Rule\Basic;
 
 use Rule\Item\RuleItemInterface;
-use Rule\RuleInterface;
-use Rule\TimesSatisfiedTrait;
+use Rule\Rule\RuleInterface;
+use Rule\Rule\TimesSatisfiedTrait;
 
 /**
  * This rule will be satisfied when another rule is not satisfied

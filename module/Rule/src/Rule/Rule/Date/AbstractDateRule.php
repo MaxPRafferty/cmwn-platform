@@ -1,10 +1,10 @@
 <?php
 
-namespace Rule\Date;
+namespace Rule\Rule\Date;
 
 use Application\Utils\Date\DateTimeFactory;
 use Rule\Exception\InvalidArgumentException;
-use Rule\RuleInterface;
+use Rule\Rule\RuleInterface;
 
 /**
  * Handles the common checking of date rules

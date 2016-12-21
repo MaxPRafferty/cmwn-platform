@@ -231,7 +231,7 @@ class StaticProviderCollectionFactoryTest extends TestCase
 
         $items = ['foo-bar'];
 
-        $this->setExpectedException(RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         StaticProviderCollectionFactory::build($container, $items);
     }
 
@@ -250,7 +250,7 @@ class StaticProviderCollectionFactoryTest extends TestCase
             \stdClass::class,
         ];
 
-        $this->setExpectedException(RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         StaticProviderCollectionFactory::build($container, $items);
     }
 }

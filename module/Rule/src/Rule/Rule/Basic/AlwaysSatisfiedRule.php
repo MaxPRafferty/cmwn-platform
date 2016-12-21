@@ -1,9 +1,9 @@
 <?php
 
-namespace Rule\Basic;
+namespace Rule\Rule\Basic;
 
 use Rule\Item\RuleItemInterface;
-use Rule\RuleInterface;
+use Rule\Rule\RuleInterface;
 
 /**
  * A Rule that is always happy

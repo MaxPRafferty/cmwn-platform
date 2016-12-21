@@ -2,17 +2,15 @@
 
 namespace RuleTest\Engine;
 
-use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\CallbackAction;
-use Rule\Basic\AlwaysSatisfiedRule;
+use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Engine\Engine;
 use Rule\Engine\Specification\ArraySpecification;
 use Rule\Engine\Specification\SpecificationCollection;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\ServiceManager;
 
 /**

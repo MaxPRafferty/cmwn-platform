@@ -1,6 +1,6 @@
 <?php
 
-namespace Rule;
+namespace Rule\Rule;
 
 use Rule\Item\RuleItemInterface;
 

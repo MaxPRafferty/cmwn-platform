@@ -2,17 +2,17 @@
 
 namespace User\Rule;
 
-use Rule\RuleInterface;
+use Rule\Rule\RuleInterface;
 use Rule\Item\RuleItemInterface;
-use Rule\TimesSatisfiedTrait;
+use Rule\Rule\TimesSatisfiedTrait;
 use User\UserInterface;
 
 /**
  * A Rule that is satisfied if the check_user matches a type
  */
-class TypeRule implements RuleInterface
+class TypeRule implements \Rule\Rule\RuleInterface
 {
-    use TimesSatisfiedTrait;
+    use \Rule\Rule\TimesSatisfiedTrait;
 
     /**
      * @var string

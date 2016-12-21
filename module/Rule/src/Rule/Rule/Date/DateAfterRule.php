@@ -1,10 +1,10 @@
 <?php
 
-namespace Rule\Date;
+namespace Rule\Rule\Date;
 
 use Rule\Item\RuleItemInterface;
-use Rule\RuleInterface;
-use Rule\TimesSatisfiedTrait;
+use Rule\Rule\RuleInterface;
+use Rule\Rule\TimesSatisfiedTrait;
 
 /**
  * Rule that states the current date must be after the specified date

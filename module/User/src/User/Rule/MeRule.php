@@ -2,9 +2,9 @@
 
 namespace User\Rule;
 
-use Rule\RuleInterface;
+use Rule\Rule\RuleInterface;
 use Rule\Item\RuleItemInterface;
-use Rule\TimesSatisfiedTrait;
+use Rule\Rule\TimesSatisfiedTrait;
 use User\UserInterface;
 
 /**
@@ -12,7 +12,7 @@ use User\UserInterface;
  */
 class MeRule implements RuleInterface
 {
-    use TimesSatisfiedTrait;
+    use \Rule\Rule\TimesSatisfiedTrait;
 
     /**
      * @inheritDoc

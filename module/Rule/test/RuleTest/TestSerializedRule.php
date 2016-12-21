@@ -3,7 +3,7 @@
 namespace RuleTest;
 
 use Rule\Item\RuleItemInterface;
-use Rule\RuleInterface;
+use Rule\Rule\RuleInterface;
 
 /**
  * Class TestSerializedRule
