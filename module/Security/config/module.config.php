@@ -22,16 +22,16 @@ return [
         ],
 
         'factories' => [
-            \Security\Listeners\UpdateSession::class      => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Security\Listeners\UserUpdateListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\UpdateSession::class          => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\UserUpdateListener::class     => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Security\Guard\CsrfGuard::class             => \Security\Factory\CsrfGuardFactory::class,
-            \Security\Guard\XsrfGuard::class             => \Security\Factory\XsrfGuardFactory::class,
-            \Security\Authorization\RouteListener::class => \Security\Authorization\RouteListenerFactory::class,
-            \Security\Service\SecurityService::class     => \Security\Service\SecurityServiceFactory::class,
-            \Security\Service\SecurityOrgService::class  => \Security\Service\SecurityOrgServiceFactory::class,
-            \Security\Authentication\AuthAdapter::class  => \Security\Authentication\AuthAdapterFactory::class,
-            \Security\Authorization\Rbac::class          => \Security\Authorization\RbacFactory::class,
+            \Security\Guard\CsrfGuard::class                  => \Security\Factory\CsrfGuardFactory::class,
+            \Security\Guard\XsrfGuard::class                  => \Security\Factory\XsrfGuardFactory::class,
+            \Security\Authorization\RouteListener::class      => \Security\Authorization\RouteListenerFactory::class,
+            \Security\Service\SecurityService::class          => \Security\Service\SecurityServiceFactory::class,
+            \Security\Service\SecurityOrgService::class       => \Security\Service\SecurityOrgServiceFactory::class,
+            \Security\Authentication\AuthAdapter::class       => \Security\Authentication\AuthAdapterFactory::class,
+            \Security\Authorization\Rbac::class               => \Security\Authorization\RbacFactory::class,
 
             \Security\Listeners\UserServiceListener::class => \Security\Factory\UserServiceListenerFactory::class,
 
