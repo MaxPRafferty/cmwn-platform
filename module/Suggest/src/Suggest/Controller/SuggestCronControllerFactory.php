@@ -27,5 +27,4 @@ class SuggestCronControllerFactory implements FactoryInterface
             $container->get(JobServiceInterface::class)
         );
     }
-
 }

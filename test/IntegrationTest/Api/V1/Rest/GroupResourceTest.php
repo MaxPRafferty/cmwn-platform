@@ -271,7 +271,6 @@ class GroupResourceTest extends TestCase
 
         $this->assertArrayHasKey('_links', $body);
         $this->assertArrayNotHasKey('group_reset', $body['_links']);
-
     }
 
     /**
