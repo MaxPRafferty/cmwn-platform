@@ -44,7 +44,7 @@ class GameDelegator implements GameServiceInterface
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -52,7 +52,7 @@ class GameDelegator implements GameServiceInterface
         $return = $this->gameService->fetchAll($where, $paginate, $prototype);
         $event->setName('fetch.all.games.post');
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -63,7 +63,7 @@ class GameDelegator implements GameServiceInterface
     public function fetchGame($gameId)
     {
         $event    = new Event('fetch.game', $this->gameService, ['game_id' => $gameId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -73,7 +73,7 @@ class GameDelegator implements GameServiceInterface
         $event->setName('fetch.game.post');
         $event->setParam('game', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -84,7 +84,7 @@ class GameDelegator implements GameServiceInterface
     public function saveGame(GameInterface $game)
     {
         $event = new Event('update.game', $this->gameService, ['game' => $game]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -92,7 +92,7 @@ class GameDelegator implements GameServiceInterface
 
         $return = $this->gameService->saveGame($game);
         $event->setName('update.game.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -103,7 +103,7 @@ class GameDelegator implements GameServiceInterface
     public function createGame(GameInterface $game)
     {
         $event = new Event('create.game', $this->gameService, ['game' => $game]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -111,7 +111,7 @@ class GameDelegator implements GameServiceInterface
 
         $return = $this->gameService->createGame($game);
         $event->setName('create.game.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -122,7 +122,7 @@ class GameDelegator implements GameServiceInterface
     public function deleteGame(GameInterface $game, $soft = true)
     {
         $event = new Event('delete.game', $this->gameService, ['game' => $game]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -130,7 +130,7 @@ class GameDelegator implements GameServiceInterface
 
         $return = $this->gameService->deleteGame($game);
         $event->setName('delete.game.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

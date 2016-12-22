@@ -2,26 +2,20 @@
 
 namespace Api\V1\Rest\Logout;
 
+use Interop\Container\ContainerInterface;
 use Zend\Authentication\AuthenticationService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class LogoutResourceFactory
- * @package Api\V1\Rest\Logout
  */
 class LogoutResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var AuthenticationService $authService */
-        $authService = $serviceLocator->get(AuthenticationService::class);
-        return new LogoutResource($authService);
+        return new LogoutResource($container->get(AuthenticationService::class));
     }
 }

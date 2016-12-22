@@ -2,10 +2,10 @@
 
 namespace Security\Factory;
 
+use Interop\Container\ContainerInterface;
 use Security\Authorization\Assertions\UserAssertion;
 use Security\Service\SecurityGroupServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UserAssertionFactory
@@ -13,16 +13,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class UserAssertionFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SecurityGroupServiceInterface $securityGroupService */
-        $securityGroupService = $serviceLocator->get(SecurityGroupServiceInterface::class);
-        return new UserAssertion($securityGroupService);
+        return new UserAssertion($container->get(SecurityGroupServiceInterface::class));
     }
 }

@@ -2,26 +2,22 @@
 
 namespace Security\Authentication;
 
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class AuthAdapterFactory
- * @package Security\Authentication
  */
 class AuthAdapterFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SecurityServiceInterface $securityService */
-        $securityService = $serviceLocator->get(SecurityServiceInterface::class);
-        return new AuthAdapter($securityService);
+        return new AuthAdapter(
+            $container->get(SecurityServiceInterface::class)
+        );
     }
 }

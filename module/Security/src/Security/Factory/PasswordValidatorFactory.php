@@ -2,11 +2,11 @@
 
 namespace Security\Factory;
 
+use Interop\Container\ContainerInterface;
 use Security\PasswordValidator;
 use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class PasswordValidatorFactory
@@ -14,23 +14,11 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class PasswordValidatorFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $validator      = new PasswordValidator();
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-
-        /** @var AuthenticationServiceInterface $authService */
-        $authService = $serviceLocator->get(AuthenticationServiceInterface::class);
-        $validator->setAuthenticationService($authService);
-        
-        return $validator;
+        $validator = new PasswordValidator();
+        $validator->setAuthenticationService($container->get(AuthenticationServiceInterface::class));
     }
 }

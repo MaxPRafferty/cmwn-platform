@@ -5,8 +5,6 @@ namespace Security;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Validator\Exception;
 use Zend\Validator\Regex;
 use Zend\Validator\ValidatorInterface;
 

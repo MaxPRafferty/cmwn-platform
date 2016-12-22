@@ -2,9 +2,9 @@
 
 namespace Notice\Factory;
 
+use Interop\Container\ContainerInterface;
 use Notice\NotifierListener;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class NotifierListenerFactory
@@ -12,15 +12,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class NotifierListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config       = $serviceLocator->get('config');
+        $config       = $container->get('config');
         $notifyConfig = array_key_exists('notify', $config) ? $config['notify'] : ['listeners' => []];
-        return new NotifierListener($serviceLocator, $notifyConfig);
+        return new NotifierListener($container, $notifyConfig);
     }
 }

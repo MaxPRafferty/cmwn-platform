@@ -3,20 +3,19 @@
 namespace Suggest\Filter;
 
 use Group\Service\UserGroupService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ClassFilterFactory
- * @package Suggest\Filter
  */
 class ClassFilterFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ClassFilter($serviceLocator->get(UserGroupService::class));
+        return new ClassFilter($container->get(UserGroupService::class));
     }
 }

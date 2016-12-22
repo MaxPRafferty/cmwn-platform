@@ -2,23 +2,20 @@
 
 namespace Api\V1\Rest\GroupReset;
 
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class GroupResetResourceFactory
- * @package Api\V1\Rest\GroupReset
  */
 class GroupResetResourceFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return GroupResetResource
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $securityService = $serviceLocator->get(SecurityServiceInterface::class);
-        return new GroupResetResource($securityService);
+        return new GroupResetResource($container->get(SecurityServiceInterface::class));
     }
 }

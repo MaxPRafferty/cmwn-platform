@@ -19,13 +19,11 @@ return array(
         13 => \Api\Listeners\OrgLinkListener::class,
     ),
     'service_manager' => array(
-        'invokables' => array(
-            'Api\\Listeners\\ChangePasswordListener' => 'Api\\Listeners\\ChangePasswordListener',
-            'Api\\Listeners\\TemplateLinkListener' => 'Api\\Listeners\\TemplateLinkListener',
-            'Api\\Listeners\\UserParamListener' => 'Api\\Listeners\\UserParamListener',
-            \Api\Listeners\OrgLinkListener::class => \Api\Listeners\OrgLinkListener::class,
-        ),
         'factories' => array(
+            'Api\\Listeners\\ChangePasswordListener' => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            'Api\\Listeners\\TemplateLinkListener' => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            'Api\\Listeners\\UserParamListener' => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Api\Listeners\OrgLinkListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             'Api\\Listeners\\UserHalLinksListener' => 'Api\\Factory\\UserHalLinksListenerFactory',
             'Api\\Listeners\\ImportRouteListener' => 'Api\\Factory\\ImportRouteListenerFactory',
             'Api\\Listeners\\ScopeListener' => 'Api\\Factory\\ScopeListenerFactory',

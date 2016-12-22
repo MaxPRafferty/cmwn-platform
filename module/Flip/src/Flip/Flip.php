@@ -3,6 +3,7 @@
 namespace Flip;
 
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Class Flip
@@ -60,7 +61,7 @@ class Flip implements FlipInterface
         $array = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
-            $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
+            $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }

@@ -2,21 +2,20 @@
 
 namespace Suggest\Listener;
 
+use Interop\Container\ContainerInterface;
 use Suggest\Service\SuggestedServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class DeleteSuggestionListenerFactory
- * @package Suggest\Listener
  */
 class DeleteSuggestionListenerFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new DeleteSuggestionListener($serviceLocator->get(SuggestedServiceInterface::class));
+        return new DeleteSuggestionListener($container->get(SuggestedServiceInterface::class));
     }
 }

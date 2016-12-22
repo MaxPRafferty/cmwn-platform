@@ -75,7 +75,7 @@ class HttpAuthListener implements AuthenticationServiceAwareInterface, LoggerAwa
     public function detachShared(SharedEventManagerInterface $manager)
     {
         foreach ($this->listeners as $listener) {
-            $manager->detach('Zend\Mvc\Application', $listener);
+            $manager->detach($listener, 'Zend\Mvc\Application');
         }
     }
 

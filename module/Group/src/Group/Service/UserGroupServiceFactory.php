@@ -2,29 +2,23 @@
 
 namespace Group\Service;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UserGroupServiceFactory
- * @package Group\Service
  */
 class UserGroupServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Adapter $adapter */
-        $adapter = $serviceLocator->get(Adapter::class);
         return new UserGroupService(
-            new TableGateway('user_groups', $adapter)
+            new TableGateway('user_groups', $container->get(Adapter::class))
         );
     }
 }

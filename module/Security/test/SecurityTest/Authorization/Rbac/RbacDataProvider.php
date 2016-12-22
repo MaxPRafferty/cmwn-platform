@@ -5,6 +5,7 @@ namespace SecurityTest\Authorization\Rbac;
 use Application\Exception\NotFoundException;
 use ArrayIterator;
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Class RbacDataProvider
@@ -57,7 +58,7 @@ class RbacDataProvider implements \IteratorAggregate
 
         foreach ($this->roleNames as $roleName) {
             $className = __NAMESPACE__ . '\\' . ucfirst(
-                StaticFilter::execute(str_replace('.', '_', $roleName), 'Word\UnderscoreToCamelCase')
+                StaticFilter::execute(str_replace('.', '_', $roleName), UnderscoreToCamelCase::class)
             ) . 'DataProvider';
 
             if (!class_exists($className)) {

@@ -2,26 +2,19 @@
 
 namespace User\Service;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class RandomNameListenerFactory
- * @codeCoverageIgnore
  */
 class RandomNameListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $services
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $services)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var TableGateway $tableGateway */
-        $tableGateway = $services->get('NamesTable');
-        return new RandomNameListener($tableGateway);
+        return new RandomNameListener($container->get('NamesTable'));
     }
 }

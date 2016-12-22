@@ -2,11 +2,11 @@
 
 namespace Security\Factory;
 
+use Interop\Container\ContainerInterface;
 use Security\Guard\CsrfGuard;
 use Security\Listeners\HttpAuthListener;
 use Zend\Authentication\Adapter\Http;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class HttpAuthListenerFactory
@@ -16,10 +16,8 @@ class HttpAuthListenerFactory implements FactoryInterface
     /**
      * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $adapter = $serviceLocator->get(Http::class);
-        $guard   = $serviceLocator->get(CsrfGuard::class);
-        return new HttpAuthListener($adapter, $guard);
+        return new HttpAuthListener($container->get(Http::class), $container->get(CsrfGuard::class));
     }
 }

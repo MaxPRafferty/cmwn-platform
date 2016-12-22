@@ -2,31 +2,23 @@
 
 namespace Security\Authorization;
 
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 /**
  * Class RbacAwareInitializer
- *
- * ${CARET}
  */
 class RbacAwareInitializer implements InitializerInterface
 {
     /**
-     * Initialize
-     *
-     * @param $instance
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if (!$instance instanceof RbacAwareInterface) {
             return;
         }
 
-        /** @var Rbac $rbac */
-        $rbac = $serviceLocator->get(Rbac::class);
-        $instance->setRbac($rbac);
+        $instance->setRbac($container->get(Rbac::class));
     }
 }

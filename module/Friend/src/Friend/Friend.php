@@ -31,6 +31,9 @@ class Friend extends User implements FriendInterface
         return $array;
     }
 
+    /**
+     * @param array $array
+     */
     public function exchangeArray(array $array)
     {
         parent::exchangeArray($array);

@@ -7,10 +7,8 @@ return [
             'Organization\Service'                           => \Org\Service\OrganizationService::class,
             \Org\Service\OrganizationServiceInterface::class => \Org\Service\OrganizationService::class,
         ],
-        'invokables' => [
-            \Org\Delegator\OrganizationDelegatorFactory::class => \Org\Delegator\OrganizationDelegatorFactory::class,
-        ],
         'factories'  => [
+            \Org\Delegator\OrganizationDelegatorFactory::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Org\Service\OrganizationService::class => \Org\Service\OrganizationServiceFactory::class,
         ],
         'delegators' => [

@@ -27,14 +27,14 @@ class ServiceManagerTest extends TestCase
      * @var array
      */
     protected $blackList = [
-        'ZF\OAuth2\Adapter\PdoAdapter',
-        'ZF\OAuth2\Adapter\IbmDb2Adapter',
-        'ZF\OAuth2\Adapter\MongoAdapter',
-        'Zend\Session\SessionManager',
+        \ZF\OAuth2\Adapter\PdoAdapter::class,
+        \ZF\OAuth2\Adapter\IbmDb2Adapter::class,
+        \ZF\OAuth2\Adapter\MongoAdapter::class,
+        \Zend\Session\SessionManager::class,
         'Log\App',
-        'ZF\Configuration\ConfigResource',
-        'AwsModule\Session\SaveHandler\DynamoDb',
-        'Api\V1\Rest\RestoreDb\RestoreDbResource',
+        \ZF\Configuration\ConfigResource::class,
+        \AwsModule\Session\SaveHandler\DynamoDb::class,
+        'mailviewrenderer',
     ];
 
     /**
@@ -77,14 +77,14 @@ class ServiceManagerTest extends TestCase
     }
 
     /**
-     * @param $service
+     * @param $serviceName
      *
      * @dataProvider servicesProvider
      */
-    public function testItShouldBeAbleToLoadService($service)
+    public function testItShouldBeAbleToLoadService($serviceName)
     {
         try {
-            $this->getServiceManager()->get($service);
+            $service = $this->getServiceManager()->get($serviceName);
         } catch (\Exception $serviceException) {
             $previous   = $serviceException;
             $prevString = '';
@@ -95,12 +95,15 @@ class ServiceManagerTest extends TestCase
 
             $this->fail(sprintf(
                 'Unable to load service "%s": %s \n%s',
-                $service,
+                $serviceName,
                 $serviceException->getMessage(),
                 $prevString
             ));
+
+            return;
         }
 
+        $this->assertNotNull($service);
         $this->assertTrue(true);
     }
 }

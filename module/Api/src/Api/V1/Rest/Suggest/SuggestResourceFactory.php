@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\Suggest;
 
+use Interop\Container\ContainerInterface;
 use Suggest\Service\SuggestedServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SuggestResourceFactory
@@ -12,15 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SuggestResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SuggestedServiceInterface $suggestService */
-        $suggestService = $serviceLocator->get(SuggestedServiceInterface::class);
-        return new SuggestResource($suggestService);
+        return new SuggestResource($container->get(SuggestedServiceInterface::class));
     }
 }

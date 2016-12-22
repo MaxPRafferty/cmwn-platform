@@ -3,8 +3,8 @@
 namespace Job\Aws\Sns;
 
 use Aws\Sdk;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
 /**
  * Class SnsJobServiceAbstractFactory
@@ -12,37 +12,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SnsJobServiceAbstractFactory implements AbstractFactoryInterface
 {
     /**
-     * @inheritDoc
-     */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        $config = $this->getConfig($serviceLocator, $requestedName);
-
-        return $config !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        $config = $this->getConfig($serviceLocator, $requestedName);
-        $snsArn = $config['sns-arn'];
-
-        /** @var Sdk $aws */
-        $aws       = $serviceLocator->get(Sdk::class);
-        $sqsClient = $aws->createSns(['version' => 'latest', 'region' => 'us-east-1']);
-
-        return new SnsJobService($sqsClient, $snsArn);
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $serviceLocator
      * @param $requestedName
      *
      * @return bool
      */
-    protected function getConfig(ServiceLocatorInterface $serviceLocator, $requestedName)
+    protected function getConfig(ContainerInterface $serviceLocator, $requestedName)
     {
         $configKey = strtolower(str_replace('Sns', '', $requestedName) . '-sns-config');
         $config    = $serviceLocator->get('Config');
@@ -51,5 +26,28 @@ class SnsJobServiceAbstractFactory implements AbstractFactoryInterface
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canCreate(ContainerInterface $container, $requestedName)
+    {
+        return $this->getConfig($container, $requestedName) !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = $this->getConfig($container, $requestedName);
+        $snsArn = $config['sns-arn'];
+
+        /** @var Sdk $aws */
+        $aws       = $container->get(Sdk::class);
+        $sqsClient = $aws->createSns(['version' => 'latest', 'region' => 'us-east-1']);
+
+        return new SnsJobService($sqsClient, $snsArn);
     }
 }

@@ -71,7 +71,6 @@ class GroupEntity extends Group implements GroupInterface, LinkCollectionAwareIn
 
     /**
      * @param LinkCollection $links
-     * @return mixed
      */
     public function setLinks(LinkCollection $links)
     {

@@ -3,7 +3,6 @@
 namespace Api\Listeners;
 
 use Api\Links\ForgotLink;
-use Api\Links\PasswordLink;
 use Api\Links\ResetLink;
 use Api\V1\Rest\User\MeEntity;
 use Api\V1\Rest\User\UserEntity;
@@ -13,7 +12,6 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\SecurityUser;
 use Security\Service\SecurityGroupServiceInterface;
-use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
@@ -24,6 +22,7 @@ use ZF\Hal\Plugin\Hal;
  * Class UserHalLinksListener
  *
  * Adjusts the hal links for a user based on the user permissions
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserHalLinksListener implements AuthenticationServiceAwareInterface, RbacAwareInterface
 {
@@ -93,7 +92,7 @@ class UserHalLinksListener implements AuthenticationServiceAwareInterface, RbacA
 
         // renderCollection will set the entity param as the actual entity
         // renderEntity will set the entity param as the HalEntity
-        $realEntity = $entity instanceof Entity ? $entity->entity : $entity;
+        $realEntity = $entity instanceof Entity ? $entity->getEntity() : $entity;
         if (!$realEntity instanceof UserEntity) {
             return;
         }

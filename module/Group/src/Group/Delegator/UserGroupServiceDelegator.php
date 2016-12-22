@@ -58,8 +58,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
 
         $hideListener->setEntityParamKey('item');
         $hideListener->setDeletedField('u.deleted');
-
-        $this->getEventManager()->attach($hideListener);
+        $hideListener->attach($this->getEventManager());
     }
 
     /**
@@ -75,7 +74,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     {
         $eventParams = ['group' => $group, 'user' => $user, 'role' => $role];
         $event       = new Event('attach.user', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -84,13 +83,13 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event                    = new Event('attach.user.error', $this->realService, $eventParams);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return false;
         }
 
         $event = new Event('attach.user.post', $this->realService, $eventParams);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -105,7 +104,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     {
         $eventParams = ['group' => $group, 'user' => $user];
         $event       = new Event('detach.user', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -114,13 +113,13 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event                    = new Event('detach.user.error', $this->realService, $eventParams);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return false;
         }
 
         $event = new Event('detach.user.post', $this->realService, $eventParams);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -136,7 +135,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $where       = $this->createWhere($where);
         $eventParams = ['group' => $group, 'where' => $where];
         $event       = new Event('fetch.group.users', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -145,13 +144,13 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event                    = new Event('fetch.group.users.error', $this->realService, $eventParams);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return false;
         }
 
         $event = new Event('fetch.group.users.post', $this->realService, $eventParams);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -167,7 +166,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         $where       = $this->createWhere($where);
         $eventParams = ['organization' => $organization, 'where' => $where];
         $event       = new Event('fetch.org.users', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -176,13 +175,13 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $eventParams['exception'] = $attachException;
             $event                    = new Event('fetch.org.users.error', $this->realService, $eventParams);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return false;
         }
 
         $event = new Event('fetch.org.users.post', $this->realService, $eventParams);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -204,7 +203,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     {
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.group', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -215,13 +214,13 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
             //FIXME re-throw the exception
             $event->setParam('exception', $fetchException);
             $event->setName('fetch.user.group.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             throw $fetchException;
         }
 
         $event->setName('fetch.user.group.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -236,7 +235,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     {
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.orgs', $this->realService, $eventParams);
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return false;
         }
 
@@ -246,13 +245,13 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
             //FIXME re-throw the exception
             $event->setParam('exception', $attachException);
             $event->setName('fetch.user.orgs.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return false;
         }
 
         $event->setName('fetch.user.orgs.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -268,7 +267,7 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     {
         $eventParams = ['user' => $user, 'where' => $where, 'prototype' => $prototype];
         $event       = new Event('fetch.all.user.users', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -280,11 +279,11 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
         } catch (\Exception $attachException) {
             $event->setParam('exception', $attachException);
             $event->setName('fetch.all.user.users.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             return false; //FIXME throw exception again
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 }

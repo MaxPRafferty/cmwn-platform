@@ -2,26 +2,20 @@
 
 namespace Security\Service;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SecurityOrgServiceFactory
- * @package Security\Service
  */
 class SecurityOrgServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $services
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $services)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Adapter $adapter */
-        $adapter   = $services->get(Adapter::class);
-        return new SecurityOrgService($adapter);
+        return new SecurityOrgService($container->get(Adapter::class));
     }
 }

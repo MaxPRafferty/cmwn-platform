@@ -2,9 +2,9 @@
 
 namespace Security\Factory;
 
+use Interop\Container\ContainerInterface;
 use Security\Listeners\ExpireAuthSessionListener;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
 
@@ -14,16 +14,10 @@ use Zend\Session\SessionManager;
 class ExpireAuthSessionListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SessionManager $session */
-        $session = $serviceLocator->get(SessionManager::class);
-        return new ExpireAuthSessionListener(new Container('auth_timer', $session));
+        return new ExpireAuthSessionListener(new Container('auth_timer', $container->get(SessionManager::class)));
     }
 }

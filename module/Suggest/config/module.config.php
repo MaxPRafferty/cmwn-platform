@@ -16,23 +16,27 @@ return [
         'aliases'    => [
             \Suggest\Service\SuggestedServiceInterface::class => \Suggest\Service\SuggestedService::class,
         ],
-        'invokables' => [
-            \Suggest\Delegator\SuggestedServiceDelegatorFactory::class =>
-                \Suggest\Delegator\SuggestedServiceDelegatorFactory::class,
-            \Suggest\Rule\TypeRule::class                              => \Suggest\Rule\TypeRule::class,
-            \Suggest\Rule\MeRule::class                                => \Suggest\Rule\MeRule::class,
-        ],
         'factories'  => [
-            \Suggest\Service\SuggestedService::class            => \Suggest\Service\SuggestedServiceFactory::class,
-            \Suggest\Engine\SuggestionEngine::class             => \Suggest\Engine\SuggestionEngineFactory::class,
-            \Suggest\Filter\ClassFilter::class                  => \Suggest\Filter\ClassFilterFactory::class,
-            \Suggest\Rule\FriendRule::class                     => \Suggest\Rule\FriendRuleFactory::class,
-            \Suggest\Listener\TriggerSuggestionsListener::class =>
+            \Suggest\Delegator\SuggestedServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Suggest\Rule\TypeRule::class                              =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Suggest\Rule\MeRule::class                                =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Suggest\Service\SuggestedService::class                   =>
+                \Suggest\Service\SuggestedServiceFactory::class,
+            \Suggest\Engine\SuggestionEngine::class                    =>
+                \Suggest\Engine\SuggestionEngineFactory::class,
+            \Suggest\Filter\ClassFilter::class                         =>
+                \Suggest\Filter\ClassFilterFactory::class,
+            \Suggest\Rule\FriendRule::class                            => \Suggest\Rule\FriendRuleFactory::class,
+            \Suggest\Listener\TriggerSuggestionsListener::class        =>
                 \Suggest\Listener\TriggerSuggestionsListenerFactory::class,
-            \Suggest\Listener\DeleteSuggestionListener::class   =>
+            \Suggest\Listener\DeleteSuggestionListener::class          =>
                 \Suggest\Listener\DeleteSuggestionListenerFactory::class,
-            \Suggest\Rule\RuleCollection::class                 => \Suggest\Rule\RuleCollectionFactory::class,
-            \Suggest\Filter\FilterCollection::class             => \Suggest\Filter\FilterCollectionFactory::class,
+            \Suggest\Rule\RuleCollection::class                        => \Suggest\Rule\RuleCollectionFactory::class,
+            \Suggest\Filter\FilterCollection::class                    =>
+                \Suggest\Filter\FilterCollectionFactory::class,
         ],
         'delegators' => [
             \Suggest\Service\SuggestedService::class => [
