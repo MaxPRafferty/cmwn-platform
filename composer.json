@@ -2,7 +2,7 @@
   "name": "cmwn/platform",
   "description": "API layer for CMWN",
   "license": "proprietary",
-  "version": "0.8",
+  "version": "0.8.0",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
