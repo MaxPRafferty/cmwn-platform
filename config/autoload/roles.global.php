@@ -142,7 +142,6 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'sa.settings',
-                    'restore.db.state',
                     'create.game',
                     'view.game',
                     'update.game',
