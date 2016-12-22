@@ -114,7 +114,13 @@ type of provider:
 
 ### Provider Collection
 
-This is a holder for all providers that allows access to all the data.  
+This is a holder for all providers that allows access to all the data.
 
+# TODO
+
+- [ ] Add Provider Plugin manager
+- [ ] Add Rule Plugin manager
+- [ ] Add Action plugin manager
+- [ ] Add DB Engine Specification
 
 

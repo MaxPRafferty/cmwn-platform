@@ -120,7 +120,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
         if (!$realEntity instanceof FriendInterface) {
             return;
         }

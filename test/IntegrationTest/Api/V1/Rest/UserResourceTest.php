@@ -86,7 +86,6 @@ class UserResourceTest extends TestCase
         $this->assertFalse($this->getAuthService()->hasIdentity());
         $this->dispatch('/user/english_student');
         $this->assertResponseStatusCode(401);
-        $this->assertCorrectCorsHeaders();
     }
 
     /**
@@ -105,7 +104,6 @@ class UserResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
         $this->assertNotRedirect();
-        $this->assertCorrectCorsHeaders();
     }
 
     /**
@@ -124,7 +122,6 @@ class UserResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
         $this->assertNotRedirect();
-        $this->assertCorrectCorsHeaders();
 
         $body = $this->getResponse()->getContent();
 

@@ -10,6 +10,7 @@ use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -19,7 +20,7 @@ use Zend\Paginator\Adapter\DbSelect;
  * @package Group\Delegator
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class GroupDelegator implements GroupServiceInterface
+class GroupDelegator implements GroupServiceInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
     use ServiceTrait;

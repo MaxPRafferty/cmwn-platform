@@ -14,7 +14,6 @@ return [
     'Zend\Validator',
     'Zend\Serializer',
     'Zend\Mvc\Console',
-    'ZF\MvcAuth',
     'ZF\ApiProblem',
     'ZF\Versioning',
     'ZF\ContentNegotiation',

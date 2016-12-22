@@ -64,7 +64,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     {
         $entity = $event->getParam('entity');
         $entity = !$entity instanceof TokenEntityInterface && $entity instanceof Entity
-            ? $entity->entity
+            ? $entity->getEntity()
             : $entity;
 
         if (!$entity instanceof TokenEntityInterface) {
