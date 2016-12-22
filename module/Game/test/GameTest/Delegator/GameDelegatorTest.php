@@ -13,6 +13,7 @@ use Zend\EventManager\Event;
 /**
  * Class GameDelegatorTest
  * @package GameTest\Delegator
+ * @SuppressWarnings(PHPMD)
  */
 class GameDelegatorTest extends TestCase
 {

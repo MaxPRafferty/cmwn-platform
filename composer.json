@@ -60,7 +60,7 @@
     "phpunit/php-token-stream": "1.4.9",
     "zfcampus/zf-development-mode": "~2.0",
     "squizlabs/php_codesniffer": "2.5.1",
-    "phpmd/phpmd": "2.3.2",
+    "phpmd/phpmd": "~2.5",
     "zendframework/zftool": "dev-master",
     "zendframework/zend-developer-tools": "dev-master",
     "zfcampus/zf-apigility-admin": "1.4.1",
