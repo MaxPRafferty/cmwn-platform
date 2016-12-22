@@ -604,6 +604,25 @@ class UserResourceTest extends TestCase
         $this->dispatch('/user', 'POST', $postData);
         $this->assertResponseStatusCode(422);
     }
+
+    /**
+     * test
+     * @ticket CORE-2746
+     */
+    public function testItShouldFetchUsersByType()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?type=CHILD');
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayHasKey('total_items', $body);
+    }
+
     /** test
      * @ticket CORE-2331
      * @group MissingApiRoute

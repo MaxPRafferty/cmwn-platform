@@ -94,8 +94,17 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
      */
     public function fetchAll($params = [])
     {
+        $where = null;
+
+        if (isset($params['type'])) {
+            $type = $params['type'];
+            $where = [];
+            $where['u.type'] = $type;
+            $where['u.super'] = 0;
+        }
+
         /** @var DbSelect $users */
-        $users = $this->service->fetchAll(null, true, new UserEntity());
+        $users = $this->service->fetchAll($where, true, new UserEntity());
 
         return new UserCollection($users);
     }
