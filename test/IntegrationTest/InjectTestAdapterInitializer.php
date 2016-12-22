@@ -2,10 +2,10 @@
 
 namespace IntegrationTest;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Driver\Pdo\Connection;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 /**
  * Class InjectTestAdapterListener
@@ -13,19 +13,14 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class InjectTestAdapterInitializer implements InitializerInterface
 {
     /**
-     * Initialize
-     *
-     * @param $instance
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if (!$instance instanceof Adapter) {
             return;
         }
-        
+
         $connection = $instance->getDriver()->getConnection();
         if (!$connection instanceof Connection) {
             return;

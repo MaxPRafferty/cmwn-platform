@@ -20,5 +20,6 @@ class PasswordValidatorFactory implements FactoryInterface
     {
         $validator = new PasswordValidator();
         $validator->setAuthenticationService($container->get(AuthenticationServiceInterface::class));
+        return $validator;
     }
 }

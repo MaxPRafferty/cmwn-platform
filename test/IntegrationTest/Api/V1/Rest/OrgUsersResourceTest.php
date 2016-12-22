@@ -76,7 +76,6 @@ class OrgUsersResourceTest extends TestCase
         $this->assertNotRedirect();
         $this->assertMatchedRouteName('api.rest.org-users');
         $this->assertControllerName('api\v1\rest\orgusers\controller');
-        $this->assertCorrectCorsHeaders();
 
         $body = $this->getResponse()->getContent();
 
