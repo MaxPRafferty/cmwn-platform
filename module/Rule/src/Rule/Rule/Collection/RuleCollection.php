@@ -9,6 +9,7 @@ use Rule\Item\RuleItemInterface;
 use Rule\Rule\Collection;
 use Rule\Rule\RuleInterface;
 use Rule\Rule\TimesSatisfiedTrait;
+use Zend\Stdlib\ArrayObject;
 
 /**
  * A Collection of rules
@@ -20,7 +21,7 @@ class RuleCollection implements RuleCollectionInterface, \Countable
     use TimesSatisfiedTrait;
 
     /**
-     * @var \ArrayObject|RuleInterface[]
+     * @var ArrayObject|RuleInterface[]
      */
     protected $rules;
 
@@ -29,7 +30,7 @@ class RuleCollection implements RuleCollectionInterface, \Countable
      */
     public function __construct()
     {
-        $this->rules = new \ArrayObject();
+        $this->rules = new ArrayObject();
     }
 
     /**
@@ -77,7 +78,7 @@ class RuleCollection implements RuleCollectionInterface, \Countable
                     $this->rules->offsetSet($orGroup, new EitherRule());
                 }
 
-                $this->rules->offsetGet($orGroup)->append($rule);
+                $this->rules->offsetGet($orGroup)->getRulesCollection()->append($rule);
         }
 
         return $this;
@@ -99,5 +100,13 @@ class RuleCollection implements RuleCollectionInterface, \Countable
         };
 
         return $this->timesSatisfied === $this->rules->count();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toArray(): array
+    {
+        return $this->rules->getArrayCopy();
     }
 }

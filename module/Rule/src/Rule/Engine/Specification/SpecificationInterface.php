@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Rule\Action\ActionCollectionInterface;
 use Rule\Provider\ProviderCollectionInterface;
 use Rule\Rule\Collection\RuleCollectionInterface;
+use Rule\Rule\Service\RuleManager;
 
 /**
  * A Specification the engine uses to build and run rules
@@ -38,11 +39,11 @@ interface SpecificationInterface
     /**
      * Allows the specification to build all the rules from the container
      *
-     * @param ContainerInterface $services
+     * @param RuleManager $ruleManager
      *
      * @return RuleCollectionInterface
      */
-    public function getRules(ContainerInterface $services): RuleCollectionInterface;
+    public function getRules(RuleManager $ruleManager): RuleCollectionInterface;
 
     /**
      * Allows the specification to build all the actions from the container

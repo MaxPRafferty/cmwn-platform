@@ -13,6 +13,7 @@ use Rule\Provider\ProviderCollectionInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\Rule\Collection\RuleCollection;
 use Rule\Rule\Collection\RuleCollectionInterface;
+use Rule\Rule\Service\RuleManager;
 use Rule\Rule\StaticRuleFactory;
 
 /**
@@ -98,7 +99,7 @@ class ArraySpecification implements SpecificationInterface
     /**
      * @inheritDoc
      */
-    public function getRules(ContainerInterface $services): RuleCollectionInterface
+    public function getRules(RuleManager $services): RuleCollectionInterface
     {
         if (null !== $this->rules) {
             return $this->rules;
@@ -107,7 +108,9 @@ class ArraySpecification implements SpecificationInterface
         $this->rules = new RuleCollection();
         array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
             $operator = $ruleSpec['operator'] ?? 'and';
-            $rule     = StaticRuleFactory::build($services, ...array_values($ruleSpec['rule']));
+            $name     = $ruleSpec['rule']['name'] ?? null;
+            $options  = $ruleSpec['rule']['options'] ?? [];
+            $rule     = $services->build($name, $options);
             $this->rules->append($rule, $operator);
         });
 

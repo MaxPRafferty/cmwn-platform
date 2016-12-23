@@ -5,7 +5,7 @@ namespace Rule\Engine;
 use Interop\Container\ContainerInterface;
 use Rule\Engine\Specification\SpecificationInterface;
 use Rule\Event\EventRuleItem;
-use Rule\Item\BasicRuleItem;
+use Rule\Rule\Service\RuleManager;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -42,7 +42,7 @@ class EngineHandler
     {
         $provider = $this->spec->buildProvider($this->container);
         $provider->setEvent($event);
-        if (!$this->spec->getRules($this->container)->isSatisfiedBy($provider)) {
+        if (!$this->spec->getRules($this->container->get(RuleManager::class))->isSatisfiedBy($provider)) {
             return;
         }
 
