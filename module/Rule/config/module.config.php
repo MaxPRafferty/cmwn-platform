@@ -36,7 +36,7 @@ return [
 
     'service_manager' => [
         'aliases'   => [
-            'config' => 'Config',
+            'RuleManager' => \Rule\Rule\Service\RuleManager::class,
         ],
         'factories' => [
             \Rule\Rule\Service\RuleManager::class => \Rule\Rule\Service\RuleManagerFactory::class,

@@ -12,7 +12,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
  * A Factory that will make a rule that has rule dependencies
  * Config options:
  *
- * 'rule__class'                     // Defines the class to use when building the class
+ * 'rule_class'                      // Defines the class to use when building the class
  * 'rules' => [                      // The specification for building the rules
  *      new AlwaysSatisfiedRule(),   // Appends a built rule
  *      AlwaysSatisfiedRule::class,  // Gets a rule from the Manager
@@ -25,6 +25,9 @@ use Zend\ServiceManager\Factory\FactoryInterface;
  *          'or_group' => when operation is "or" this will group together the rules
  *      ]
  * ]
+ *
+ * Under the hood, this builds a rules collection and checks if the rule is RuleCollectionAware.  If not
+ * all the rules from the collection are splatted into the constructor of the rule.
  *
  * @see DependantRuleFactory
  * @see RuleCollection
@@ -45,8 +48,8 @@ class DependantRuleFactory implements FactoryInterface
         $ruleClass = $options['rule_class'] ?? $requestedName;
         unset($options['rule_class']);
 
-        $ruleManager    = $container->get(RuleManager::class);
-        $ruleSpecs      = $options ?? [];
+        $ruleManager = $container->get(RuleManager::class);
+        $ruleSpecs   = $options ?? [];
 
         // bail early if we have no specs
         if (empty($ruleSpecs)) {

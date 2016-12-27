@@ -10,7 +10,7 @@ class FromEventNameProvider extends AbstractEventProvider
     /**
      * @inheritDoc
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->getEvent()->getName();
     }
