@@ -1,9 +1,9 @@
 <?php
 
-namespace RuleTest\Action;
+namespace RuleTest\Action\Collection;
 
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Action\ActionCollection;
+use Rule\Action\Collection\ActionCollection;
 use Rule\Action\CallbackAction;
 use Rule\Item\BasicRuleItem;
 

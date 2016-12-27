@@ -1,7 +1,8 @@
 <?php
 
-namespace Rule\Action;
+namespace Rule\Action\Collection;
 
+use Rule\Action\ActionInterface;
 use Rule\Item\RuleItemInterface;
 
 /**

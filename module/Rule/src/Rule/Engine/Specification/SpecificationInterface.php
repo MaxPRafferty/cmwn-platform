@@ -3,7 +3,7 @@
 namespace Rule\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
-use Rule\Action\ActionCollectionInterface;
+use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Provider\ProviderCollectionInterface;
 use Rule\Rule\Collection\RuleCollectionInterface;
 use Rule\Rule\Service\RuleManager;
@@ -50,7 +50,7 @@ interface SpecificationInterface
      *
      * @param ContainerInterface $services
      *
-     * @return ActionCollectionInterface
+     * @return \Rule\Action\Collection\ActionCollectionInterface
      */
     public function getActions(ContainerInterface $services): ActionCollectionInterface;
 

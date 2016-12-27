@@ -67,6 +67,7 @@ class RuleManagerTest extends TestCase
                     NotRule::class             => DependantRuleFactory::class,
                     EitherRule::class          => DependantRuleFactory::class,
                     RuleCollection::class      => RuleCollectionFactory::class,
+                    'MANCHUCK-IS-INSANE'       => DependantRuleFactory::class,
                 ],
                 'shared'    => [
                     AlwaysSatisfiedRule::class => true,
@@ -271,11 +272,12 @@ class RuleManagerTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldBuildReallyComplexRules()
+    public function testItShouldBuildReallyInsaneRules()
     {
         $andRule = $this->manager->build(
-            EitherRule::class,
+            'MANCHUCK-IS-INSANE',
             [
+                'rule_class' => EitherRule::class,
                 'rules'      => [
                     ['rule' => new AlwaysSatisfiedRule()],
                     ['rule' => AlwaysSatisfiedRule::class],

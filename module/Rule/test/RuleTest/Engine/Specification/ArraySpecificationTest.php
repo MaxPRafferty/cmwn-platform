@@ -4,7 +4,7 @@ namespace RuleTest\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
-use Rule\Action\ActionCollectionInterface;
+use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\NoopAction;
 use Rule\Event\Provider\EventProvider;
 use Rule\Event\Provider\FromEventNameProvider;

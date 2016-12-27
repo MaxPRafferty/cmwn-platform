@@ -1,6 +1,8 @@
 <?php
 
-namespace Rule\Action;
+namespace Rule\Action\Collection;
+
+use Rule\Action\ActionInterface;
 
 /**
  * An interface that defines a collection of ActionInterfaces

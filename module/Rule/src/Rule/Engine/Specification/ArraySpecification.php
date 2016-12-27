@@ -3,8 +3,8 @@
 namespace Rule\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
-use Rule\Action\ActionCollection;
-use Rule\Action\ActionCollectionInterface;
+use Rule\Action\Collection\ActionCollection;
+use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\ActionInterface;
 use Rule\Action\StaticActionFactory;
 use Rule\Exception\InvalidArgumentException;
@@ -32,7 +32,7 @@ class ArraySpecification implements SpecificationInterface
     protected $rules;
 
     /**
-     * @var ActionCollectionInterface
+     * @var \Rule\Action\Collection\ActionCollectionInterface
      */
     protected $actions;
 

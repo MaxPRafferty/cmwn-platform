@@ -30,16 +30,32 @@ return [
 
     'providers' => [],
 
-    'actions' => [],
+    'actions' => [
+        'aliases'            => [
+            \Rule\Action\Collection\ActionCollectionInterface::class => \Rule\Action\Collection\ActionCollection::class,
+        ],
+        'services'           => [
+            \Rule\Action\NoopAction::class => new \Rule\Action\NoopAction(),
+        ],
+        'factories'          => [
+            \Rule\Action\NoopAction::class                  => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Rule\Action\Collection\ActionCollection::class => \Rule\Action\Service\BuildActionCollectionFactory::class,
+        ],
+        'abstract_factories' => [
+            \Rule\Action\Service\ConfigActionFactory::class => \Rule\Action\Service\ConfigActionFactory::class,
+        ],
+    ],
 
     'specifications' => [],
 
     'service_manager' => [
         'aliases'   => [
-            'RuleManager' => \Rule\Rule\Service\RuleManager::class,
+            'RuleManager'   => \Rule\Rule\Service\RuleManager::class,
+            'ActionManager' => \Rule\Action\Service\ActionManager::class,
         ],
         'factories' => [
-            \Rule\Rule\Service\RuleManager::class => \Rule\Rule\Service\RuleManagerFactory::class,
+            \Rule\Rule\Service\RuleManager::class     => \Rule\Rule\Service\RuleManagerFactory::class,
+            \Rule\Action\Service\ActionManager::class => \Rule\Action\Service\ActionManagerFactory::class,
         ],
     ],
 ];

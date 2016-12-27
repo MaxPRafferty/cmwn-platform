@@ -14,19 +14,29 @@ use Zend\ServiceManager\Factory\FactoryInterface;
  *
  * Config options:
  *
- * 'rule_collection_class' => Defines the class to use when building the class (defaults: RuleCollection)
- * 'rules' => [                      // The specification for building the rules
- *      new AlwaysSatisfiedRule(),   // Appends a built rule
- *      AlwaysSatisfiedRule::class,  // Gets a rule from the Manager
- *      [                            // Builds a rule with options
+ * // Define an optional rule collection
+ * 'rule_collection_class' => 'Some\Rule\Collection',
+ *
+ * // Defines the dependencies for the rule
+ * 'rules' => [
+ *      // This will append the rule
+ *      new AlwaysSatisfiedRule(),
+ *
+ *      // This will GET the rule from the manager
+ *      'Manchuck/Rule',
+ *      AlwaysSatisfiedRule::class,
+ *
+ *     // This will build a rule with options
+ *     [
  *          'rule' => [
- *              'name' => The name of the rule to build or load
- *              'options' => Options the rule needs to build
+ *              'name'    => 'Some/Rule/To/Build',
+ *              'options' => ['foo', 'bar'],
  *          ],
  *          'operator' ("and" | "or" | "not") => the operator to use when adding the collection
  *          'or_group' => when operation is "or" this will group together the rules
  *      ]
  * ]
+ *
  *
  * @see DependantRuleFactory
  * @see RuleCollection
