@@ -3,6 +3,7 @@
 namespace Rule\Action\Service;
 
 use Rule\Action\ActionInterface;
+use Rule\Action\Collection\ActionCollectionInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\PluginManagerInterface;
 

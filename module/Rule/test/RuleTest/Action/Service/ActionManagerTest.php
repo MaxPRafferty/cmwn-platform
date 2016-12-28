@@ -5,6 +5,7 @@ namespace RuleTest\Action\Service;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\CallbackAction;
 use Rule\Action\Collection\ActionCollection;
+use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\NoopAction;
 use Rule\Action\Service\BuildActionCollectionFactory;
 use Rule\Action\Service\ActionManager;
@@ -48,15 +49,19 @@ class ActionManagerTest extends TestCase
     {
         $this->config = [
             'actions'                  => [
+                'aliases' => [
+                    ActionCollectionInterface::class => ActionCollection::class,
+                ],
                 'services'  => [
                     NoopAction::class => new NoopAction(),
                 ],
                 'factories' => [
                     NoopAction::class       => InvokableFactory::class,
                     CallbackAction::class   => BuildActionFromConfigFactory::class,
+                    ActionCollection::class => BuildActionCollectionFactory::class,
                 ],
                 'shared'    => [
-                    NoopAction::class       => true,
+                    ActionCollection::class       => true,
                 ],
                 'abstract_factories' => [
                     BuildActionFromConfigFactory::class => BuildActionFromConfigFactory::class,
@@ -284,6 +289,22 @@ class ActionManagerTest extends TestCase
             NoopAction::class,
             $iterator->current(),
             'Action Manager built the incorrect action in the collection for the 4th action'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldBuildActionCollection()
+    {
+        $collection = $this->manager->build(
+            ActionCollectionInterface::class,
+            [NoopAction::class]
+        );
+
+        $this->assertInstanceOf(
+            ActionCollection::class,
+            $collection
         );
     }
 }

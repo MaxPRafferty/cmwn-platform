@@ -13,8 +13,6 @@ interface RuleCollectionAwareInterface
      * This is designed to be fluent
      *
      * @param RuleCollectionInterface $collection
-     *
-     * @return RuleCollectionAwareInterface
      */
     public function setRulesCollection(RuleCollectionInterface $collection);
 

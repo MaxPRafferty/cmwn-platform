@@ -25,5 +25,4 @@ class BuildProviderFromConfigFactory extends AbstractConfigBuilderFactory implem
      * @inheritDoc
      */
     protected $instanceOf = ProviderInterface::class;
-
 }

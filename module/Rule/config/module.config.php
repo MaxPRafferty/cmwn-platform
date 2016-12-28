@@ -59,24 +59,50 @@ return [
             \Rule\Action\NoopAction::class                  => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Action\Collection\ActionCollection::class => \Rule\Action\Service\BuildActionCollectionFactory::class,
         ],
+        'shared'             => [
+            \Rule\Action\Collection\ActionCollection::class => false,
+        ],
         'abstract_factories' => [
             \Rule\Action\Service\BuildActionFromConfigFactory::class =>
                 \Rule\Action\Service\BuildActionFromConfigFactory::class,
         ],
     ],
 
-    'specifications' => [],
+    'specifications' => [
+        'aliases'            => [
+            \Rule\Engine\Specification\SpecificationCollectionInterface::class =>
+                \Rule\Engine\Specification\SpecificationCollection::class,
+        ],
+        'factories'          => [
+            \Rule\Engine\Specification\ArraySpecification::class      =>
+                \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            \Rule\Engine\Specification\SpecificationCollection::class =>
+                \Rule\Engine\Service\BuildSpecificationCollectionFactory::class,
+            'AllSpecifications'                                       =>
+                \Rule\Engine\Service\SpecificationCollectionFactory::class,
+        ],
+        'shared'             => [
+            \Rule\Engine\Specification\ArraySpecification::class      => false,
+            \Rule\Engine\Specification\SpecificationCollection::class => false,
+        ],
+        'abstract_factories' => [
+            \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class =>
+                \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+        ],
+    ],
 
     'service_manager' => [
         'aliases'   => [
-            'ActionManager'   => \Rule\Action\Service\ActionManager::class,
-            'ProviderManager' => \Rule\Provider\Service\ProviderManager::class,
-            'RuleManager'     => \Rule\Rule\Service\RuleManager::class,
+            'ActionManager'        => \Rule\Action\Service\ActionManager::class,
+            'ProviderManager'      => \Rule\Provider\Service\ProviderManager::class,
+            'RuleManager'          => \Rule\Rule\Service\RuleManager::class,
+            'SpecificationManager' => \Rule\Engine\Service\SpecificationManager::class,
         ],
         'factories' => [
-            \Rule\Action\Service\ActionManager::class     => \Rule\Action\Service\ActionManagerFactory::class,
-            \Rule\Provider\Service\ProviderManager::class => \Rule\Provider\Service\ProviderManagerFactory::class,
-            \Rule\Rule\Service\RuleManager::class         => \Rule\Rule\Service\RuleManagerFactory::class,
+            \Rule\Action\Service\ActionManager::class        => \Rule\Action\Service\ActionManagerFactory::class,
+            \Rule\Provider\Service\ProviderManager::class    => \Rule\Provider\Service\ProviderManagerFactory::class,
+            \Rule\Rule\Service\RuleManager::class            => \Rule\Rule\Service\RuleManagerFactory::class,
+            \Rule\Engine\Service\SpecificationManager::class => \Rule\Engine\Service\SpecificationManagerFactory::class,
         ],
     ],
 ];

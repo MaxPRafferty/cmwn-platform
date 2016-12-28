@@ -9,7 +9,7 @@ use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Class BuildBasicValueProviderFactory
+ * Builds a Basic value provider from an array
  */
 class BuildProviderFactory implements FactoryInterface
 {

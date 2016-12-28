@@ -102,6 +102,6 @@ abstract class AbstractConfigBuilderFactory implements AbstractFactoryInterface
             $serviceDependencies
         );
 
-        return new $itemClass(...$arguments);
+        return new $itemClass(...array_values($arguments));
     }
 }

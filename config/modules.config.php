@@ -43,4 +43,5 @@ return [
     'Suggest',
     'Flag',
     'Sa',
+    'Rule',
 ];
