@@ -103,6 +103,7 @@ return [
             \Rule\Provider\Service\ProviderManager::class    => \Rule\Provider\Service\ProviderManagerFactory::class,
             \Rule\Rule\Service\RuleManager::class            => \Rule\Rule\Service\RuleManagerFactory::class,
             \Rule\Engine\Service\SpecificationManager::class => \Rule\Engine\Service\SpecificationManagerFactory::class,
+            \Rule\Engine\Engine::class                       => \Rule\Engine\Service\EngineFactory::class,
         ],
     ],
 ];

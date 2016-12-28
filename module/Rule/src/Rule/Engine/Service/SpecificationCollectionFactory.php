@@ -28,7 +28,7 @@ class SpecificationCollectionFactory implements FactoryInterface
         // Merge in configured specs
         $allSpecs = array_merge(
             array_keys($allFactories),
-            array_keys($config[BuildSpecificationFromConfigFactory::class])
+            array_keys($config[BuildSpecificationFromConfigFactory::class] ?? [])
         );
 
         return $container->get(SpecificationManager::class)
