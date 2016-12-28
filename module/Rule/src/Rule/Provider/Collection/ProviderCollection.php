@@ -2,10 +2,7 @@
 
 namespace Rule\Provider\Collection;
 
-use Rule\Event\Provider\EventProviderInterface;
-use Rule\Item\RuleItemInterface;
 use Rule\Provider\ProviderInterface;
-use Zend\EventManager\EventInterface;
 
 /**
  * A collection of providers
@@ -18,18 +15,13 @@ class ProviderCollection implements ProviderCollectionInterface
     protected $parameters;
 
     /**
-     * @var array All the keys that are event providers
-     */
-    protected $eventProviders = [];
-
-    /**
      * ProviderCollection constructor.
      *
      * @param ProviderInterface[] ...$providers
      */
     public function __construct(ProviderInterface ...$providers)
     {
-        $this->parameters = new \ArrayObject();
+        $this->parameters = new \ArrayObject([], null, ProviderIterator::class);
         array_walk($providers, [$this, 'append']);
     }
 
@@ -48,11 +40,7 @@ class ProviderCollection implements ProviderCollectionInterface
     public function append(ProviderInterface $provider): ProviderCollectionInterface
     {
         if (!$this->offsetExists($provider->getName())) {
-            $this->offsetSet($provider->getName(), $provider->getValue());
-        }
-
-        if ($provider instanceof EventProviderInterface && !in_array($provider->getName(), $this->eventProviders)) {
-            array_push($this->eventProviders, $provider->getName());
+            $this->offsetSet($provider->getName(), $provider);
         }
 
         return $this;
@@ -71,7 +59,12 @@ class ProviderCollection implements ProviderCollectionInterface
      */
     public function offsetGet($offset)
     {
-        return $this->parameters->offsetGet($offset);
+        if (!$this->parameters->offsetExists($offset)) {
+            return null;
+        }
+
+        $value = $this->parameters->offsetGet($offset);
+        return $value instanceof ProviderInterface ? $value->getValue() : $value;
     }
 
     /**
@@ -101,12 +94,12 @@ class ProviderCollection implements ProviderCollectionInterface
     /**
      * @inheritDoc
      */
-    public function setEvent(EventInterface $event): RuleItemInterface
+    public function getProvider($name): ProviderInterface
     {
-        array_walk($this->eventProviders, function ($providerName) use (&$event) {
-            $this->offsetGet($providerName)->setEvent($event);
-        });
+        if (!$this->parameters->offsetExists($name)) {
+            return null;
+        }
 
-        return $this;
+        return $this->parameters->offsetGet($name);
     }
 }

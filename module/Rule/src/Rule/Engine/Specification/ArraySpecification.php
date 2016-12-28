@@ -2,14 +2,13 @@
 
 namespace Rule\Engine\Specification;
 
-use Interop\Container\ContainerInterface;
-use Rule\Action\Collection\ActionCollection;
 use Rule\Action\Collection\ActionCollectionInterface;
-use Rule\Action\ActionInterface;
+use Rule\Action\Service\ActionManager;
 use Rule\Action\StaticActionFactory;
 use Rule\Exception\InvalidArgumentException;
 use Rule\Exception\RuntimeException;
 use Rule\Provider\Collection\ProviderCollectionInterface;
+use Rule\Provider\Service\ProviderManager;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\Rule\Collection\RuleCollection;
 use Rule\Rule\Collection\RuleCollectionInterface;
@@ -39,7 +38,7 @@ class ArraySpecification implements SpecificationInterface
     /**
      * @var ProviderCollectionInterface
      */
-    protected $ruleItem;
+    protected $provider;
 
     /**
      * Used to specify engine rules from an array
@@ -59,7 +58,8 @@ class ArraySpecification implements SpecificationInterface
             }
         }
 
-        foreach (['rules', 'actions', 'item_params'] as $mustBeArray) {
+        // check that items are arrays
+        foreach (['rules', 'actions', 'providers'] as $mustBeArray) {
             if (isset($spec[$mustBeArray]) && !is_array($spec[$mustBeArray])) {
                 throw new InvalidArgumentException(sprintf(
                     'Key "%s" myst be an array for "%s"',
@@ -99,20 +99,14 @@ class ArraySpecification implements SpecificationInterface
     /**
      * @inheritDoc
      */
-    public function getRules(RuleManager $services): RuleCollectionInterface
+    public function getRules(RuleManager $ruleManager): RuleCollectionInterface
     {
-        if (null !== $this->rules) {
-            return $this->rules;
+        if (null == $this->rules) {
+            $this->rules = $ruleManager->build(
+                RuleCollection::class,
+                $this->spec['rules']
+            );
         }
-
-        $this->rules = new RuleCollection();
-        array_walk($this->spec['rules'], function ($ruleSpec) use (&$services) {
-            $operator = $ruleSpec['operator'] ?? 'and';
-            $name     = $ruleSpec['rule']['name'] ?? null;
-            $options  = $ruleSpec['rule']['options'] ?? [];
-            $rule     = $services->build($name, $options);
-            $this->rules->append($rule, $operator);
-        });
 
         return $this->rules;
     }
@@ -120,19 +114,13 @@ class ArraySpecification implements SpecificationInterface
     /**
      * @inheritDoc
      */
-    public function getActions(ContainerInterface $services): ActionCollectionInterface
+    public function getActions(ActionManager $actionManager): ActionCollectionInterface
     {
-        if (null === $this->actions) {
-            $this->actions = new ActionCollection();
-            array_walk($this->spec['actions'], function ($actionSpec) use (&$services) {
-                if ($actionSpec instanceof ActionInterface) {
-                    $this->actions->append($actionSpec);
-
-                    return;
-                }
-
-                $this->actions->append(StaticActionFactory::build($services, $actionSpec));
-            });
+        if (null == $this->actions) {
+            $this->actions = $actionManager->build(
+                ActionCollectionInterface::class,
+                $this->spec['actions']
+            );
         }
 
         return $this->actions;
@@ -141,12 +129,15 @@ class ArraySpecification implements SpecificationInterface
     /**
      * @inheritDoc
      */
-    public function buildProvider(ContainerInterface $services): ProviderCollectionInterface
+    public function buildProvider(ProviderManager $providerManager): ProviderCollectionInterface
     {
-        if (null === $this->ruleItem) {
-            $this->ruleItem = StaticProviderCollectionFactory::build($services, $this->spec['item_params'] ?? []);
+        if (null === $this->provider) {
+            $this->provider = $providerManager->build(
+                ProviderCollectionInterface::class,
+                $this->spec['providers'] ?? []
+            );
         }
 
-        return $this->ruleItem;
+        return $this->provider;
     }
 }

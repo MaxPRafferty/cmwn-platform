@@ -18,4 +18,13 @@ interface ProviderCollectionInterface extends \IteratorAggregate, \ArrayAccess, 
      * @return ProviderCollectionInterface
      */
     public function append(ProviderInterface $provider): ProviderCollectionInterface;
+
+    /**
+     * Used to retrieve a provider
+     *
+     * @param $name
+     *
+     * @return ProviderInterface
+     */
+    public function getProvider($name): ProviderInterface;
 }

@@ -60,7 +60,8 @@ return [
             \Rule\Action\Collection\ActionCollection::class => \Rule\Action\Service\BuildActionCollectionFactory::class,
         ],
         'abstract_factories' => [
-            \Rule\Action\Service\BuildActionFromConfigFactory::class => \Rule\Action\Service\BuildActionFromConfigFactory::class,
+            \Rule\Action\Service\BuildActionFromConfigFactory::class =>
+                \Rule\Action\Service\BuildActionFromConfigFactory::class,
         ],
     ],
 

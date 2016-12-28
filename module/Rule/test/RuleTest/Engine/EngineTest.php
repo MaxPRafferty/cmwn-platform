@@ -4,10 +4,13 @@ namespace RuleTest\Engine;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\CallbackAction;
+use Rule\Action\Service\ActionManager;
+use Rule\Provider\Service\ProviderManager;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Engine\Engine;
 use Rule\Engine\Specification\ArraySpecification;
 use Rule\Engine\Specification\SpecificationCollection;
+use Rule\Rule\Service\RuleManager;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
@@ -22,23 +25,47 @@ use Zend\ServiceManager\ServiceManager;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RulesEngineTest extends TestCase
+class EngineTest extends TestCase
 {
+    /**
+     * @var array
+     */
+    protected $config = [];
+
+    /**
+     * @var ServiceManager
+     */
+    protected $serviceManager;
+
+    /**
+     * @before
+     */
+    public function setUpConfig()
+    {
+        $this->config = include __DIR__ . '/../../../config/module.config.php';
+    }
+
+    /**
+     * @before
+     */
+    public function setUpServiceManager()
+    {
+        $this->serviceManager = new ServiceManager($this->config['service_manager']);
+        $this->serviceManager->setService('Config', $this->config);
+    }
+
     /**
      * @test
      */
     public function testItShouldAttachToEvents()
     {
         $called    = false;
-        $container = new ServiceManager();
         $spec      = [
             'id'      => 'foo-bar',
             'name'    => 'This is a test that the foo will bar',
             'when'    => 'some.event',
             'rules'   => [
-                [
-                    'rule' => ['name' => AlwaysSatisfiedRule::class],
-                ],
+                AlwaysSatisfiedRule::class,
             ],
             'actions' => [
                 new CallbackAction(function () use (&$called) {
@@ -54,7 +81,9 @@ class RulesEngineTest extends TestCase
         $events       = new EventManager($sharedEvents);
         new Engine(
             $sharedEvents,
-            $container,
+            $this->serviceManager->get(ActionManager::class),
+            $this->serviceManager->get(RuleManager::class),
+            $this->serviceManager->get(ProviderManager::class),
             $collection
         );
 
@@ -75,17 +104,14 @@ class RulesEngineTest extends TestCase
     {
         $expectedTimes = 1000;
         $calledTimes   = 0;
-        $container     = new ServiceManager();
         $collection    = new SpecificationCollection();
         foreach (range(1, $expectedTimes) as $specCount) {
             $collection->append(new ArraySpecification([
                 'id'      => 'foo-bar-' . $specCount,
-                'name'    => 'This is a test that the foo will bar',
+                'name'    => 'This is a test that the foo will bar ' . $specCount . ' time(s)',
                 'when'    => 'some.event',
                 'rules'   => [
-                    [
-                        'rule' => ['name' => AlwaysSatisfiedRule::class],
-                    ],
+                    AlwaysSatisfiedRule::class,
                 ],
                 'actions' => [
                     new CallbackAction(function () use (&$calledTimes) {
@@ -99,7 +125,9 @@ class RulesEngineTest extends TestCase
         $events       = new EventManager($sharedEvents);
         new Engine(
             $sharedEvents,
-            $container,
+            $this->serviceManager->get(ActionManager::class),
+            $this->serviceManager->get(RuleManager::class),
+            $this->serviceManager->get(ProviderManager::class),
             $collection
         );
 

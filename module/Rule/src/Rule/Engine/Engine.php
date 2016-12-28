@@ -2,9 +2,10 @@
 
 namespace Rule\Engine;
 
-use Interop\Container\ContainerInterface;
+use Rule\Action\Service\ActionManager;
 use Rule\Engine\Specification\SpecificationCollectionInterface;
-use Rule\Engine\Specification\SpecificationInterface;
+use Rule\Provider\Service\ProviderManager;
+use Rule\Rule\Service\RuleManager;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Stdlib\CallbackHandler;
 
@@ -17,16 +18,32 @@ class Engine
      * Engine constructor.
      *
      * @param SharedEventManagerInterface $events
-     * @param ContainerInterface $container
-     * @param SpecificationCollectionInterface|SpecificationInterface[] $specs
+     * @param ActionManager $actionManager
+     * @param RuleManager $ruleManager
+     * @param ProviderManager $providerManager
+     * @param SpecificationCollectionInterface $specs
      */
     public function __construct(
         SharedEventManagerInterface $events,
-        ContainerInterface $container,
+        ActionManager $actionManager,
+        RuleManager $ruleManager,
+        ProviderManager $providerManager,
         SpecificationCollectionInterface $specs
     ) {
+        $handler = new EngineHandler(
+            $actionManager,
+            $ruleManager,
+            $providerManager
+        );
+
         foreach ($specs as $spec) {
-            $events->attach('*', $spec->getEventName(), new EngineHandler($container, $spec));
+            $newHandler = clone $handler;
+            $newHandler->setSpecification($spec);
+            $events->attach(
+                '*',
+                $spec->getEventName(),
+                $newHandler
+            );
         }
     }
 }

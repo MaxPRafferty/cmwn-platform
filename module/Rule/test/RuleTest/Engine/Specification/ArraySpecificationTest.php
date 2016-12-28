@@ -2,17 +2,14 @@
 
 namespace RuleTest\Engine\Specification;
 
-use Interop\Container\ContainerInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\NoopAction;
-use Rule\Event\Provider\EventProvider;
-use Rule\Event\Provider\FromEventNameProvider;
+use Rule\Provider\BasicValueProvider;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
-use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Engine\Specification\ArraySpecification;
 use Rule\Rule\Collection\RuleCollectionInterface;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\ServiceManager;
 
 /**
  * Test ArraySpecificationTest
@@ -26,30 +23,49 @@ use Zend\ServiceManager\Exception\ServiceNotFoundException;
 class ArraySpecificationTest extends TestCase
 {
     /**
+     * @var array
+     */
+    protected $config = [];
+
+    /**
+     * @var ServiceManager
+     */
+    protected $serviceManager;
+
+    /**
+     * @before
+     */
+    public function setUpConfig()
+    {
+        $this->config = include __DIR__ . '/../../../../config/module.config.php';
+    }
+
+    /**
+     * @before
+     */
+    public function setUpServiceManager()
+    {
+        $this->serviceManager = new ServiceManager($this->config['service_manager']);
+        $this->serviceManager->setService('Config', $this->config);
+    }
+
+    /**
      * @test
      */
     public function testItShouldCreateRulesFromSpec()
     {
-        /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $container = \Mockery::mock(ContainerInterface::class);
-        /** @noinspection PhpMethodParametersCountMismatchInspection */
-        $container->shouldReceive('get')->andThrow(new ServiceNotFoundException())->byDefault();
-        $container->shouldReceive('has')->andReturn(false)->byDefault();
-
         $spec = [
-            'id'          => 'foo-bar',
-            'name'        => 'This is a test that the foo will bar',
-            'when'        => 'some.event',
-            'rules'       => [
-                [
-                    'rule' => ['name' => AlwaysSatisfiedRule::class],
-                ],
+            'id'        => 'foo-bar',
+            'name'      => 'This is a test that the foo will bar',
+            'when'      => 'some.event',
+            'rules'     => [
+                AlwaysSatisfiedRule::class,
             ],
-            'actions'     => [
-                ['name' => NoopAction::class],
+            'actions'   => [
+                NoopAction::class,
             ],
-            'item_params' => [
-                'active_user' => 'MANCHUCK'
+            'providers' => [
+                new BasicValueProvider('active_user', 'MANCHUCK'),
             ],
         ];
 
@@ -73,14 +89,14 @@ class ArraySpecificationTest extends TestCase
             'The Event name does not match the expected spec'
         );
 
-        $item = $arraySpec->buildProvider($container);
+        $item = $arraySpec->buildProvider($this->serviceManager->get('ProviderManager'));
         $this->assertEquals(
             'MANCHUCK',
             $item->getParam('active_user'),
             'The item that was built does not have the correct parameter'
         );
 
-        $rules = $arraySpec->getRules($container);
+        $rules = $arraySpec->getRules($this->serviceManager->get('RuleManager'));
         $this->assertInstanceOf(
             RuleCollectionInterface::class,
             $rules,
@@ -92,48 +108,11 @@ class ArraySpecificationTest extends TestCase
             'Spec for this array should be satisfied'
         );
 
-        $actions = $arraySpec->getActions($container);
+        $actions = $arraySpec->getActions($this->serviceManager->get('ActionManager'));
         $this->assertInstanceOf(
             ActionCollectionInterface::class,
             $actions,
             'Actions built are not a Collection of actions'
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldBuildARuleSetWithNot()
-    {
-        /** @var \Mockery\MockInterface|ContainerInterface $container */
-        $container = \Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->andThrow(new ServiceNotFoundException())->byDefault();
-        $container->shouldReceive('has')->andReturn(false)->byDefault();
-
-        $spec = [
-            'id'          => 'foo-bar',
-            'name'        => 'This is a test that the foo will bar',
-            'when'        => 'some.event',
-            'rules'       => [
-                [
-                    'rule' => [
-                        'name'     => NeverSatisfiedRule::class,
-                    ],
-                    'operator' => 'not',
-                ],
-            ],
-            'actions'     => [
-                ['name' => NoopAction::class],
-            ],
-            'item_params' => [],
-        ];
-
-        $arraySpec = new ArraySpecification($spec);
-
-        $rules = $arraySpec->getRules($container);
-        $this->assertTrue(
-            $rules->isSatisfiedBy($arraySpec->buildProvider($container)),
-            'This rule set should be satisfied since the "not" operator was specified'
         );
     }
 }
