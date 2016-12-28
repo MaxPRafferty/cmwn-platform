@@ -2,7 +2,7 @@
 
 namespace Rule\Item;
 
-use Rule\Provider\ProviderCollection;
+use Rule\Provider\Collection\ProviderCollection;
 use Rule\Provider\ProviderInterface;
 use Zend\EventManager\EventInterface;
 

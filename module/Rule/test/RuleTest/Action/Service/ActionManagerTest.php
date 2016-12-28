@@ -2,12 +2,9 @@
 
 namespace RuleTest\Action\Service;
 
-use Flip\Rule\Action\AwardFlipAction;
-use Flip\Service\FlipUserServiceInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Action\CallbackAction;
 use Rule\Action\Collection\ActionCollection;
-use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\NoopAction;
 use Rule\Action\Service\BuildActionCollectionFactory;
 use Rule\Action\Service\ActionManager;
@@ -15,8 +12,6 @@ use Rule\Action\Service\ActionManagerFactory;
 use Rule\Action\Service\BuildActionFactory;
 use Rule\Action\Service\ConfigActionFactory;
 use Rule\Item\BasicRuleItem;
-use Rule\Provider\BasicValueProvider;
-use User\Adult;
 use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\ServiceManager\ServiceManager;
 

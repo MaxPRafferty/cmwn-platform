@@ -1,13 +1,14 @@
 <?php
 
-namespace Rule\Provider;
+namespace Rule\Provider\Collection;
 
 use Rule\Event\Provider\EventProviderInterface;
 use Rule\Item\RuleItemInterface;
+use Rule\Provider\ProviderInterface;
 use Zend\EventManager\EventInterface;
 
 /**
- * Class ProviderCollection
+ * A collection of providers
  */
 class ProviderCollection implements ProviderCollectionInterface
 {
@@ -34,6 +35,7 @@ class ProviderCollection implements ProviderCollectionInterface
 
     /**
      * @inheritDoc
+     * @return \ArrayIterator|ProviderInterface[]
      */
     public function getIterator()
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace RuleTest\Provider;
+namespace RuleTest\Provider\Collection;
 
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Provider\BasicValueProvider;
-use Rule\Provider\ProviderCollection;
+use Rule\Provider\Collection\ProviderCollection;
 
 /**
  * Test ProviderCollectionTest

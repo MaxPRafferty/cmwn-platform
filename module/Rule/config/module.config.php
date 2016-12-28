@@ -28,7 +28,25 @@ return [
         ],
     ],
 
-    'providers' => [],
+    'providers' => [
+        'aliases'            => [
+            \Rule\Provider\Collection\ProviderCollectionInterface::class =>
+                \Rule\Provider\Collection\ProviderCollection::class,
+        ],
+        'factories'          => [
+            \Rule\Provider\BasicValueProvider::class            => \Rule\Provider\Service\BuildProviderFactory::class,
+            \Rule\Provider\Collection\ProviderCollection::class =>
+                \Rule\Provider\Service\BuildCollectionProviderFactory::class,
+        ],
+        'abstract_factories' => [
+            \Rule\Provider\Service\ConfigProviderFactory::class =>
+                \Rule\Provider\Service\ConfigProviderFactory::class,
+        ],
+        'shared'             => [
+            \Rule\Provider\Collection\ProviderCollection::class => false,
+            \Rule\Provider\BasicValueProvider::class            => false,
+        ],
+    ],
 
     'actions' => [
         'aliases'            => [
@@ -50,12 +68,14 @@ return [
 
     'service_manager' => [
         'aliases'   => [
-            'RuleManager'   => \Rule\Rule\Service\RuleManager::class,
-            'ActionManager' => \Rule\Action\Service\ActionManager::class,
+            'ActionManager'   => \Rule\Action\Service\ActionManager::class,
+            'ProviderManager' => \Rule\Provider\Service\ProviderManager::class,
+            'RuleManager'     => \Rule\Rule\Service\RuleManager::class,
         ],
         'factories' => [
-            \Rule\Rule\Service\RuleManager::class     => \Rule\Rule\Service\RuleManagerFactory::class,
-            \Rule\Action\Service\ActionManager::class => \Rule\Action\Service\ActionManagerFactory::class,
+            \Rule\Action\Service\ActionManager::class     => \Rule\Action\Service\ActionManagerFactory::class,
+            \Rule\Provider\Service\ProviderManager::class => \Rule\Provider\Service\ProviderManagerFactory::class,
+            \Rule\Rule\Service\RuleManager::class         => \Rule\Rule\Service\RuleManagerFactory::class,
         ],
     ],
 ];

@@ -10,10 +10,15 @@ class InvalidProviderType extends \RuntimeException
     /**
      * @inheritDoc
      */
-    public function __construct($className, $type)
+    public function __construct(string $className, string $provider, string $type)
     {
         parent::__construct(
-            sprintf('"%s" requires a provider that returns a "%s"', $className, $type)
+            sprintf(
+                '"%s" requires a provider "%s" that returns a "%s"',
+                $className,
+                $provider,
+                $type
+            )
         );
     }
 }

@@ -4,7 +4,7 @@ namespace Rule\Engine\Specification;
 
 use Interop\Container\ContainerInterface;
 use Rule\Action\Collection\ActionCollectionInterface;
-use Rule\Provider\ProviderCollectionInterface;
+use Rule\Provider\Collection\ProviderCollectionInterface;
 use Rule\Rule\Collection\RuleCollectionInterface;
 use Rule\Rule\Service\RuleManager;
 
@@ -59,7 +59,7 @@ interface SpecificationInterface
      *
      * @param ContainerInterface $services
      *
-     * @return ProviderCollectionInterface
+     * @return \Rule\Provider\Collection\ProviderCollectionInterface
      */
     public function buildProvider(ContainerInterface $services): ProviderCollectionInterface;
 }

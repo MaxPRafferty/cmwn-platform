@@ -9,7 +9,7 @@ use Rule\Action\ActionInterface;
 use Rule\Action\StaticActionFactory;
 use Rule\Exception\InvalidArgumentException;
 use Rule\Exception\RuntimeException;
-use Rule\Provider\ProviderCollectionInterface;
+use Rule\Provider\Collection\ProviderCollectionInterface;
 use Rule\Provider\StaticProviderCollectionFactory;
 use Rule\Rule\Collection\RuleCollection;
 use Rule\Rule\Collection\RuleCollectionInterface;

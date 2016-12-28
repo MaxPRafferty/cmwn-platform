@@ -1,11 +1,12 @@
 <?php
 
-namespace Rule\Provider;
+namespace Rule\Provider\Collection;
 
 use Rule\Item\RuleItemInterface;
+use Rule\Provider\ProviderInterface;
 
 /**
- * Interface ProviderCollectionInterface
+ * Defines a collection of providers
  */
 interface ProviderCollectionInterface extends \IteratorAggregate, \ArrayAccess, RuleItemInterface
 {
