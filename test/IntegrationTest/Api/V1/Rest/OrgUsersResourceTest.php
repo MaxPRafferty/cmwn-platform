@@ -123,24 +123,6 @@ class OrgUsersResourceTest extends TestCase
     public function organizationUsersDataProvider()
     {
         return [
-//            'English Teacher' => [
-//                'Active User'    => 'english_teacher',
-//                'Organization'   => 'district',
-//                'Expected Users' => [
-//                    'english_student',
-//                    'math_student',
-//                    'math_teacher',
-//                    'principal',
-//                ],
-//            ],
-//            'Other Teacher' => [
-//                'Active User'    => 'other_teacher',
-//                'Organization'   => 'manchuck',
-//                'Expected Users' => [
-//                    'other_student',
-//                    'other_principal',
-//                ],
-//            ],
             'Super User' => [
                 'Active User'    => 'super_user',
                 'Organization'   => 'district',
@@ -161,24 +143,6 @@ class OrgUsersResourceTest extends TestCase
     public function deletedOrganizationUsersDataProvider()
     {
         return [
-//            'English Teacher' => [
-//                'Active User'    => 'english_teacher',
-//                'Organization'   => 'district',
-//                'Delete User'    => 'math_teacher',
-//                'Expected Users' => [
-//                    'english_student',
-//                    'math_student',
-//                    'principal',
-//                ],
-//            ],
-//            'Other Teacher' => [
-//                'Active User'    => 'other_teacher',
-//                'Organization'   => 'manchuck',
-//                'Delete User'    => 'other_student',
-//                'Expected Users' => [
-//                    'other_principal',
-//                ],
-//            ],
             'Super User' => [
                 'Active User'    => 'super_user',
                 'Organization'   => 'district',
