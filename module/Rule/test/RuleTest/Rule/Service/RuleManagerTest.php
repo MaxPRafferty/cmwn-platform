@@ -8,12 +8,12 @@ use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Rule\Basic\AndRule;
 use Rule\Rule\Basic\EitherRule;
 use Rule\Rule\Collection\RuleCollectionInterface;
-use Rule\Rule\Service\DependantRuleFactory;
+use Rule\Rule\Service\BuildDependantRuleFactory;
 use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Rule\Basic\NotRule;
 use Rule\Rule\Basic\NotRuleFactory;
 use Rule\Rule\Collection\RuleCollection;
-use Rule\Rule\Service\RuleCollectionFactory;
+use Rule\Rule\Service\BuildRuleCollectionFactory;
 use Rule\Rule\Service\RuleManager;
 use Rule\Rule\Service\RuleManagerFactory;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -63,11 +63,11 @@ class RuleManagerTest extends TestCase
                 'factories' => [
                     AlwaysSatisfiedRule::class => InvokableFactory::class,
                     NeverSatisfiedRule::class  => InvokableFactory::class,
-                    AndRule::class             => DependantRuleFactory::class,
-                    NotRule::class             => DependantRuleFactory::class,
-                    EitherRule::class          => DependantRuleFactory::class,
-                    RuleCollection::class      => RuleCollectionFactory::class,
-                    'MANCHUCK-IS-INSANE'       => DependantRuleFactory::class,
+                    AndRule::class             => BuildDependantRuleFactory::class,
+                    NotRule::class             => BuildDependantRuleFactory::class,
+                    EitherRule::class          => BuildDependantRuleFactory::class,
+                    RuleCollection::class      => BuildRuleCollectionFactory::class,
+                    'MANCHUCK-IS-INSANE'       => BuildDependantRuleFactory::class,
                 ],
                 'shared'    => [
                     AlwaysSatisfiedRule::class => true,
@@ -171,19 +171,15 @@ class RuleManagerTest extends TestCase
             [
                 'rule_class' => EitherRule::class,
                 'rules'      => [
-                    ['rule' => new AlwaysSatisfiedRule()],
-                    ['rule' => AlwaysSatisfiedRule::class],
+                    new AlwaysSatisfiedRule(),
+                    AlwaysSatisfiedRule::class,
                     [
-                        'rule' => [
-                            'name'    => NotRule::class,
-                            'options' => [new NeverSatisfiedRule()],
-                        ],
+                        'name'    => NotRule::class,
+                        'options' => [new NeverSatisfiedRule()],
                     ],
                     [
-                        'rule'     => [
-                            'name'    => NotRule::class,
-                            'options' => [NeverSatisfiedRule::class],
-                        ],
+                        'name'     => NotRule::class,
+                        'options'  => [NeverSatisfiedRule::class],
                         'operator' => 'or',
                         'or_group' => 'foo-bar',
                     ],
@@ -207,41 +203,33 @@ class RuleManagerTest extends TestCase
                 'rules' => [
                     // Adds not rule
                     [
-                        'rule'     => [
-                            'name' => NeverSatisfiedRule::class,
-                        ],
+                        'name'     => NeverSatisfiedRule::class,
                         'operator' => 'not',
                     ],
 
                     // Adds rule instance
-                    ['rule' => new AlwaysSatisfiedRule()],
+                    new AlwaysSatisfiedRule(),
 
                     // Builds the rule
-                    ['rule' => AlwaysSatisfiedRule::class],
+                    AlwaysSatisfiedRule::class,
 
                     // Build rule without rule key
                     AlwaysSatisfiedRule::class,
 
                     // Or Rules
                     [
-                        'rule'     => [
-                            'name' => NeverSatisfiedRule::class,
-                        ],
+                        'name'     => NeverSatisfiedRule::class,
                         'operator' => 'or',
                         'or_group' => 'foo-bar',
                     ],
                     [
-                        'rule'     => [
-                            'name' => AlwaysSatisfiedRule::class,
-                        ],
+                        'name'     => AlwaysSatisfiedRule::class,
                         'operator' => 'or',
                         'or_group' => 'foo-bar',
                     ],
                     [
-                        'rule'     => [
-                            'name'    => NotRule::class,
-                            'options' => [NeverSatisfiedRule::class],
-                        ],
+                        'name'     => NotRule::class,
+                        'options'  => [NeverSatisfiedRule::class],
                         'operator' => 'or',
                         'or_group' => 'foo-bar',
                     ],
@@ -279,59 +267,47 @@ class RuleManagerTest extends TestCase
             [
                 'rule_class' => EitherRule::class,
                 'rules'      => [
-                    ['rule' => new AlwaysSatisfiedRule()],
-                    ['rule' => AlwaysSatisfiedRule::class],
+                    new AlwaysSatisfiedRule(),
+                    AlwaysSatisfiedRule::class,
                     [
-                        'rule' => [
-                            'name'    => NotRule::class,
-                            'options' => [new NeverSatisfiedRule()],
-                        ],
+                        'name'    => NotRule::class,
+                        'options' => [new NeverSatisfiedRule()],
                     ],
                     [
-                        'rule'     => [
-                            'name'    => AndRule::class,
-                            'options' => [
-                                'rules' => [
-                                    // Adds not rule
-                                    [
-                                        'rule'     => [
-                                            'name' => NeverSatisfiedRule::class,
-                                        ],
-                                        'operator' => 'not',
-                                    ],
+                        'name'     => AndRule::class,
+                        'options'  => [
+                            'rules' => [
+                                // Adds not rule
+                                [
+                                    'name'     => NeverSatisfiedRule::class,
+                                    'operator' => 'not',
+                                ],
 
-                                    // Adds rule instance
-                                    ['rule' => new AlwaysSatisfiedRule()],
+                                // Adds rule instance
+                                new AlwaysSatisfiedRule(),
 
-                                    // Builds the rule
-                                    ['rule' => AlwaysSatisfiedRule::class],
+                                // Builds the rule
+                                AlwaysSatisfiedRule::class,
 
-                                    // Build rule without rule key
-                                    AlwaysSatisfiedRule::class,
+                                // Build rule without rule key
+                                AlwaysSatisfiedRule::class,
 
-                                    // Or Rules
-                                    [
-                                        'rule'     => [
-                                            'name' => NeverSatisfiedRule::class,
-                                        ],
-                                        'operator' => 'or',
-                                        'or_group' => 'foo-bar',
-                                    ],
-                                    [
-                                        'rule'     => [
-                                            'name' => AlwaysSatisfiedRule::class,
-                                        ],
-                                        'operator' => 'or',
-                                        'or_group' => 'foo-bar',
-                                    ],
-                                    [
-                                        'rule'     => [
-                                            'name'    => NotRule::class,
-                                            'options' => [NeverSatisfiedRule::class],
-                                        ],
-                                        'operator' => 'or',
-                                        'or_group' => 'foo-bar',
-                                    ],
+                                // Or Rules
+                                [
+                                    'name'     => NeverSatisfiedRule::class,
+                                    'operator' => 'or',
+                                    'or_group' => 'foo-bar',
+                                ],
+                                [
+                                    'name'     => AlwaysSatisfiedRule::class,
+                                    'operator' => 'or',
+                                    'or_group' => 'foo-bar',
+                                ],
+                                [
+                                    'name'     => NotRule::class,
+                                    'options'  => [NeverSatisfiedRule::class],
+                                    'operator' => 'or',
+                                    'or_group' => 'foo-bar',
                                 ],
                             ],
                         ],

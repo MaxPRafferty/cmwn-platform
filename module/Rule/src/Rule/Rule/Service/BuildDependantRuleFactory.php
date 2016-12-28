@@ -35,9 +35,9 @@ use Zend\ServiceManager\Factory\FactoryInterface;
  * Under the hood, this builds a rules collection and checks if the rule is RuleCollectionAware.  If not
  * all the rules from the collection are splatted into the constructor of the rule.
  *
- * @see RuleCollectionFactory
+ * @see BuildRuleCollectionFactory
  */
-class DependantRuleFactory implements FactoryInterface
+class BuildDependantRuleFactory implements FactoryInterface
 {
     /**
      * @inheritDoc

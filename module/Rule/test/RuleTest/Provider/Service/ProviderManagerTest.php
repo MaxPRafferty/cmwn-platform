@@ -9,11 +9,10 @@ use Rule\Provider\Collection\ProviderCollection;
 use Rule\Provider\Collection\ProviderCollectionInterface;
 use Rule\Provider\NoopProvider;
 use Rule\Provider\Service\BuildProviderFactory;
-use Rule\Provider\Service\BuildCollectionProviderFactory;
 use Rule\Provider\Service\BuildProviderCollectionFactory;
 use Rule\Provider\Service\ProviderManager;
 use Rule\Provider\Service\ProviderManagerFactory;
-use Rule\Provider\Service\ConfigProviderFactory;
+use Rule\Provider\Service\BuildProviderFromConfigFactory;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -54,10 +53,10 @@ class ProviderManagerTest extends TestCase
                 ],
                 'factories'          => [
                     BasicValueProvider::class => BuildProviderFactory::class,
-                    ProviderCollection::class => BuildCollectionProviderFactory::class,
+                    ProviderCollection::class => BuildProviderCollectionFactory::class,
                 ],
                 'abstract_factories' => [
-                    ConfigProviderFactory::class => ConfigProviderFactory::class,
+                    BuildProviderFromConfigFactory::class => BuildProviderFromConfigFactory::class,
                 ],
                 'shared'             => [
                     ProviderCollection::class => false,
@@ -99,7 +98,7 @@ class ProviderManagerTest extends TestCase
     {
         $dependency = new ProviderDependency();
 
-        $this->config[ConfigProviderFactory::class] = [
+        $this->config[BuildProviderFromConfigFactory::class] = [
             'foo-bar' => [
                 'provider_class' => BasicValueProvider::class,
                 'foo',
@@ -123,19 +122,19 @@ class ProviderManagerTest extends TestCase
         $this->assertInstanceOf(
             BasicValueProvider::class,
             $provider,
-            ConfigProviderFactory::class . ' did not build the correct Provider'
+            BuildProviderFromConfigFactory::class . ' did not build the correct Provider'
         );
 
         $this->assertEquals(
             'foo',
             $provider->getName(),
-            ConfigProviderFactory::class . ' did not build correct name into provider'
+            BuildProviderFromConfigFactory::class . ' did not build correct name into provider'
         );
 
         $this->assertEquals(
             'bar',
             $provider->getValue(),
-            ConfigProviderFactory::class . ' did not build correct value into provider'
+            BuildProviderFromConfigFactory::class . ' did not build correct value into provider'
         );
 
         $depProvider = $manager->build('provider-with-dependency');
@@ -143,13 +142,13 @@ class ProviderManagerTest extends TestCase
         $this->assertInstanceOf(
             ProviderWithDependency::class,
             $depProvider,
-            ConfigProviderFactory::class . ' did not build correct provider'
+            BuildProviderFromConfigFactory::class . ' did not build correct provider'
         );
 
         $this->assertSame(
             $dependency,
             $depProvider->depend,
-            ConfigProviderFactory::class . ' did not inject the dependency into the provider'
+            BuildProviderFromConfigFactory::class . ' did not inject the dependency into the provider'
         );
     }
 
@@ -161,7 +160,7 @@ class ProviderManagerTest extends TestCase
         $provider        = new BasicValueProvider('foo', 'bar');
         $serviceProvider = new BasicValueProvider('baz', 'bat');
         $this->manager->setService('MyProvider', $serviceProvider);
-        $this->manager->setFactory('MyCollection', new BuildCollectionProviderFactory());
+        $this->manager->setFactory('MyCollection', new BuildProviderCollectionFactory());
         /** @var ProviderCollection $collection */
         $collection = $this->manager->build(
             'MyCollection',
@@ -181,7 +180,7 @@ class ProviderManagerTest extends TestCase
         $this->assertInstanceOf(
             ProviderCollection::class,
             $collection,
-            BuildCollectionProviderFactory::class . ' built the wrong Collection'
+            BuildProviderCollectionFactory::class . ' built the wrong Collection'
         );
 
         $iterator = $collection->getIterator();
@@ -189,26 +188,26 @@ class ProviderManagerTest extends TestCase
         $this->assertEquals(
             'foo',
             $iterator->key(),
-            BuildCollectionProviderFactory::class . ' did not add the passed in provider'
+            BuildProviderCollectionFactory::class . ' did not add the passed in provider'
         );
 
         $this->assertEquals(
             'bar',
             $iterator->current(),
-            BuildCollectionProviderFactory::class . ' did not add the passed in provider'
+            BuildProviderCollectionFactory::class . ' did not add the passed in provider'
         );
 
         $iterator->next();
         $this->assertEquals(
             'baz',
             $iterator->key(),
-            BuildCollectionProviderFactory::class . ' did not get the provider from the container'
+            BuildProviderCollectionFactory::class . ' did not get the provider from the container'
         );
 
         $this->assertEquals(
             'bat',
             $iterator->current(),
-            BuildCollectionProviderFactory::class . ' did not get the provider from the container'
+            BuildProviderCollectionFactory::class . ' did not get the provider from the container'
         );
 
         $iterator->next();
@@ -216,13 +215,13 @@ class ProviderManagerTest extends TestCase
         $this->assertEquals(
             'fizz',
             $iterator->key(),
-            BuildCollectionProviderFactory::class . ' did not pass the correct name when building a provider'
+            BuildProviderCollectionFactory::class . ' did not pass the correct name when building a provider'
         );
 
         $this->assertEquals(
             'buzz',
             $iterator->current(),
-            BuildCollectionProviderFactory::class . ' did not pass the correct value when building a provider'
+            BuildProviderCollectionFactory::class . ' did not pass the correct value when building a provider'
         );
     }
 }

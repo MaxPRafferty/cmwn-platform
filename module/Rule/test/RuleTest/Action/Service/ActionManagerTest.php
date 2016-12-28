@@ -10,7 +10,7 @@ use Rule\Action\Service\BuildActionCollectionFactory;
 use Rule\Action\Service\ActionManager;
 use Rule\Action\Service\ActionManagerFactory;
 use Rule\Action\Service\BuildActionFactory;
-use Rule\Action\Service\ConfigActionFactory;
+use Rule\Action\Service\BuildActionFromConfigFactory;
 use Rule\Item\BasicRuleItem;
 use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\ServiceManager\ServiceManager;
@@ -53,13 +53,13 @@ class ActionManagerTest extends TestCase
                 ],
                 'factories' => [
                     NoopAction::class       => InvokableFactory::class,
-                    CallbackAction::class   => ConfigActionFactory::class,
+                    CallbackAction::class   => BuildActionFromConfigFactory::class,
                 ],
                 'shared'    => [
                     NoopAction::class       => true,
                 ],
                 'abstract_factories' => [
-                    ConfigActionFactory::class => ConfigActionFactory::class,
+                    BuildActionFromConfigFactory::class => BuildActionFromConfigFactory::class,
                 ],
             ],
             'service_manager'          => [
@@ -118,7 +118,7 @@ class ActionManagerTest extends TestCase
             $called = true;
         };
 
-        $this->config[ConfigActionFactory::class][CallbackAction::class] = [
+        $this->config[BuildActionFromConfigFactory::class][CallbackAction::class] = [
             $callAbleAction,
         ];
 
@@ -147,7 +147,7 @@ class ActionManagerTest extends TestCase
     public function testItShouldBuildActionBasedOnConfig()
     {
         $dependency = new ActionDependency();
-        $this->config[ConfigActionFactory::class] = [
+        $this->config[BuildActionFromConfigFactory::class] = [
             'login-flip-action' => [
                 'action_class' => ActionWithDependency::class,
                 ActionDependency::class
@@ -219,7 +219,7 @@ class ActionManagerTest extends TestCase
     public function testItShouldBuildActionCollectionBasedOnConfig()
     {
         $dependency = new ActionDependency();
-        $this->config[ConfigActionFactory::class] = [
+        $this->config[BuildActionFromConfigFactory::class] = [
             'login-flip-action' => [
                 'action_class' => ActionWithDependency::class,
                 ActionDependency::class

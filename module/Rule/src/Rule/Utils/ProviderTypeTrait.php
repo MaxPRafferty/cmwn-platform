@@ -1,6 +1,6 @@
 <?php
 
-namespace Rule\Provider;
+namespace Rule\Utils;
 
 use Rule\Exception\InvalidProviderType;
 

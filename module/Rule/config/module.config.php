@@ -13,10 +13,10 @@ return [
         'factories' => [
             \Rule\Rule\Basic\AlwaysSatisfiedRule::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Rule\Basic\NeverSatisfiedRule::class  => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Rule\Rule\Basic\AndRule::class             => \Rule\Rule\Service\DependantRuleFactory::class,
-            \Rule\Rule\Basic\NotRule::class             => \Rule\Rule\Service\DependantRuleFactory::class,
-            \Rule\Rule\Basic\EitherRule::class          => \Rule\Rule\Service\DependantRuleFactory::class,
-            \Rule\Rule\Collection\RuleCollection::class => \Rule\Rule\Service\RuleCollectionFactory::class,
+            \Rule\Rule\Basic\AndRule::class             => \Rule\Rule\Service\BuildDependantRuleFactory::class,
+            \Rule\Rule\Basic\NotRule::class             => \Rule\Rule\Service\BuildDependantRuleFactory::class,
+            \Rule\Rule\Basic\EitherRule::class          => \Rule\Rule\Service\BuildDependantRuleFactory::class,
+            \Rule\Rule\Collection\RuleCollection::class => \Rule\Rule\Service\BuildRuleCollectionFactory::class,
         ],
         'shared'    => [
             \Rule\Rule\Basic\AlwaysSatisfiedRule::class => true,
@@ -36,11 +36,11 @@ return [
         'factories'          => [
             \Rule\Provider\BasicValueProvider::class            => \Rule\Provider\Service\BuildProviderFactory::class,
             \Rule\Provider\Collection\ProviderCollection::class =>
-                \Rule\Provider\Service\BuildCollectionProviderFactory::class,
+                \Rule\Provider\Service\BuildProviderCollectionFactory::class,
         ],
         'abstract_factories' => [
-            \Rule\Provider\Service\ConfigProviderFactory::class =>
-                \Rule\Provider\Service\ConfigProviderFactory::class,
+            \Rule\Provider\Service\BuildProviderFromConfigFactory::class =>
+                \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
         ],
         'shared'             => [
             \Rule\Provider\Collection\ProviderCollection::class => false,
@@ -60,7 +60,7 @@ return [
             \Rule\Action\Collection\ActionCollection::class => \Rule\Action\Service\BuildActionCollectionFactory::class,
         ],
         'abstract_factories' => [
-            \Rule\Action\Service\ConfigActionFactory::class => \Rule\Action\Service\ConfigActionFactory::class,
+            \Rule\Action\Service\BuildActionFromConfigFactory::class => \Rule\Action\Service\BuildActionFromConfigFactory::class,
         ],
     ],
 

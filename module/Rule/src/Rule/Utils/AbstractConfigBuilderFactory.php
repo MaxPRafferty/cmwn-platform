@@ -1,32 +1,43 @@
 <?php
 
-namespace Rule\Action\Service;
+namespace Rule\Utils;
 
 use Interop\Container\ContainerInterface;
-use Rule\Action\ActionInterface;
-use Zend\Config\AbstractConfigFactory;
+use Rule\Action\Service\BuildActionFromConfigFactory;
+use Rule\Provider\Service\BuildProvderFromConfigFactory;
+use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
 /**
- * Build an action from a config string
+ * Functions like the AbstractConfigBuilder in Zf3
  *
- * Functions much like the ZF3 AbstractConfigFactory.  This will check the config for a corresponding config key
- *
- * @see AbstractConfigFactory
+ * @see ConfigAbstractFactory
+ * @see BuildActionFromConfigFactory
+ * @see BuildProvderFromConfigFactory
  */
-class ConfigActionFactory implements AbstractFactoryInterface
+abstract class AbstractConfigBuilderFactory implements AbstractFactoryInterface
 {
+    /**
+     * @var string optional key to check in the config to specify the name of the object to create
+     */
+    protected $itemClassKey;
+
+    /**
+     * @var string the type the instance needs to be
+     */
+    protected $instanceOf;
+
     /**
      * @inheritDoc
      */
     public function canCreate(ContainerInterface $container, $requestedName)
     {
-        if (!$container->has('config') || !array_key_exists(self::class, $container->get('config'))) {
+        if (!$container->has('config') || !array_key_exists(static::class, $container->get('config'))) {
             return false;
         }
         $config       = $container->get('config');
-        $dependencies = $config[self::class];
+        $dependencies = $config[static::class];
 
         return is_array($dependencies) && array_key_exists($requestedName, $dependencies);
     }
@@ -46,11 +57,11 @@ class ConfigActionFactory implements AbstractFactoryInterface
             throw new ServiceNotCreatedException('Config must be an array');
         }
 
-        if (!array_key_exists(self::class, $config)) {
-            throw new ServiceNotCreatedException('Cannot find a "' . self::class . '" key in the config array');
+        if (!array_key_exists(static::class, $config)) {
+            throw new ServiceNotCreatedException('Cannot find a "' . static::class . '" key in the config array');
         }
 
-        $dependencies = $config[self::class];
+        $dependencies = $config[static::class];
 
         if (!is_array($dependencies)
             || !array_key_exists($requestedName, $dependencies)
@@ -60,20 +71,21 @@ class ConfigActionFactory implements AbstractFactoryInterface
         }
 
         $serviceDependencies = $dependencies[$requestedName];
-        $actionClass = $serviceDependencies['action_class'] ?? $requestedName;
-        unset($serviceDependencies['action_class']);
+        $itemClass       = $serviceDependencies[$this->itemClassKey] ?? $requestedName;
+        unset($serviceDependencies[$this->itemClassKey]);
 
-        if (!class_exists($actionClass)) {
-            throw new ServiceNotCreatedException(sprintf('Cannot find a "%s" at all', $actionClass));
+        if (!class_exists($itemClass)) {
+            throw new ServiceNotCreatedException(sprintf('Cannot find a "%s" at all', $itemClass));
         }
 
-        if (!in_array(ActionInterface::class, class_implements($actionClass))) {
+        if (!in_array($this->instanceOf, class_implements($itemClass))) {
             throw new ServiceNotCreatedException(
                 sprintf(
-                    'Cannot create "%s" using "%s" since "%s" is not an action',
-                    $actionClass,
-                    self::class,
-                    $actionClass
+                    'Cannot create "%s" using "%s" since "%s" is not an instace of %s',
+                    $itemClass,
+                    BuildProviderFromConfigFactory::class,
+                    $itemClass,
+                    $this->instanceOf
                 )
             );
         }
@@ -90,6 +102,6 @@ class ConfigActionFactory implements AbstractFactoryInterface
             $serviceDependencies
         );
 
-        return new $actionClass(...$arguments);
+        return new $itemClass(...$arguments);
     }
 }
