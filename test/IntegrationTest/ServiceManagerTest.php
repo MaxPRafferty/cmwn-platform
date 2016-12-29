@@ -3,6 +3,7 @@
 namespace IntegrationTest;
 
 use \PHPUnit_Framework_TestCase as TestCase;
+use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -56,12 +57,18 @@ class ServiceManagerTest extends TestCase
         $config       = $this->getServiceManager()->get('Config');
         $return       = [];
         $servicesList = [];
-        foreach ($config['service_manager'] as $type => $config) {
-            if (!in_array($type, ['aliases', 'factories', 'invokables'])) {
+        // Get all everything from the service manager
+        foreach ($config['service_manager'] as $type => $serviceConfig) {
+            if (!in_array($type, ['aliases', 'factories', 'invokables', 'services'])) {
                 continue;
             }
 
-            $servicesList = array_merge($servicesList, array_keys($config));
+            $servicesList = array_merge($servicesList, array_keys($serviceConfig));
+        }
+
+        // Gets everything from the config abstract factory
+        foreach (array_keys($config[ConfigAbstractFactory::class]) as $service) {
+            array_push($servicesList, $service);
         }
 
         sort($servicesList);

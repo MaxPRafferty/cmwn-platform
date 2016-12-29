@@ -11,6 +11,7 @@ use Zend\Text\Table\Table;
 
 /**
  * Class PermissionTableBuilder
+ * @todo move to dev module
  */
 class PermissionTableFactory implements RbacAwareInterface
 {

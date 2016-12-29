@@ -4,10 +4,11 @@ namespace Security\Authorization;
 
 use Zend\Permissions\Rbac\Exception\InvalidArgumentException;
 use Zend\Permissions\Rbac\Rbac as ZfRbac;
+use Zend\Permissions\Rbac\Role;
 use Zend\Permissions\Rbac\RoleInterface;
 
 /**
- * Class Rbac
+ * Expanded ZF Rbac that will build roles from the config
  */
 class Rbac extends ZfRbac
 {
@@ -27,16 +28,19 @@ class Rbac extends ZfRbac
 
     /**
      * Rbac constructor.
+     *
      * @param array $config
      */
     public function __construct(array $config)
     {
+        $config                 = $config['cmwn-roles'] ?? [];
         $this->permissionLabels = $config['permission_labels'];
         array_walk($config['roles'], [$this, 'addRoleFromConfig']);
     }
 
     /**
      * @param string|RoleInterface $objectOrName
+     *
      * @return RoleInterface
      */
     public function getRole($objectOrName)
@@ -79,6 +83,7 @@ class Rbac extends ZfRbac
      * Gets the label for a permission
      *
      * @param $permission
+     *
      * @return string
      */
     public function getLabelForPermission($permission)
@@ -93,6 +98,7 @@ class Rbac extends ZfRbac
     /**
      * @param $role
      * @param $entity
+     *
      * @return int
      */
     public function getScopeForEntity($role, $entity)

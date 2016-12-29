@@ -18,10 +18,11 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class FlagServiceTest
+ *
  * @package FlagTest
- * @group Flag
- * @group Service
- * @group FlagService
+ * @group   Flag
+ * @group   Service
+ * @group   FlagService
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FlagServiceTest extends TestCase
@@ -81,12 +82,12 @@ class FlagServiceTest extends TestCase
      */
     public function setUpFlag()
     {
-        $flagData = [
+        $flagData   = [
             'flag_id' => 'foo',
-            'flagger' => new Child(['user_id' => 'english_student']),
-            'flaggee' => new Child(['user_id' => 'english_student']),
+            'flagger' => new Child(['user_id' => 'english_student', 'username' => 'flagger']),
+            'flaggee' => new Child(['user_id' => 'english_student', 'username' => 'flaggee']),
             'url'     => '/foo',
-            'reason'  => 'bar'
+            'reason'  => 'bar',
         ];
         $this->flag = new Flag($flagData);
     }
@@ -105,7 +106,7 @@ class FlagServiceTest extends TestCase
             $this->tableGateway->getAdapter(),
             $resultSet
         );
-        $actual = $this->flagService->fetchAll();
+        $actual   = $this->flagService->fetchAll();
         $this->assertEquals($expected, $actual);
     }
 
@@ -127,11 +128,12 @@ class FlagServiceTest extends TestCase
                     $actual,
                     'Flag Service is not fetching flags correctly'
                 );
-                $resultSet = new ResultSet();
-                $flagData = $this->flag->getArrayCopy();
+                $resultSet           = new ResultSet();
+                $flagData            = $this->flag->getArrayCopy();
                 $flagData['flagger'] = $flagData['flagger']['user_id'];
                 $flagData['flaggee'] = $flagData['flaggee']['user_id'];
                 $resultSet->initialize([$flagData]);
+
                 return $resultSet;
             });
         $this->flagHydrator
@@ -186,8 +188,8 @@ class FlagServiceTest extends TestCase
      */
     public function testItShouldDeleteFlag()
     {
-        $resultSet = new ResultSet();
-        $flagData = $this->flag->getArrayCopy();
+        $resultSet           = new ResultSet();
+        $flagData            = $this->flag->getArrayCopy();
         $flagData['flagger'] = $flagData['flagger']['user_id'];
         $flagData['flaggee'] = $flagData['flaggee']['user_id'];
         $resultSet->initialize([$flagData]);

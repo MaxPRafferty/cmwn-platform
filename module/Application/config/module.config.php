@@ -40,6 +40,7 @@ return [
             \Zend\Db\Adapter\AdapterAbstractServiceFactory::class,
             \Application\Log\LoggerFactory::class,
             \Application\Utils\AbstractTableFactory::class,
+            \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
         ],
     ],
 

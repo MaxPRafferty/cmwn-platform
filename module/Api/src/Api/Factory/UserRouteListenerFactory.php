@@ -4,7 +4,7 @@ namespace Api\Factory;
 
 use Interop\Container\ContainerInterface;
 use Security\Listeners\UserRouteListener;
-use Security\Authorization\Assertions\UserAssertion;
+use Security\Authorization\Assertion\UserAssertion;
 use User\Service\UserServiceInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 

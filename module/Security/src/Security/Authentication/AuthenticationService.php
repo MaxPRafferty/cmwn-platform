@@ -5,19 +5,21 @@ namespace Security\Authentication;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
-use User\UserInterface;
+use Security\SecurityUserInterface;
 use Zend\Authentication\AuthenticationService as ZfAuthService;
 
 /**
- * Class AuthenticationService
+ * Authentication service that will always return a user type for getIdentity
  */
 class AuthenticationService extends ZfAuthService
 {
     /**
-     * Returns the identity from storage or null if no identity is available
+     * Returns the identity from storage or GuestUser if no identity is available
+     *
+     * If the user needs to change their password, than an exception is thrown
      *
      * @throws ChangePasswordException
-     * @return UserInterface|GuestUser
+     * @return SecurityUserInterface
      */
     public function getIdentity()
     {
@@ -26,6 +28,8 @@ class AuthenticationService extends ZfAuthService
             throw new ChangePasswordException($identity);
         }
 
-        return $identity;
+        return !$identity instanceof SecurityUserInterface
+            ? new GuestUser()
+            : $identity;
     }
 }

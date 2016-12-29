@@ -4,7 +4,7 @@ namespace Security\Guard;
 
 use Api\TokenEntityInterface;
 use Application\Utils\NoopLoggerAwareTrait;
-use Security\OpenRouteTrait;
+use Security\Utils\OpenRouteTrait;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
@@ -16,7 +16,9 @@ use ZF\ApiProblem\ApiProblemResponse;
 use ZF\Hal\Entity;
 
 /**
- * Class CsrfListener
+ * Checks the Csrf Token is correct
+ *
+ * @todo remove when we get JWT going
  */
 class CsrfGuard extends Csrf implements LoggerAwareInterface
 {
@@ -35,6 +37,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function __construct(array $config)
     {
+        $config = $config['cmwn-security'] ?? [];
         $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
         parent::__construct();
     }

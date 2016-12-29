@@ -40,8 +40,7 @@ class PasswordValidatorTest extends TestCase
      */
     public function testItShouldPassWithStrongPassword($password)
     {
-        $validator = new PasswordValidator();
-        $validator->setAuthenticationService($this->authService);
+        $validator = new PasswordValidator($this->authService);
         $this->assertTrue($validator->isValid($password));
     }
 
@@ -52,8 +51,7 @@ class PasswordValidatorTest extends TestCase
      */
     public function testItShouldFailsWithWeakPassword($password)
     {
-        $validator = new PasswordValidator();
-        $validator->setAuthenticationService($this->authService);
+        $validator = new PasswordValidator($this->authService);
         $this->assertFalse($validator->isValid($password));
     }
 
@@ -67,9 +65,8 @@ class PasswordValidatorTest extends TestCase
     {
         $securityUser = new SecurityUser(['code' => 'foobar123']);
 
-        $validator = new PasswordValidator();
-        $validator->setAuthenticationService($this->authService);
-        
+        $validator = new PasswordValidator($this->authService);
+
         $this->authService->shouldReceive('getIdentity')->andReturn($securityUser)->once();
         $this->assertTrue($validator->isValid($password));
     }
@@ -82,8 +79,7 @@ class PasswordValidatorTest extends TestCase
     public function testItShouldValidateTrueWhenUserNeedsToChangePassword($password)
     {
 
-        $validator = new PasswordValidator();
-        $validator->setAuthenticationService($this->authService);
+        $validator = new PasswordValidator($this->authService);
 
         $this->authService
             ->shouldReceive('getIdentity')
@@ -100,8 +96,7 @@ class PasswordValidatorTest extends TestCase
      */
     public function testItShouldValidateFalseCodeMatchesNewPassword($password)
     {
-        $validator = new PasswordValidator();
-        $validator->setAuthenticationService($this->authService);
+        $validator = new PasswordValidator($this->authService);
 
         $this->authService
             ->shouldReceive('getIdentity')
@@ -116,8 +111,7 @@ class PasswordValidatorTest extends TestCase
      */
     public function testItShouldValidateFalseCodeMatchesNewPasswordOnChangePasswordUser()
     {
-        $validator = new PasswordValidator();
-        $validator->setAuthenticationService($this->authService);
+        $validator = new PasswordValidator($this->authService);
 
         $this->authService
             ->shouldReceive('getIdentity')

@@ -6,6 +6,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authentication\AuthenticationService;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
+use Security\SecurityUser;
 use User\Child;
 use Zend\Authentication\Storage\NonPersistent;
 
@@ -54,7 +55,7 @@ class AuthenticationServiceTest extends TestCase
      */
     public function testItShouldReturnCorrectIdentity()
     {
-        $user = new Child();
+        $user = new SecurityUser();
         $this->storage->write($user);
 
         $this->assertSame($user, $this->authService->getIdentity());
@@ -68,7 +69,7 @@ class AuthenticationServiceTest extends TestCase
         $user = new ChangePasswordUser();
         $this->storage->write($user);
 
-        $this->setExpectedException(ChangePasswordException::class);
+        $this->expectException(ChangePasswordException::class);
         $this->authService->getIdentity();
     }
 }
