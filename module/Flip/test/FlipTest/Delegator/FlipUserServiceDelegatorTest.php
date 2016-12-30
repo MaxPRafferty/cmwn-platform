@@ -2,10 +2,14 @@
 
 namespace FlipTest\Delegator;
 
-use Flip\Delegator\FlipUserDelegator;
+use Flip\Delegator\FlipUserServiceDelegator;
+use Flip\Service\FlipUserService;
 use \PHPUnit_Framework_TestCase as TestCase;
+use User\Delegator\UserServiceDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
+use Zend\Paginator\Adapter\Iterator;
 
 /**
  * Test FlipUserDelegatorTest
@@ -18,16 +22,17 @@ use Zend\EventManager\Event;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FlipUserDelegatorTest extends TestCase
+class FlipUserServiceDelegatorTest extends TestCase
 {
     /**
-     * @var \Mockery\MockInterface|\Flip\Service\FlipUserService
+     * @var \Mockery\MockInterface|FlipUserService
      */
     protected $flipService;
 
     /**
-     * @var FlipUserDelegator
+     * @var FlipUserServiceDelegator
      */
     protected $delegator;
 
@@ -41,7 +46,7 @@ class FlipUserDelegatorTest extends TestCase
      */
     public function setUpFlipService()
     {
-        $this->flipService = \Mockery::mock('\Flip\Service\FlipUserService');
+        $this->flipService = \Mockery::mock(FlipUserService::class);
     }
 
     /**
@@ -49,9 +54,10 @@ class FlipUserDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events             = new EventManager();
         $this->calledEvents = [];
-        $this->delegator = new FlipUserDelegator($this->flipService);
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->delegator    = new FlipUserServiceDelegator($this->flipService, $events);
+        $events->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
@@ -62,7 +68,7 @@ class FlipUserDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -71,7 +77,7 @@ class FlipUserDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAllEarnedFlipsForUser()
     {
-        $result = new \ArrayIterator([['foo' => 'bar']]);
+        $result = new Iterator(new \ArrayIterator([['foo' => 'bar']]));
         $this->flipService->shouldReceive('fetchEarnedFlipsForUser')
             ->andReturn($result)
             ->once();
@@ -104,14 +110,55 @@ class FlipUserDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCallFetchAllEarnedFlipsForUserAndTriggerError()
+    {
+        $exception = new \Exception();
+        $this->flipService->shouldReceive('fetchEarnedFlipsForUser')
+            ->andThrow($exception)
+            ->once();
+
+        try {
+            $this->delegator->fetchEarnedFlipsForUser('foo-bar');
+            $this->fail(UserServiceDelegator::class . ' failed to throw exception from service');
+        } catch (\Throwable $actual) {
+            $this->assertSame(
+                $exception,
+                $actual,
+                UserServiceDelegator::class . ' failed to re-throw the same exception from service'
+            );
+        }
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.flips',
+                'target' => $this->flipService,
+                'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar'],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.user.flips.error',
+                'target' => $this->flipService,
+                'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar', 'error' => $exception],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldNotCallFetchAllEarnedFlipsForUser()
     {
-        $result = new \ArrayIterator([['foo' => 'bar']]);
+        $result = new Iterator(new \ArrayIterator([['foo' => 'bar']]));
         $this->flipService->shouldReceive('fetchEarnedFlipsForUser')
             ->never();
 
         $this->delegator->getEventManager()->attach('fetch.user.flips', function (Event $event) use (&$result) {
             $event->stopPropagation(true);
+
             return $result;
         });
 
@@ -131,6 +178,7 @@ class FlipUserDelegatorTest extends TestCase
             $this->calledEvents[0]
         );
     }
+
     /**
      * @test
      */
@@ -169,6 +217,46 @@ class FlipUserDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldCallAttachFlipToUserAndTriggerError()
+    {
+        $exception = new \Exception();
+        $this->flipService->shouldReceive('attachFlipToUser')
+            ->with('foo-bar', 'baz-bat')
+            ->once()
+            ->andThrow($exception);
+
+        try {
+            $this->delegator->attachFlipToUser('foo-bar', 'baz-bat');
+            $this->fail(UserServiceDelegator::class . ' failed to throw exception from service');
+        } catch (\Throwable $actual) {
+            $this->assertSame(
+                $exception,
+                $actual,
+                UserServiceDelegator::class . ' failed to re-throw the same exception from service'
+            );
+        }
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name'   => 'attach.flip',
+                'target' => $this->flipService,
+                'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar'],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name'   => 'attach.flip.error',
+                'target' => $this->flipService,
+                'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar', 'error' => $exception],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldNotCallAttachFlipToUser()
     {
         $this->flipService->shouldReceive('attachFlipToUser')
@@ -176,6 +264,7 @@ class FlipUserDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('attach.flip', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
 

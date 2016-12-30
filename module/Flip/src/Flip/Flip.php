@@ -6,7 +6,7 @@ use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
- * Class Flip
+ * The Basic flip
  */
 class Flip implements FlipInterface
 {
@@ -27,6 +27,7 @@ class Flip implements FlipInterface
 
     /**
      * Flip constructor.
+     *
      * @param array|null $options
      */
     public function __construct(array $options = null)
@@ -37,18 +38,15 @@ class Flip implements FlipInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function __toString()
     {
-        return (string) $this->getTitle();
+        return (string)$this->getTitle();
     }
 
     /**
-     * Exchange internal values from provided array
-     *
-     * @param  array $array
-     * @return void
+     * @inheritdoc
      */
     public function exchangeArray(array $array)
     {
@@ -69,11 +67,9 @@ class Flip implements FlipInterface
     }
 
     /**
-     * Return an array representation of the object
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'flip_id'     => $this->getFlipId(),
@@ -81,23 +77,19 @@ class Flip implements FlipInterface
             'description' => $this->getDescription(),
         ];
     }
+
     /**
-     * Gets the flip Id
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getFlipId()
+    public function getFlipId(): string
     {
         return $this->flipId;
     }
 
     /**
-     * Sets the Flip Id
-     *
-     * @param string $flipId
-     * @return Flip
+     * @inheritdoc
      */
-    public function setFlipId($flipId)
+    public function setFlipId(string $flipId)
     {
         $this->flipId = $flipId;
 
@@ -105,22 +97,18 @@ class Flip implements FlipInterface
     }
 
     /**
-     * Gets the flip title
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
+
     /**
-     * Sets the title of the flip
-     *
-     * @param string $title
-     * @return Flip
+     * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
 
@@ -128,22 +116,17 @@ class Flip implements FlipInterface
     }
 
     /**
-     * Gets the description of the flip
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
     /**
-     * Gets the flip Description
-     *
-     * @param string $description
-     * @return Flip
+     * @inheritdoc
      */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
 

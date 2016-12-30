@@ -50,7 +50,7 @@
   },
   "require-dev": {
     "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
-    "mockery/mockery": "0.9.*",
+    "mockery/mockery": "dev-master",
     "phpunit/phpunit": "~5.0",
     "phpunit/dbunit": "~2.0",
     "phpunit/php-token-stream": "~1.4",

@@ -5,11 +5,13 @@ namespace FlipTest\Service;
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserService;
 use \PHPUnit_Framework_TestCase as TestCase;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -33,7 +35,7 @@ class FlipUserServiceTest extends TestCase
     protected $flipService;
 
     /**
-     * @var \Mockery\MockInterface|\Zend\Db\TableGateway\TableGateway
+     * @var \Mockery\MockInterface|TableGateway
      */
     protected $tableGateway;
 
@@ -42,11 +44,11 @@ class FlipUserServiceTest extends TestCase
      */
     public function setUpGateWay()
     {
-        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock(\Zend\Db\Adapter\Adapter::class);
+        /** @var \Mockery\MockInterface|Adapter $adapter */
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
 
-        $this->tableGateway = \Mockery::mock(\Zend\Db\TableGateway\TableGateway::class);
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('user_flips')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
@@ -79,7 +81,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->where($where);
         $expectedSelect->group('f.flip_id');
         $expectedSelect->order(['uf.earned', 'f.title']);
-        $expectedAdapter   = new DbSelect(
+        $expectedAdapter = new DbSelect(
             $expectedSelect,
             $this->tableGateway->getAdapter(),
             $expectedResultSet
@@ -88,7 +90,7 @@ class FlipUserServiceTest extends TestCase
         $this->assertEquals(
             $expectedAdapter,
             $this->flipService->fetchEarnedFlipsForUser('foo-bar'),
-            'Flip User Service did not return correct adapter'
+            FlipUserService::class . ' did not return correct paginator adapter using a string for the user id'
         );
     }
 
@@ -99,7 +101,7 @@ class FlipUserServiceTest extends TestCase
     {
         /** @var \Mockery\MockInterface|\Flip\EarnedFlipInterface $prototype */
         $prototype = \Mockery::mock('\Flip\EarnedFlipInterface');
-        $where   = new Where();
+        $where     = new Where();
         $where->addPredicate(new Operator('foo', '=', 'bar'));
 
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
@@ -119,7 +121,7 @@ class FlipUserServiceTest extends TestCase
 
         $expectedSelect->where($expectedWhere);
 
-        $expectedAdapter   = new DbSelect(
+        $expectedAdapter = new DbSelect(
             $expectedSelect,
             $this->tableGateway->getAdapter(),
             $expectedResultSet
@@ -128,7 +130,7 @@ class FlipUserServiceTest extends TestCase
         $this->assertEquals(
             $expectedAdapter,
             $this->flipService->fetchEarnedFlipsForUser('foo-bar', $where, $prototype),
-            'Flip User Service did not return correct adapter'
+            FlipUserService::class . ' did not return correct paginator adapter using a custom prototype'
         );
     }
 
@@ -140,45 +142,40 @@ class FlipUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('insert')
             ->once()
             ->andReturnUsing(function ($actualInsert) {
-                $this->assertTrue(
-                    is_array($actualInsert),
-                    'User flip service called insert with non array'
-                );
-
-                $this->assertArrayHasKey(
-                    'user_id',
-                    $actualInsert,
-                    'User flip service did not include the user id on insert'
-                );
-
-                $this->assertArrayHasKey(
-                    'flip_id',
-                    $actualInsert,
-                    'User flip service did not include the flip id on insert'
+                $this->assertEquals(
+                    ['user_id', 'flip_id', 'earned', 'acknowledge_id'],
+                    array_keys($actualInsert),
+                    FlipUserService::class . ' is setting the wrong fields'
                 );
 
                 $this->assertArrayHasKey(
                     'earned',
                     $actualInsert,
-                    'User flip service did not include the earned id on insert'
+                    FlipUserService::class . ' did not include the earned date on attach'
+                );
+
+                $this->assertArrayHasKey(
+                    'acknowledge_id',
+                    $actualInsert,
+                    FlipUserService::class . ' did not include the acknowledge id on attach'
                 );
 
                 $this->assertEquals(
                     'foo-bar',
                     $actualInsert['user_id'],
-                    'Flip user service did not use correct user Id'
+                    FlipUserService::class . ' service did not use correct user Id'
                 );
 
                 $this->assertEquals(
                     'baz-bat',
                     $actualInsert['flip_id'],
-                    'Flip user service did not use correct flip Id'
+                    FlipUserService::class . ' did not use correct flip Id'
                 );
 
                 $this->assertNotInstanceOf(
                     \DateTime::class,
                     $actualInsert['earned'],
-                    'Flip User Service did not set the earned date correctly'
+                    FlipUserService::class . ' did not set the earned date correctly'
                 );
 
                 return true;
