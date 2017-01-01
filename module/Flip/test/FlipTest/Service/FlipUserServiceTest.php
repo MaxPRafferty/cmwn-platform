@@ -4,7 +4,9 @@ namespace FlipTest\Service;
 
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
+use Ramsey\Uuid\Uuid;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Expression;
@@ -29,6 +31,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class FlipUserServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var FlipUserService(
      */
@@ -74,7 +78,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned'],
+            ['earned' => 'earned', 'user_id' => 'earned_by'],
             Select::JOIN_LEFT
         );
 
@@ -115,7 +119,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned'],
+            ['earned' => 'earned', 'user_id' => 'earned_by'],
             Select::JOIN_LEFT
         );
 
@@ -182,5 +186,43 @@ class FlipUserServiceTest extends TestCase
             });
 
         $this->flipService->attachFlipToUser('foo-bar', 'baz-bat');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldAcknowledgeFlip()
+    {
+        $ackId      = Uuid::uuid1();
+        $earnedFlip = new EarnedFlip();
+        $earnedFlip->setAcknowledgeId($ackId);
+        $this->tableGateway->shouldReceive('update')
+            ->with(['acknowledge_id' => null], ['acknowledge_id' => $ackId])
+            ->andReturn(1)
+            ->once();
+
+        $this->assertTrue(
+            $this->flipService->acknowledgeFlip($earnedFlip),
+            FlipUserService::class . ' did not acknowledge earned flip'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotAcknowledgeFlip()
+    {
+        $ackId      = Uuid::uuid1();
+        $earnedFlip = new EarnedFlip();
+        $earnedFlip->setAcknowledgeId($ackId);
+        $this->tableGateway->shouldReceive('update')
+            ->with(['acknowledge_id' => null], ['acknowledge_id' => $ackId])
+            ->andReturn(0)
+            ->once();
+
+        $this->assertFalse(
+            $this->flipService->acknowledgeFlip($earnedFlip),
+            FlipUserService::class . ' did acknowledged earned flip'
+        );
     }
 }

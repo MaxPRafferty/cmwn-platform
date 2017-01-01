@@ -89,7 +89,7 @@ class Flip implements FlipInterface
     /**
      * @inheritdoc
      */
-    public function setFlipId(string $flipId)
+    public function setFlipId(string $flipId): FlipInterface
     {
         $this->flipId = $flipId;
 
@@ -104,11 +104,10 @@ class Flip implements FlipInterface
         return $this->title;
     }
 
-
     /**
      * @inheritdoc
      */
-    public function setTitle(string $title)
+    public function setTitle(string $title): FlipInterface
     {
         $this->title = $title;
 
@@ -126,7 +125,7 @@ class Flip implements FlipInterface
     /**
      * @inheritdoc
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description): FlipInterface
     {
         $this->description = $description;
 

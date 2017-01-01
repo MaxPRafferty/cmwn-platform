@@ -103,4 +103,35 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
 
         return $return;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function acknowledgeFlip(EarnedFlipInterface $earnedFlip): bool
+    {
+        $event = new Event(
+            'acknowledge.flip',
+            $this->realService,
+            ['earned_flip' => $earnedFlip]
+        );
+
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->acknowledgeFlip($earnedFlip);
+        } catch (\Throwable $attachException) {
+            $event->setName('acknowledge.flip.error');
+            $event->setParam('error', $attachException);
+            $this->getEventManager()->triggerEvent($event);
+            throw $attachException;
+        }
+
+        $event->setName('acknowledge.flip.post');
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
 }

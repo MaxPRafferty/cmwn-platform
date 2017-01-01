@@ -5,6 +5,7 @@ namespace FlipTest\Service;
 use Application\Exception\NotFoundException;
 use Flip\Flip;
 use Flip\Service\FlipService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -29,6 +30,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class FlipServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var FlipService
      */

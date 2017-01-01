@@ -19,8 +19,6 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Service that handles flips a user has earned
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FlipUserService implements FlipUserServiceInterface
 {
@@ -57,7 +55,7 @@ class FlipUserService implements FlipUserServiceInterface
         $select->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', $userId),
-            ['earned' => 'earned'],
+            ['earned' => 'earned', 'user_id' => 'earned_by'],
             Select::JOIN_LEFT
         );
 
@@ -93,5 +91,16 @@ class FlipUserService implements FlipUserServiceInterface
         ]);
 
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function acknowledgeFlip(EarnedFlipInterface $earnedFlip): bool
+    {
+        return (bool) $this->pivotTable->update(
+            ['acknowledge_id' => null],
+            ['acknowledge_id' => $earnedFlip->getAcknowledgeId()]
+        );
     }
 }

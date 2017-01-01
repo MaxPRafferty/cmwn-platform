@@ -36,11 +36,13 @@ interface FlipInterface
     /**
      * Sets the Flip Id
      *
+     * Designed to be fluent
+     *
      * @param string $flipId
      *
-     * @return Flip
+     * @return FlipInterface
      */
-    public function setFlipId(string $flipId);
+    public function setFlipId(string $flipId): FlipInterface;
 
     /**
      * Gets the flip title
@@ -52,11 +54,13 @@ interface FlipInterface
     /**
      * Sets the title of the flip
      *
+     * Designed to be fluent
+     *
      * @param string $title
      *
-     * @return Flip
+     * @return FlipInterface
      */
-    public function setTitle(string $title);
+    public function setTitle(string $title): FlipInterface;
 
     /**
      * Gets the description on how to earn the flip
@@ -68,9 +72,11 @@ interface FlipInterface
     /**
      * Sets a description on how to earn a flip
      *
+     * Designed to be fluent
+     *
      * @param string $description
      *
-     * @return Flip
+     * @return FlipInterface
      */
-    public function setDescription(string $description);
+    public function setDescription(string $description): FlipInterface;
 }

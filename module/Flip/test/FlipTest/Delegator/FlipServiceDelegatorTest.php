@@ -5,6 +5,7 @@ namespace FlipTest\Delegator;
 use Flip\Delegator\FlipServiceDelegator;
 use Flip\Flip;
 use Flip\Service\FlipService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
@@ -25,6 +26,8 @@ use Zend\Paginator\Adapter\Iterator;
  */
 class FlipServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|FlipService
      */

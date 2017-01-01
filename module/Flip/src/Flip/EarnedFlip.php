@@ -20,6 +20,11 @@ class EarnedFlip extends Flip implements EarnedFlipInterface
     protected $ackId;
 
     /**
+     * @var string
+     */
+    protected $earnedBy;
+
+    /**
      * @inheritdoc
      */
     public function exchangeArray(array $array)
@@ -37,6 +42,7 @@ class EarnedFlip extends Flip implements EarnedFlipInterface
         $return                   = parent::getArrayCopy();
         $return['earned']         = $this->getEarned() !== null ? $this->getEarned()->format(\DateTime::ISO8601) : null;
         $return['acknowledge_id'] = $this->getAcknowledgeId();
+        $return['earned_by']      = $this->getEarnedBy();
 
         return $return;
     }
@@ -52,17 +58,21 @@ class EarnedFlip extends Flip implements EarnedFlipInterface
     /**
      * @inheritdoc
      */
-    public function setEarned(\DateTime $earned = null)
+    public function setEarned(\DateTime $earned = null): EarnedFlipInterface
     {
         $this->earned = $earned;
+
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function setAcknowledgeId(string $ackId)
+    public function setAcknowledgeId(string $ackId): EarnedFlipInterface
     {
         $this->ackId = $ackId;
+
+        return $this;
     }
 
     /**
@@ -79,5 +89,23 @@ class EarnedFlip extends Flip implements EarnedFlipInterface
     public function isAcknowledged(): bool
     {
         return empty($this->ackId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setEarnedBy(string $userId): EarnedFlipInterface
+    {
+        $this->earnedBy = $userId;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEarnedBy(): string
+    {
+        return (string)$this->earnedBy;
     }
 }

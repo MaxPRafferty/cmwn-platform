@@ -28,6 +28,7 @@ class EarnedFlipTest extends TestCase
             'title'          => 'Manchuck Flip',
             'description'    => 'The Best Flip to earn',
             'earned'         => $expectedDate,
+            'earned_by'      => 'manchuck',
             'acknowledge_id' => 'acknowledge_me',
 
         ];
@@ -53,6 +54,7 @@ class EarnedFlipTest extends TestCase
             'title'          => 'Manchuck Flip',
             'description'    => 'The Best Flip to earn',
             'earned'         => $expectedDate->format(\DateTime::ISO8601),
+            'earned_by'      => 'manchuck',
             'acknowledge_id' => 'acknowledge_me',
         ];
 

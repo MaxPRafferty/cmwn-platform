@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8419a20a61c62fe5fd324203c5c265f5",
-    "content-hash": "0f8d87e2bdabd1918cd607bfaa64e3cd",
+    "hash": "2e7e3dde5200291d7a21e6b8f561467b",
+    "content-hash": "721bc4983532ea659a94752ffbae7e8b",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -76,16 +76,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.20.11",
+            "version": "3.20.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "39d122b903813da2f53312fd3146acaa83a6d9f6"
+                "reference": "8725e67cb77b057b55596b4468ce9a1a95c5fe96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/39d122b903813da2f53312fd3146acaa83a6d9f6",
-                "reference": "39d122b903813da2f53312fd3146acaa83a6d9f6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8725e67cb77b057b55596b4468ce9a1a95c5fe96",
+                "reference": "8725e67cb77b057b55596b4468ce9a1a95c5fe96",
                 "shasum": ""
             },
             "require": {
@@ -152,7 +152,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-12-22 20:47:16"
+            "time": "2016-12-30 00:41:36"
         },
         {
             "name": "aws/aws-sdk-php-zf2",
@@ -4740,20 +4740,21 @@
         },
         {
             "name": "phpmd/phpmd",
-            "version": "2.5.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "9298602a922cd8c46666df8d540a60bc5925ce55"
+                "reference": "db49f2054fb71340857d197acefcdc25f44fcf98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/9298602a922cd8c46666df8d540a60bc5925ce55",
-                "reference": "9298602a922cd8c46666df8d540a60bc5925ce55",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/db49f2054fb71340857d197acefcdc25f44fcf98",
+                "reference": "db49f2054fb71340857d197acefcdc25f44fcf98",
                 "shasum": ""
             },
             "require": {
-                "pdepend/pdepend": "^2.0.4",
+                "ext-xml": "*",
+                "pdepend/pdepend": "^2.2",
                 "php": ">=5.3.9"
             },
             "require-dev": {
@@ -4801,7 +4802,7 @@
                 "phpmd",
                 "pmd"
             ],
-            "time": "2016-11-23 20:33:32"
+            "time": "2016-12-21 12:20:45"
         },
         {
             "name": "phpspec/prophecy",
@@ -6563,7 +6564,8 @@
     "stability-flags": {
         "lcobucci/jwt": 20,
         "zendframework/zend-component-installer": 20,
-        "mockery/mockery": 20
+        "mockery/mockery": 20,
+        "phpmd/phpmd": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

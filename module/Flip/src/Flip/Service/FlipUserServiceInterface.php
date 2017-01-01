@@ -36,4 +36,13 @@ interface FlipUserServiceInterface
      * @return bool
      */
     public function attachFlipToUser($user, $flip): bool;
+
+    /**
+     * Acknowledges a flip
+     *
+     * @param EarnedFlipInterface $earnedFlip
+     *
+     * @return bool
+     */
+    public function acknowledgeFlip(EarnedFlipInterface $earnedFlip): bool;
 }
