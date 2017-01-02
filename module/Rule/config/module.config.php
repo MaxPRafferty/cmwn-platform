@@ -80,10 +80,12 @@ return [
                 \Rule\Engine\Service\BuildSpecificationCollectionFactory::class,
             'AllSpecifications'                                       =>
                 \Rule\Engine\Service\SpecificationCollectionFactory::class,
+            \Rule\Engine\Specification\EngineSpecification::class     =>
+                \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
         'shared'             => [
-            \Rule\Engine\Specification\ArraySpecification::class      => false,
-            \Rule\Engine\Specification\SpecificationCollection::class => false,
+            \Rule\Engine\Specification\EngineSpecification::class => false,
+            \Rule\Engine\Specification\ArraySpecification::class  => false,
         ],
         'abstract_factories' => [
             \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class =>

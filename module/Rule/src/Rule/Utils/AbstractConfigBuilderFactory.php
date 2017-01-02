@@ -71,7 +71,7 @@ abstract class AbstractConfigBuilderFactory implements AbstractFactoryInterface
         }
 
         $serviceDependencies = $dependencies[$requestedName];
-        $itemClass       = $serviceDependencies[$this->itemClassKey] ?? $requestedName;
+        $itemClass           = $serviceDependencies[$this->itemClassKey] ?? $requestedName;
         unset($serviceDependencies[$this->itemClassKey]);
 
         if (!class_exists($itemClass)) {
@@ -81,7 +81,7 @@ abstract class AbstractConfigBuilderFactory implements AbstractFactoryInterface
         if (!in_array($this->instanceOf, class_implements($itemClass))) {
             throw new ServiceNotCreatedException(
                 sprintf(
-                    'Cannot create "%s" using "%s" since "%s" is not an instace of %s',
+                    'Cannot create "%s" using "%s" since "%s" is not an instance of %s',
                     $itemClass,
                     BuildProviderFromConfigFactory::class,
                     $itemClass,

@@ -57,6 +57,10 @@ return [
             \Zend\Authentication\Adapter\Http::class,
             \Security\Guard\CsrfGuard::class,
         ],
+
+        \Security\Rule\Provider\ActiveUserProvider::class => [
+            \Security\Authentication\AuthenticationService::class,
+        ],
     ],
 
     'service_manager' => [
@@ -150,6 +154,28 @@ return [
                     ],
                 ],
             ],
+        ],
+    ],
+
+    'providers' => [
+        'factories' => [
+            \Security\Rule\Provider\RoleProvider::class       =>
+                \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
+            \Security\Rule\Provider\ActiveUserProvider::class => \Zend\Config\AbstractConfigFactory::class,
+        ],
+        'shared'    => [
+            \Security\Rule\Provider\RoleProvider::class => false,
+        ],
+    ],
+
+    'rules' => [
+        'factories' => [
+            \Security\Rule\Rule\HasPermission::class => \Rule\Rule\Service\BuildRuleFromConfigFactory::class,
+            \Security\Rule\Rule\HasRole::class       => \Rule\Rule\Service\BuildRuleFromConfigFactory::class,
+        ],
+        'shared'    => [
+            \Security\Rule\Rule\HasPermission::class => false,
+            \Security\Rule\Rule\HasRole::class       => false,
         ],
     ],
 ];

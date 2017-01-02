@@ -3,6 +3,7 @@
 namespace Rule\Engine\Service;
 
 use Rule\Engine\Specification\SpecificationInterface;
+use Rule\Rule\Service\RuleManager;
 use Rule\Utils\AbstractConfigBuilderFactory;
 use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
@@ -20,4 +21,9 @@ class BuildSpecificationFromConfigFactory extends AbstractConfigBuilderFactory i
      * @inheritDoc
      */
     protected $instanceOf = SpecificationInterface::class;
+
+    /**
+     * @var RuleManager
+     */
+    protected static $ruleManager;
 }

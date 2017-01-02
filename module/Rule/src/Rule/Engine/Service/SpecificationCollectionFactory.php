@@ -4,9 +4,11 @@ namespace Rule\Engine\Service;
 
 use Interop\Container\ContainerInterface;
 use Rule\Engine\Specification\ArraySpecification;
+use Rule\Engine\Specification\EngineSpecification;
 use Rule\Engine\Specification\SpecificationCollection;
 use Rule\Engine\Specification\SpecificationCollectionInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Class SpecificationCollectionFactory
@@ -23,12 +25,13 @@ class SpecificationCollectionFactory implements FactoryInterface
         $allFactories = $config['specifications']['factories'];
         unset($allFactories[ArraySpecification::class]);
         unset($allFactories[SpecificationCollection::class]);
+        unset($allFactories[EngineSpecification::class]);
         unset($allFactories[$requestedName]);
 
         // Merge in configured specs
-        $allSpecs = array_merge(
-            array_keys($allFactories),
-            array_keys($config[BuildSpecificationFromConfigFactory::class] ?? [])
+        $allSpecs = ArrayUtils::merge(
+            $allFactories,
+            $config[BuildSpecificationFromConfigFactory::class] ?? []
         );
 
         return $container->get(SpecificationManager::class)

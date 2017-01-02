@@ -47,19 +47,11 @@ class FlipUserService implements FlipUserServiceInterface
         $where = null,
         EarnedFlipInterface $prototype = null
     ): AdapterInterface {
-        $where  = $this->createWhere($where);
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $select = new Select(['f' => 'flips']);
-
-        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
-        $select->join(
-            ['uf' => 'user_flips'],
-            new Expression('uf.user_id = ?', $userId),
-            ['earned' => 'earned', 'user_id' => 'earned_by'],
-            Select::JOIN_LEFT
+        $select = $this->buildSelect(
+            $user instanceof UserInterface ? $user->getUserId() : $user,
+            $where
         );
 
-        $select->where($where);
         $select->group('f.flip_id');
         $select->order(['uf.earned', 'f.title']);
 
@@ -98,9 +90,58 @@ class FlipUserService implements FlipUserServiceInterface
      */
     public function acknowledgeFlip(EarnedFlipInterface $earnedFlip): bool
     {
-        return (bool) $this->pivotTable->update(
+        return (bool)$this->pivotTable->update(
             ['acknowledge_id' => null],
             ['acknowledge_id' => $earnedFlip->getAcknowledgeId()]
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchFlipsForUser(
+        UserInterface $user,
+        string $flipId,
+        EarnedFlipInterface $prototype = null
+    ): AdapterInterface {
+        $select = $this->buildSelect(
+            $user->getUserId(),
+            ['uf.flip_id' => $flipId]
+        );
+
+        $prototype = $prototype ?? new EarnedFlip();
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        return new DbSelect(
+            $select,
+            $this->pivotTable->getAdapter(),
+            $resultSet
+        );
+    }
+
+    /**
+     * Helps build out the common select statement with all the joins
+     *
+     * @param string $userId
+     * @param null $where
+     *
+     * @return Select
+     */
+    protected function buildSelect(string $userId, $where = null)
+    {
+        $where  = $this->createWhere($where);
+        $select = new Select(['f' => 'flips']);
+
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $select->join(
+            ['uf' => 'user_flips'],
+            new Expression('uf.user_id = ?', $userId),
+            ['earned' => 'earned', 'user_id' => 'earned_by'],
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+
+        return $select;
     }
 }

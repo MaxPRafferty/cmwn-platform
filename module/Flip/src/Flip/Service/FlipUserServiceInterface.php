@@ -3,6 +3,7 @@
 namespace Flip\Service;
 
 use Flip\EarnedFlipInterface;
+use User\UserInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
@@ -45,4 +46,19 @@ interface FlipUserServiceInterface
      * @return bool
      */
     public function acknowledgeFlip(EarnedFlipInterface $earnedFlip): bool;
+
+    /**
+     * Fetches a paginated list of all the times a user earned a flip
+     *
+     * @param UserInterface $user
+     * @param string $flipId
+     * @param EarnedFlipInterface|null $prototype
+     *
+     * @return AdapterInterface
+     */
+    public function fetchFlipsForUser(
+        UserInterface $user,
+        string $flipId,
+        EarnedFlipInterface $prototype = null
+    ): AdapterInterface;
 }

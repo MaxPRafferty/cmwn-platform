@@ -6,6 +6,7 @@ use Application\Utils\ServiceTrait;
 use Flip\EarnedFlipInterface;
 use Flip\Service\FlipUserService;
 use Flip\Service\FlipUserServiceInterface;
+use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
@@ -130,6 +131,42 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
         }
 
         $event->setName('acknowledge.flip.post');
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchFlipsForUser(
+        UserInterface $user,
+        string $flipId,
+        EarnedFlipInterface $prototype = null
+    ): AdapterInterface {
+        $event = new Event(
+            'fetch.earned.user.flips',
+            $this->realService,
+            ['flip_id' => $flipId, 'prototype' => $prototype, 'user' => $user]
+        );
+
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->fetchFlipsForUser($user, $flipId, $prototype);
+        } catch (\Throwable $fetchEarnedException) {
+            $event->setName('fetch.earned.user.flips.error');
+            $event->setParam('error', $fetchEarnedException);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $fetchEarnedException;
+        }
+
+        $event->setName('fetch.earned.user.flips.post');
+        $event->setParam('flips', $return);
         $this->getEventManager()->triggerEvent($event);
 
         return $return;

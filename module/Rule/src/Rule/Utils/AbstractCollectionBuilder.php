@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Rule\Action\ActionInterface;
 use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\Service\BuildActionCollectionFactory;
+use Rule\Engine\Specification\SpecificationCollectionInterface;
 use Rule\Provider\Collection\ProviderCollectionInterface;
 use Rule\Provider\ProviderInterface;
 use Rule\Provider\Service\BuildProviderCollectionFactory;
@@ -139,7 +140,7 @@ abstract class AbstractCollectionBuilder implements FactoryInterface
 
     /**
      * @param RuleInterface|ProviderInterface|ActionInterface $instance
-     * @param RuleCollectionInterface|ProviderCollectionInterface|ActionCollectionInterface $collection
+     * @param RuleCollectionInterface|ProviderCollectionInterface|ActionCollectionInterface|SpecificationCollectionInterface $collection
      */
     protected function append($instance, $collection)
     {
