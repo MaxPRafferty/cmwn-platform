@@ -3,7 +3,14 @@
  * @codingStandardsIgnoreStart
  */
 return [
-    'flips'         => [],
+    'flips' => [],
+//    'flips'         => [
+//        [
+//            'flip_id'     => 'first-time-login',
+//            'title'       => 'Login for the first time',
+//            'description' => 'Login for the first time',
+//        ]
+//    ],
     'organizations' => [],
     'games'         => [],
     'groups'        => [],

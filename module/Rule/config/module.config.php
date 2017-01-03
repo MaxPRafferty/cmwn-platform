@@ -32,6 +32,7 @@ return [
             \Rule\Provider\BasicValueProvider::class            => \Rule\Provider\Service\BuildProviderFactory::class,
             \Rule\Provider\Collection\ProviderCollection::class =>
                 \Rule\Provider\Service\BuildProviderCollectionFactory::class,
+            \Rule\Event\Provider\FromEventTargetProvider::class => \Rule\Provider\Service\BuildProviderFactory::class,
         ],
         'abstract_factories' => [
             \Rule\Provider\Service\BuildProviderFromConfigFactory::class =>

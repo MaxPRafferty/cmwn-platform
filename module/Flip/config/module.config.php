@@ -8,7 +8,7 @@ return [
 
     'actions' => [
         'factories' => [
-            \Flip\Rule\Action\EarnFlip::class => \Application\Service\DependentInvokableFactory::class,
+            \Flip\Rule\Action\EarnFlip::class => \Rule\Action\Service\BuildActionFactory::class,
         ],
         'shared'    => [
             \Flip\Rule\Action\EarnFlip::class => false,
@@ -17,10 +17,12 @@ return [
 
     'rules' => [
         'factories' => [
-            \Flip\Rule\Rule\EarnedFlip::class => \Application\Service\DependentInvokableFactory::class,
+            \Flip\Rule\Rule\EarnedFlip::class     => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Flip\Rule\Rule\FlipRegistered::class => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
         'shared'    => [
-            \Flip\Rule\Rule\EarnedFlip::class => false,
+            \Flip\Rule\Rule\EarnedFlip::class     => false,
+            \Flip\Rule\Rule\FlipRegistered::class => false,
         ],
     ],
 

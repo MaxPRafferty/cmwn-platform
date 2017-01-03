@@ -42,20 +42,13 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
     protected $password;
 
     /**
-     * @var EventManagerInterface
-     */
-    protected $events;
-
-    /**
      * AuthAdapter constructor.
      *
      * @param SecurityServiceInterface $service
-     * @param EventManagerInterface $events
      */
-    public function __construct(SecurityServiceInterface $service, EventManagerInterface $events)
+    public function __construct(SecurityServiceInterface $service)
     {
         $this->service = $service;
-        $this->events  = $events;
     }
 
     /**
@@ -103,7 +96,6 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 $user = $this->service->fetchUserByUserName($this->userId);
             }
         } catch (NotFoundException $notFound) {
-            $this->trigger('login.not.found');
             $this->getLogger()->alert(
                 'Login attempt with non-existent user',
                 ['user_id' => $this->userId]
@@ -113,7 +105,6 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
         }
 
         if ($user->isDeleted()) {
-            $this->trigger('login.not.found', $user);
             $this->getLogger()->warn(
                 'Deleted user attempted to login',
                 ['user_id' => $this->userId]
@@ -124,7 +115,6 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
 
         // Bail early if the password is good
         if ($user->comparePassword($this->password)) {
-            $this->trigger('login.success', $user);
             $this->getLogger()->notice(
                 'Successful user login',
                 ['user_id' => $this->userId]
@@ -135,7 +125,6 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
 
         switch ($user->compareCode($this->password)) {
             case SecurityUserInterface::CODE_EXPIRED:
-                $this->trigger('login.expired', $user);
                 $this->getLogger()->warn(
                     'Code Expired for user',
                     ['user_id' => $this->userId]
@@ -144,7 +133,6 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 return new Result(Result::FAILURE_UNCATEGORIZED, new GuestUser());
 
             case SecurityUserInterface::CODE_INVALID:
-                $this->trigger('login.invalid', $user);
                 $this->getLogger()->warn(
                     'Invalid password/code supplied for user',
                     ['user_id' => $this->userId]
@@ -153,7 +141,6 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 return new Result(Result::FAILURE_CREDENTIAL_INVALID, new GuestUser());
 
             case SecurityUserInterface::CODE_VALID:
-                $this->trigger('login.with.code', $user);
                 $this->getLogger()->notice(
                     'User Logged in with correct code',
                     ['user_id' => $this->userId]
@@ -170,14 +157,5 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
         $this->getLogger()->emerg('THIS IS THE BAD! SHOW THEM THE BAD', ['user_id' => $this->userId]);
 
         return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, new GuestUser());
-    }
-
-    /**
-     * @param string $eventName
-     * @param SecurityUserInterface|null $user
-     */
-    protected function trigger(string $eventName, SecurityUserInterface $user = null)
-    {
-        $this->events->triggerEvent(new Event($eventName, $user));
     }
 }

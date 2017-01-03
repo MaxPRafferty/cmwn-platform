@@ -1,7 +1,5 @@
 <?php
-/**
- * Earn a flip at login
- */
+$flipToEarn = 'first-time-login';
 return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
         'first-time-login' => [
@@ -17,7 +15,16 @@ return [
                         'name'    => \Security\Rule\Rule\HasPermission::class,
                         'options' => [
                             \Security\Authorization\Rbac::class,
-                            'earn.flip',
+                            'create.user.flip',
+                        ],
+                    ],
+
+                    // The flip is registered
+                    [
+                        'name'    => \Flip\Rule\Rule\FlipRegistered::class,
+                        'options' => [
+                            \Flip\Service\FlipServiceInterface::class,
+                            $flipToEarn,
                         ],
                     ],
 
@@ -26,7 +33,7 @@ return [
                         'name'     => \Flip\Rule\Rule\EarnedFlip::class,
                         'options'  => [
                             \Flip\Service\FlipUserServiceInterface::class,
-                            'first-time-login',
+                            $flipToEarn,
                             'active_user',
                         ],
                         'operator' => 'not',
@@ -36,16 +43,20 @@ return [
             'actions'             => [
                 'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
                 'actions'                 => [
+                    // Earn the flip for the active user
                     [
-                        'action_class' => \Flip\Rule\Action\EarnFlip::class,
-                        \Flip\Service\FlipUserServiceInterface::class,
-                        'first-time-login',
-                        'active_user',
+                        'name'    => \Flip\Rule\Action\EarnFlip::class,
+                        'options' => [
+                            \Flip\Service\FlipUserServiceInterface::class,
+                            $flipToEarn,
+                            'active_user',
+                        ],
                     ],
                 ],
             ],
             'providers'           => [
-                'active_user' => \Security\Rule\Provider\ActiveUserProvider::class,
+                \Security\Rule\Provider\ActiveUserProvider::class,
+                \Security\Rule\Provider\RoleProvider::class,
             ],
         ],
     ],

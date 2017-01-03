@@ -136,7 +136,7 @@ class FlipUserService implements FlipUserServiceInterface
         $select->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', $userId),
-            ['earned' => 'earned', 'user_id' => 'earned_by'],
+            ['earned' => 'earned', 'earned_by' => 'user_id'],
             Select::JOIN_LEFT
         );
 

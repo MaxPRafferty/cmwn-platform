@@ -47,7 +47,7 @@ class SecurityUser extends User implements SecurityUserInterface
     /**
      * @var string
      */
-    protected $role = 'guest';
+    protected $role;
 
     /**
      * @inheritdoc
@@ -140,6 +140,10 @@ class SecurityUser extends User implements SecurityUserInterface
     {
         if ($this->isSuper()) {
             return 'super';
+        }
+
+        if (null === $this->role) {
+            return 'me.' . strtolower($this->getType());
         }
 
         return $this->role;

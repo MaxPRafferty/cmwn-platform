@@ -174,8 +174,8 @@ return [
 
     'rules' => [
         'factories' => [
-            \Security\Rule\Rule\HasPermission::class => \Application\Service\DependentInvokableFactory::class,
-            \Security\Rule\Rule\HasRole::class       => \Application\Service\DependentInvokableFactory::class,
+            \Security\Rule\Rule\HasPermission::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Security\Rule\Rule\HasRole::class       => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
         'shared'    => [
             \Security\Rule\Rule\HasPermission::class => false,
