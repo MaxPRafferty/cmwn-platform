@@ -6,6 +6,24 @@ return [
         \Flip\Service\FlipService::class     => ['FlipsTable'],
     ],
 
+    'actions' => [
+        'factories' => [
+            \Flip\Rule\Action\EarnFlip::class => \Application\Service\DependentInvokableFactory::class,
+        ],
+        'shared'    => [
+            \Flip\Rule\Action\EarnFlip::class => false,
+        ],
+    ],
+
+    'rules' => [
+        'factories' => [
+            \Flip\Rule\Rule\EarnedFlip::class => \Application\Service\DependentInvokableFactory::class,
+        ],
+        'shared'    => [
+            \Flip\Rule\Rule\EarnedFlip::class => false,
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             \Flip\Service\FlipServiceInterface::class     => \Flip\Service\FlipService::class,

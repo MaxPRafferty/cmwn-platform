@@ -12,17 +12,6 @@ return [
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
                 'rules'                 => [
-                    // Cannot have earned the flip before
-                    [
-                        'rule_class' => \Flip\Rule\Rule\EarnedFlip::class,
-                        'options'    => [
-                            \Flip\Service\FlipUserServiceInterface::class,
-                            'first-time-login',
-                            'active_user',
-                        ],
-                        'operator'   => 'not',
-                    ],
-
                     // Has permission to earn flips
                     [
                         'name'    => \Security\Rule\Rule\HasPermission::class,
@@ -30,6 +19,17 @@ return [
                             \Security\Authorization\Rbac::class,
                             'earn.flip',
                         ],
+                    ],
+
+                    // Cannot have earned the flip before
+                    [
+                        'name'     => \Flip\Rule\Rule\EarnedFlip::class,
+                        'options'  => [
+                            \Flip\Service\FlipUserServiceInterface::class,
+                            'first-time-login',
+                            'active_user',
+                        ],
+                        'operator' => 'not',
                     ],
                 ],
             ],
@@ -45,7 +45,7 @@ return [
                 ],
             ],
             'providers'           => [
-                'foo' => 'bar',
+                'active_user' => \Security\Rule\Provider\ActiveUserProvider::class,
             ],
         ],
     ],

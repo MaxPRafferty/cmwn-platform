@@ -26,7 +26,7 @@ abstract class AbstractEarnedFlipRule implements RuleInterface
         $user = $item->getParam($this->getUserProviderName());
         static::checkValueType($user, UserInterface::class);
 
-        $timesEarned = $this->getFlipUserService()->fetchEarnedFlipsForUser(
+        $timesEarned = $this->getFlipUserService()->fetchFlipsForUser(
             $user,
             $this->getFlipId()
         );

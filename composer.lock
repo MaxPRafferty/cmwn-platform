@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2e7e3dde5200291d7a21e6b8f561467b",
-    "content-hash": "721bc4983532ea659a94752ffbae7e8b",
+    "hash": "8419a20a61c62fe5fd324203c5c265f5",
+    "content-hash": "0f8d87e2bdabd1918cd607bfaa64e3cd",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -4740,21 +4740,20 @@
         },
         {
             "name": "phpmd/phpmd",
-            "version": "dev-master",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "db49f2054fb71340857d197acefcdc25f44fcf98"
+                "reference": "9298602a922cd8c46666df8d540a60bc5925ce55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/db49f2054fb71340857d197acefcdc25f44fcf98",
-                "reference": "db49f2054fb71340857d197acefcdc25f44fcf98",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/9298602a922cd8c46666df8d540a60bc5925ce55",
+                "reference": "9298602a922cd8c46666df8d540a60bc5925ce55",
                 "shasum": ""
             },
             "require": {
-                "ext-xml": "*",
-                "pdepend/pdepend": "^2.2",
+                "pdepend/pdepend": "^2.0.4",
                 "php": ">=5.3.9"
             },
             "require-dev": {
@@ -4802,7 +4801,7 @@
                 "phpmd",
                 "pmd"
             ],
-            "time": "2016-12-21 12:20:45"
+            "time": "2016-11-23 20:33:32"
         },
         {
             "name": "phpspec/prophecy",
@@ -6564,8 +6563,7 @@
     "stability-flags": {
         "lcobucci/jwt": 20,
         "zendframework/zend-component-installer": 20,
-        "mockery/mockery": 20,
-        "phpmd/phpmd": 20
+        "mockery/mockery": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

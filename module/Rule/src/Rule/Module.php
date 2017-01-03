@@ -26,6 +26,6 @@ class Module implements ConfigProviderInterface
      */
     public function onBootstrap(MvcEvent $mvcEvent)
     {
-//        $mvcEvent->getApplication()->getServiceManager()->get(Engine::class);
+        $mvcEvent->getApplication()->getServiceManager()->get(Engine::class);
     }
 }

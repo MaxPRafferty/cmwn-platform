@@ -192,7 +192,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
      */
     public function getUserId()
     {
-        return $this->userId;
+        return (string) $this->userId;
     }
 
     /**

@@ -57,8 +57,13 @@ return [
             \Zend\Authentication\Adapter\Http::class,
             \Security\Guard\CsrfGuard::class,
         ],
+    ],
 
+    \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
         \Security\Rule\Provider\ActiveUserProvider::class => [
+            \Security\Authentication\AuthenticationService::class,
+        ],
+        \Security\Rule\Provider\RoleProvider::class       => [
             \Security\Authentication\AuthenticationService::class,
         ],
     ],
@@ -118,17 +123,17 @@ return [
     ],
 
     'shared-listeners' => [
-//        \Security\Listeners\OrgServiceListener::class,
-//        \Security\Listeners\GroupServiceListener::class,
-//        \Security\Listeners\RouteListener::class,
-//        \Security\Guard\XsrfGuard::class,
-//        \Security\Guard\CsrfGuard::class,
-//        \Security\Listeners\ExpireAuthSessionListener::class,
-//        \Security\Listeners\UserServiceListener::class,
-//        \Security\Listeners\UpdateSession::class,
-//        \Security\Listeners\HttpAuthListener::class,
-//        \Security\Listeners\UserUpdateListener::class,
-//        \Security\Listeners\FetchUserImageListener::class,
+        \Security\Listeners\OrgServiceListener::class,
+        \Security\Listeners\GroupServiceListener::class,
+        \Security\Listeners\RouteListener::class,
+        \Security\Guard\XsrfGuard::class,
+        \Security\Guard\CsrfGuard::class,
+        \Security\Listeners\ExpireAuthSessionListener::class,
+        \Security\Listeners\UserServiceListener::class,
+        \Security\Listeners\UpdateSession::class,
+        \Security\Listeners\HttpAuthListener::class,
+        \Security\Listeners\UserUpdateListener::class,
+        \Security\Listeners\FetchUserImageListener::class,
     ],
 
     'console' => [
@@ -159,19 +164,18 @@ return [
 
     'providers' => [
         'factories' => [
-            \Security\Rule\Provider\RoleProvider::class       =>
+            \Security\Rule\Provider\RoleProvider::class =>
                 \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
-            \Security\Rule\Provider\ActiveUserProvider::class => \Zend\Config\AbstractConfigFactory::class,
-        ],
-        'shared'    => [
-            \Security\Rule\Provider\RoleProvider::class => false,
+
+            \Security\Rule\Provider\ActiveUserProvider::class =>
+                \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
         ],
     ],
 
     'rules' => [
         'factories' => [
-            \Security\Rule\Rule\HasPermission::class => \Rule\Rule\Service\BuildRuleFromConfigFactory::class,
-            \Security\Rule\Rule\HasRole::class       => \Rule\Rule\Service\BuildRuleFromConfigFactory::class,
+            \Security\Rule\Rule\HasPermission::class => \Application\Service\DependentInvokableFactory::class,
+            \Security\Rule\Rule\HasRole::class       => \Application\Service\DependentInvokableFactory::class,
         ],
         'shared'    => [
             \Security\Rule\Rule\HasPermission::class => false,

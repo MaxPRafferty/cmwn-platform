@@ -59,7 +59,7 @@ class EarnedFlip extends AbstractEarnedFlipRule
      */
     protected function getUserProviderName(): string
     {
-        return $this->expectedFlip;
+        return $this->userProvider;
     }
 
     /**
