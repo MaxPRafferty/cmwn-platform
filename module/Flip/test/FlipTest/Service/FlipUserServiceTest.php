@@ -78,7 +78,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned', 'user_id' => 'earned_by'],
+            ['earned' => 'earned', 'earned_by' => 'user_id'],
             Select::JOIN_LEFT
         );
 
@@ -119,7 +119,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->join(
             ['uf' => 'user_flips'],
             new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned', 'user_id' => 'earned_by'],
+            ['earned' => 'earned', 'earned_by' => 'user_id'],
             Select::JOIN_LEFT
         );
 

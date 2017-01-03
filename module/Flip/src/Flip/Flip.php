@@ -51,9 +51,9 @@ class Flip implements FlipInterface
     public function exchangeArray(array $array)
     {
         $defaults = [
-            'flip_id'     => null,
-            'title'       => null,
-            'description' => null,
+            'flip_id'     => '',
+            'title'       => '',
+            'description' => '',
         ];
 
         $array = array_merge($defaults, $array);
@@ -83,7 +83,7 @@ class Flip implements FlipInterface
      */
     public function getFlipId(): string
     {
-        return $this->flipId;
+        return (string)$this->flipId;
     }
 
     /**
@@ -101,7 +101,7 @@ class Flip implements FlipInterface
      */
     public function getTitle(): string
     {
-        return $this->title;
+        return (string)$this->title;
     }
 
     /**
@@ -119,7 +119,7 @@ class Flip implements FlipInterface
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return (string)$this->description;
     }
 
     /**

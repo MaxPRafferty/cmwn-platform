@@ -17,12 +17,14 @@ return [
 
     'rules' => [
         'factories' => [
-            \Flip\Rule\Rule\EarnedFlip::class     => \Rule\Rule\Service\BuildRuleFactory::class,
-            \Flip\Rule\Rule\FlipRegistered::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Flip\Rule\Rule\EarnedFlip::class       => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Flip\Rule\Rule\EarnedFlipXTimes::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Flip\Rule\Rule\FlipRegistered::class   => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
         'shared'    => [
-            \Flip\Rule\Rule\EarnedFlip::class     => false,
-            \Flip\Rule\Rule\FlipRegistered::class => false,
+            \Flip\Rule\Rule\EarnedFlip::class       => false,
+            \Flip\Rule\Rule\FlipRegistered::class   => false,
+            \Flip\Rule\Rule\EarnedFlipXTimes::class => false,
         ],
     ],
 

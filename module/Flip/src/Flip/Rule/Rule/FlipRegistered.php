@@ -34,7 +34,7 @@ class FlipRegistered implements RuleInterface
     public function __construct(FlipServiceInterface $service, string $flipId)
     {
         $this->service = $service;
-        $this->flipId = $flipId;
+        $this->flipId  = $flipId;
     }
 
     /**
@@ -49,6 +49,7 @@ class FlipRegistered implements RuleInterface
         }
 
         $this->timesSatisfied++;
+
         return true;
     }
 }
