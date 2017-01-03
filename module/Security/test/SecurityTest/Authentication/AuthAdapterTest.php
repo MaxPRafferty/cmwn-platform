@@ -12,7 +12,6 @@ use Security\SecurityUser;
 use Security\Service\SecurityService;
 use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\Result;
-use Zend\EventManager\EventManager;
 
 /**
  * Test AuthAdapterTest
@@ -52,7 +51,7 @@ class AuthAdapterTest extends TestCase
      */
     public function setUpAdapter()
     {
-        $this->adapter = new AuthAdapter($this->securityService, new EventManager());
+        $this->adapter = new AuthAdapter($this->securityService);
     }
 
     /**
