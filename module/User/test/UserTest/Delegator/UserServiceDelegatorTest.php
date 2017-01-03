@@ -8,6 +8,7 @@ use User\Delegator\UserServiceDelegator;
 use User\Service\UserServiceInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test UserServiceDelegatorTest
@@ -57,10 +58,7 @@ class UserServiceDelegatorTest extends TestCase
     public function setUpDelegator()
     {
         $this->calledEvents = [];
-        $this->delegator    = new UserServiceDelegator($this->userService);
-        $this->delegator->getEventManager()->clearListeners('save.user');
-        $this->delegator->getEventManager()->clearListeners('fetch.user.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.all.users');
+        $this->delegator    = new UserServiceDelegator($this->userService, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

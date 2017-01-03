@@ -34,8 +34,9 @@ class Rbac extends ZfRbac
     public function __construct(array $config)
     {
         $config                 = $config['cmwn-roles'] ?? [];
-        $this->permissionLabels = $config['permission_labels'];
-        array_walk($config['roles'], [$this, 'addRoleFromConfig']);
+        $this->permissionLabels = $config['permission_labels'] ?? [];
+        $roles                  = ($config['roles'] ?? []);
+        array_walk($roles, [$this, 'addRoleFromConfig']);
     }
 
     /**

@@ -98,6 +98,7 @@ class TeacherWorksheetParserTest extends TestCase
      */
     public function setUpRbac()
     {
+        $this->markTestSkipped('This should not use the helper to get the rbac');
         $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 

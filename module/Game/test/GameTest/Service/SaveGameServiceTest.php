@@ -176,7 +176,7 @@ class SaveGameServiceTest extends TestCase
         $result = new ResultSet();
         $result->initialize([$gameData]);
 
-        $this->tableGateway->shouldReceive()
+        $this->tableGateway->shouldReceive('insert')
             ->once()
             ->andReturn($result);
 
