@@ -118,17 +118,17 @@ return [
     ],
 
     'shared-listeners' => [
-        \Security\Listeners\OrgServiceListener::class,
-        \Security\Listeners\GroupServiceListener::class,
-        \Security\Listeners\RouteListener::class,
-        \Security\Guard\XsrfGuard::class,
-        \Security\Guard\CsrfGuard::class,
-        \Security\Listeners\ExpireAuthSessionListener::class,
-        \Security\Listeners\UserServiceListener::class,
-        \Security\Listeners\UpdateSession::class,
-        \Security\Listeners\HttpAuthListener::class,
-        \Security\Listeners\UserUpdateListener::class,
-        \Security\Listeners\FetchUserImageListener::class,
+//        \Security\Listeners\OrgServiceListener::class,
+//        \Security\Listeners\GroupServiceListener::class,
+//        \Security\Listeners\RouteListener::class,
+//        \Security\Guard\XsrfGuard::class,
+//        \Security\Guard\CsrfGuard::class,
+//        \Security\Listeners\ExpireAuthSessionListener::class,
+//        \Security\Listeners\UserServiceListener::class,
+//        \Security\Listeners\UpdateSession::class,
+//        \Security\Listeners\HttpAuthListener::class,
+//        \Security\Listeners\UserUpdateListener::class,
+//        \Security\Listeners\FetchUserImageListener::class,
     ],
 
     'console' => [

@@ -15,6 +15,6 @@ return [
         'config_cache_enabled'     => true,
         'module_map_cache_key'     => 'application.module.cache',
         'module_map_cache_enabled' => true,
-        'cache_dir'                => 'data/cache/',
+        'cache_dir'                => realpath(__DIR__ . '/../data/cache/'),
     ],
 ];
