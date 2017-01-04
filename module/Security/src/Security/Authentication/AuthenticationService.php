@@ -8,7 +8,6 @@ use Security\GuestUser;
 use Security\SecurityUserInterface;
 use Zend\Authentication\Adapter;
 use Zend\Authentication\AuthenticationService as ZfAuthService;
-use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Authentication\Result;
 use Zend\Authentication\Storage;
 use Zend\EventManager\Event;
@@ -31,9 +30,9 @@ class AuthenticationService extends ZfAuthService
      * @inheritDoc
      */
     public function __construct(
+        EventManagerInterface $events,
         Storage\StorageInterface $storage = null,
-        Adapter\AdapterInterface $adapter = null,
-        EventManagerInterface $events
+        Adapter\AdapterInterface $adapter = null
     ) {
         parent::__construct($storage, $adapter);
         $this->setEventManager($events);
@@ -91,6 +90,7 @@ class AuthenticationService extends ZfAuthService
 
         $event->setTarget($result->getIdentity());
         $this->events->triggerEvent($event);
+
         return $result;
     }
 }
