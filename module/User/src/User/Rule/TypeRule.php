@@ -10,9 +10,9 @@ use User\UserInterface;
 /**
  * A Rule that is satisfied if the check_user matches a type
  */
-class TypeRule implements \Rule\Rule\RuleInterface
+class TypeRule implements RuleInterface
 {
-    use \Rule\Rule\TimesSatisfiedTrait;
+    use TimesSatisfiedTrait;
 
     /**
      * @var string
