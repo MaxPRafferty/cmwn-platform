@@ -61,8 +61,8 @@ class RbacDataProvider implements \IteratorAggregate
 
         foreach ($this->roleNames as $roleName) {
             $className = __NAMESPACE__ . '\\' . ucfirst(
-                    StaticFilter::execute(str_replace('.', '_', $roleName), UnderscoreToCamelCase::class)
-                ) . 'DataProvider';
+                StaticFilter::execute(str_replace('.', '_', $roleName), UnderscoreToCamelCase::class)
+            ) . 'DataProvider';
 
             if (!class_exists($className)) {
                 throw new NotFoundException("Missing roles from provider for role $roleName");
