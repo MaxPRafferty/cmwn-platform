@@ -12,6 +12,8 @@ use Zend\Authentication\AuthenticationServiceInterface;
  */
 class ActiveUserProvider implements ProviderInterface
 {
+    const PROVIDER_NAME = 'active_user';
+
     /**
      * @var AuthenticationServiceInterface
      */
@@ -32,7 +34,7 @@ class ActiveUserProvider implements ProviderInterface
      */
     public function getName(): string
     {
-        return 'active_user';
+        return static::PROVIDER_NAME;
     }
 
     /**

@@ -125,13 +125,12 @@ class TestHelper
                 . static::$appConfig['module_listener_options']['config_cache_key']
                 . '.php';
 
-            $adapter = new Adapter(
+            static::$appConfig['service_manager']['services'][Adapter::class] = new Adapter(
                 new Pdo(
                     static::getPdoConnection()
                 )
             );
 
-            static::$appConfig['service_manager']['services'][Adapter::class] = $adapter;
             @unlink(static::$appConfig['module_listener_options']['cache_dir'] . '/' . $cacheFile);
         }
 

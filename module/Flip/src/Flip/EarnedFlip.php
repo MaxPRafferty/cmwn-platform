@@ -29,8 +29,9 @@ class EarnedFlip extends Flip implements EarnedFlipInterface
      */
     public function exchangeArray(array $array)
     {
-        $earned          = isset($array['earned']) ? DateTimeFactory::factory($array['earned']) : null;
-        $array['earned'] = $earned;
+        $earned                  = isset($array['earned']) ? DateTimeFactory::factory($array['earned']) : null;
+        $array['earned']         = $earned;
+        $array['acknowledge_id'] = $array['acknowledge_id'] ?? '';
         parent::exchangeArray($array);
     }
 

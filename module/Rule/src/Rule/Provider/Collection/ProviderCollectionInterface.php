@@ -15,9 +15,9 @@ interface ProviderCollectionInterface extends \IteratorAggregate, \ArrayAccess, 
      *
      * @param ProviderInterface $provider
      *
-     * @return ProviderCollectionInterface
+     * @return ProviderCollectionInterface|RuleItemInterface
      */
-    public function append(ProviderInterface $provider): ProviderCollectionInterface;
+    public function append(ProviderInterface $provider): RuleItemInterface;
 
     /**
      * Used to retrieve a provider

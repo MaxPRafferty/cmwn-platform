@@ -17,6 +17,11 @@ use ZF\Apigility\Application;
 class InitTest extends TestCase
 {
     /**
+     * This checks that application can be bootstrapped
+     *
+     * I run this test with the networked services off to ensure that no module is
+     * trying to connect at the time of bootstrapping
+     *
      * @test
      */
     public function testItShouldInitTheApplication()

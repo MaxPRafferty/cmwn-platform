@@ -2,6 +2,7 @@
 
 namespace Flip\Delegator;
 
+use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Flip\EarnedFlipInterface;
 use Flip\Service\FlipUserService;
@@ -167,6 +168,41 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
 
         $event->setName('fetch.earned.user.flips.post');
         $event->setParam('flips', $return);
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchLatestAcknowledgeFlip(
+        UserInterface $user,
+        EarnedFlipInterface $prototype = null
+    ): EarnedFlipInterface {
+        $event = new Event(
+            'fetch.acknowledge.flip',
+            $this->realService,
+            ['prototype' => $prototype, 'user' => $user]
+        );
+
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->fetchLatestAcknowledgeFlip($user, $prototype);
+        } catch (\Throwable $fetchAcknowledgeException) {
+            $event->setName('fetch.acknowledge.flip.error');
+            $event->setParam('error', $fetchAcknowledgeException);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $fetchAcknowledgeException;
+        }
+
+        $event->setName('fetch.acknowledge.flip.post');
+        $event->setParam('flip', $return);
         $this->getEventManager()->triggerEvent($event);
 
         return $return;

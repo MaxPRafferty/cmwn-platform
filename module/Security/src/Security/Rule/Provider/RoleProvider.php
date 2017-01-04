@@ -10,6 +10,8 @@ use Zend\Authentication\AuthenticationServiceInterface;
  */
 class RoleProvider implements ProviderInterface
 {
+    const PROVIDER_NAME = 'active_role';
+
     /**
      * @var AuthenticationServiceInterface
      */
@@ -30,7 +32,7 @@ class RoleProvider implements ProviderInterface
      */
     public function getName(): string
     {
-        return 'active_role';
+        return static::PROVIDER_NAME;
     }
 
     /**
