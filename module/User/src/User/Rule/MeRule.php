@@ -12,7 +12,7 @@ use User\UserInterface;
  */
 class MeRule implements RuleInterface
 {
-    use \Rule\Rule\TimesSatisfiedTrait;
+    use TimesSatisfiedTrait;
 
     /**
      * @inheritDoc
