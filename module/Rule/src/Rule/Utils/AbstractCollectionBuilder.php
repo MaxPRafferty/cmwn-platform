@@ -140,7 +140,7 @@ abstract class AbstractCollectionBuilder implements FactoryInterface
 
     /**
      * @param RuleInterface|ProviderInterface|ActionInterface $instance
-     * @param RuleCollectionInterface|ProviderCollectionInterface|ActionCollectionInterface|SpecificationCollectionInterface $collection
+     * @param RuleCollectionInterface|ProviderCollectionInterface|ActionCollectionInterface $collection
      */
     protected function append($instance, $collection)
     {
