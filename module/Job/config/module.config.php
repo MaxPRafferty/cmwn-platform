@@ -2,13 +2,13 @@
 
 return [
     'service_manager' => [
-        'aliases'    => [
-            'Job\Service' => \Job\Service\JobService::class,
+        'aliases'            => [
+            'Job\Service'                           => \Job\Service\JobService::class,
             \Job\Service\JobServiceInterface::class => \Job\Service\JobService::class,
         ],
-        'factories'  => [
+        'factories'          => [
             \Job\Processor\JobRunner::class => \Job\Processor\JobRunnerFactory::class,
-            \Job\Service\JobService::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Job\Service\JobService::class  => \Job\Service\JobServiceFactory::class,
         ],
         'abstract_factories' => [
             \Job\Aws\Sqs\SqsJobServiceAbstractFactory::class,
