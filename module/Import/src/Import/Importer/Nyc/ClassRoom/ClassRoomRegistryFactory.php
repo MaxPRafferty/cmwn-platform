@@ -3,26 +3,19 @@
 namespace Import\Importer\Nyc\ClassRoom;
 
 use Group\Service\GroupServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ClassRoomRegistryFactory
- *
- * ${CARET}
  */
 class ClassRoomRegistryFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var GroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get(GroupServiceInterface::class);
-        return new ClassRoomRegistry($groupService);
+        return new ClassRoomRegistry($container->get(GroupServiceInterface::class));
     }
 }

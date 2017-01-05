@@ -58,8 +58,8 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        $events->detach('Zend\Mvc\Application', $this->listeners[0]);
-        $events->detach('Zend\Mvc\Application', $this->listeners[1]);
+        $events->detach($this->listeners[0], 'Zend\Mvc\Application');
+        $events->detach($this->listeners[1], 'Zend\Mvc\Application');
     }
 
     /**

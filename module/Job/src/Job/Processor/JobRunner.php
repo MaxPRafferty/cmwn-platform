@@ -70,7 +70,7 @@ class JobRunner implements LoggerAwareInterface
         $paramStr = '';
         foreach ($jobSpec['params'] as $jobParam) {
             $this->getLogger()->debug('Found param: ' . $jobParam);
-            $valueFlag = lcfirst(StaticFilter::execute($jobParam, 'Word\UnderscoreToCamelCase'));
+            $valueFlag = lcfirst(StaticFilter::execute($jobParam, UnderscoreToCamelCase::class));
 
             $paramStr .= ' --' . $valueFlag . '=' . escapeshellarg($params[$jobParam]);
             $this->getLogger()->debug('Param String: ' . $jobParam);

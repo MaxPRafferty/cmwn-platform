@@ -51,7 +51,7 @@ class ForgotServiceDelegator implements ForgotServiceInterface, EventManagerAwar
         $event->setTarget($this->realService);
         $event->setName('forgot.password');
 
-        if ($this->getEventManager()->trigger($event)->stopped()) {
+        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
             return true;
         }
 
@@ -64,7 +64,7 @@ class ForgotServiceDelegator implements ForgotServiceInterface, EventManagerAwar
             $event->setParam('exception', $exception);
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return true;
     }
 

@@ -2,29 +2,21 @@
 
 namespace Job\Controller;
 
-use Zend\ServiceManager\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class WorkerControllerFactory
- * @codeCoverageIgnore
  */
 class WorkerControllerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-
-        $authService = $serviceLocator->get('authentication');
-        return new WorkerController($serviceLocator, $authService);
+        return new WorkerController($container, $container->get(AuthenticationServiceInterface::class));
     }
 }

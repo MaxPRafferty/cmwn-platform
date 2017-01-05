@@ -3,9 +3,9 @@
 namespace Security\Factory;
 
 use Group\Service\UserGroupServiceInterface;
+use Interop\Container\ContainerInterface;
 use Security\Listeners\UserServiceListener;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UserServiceListenerFactory
@@ -13,15 +13,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class UserServiceListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get(UserGroupServiceInterface::class);
-        return new UserServiceListener($userGroupService);
+        return new UserServiceListener($container->get(UserGroupServiceInterface::class));
     }
 }

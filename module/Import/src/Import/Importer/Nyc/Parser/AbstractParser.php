@@ -70,11 +70,17 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface, 
         static::$logger = $logger;
     }
 
+    /**
+     * @param Rbac $rbac
+     */
     public function setRbac(Rbac $rbac)
     {
         static::$rbac = $rbac;
     }
 
+    /**
+     * @return RbacAwareInterface
+     */
     public function getRbac()
     {
         return self::$rbac;

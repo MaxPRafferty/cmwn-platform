@@ -57,7 +57,6 @@ class SkribbleServiceDelegatorTest extends TestCase
     {
         $this->calledEvents = [];
         $this->delegator    = new SkribbleServiceDelegator($this->skribbleService);
-        $this->delegator->getEventManager()->getSharedManager()->clearListeners(SkribbleServiceInterface::class);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

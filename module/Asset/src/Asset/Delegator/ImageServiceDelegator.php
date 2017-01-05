@@ -44,7 +44,7 @@ class ImageServiceDelegator implements ImageServiceInterface
     {
         $hideListener = new HideDeletedEntitiesListener(['fetch.all.images'], ['fetch.image.post']);
         $hideListener->setEntityParamKey('image');
-        $this->getEventManager()->attach($hideListener);
+        $hideListener->attach($this->getEventManager());
     }
 
     /**
@@ -59,7 +59,7 @@ class ImageServiceDelegator implements ImageServiceInterface
     public function saveNewImage(ImageInterface $image)
     {
         $event    = new Event('save.new.image', $this->realService, ['image' => $image]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -68,7 +68,7 @@ class ImageServiceDelegator implements ImageServiceInterface
         $return = $this->realService->saveNewImage($image);
 
         $event    = new Event('save.new.image.post', $this->realService, ['image' => $image]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -85,7 +85,7 @@ class ImageServiceDelegator implements ImageServiceInterface
     public function saveImage(ImageInterface $image)
     {
         $event    = new Event('save.image', $this->realService, ['image' => $image]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -94,7 +94,7 @@ class ImageServiceDelegator implements ImageServiceInterface
         $return = $this->realService->saveImage($image);
 
         $event    = new Event('save.image.post', $this->realService, ['image' => $image]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -109,7 +109,7 @@ class ImageServiceDelegator implements ImageServiceInterface
     public function fetchImage($imageId)
     {
         $event    = new Event('fetch.image', $this->realService, ['image_id' => $imageId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -117,7 +117,7 @@ class ImageServiceDelegator implements ImageServiceInterface
 
         $return = $this->realService->fetchImage($imageId);
         $event    = new Event('fetch.image.post', $this->realService, ['image_id' => $imageId, 'image' => $return]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -133,7 +133,7 @@ class ImageServiceDelegator implements ImageServiceInterface
     public function deleteImage(ImageInterface $image, $soft = true)
     {
         $event    = new Event('delete.image', $this->realService, ['image' => $image, 'soft' => $soft]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -141,7 +141,7 @@ class ImageServiceDelegator implements ImageServiceInterface
 
         $return = $this->realService->deleteImage($image, $soft);
         $event  = new Event('delete.image.post', $this->realService, ['image' => $image, 'soft' => $soft]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -160,7 +160,7 @@ class ImageServiceDelegator implements ImageServiceInterface
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -171,7 +171,7 @@ class ImageServiceDelegator implements ImageServiceInterface
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'images' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

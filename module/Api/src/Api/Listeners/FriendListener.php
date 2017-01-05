@@ -72,13 +72,14 @@ class FriendListener implements AuthenticationServiceAwareInterface
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        $events->detach('Zend\Mvc\Application', $this->listeners[0]);
-        $events->detach('ZF\Hal\Plugin\Hal', $this->listeners[1]);
-        $events->detach('ZF\Hal\Plugin\Hal', $this->listeners[2]);
+        $events->detach($this->listeners[0], 'Zend\Mvc\Application');
+        $events->detach($this->listeners[1], 'ZF\Hal\Plugin\Hal');
+        $events->detach($this->listeners[2], 'ZF\Hal\Plugin\Hal');
     }
 
     /**
      * @param MvcEvent $event
+     *
      * @return null
      */
     public function onRoute(MvcEvent $event)
@@ -104,6 +105,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
         $userId = $event->getRouteMatch()->getParam('user_id', false);
         $dataContainer->setBodyParam('user_id', $userId);
+        return null;
     }
 
     /**
@@ -118,7 +120,7 @@ class FriendListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
         if (!$realEntity instanceof FriendInterface) {
             return;
         }
@@ -157,11 +159,11 @@ class FriendListener implements AuthenticationServiceAwareInterface
         if ($realEntity instanceof MeEntity && $realEntity->getType() === UserInterface::TYPE_CHILD) {
             $entity->getLinks()->add(new SuggestLink($authUser->getUserId()));
         }
-        
+
         if ($realEntity instanceof MeEntity) {
             return;
         }
-        
+
         if ($status === FriendInterface::FRIEND && !$entity->getLinks()->has('friend')) {
             $entity->getLinks()->add(new FriendLink($authUser->getUserId(), $realEntity->getUserId()));
         }

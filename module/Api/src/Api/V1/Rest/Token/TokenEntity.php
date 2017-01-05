@@ -32,6 +32,6 @@ class TokenEntity extends Entity implements TokenEntityInterface
      */
     public function setToken($token)
     {
-        $this->entity['token'] = $token;
+        $this->getEntity()['token'] = $token;
     }
 }

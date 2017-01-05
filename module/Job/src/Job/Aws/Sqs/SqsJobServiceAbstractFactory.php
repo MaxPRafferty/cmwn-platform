@@ -3,8 +3,8 @@
 namespace Job\Aws\Sqs;
 
 use Aws\Sdk;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
 /**
  * Class SqsJobServiceAbstractFactory
@@ -12,43 +12,42 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SqsJobServiceAbstractFactory implements AbstractFactoryInterface
 {
     /**
-     * @inheritDoc
-     */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        $config   = $this->getConfig($serviceLocator, $requestedName);
-        return $config !== false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        $config   = $this->getConfig($serviceLocator, $requestedName);
-        $queueUrl = $config['queue-url'];
-
-        /** @var Sdk $aws */
-        $aws       = $serviceLocator->get(Sdk::class);
-        $sqsClient = $aws->createSqs(['version' => 'latest']);
-
-        return new SqsJobService($sqsClient, $queueUrl);
-    }
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @param $requestedName
      *
      * @return bool
      */
-    protected function getConfig(ServiceLocatorInterface $serviceLocator, $requestedName)
+    protected function getConfig(ContainerInterface $container, $requestedName)
     {
         $configKey = strtolower(str_replace('Sqs', '', $requestedName) . '-sqs-config');
-        $config    = $serviceLocator->get('Config');
+        $config    = $container->get('Config');
         if (isset($config[$configKey])) {
             return $config[$configKey];
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canCreate(ContainerInterface $container, $requestedName)
+    {
+        return $this->getConfig($container, $requestedName) !== false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config   = $this->getConfig($container, $requestedName);
+        $queueUrl = $config['queue-url'];
+
+        /** @var Sdk $aws */
+        $aws       = $container->get(Sdk::class);
+        $sqsClient = $aws->createSqs(['version' => 'latest']);
+
+        return new SqsJobService($sqsClient, $queueUrl);
     }
 }

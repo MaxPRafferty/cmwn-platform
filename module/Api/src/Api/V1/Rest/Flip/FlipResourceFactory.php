@@ -3,8 +3,8 @@
 namespace Api\V1\Rest\Flip;
 
 use Flip\Service\FlipServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FlipResourceFactory
@@ -12,15 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FlipResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var FlipServiceInterface $flipService */
-        $flipService = $serviceLocator->get(FlipServiceInterface::class);
-        return new FlipResource($flipService);
+        return new FlipResource($container->get(FlipServiceInterface::class));
     }
 }

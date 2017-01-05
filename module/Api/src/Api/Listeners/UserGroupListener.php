@@ -73,7 +73,7 @@ class UserGroupListener
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('ZF\Hal\Plugin\Hal', $listener);
+            $events->detach($listener, 'ZF\Hal\Plugin\Hal');
         }
     }
 
@@ -101,7 +101,7 @@ class UserGroupListener
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
 
         if (!$realEntity instanceof UserEntity) {
             return;
@@ -150,7 +150,7 @@ class UserGroupListener
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
 
         if (!$realEntity instanceof UserEntity) {
             return;

@@ -388,6 +388,6 @@ class SecurityServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturn($resultSet)->once();
         $this->tableGateway->shouldReceive('update')->twice();
-        $this->securityService->saveCodeToGroup('foobar', 'school');
+        $this->assertTrue($this->securityService->saveCodeToGroup('foobar', 'school'));
     }
 }

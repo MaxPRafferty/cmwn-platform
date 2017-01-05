@@ -51,7 +51,7 @@ class FlipDelegator implements FlipServiceInterface
             ['where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -59,7 +59,7 @@ class FlipDelegator implements FlipServiceInterface
         $return   = $this->realService->fetchAll($where, $prototype);
         $event->setName('fetch.all.flips.post');
         $event->setParam('flips', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -74,7 +74,7 @@ class FlipDelegator implements FlipServiceInterface
     public function fetchFlipById($flipId)
     {
         $event    = new Event('fetch.flip', $this->realService, ['flip_id' => $flipId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -83,7 +83,7 @@ class FlipDelegator implements FlipServiceInterface
         $return = $this->realService->fetchFlipById($flipId);
         $event->setParam('flip', $return);
         $event->setName('fetch.flip.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 }

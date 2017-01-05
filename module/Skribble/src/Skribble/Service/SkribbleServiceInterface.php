@@ -4,7 +4,6 @@ namespace Skribble\Service;
 
 use Application\Exception\NotFoundException;
 use Skribble\SkribbleInterface;
-use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**

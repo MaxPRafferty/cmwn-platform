@@ -128,7 +128,7 @@ class NewUserListenerTest extends TestCase
         $event = new Event('save.new.user.post');
         $event->setParam('user', $user);
 
-        $this->listener->notify($event);
+        $this->assertEmpty($this->listener->notify($event));
     }
 
     /**
@@ -154,7 +154,7 @@ class NewUserListenerTest extends TestCase
         $event = new Event('save.new.user.post');
         $event->setParam('user', 'foo');
 
-        $this->listener->notify($event);
+        $this->assertEmpty($this->listener->notify($event));
     }
 
     /**
@@ -182,6 +182,6 @@ class NewUserListenerTest extends TestCase
         $event = new Event('save.new.user.post');
         $event->setParam('user', $user);
 
-        $this->listener->notify($event);
+        $this->assertEmpty($this->listener->notify($event));
     }
 }

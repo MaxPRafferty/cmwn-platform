@@ -72,7 +72,7 @@ class TriggerSuggestionListenerTest extends TestCase
         $this->suggestionEngine->shouldReceive('exchangeArray')->once();
         $this->jobService->shouldReceive('sendJob')->once();
 
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
         $this->assertFalse($response->stopped());
     }
 
@@ -93,7 +93,7 @@ class TriggerSuggestionListenerTest extends TestCase
         $this->suggestionEngine->shouldReceive('exchangeArray')->never();
         $this->jobService->shouldReceive('sendJob')->never();
 
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
         $this->assertFalse($response->stopped());
     }
 }

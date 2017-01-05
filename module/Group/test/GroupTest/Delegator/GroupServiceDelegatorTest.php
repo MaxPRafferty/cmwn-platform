@@ -60,8 +60,6 @@ class GroupServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('save.group');
         $this->delegator->getEventManager()->clearListeners('fetch.group.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.groups');
-        $this->delegator->getEventManager()->getSharedManager()->clearListeners(GroupDelegator::class);
-        $this->delegator->getEventManager()->getSharedManager()->clearListeners(GroupServiceInterface::class);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

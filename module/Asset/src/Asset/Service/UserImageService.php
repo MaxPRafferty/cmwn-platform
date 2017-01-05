@@ -3,7 +3,6 @@
 namespace Asset\Service;
 
 use Application\Exception\NotFoundException;
-use Asset\AssetNotApprovedException;
 use Asset\Image;
 use Asset\ImageInterface;
 use User\UserInterface;
@@ -56,8 +55,9 @@ class UserImageService implements UserImageServiceInterface
      * Fetches an image for a user
      *
      * @param $user
+     * @param bool $approvedOnly
+     *
      * @return Image
-     * @throws AssetNotApprovedException
      * @throws NotFoundException
      */
     public function fetchImageForUser($user, $approvedOnly = true)

@@ -2,30 +2,26 @@
 
 namespace Api\Factory;
 
+use Interop\Container\ContainerInterface;
 use Security\Listeners\UserRouteListener;
 use Security\Authorization\Assertions\UserAssertion;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UserRouteListenerFactory
- * @package Api\Factory
  */
 class UserRouteListenerFactory implements FactoryInterface
 {
+
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var UserServiceInterface $userService */
-        /** @var UserAssertion $userAssertion */
-        $userService   = $serviceLocator->get(UserServiceInterface::class);
-        $userAssertion = $serviceLocator->get(UserAssertion::class);
-        return new UserRouteListener($userService, $userAssertion);
+        return new UserRouteListener(
+            $container->get(UserServiceInterface::class),
+            $container->get(UserAssertion::class)
+        );
     }
 }

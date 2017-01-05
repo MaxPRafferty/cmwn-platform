@@ -54,7 +54,7 @@ class OrgLinkListener implements AuthenticationServiceAwareInterface, RbacAwareI
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
         if (!$realEntity instanceof OrganizationInterface) {
             return;
         }

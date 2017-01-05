@@ -53,8 +53,8 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-        $manager->detach('ZF\Hal\Plugin\Hal', $this->listeners[0]);
-        $manager->detach('Zend\Mvc\Application', $this->listeners[1]);
+        $manager->detach($this->listeners[0], 'ZF\Hal\Plugin\Hal');
+        $manager->detach($this->listeners[1], 'Zend\Mvc\Application');
     }
 
     /**
@@ -64,7 +64,7 @@ class CsrfGuard extends Csrf implements LoggerAwareInterface
     {
         $entity = $event->getParam('entity');
         $entity = !$entity instanceof TokenEntityInterface && $entity instanceof Entity
-            ? $entity->entity
+            ? $entity->getEntity()
             : $entity;
 
         if (!$entity instanceof TokenEntityInterface) {

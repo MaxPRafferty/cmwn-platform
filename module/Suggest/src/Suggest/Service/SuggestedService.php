@@ -18,6 +18,8 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class SuggestedFriendService
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SuggestedService implements SuggestedServiceInterface
 {

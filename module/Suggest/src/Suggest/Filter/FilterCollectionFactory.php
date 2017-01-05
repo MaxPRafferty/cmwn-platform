@@ -2,8 +2,8 @@
 
 namespace Suggest\Filter;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FilterCollectionFactory
@@ -11,14 +11,17 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FilterCollectionFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config           = $serviceLocator->get('config');
+        $config           = $container->get('config');
         $suggestionConfig = isset($config['suggestion-engine']) ? $config['suggestion-engine'] : [];
         $filtersConfig    = isset($suggestionConfig['filters']) ? $suggestionConfig['filters'] : [];
 
-        return new FilterCollection($serviceLocator, $filtersConfig);
+        return new FilterCollection(
+            $container,
+            $filtersConfig
+        );
     }
 }

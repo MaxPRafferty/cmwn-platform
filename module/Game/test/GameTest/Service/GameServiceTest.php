@@ -188,7 +188,7 @@ class GameServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')->once()->andReturn($resultSet);
         $this->tableGateway->shouldReceive('update')->once();
 
-        $this->gameService->saveGame(new Game($this->gameData));
+        $this->assertEmpty($this->gameService->saveGame(new Game($this->gameData)));
     }
 
     /**
@@ -200,7 +200,7 @@ class GameServiceTest extends TestCase
         $resultSet->initialize([$this->gameData]);
         $this->tableGateway->shouldReceive('select')->once()->andReturn($resultSet);
         $this->tableGateway->shouldReceive('update')->once();
-        $this->gameService->deleteGame(new Game($this->gameData));
+        $this->assertTrue($this->gameService->deleteGame(new Game($this->gameData)));
     }
 
     /**
@@ -212,6 +212,6 @@ class GameServiceTest extends TestCase
         $resultSet->initialize([$this->gameData]);
         $this->tableGateway->shouldReceive('select')->once()->andReturn($resultSet);
         $this->tableGateway->shouldReceive('delete')->once();
-        $this->gameService->deleteGame(new Game($this->gameData), false);
+        $this->assertTrue($this->gameService->deleteGame(new Game($this->gameData), false));
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\UpdatePassword;
 
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UpdatePasswordResourceFactory
@@ -12,16 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class UpdatePasswordResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SecurityService $securityService */
-        $securityService = $serviceLocator->get(SecurityService::class);
-        return new UpdatePasswordResource($securityService);
+        return new UpdatePasswordResource($container->get(SecurityService::class));
     }
 }

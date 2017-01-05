@@ -2,8 +2,6 @@
 
 namespace Api\V1\Rest\Password;
 
-use Security\Exception\ChangePasswordException;
-use Security\SecurityUser;
 use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
@@ -46,7 +44,7 @@ class PasswordResource extends AbstractResourceListener
         $data = (array) $data;
 
         $securityUser = $this->authService->getIdentity();
-        
+
         $this->securityService->savePasswordToUser($securityUser, $data['password']);
         $this->authService->clearIdentity();
         return new ApiProblem(200, 'Password Updated', null, 'Ok');

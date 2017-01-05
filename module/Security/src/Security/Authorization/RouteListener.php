@@ -85,7 +85,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        $events->detach('Zend\Mvc\Application', $this->listeners[0]);
+        $events->detach($this->listeners[0], 'Zend\Mvc\Application');
     }
 
     /**

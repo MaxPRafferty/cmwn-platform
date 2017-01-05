@@ -8,14 +8,14 @@ return [
             \Asset\Service\UserImageServiceInterface::class => \Asset\Service\UserImageService::class,
             \Asset\Service\ImageServiceInterface::class     => \Asset\Service\ImageService::class,
         ],
-        'invokables' => [
-            \Asset\Delegator\ImageDelegatorFactory::class            => \Asset\Delegator\ImageDelegatorFactory::class,
-            \Asset\Delegator\UserImageServiceDelegatorFactory::class =>
-                \Asset\Delegator\UserImageServiceDelegatorFactory::class,
-        ],
         'factories'  => [
             \Asset\Service\ImageService::class     => \Asset\Service\ImageServiceFactory::class,
             \Asset\Service\UserImageService::class => \Asset\Service\UserImageServiceFactory::class,
+            \Asset\Delegator\ImageDelegatorFactory::class            =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Asset\Delegator\UserImageServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+
         ],
         'delegators' => [
             \Asset\Service\ImageService::class     => [

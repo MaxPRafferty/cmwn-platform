@@ -2,27 +2,21 @@
 
 namespace Security\Authentication;
 
+use Interop\Container\ContainerInterface;
 use Zend\Authentication\Storage\Session;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Session\SessionManager;
 
 /**
- * Class CmwnAuthenticationServiceFactory
- * @package Security\Authentication
+ * Class AuthenticationServiceFactory
  */
 class AuthenticationServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SessionManager $session */
-        $session = $serviceLocator->get(SessionManager::class);
-        return new AuthenticationService(new Session(null, null, $session));
+        return new AuthenticationService(new Session(null, null, $container->get(SessionManager::class)));
     }
 }

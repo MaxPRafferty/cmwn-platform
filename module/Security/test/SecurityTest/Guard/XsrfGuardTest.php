@@ -6,7 +6,7 @@ use IntegrationTest\SessionManager;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Guard\XsrfGuard;
 use Zend\Http\Header\Cookie;
-use Zend\Mvc\Router\RouteMatch;
+use \Zend\Router\Http\RouteMatch;
 use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;

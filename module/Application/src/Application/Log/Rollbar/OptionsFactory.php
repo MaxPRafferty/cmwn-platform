@@ -2,8 +2,8 @@
 
 namespace Application\Log\Rollbar;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class OptionsFactory
@@ -11,15 +11,11 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class OptionsFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return Options
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config   = $serviceLocator->get('Config');
+        $config   = $container->get('Config');
         $settings = isset($config['log-settings']) ? $config['log-settings'] : [];
         $rollBar  = isset($settings['rollbar']) ? $settings['rollbar'] : [];
 

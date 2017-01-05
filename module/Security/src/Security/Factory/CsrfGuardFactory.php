@@ -2,9 +2,9 @@
 
 namespace Security\Factory;
 
+use Interop\Container\ContainerInterface;
 use Security\Guard\CsrfGuard;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class CsrfGuardFactory
@@ -12,15 +12,11 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class CsrfGuardFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $serviceLocator->get('config');
+        $config = $container->get('config');
         $config = isset($config['cmwn-security']) ? $config['cmwn-security'] : [];
 
         return new CsrfGuard($config);

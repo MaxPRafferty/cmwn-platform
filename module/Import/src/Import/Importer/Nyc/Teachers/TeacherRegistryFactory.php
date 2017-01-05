@@ -2,9 +2,9 @@
 
 namespace Import\Importer\Nyc\Teachers;
 
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class TeacherRegistryFactory
@@ -12,15 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class TeacherRegistryFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-        return new TeacherRegistry($userService);
+        return new TeacherRegistry($container->get(UserServiceInterface::class));
     }
 }

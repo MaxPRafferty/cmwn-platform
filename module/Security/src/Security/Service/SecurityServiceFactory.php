@@ -2,27 +2,19 @@
 
 namespace Security\Service;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SecurityServiceFactory
- * @package Security\Service
- * @codeCoverageIgnore
  */
 class SecurityServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var TableGateway $tableGateway */
-        $tableGateway = $serviceLocator->get('UsersTable');
-        return new SecurityService($tableGateway);
+        return new SecurityService($container->get('UsersTable'));
     }
 }

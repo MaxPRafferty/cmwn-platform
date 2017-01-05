@@ -2,28 +2,25 @@
 
 namespace Application\Controller;
 
-use Zend\ServiceManager\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\SessionManager;
 
 /**
  * Class RedisControllerFactory
- * @package Application\Controller
  */
 class RedisControllerFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-        $sessionManager = $serviceLocator->get(SessionManager::class);
-        /**@var \Zend\Session\SaveHandler\Cache $cache*/
-        $cache = $sessionManager->getSaveHandler();
+        /** @var \Zend\Session\SaveHandler\Cache $cache */
+        $sessionManager = $container->get(SessionManager::class);
+        $cache          = $sessionManager->getSaveHandler();
+
         return new RedisController($cache->getCacheStorage());
     }
 }
