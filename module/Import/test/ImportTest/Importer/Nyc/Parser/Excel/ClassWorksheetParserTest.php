@@ -10,6 +10,7 @@ use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidWorksheetException;
 use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -28,6 +29,8 @@ use \PHPUnit_Framework_TestCase as TestCase;
  */
 class ClassWorksheetParserTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\GroupService
      */
@@ -60,11 +63,13 @@ class ClassWorksheetParserTest extends TestCase
 
     /**
      * @param \PHPExcel_Worksheet $sheet
+     *
      * @return ClassWorksheetParser
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)
     {
         AbstractParser::clear();
+
         return new ClassWorksheetParser($sheet, $this->registry);
     }
 
@@ -100,7 +105,6 @@ class ClassWorksheetParserTest extends TestCase
             ),
             100
         );
-
 
         $actions->insert(
             new AddClassRoomAction(
@@ -168,6 +172,7 @@ class ClassWorksheetParserTest extends TestCase
 
         return $actions;
     }
+
     /**
      * @return \SplPriorityQueue|AddClassRoomAction[]
      */

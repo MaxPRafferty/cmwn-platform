@@ -3,6 +3,7 @@
 namespace GameTest\Service;
 
 use Game\Game;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Game\Service\GameService;
 use Zend\Db\ResultSet\ResultSet;
@@ -10,12 +11,15 @@ use Zend\Db\Sql\Where;
 
 /**
  * Test GameServiceTest
+ *
  * @group Game
  * @group Service
  * @group GameService
  */
 class GameServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var GameService
      */
@@ -95,6 +99,7 @@ class GameServiceTest extends TestCase
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) {
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -114,6 +119,7 @@ class GameServiceTest extends TestCase
             ->andReturnUsing(function ($where) use (&$expectedWhere) {
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -136,6 +142,7 @@ class GameServiceTest extends TestCase
                 $this->assertEquals($where, $actual);
                 $resultSet = new ResultSet();
                 $resultSet->initialize([$this->gameData]);
+
                 return $resultSet;
             })->once();
 

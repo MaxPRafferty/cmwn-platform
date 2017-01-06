@@ -2,6 +2,7 @@
 
 namespace SecurityTest\Authorization\Assertion;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Assertion\UserAssertion;
 use Security\Authorization\Rbac;
@@ -20,6 +21,8 @@ use User\Child;
  */
 class UserAssertionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|SecurityGroupServiceInterface
      */

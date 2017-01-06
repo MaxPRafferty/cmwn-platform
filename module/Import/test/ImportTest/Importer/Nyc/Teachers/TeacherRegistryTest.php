@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\Exception\InvalidTeacherException;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
@@ -20,6 +21,8 @@ use User\Adult;
  */
 class TeacherRegistryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var TeacherRegistry
      */

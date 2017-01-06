@@ -8,6 +8,7 @@ use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -27,6 +28,8 @@ use \PHPUnit_Framework_TestCase as TestCase;
  */
 class StudentWorksheetParserTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\User\Service\UserServiceInterface
      */
@@ -89,6 +92,7 @@ class StudentWorksheetParserTest extends TestCase
 
     /**
      * @param \PHPExcel_Worksheet $sheet
+     *
      * @return StudentWorksheetParser
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)

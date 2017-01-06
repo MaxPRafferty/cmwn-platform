@@ -2,6 +2,7 @@
 
 namespace UserTest\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Child;
@@ -19,6 +20,8 @@ use Zend\EventManager\Event;
  */
 class RandomNameListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Zend\Db\TableGateway\TableGateway
      */
@@ -54,6 +57,7 @@ class RandomNameListenerTest extends TestCase
 
     /**
      * @param UserInterface $user
+     *
      * @return Event
      */
     public function getEvent(UserInterface $user)
@@ -70,9 +74,9 @@ class RandomNameListenerTest extends TestCase
      */
     public function testItShouldReserveRandomNameLessThanAThousand()
     {
-        $user     = new Child();
+        $user = new Child();
         $user->getUserName();
-        $userName = $user->getGeneratedName();
+        $userName      = $user->getGeneratedName();
         $beforeRunName = $userName->userName;
 
         $return = new \ArrayObject([
@@ -85,7 +89,7 @@ class RandomNameListenerTest extends TestCase
                 'name'     => $userName->right,
                 'position' => 'RIGHT',
                 'count'    => 5,
-            ]
+            ],
         ]);
 
         $this->tableGateway->shouldReceive('select')
@@ -118,9 +122,9 @@ class RandomNameListenerTest extends TestCase
      */
     public function testItShouldReserveRandomNameMoreThanAThousand()
     {
-        $user     = new Child();
+        $user = new Child();
         $user->getUserName();
-        $userName = $user->getGeneratedName();
+        $userName      = $user->getGeneratedName();
         $beforeRunName = $userName->userName;
 
         $return = new \ArrayObject([
@@ -133,7 +137,7 @@ class RandomNameListenerTest extends TestCase
                 'name'     => $userName->right,
                 'position' => 'RIGHT',
                 'count'    => 500,
-            ]
+            ],
         ]);
 
         $this->tableGateway->shouldReceive('select')
@@ -181,9 +185,9 @@ class RandomNameListenerTest extends TestCase
      */
     public function testItShouldDoNothingWhenNoNamesReturned()
     {
-        $user     = new Child();
+        $user = new Child();
         $user->getUserName();
-        $userName = $user->getGeneratedName();
+        $userName      = $user->getGeneratedName();
         $beforeRunName = $userName->userName;
 
         $return = new \ArrayObject();

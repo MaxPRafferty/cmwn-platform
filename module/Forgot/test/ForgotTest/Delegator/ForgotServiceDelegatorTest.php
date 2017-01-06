@@ -4,6 +4,7 @@ namespace ForgotTest\Delegator;
 
 use Application\Exception\NotFoundException;
 use Forgot\Delegator\ForgotServiceDelegator;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
@@ -18,6 +19,8 @@ use Zend\EventManager\Event;
  */
 class ForgotServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Forgot\Service\ForgotService
      */
@@ -41,7 +44,7 @@ class ForgotServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -55,7 +58,7 @@ class ForgotServiceDelegatorTest extends TestCase
             ->andReturn('foobar')
             ->byDefault();
     }
-    
+
     /**
      * @before
      */
@@ -91,7 +94,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar']
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar'],
             ],
             $this->calledEvents[0],
             'Delegator did not create correct forgot.password event'
@@ -101,7 +104,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password.post',
                 'target' => $this->forgotService,
-                'params' => ['user' => $user, 'email' => 'chuck@manchuck.com', 'code' => 'foobar']
+                'params' => ['user' => $user, 'email' => 'chuck@manchuck.com', 'code' => 'foobar'],
             ],
             $this->calledEvents[1],
             'Delegator did not create correct forgot.password.post event'
@@ -131,7 +134,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'bazbat']
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'bazbat'],
             ],
             $this->calledEvents[0],
             'Delegator did not create correct forgot.password event'
@@ -141,7 +144,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password.post',
                 'target' => $this->forgotService,
-                'params' => ['user' => $user, 'email' => 'chuck@manchuck.com', 'code' => 'bazbat']
+                'params' => ['user' => $user, 'email' => 'chuck@manchuck.com', 'code' => 'bazbat'],
             ],
             $this->calledEvents[1],
             'Delegator did not create correct forgot.password.post event'
@@ -158,6 +161,7 @@ class ForgotServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('forgot.password', function (Event $event) {
             $event->stopPropagation(true);
+
             return true;
         });
 
@@ -174,7 +178,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar']
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar'],
             ],
             $this->calledEvents[0],
             'Delegator did not create correct forgot.password event'
@@ -205,7 +209,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar']
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar'],
             ],
             $this->calledEvents[0],
             'Delegator did not create correct forgot.password event'
@@ -215,7 +219,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password.error',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar', 'exception' => $exception, ]
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar', 'exception' => $exception,],
             ],
             $this->calledEvents[1],
             'Delegator did not create correct forgot.password.error event with NotFoundException'
@@ -246,7 +250,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar']
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar'],
             ],
             $this->calledEvents[0],
             'Delegator did not create correct forgot.password event'
@@ -256,7 +260,7 @@ class ForgotServiceDelegatorTest extends TestCase
             [
                 'name'   => 'forgot.password.error',
                 'target' => $this->forgotService,
-                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar', 'exception' => $exception, ]
+                'params' => ['email' => 'chuck@manchuck.com', 'code' => 'foobar', 'exception' => $exception,],
             ],
             $this->calledEvents[1],
             'Delegator did not create correct forgot.password.error event with NotFoundException'

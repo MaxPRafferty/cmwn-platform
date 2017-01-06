@@ -2,6 +2,7 @@
 
 namespace SecurityTest\Authorization\Assertion;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Assertion\DefaultAssertion;
 use Security\Authorization\Rbac;
@@ -17,6 +18,8 @@ use Security\Authorization\Rbac;
  */
 class DefaultAssertionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      */

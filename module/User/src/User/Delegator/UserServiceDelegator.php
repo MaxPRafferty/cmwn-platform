@@ -10,7 +10,6 @@ use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -20,7 +19,11 @@ use Zend\Paginator\Adapter\DbSelect;
 class UserServiceDelegator implements UserServiceInterface
 {
     use ServiceTrait;
-    use EventManagerAwareTrait;
+
+    /**
+     * @var EventManagerInterface
+     */
+    protected $events;
 
     /**
      * @var UserService
@@ -36,11 +39,20 @@ class UserServiceDelegator implements UserServiceInterface
     public function __construct(UserService $service, EventManagerInterface $events)
     {
         $this->realService = $service;
-        $this->setEventManager($events);
+        $this->events      = $events;
         $events->addIdentifiers(array_merge(
             [UserServiceInterface::class, static::class, UserService::class],
             $events->getIdentifiers()
         ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     * @todo make a better event manager aware trait
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**
@@ -51,49 +63,58 @@ class UserServiceDelegator implements UserServiceInterface
      */
     public function createUser(UserInterface $user)
     {
-        $event    = new Event('save.new.user', $this->realService, ['user' => $user]);
-        $response = $this->getEventManager()->triggerEvent($event);
-
-        if ($response->stopped()) {
-            return $response->last();
-        }
+        $event = new Event(
+            'save.new.user',
+            $this->realService,
+            ['user' => $user]
+        );
 
         try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
             $return = $this->realService->createUser($user);
-            $event  = new Event('save.new.user.post', $this->realService, ['user' => $user]);
-            $this->getEventManager()->triggerEvent($event);
-
-            return $return;
         } catch (\Exception $createException) {
-            $event = new Event(
-                'save.new.user.error',
-                $this->realService,
-                ['user' => $user, 'error' => $createException]
-            );
-
+            $event->setName('save.new.user.error');
+            $event->setParam('error', $createException);
             $this->getEventManager()->triggerEvent($event);
-
             throw $createException;
         }
+
+        $event->setName('save.new.user.post');
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
     }
 
     /**
      * @param UserInterface $user
      *
      * @return bool|mixed
+     * @throws \Throwable
      */
     public function updateUser(UserInterface $user)
     {
-        $event    = new Event('save.user', $this->realService, ['user' => $user]);
-        $response = $this->getEventManager()->triggerEvent($event);
+        $event = new Event('save.user', $this->realService, ['user' => $user]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            
+            if ($response->stopped()) {
+                return $response->last();
+            }
 
-        if ($response->stopped()) {
-            return $response->last();
+            $return = $this->realService->updateUser($user);
+        } catch (\Throwable $updateException) {
+            $event->setName('save.user.error');
+            $event->setParam('error', $updateException);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $updateException;
         }
 
-        $return = $this->realService->updateUser($user);
-
-        $event = new Event('save.user.post', $this->realService, ['user' => $user]);
+        $event->setName('save.user.post');
         $this->getEventManager()->triggerEvent($event);
 
         return $return;

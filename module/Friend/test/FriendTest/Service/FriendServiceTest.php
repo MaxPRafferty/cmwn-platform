@@ -5,6 +5,7 @@ namespace FriendTest\Service;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
 use User\UserInterface;
@@ -24,6 +25,8 @@ use Zend\Hydrator\ArraySerializable;
  */
 class FriendServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var FriendService
      */

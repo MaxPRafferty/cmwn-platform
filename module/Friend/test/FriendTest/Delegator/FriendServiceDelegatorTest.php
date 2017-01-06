@@ -4,6 +4,7 @@ namespace FriendTest\Delegator;
 
 use Application\Utils\ServiceTrait;
 use Friend\Service\FriendServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Friend\Delegator\FriendServiceDelegator;
 use User\UserInterface;
@@ -24,7 +25,10 @@ use User\Child;
  */
 class FriendServiceDelegatorTest extends TestCase
 {
+    // TODO Remove this this is not for tests to use
     use ServiceTrait;
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Friend\Service\FriendService
      */

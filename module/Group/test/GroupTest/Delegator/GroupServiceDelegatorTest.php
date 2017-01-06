@@ -3,6 +3,7 @@
 namespace GroupTest\Delegator;
 
 use Group\Service\GroupServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use Group\Delegator\GroupDelegator;
@@ -22,6 +23,8 @@ use Zend\EventManager\Event;
  */
 class GroupServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\GroupService
      */

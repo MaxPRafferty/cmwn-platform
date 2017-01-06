@@ -10,6 +10,7 @@ use Group\GroupAwareInterface;
 use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\NotificationAwareInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
@@ -36,6 +37,8 @@ use ZF\Rest\ResourceEvent;
  */
 class ImportResourceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|AuthenticationServiceInterface
      */

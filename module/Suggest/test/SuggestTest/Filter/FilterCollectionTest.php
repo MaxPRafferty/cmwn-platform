@@ -4,6 +4,7 @@ namespace SuggestTest\Filter;
 
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\Filter\FilterCollection;
@@ -28,6 +29,8 @@ use Zend\ServiceManager\ServiceManager;
  */
 class FilterCollectionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var ServiceManager
      */
@@ -129,8 +132,8 @@ class FilterCollectionTest extends TestCase
      */
     public function testItShouldThrowExceptionWithInvalidFilter()
     {
-        $services   = new ServiceManager();
-        $config     = ['foo-bar' => 'foobar'];
+        $services = new ServiceManager();
+        $config   = ['foo-bar' => 'foobar'];
         $services->setService('foobar', new \stdClass());
         $rules      = new FilterCollection($services, $config);
         $collection = new SuggestionCollection();

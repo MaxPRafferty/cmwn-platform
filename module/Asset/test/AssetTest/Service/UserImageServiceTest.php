@@ -5,6 +5,7 @@ namespace AssetTest\Service;
 use Application\Exception\NotFoundException;
 use Asset\Image;
 use Asset\Service\UserImageService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use Zend\Db\Sql\Predicate\Operator;
@@ -13,6 +14,7 @@ use Zend\Db\Sql\Where;
 
 /**
  * Exception UserImageServiceTest
+ *
  * @group Asset
  * @group Image
  * @group User
@@ -26,6 +28,8 @@ use Zend\Db\Sql\Where;
  */
 class UserImageServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var UserImageService
      */

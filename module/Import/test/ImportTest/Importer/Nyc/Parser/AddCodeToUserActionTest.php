@@ -4,6 +4,7 @@ namespace ImportTest\Importer\Nyc\Parser;
 
 use Application\Utils\Date\DateTimeFactory;
 use Import\Importer\Nyc\Parser\AddCodeToUserAction;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
@@ -17,6 +18,8 @@ use User\Adult;
  */
 class AddCodeToUserActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var Adult
      */

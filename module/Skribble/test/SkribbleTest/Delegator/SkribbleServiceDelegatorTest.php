@@ -2,6 +2,7 @@
 
 namespace SkribbleTest\Delegator;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Skribble\Skribble;
 use Skribble\Delegator\SkribbleServiceDelegator;
@@ -22,6 +23,8 @@ use Zend\EventManager\Event;
  */
 class SkribbleServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Skribble\Service\SkribbleService
      */

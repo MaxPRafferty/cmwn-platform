@@ -3,6 +3,7 @@
 namespace ApplicationTest\Service;
 
 use Application\Service\AbstractTableFactory;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
@@ -19,6 +20,8 @@ use Zend\ServiceManager\ServiceManager;
  */
 class AbstractTableFactoryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|Adapter
      */
