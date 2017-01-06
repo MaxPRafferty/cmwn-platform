@@ -3,6 +3,7 @@
 namespace UserTest\Delegator;
 
 use Application\Exception\DuplicateEntryException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Delegator\CheckUserListener;
@@ -20,6 +21,8 @@ use Zend\EventManager\Event;
  */
 class CheckUserListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\User\Service\UserService
      */

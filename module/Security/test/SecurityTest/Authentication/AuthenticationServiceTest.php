@@ -70,7 +70,11 @@ class AuthenticationServiceTest extends TestCase
     public function setUpAuthenticationService()
     {
         $this->calledEvents = [];
-        $this->authService  = new AuthenticationService($this->storage, $this->authAdapter, new EventManager());
+        $this->authService  = new AuthenticationService(
+            new EventManager(),
+            $this->storage,
+            $this->authAdapter
+        );
         $this->authService->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

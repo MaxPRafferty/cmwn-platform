@@ -11,7 +11,6 @@ use Zend\Authentication\AuthenticationService as ZfAuthService;
 use Zend\Authentication\Result;
 use Zend\Authentication\Storage;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 
 /**
@@ -19,12 +18,10 @@ use Zend\EventManager\EventManagerInterface;
  */
 class AuthenticationService extends ZfAuthService
 {
-    use EventManagerAwareTrait;
-
     /**
-     * @var string
+     * @var EventManagerInterface
      */
-    protected $eventIdentifier = self::class;
+    protected $events;
 
     /**
      * @inheritDoc
@@ -35,7 +32,20 @@ class AuthenticationService extends ZfAuthService
         Adapter\AdapterInterface $adapter = null
     ) {
         parent::__construct($storage, $adapter);
-        $this->setEventManager($events);
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [static::class, ZfAuthService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     * @todo make a better event manager aware trait
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

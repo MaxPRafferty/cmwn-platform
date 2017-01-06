@@ -2,6 +2,7 @@
 
 namespace SecurityTest\Rule\Provider;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\GuestUser;
 use Security\Rule\Provider\RoleProvider;
@@ -18,6 +19,8 @@ use Zend\Authentication\AuthenticationServiceInterface;
  */
 class RoleProviderTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      */

@@ -6,6 +6,7 @@ use Aws\Api\Service;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\InvalidRuleException;
 use Suggest\Rule\FriendRule;
@@ -31,6 +32,8 @@ use Zend\ServiceManager\ServiceManager;
  */
 class RuleCollectionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var ServiceManager
      */
@@ -158,8 +161,8 @@ class RuleCollectionTest extends TestCase
      */
     public function testItShouldThrowExceptionWithInvalidRule()
     {
-        $services   = new ServiceManager();
-        $config     = ['foo-bar' => 'foobar'];
+        $services = new ServiceManager();
+        $config   = ['foo-bar' => 'foobar'];
         $services->setService('foobar', new \stdClass());
         $rules      = new RuleCollection($services, $config);
         $collection = new SuggestionCollection();

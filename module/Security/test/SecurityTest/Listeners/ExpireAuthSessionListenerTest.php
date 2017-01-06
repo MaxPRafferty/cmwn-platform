@@ -2,6 +2,7 @@
 
 namespace SecurityTest\Listeners;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Listeners\ExpireAuthSessionListener;
 use Zend\Session\Config\StandardConfig;
@@ -19,6 +20,7 @@ use ZF\ApiProblem\ApiProblemResponse;
  */
 class ExpireAuthSessionListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
 
     /**
      * @var Container

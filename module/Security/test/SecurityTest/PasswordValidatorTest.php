@@ -2,6 +2,7 @@
 
 namespace SecurityTest;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
@@ -18,6 +19,8 @@ use Zend\Authentication\AuthenticationServiceInterface;
  */
 class PasswordValidatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Zend\Authentication\AuthenticationServiceInterface
      */
@@ -35,7 +38,9 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider validPasswords
+     *
      * @param $password
+     *
      * @test
      */
     public function testItShouldPassWithStrongPassword($password)
@@ -46,7 +51,9 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider invalidPasswords
+     *
      * @param $password
+     *
      * @test
      */
     public function testItShouldFailsWithWeakPassword($password)
@@ -57,8 +64,10 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider validPasswords
+     *
      * @param $password
-     * @ticket CORE-732
+     *
+     * @ticket       CORE-732
      * @test
      */
     public function testItShouldValidateTrueWhenNewPasswordDoesNotEqualCode($password)
@@ -73,7 +82,9 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider validPasswords
+     *
      * @param $password
+     *
      * @test
      */
     public function testItShouldValidateTrueWhenUserNeedsToChangePassword($password)
@@ -91,7 +102,7 @@ class PasswordValidatorTest extends TestCase
 
     /**
      * @dataProvider passEqualsCode
-     * @ticket CORE-732
+     * @ticket       CORE-732
      * @test
      */
     public function testItShouldValidateFalseCodeMatchesNewPassword($password)

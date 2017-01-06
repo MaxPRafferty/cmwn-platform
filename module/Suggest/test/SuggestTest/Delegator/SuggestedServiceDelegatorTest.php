@@ -2,6 +2,7 @@
 
 namespace SuggestTest\Delegator;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Delegator\SuggestedServiceDelegator;
 use Suggest\Suggestion;
@@ -20,6 +21,8 @@ use Zend\EventManager\Event;
  */
 class SuggestedServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface| \Suggest\Service\SuggestedService
      */
@@ -297,6 +300,7 @@ class SuggestedServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('delete.all.suggestions', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
 

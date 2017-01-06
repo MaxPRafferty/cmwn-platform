@@ -5,6 +5,7 @@ namespace ImportTest\Importer\Nyc\Students;
 use Import\Importer\Nyc\Students\AddStudentAction;
 use Import\Importer\Nyc\Students\Student;
 use Import\Importer\Nyc\Students\StudentRegistry;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
 
@@ -21,6 +22,8 @@ use User\Child;
  */
 class AddStudentActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var StudentRegistry
      */
@@ -67,7 +70,7 @@ class AddStudentActionTest extends TestCase
     public function testItShouldReportCorrectName()
     {
         $student = $this->getGoodStudent();
-        $action = new AddStudentAction($this->service, $student);
+        $action  = new AddStudentAction($this->service, $student);
 
         $this->assertEquals(
             'Creating user for a student with id foo-bar',

@@ -2,10 +2,10 @@
 
 namespace UserTest\Delegator;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Delegator\UserServiceDelegator;
-use User\Service\UserServiceInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -24,6 +24,8 @@ use Zend\EventManager\EventManager;
  */
 class UserServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\User\Service\UserService
      */
@@ -95,9 +97,6 @@ class UserServiceDelegatorTest extends TestCase
             ->andReturn(true)
             ->once();
 
-        $this->userService->shouldReceive('fetchAll')
-            ->once();
-
         $this->delegator->createUser($this->user);
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -159,8 +158,6 @@ class UserServiceDelegatorTest extends TestCase
         $this->userService->shouldReceive('createUser')
             ->with($this->user)
             ->never();
-        $this->userService->shouldReceive('fetchAll')
-            ->once();
 
         $this->delegator->getEventManager()->attach('save.new.user', function (Event $event) {
             $event->stopPropagation(true);

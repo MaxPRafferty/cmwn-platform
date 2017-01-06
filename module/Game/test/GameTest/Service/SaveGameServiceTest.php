@@ -4,6 +4,7 @@ namespace GameTest\Service;
 
 use Game\SaveGame;
 use Game\Service\SaveGameService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
@@ -21,6 +22,8 @@ use Zend\Json\Json;
  */
 class SaveGameServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var SaveGameService
      */
@@ -175,10 +178,6 @@ class SaveGameServiceTest extends TestCase
 
         $result = new ResultSet();
         $result->initialize([$gameData]);
-
-        $this->tableGateway->shouldReceive('insert')
-            ->once()
-            ->andReturn($result);
 
         $saveGame = new SaveGame([
             'game_id' => 'monarch',

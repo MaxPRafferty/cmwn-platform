@@ -3,6 +3,7 @@
 namespace SuggestTest\Listener;
 
 use Friend\Service\FriendServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Listener\DeleteSuggestionListener;
 use Suggest\Service\SuggestedServiceInterface;
@@ -19,6 +20,8 @@ use Zend\EventManager\EventManager;
  */
 class DeleteSuggestionListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface | SuggestedServiceInterface
      */

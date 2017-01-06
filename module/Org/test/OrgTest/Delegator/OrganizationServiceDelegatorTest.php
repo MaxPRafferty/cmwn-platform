@@ -2,6 +2,7 @@
 
 namespace OrgTest\Delegator;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Service\OrganizationServiceInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Org\Organization;
@@ -19,6 +20,8 @@ use Zend\EventManager\Event;
  */
 class OrganizationServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Org\Service\OrganizationService
      */
@@ -78,7 +81,7 @@ class OrganizationServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -99,7 +102,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.org',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org]
+                'params' => ['org' => $this->org],
             ],
             $this->calledEvents[0]
         );
@@ -107,7 +110,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.org.post',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org]
+                'params' => ['org' => $this->org],
             ],
             $this->calledEvents[1]
         );
@@ -130,7 +133,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.org',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org]
+                'params' => ['org' => $this->org],
             ],
             $this->calledEvents[0]
         );
@@ -138,7 +141,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.org.post',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org]
+                'params' => ['org' => $this->org],
             ],
             $this->calledEvents[1]
         );
@@ -155,6 +158,7 @@ class OrganizationServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('save.new.org', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
 
@@ -165,7 +169,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.org',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org]
+                'params' => ['org' => $this->org],
             ],
             $this->calledEvents[0]
         );
@@ -191,7 +195,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org',
                 'target' => $this->orgService,
-                'params' => ['org_id' => $this->org->getOrgId()]
+                'params' => ['org_id' => $this->org->getOrgId()],
             ],
             $this->calledEvents[0]
         );
@@ -199,7 +203,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.post',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org, 'org_id' => $this->org->getOrgId()]
+                'params' => ['org' => $this->org, 'org_id' => $this->org->getOrgId()],
             ],
             $this->calledEvents[1]
         );
@@ -217,6 +221,7 @@ class OrganizationServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.org', function (Event $event) {
             $event->stopPropagation(true);
+
             return $this->org;
         });
 
@@ -230,7 +235,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org',
                 'target' => $this->orgService,
-                'params' => ['org_id' => $this->org->getOrgId()]
+                'params' => ['org_id' => $this->org->getOrgId()],
             ],
             $this->calledEvents[0]
         );
@@ -256,7 +261,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.org',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org, 'soft' => true]
+                'params' => ['org' => $this->org, 'soft' => true],
             ],
             $this->calledEvents[0]
         );
@@ -264,7 +269,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.org.post',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org, 'soft' => true]
+                'params' => ['org' => $this->org, 'soft' => true],
             ],
             $this->calledEvents[1]
         );
@@ -282,6 +287,7 @@ class OrganizationServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('delete.org', function (Event $event) {
             $event->stopPropagation(true);
+
             return $this->org;
         });
 
@@ -295,7 +301,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.org',
                 'target' => $this->orgService,
-                'params' => ['org' => $this->org, 'soft' => true]
+                'params' => ['org' => $this->org, 'soft' => true],
             ],
             $this->calledEvents[0]
         );
@@ -321,7 +327,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.orgs',
                 'target' => $this->orgService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -330,7 +336,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.orgs.post',
                 'target' => $this->orgService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'orgs' => $result]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'orgs' => $result],
             ],
             $this->calledEvents[1]
         );
@@ -348,6 +354,7 @@ class OrganizationServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.all.orgs', function (Event $event) use (&$result) {
             $event->stopPropagation(true);
+
             return $result;
         });
 
@@ -361,7 +368,7 @@ class OrganizationServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.orgs',
                 'target' => $this->orgService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
