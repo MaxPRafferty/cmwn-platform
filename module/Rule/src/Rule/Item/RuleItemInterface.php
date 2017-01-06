@@ -2,7 +2,7 @@
 
 namespace Rule\Item;
 
-use Zend\EventManager\EventInterface;
+use Rule\Provider\ProviderInterface;
 
 /**
  * A Rule item is an expanded event that is use to satisfy rules
@@ -20,11 +20,13 @@ interface RuleItemInterface
     public function getParam(string $param, $default = null);
 
     /**
-     * Passes the event from the rules engine into the item
+     * Appends a new provider
      *
-     * @param EventInterface $event
+     * This will allow rules and actions to provide data
+     *
+     * @param ProviderInterface $provider
      *
      * @return RuleItemInterface
      */
-    public function setEvent(EventInterface $event): RuleItemInterface;
+    public function append(ProviderInterface $provider): RuleItemInterface;
 }

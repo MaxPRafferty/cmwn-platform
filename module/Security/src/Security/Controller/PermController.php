@@ -11,6 +11,7 @@ use Zend\Text\Table\Decorator\Ascii;
 
 /**
  * Class PermController
+ * @todo move to dev module
  */
 class PermController extends AbstractConsoleController implements RbacAwareInterface
 {

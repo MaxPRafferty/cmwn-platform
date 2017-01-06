@@ -2,6 +2,8 @@
 
 namespace IntegrationTest;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\Pdo\Pdo;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use ZF\Apigility\Application;
@@ -29,6 +31,11 @@ class TestHelper
      * @var \PDO
      */
     protected static $pdo;
+
+    /**
+     * @var array
+     */
+    protected static $appConfig;
 
     /**
      * @return bool
@@ -99,6 +106,7 @@ class TestHelper
             'password'       => $envConfig['pass'],
             'driver_options' => [
                 \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
+                \PDO::ATTR_PERSISTENT         => true,
             ],
         ];
     }
@@ -108,31 +116,41 @@ class TestHelper
      */
     public static function getApplicationConfig()
     {
-        $appConfig = include __DIR__ . '/../../config/application.config.php';
+        if (static::$appConfig === null) {
+            static::$appConfig = [
+                'modules'                 => include __DIR__ . '/../../config/modules.config.php',
+                'module_listener_options' => [
+                    'module_paths'             => [
+                        './module',
+                        './vendor',
+                    ],
+                    'config_glob_paths'        => [
+                        __DIR__ . '/../../config/autoload/{,*.}{global,local}.php',
+                        __DIR__ . '/../../config/games/{games}{*}.php',
+                        __DIR__ . '/../../config/rules/{*.}rule.php',
+                    ],
+                    'config_cache_enabled'     => false,
+                    'module_map_cache_enabled' => false,
+                    'cache_dir'                => realpath(__DIR__ . '/../../data/cache/'),
+                ],
+                'service_manager'         => [
+                    'services' => [
+                        Adapter::class => new Adapter(new Pdo(static::getPdoConnection())),
+                    ],
+                ],
+            ];
+        }
 
-        $appConfig['module_listener_options']['config_cache_enabled']     = false;
-        $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
-
-        return $appConfig;
+        return static::$appConfig;
     }
 
     /**
      * @return string[]
+     * @deprecated
      */
     public static function getApplicationConfigWithDb()
     {
-        $appConfig = include __DIR__ . '/../../config/application.config.php';
-
-        $appConfig['module_listener_options']['config_cache_enabled']     = false;
-        $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
-
-        $appConfig['service_manager'] = [
-            'initializers' => [
-                'InjectTestAdapter' => InjectTestAdapterInitializer::class,
-            ],
-        ];
-
-        return $appConfig;
+        return static::getApplicationConfig();
     }
 
     /**

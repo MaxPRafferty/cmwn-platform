@@ -29,4 +29,11 @@ interface RuleCollectionInterface extends \IteratorAggregate, RuleInterface
         string $operator = self::OPERATOR_AND,
         string $orGroup = null
     ): RuleCollectionInterface;
+
+    /**
+     * Gets all the rules in the collection as an array of rules
+     *
+     * @return array
+     */
+    public function toArray(): array;
 }

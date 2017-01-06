@@ -10,7 +10,7 @@ class EventStoppedProvider extends AbstractEventProvider
     /**
      * @inheritDoc
      */
-    public function getValue()
+    public function getValue(): bool
     {
         return $this->getEvent()->propagationIsStopped();
     }

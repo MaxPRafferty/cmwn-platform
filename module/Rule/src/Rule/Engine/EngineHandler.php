@@ -2,10 +2,12 @@
 
 namespace Rule\Engine;
 
-use Interop\Container\ContainerInterface;
+use Rule\Action\Service\ActionManager;
 use Rule\Engine\Specification\SpecificationInterface;
-use Rule\Event\EventRuleItem;
-use Rule\Item\BasicRuleItem;
+use Rule\Exception\RuntimeException;
+use Rule\Item\EventRuleItem;
+use Rule\Provider\Service\ProviderManager;
+use Rule\Rule\Service\RuleManager;
 use Zend\EventManager\EventInterface;
 
 /**
@@ -14,25 +16,56 @@ use Zend\EventManager\EventInterface;
 class EngineHandler
 {
     /**
-     * @var EngineSpecificationInterface
+     * @var SpecificationInterface
      */
     protected $spec;
 
     /**
-     * @var ContainerInterface
+     * @var RuleManager
      */
-    protected $container;
+    protected $ruleManager;
+
+    /**
+     * @var ActionManager
+     */
+    protected $actionManager;
+
+    /**
+     * @var ProviderManager
+     */
+    protected $providerManager;
 
     /**
      * EngineHandler constructor.
      *
-     * @param ContainerInterface $container
+     * @param ActionManager $actionManager
+     * @param RuleManager $ruleManager
+     * @param ProviderManager $providerManager
+     */
+    public function __construct(
+        ActionManager $actionManager,
+        RuleManager $ruleManager,
+        ProviderManager $providerManager
+    ) {
+        $this->ruleManager     = $ruleManager;
+        $this->providerManager = $providerManager;
+        $this->actionManager   = $actionManager;
+    }
+
+    /**
+     * Removes the current spec when cloning
+     */
+    public function __clone()
+    {
+        $this->spec = null;
+    }
+
+    /**
      * @param SpecificationInterface $specification
      */
-    public function __construct(ContainerInterface $container, SpecificationInterface $specification)
+    public function setSpecification(SpecificationInterface $specification)
     {
-        $this->spec      = $specification;
-        $this->container = $container;
+        $this->spec = $specification;
     }
 
     /**
@@ -40,13 +73,17 @@ class EngineHandler
      */
     public function __invoke(EventInterface $event)
     {
-        $provider = $this->spec->buildProvider($this->container);
-        $provider->setEvent($event);
-        if (!$this->spec->getRules($this->container)->isSatisfiedBy($provider)) {
+        if (null === $this->spec) {
+            throw new RuntimeException('Cannot handle "%s", specification is not set');
+        }
+
+        $item = new EventRuleItem($event);
+        $item->setProviderCollection($this->spec->buildProvider($this->providerManager));
+        if (!$this->spec->getRules($this->ruleManager)->isSatisfiedBy($item)) {
             return;
         }
 
-        $actions = $this->spec->getActions($this->container);
-        $actions($provider);
+        $actions = $this->spec->getActions($this->actionManager);
+        $actions($item);
     }
 }

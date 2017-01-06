@@ -3,7 +3,7 @@
 namespace Security\Guard;
 
 use Application\Utils\NoopLoggerAwareTrait;
-use Security\OpenRouteTrait;
+use Security\Utils\OpenRouteTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Header\Cookie;
 use Zend\Http\Header\SetCookie;
@@ -16,11 +16,7 @@ use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
 /**
- * Class CsrfGuard
- *
  * Checks XSRF token on requests
- *
- * @package Security\Guard
  */
 class XsrfGuard extends Csrf implements LoggerAwareInterface
 {
@@ -39,6 +35,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
      */
     public function __construct(array $config)
     {
+        $config = $config['cmwn-security'] ?? [];
         $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
         parent::__construct();
     }
@@ -68,6 +65,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
     protected function hasHash()
     {
         $session = $this->getSession();
+
         return !$session->hash;
     }
 
@@ -98,6 +96,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
 
     /**
      * @param MvcEvent $event
+     *
      * @return null|void|ApiProblemResponse
      */
     public function onFinish(MvcEvent $event)
@@ -109,7 +108,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
             return null;
         }
 
-        $hash = $this->getHashFromSession();
+        $hash   = $this->getHashFromSession();
         $cookie = new SetCookie();
 
         $cookie->setName('XSRF-TOKEN');
@@ -119,11 +118,13 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
         $cookie->setHttponly(true);
         $cookie->setDomain('.changemyworldnow.com');
         $response->getHeaders()->addHeader($cookie);
+
         return null;
     }
 
     /**
      * @param MvcEvent $event
+     *
      * @return null|void|ApiProblemResponse
      */
     public function onDispatch(MvcEvent $event)
@@ -133,7 +134,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
         }
 
         /** @var HttpRequest $request */
-        $request  = $event->getRequest();
+        $request = $event->getRequest();
 
         $cookie = $request->getCookie();
         if ($cookie && $cookie->offsetExists('XSRF-TOKEN')) {
@@ -145,6 +146,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
 
     /**
      * @param Cookie $cookie
+     *
      * @return null|ApiProblemResponse
      * @SuppressWarnings(PHPMD.Superglobals)
      */
@@ -158,7 +160,7 @@ class XsrfGuard extends Csrf implements LoggerAwareInterface
                 [
                     'actual_token'   => $cookie->offsetGet('XSRF-TOKEN'),
                     'expected_token' => $this->getHashFromSession(),
-                    'cookie'         => $_COOKIE
+                    'cookie'         => $_COOKIE,
                 ]
             );
 

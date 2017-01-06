@@ -3,9 +3,9 @@
 namespace Security\Authorization;
 
 /**
- * Trait RbacAwareTrait
+ * Helps satisfiy RbacAwareInterface
  *
- * Trait to help a class be aware of the RBAC
+ * @see RbacAwareInterface
  */
 trait RbacAwareTrait
 {
@@ -25,7 +25,7 @@ trait RbacAwareTrait
     /**
      * @return Rbac
      */
-    public function getRbac()
+    public function getRbac(): Rbac
     {
         return $this->rbac;
     }

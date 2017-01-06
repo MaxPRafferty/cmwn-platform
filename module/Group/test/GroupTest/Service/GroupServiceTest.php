@@ -2,6 +2,7 @@
 
 namespace GroupTest\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use Group\Service\GroupService;
@@ -24,6 +25,8 @@ use Zend\Db\Sql\Predicate\PredicateInterface;
  */
 class GroupServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var GroupService
      */
@@ -249,7 +252,7 @@ class GroupServiceTest extends TestCase
             'updated'         => '2016-02-28',
             'deleted'         => '2016-02-28',
             'external_id'     => 'foo-bar',
-            'network_id'      => 'baz-bat'
+            'network_id'      => 'baz-bat',
         ];
 
         $result = new ResultSet();

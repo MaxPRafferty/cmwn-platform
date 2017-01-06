@@ -4,13 +4,17 @@ namespace Rule\Rule\Basic;
 
 use Rule\Item\RuleItemInterface;
 use Rule\Rule\Collection\RuleCollection;
+use Rule\Rule\Collection\RuleCollectionAwareInterface;
+use Rule\Rule\Collection\RuleCollectionInterface;
 use Rule\Rule\RuleInterface;
 
 /**
  * A Specification that is satisfied when one rule is satisfied
  */
-class EitherRule extends RuleCollection implements RuleInterface
+class EitherRule implements RuleInterface, RuleCollectionAwareInterface
 {
+    protected $rules;
+
     /**
      * EitherSpecification constructor.
      *
@@ -18,10 +22,34 @@ class EitherRule extends RuleCollection implements RuleInterface
      */
     public function __construct(RuleInterface ...$rules)
     {
-        parent::__construct();
+        $this->rules = new RuleCollection();
         array_walk($rules, function (RuleInterface $rule) {
-            $this->append($rule);
+            $this->rules->append($rule);
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setRulesCollection(RuleCollectionInterface $collection)
+    {
+        $this->rules = $collection;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRulesCollection(): RuleCollectionInterface
+    {
+        return $this->rules;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function timesSatisfied(): int
+    {
+        return $this->rules->timesSatisfied();
     }
 
     /**
@@ -29,7 +57,7 @@ class EitherRule extends RuleCollection implements RuleInterface
      */
     public function isSatisfiedBy(RuleItemInterface $event): bool
     {
-        parent::isSatisfiedBy($event);
+        $this->rules->isSatisfiedBy($event);
         return $this->timesSatisfied() > 0;
     }
 }

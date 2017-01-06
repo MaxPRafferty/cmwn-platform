@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Friend\AttachFriendValidator;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Child;
@@ -13,13 +14,16 @@ use Zend\Hydrator\ArraySerializable;
 
 /**
  * Test AttachFriendValidatorTest
+ *
  * @package FriendTest
- * @group Friend
- * @group Validator
- * @group FriendService
+ * @group   Friend
+ * @group   Validator
+ * @group   FriendService
  */
 class AttachFriendValidatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var AttachFriendValidator
      */
@@ -58,7 +62,7 @@ class AttachFriendValidatorTest extends TestCase
     {
         $this->validator = new AttachFriendValidator($this->friendService, $this->userService);
     }
-    
+
     /**
      * @test
      */
@@ -107,7 +111,7 @@ class AttachFriendValidatorTest extends TestCase
      */
     public function testItShouldCheckIfPendingFriends()
     {
-        $engStudent = new Child(['user_id' => 'english_student']);
+        $engStudent  = new Child(['user_id' => 'english_student']);
         $mathStudent = new Child(['user_id' => 'math_student']);
         $this->userService->shouldReceive('fetchUser')
             ->with('english_student')
@@ -118,10 +122,10 @@ class AttachFriendValidatorTest extends TestCase
             ->andReturn($mathStudent)
             ->once();
         $hydrator = new ArraySerializable();
-        $row = [
-            'uf_user_id' => 'math_student',
-            'uf_friend_id' => 'english_student',
-            'friend_status' => FriendInterface::PENDING
+        $row      = [
+            'uf_user_id'    => 'math_student',
+            'uf_friend_id'  => 'english_student',
+            'friend_status' => FriendInterface::PENDING,
         ];
         $this->friendService->shouldReceive('fetchFriendForUser')
             ->andReturn($hydrator->hydrate($row, new \ArrayObject()));
@@ -133,7 +137,7 @@ class AttachFriendValidatorTest extends TestCase
      */
     public function testItShouldCheckIfAlreadyFriends()
     {
-        $engStudent = new Child(['user_id' => 'english_student']);
+        $engStudent  = new Child(['user_id' => 'english_student']);
         $mathStudent = new Child(['user_id' => 'math_student']);
         $this->userService->shouldReceive('fetchUser')
             ->with('english_student')
@@ -144,10 +148,10 @@ class AttachFriendValidatorTest extends TestCase
             ->andReturn($mathStudent)
             ->once();
         $hydrator = new ArraySerializable();
-        $row = [
-            'uf_user_id' => 'math_student',
-            'uf_friend_id' => 'english_student',
-            'friend_status' => FriendInterface::FRIEND
+        $row      = [
+            'uf_user_id'    => 'math_student',
+            'uf_friend_id'  => 'english_student',
+            'friend_status' => FriendInterface::FRIEND,
         ];
         $this->friendService->shouldReceive('fetchFriendForUser')
             ->andReturn($hydrator->hydrate($row, new \ArrayObject()));
@@ -159,7 +163,7 @@ class AttachFriendValidatorTest extends TestCase
      */
     public function testItShouldCheckIfNotAlreadyFriends()
     {
-        $engStudent = new Child(['user_id' => 'english_student']);
+        $engStudent  = new Child(['user_id' => 'english_student']);
         $mathStudent = new Child(['user_id' => 'math_student']);
         $this->userService->shouldReceive('fetchUser')
             ->with('english_student')

@@ -2,6 +2,7 @@
 
 namespace OrgTest\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Org\Organization;
 use Org\Service\OrganizationService;
@@ -17,6 +18,8 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
  */
 class OrganizationServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var OrganizationService
      */
@@ -71,6 +74,7 @@ class OrganizationServiceTest extends TestCase
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) {
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -90,6 +94,7 @@ class OrganizationServiceTest extends TestCase
             ->andReturnUsing(function ($where) use (&$expectedWhere) {
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -117,12 +122,13 @@ class OrganizationServiceTest extends TestCase
 
                 $this->assertTrue(is_array($data));
 
-                $expected = $newOrg->getArrayCopy();
+                $expected         = $newOrg->getArrayCopy();
                 $expected['meta'] = '[]';
                 unset($expected['password']);
                 unset($expected['deleted']);
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
+
                 return 1;
             })
             ->once();
@@ -145,7 +151,7 @@ class OrganizationServiceTest extends TestCase
             'deleted'     => '2016-02-28',
         ];
 
-        $org   = new Organization($orgData);
+        $org    = new Organization($orgData);
         $result = new ResultSet();
         $result->initialize([$orgData]);
         $this->tableGateway->shouldReceive('select')
@@ -155,7 +161,7 @@ class OrganizationServiceTest extends TestCase
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$org) {
                 $this->assertEquals(['org_id' => $org->getOrgId()], $where);
-                $expected = $org->getArrayCopy();
+                $expected         = $org->getArrayCopy();
                 $expected['meta'] = '[]';
 
                 unset($expected['deleted']);
@@ -226,7 +232,7 @@ class OrganizationServiceTest extends TestCase
             'deleted'     => '2016-02-28',
         ];
 
-        $org   = new Organization($orgData);
+        $org    = new Organization($orgData);
         $result = new ResultSet();
         $result->initialize([$orgData]);
         $this->tableGateway->shouldReceive('select')
@@ -257,7 +263,7 @@ class OrganizationServiceTest extends TestCase
             'deleted'     => '2016-02-28',
         ];
 
-        $org   = new Organization($orgData);
+        $org    = new Organization($orgData);
         $result = new ResultSet();
         $result->initialize([$orgData]);
         $this->tableGateway->shouldReceive('select')

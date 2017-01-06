@@ -7,16 +7,20 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\GuestUser;
+use Security\SecurityUserInterface;
 use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Exception\RuntimeException;
 use Zend\Authentication\Result;
+use Zend\EventManager\Event;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Validator\StaticValidator;
 
 /**
- * Class AuthAdapter
- * @package Security\Authentication
+ * Adapter for logging in
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AuthAdapter implements AdapterInterface, LoggerAwareInterface
 {
@@ -44,7 +48,7 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
      */
     public function __construct(SecurityServiceInterface $service)
     {
-        $this->service    = $service;
+        $this->service = $service;
     }
 
     /**
@@ -53,21 +57,25 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
      * This can either be the user name or the email address
      *
      * @param string $userId user name or email
+     *
      * @return $this
      */
     public function setUserIdentifier($userId)
     {
         $this->userId = $userId;
+
         return $this;
     }
 
     /**
      * @param $password
+     *
      * @return $this
      */
     public function setPassword($password)
     {
         $this->password = $password;
+
         return $this;
     }
 
@@ -92,6 +100,7 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 'Login attempt with non-existent user',
                 ['user_id' => $this->userId]
             );
+
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
         }
 
@@ -100,6 +109,7 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 'Deleted user attempted to login',
                 ['user_id' => $this->userId]
             );
+
             return new Result(Result::FAILURE_IDENTITY_NOT_FOUND, new GuestUser());
         }
 
@@ -109,29 +119,33 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
                 'Successful user login',
                 ['user_id' => $this->userId]
             );
+
             return new Result(Result::SUCCESS, $user);
         }
 
         switch ($user->compareCode($this->password)) {
-            case $user::CODE_EXPIRED:
+            case SecurityUserInterface::CODE_EXPIRED:
                 $this->getLogger()->warn(
                     'Code Expired for user',
                     ['user_id' => $this->userId]
                 );
+
                 return new Result(Result::FAILURE_UNCATEGORIZED, new GuestUser());
 
-            case $user::CODE_INVALID:
+            case SecurityUserInterface::CODE_INVALID:
                 $this->getLogger()->warn(
                     'Invalid password/code supplied for user',
                     ['user_id' => $this->userId]
                 );
+
                 return new Result(Result::FAILURE_CREDENTIAL_INVALID, new GuestUser());
 
-            case $user::CODE_VALID:
+            case SecurityUserInterface::CODE_VALID:
                 $this->getLogger()->notice(
                     'User Logged in with correct code',
                     ['user_id' => $this->userId]
                 );
+
                 return new Result(
                     Result::SUCCESS,
                     new ChangePasswordUser($user->getArrayCopy())
@@ -141,6 +155,7 @@ class AuthAdapter implements AdapterInterface, LoggerAwareInterface
         // @codeCoverageIgnoreStart
         // Hard to get here unless a new code status is added
         $this->getLogger()->emerg('THIS IS THE BAD! SHOW THEM THE BAD', ['user_id' => $this->userId]);
+
         return new Result(Result::FAILURE_IDENTITY_AMBIGUOUS, new GuestUser());
     }
 }

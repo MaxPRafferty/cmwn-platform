@@ -13,7 +13,7 @@ use User\UserInterface;
  */
 class BirthdayRule implements RuleInterface
 {
-    use \Rule\Rule\TimesSatisfiedTrait;
+    use TimesSatisfiedTrait;
 
     /**
      * @inheritDoc

@@ -6,6 +6,7 @@ use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddStudentToGroupAction;
 use Import\Importer\Nyc\Students\Student;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Child;
 
@@ -20,6 +21,8 @@ use User\Child;
  */
 class AddStudentToGroupActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var Group
      */

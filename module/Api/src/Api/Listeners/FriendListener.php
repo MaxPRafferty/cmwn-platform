@@ -10,7 +10,7 @@ use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
-use Security\Authorization\Assertions\DefaultAssertion;
+use Security\Authorization\Assertion\DefaultAssertion;
 use Suggest\NotFoundException;
 use Suggest\Service\SuggestedService;
 use Suggest\Service\SuggestedServiceInterface;

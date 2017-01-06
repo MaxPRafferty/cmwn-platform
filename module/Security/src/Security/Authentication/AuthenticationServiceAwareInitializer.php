@@ -7,7 +7,9 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\ServiceManager\Initializer\InitializerInterface;
 
 /**
- * Class AuthenticationServiceAwareInitializer
+ * An Initializer that will inject the authentication service
+ *
+ * @deprecated User explicit dependencies instead
  */
 class AuthenticationServiceAwareInitializer implements InitializerInterface
 {

@@ -2,9 +2,8 @@
 
 namespace Rule\Item;
 
-use Rule\Provider\ProviderCollection;
+use Rule\Provider\Collection\ProviderCollection;
 use Rule\Provider\ProviderInterface;
-use Zend\EventManager\EventInterface;
 
 /**
  * A Basic Rule Item that takes providers as an array
@@ -35,9 +34,9 @@ class BasicRuleItem implements RuleItemInterface
     /**
      * @inheritDoc
      */
-    public function setEvent(EventInterface $event): RuleItemInterface
+    public function append(ProviderInterface $provider): RuleItemInterface
     {
-        $this->data->setEvent($event);
+        $this->data->append($provider);
         return $this;
     }
 }

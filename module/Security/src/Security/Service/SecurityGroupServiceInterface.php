@@ -5,11 +5,10 @@ namespace Security\Service;
 use User\UserInterface;
 
 /**
- * Interface SecurityGroupServiceInterface
+ * A Service used to find the role between 2 users
  */
 interface SecurityGroupServiceInterface
 {
-
     /**
      * Finds the role the user has to another user
      *
@@ -34,13 +33,13 @@ interface SecurityGroupServiceInterface
      *  requested_parent_group.group_id AS requested_parent_group
      *
      * FROM user_groups AS active_user
-     *  LEFT JOIN user_groups AS requested_user ON requested_user.user_id = '974263e8-2806-11e6-af9a-b1fd6b0b32b7'
+     *  LEFT JOIN user_groups AS requested_user ON requested_user.user_id = :user_id
      *  LEFT JOIN groups AS active_group ON active_group.group_id = requested_user.group_id
      *  LEFT JOIN groups AS active_parent_group ON active_parent_group.group_id = active_group.parent_id
      *  LEFT JOIN groups AS requested_group ON requested_group.group_id = requested_user.group_id
      *  LEFT JOIN groups AS requested_parent_group ON requested_parent_group.group_id = requested_group.parent_id
      *
-     * WHERE active_user.user_id = '964437d2-2806-11e6-b002-8eb532838af7'
+     * WHERE active_user.user_id = :user_id
      *  AND active_group.organization_id = requested_group.organization_id
      *
      *

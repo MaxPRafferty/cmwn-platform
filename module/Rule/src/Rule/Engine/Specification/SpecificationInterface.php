@@ -2,13 +2,15 @@
 
 namespace Rule\Engine\Specification;
 
-use Interop\Container\ContainerInterface;
-use Rule\Action\ActionCollectionInterface;
-use Rule\Provider\ProviderCollectionInterface;
+use Rule\Action\Collection\ActionCollectionInterface;
+use Rule\Action\Service\ActionManager;
+use Rule\Provider\Collection\ProviderCollectionInterface;
+use Rule\Provider\Service\ProviderManager;
 use Rule\Rule\Collection\RuleCollectionInterface;
+use Rule\Rule\Service\RuleManager;
 
 /**
- * A Specification the engine uses to build and run rules
+ * A Specification the engine uses to check rules and run actions on an event
  */
 interface SpecificationInterface
 {
@@ -38,27 +40,27 @@ interface SpecificationInterface
     /**
      * Allows the specification to build all the rules from the container
      *
-     * @param ContainerInterface $services
+     * @param RuleManager $ruleManager
      *
      * @return RuleCollectionInterface
      */
-    public function getRules(ContainerInterface $services): RuleCollectionInterface;
+    public function getRules(RuleManager $ruleManager): RuleCollectionInterface;
 
     /**
      * Allows the specification to build all the actions from the container
      *
-     * @param ContainerInterface $services
+     * @param ActionManager $actionManager
      *
-     * @return ActionCollectionInterface
+     * @return \Rule\Action\Collection\ActionCollectionInterface
      */
-    public function getActions(ContainerInterface $services): ActionCollectionInterface;
+    public function getActions(ActionManager $actionManager): ActionCollectionInterface;
 
     /**
      * Builds the rule from the specification so it can set the correct providers
      *
-     * @param ContainerInterface $services
+     * @param ProviderManager $providerManager
      *
-     * @return ProviderCollectionInterface
+     * @return \Rule\Provider\Collection\ProviderCollectionInterface
      */
-    public function buildProvider(ContainerInterface $services): ProviderCollectionInterface;
+    public function buildProvider(ProviderManager $providerManager): ProviderCollectionInterface;
 }

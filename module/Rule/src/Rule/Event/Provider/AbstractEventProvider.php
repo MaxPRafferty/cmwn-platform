@@ -9,6 +9,8 @@ use Zend\EventManager\EventInterface;
  */
 abstract class AbstractEventProvider implements EventProviderInterface
 {
+    const PROVIDER_NAME = 'event';
+
     /**
      * @var EventInterface
      */
@@ -24,7 +26,7 @@ abstract class AbstractEventProvider implements EventProviderInterface
      *
      * @param string $providerName
      */
-    public function __construct(string $providerName)
+    public function __construct(string $providerName = self::PROVIDER_NAME)
     {
         $this->name = $providerName;
     }
