@@ -106,6 +106,7 @@ class TestHelper
             'password'       => $envConfig['pass'],
             'driver_options' => [
                 \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
+                \PDO::ATTR_PERSISTENT         => true,
             ],
         ];
     }
@@ -116,22 +117,28 @@ class TestHelper
     public static function getApplicationConfig()
     {
         if (static::$appConfig === null) {
-            static::$appConfig = include __DIR__ . '/../../config/application.config.php';
-
-            static::$appConfig['module_listener_options']['config_cache_enabled']     = true;
-            static::$appConfig['module_listener_options']['module_map_cache_enabled'] = true;
-
-            $cacheFile = 'module-config-cache.'
-                . static::$appConfig['module_listener_options']['config_cache_key']
-                . '.php';
-
-            static::$appConfig['service_manager']['services'][Adapter::class] = new Adapter(
-                new Pdo(
-                    static::getPdoConnection()
-                )
-            );
-
-            @unlink(static::$appConfig['module_listener_options']['cache_dir'] . '/' . $cacheFile);
+            static::$appConfig = [
+                'modules'                 => include __DIR__ . '/../../config/modules.config.php',
+                'module_listener_options' => [
+                    'module_paths'             => [
+                        './module',
+                        './vendor',
+                    ],
+                    'config_glob_paths'        => [
+                        __DIR__ . '/../../config/autoload/{,*.}{global,local}.php',
+                        __DIR__ . '/../../config/games/{games}{*}.php',
+                        __DIR__ . '/../../config/rules/{*.}rule.php',
+                    ],
+                    'config_cache_enabled'     => false,
+                    'module_map_cache_enabled' => false,
+                    'cache_dir'                => realpath(__DIR__ . '/../../data/cache/'),
+                ],
+                'service_manager'         => [
+                    'services' => [
+                        Adapter::class => new Adapter(new Pdo(static::getPdoConnection())),
+                    ],
+                ],
+            ];
         }
 
         return static::$appConfig;
