@@ -75,17 +75,21 @@ class FlipUserServiceTest extends TestCase
     public function testItShouldFetchAllFlipsForUserWithDefaultValuesAndStringForUserId()
     {
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new EarnedFlip());
-        $expectedSelect    = new Select(['f' => 'flips']);
         $where             = new Where();
+        $expectedSelect    = new Select(['uf' => 'user_flips']);
 
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
         $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $expectedSelect->join(
-            ['uf' => 'user_flips'],
+            ['f' => 'flips'],
             new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned', 'earned_by' => 'user_id'],
+            '*',
             Select::JOIN_LEFT
         );
-
         $expectedSelect->where($where);
         $expectedSelect->group('f.flip_id');
         $expectedSelect->order(['uf.earned', 'f.title']);
@@ -108,26 +112,29 @@ class FlipUserServiceTest extends TestCase
     public function testItShouldFetchAllFlipsForUserWithCustomProtoTypeAndWhere()
     {
         /** @var \Mockery\MockInterface|\Flip\EarnedFlipInterface $prototype */
-        $prototype = \Mockery::mock('\Flip\EarnedFlipInterface');
-        $where     = new Where();
-        $where->addPredicate(new Operator('foo', '=', 'bar'));
-
+        $prototype         = \Mockery::mock('\Flip\EarnedFlipInterface');
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        $expectedSelect    = new Select(['f' => 'flips']);
-        $expectedWhere     = new Where();
+        $where             = new Where();
+        $expectedSelect    = new Select(['uf' => 'user_flips']);
+
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $expectedSelect->join(
+            ['f' => 'flips'],
+            new Expression('uf.user_id = ?', 'foo-bar'),
+            '*',
+            Select::JOIN_LEFT
+        );
         $expectedSelect->group('f.flip_id');
         $expectedSelect->order(['uf.earned', 'f.title']);
 
-        $expectedWhere->addPredicate(new Operator('foo', '=', 'bar'));
-        $expectedWhere->addPredicate(new Expression('f.flip_id = uf.flip_id'));
-        $expectedSelect->join(
-            ['uf' => 'user_flips'],
-            new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned', 'earned_by' => 'user_id'],
-            Select::JOIN_LEFT
-        );
-
-        $expectedSelect->where($expectedWhere);
+        $where->addPredicate(new Operator('foo', '=', 'bar'));
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $expectedSelect->where($where);
 
         $expectedAdapter = new DbSelect(
             $expectedSelect,
@@ -243,18 +250,23 @@ class FlipUserServiceTest extends TestCase
 
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
         $expectedResultSet->initialize([$earnedFlip->getArrayCopy()]);
-        $expectedSelect = new Select(['f' => 'flips']);
         $where          = new PredicateSet();
+        $expectedSelect = new Select(['uf' => 'user_flips']);
 
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
         $expectedSelect->join(
-            ['uf' => 'user_flips'],
+            ['f' => 'flips'],
             new Expression('uf.user_id = ?', 'manchuck'),
-            ['earned' => 'earned', 'earned_by' => 'user_id'],
+            '*',
             Select::JOIN_LEFT
         );
-
         $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $where->addPredicate(new IsNotNull('uf.acknowledge_id'));
+
         $expectedSelect->where($where);
         $expectedSelect->order(['uf.earned DESC']);
         $expectedSelect->limit(1);

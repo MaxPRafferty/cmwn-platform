@@ -57,8 +57,6 @@ class FlipUserService implements FlipUserServiceInterface
         $select->group('f.flip_id');
         $select->order(['uf.earned', 'f.title']);
 
-        $sql = new \Zend\Db\Sql\Sql($this->pivotTable->getAdapter());
-        $stmt = $sql->buildSqlString($select);
         $prototype = $prototype ?? new EarnedFlip();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 

@@ -39,5 +39,4 @@ class BasicRuleItem implements RuleItemInterface
         $this->data->append($provider);
         return $this;
     }
-
 }
