@@ -7,12 +7,6 @@
 
 return [
     'modules' => [
-        'ZF\\Apigility\\Admin',
-        'ZF\\DevelopmentMode',
-        'ZF\\Apigility',
-        'ZF\\Apigility\\Provider',
-        'ZF\\Apigility\\Documentation',
-        'ZF\\Rpc',
     ],
     'module_listener_options' => [
         'config_glob_paths' => [
