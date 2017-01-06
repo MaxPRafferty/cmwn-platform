@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Import\Importer\Nyc\Teachers\AddTeacherAction;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
@@ -22,6 +23,8 @@ use User\Adult;
  */
 class AddTeacherActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var TeacherRegistry
      */
@@ -71,7 +74,7 @@ class AddTeacherActionTest extends TestCase
     public function testItShouldReportCorrectAction()
     {
         $teacher = $this->getGoodTeacher();
-        $action = new AddTeacherAction($this->service, $teacher);
+        $action  = new AddTeacherAction($this->service, $teacher);
 
         $this->assertEquals(
             'Creating a user for the_man Chuck Reeves chuck@manchuck.com',

@@ -5,6 +5,7 @@ namespace Security;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Validator\Regex;
 use Zend\Validator\ValidatorInterface;
 
@@ -18,7 +19,7 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
     use AuthenticationServiceAwareTrait;
 
     const NEW_PASSWORD = 'newPassword';
-    const CASE_CHANGE = 'caseChange';
+    const CASE_CHANGE  = 'caseChange';
 
     /**
      * @var array
@@ -33,14 +34,18 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
 
     /**
      * PasswordValidator constructor.
+     *
+     * @param AuthenticationServiceInterface $authService
      */
-    public function __construct()
+    public function __construct(AuthenticationServiceInterface $authService)
     {
+        $this->setAuthenticationService($authService);
         parent::__construct($this->getPattern());
     }
 
     /**
      * @param mixed|string $value
+     *
      * @return bool
      */
     public function isValid($value)
@@ -64,14 +69,17 @@ class PasswordValidator extends Regex implements ValidatorInterface, Authenticat
         }
 
         if ($loggedIn->getCode() === $value) {
-                $this->error(static::NEW_PASSWORD);
-                return false;
+            $this->error(static::NEW_PASSWORD);
+
+            return false;
         }
 
         if (strcasecmp($loggedIn->getCode(), $value) === 0) {
-                $this->error(static::CASE_CHANGE);
-                return false;
+            $this->error(static::CASE_CHANGE);
+
+            return false;
         }
+
         return true;
     }
 

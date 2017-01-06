@@ -2,6 +2,7 @@
 
 namespace UserTest\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Service\UserService;
@@ -21,6 +22,8 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
  */
 class UserServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var UserService
      */

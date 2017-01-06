@@ -4,6 +4,7 @@ namespace Security\Authentication;
 
 use Interop\Container\ContainerInterface;
 use Zend\Authentication\Storage\Session;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Session\SessionManager;
 
@@ -17,6 +18,10 @@ class AuthenticationServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new AuthenticationService(new Session(null, null, $container->get(SessionManager::class)));
+        return new AuthenticationService(
+            $container->get(EventManagerInterface::class),
+            new Session(null, null, $container->get(SessionManager::class)),
+            $container->get(AuthAdapter::class)
+        );
     }
 }

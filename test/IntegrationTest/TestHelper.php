@@ -2,6 +2,8 @@
 
 namespace IntegrationTest;
 
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\Pdo\Pdo;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use ZF\Apigility\Application;
@@ -29,6 +31,11 @@ class TestHelper
      * @var \PDO
      */
     protected static $pdo;
+
+    /**
+     * @var array
+     */
+    protected static $appConfig;
 
     /**
      * @return bool
@@ -108,31 +115,36 @@ class TestHelper
      */
     public static function getApplicationConfig()
     {
-        $appConfig = include __DIR__ . '/../../config/application.config.php';
+        if (static::$appConfig === null) {
+            static::$appConfig = include __DIR__ . '/../../config/application.config.php';
 
-        $appConfig['module_listener_options']['config_cache_enabled']     = false;
-        $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
+            static::$appConfig['module_listener_options']['config_cache_enabled']     = true;
+            static::$appConfig['module_listener_options']['module_map_cache_enabled'] = true;
 
-        return $appConfig;
+            $cacheFile = 'module-config-cache.'
+                . static::$appConfig['module_listener_options']['config_cache_key']
+                . '.php';
+
+            $adapter = new Adapter(
+                new Pdo(
+                    static::getPdoConnection()
+                )
+            );
+
+            static::$appConfig['service_manager']['services'][Adapter::class] = $adapter;
+            @unlink(static::$appConfig['module_listener_options']['cache_dir'] . '/' . $cacheFile);
+        }
+
+        return static::$appConfig;
     }
 
     /**
      * @return string[]
+     * @deprecated
      */
     public static function getApplicationConfigWithDb()
     {
-        $appConfig = include __DIR__ . '/../../config/application.config.php';
-
-        $appConfig['module_listener_options']['config_cache_enabled']     = false;
-        $appConfig['module_listener_options']['module_map_cache_enabled'] = false;
-
-        $appConfig['service_manager'] = [
-            'initializers' => [
-                'InjectTestAdapter' => InjectTestAdapterInitializer::class,
-            ],
-        ];
-
-        return $appConfig;
+        return static::getApplicationConfig();
     }
 
     /**

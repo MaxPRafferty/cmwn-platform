@@ -203,5 +203,6 @@ this will create an ```EitherRule``` that has **4** Rules that will always be sa
 # TODO
 
 - [ ] Add DB Engine Specification
+- [ ] Allow rules and providers to specify other rules and/or provders
 
 

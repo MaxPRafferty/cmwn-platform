@@ -3,13 +3,8 @@
 namespace Security;
 
 /**
- * Class ChangePasswordUser
- *
- * Tag Handler
- *
- * @package Security
+ * A User that must reset their password
  */
-class ChangePasswordUser extends SecurityUser
+class ChangePasswordUser extends SecurityUser implements SecurityUserInterface
 {
-
 }

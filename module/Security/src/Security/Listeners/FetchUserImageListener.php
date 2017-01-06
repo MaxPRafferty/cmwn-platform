@@ -12,7 +12,6 @@ use Zend\EventManager\SharedEventManagerInterface;
 
 /**
  * Class FetchUserImageListener
- * @package Asset\Delegator
  */
 class FetchUserImageListener implements AuthenticationServiceAwareInterface
 {
@@ -45,6 +44,7 @@ class FetchUserImageListener implements AuthenticationServiceAwareInterface
 
     /**
      * @param Event $event
+     *
      * @throws NotAuthorizedException
      */
     public function checkUser(Event $event)
@@ -53,11 +53,9 @@ class FetchUserImageListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $loggedIn = $this->getAuthenticationService()->getIdentity();
-        $user = $event->getParam('user');
-
-        $userId = $user instanceof UserInterface? $user->getUserId() : $user;
-
+        $loggedIn     = $this->getAuthenticationService()->getIdentity();
+        $user         = $event->getParam('user');
+        $userId       = $user instanceof UserInterface ? $user->getUserId() : $user;
         $approvedOnly = ($userId !== $loggedIn->getUserId());
 
         $event->setParam('approved_only', $approvedOnly);

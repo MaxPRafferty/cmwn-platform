@@ -8,34 +8,16 @@ use Lcobucci\JWT\ValidationData;
 use User\User;
 
 /**
- * Class SecurityUser
- *
  * A security user, is a user that is logged in.   This user can be saved to the database
  * however not all the security will be saved.  To Save the password, code and super flag,
  * use the security service
- *
- * @package Security
  */
-class SecurityUser extends User
+class SecurityUser extends User implements SecurityUserInterface
 {
-    const CODE_EXPIRED = 'Expired';
-    const CODE_INVALID = 'Invalid';
-    const CODE_VALID   = 'Valid';
-
-    /**
-     * @var string
-     */
-    protected $userId;
-
     /**
      * @var string
      */
     protected $userName;
-
-    /**
-     * @var string
-     */
-    protected $email;
 
     /**
      * @var string|null
@@ -65,19 +47,10 @@ class SecurityUser extends User
     /**
      * @var string
      */
-    protected $role = 'guest';
+    protected $role;
 
     /**
-     * @var string
-     */
-    protected $normalizedUsername;
-
-    /**
-     * Sets the data for the user
-     *
-     * Also sets the code, password and super flag
-     *
-     * @param array $array
+     * @inheritdoc
      */
     public function exchangeArray(array $array)
     {
@@ -96,9 +69,7 @@ class SecurityUser extends User
     }
 
     /**
-     * Gets the type
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getType()
     {
@@ -106,11 +77,7 @@ class SecurityUser extends User
     }
 
     /**
-     * Sets the type
-     *
-     * @param $type
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function setType($type)
     {
@@ -120,25 +87,17 @@ class SecurityUser extends User
     }
 
     /**
-     * Verifies the password
-     *
-     * @param $password
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function comparePassword($password)
+    public function comparePassword(string $password): bool
     {
         return password_verify($password, $this->password);
     }
 
     /**
-     * Compare string to a code
-     *
-     * @param $code
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function compareCode($code)
+    public function compareCode(string $code): string
     {
         if (null === $this->code) {
             return static::CODE_INVALID;
@@ -159,29 +118,50 @@ class SecurityUser extends User
     }
 
     /**
-     * Gets the temp code for the user
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getCode()
+    public function getCode(): string
     {
-        return $this->code;
+        return (string) $this->code;
     }
 
     /**
-     * Tests if the user is a super admin or not
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function isSuper()
+    public function isSuper(): bool
     {
         return $this->super;
     }
 
     /**
-     * @param $type |GroupInterface
+     * @inheritdoc
+     */
+    public function getRole(): string
+    {
+        if ($this->isSuper()) {
+            return 'super';
+        }
+
+        if (null === $this->role) {
+            return 'me.' . strtolower($this->getType());
+        }
+
+        return $this->role;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setRole(string $role)
+    {
+        $this->role = $role;
+    }
+
+    /**
+     * @param $type
      *
      * @return $this
+     * @deprecated
      */
     public function addGroupType($type)
     {
@@ -192,46 +172,11 @@ class SecurityUser extends User
     }
 
     /**
-     * @return string
-     */
-    public function getRole()
-    {
-        if ($this->isSuper()) {
-            return 'super';
-        }
-
-        return $this->role;
-    }
-
-    /**
-     * @param $role
-     */
-    public function setRole($role)
-    {
-        $this->role = $role;
-    }
-
-    /**
      * @return array
+     * @deprecated
      */
     public function getGroupTypes()
     {
         return $this->groupTypes;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNormalizedUsername()
-    {
-        return $this->normalizedUsername;
-    }
-
-    /**
-     * @param $normalizedUsername
-     */
-    public function setNormalizedUsername($normalizedUsername)
-    {
-        $this->normalizedUsername = $normalizedUsername;
     }
 }

@@ -3,6 +3,7 @@
 namespace ForgotTest\Service;
 
 use Forgot\Service\ForgotService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 
@@ -15,6 +16,8 @@ use Security\SecurityUser;
  */
 class ForgotServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Security\Service\SecurityServiceInterface
      */

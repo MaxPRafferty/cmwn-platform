@@ -1,25 +1,50 @@
 <?php
 
 return [
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Flip\Service\FlipUserService::class => ['Table/UserFlips'],
+        \Flip\Service\FlipService::class     => ['FlipsTable'],
+    ],
+
+    'actions' => [
+        'factories' => [
+            \Flip\Rule\Action\EarnFlip::class => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+        'shared'    => [
+            \Flip\Rule\Action\EarnFlip::class => false,
+        ],
+    ],
+
+    'rules' => [
+        'factories' => [
+            \Flip\Rule\Rule\EarnedFlip::class       => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Flip\Rule\Rule\EarnedFlipXTimes::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Flip\Rule\Rule\FlipRegistered::class   => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+        'shared'    => [
+            \Flip\Rule\Rule\EarnedFlip::class       => false,
+            \Flip\Rule\Rule\FlipRegistered::class   => false,
+            \Flip\Rule\Rule\EarnedFlipXTimes::class => false,
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             \Flip\Service\FlipServiceInterface::class     => \Flip\Service\FlipService::class,
             \Flip\Service\FlipUserServiceInterface::class => \Flip\Service\FlipUserService::class,
         ],
         'factories'  => [
-            \Flip\Flip::class                               => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Flip\EarnedFlip::class                         => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Flip\Delegator\FlipDelegatorFactory::class     => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Flip\Delegator\FlipUserDelegatorFactory::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Flip\Service\FlipUserService::class            => \Flip\Service\FlipUserServiceFactory::class,
-            \Flip\Service\FlipService::class                => \Flip\Service\FlipServiceFactory::class,
+            \Flip\Delegator\FlipServiceDelegatorFactory::class     =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Flip\Delegator\FlipUserServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
         'delegators' => [
             \Flip\Service\FlipService::class     => [
-                \Flip\Delegator\FlipDelegatorFactory::class,
+                \Flip\Delegator\FlipServiceDelegatorFactory::class,
             ],
             \Flip\Service\FlipUserService::class => [
-                \Flip\Delegator\FlipUserDelegatorFactory::class,
+                \Flip\Delegator\FlipUserServiceDelegatorFactory::class,
             ],
         ],
     ],

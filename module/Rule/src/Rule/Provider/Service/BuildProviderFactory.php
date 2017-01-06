@@ -39,6 +39,6 @@ class BuildProviderFactory implements FactoryInterface
             );
         }
 
-        return new BasicValueProvider(...array_values($options));
+        return new $requestedName(...array_values($options));
     }
 }

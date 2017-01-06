@@ -3,7 +3,7 @@
 namespace Security\Authorization;
 
 /**
- * Interface RbacAwareInterface
+ * Instance is aware of the Rbac
  */
 interface RbacAwareInterface
 {
@@ -15,5 +15,5 @@ interface RbacAwareInterface
     /**
      * @return Rbac
      */
-    public function getRbac();
+    public function getRbac(): Rbac;
 }

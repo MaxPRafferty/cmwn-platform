@@ -8,6 +8,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class PermissionTableBuilderFactory
+ * @todo move to dev module
  */
 class PermissionTableBuilderFactory implements FactoryInterface
 {

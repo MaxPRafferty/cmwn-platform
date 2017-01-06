@@ -39,7 +39,8 @@ return [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
             \Zend\Db\Adapter\AdapterAbstractServiceFactory::class,
             \Application\Log\LoggerFactory::class,
-            \Application\Utils\AbstractTableFactory::class,
+            \Application\Service\AbstractTableFactory::class,
+            \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
         ],
     ],
 

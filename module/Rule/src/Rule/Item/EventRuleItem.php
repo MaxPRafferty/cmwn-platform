@@ -40,7 +40,7 @@ class EventRuleItem implements RuleItemInterface, ProviderCollectionAwareInterfa
 
         $provider = $this->getProviderCollection()->getProvider($param);
         if ($provider instanceof EventProviderInterface) {
-            $this->getProviderCollection()->getProvider($param);
+            $provider->setEvent($this->event);
 
             return $provider->getValue();
         }

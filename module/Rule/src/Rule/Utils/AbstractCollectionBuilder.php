@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Rule\Action\ActionInterface;
 use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\Service\BuildActionCollectionFactory;
+use Rule\Engine\Specification\SpecificationCollectionInterface;
 use Rule\Provider\Collection\ProviderCollectionInterface;
 use Rule\Provider\ProviderInterface;
 use Rule\Provider\Service\BuildProviderCollectionFactory;
