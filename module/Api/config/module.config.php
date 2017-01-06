@@ -1,5 +1,11 @@
 <?php
 return [
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Api\V1\Rest\Ack\AckResource::class => [
+            \Flip\Service\FlipUserServiceInterface::class,
+        ],
+    ],
+
     'shared-listeners' => [
         \Api\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
@@ -361,6 +367,15 @@ return [
                     ],
                 ],
             ],
+            'api.rest.acknowledge'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/ack/:ack_id',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\Ack\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -394,6 +409,7 @@ return [
             'api.rest.game-data',
             'api.rest.flag',
             'api.rest.group-reset',
+            'api.rest.acknowledge',
         ],
     ],
     'zf-rest'                => [
@@ -789,6 +805,14 @@ return [
             'entity_class'               => \Api\V1\Rest\GroupReset\GroupResetEntity::class,
             'collection_class'           => \Api\V1\Rest\GroupReset\GroupResetCollection::class,
             'service_name'               => 'GroupReset',
+        ],
+        'Api\V1\Rest\Ack\Controller'     => [
+            'listener'                   => \Api\V1\Rest\Ack\AckResource::class,
+            'route_name'                 => 'api.rest.acknowledge',
+            'route_identifier_name'      => 'ack_id',
+            'collection_name'            => 'acknowledge',
+            'entity_http_methods'        => ['PUT'],
+            'service_name'               => 'AckFlip',
         ],
     ],
     'zf-content-negotiation' => [
