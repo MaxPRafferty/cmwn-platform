@@ -2,6 +2,7 @@
 
 namespace Flip\Service;
 
+use Application\Exception\NotFoundException;
 use Flip\EarnedFlipInterface;
 use User\UserInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -61,4 +62,18 @@ interface FlipUserServiceInterface
         string $flipId,
         EarnedFlipInterface $prototype = null
     ): AdapterInterface;
+
+    /**
+     * Fetches the latest flip that needs to be acknowledged
+     *
+     * @param UserInterface $user
+     * @param EarnedFlipInterface $prototype
+     *
+     * @throws NotFoundException
+     * @return EarnedFlipInterface
+     */
+    public function fetchLatestAcknowledgeFlip(
+        UserInterface $user,
+        EarnedFlipInterface $prototype = null
+    ): EarnedFlipInterface;
 }

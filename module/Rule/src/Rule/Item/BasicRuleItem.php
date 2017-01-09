@@ -30,4 +30,13 @@ class BasicRuleItem implements RuleItemInterface
     {
         return $this->data->offsetExists($param) ? $this->data->offsetGet($param) : $default;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function append(ProviderInterface $provider): RuleItemInterface
+    {
+        $this->data->append($provider);
+        return $this;
+    }
 }

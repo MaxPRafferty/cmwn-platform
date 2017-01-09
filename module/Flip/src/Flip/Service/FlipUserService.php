@@ -2,6 +2,7 @@
 
 namespace Flip\Service;
 
+use Application\Exception\NotFoundException;
 use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\ServiceTrait;
 use Flip\EarnedFlip;
@@ -11,6 +12,7 @@ use Ramsey\Uuid\Uuid;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\IsNotNull;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -90,6 +92,10 @@ class FlipUserService implements FlipUserServiceInterface
      */
     public function acknowledgeFlip(EarnedFlipInterface $earnedFlip): bool
     {
+        if ($earnedFlip->isAcknowledged()) {
+            return true;
+        }
+
         return (bool)$this->pivotTable->update(
             ['acknowledge_id' => null],
             ['acknowledge_id' => $earnedFlip->getAcknowledgeId()]
@@ -120,6 +126,33 @@ class FlipUserService implements FlipUserServiceInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function fetchLatestAcknowledgeFlip(
+        UserInterface $user,
+        EarnedFlipInterface $prototype = null
+    ): EarnedFlipInterface {
+        $where  = $this->createWhere([]);
+        $select = $this->buildSelect($user->getUserId(), $where);
+
+        $where->addPredicate(new IsNotNull('uf.acknowledge_id'));
+
+        $select->order(['uf.earned DESC']);
+        $select->limit(1);
+
+        $results = $this->pivotTable->selectWith($select);
+        $row     = $results->current();
+        if (!$row) {
+            throw new NotFoundException('No flips to acknowledge');
+        }
+
+        $earnedFlip = $prototype ?? new EarnedFlip();
+        $earnedFlip->exchangeArray((array)$row);
+
+        return $earnedFlip;
+    }
+
+    /**
      * Helps build out the common select statement with all the joins
      *
      * @param string $userId
@@ -130,13 +163,18 @@ class FlipUserService implements FlipUserServiceInterface
     protected function buildSelect(string $userId, $where = null)
     {
         $where  = $this->createWhere($where);
-        $select = new Select(['f' => 'flips']);
+        $select = new Select(['uf' => 'user_flips']);
 
+        $select->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
         $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $select->join(
-            ['uf' => 'user_flips'],
+            ['f' => 'flips'],
             new Expression('uf.user_id = ?', $userId),
-            ['earned' => 'earned', 'earned_by' => 'user_id'],
+            '*',
             Select::JOIN_LEFT
         );
 

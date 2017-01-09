@@ -2,6 +2,7 @@
 
 namespace Rule\Provider\Collection;
 
+use Rule\Item\RuleItemInterface;
 use Rule\Provider\ProviderInterface;
 
 /**
@@ -37,7 +38,7 @@ class ProviderCollection implements ProviderCollectionInterface
     /**
      * @inheritDoc
      */
-    public function append(ProviderInterface $provider): ProviderCollectionInterface
+    public function append(ProviderInterface $provider): RuleItemInterface
     {
         if (!$this->offsetExists($provider->getName())) {
             $this->offsetSet($provider->getName(), $provider);

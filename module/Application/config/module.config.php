@@ -5,7 +5,7 @@
  */
 
 return [
-    'router'          => [
+    'router' => [
         'routes' => [
             'home' => [
                 'type'    => 'Literal',
@@ -19,6 +19,49 @@ return [
             ],
         ],
     ],
+
+    'rules' => [
+        'factories' => [
+            \Application\Rule\Session\Rule\HasValue::class            => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Application\Rule\Session\Rule\ValueEquals::class         => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Application\Rule\Session\Rule\ValueEqualsProvider::class => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+        'shared'    => [
+            \Application\Rule\Session\Rule\HasValue::class            => false,
+            \Application\Rule\Session\Rule\ValueEquals::class         => false,
+            \Application\Rule\Session\Rule\ValueEqualsProvider::class => false,
+        ],
+    ],
+
+    'providers' => [
+        'factories' => [
+            \Application\Rule\Session\Provider\SessionContainer::class =>
+                \Rule\Provider\Service\BuildProviderFactory::class,
+            \Application\Rule\Session\Provider\SessionValue::class     =>
+                \Rule\Provider\Service\BuildProviderFactory::class,
+        ],
+        'shared'    => [
+            \Application\Rule\Session\Provider\SessionContainer::class => false,
+            \Application\Rule\Session\Provider\SessionValue::class     => false,
+        ],
+    ],
+
+    'actions'                                                         => [
+        'factories' => [
+            \Application\Rule\Session\Action\WriteProviderToSession::class =>
+                \Rule\Action\Service\BuildActionFactory::class,
+            \Application\Rule\Session\Action\WriteValueToSession::class    =>
+                \Rule\Action\Service\BuildActionFactory::class,
+        ],
+        'shared'    => [
+            \Application\Rule\Session\Action\WriteProviderToSession::class => false,
+            \Application\Rule\Session\Action\WriteValueToSession::class    => false,
+        ],
+    ],
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Application\Session\CmwnContainer::class => [\Zend\Session\SessionManager::class],
+    ],
+
     'service_manager' => [
         'initializers'       => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,

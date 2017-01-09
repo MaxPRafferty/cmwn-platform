@@ -17,6 +17,7 @@ use Security\Service\SecurityOrgServiceInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -48,11 +49,6 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     protected $groupService;
 
     /**
-     * @var array
-     */
-    protected $listeners = [];
-
-    /**
      * RouteListener constructor.
      *
      * @param array $config
@@ -76,10 +72,10 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(
-            'Zend\Mvc\Application',
+        $events->attach(
+            Application::class,
             MvcEvent::EVENT_ROUTE,
-            [$this, 'onRoute'],
+            $this,
             -2
         );
     }
@@ -89,7 +85,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
-        $events->detach($this->listeners[0], 'Zend\Mvc\Application');
+        $events->detach($this, Application::class);
     }
 
     /**
@@ -97,7 +93,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
      *
      * @return null|ApiProblemResponse
      */
-    public function onRoute(MvcEvent $event)
+    public function __invoke(MvcEvent $event)
     {
         if ($this->isRouteUnRestricted($event)) {
             return null;

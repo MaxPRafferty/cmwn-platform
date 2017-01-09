@@ -2,12 +2,13 @@
 
 namespace FlipTest\Delegator;
 
+use Application\Exception\NotFoundException;
 use Flip\Delegator\FlipUserServiceDelegator;
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
-use User\Delegator\UserServiceDelegator;
+use User\Child;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -89,13 +90,13 @@ class FlipUserServiceDelegatorTest extends TestCase
         $this->assertEquals(
             $result,
             $this->delegator->fetchEarnedFlipsForUser('foo-bar'),
-            UserServiceDelegator::class . ' did not return the result from the real service'
+            FlipUserServiceDelegator::class. ' did not return the result from the real service'
         );
 
         $this->assertEquals(
             2,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' did not trigger the correct number of expected events'
+            FlipUserServiceDelegator::class. ' did not trigger the correct number of expected events'
         );
         $this->assertEquals(
             [
@@ -104,7 +105,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar'],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger fetch.user.flips correctly'
+            FlipUserServiceDelegator::class. ' did not trigger fetch.user.flips correctly'
         );
         $this->assertEquals(
             [
@@ -113,7 +114,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar', 'flips' => $result],
             ],
             $this->calledEvents[1],
-            UserServiceDelegator::class . ' did not trigger fetch.user.flips.post correctly'
+            FlipUserServiceDelegator::class. ' did not trigger fetch.user.flips.post correctly'
         );
     }
 
@@ -129,19 +130,19 @@ class FlipUserServiceDelegatorTest extends TestCase
 
         try {
             $this->delegator->fetchEarnedFlipsForUser('foo-bar');
-            $this->fail(UserServiceDelegator::class . ' failed to throw exception from service');
+            $this->fail(FlipUserServiceDelegator::class. ' failed to throw exception from service');
         } catch (\Throwable $actual) {
             $this->assertSame(
                 $exception,
                 $actual,
-                UserServiceDelegator::class . ' failed to re-throw the same exception from service'
+                FlipUserServiceDelegator::class. ' failed to re-throw the same exception from service'
             );
         }
 
         $this->assertEquals(
             2,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' did not trigger the correct number of expected events on an error'
+            FlipUserServiceDelegator::class. ' did not trigger the correct number of expected events on an error'
         );
 
         $this->assertEquals(
@@ -151,7 +152,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar'],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger fetch.user.flips correctly during an error'
+            FlipUserServiceDelegator::class. ' did not trigger fetch.user.flips correctly during an error'
         );
         $this->assertEquals(
             [
@@ -160,7 +161,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar', 'error' => $exception],
             ],
             $this->calledEvents[1],
-            UserServiceDelegator::class . ' did not trigger fetch.user.flips correctly during an error'
+            FlipUserServiceDelegator::class. ' did not trigger fetch.user.flips correctly during an error'
         );
     }
 
@@ -182,13 +183,13 @@ class FlipUserServiceDelegatorTest extends TestCase
         $this->assertEquals(
             $result,
             $this->delegator->fetchEarnedFlipsForUser('foo-bar'),
-            UserServiceDelegator::class . ' did not return the result from the event'
+            FlipUserServiceDelegator::class. ' did not return the result from the event'
         );
 
         $this->assertEquals(
             1,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' triggered the incorrect number of events when the fetch.user.flips stops'
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events when the fetch.user.flips stops'
         );
         $this->assertEquals(
             [
@@ -197,7 +198,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['where' => new Where(), 'prototype' => null, 'user' => 'foo-bar'],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger fetch.user.flips correctly'
+            FlipUserServiceDelegator::class. ' did not trigger fetch.user.flips correctly'
         );
     }
 
@@ -220,7 +221,7 @@ class FlipUserServiceDelegatorTest extends TestCase
         $this->assertEquals(
             2,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' called the incorrect number of events for attachFlipToUser'
+            FlipUserServiceDelegator::class. ' called the incorrect number of events for attachFlipToUser'
         );
 
         $this->assertEquals(
@@ -230,7 +231,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar'],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger attach.flip correctly'
+            FlipUserServiceDelegator::class. ' did not trigger attach.flip correctly'
         );
         $this->assertEquals(
             [
@@ -239,7 +240,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar'],
             ],
             $this->calledEvents[1],
-            UserServiceDelegator::class . ' did not trigger attach.flip.post correctly'
+            FlipUserServiceDelegator::class. ' did not trigger attach.flip.post correctly'
         );
     }
 
@@ -256,19 +257,19 @@ class FlipUserServiceDelegatorTest extends TestCase
 
         try {
             $this->delegator->attachFlipToUser('foo-bar', 'baz-bat');
-            $this->fail(UserServiceDelegator::class . ' failed to throw exception from service');
+            $this->fail(FlipUserServiceDelegator::class. ' failed to throw exception from service');
         } catch (\Throwable $actual) {
             $this->assertSame(
                 $exception,
                 $actual,
-                UserServiceDelegator::class . ' failed to re-throw the same exception from service'
+                FlipUserServiceDelegator::class. ' failed to re-throw the same exception from service'
             );
         }
 
         $this->assertEquals(
             2,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' did not trigger the correct number of events during an error'
+            FlipUserServiceDelegator::class. ' did not trigger the correct number of events during an error'
         );
 
         $this->assertEquals(
@@ -278,7 +279,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar'],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger attach.flip correctly for error'
+            FlipUserServiceDelegator::class. ' did not trigger attach.flip correctly for error'
         );
         $this->assertEquals(
             [
@@ -287,7 +288,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar', 'error' => $exception],
             ],
             $this->calledEvents[1],
-            UserServiceDelegator::class . ' did not trigger attach.flip.error correctly'
+            FlipUserServiceDelegator::class. ' did not trigger attach.flip.error correctly'
         );
     }
 
@@ -308,13 +309,13 @@ class FlipUserServiceDelegatorTest extends TestCase
         $this->assertEquals(
             false,
             $this->delegator->attachFlipToUser('foo-bar', 'baz-bat'),
-            UserServiceDelegator::class . ' did not return the result from the attach.flip event'
+            FlipUserServiceDelegator::class. ' did not return the result from the attach.flip event'
         );
 
         $this->assertEquals(
             1,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' triggered the incorrect number of events when attach.flip stops'
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events when attach.flip stops'
         );
 
         $this->assertEquals(
@@ -324,7 +325,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar'],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger attach.flip.error correctly'
+            FlipUserServiceDelegator::class. ' did not trigger attach.flip.error correctly'
         );
     }
 
@@ -342,13 +343,13 @@ class FlipUserServiceDelegatorTest extends TestCase
 
         $this->assertTrue(
             $this->delegator->acknowledgeFlip($earnedFlip),
-            UserServiceDelegator::class . ' did not return the result from the service'
+            FlipUserServiceDelegator::class. ' did not return the result from the service'
         );
 
         $this->assertEquals(
             2,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' triggered the incorrect number of events'
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events'
         );
 
         $this->assertEquals(
@@ -358,7 +359,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['earned_flip' => $earnedFlip],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger acknowledge.flip correctly'
+            FlipUserServiceDelegator::class. ' did not trigger acknowledge.flip correctly'
         );
 
         $this->assertEquals(
@@ -368,7 +369,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['earned_flip' => $earnedFlip],
             ],
             $this->calledEvents[1],
-            UserServiceDelegator::class . ' did not trigger acknowledge.flip.post correctly'
+            FlipUserServiceDelegator::class. ' did not trigger acknowledge.flip.post correctly'
         );
     }
 
@@ -386,18 +387,18 @@ class FlipUserServiceDelegatorTest extends TestCase
 
         try {
             $this->delegator->acknowledgeFlip($earnedFlip);
-            $this->fail(UserServiceDelegator::class . ' failed to throw exception from service');
+            $this->fail(FlipUserServiceDelegator::class. ' failed to throw exception from service');
         } catch (\Throwable $actual) {
             $this->assertSame(
                 $exception,
                 $actual,
-                UserServiceDelegator::class . ' failed to re-throw the same exception from service'
+                FlipUserServiceDelegator::class. ' failed to re-throw the same exception from service'
             );
         }
         $this->assertEquals(
             2,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' triggered the incorrect number of events on error'
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events on error'
         );
 
         $this->assertEquals(
@@ -407,7 +408,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['earned_flip' => $earnedFlip],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' did not trigger acknowledge.flip correctly during an error'
+            FlipUserServiceDelegator::class. ' did not trigger acknowledge.flip correctly during an error'
         );
         $this->assertEquals(
             [
@@ -416,7 +417,7 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['earned_flip' => $earnedFlip, 'error' => $exception],
             ],
             $this->calledEvents[1],
-            UserServiceDelegator::class . ' did not trigger acknowledge.flip.error correctly'
+            FlipUserServiceDelegator::class. ' did not trigger acknowledge.flip.error correctly'
         );
     }
 
@@ -437,13 +438,13 @@ class FlipUserServiceDelegatorTest extends TestCase
 
         $this->assertFalse(
             $this->delegator->acknowledgeFlip($earnedFlip),
-            UserServiceDelegator::class . ' did not return result from event '
+            FlipUserServiceDelegator::class. ' did not return result from event '
         );
 
         $this->assertEquals(
             1,
             count($this->calledEvents),
-            UserServiceDelegator::class . ' triggered the incorrect number of events when stopping acknowledge.flip'
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events when stopping acknowledge.flip'
         );
         $this->assertEquals(
             [
@@ -452,7 +453,101 @@ class FlipUserServiceDelegatorTest extends TestCase
                 'params' => ['earned_flip' => $earnedFlip],
             ],
             $this->calledEvents[0],
-            UserServiceDelegator::class . ' triggered acknowledge.flip incorrectly when stopping acknowledge.flip'
+            FlipUserServiceDelegator::class. ' triggered acknowledge.flip incorrectly when stopping acknowledge.flip'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchTheLatestAcknowledgeFlip()
+    {
+        $user       = new Child();
+        $earnedFlip = new EarnedFlip();
+        $this->flipService->shouldReceive('fetchLatestAcknowledgeFlip')
+            ->once()
+            ->with($user, null)
+            ->andReturn($earnedFlip);
+
+        $this->assertSame(
+            $earnedFlip,
+            $this->delegator->fetchLatestAcknowledgeFlip($user),
+            FlipUserServiceDelegator::class. ' did not chain result from service'
+        );
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events when stopping acknowledge.flip'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.acknowledge.flip',
+                'target' => $this->flipService,
+                'params' => ['user' => $user, 'prototype' => null],
+            ],
+            $this->calledEvents[0],
+            FlipUserServiceDelegator::class. ' triggered acknowledge.flip incorrectly when stopping acknowledge.flip'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.acknowledge.flip.post',
+                'target' => $this->flipService,
+                'params' => ['user' => $user, 'prototype' => null, 'flip' => $earnedFlip],
+            ],
+            $this->calledEvents[1],
+            FlipUserServiceDelegator::class. ' triggered acknowledge.flip incorrectly when stopping acknowledge.flip'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldReThrowExceptionOnFetchLatestAcknowledgeFlip()
+    {
+        $user      = new Child();
+        $exception = new NotFoundException();
+        $this->flipService->shouldReceive('fetchLatestAcknowledgeFlip')
+            ->once()
+            ->with($user, null)
+            ->andThrow($exception);
+
+        try {
+            $this->delegator->fetchLatestAcknowledgeFlip($user);
+            $this->fail(FlipUserServiceDelegator::class. ' did not throw the error');
+        } catch (\Throwable $actualException) {
+            $this->assertSame(
+                $actualException,
+                $exception
+            );
+        }
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            FlipUserServiceDelegator::class. ' triggered the incorrect number of events when stopping acknowledge.flip'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.acknowledge.flip',
+                'target' => $this->flipService,
+                'params' => ['user' => $user, 'prototype' => null],
+            ],
+            $this->calledEvents[0],
+            FlipUserServiceDelegator::class. ' triggered acknowledge.flip incorrectly when stopping acknowledge.flip'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.acknowledge.flip.error',
+                'target' => $this->flipService,
+                'params' => ['user' => $user, 'prototype' => null, 'error' => $exception],
+            ],
+            $this->calledEvents[1],
+            FlipUserServiceDelegator::class. ' triggered acknowledge.flip incorrectly when stopping acknowledge.flip'
         );
     }
 }

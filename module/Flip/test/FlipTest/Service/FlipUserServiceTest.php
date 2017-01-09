@@ -2,15 +2,19 @@
 
 namespace FlipTest\Service;
 
+use Application\Exception\NotFoundException;
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
+use User\Adult;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\IsNotNull;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
@@ -71,17 +75,21 @@ class FlipUserServiceTest extends TestCase
     public function testItShouldFetchAllFlipsForUserWithDefaultValuesAndStringForUserId()
     {
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new EarnedFlip());
-        $expectedSelect    = new Select(['f' => 'flips']);
         $where             = new Where();
+        $expectedSelect    = new Select(['uf' => 'user_flips']);
 
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
         $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $expectedSelect->join(
-            ['uf' => 'user_flips'],
+            ['f' => 'flips'],
             new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned', 'earned_by' => 'user_id'],
+            '*',
             Select::JOIN_LEFT
         );
-
         $expectedSelect->where($where);
         $expectedSelect->group('f.flip_id');
         $expectedSelect->order(['uf.earned', 'f.title']);
@@ -104,26 +112,29 @@ class FlipUserServiceTest extends TestCase
     public function testItShouldFetchAllFlipsForUserWithCustomProtoTypeAndWhere()
     {
         /** @var \Mockery\MockInterface|\Flip\EarnedFlipInterface $prototype */
-        $prototype = \Mockery::mock('\Flip\EarnedFlipInterface');
-        $where     = new Where();
-        $where->addPredicate(new Operator('foo', '=', 'bar'));
-
+        $prototype         = \Mockery::mock('\Flip\EarnedFlipInterface');
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        $expectedSelect    = new Select(['f' => 'flips']);
-        $expectedWhere     = new Where();
+        $where             = new Where();
+        $expectedSelect    = new Select(['uf' => 'user_flips']);
+
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $expectedSelect->join(
+            ['f' => 'flips'],
+            new Expression('uf.user_id = ?', 'foo-bar'),
+            '*',
+            Select::JOIN_LEFT
+        );
         $expectedSelect->group('f.flip_id');
         $expectedSelect->order(['uf.earned', 'f.title']);
 
-        $expectedWhere->addPredicate(new Operator('foo', '=', 'bar'));
-        $expectedWhere->addPredicate(new Expression('f.flip_id = uf.flip_id'));
-        $expectedSelect->join(
-            ['uf' => 'user_flips'],
-            new Expression('uf.user_id = ?', 'foo-bar'),
-            ['earned' => 'earned', 'earned_by' => 'user_id'],
-            Select::JOIN_LEFT
-        );
-
-        $expectedSelect->where($expectedWhere);
+        $where->addPredicate(new Operator('foo', '=', 'bar'));
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $expectedSelect->where($where);
 
         $expectedAdapter = new DbSelect(
             $expectedSelect,
@@ -224,5 +235,71 @@ class FlipUserServiceTest extends TestCase
             $this->flipService->acknowledgeFlip($earnedFlip),
             FlipUserService::class . ' did acknowledged earned flip'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchTheLatestAcknowledgeFlip()
+    {
+        $earnedFlip = new EarnedFlip();
+        $earnedFlip->setFlipId('played-farmville-manchuck-edition');
+        $earnedFlip->setTitle('Be the best farmer');
+        $earnedFlip->setDescription('Manchuck is the best farmer in the world');
+        $earnedFlip->setAcknowledgeId('foobar-bazbat');
+
+        $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
+        $expectedResultSet->initialize([$earnedFlip->getArrayCopy()]);
+        $where          = new PredicateSet();
+        $expectedSelect = new Select(['uf' => 'user_flips']);
+
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
+        $expectedSelect->join(
+            ['f' => 'flips'],
+            new Expression('uf.user_id = ?', 'manchuck'),
+            '*',
+            Select::JOIN_LEFT
+        );
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $where->addPredicate(new IsNotNull('uf.acknowledge_id'));
+
+        $expectedSelect->where($where);
+        $expectedSelect->order(['uf.earned DESC']);
+        $expectedSelect->limit(1);
+
+        $this->tableGateway->shouldReceive('selectWith')
+            ->andReturnUsing(function ($actualSelect) use (&$expectedSelect, &$expectedResultSet) {
+                $this->assertEquals(
+                    $expectedSelect,
+                    $actualSelect,
+                    FlipUserService::class . ' is selecting the wrong stuff for acknowledge flip'
+                );
+
+                return $expectedResultSet;
+            });
+
+        $this->assertEquals(
+            $earnedFlip,
+            $this->flipService->fetchLatestAcknowledgeFlip(new Adult(['user_id' => 'manchuck'])),
+            FlipUserService::class . ' did not return the earned flip for the best farmer in the world'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenThereAreNoFlipsToAcknowledge()
+    {
+        $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
+        $expectedResultSet->initialize([]);
+        $this->tableGateway->shouldReceive('selectWith')->andReturn($expectedResultSet);
+
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('No flips to acknowledge');
+        $this->flipService->fetchLatestAcknowledgeFlip(new Adult(['user_id' => 'manchuck']));
     }
 }

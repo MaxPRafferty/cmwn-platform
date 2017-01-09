@@ -10,12 +10,18 @@ class FromEventParamProvider extends AbstractEventProvider
     /**
      * @var string
      */
-    protected $eventName;
+    protected $eventParam;
 
+    /**
+     * FromEventParamProvider constructor.
+     *
+     * @param string $providerName
+     * @param null $eventParam
+     */
     public function __construct($providerName, $eventParam = null)
     {
         parent::__construct($providerName);
-        $this->eventName = $eventParam === null ? $providerName : $eventParam;
+        $this->eventParam = $eventParam === null ? $providerName : $eventParam;
     }
 
     /**
@@ -23,6 +29,6 @@ class FromEventParamProvider extends AbstractEventProvider
      */
     public function getValue()
     {
-        return $this->getEvent()->getParam($this->eventName, null);
+        return $this->getEvent()->getParam($this->eventParam, null);
     }
 }

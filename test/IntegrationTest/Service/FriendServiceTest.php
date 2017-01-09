@@ -29,10 +29,12 @@ class FriendServiceTest extends TestCase
      * @var FriendServiceInterface
      */
     protected $friendService;
+
     /**
      * @var UserInterface|Child
      */
     protected $user;
+
     /**
      * @var UserInterface|Child
      */
@@ -61,6 +63,7 @@ class FriendServiceTest extends TestCase
     {
         $this->user = new Child(['user_id' => 'english_student']);
     }
+
     /**
      * @before
      */
@@ -68,6 +71,7 @@ class FriendServiceTest extends TestCase
     {
         $this->friend = new Child(['user_id' => 'math_student']);
     }
+
     /**
      * @test
      */
@@ -124,6 +128,7 @@ class FriendServiceTest extends TestCase
             //noop
         }
     }
+
     /**
      * @test
      */
@@ -147,6 +152,7 @@ class FriendServiceTest extends TestCase
             //noop
         }
     }
+
     /**
      * @test
      */
