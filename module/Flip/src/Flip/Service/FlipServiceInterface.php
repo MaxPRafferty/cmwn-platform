@@ -4,30 +4,31 @@ namespace Flip\Service;
 
 use Application\Exception\NotFoundException;
 use Flip\FlipInterface;
-use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Interface FlipServiceInterface
+ * A Service that handles flips
  */
 interface FlipServiceInterface
 {
-
     /**
-     * Fetches all the flips
+     * Used to fetch a paginated list of flips
      *
-     * @param null|PredicateInterface|array $where
-     * @param null|object $prototype
+     * @param null $where
+     * @param FlipInterface|null $prototype
+     *
      * @return AdapterInterface
      */
-    public function fetchAll($where = null, $prototype = null);
+    public function fetchAll($where = null, FlipInterface $prototype = null): AdapterInterface;
 
     /**
-     * Fetches a flip by the flip Id
+     * Fetches a flip using by the flip id
      *
      * @param $flipId
-     * @return FlipInterface
+     * @param FlipInterface|null $prototype
+     *
      * @throws NotFoundException
+     * @return FlipInterface
      */
-    public function fetchFlipById($flipId);
+    public function fetchFlipById($flipId, FlipInterface $prototype = null): FlipInterface;
 }

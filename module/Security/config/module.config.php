@@ -3,7 +3,68 @@
 return [
     'validators' => [
         'factories' => [
-            \Security\PasswordValidator::class => \Security\Factory\PasswordValidatorFactory::class,
+            \Security\PasswordValidator::class => \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
+        ],
+    ],
+
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Security\Authentication\AuthAdapter::class => [
+            \Security\Service\SecurityServiceInterface::class,
+            \Zend\EventManager\EventManagerInterface::class,
+        ],
+
+        \Security\Listeners\RouteListener::class => [
+            'Config',
+            \Security\Service\SecurityOrgServiceInterface::class,
+            \Security\Service\SecurityGroupServiceInterface::class,
+        ],
+
+        \Security\Guard\CsrfGuard::class => [
+            'Config',
+        ],
+
+        \Security\Listeners\GroupServiceListener::class => [
+            \Group\Service\UserGroupServiceInterface::class,
+            \Security\Service\SecurityOrgServiceInterface::class,
+        ],
+
+        \Security\Listeners\OrgServiceListener::class => [
+            \Security\Service\SecurityOrgServiceInterface::class,
+            \Group\Service\UserGroupServiceInterface::class,
+        ],
+
+        \Security\PasswordValidator::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+        ],
+
+        \Security\Authorization\Assertion\UserAssertion::class => [
+            \Security\Service\SecurityGroupServiceInterface::class,
+        ],
+
+        \Security\Listeners\UserServiceListener::class => [
+            \Group\Service\UserGroupServiceInterface::class,
+        ],
+
+        \Security\Guard\XsrfGuard::class => [
+            'Config',
+        ],
+
+        \Security\Authorization\Rbac::class => [
+            'Config',
+        ],
+
+        \Security\Listeners\HttpAuthListener::class => [
+            \Zend\Authentication\Adapter\Http::class,
+            \Security\Guard\CsrfGuard::class,
+        ],
+    ],
+
+    \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
+        \Security\Rule\Provider\ActiveUserProvider::class => [
+            \Security\Authentication\AuthenticationService::class,
+        ],
+        \Security\Rule\Provider\RoleProvider::class       => [
+            \Security\Authentication\AuthenticationService::class,
         ],
     ],
 
@@ -21,25 +82,12 @@ return [
             \Security\Service\SecurityOrgServiceInterface::class       => \Security\Service\SecurityOrgService::class,
         ],
 
-        'invokables' => [
-            \Security\Guard\OriginGuard::class                => \Security\Guard\OriginGuard::class,
-            \Security\Listeners\UpdateSession::class          => \Security\Listeners\UpdateSession::class,
-            \Security\Listeners\UserUpdateListener::class     => \Security\Listeners\UserUpdateListener::class,
-            \Security\Listeners\FetchUserImageListener::class => \Security\Listeners\FetchUserImageListener::class,
-            \Security\Listeners\RestoreServiceListener::class => \Security\Listeners\RestoreServiceListener::class,
-        ],
-
         'factories' => [
-            \Security\Guard\CsrfGuard::class             => \Security\Factory\CsrfGuardFactory::class,
-            \Security\Guard\XsrfGuard::class             => \Security\Factory\XsrfGuardFactory::class,
-            \Security\Authorization\RouteListener::class => \Security\Authorization\RouteListenerFactory::class,
-            \Zend\Session\SessionManager::class          => \Security\Session\SessionManagerFactory::class,
-            \Security\Service\SecurityService::class     => \Security\Service\SecurityServiceFactory::class,
-            \Security\Service\SecurityOrgService::class  => \Security\Service\SecurityOrgServiceFactory::class,
-            \Security\Authentication\AuthAdapter::class  => \Security\Authentication\AuthAdapterFactory::class,
-            \Security\Authorization\Rbac::class          => \Security\Authorization\RbacFactory::class,
-
-            \Security\Listeners\UserServiceListener::class => \Security\Factory\UserServiceListenerFactory::class,
+            \Security\Listeners\UpdateSession::class          => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\UserUpdateListener::class     => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Security\Service\SecurityService::class          => \Security\Service\SecurityServiceFactory::class,
+            \Security\Service\SecurityOrgService::class       => \Security\Service\SecurityOrgServiceFactory::class,
 
             \Security\Service\SecurityGroupService::class =>
                 \Security\Service\SecurityGroupServiceFactory::class,
@@ -50,21 +98,12 @@ return [
             \Security\Listeners\ExpireAuthSessionListener::class =>
                 \Security\Factory\ExpireAuthSessionListenerFactory::class,
 
-            \Security\Authorization\Assertions\UserAssertion::class =>
-                \Security\Factory\UserAssertionFactory::class,
-
-            \Security\Listeners\GroupServiceListener::class =>
-                \Security\Factory\GroupServiceListenerFactory::class,
-            \Security\Listeners\OrgServiceListener::class   =>
-                \Security\Factory\OrgServiceListenerFactory::class,
-
             \Zend\Authentication\Adapter\Http::class =>
                 \Security\Factory\BasicAuthAdapterFactory::class,
 
             \Zend\Authentication\Adapter\Http\ResolverInterface::class =>
                 \Security\Factory\BasicAuthResolverFactory::class,
 
-            \Security\Listeners\HttpAuthListener::class   => \Security\Factory\HttpAuthListenerFactory::class,
             \Security\Utils\PermissionTableFactory::class => \Security\Utils\PermissionTableBuilderFactory::class,
         ],
 
@@ -86,8 +125,7 @@ return [
     'shared-listeners' => [
         \Security\Listeners\OrgServiceListener::class,
         \Security\Listeners\GroupServiceListener::class,
-        \Security\Authorization\RouteListener::class,
-        \Security\Guard\OriginGuard::class,
+        \Security\Listeners\RouteListener::class,
         \Security\Guard\XsrfGuard::class,
         \Security\Guard\CsrfGuard::class,
         \Security\Listeners\ExpireAuthSessionListener::class,
@@ -96,7 +134,6 @@ return [
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
         \Security\Listeners\FetchUserImageListener::class,
-        \Security\Listeners\RestoreServiceListener::class,
     ],
 
     'console' => [
@@ -122,6 +159,27 @@ return [
                     ],
                 ],
             ],
+        ],
+    ],
+
+    'providers' => [
+        'factories' => [
+            \Security\Rule\Provider\RoleProvider::class =>
+                \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
+
+            \Security\Rule\Provider\ActiveUserProvider::class =>
+                \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
+        ],
+    ],
+
+    'rules' => [
+        'factories' => [
+            \Security\Rule\Rule\HasPermission::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Security\Rule\Rule\HasRole::class       => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+        'shared'    => [
+            \Security\Rule\Rule\HasPermission::class => false,
+            \Security\Rule\Rule\HasRole::class       => false,
         ],
     ],
 ];

@@ -1,17 +1,14 @@
 <?php
-$dbName = getenv('IMAGE_LINK');
-$dbName = empty($dbName) ? 'https://media.changemyworldnow.com/f' : $dbName;
-
 return [
     'log' => [
         'Log\App' => [
             'writers' => [
-                ['name' => 'noop',],
+                ['name' => 'noop'],
             ],
         ],
     ],
 
     'options' => [
-        'image_domain' => $dbName,
+        'image_domain' => 'https://media.changemyworldnow.com/f',
     ],
 ];

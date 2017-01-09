@@ -4,6 +4,7 @@ namespace SecurityTest\Authentication;
 
 use Application\Exception\NotFoundException;
 use Lcobucci\JWT\Configuration;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\ChangePasswordUser;
@@ -28,6 +29,8 @@ use Zend\Authentication\Result;
  */
 class AuthAdapterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|SecurityServiceInterface
      */
@@ -176,11 +179,11 @@ class AuthAdapterTest extends TestCase
             ->identifiedBy('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -215,11 +218,11 @@ class AuthAdapterTest extends TestCase
             ->identifiedBy('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -254,11 +257,11 @@ class AuthAdapterTest extends TestCase
             ->identifiedBy('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -279,6 +282,7 @@ class AuthAdapterTest extends TestCase
             'Wrong password user was allowed to login'
         );
     }
+
     /**
      * @test
      */
@@ -291,11 +295,11 @@ class AuthAdapterTest extends TestCase
             ->identifiedBy('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(

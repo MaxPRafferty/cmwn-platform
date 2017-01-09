@@ -10,12 +10,14 @@ use Import\Importer\Nyc\Parser\Excel\TeacherWorksheetParser;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use IntegrationTest\TestHelper;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Rbac;
 use User\Adult;
 
 /**
  * Test TeacherWorksheetParserTest
+ *
  * @group Teacher
  * @group User
  * @group NycImport
@@ -29,6 +31,8 @@ use User\Adult;
  */
 class TeacherWorksheetParserTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\User\Service\UserServiceInterface
      */
@@ -98,11 +102,13 @@ class TeacherWorksheetParserTest extends TestCase
      */
     public function setUpRbac()
     {
+        $this->markTestSkipped('This should not use the helper to get the rbac');
         $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 
     /**
      * @param \PHPExcel_Worksheet $sheet
+     *
      * @return TeacherWorksheetParser
      */
     protected function getParser(\PHPExcel_Worksheet $sheet)
@@ -110,6 +116,7 @@ class TeacherWorksheetParserTest extends TestCase
         AbstractParser::clear();
         $parser = new TeacherWorksheetParser($sheet, $this->registry, $this->classRegistry);
         $parser->setRbac($this->rbac);
+
         return $parser;
     }
 

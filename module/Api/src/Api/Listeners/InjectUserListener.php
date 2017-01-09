@@ -44,6 +44,16 @@ class InjectUserListener
     }
 
     /**
+     * @param SharedEventManagerInterface $events
+     */
+    public function detachShared(SharedEventManagerInterface $events)
+    {
+        foreach ($this->listeners as $listener) {
+            $events->detach($listener, 'ZF\Hal\Plugin\Hal');
+        }
+    }
+
+    /**
      * @param Event $event
      */
     public function onRender(Event $event)
@@ -54,7 +64,7 @@ class InjectUserListener
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
 
         if (!$realEntity instanceof FeedInterface) {
             return;

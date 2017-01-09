@@ -3,9 +3,9 @@
 namespace Api\Factory;
 
 use Api\Listeners\InjectUserListener;
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class InjectUserListenerFactory
@@ -16,10 +16,10 @@ class InjectUserListenerFactory implements FactoryInterface
     /**
      * @inheritdoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /**@var UserServiceInterface $userService*/
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-        return new InjectUserListener($userService);
+        return new InjectUserListener(
+            $container->get(UserServiceInterface::class)
+        );
     }
 }

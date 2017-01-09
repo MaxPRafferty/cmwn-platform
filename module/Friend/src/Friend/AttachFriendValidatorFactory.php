@@ -3,10 +3,10 @@
 namespace Friend;
 
 use Friend\Service\FriendServiceInterface;
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class AttachFriendValidatorFactory
@@ -14,22 +14,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class AttachFriendValidatorFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-        
-        /** @var UserServiceInterface $userService */
-        /** @var FriendServiceInterface $friendService */
-        $userService   = $serviceLocator->get(UserServiceInterface::class);
-        $friendService = $serviceLocator->get(FriendServiceInterface::class);
-
-        return new AttachFriendValidator($friendService, $userService);
+        return new AttachFriendValidator(
+            $container->get(FriendServiceInterface::class),
+            $container->get(UserServiceInterface::class)
+        );
     }
 }

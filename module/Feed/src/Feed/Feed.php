@@ -8,6 +8,7 @@ use Application\Utils\Date\DateUpdatedTrait;
 use Application\Utils\MetaDataTrait;
 use User\UserInterface;
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Class Feed
@@ -98,7 +99,7 @@ class Feed extends \ArrayObject implements FeedInterface
         $array = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
-            $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
+            $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }

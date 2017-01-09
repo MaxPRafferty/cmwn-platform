@@ -14,6 +14,7 @@ return [
         'ZF\\Apigility\\Provider',
         'ZF\\Apigility\\Documentation',
         'AssetManager',
+        'ZF\Rpc',
     ],
     // development time configuration globbing
     'module_listener_options' => [

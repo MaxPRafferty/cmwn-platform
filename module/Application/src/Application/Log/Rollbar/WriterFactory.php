@@ -2,9 +2,9 @@
 
 namespace Application\Log\Rollbar;
 
+use Interop\Container\ContainerInterface;
 use Zend\Log\Filter\Priority;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class WriterFactory
@@ -12,19 +12,19 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class WriterFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var \RollbarNotifier $notifier */
-        $notifier = $serviceLocator->get('Application\Log\Rollbar\Notifier');
-        $options = $serviceLocator->get(Options::class);
-        $writer   =  new Writer($notifier, $serviceLocator, $options);
+        $options = $container->get(Options::class);
+        $writer  = new Writer(
+            $container->get('Application\Log\Rollbar\Notifier'),
+            $container,
+            $options
+        );
+
         $writer->addFilter(new Priority($options->getLogLevel()));
+
         return $writer;
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Game;
 
-use Zend\Filter\StaticFilter;
-
 /**
  * Interface SaveGameInterface
  */

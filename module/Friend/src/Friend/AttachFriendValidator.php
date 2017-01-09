@@ -5,7 +5,6 @@ namespace Friend;
 use Application\Exception\NotFoundException;
 use Friend\Service\FriendServiceInterface;
 use User\Service\UserServiceInterface;
-use User\UserInterface;
 use Zend\Validator\AbstractValidator;
 use Zend\Validator\Exception;
 use Zend\Validator\ValidatorInterface;

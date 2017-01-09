@@ -7,7 +7,6 @@ use Flag\Flag;
 use Flag\Service\FlagServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
-use Security\SecurityUser;
 use User\UserInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -61,7 +60,7 @@ class FlagResource extends AbstractResourceListener implements AuthenticationSer
      */
     public function fetch($flagId)
     {
-        $flag = $this->flagService->fetchFlag($flagId, null, new FlagEntity());
+        $flag = $this->flagService->fetchFlag($flagId, new FlagEntity());
         return new FlagEntity($flag->getArrayCopy());
     }
 

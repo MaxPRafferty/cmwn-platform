@@ -2,9 +2,8 @@
 
 namespace Feed\Delegator;
 
-use Feed\Service\FeedUserService;
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
  * Class FeedUserDelegatorFactory
@@ -15,9 +14,8 @@ class FeedUserDelegatorFactory implements DelegatorFactoryInterface
     /**
      * @inheritdoc
      */
-    public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
+    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        $feedUserService = call_user_func($callback);
-        return new FeedUserDelegator($feedUserService);
+        return new FeedUserDelegator($callback());
     }
 }

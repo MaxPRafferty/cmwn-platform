@@ -11,6 +11,7 @@ use Application\Utils\SoftDeleteInterface;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
@@ -128,7 +129,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
         $array = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
-            $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
+            $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }

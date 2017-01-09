@@ -5,7 +5,6 @@ namespace Group\Service;
 use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
-use Security\SecurityUser;
 use User\UserHydrator;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -207,8 +206,6 @@ class UserGroupService implements UserGroupServiceInterface
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
-        $sql = new \Zend\Db\Sql\Sql($this->pivotTable->getAdapter());
-        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->pivotTable->getAdapter(),

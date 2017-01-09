@@ -2,6 +2,7 @@
 
 namespace SkribbleTest\Rule;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Skribble\Rule\Background;
 use Skribble\Rule\Effect;
@@ -23,6 +24,8 @@ use Zend\Json\Json;
  */
 class SkribbleRulesTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      */
@@ -149,7 +152,9 @@ class SkribbleRulesTest extends TestCase
 
     /**
      * @test
+     *
      * @param $rule
+     *
      * @dataProvider restrictedRulesDataProvider
      */
     public function testItShouldNotAllowMultipleRulesBasedOnRestrictedType(RuleCompositeInterface $rule)

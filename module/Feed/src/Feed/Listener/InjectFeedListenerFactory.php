@@ -5,8 +5,8 @@ namespace Feed\Listener;
 use Feed\Service\FeedServiceInterface;
 use Feed\Service\FeedUserServiceInterface;
 use Friend\Service\FriendServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class InjectFeedListenerFactory
@@ -15,14 +15,14 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class InjectFeedListenerFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return InjectFeedListener
+     * @inheritdoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $feedService = $serviceLocator->get(FeedServiceInterface::class);
-        $feedUserService = $serviceLocator->get(FeedUserServiceInterface::class);
-        $friendService = $serviceLocator->get(FriendServiceInterface::class);
-        return new InjectFeedListener($feedService, $feedUserService, $friendService);
+        return new InjectFeedListener(
+            $container->get(FeedServiceInterface::class),
+            $container->get(FeedUserServiceInterface::class),
+            $container->get(FriendServiceInterface::class)
+        );
     }
 }

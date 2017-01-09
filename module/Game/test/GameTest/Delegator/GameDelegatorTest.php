@@ -6,17 +6,21 @@ use Application\Exception\NotFoundException;
 use Game\Delegator\GameDelegator;
 use Game\Game;
 use Game\Service\GameService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 
 /**
  * Class GameDelegatorTest
+ *
  * @package GameTest\Delegator
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD)
  */
 class GameDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface | \Game\Service\GameService
      */
@@ -57,7 +61,7 @@ class GameDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -85,7 +89,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games.post',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[1]
         );
@@ -101,6 +105,7 @@ class GameDelegatorTest extends TestCase
             ->never();
         $this->gameDelegator->getEventManager()->attach('fetch.all.games', function (Event $event) {
             $event->stopPropagation(true);
+
             return 'foo';
         });
 
@@ -134,7 +139,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.game',
                 'target' => $this->gameService,
-                'params' => ['game_id'=> 'qwerty'],
+                'params' => ['game_id' => 'qwerty'],
             ],
             $this->calledEvents[0]
         );
@@ -142,7 +147,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.game.post',
                 'target' => $this->gameService,
-                'params' => ['game_id'=> 'qwerty', 'game' => $result],
+                'params' => ['game_id' => 'qwerty', 'game' => $result],
             ],
             $this->calledEvents[1]
         );
@@ -167,7 +172,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.game',
                 'target' => $this->gameService,
-                'params' => ['game_id'=> 'qwerty'],
+                'params' => ['game_id' => 'qwerty'],
             ],
             $this->calledEvents[0]
         );
@@ -183,6 +188,7 @@ class GameDelegatorTest extends TestCase
             ->never();
         $this->gameDelegator->getEventManager()->attach('fetch.game', function (Event $event) {
             $event->stopPropagation(true);
+
             return 'foo';
         });
 
@@ -194,7 +200,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.game',
                 'target' => $this->gameService,
-                'params' => ['game_id'=> 'qwerty'],
+                'params' => ['game_id' => 'qwerty'],
             ],
             $this->calledEvents[0]
         );
@@ -239,6 +245,7 @@ class GameDelegatorTest extends TestCase
             ->never();
         $this->gameDelegator->getEventManager()->attach('create.game', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
         $this->assertFalse($this->gameDelegator->createGame($game));
@@ -292,6 +299,7 @@ class GameDelegatorTest extends TestCase
             ->with($game);
         $this->gameDelegator->getEventManager()->attach('update.game', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
         $this->assertFalse($this->gameDelegator->saveGame($game));
@@ -345,6 +353,7 @@ class GameDelegatorTest extends TestCase
             ->with($game);
         $this->gameDelegator->getEventManager()->attach('delete.game', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
         $this->assertFalse($this->gameDelegator->deleteGame($game));

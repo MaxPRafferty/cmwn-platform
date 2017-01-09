@@ -3,6 +3,7 @@
 namespace SecurityTest\Service;
 
 use Lcobucci\JWT\Configuration;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
@@ -24,6 +25,8 @@ use Zend\Db\ResultSet\ResultSet;
  */
 class SecurityServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var SecurityService
      */
@@ -233,7 +236,7 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('now');
+                $start = new \DateTime('now');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
@@ -273,7 +276,7 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('now');
+                $start = new \DateTime('now');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
@@ -312,7 +315,7 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('now');
+                $start = new \DateTime('now');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
@@ -351,7 +354,7 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('tomorrow');
+                $start = new \DateTime('tomorrow');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
@@ -388,6 +391,6 @@ class SecurityServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturn($resultSet)->once();
         $this->tableGateway->shouldReceive('update')->twice();
-        $this->securityService->saveCodeToGroup('foobar', 'school');
+        $this->assertTrue($this->securityService->saveCodeToGroup('foobar', 'school'));
     }
 }

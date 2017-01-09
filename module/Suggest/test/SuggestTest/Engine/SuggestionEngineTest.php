@@ -2,6 +2,7 @@
 
 namespace SuggestTest\Engine;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Engine\SuggestionEngine;
 use Suggest\Filter\FilterCollection;
@@ -29,6 +30,8 @@ use User\Service\UserServiceInterface;
  */
 class SuggestionEngineTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|SuggestedServiceInterface
      */
@@ -276,13 +279,14 @@ class SuggestionEngineTest extends TestCase
      */
     public function testItShouldPerformWithMultipleUsersToAttachAndNotExceed()
     {
-        $user      = new Child(['user_id' => 'test_child', 'username' => 'manchuck']);
+        $user        = new Child(['user_id' => 'test_child', 'username' => 'manchuck']);
         $suggestions = [];
         for ($suggestedCount = 0; $suggestedCount < SuggestionEngine::MAX_CAPACITY + 5; $suggestedCount++) {
             array_push(
                 $suggestions,
                 new Child([
-                   'user_id' => 'friend_' . $suggestedCount, 'username' => 'manchuck_' . $suggestedCount
+                    'user_id'  => 'friend_' . $suggestedCount,
+                    'username' => 'manchuck_' . $suggestedCount,
                 ])
             );
         }

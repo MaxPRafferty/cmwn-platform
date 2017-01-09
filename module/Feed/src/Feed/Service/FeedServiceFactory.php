@@ -2,10 +2,10 @@
 
 namespace Feed\Service;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FeedServiceFactory
@@ -16,10 +16,10 @@ class FeedServiceFactory implements FactoryInterface
     /**
      * @inheritdoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $adapter = $serviceLocator->get(Adapter::class);
-
-        return new FeedService(new TableGateway('feed', $adapter));
+        return new FeedService(
+            new TableGateway('feed', $container->get(Adapter::class))
+        );
     }
 }

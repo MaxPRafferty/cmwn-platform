@@ -9,6 +9,7 @@ use Import\Importer\Nyc\Parser\DoeParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use IntegrationTest\TestHelper;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Rbac;
 
@@ -26,6 +27,8 @@ use Security\Authorization\Rbac;
  */
 class DoeParserTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Import\Importer\Nyc\ClassRoom\ClassRoomRegistry
      */
@@ -73,6 +76,7 @@ class DoeParserTest extends TestCase
     {
         $this->userGroupService = \Mockery::mock('\Group\Service\UserGroupServiceInterface');
     }
+
     /**
      * @before
      */
@@ -101,7 +105,7 @@ class DoeParserTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        /** @var  $this->securityService */
+        /** @var  $this ->securityService */
         $this->securityService = \Mockery::mock('\Security\Service\SecurityServiceInterface');
     }
 
@@ -138,6 +142,7 @@ class DoeParserTest extends TestCase
      */
     public function setUpRbac()
     {
+        $this->markTestSkipped('This should not use the helper to get the rbac');
         $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 
@@ -177,6 +182,7 @@ class DoeParserTest extends TestCase
 
     /**
      * @dataProvider missingSheets
+     *
      * @param $fileName
      */
     public function testItShouldNotCallParsersWhenSheetsNotFound($fileName)

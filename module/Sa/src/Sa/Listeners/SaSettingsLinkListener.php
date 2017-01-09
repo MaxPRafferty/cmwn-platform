@@ -54,7 +54,7 @@ class SaSettingsLinkListener implements AuthenticationServiceAwareInterface, Rba
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
         if (!$realEntity instanceof UserInterface) {
             return;
         }

@@ -2,28 +2,19 @@
 
 namespace Org\Service;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Class UserServiceFactory
- *
- * @package User\Service
- * @codeCoverageIgnore
+ * Class OrganizationServiceFactory
  */
 class OrganizationServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var TableGateway $tableGateway */
-        $tableGateway = $serviceLocator->get('OrganizationsTable');
-        return new OrganizationService($tableGateway);
+        return new OrganizationService($container->get('OrganizationsTable'));
     }
 }

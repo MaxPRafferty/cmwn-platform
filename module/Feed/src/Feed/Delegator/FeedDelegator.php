@@ -41,7 +41,7 @@ class FeedDelegator implements FeedServiceInterface
             ['feed' => $feed]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -49,7 +49,7 @@ class FeedDelegator implements FeedServiceInterface
         $return = $this->service->createFeed($feed);
 
         $event->setName('create.feed.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -65,7 +65,7 @@ class FeedDelegator implements FeedServiceInterface
             ['feed_id' => $feedId, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -76,13 +76,13 @@ class FeedDelegator implements FeedServiceInterface
             $event->setName('fetch.feed.post');
             $event->setParam('feed', $return);
 
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return $return;
         } catch (\Exception $e) {
             $event->setName('fetch.feed.error');
             $event->setParam('exception', $e);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $e;
         }
     }
@@ -98,7 +98,7 @@ class FeedDelegator implements FeedServiceInterface
             ['where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -108,7 +108,7 @@ class FeedDelegator implements FeedServiceInterface
         $event->setName('fetch.all.feed.post');
         $event->setParam('feeds', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -124,7 +124,7 @@ class FeedDelegator implements FeedServiceInterface
             ['feed' => $feed]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -132,7 +132,7 @@ class FeedDelegator implements FeedServiceInterface
         $return = $this->service->updateFeed($feed);
 
         $event->setName('update.feed.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -148,7 +148,7 @@ class FeedDelegator implements FeedServiceInterface
             ['feed' => $feed, 'soft' => $soft]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -156,7 +156,7 @@ class FeedDelegator implements FeedServiceInterface
         $return = $this->service->deleteFeed($feed, $soft);
 
         $event->setName('delete.feed.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

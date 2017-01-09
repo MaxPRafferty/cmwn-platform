@@ -2,14 +2,14 @@
 
 namespace Import\Importer\Nyc\Parser;
 
+use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
-use Security\Service\SecurityService;
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class DoeParserFactory
@@ -17,35 +17,17 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class DoeParserFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $serviceLocator->get(UserGroupServiceInterface::class);
-
-        /** @var ClassRoomRegistry $classRegistry */
-        $classRegistry    = $serviceLocator->get(ClassRoomRegistry::class);
-
-        /** @var TeacherRegistry $teacherRegistry */
-        $teacherRegistry  = $serviceLocator->get(TeacherRegistry::class);
-
-        /** @var StudentRegistry $studentRegistry */
-        $studentRegistry  = $serviceLocator->get(StudentRegistry::class);
-
-        /** @var SecurityService $securityService */
-        $securityService  = $serviceLocator->get(SecurityServiceInterface::class);
-
         return new DoeParser(
-            $classRegistry,
-            $teacherRegistry,
-            $studentRegistry,
-            $userGroupService,
-            $classRegistry->getGroupService(),
-            $securityService
+            $container->get(ClassRoomRegistry::class),
+            $container->get(TeacherRegistry::class),
+            $container->get(StudentRegistry::class),
+            $container->get(UserGroupServiceInterface::class),
+            $container->get(GroupServiceInterface::class),
+            $container->get(SecurityServiceInterface::class)
         );
     }
 }

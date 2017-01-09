@@ -38,7 +38,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
             ['user' => $user, 'user_feed' => $feed]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -47,12 +47,12 @@ class FeedUserDelegator implements FeedUserServiceInterface
             $return = $this->service->attachFeedForUser($user, $feed);
 
             $event->setName('attach.user.feed.post');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return $return;
         } catch (\Exception $e) {
             $event->setName('attach.user.feed.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             $event->setParam('exception', $e);
 
             throw $e;
@@ -70,7 +70,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
             ['user' => $user, 'feed_id' => $feedId, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -81,13 +81,13 @@ class FeedUserDelegator implements FeedUserServiceInterface
             $event->setName('fetch.user.feed.post');
             $event->setParam('user_feed', $return);
 
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
 
             return $return;
         } catch (\Exception $e) {
             $event->setName('fetch.user.feed.error');
             $event->setParam('exception', $e);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $e;
         }
     }
@@ -103,7 +103,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
             ['user' => $user, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -113,7 +113,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
         $event->setName('fetch.all.user.feed.post');
         $event->setParam('user_feeds', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -129,7 +129,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
             ['user' => $user, 'user_feed' => $feed]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -137,7 +137,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
         $return = $this->service->updateFeedForUser($user, $feed);
 
         $event->setName('update.user.feed.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -153,7 +153,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
             ['user' => $user, 'user_feed' => $feed]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -161,7 +161,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
         $return = $this->service->deleteFeedForUser($user, $feed);
 
         $event->setName('delete.user.feed.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

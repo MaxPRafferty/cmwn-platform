@@ -51,8 +51,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
 
         $hideListener->setEntityParamKey('skribble');
         $hideListener->setDeletedField('s.deleted');
-
-        $this->getEventManager()->attach($hideListener);
+        $hideListener->attach($this->getEventManager());
     }
 
     /**
@@ -67,7 +66,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['user' => $user, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -78,7 +77,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         $event->setName('fetch.all.skribbles.post');
         $event->setParam('result', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -95,7 +94,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['user' => $user, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -106,7 +105,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         $event->setName('fetch.all.received.skribbles.post');
         $event->setParam('result', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -123,7 +122,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['user' => $user, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -134,7 +133,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         $event->setName('fetch.all.sent.skribbles.post');
         $event->setParam('result', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -151,7 +150,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['user' => $user, 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -162,7 +161,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         $event->setName('fetch.all.draft.skribbles.post');
         $event->setParam('result', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -178,7 +177,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['skirbble_id' => $skribbleId, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -189,7 +188,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         $event->setName('fetch.skribble.post');
         $event->setParam('skribble', $return);
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -205,7 +204,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['skribble' => $skribble]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -217,11 +216,11 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         } catch (\Exception $createException) {
             $event->setName('create.skribble.error');
             $event->setParam('error', $createException);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $createException;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -237,7 +236,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['skribble' => $skribble]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -249,11 +248,11 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         } catch (\Exception $updateException) {
             $event->setName('update.skribble.error');
             $event->setParam('error', $updateException);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $updateException;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -269,7 +268,7 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
             ['skribble' => $skribble, 'hard' => $hard]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -282,10 +281,10 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
         } catch (\Exception $deleteException) {
             $event->setName('delete.skribble.error');
             $event->setParam('error', $deleteException);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $deleteException;
         }
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

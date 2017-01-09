@@ -5,6 +5,7 @@ namespace ImportTest\Importer\Nyc\Parser;
 use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddClassToSchoolAction;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -18,6 +19,8 @@ use \PHPUnit_Framework_TestCase as TestCase;
  */
 class AddClassToSchoolActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\GroupServiceInterface
      */
@@ -43,7 +46,7 @@ class AddClassToSchoolActionTest extends TestCase
      */
     public function setUpGroupService()
     {
-        /** @var  $this->groupService */
+        /** @var  $this ->groupService */
         $this->groupService = \Mockery::mock('\Group\Service\GroupServiceInterface');
     }
 

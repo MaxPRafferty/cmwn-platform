@@ -10,7 +10,7 @@ use Zend\Json\Json;
  * Class SuperAdminSettingsResourceTest
  * @package IntegrationTest\Sa\Rest
  */
-class SuperAdminSettingsResourceTest extends AbstractApigilityTestCase
+class SuperAdminResourceTest extends AbstractApigilityTestCase
 {
     /**
      * @return ArrayDataSet

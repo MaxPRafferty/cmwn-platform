@@ -5,7 +5,7 @@ namespace Security\Listeners;
 use Application\Exception\NotFoundException;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
-use Security\Authorization\Assertions\UserAssertion;
+use Security\Authorization\Assertion\UserAssertion;
 use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -35,7 +35,7 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
     protected $listeners = [];
 
     /**
-     * @var UserAssertion
+     * @var \Security\Authorization\Assertion\UserAssertion
      */
     protected $assertion;
 
@@ -43,7 +43,7 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
      * UserRouteListener constructor.
      *
      * @param UserServiceInterface $userService
-     * @param UserAssertion $assertion
+     * @param \Security\Authorization\Assertion\UserAssertion $assertion
      */
     public function __construct(UserServiceInterface $userService, UserAssertion $assertion)
     {

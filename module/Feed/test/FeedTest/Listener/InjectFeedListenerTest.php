@@ -70,7 +70,7 @@ class InjectFeedListenerTest extends TestCase
             ->once();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->once();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -96,7 +96,7 @@ class InjectFeedListenerTest extends TestCase
             ->once();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->twice();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -120,7 +120,7 @@ class InjectFeedListenerTest extends TestCase
             ->never();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->never();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -144,7 +144,7 @@ class InjectFeedListenerTest extends TestCase
             ->never();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->never();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -172,7 +172,7 @@ class InjectFeedListenerTest extends TestCase
             ->once();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->once();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -200,7 +200,7 @@ class InjectFeedListenerTest extends TestCase
             ->never();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->never();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -228,7 +228,7 @@ class InjectFeedListenerTest extends TestCase
             ->once();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->once();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }
@@ -256,7 +256,7 @@ class InjectFeedListenerTest extends TestCase
             ->never();
         $this->feedUserService->shouldReceive('attachFeedForUser')
             ->never();
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
 
         $this->assertFalse($response->stopped());
     }

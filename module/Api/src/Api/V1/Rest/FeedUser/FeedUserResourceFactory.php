@@ -3,8 +3,8 @@
 namespace Api\V1\Rest\FeedUser;
 
 use Feed\Service\FeedUserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FeedUserResourceFactory
@@ -13,9 +13,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FeedUserResourceFactory implements FactoryInterface
 {
     /**@inheritdoc*/
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $feedUserService = $serviceLocator->get(FeedUserServiceInterface::class);
+        $feedUserService = $container->get(FeedUserServiceInterface::class);
         return new FeedUserResource($feedUserService);
     }
 }

@@ -51,6 +51,7 @@ class GroupService implements GroupServiceInterface
      * @param GroupInterface $child
      *
      * @return bool
+     * @throws \Exception
      */
     public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
     {
@@ -110,7 +111,7 @@ class GroupService implements GroupServiceInterface
                     'head'       => $parent->getHead() + 1,
                     'tail'       => $parent->getHead() + 2,
                     'network_id' => $child->getNetworkId(),
-                    'parent_id'     => $parent->getGroupId(),
+                    'parent_id'  => $parent->getGroupId(),
                 ],
                 $where
             );
@@ -335,8 +336,6 @@ class GroupService implements GroupServiceInterface
 
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
-        $sql = new \Zend\Db\Sql\Sql($this->groupTableGateway->getAdapter());
-        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->groupTableGateway->getAdapter(),

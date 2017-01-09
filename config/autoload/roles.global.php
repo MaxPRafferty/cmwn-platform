@@ -144,7 +144,6 @@ return [
                     'view.user.orgs',
                     'view.feed',
                     'sa.settings',
-                    'restore.db.state',
                     'create.game',
                     'view.game',
                     'update.game',

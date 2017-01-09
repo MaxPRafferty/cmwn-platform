@@ -86,7 +86,6 @@ class UserResourceTest extends TestCase
         $this->assertFalse($this->getAuthService()->hasIdentity());
         $this->dispatch('/user/english_student');
         $this->assertResponseStatusCode(401);
-        $this->assertCorrectCorsHeaders();
     }
 
     /**
@@ -105,7 +104,6 @@ class UserResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
         $this->assertNotRedirect();
-        $this->assertCorrectCorsHeaders();
     }
 
     /**
@@ -124,7 +122,6 @@ class UserResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
         $this->assertNotRedirect();
-        $this->assertCorrectCorsHeaders();
 
         $body = $this->getResponse()->getContent();
 
@@ -660,6 +657,26 @@ class UserResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $this->dispatch('/user?email=foo@ginasink.com');
+    }
+
+    /**
+     * test
+     * @ticket CORE-2746
+     */
+    public function testItShouldFetchUsersByType()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?type=CHILD');
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayHasKey('total_items', $body);
     }
 
     /**

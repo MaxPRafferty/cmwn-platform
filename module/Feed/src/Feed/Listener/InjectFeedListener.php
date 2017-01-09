@@ -85,9 +85,27 @@ class InjectFeedListener implements AuthenticationServiceAwareInterface
 
         $this->listeners[] = $events->attach(
             SkribbleServiceInterface::class,
-            ['create.skribble.post', 'update.skribble.post'],
+            'create.skribble.post',
             [$this,'injectSkribbleFeed']
         );
+
+        $this->listeners[] = $events->attach(
+            SkribbleServiceInterface::class,
+            'update.skribble.post',
+            [$this,'injectSkribbleFeed']
+        );
+    }
+
+    /**
+     * @param SharedEventManagerInterface $manager
+     * @codeCoverageIgnore
+     */
+    public function detachShared(SharedEventManagerInterface $manager)
+    {
+        $manager->detach($this->listeners[0], FlipUserServiceInterface::class);
+        $manager->detach($this->listeners[1], FriendServiceInterface::class);
+        $manager->detach($this->listeners[2], SkribbleServiceInterface::class);
+        $manager->detach($this->listeners[3], SkribbleServiceInterface::class);
     }
 
     /**
