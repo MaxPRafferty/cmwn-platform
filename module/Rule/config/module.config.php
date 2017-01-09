@@ -33,6 +33,7 @@ return [
             \Rule\Provider\Collection\ProviderCollection::class =>
                 \Rule\Provider\Service\BuildProviderCollectionFactory::class,
             \Rule\Event\Provider\FromEventTargetProvider::class => \Rule\Provider\Service\BuildProviderFactory::class,
+            \Rule\Event\Provider\EventProvider::class           => \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
         'abstract_factories' => [
             \Rule\Provider\Service\BuildProviderFromConfigFactory::class =>
@@ -41,6 +42,7 @@ return [
         'shared'             => [
             \Rule\Provider\Collection\ProviderCollection::class => false,
             \Rule\Provider\BasicValueProvider::class            => false,
+            \Rule\Event\Provider\EventProvider::class           => false,
         ],
     ],
 

@@ -3,6 +3,8 @@
 namespace Security\Rule\Provider;
 
 use Rule\Provider\ProviderInterface;
+use Security\Exception\ChangePasswordException;
+use Security\GuestUser;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
@@ -12,6 +14,8 @@ use Zend\Authentication\AuthenticationServiceInterface;
  */
 class ActiveUserProvider implements ProviderInterface
 {
+    const PROVIDER_NAME = 'active_user';
+
     /**
      * @var AuthenticationServiceInterface
      */
@@ -32,7 +36,7 @@ class ActiveUserProvider implements ProviderInterface
      */
     public function getName(): string
     {
-        return 'active_user';
+        return static::PROVIDER_NAME;
     }
 
     /**
@@ -40,6 +44,12 @@ class ActiveUserProvider implements ProviderInterface
      */
     public function getValue()
     {
-        return $this->authService->getIdentity();
+        try {
+            return $this->authService->getIdentity();
+        } catch (ChangePasswordException $change) {
+            // no op
+        }
+
+        return new GuestUser();
     }
 }
