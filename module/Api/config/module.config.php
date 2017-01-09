@@ -7,7 +7,6 @@ return [
     ],
 
     'shared-listeners' => [
-        \Api\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ImportRouteListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -38,8 +37,6 @@ return [
                 \Api\Factory\ImportRouteListenerFactory::class,
             \Api\Listeners\ScopeListener::class                       =>
                 \Api\Factory\ScopeListenerFactory::class,
-            \Api\Listeners\UserRouteListener::class                   =>
-                \Api\Factory\UserRouteListenerFactory::class,
             \Api\Listeners\UserGroupListener::class                   =>
                 \Api\Factory\UserGroupListenerFactory::class,
             \Api\Listeners\GroupRouteListener::class                  =>
