@@ -25,9 +25,6 @@ build:
       name: PHPCS Check
       code: phpcs --standard=PSR2 -p --no-colors module
     - script:
-      name: PHPMD
-      code: phpmd module text codesize,design,controversial --suffixes php --exclude "*Test*"
-    - script:
       name: PHPUNIT
       code: |-
         export USE_ZEND_ALLOC=0
