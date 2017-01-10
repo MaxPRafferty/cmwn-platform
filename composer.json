@@ -45,7 +45,7 @@
     "chrisboulton/php-resque": "~1.2",
     "rollbar/rollbar": "v0.18.2",
     "aws/aws-sdk-php-zf2": "~4",
-    "lcobucci/jwt": "4.0.x-dev",
+    "lcobucci/jwt": "~3.2",
     "zendframework/zend-mvc-i18n": "^1.0",
     "zfcampus/zf-development-mode": "^3.0"
   },
@@ -87,7 +87,8 @@
       "Skribble\\": "module\\Skribble\\src\\Skribble",
       "Suggest\\": "module\\Suggest\\src\\Suggest",
       "User\\": "module\\User\\src\\User",
-      "Sa\\": "module\\Sa\\src\\Sa"
+      "Sa\\": "module\\Sa\\src\\Sa",
+      "Address\\": "module\\Address\\src\\Address"
     }
   },
   "autoload-dev": {
@@ -111,7 +112,8 @@
       "SuggestTest\\": "module\\Suggest\\test\\SuggestTest",
       "UserTest\\": "module\\User\\test\\UserTest",
       "SaTest\\": "module\\Sa\\test\\SaTest",
-      "IntegrationTest\\": "test\\IntegrationTest"
+      "IntegrationTest\\": "test\\IntegrationTest",
+      "AddressTest\\": "module\\Address\\test\\AddressTest"
     }
   }
 }

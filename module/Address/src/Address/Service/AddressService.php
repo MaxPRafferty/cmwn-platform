@@ -77,7 +77,7 @@ class AddressService implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function createAddress(AddressInterface $address)
+    public function createAddress(AddressInterface $address) : bool
     {
         $address->setAddressId(Uuid::uuid1());
         $data = $address->getArrayCopy();
@@ -89,7 +89,7 @@ class AddressService implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function updateAddress(AddressInterface $address)
+    public function updateAddress(AddressInterface $address) : bool
     {
         $this->fetchAddress($address->getAddressId());
 
@@ -103,7 +103,7 @@ class AddressService implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteAddress(AddressInterface $address)
+    public function deleteAddress(AddressInterface $address) : bool
     {
         $this->fetchAddress($address->getAddressId());
 

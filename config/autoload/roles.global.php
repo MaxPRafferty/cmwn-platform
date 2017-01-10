@@ -82,7 +82,14 @@ return [
             'skribble.notice'      => 'Notify Skribble status',
 
             // god mode
-            'sa.settings'          => 'View God Mode Admin Dashboard'
+            'sa.settings'          => 'View God Mode Admin Dashboard',
+
+            //address
+            'view.all.addresses'   => 'View Addresses',
+            'view.address'         => 'View a single address',
+            'create.address'       => 'Create new address',
+            'update.address'       => 'update address',
+            'delete.address'       => 'delete address',
         ],
         'roles'             => [
             'super' => [
@@ -147,6 +154,12 @@ return [
                     'update.game',
                     'delete.game',
                     'reset.group.code',
+                    'view.all.addresses',
+                    'view.address',
+                    'edit.address',
+                    'create.address',
+                    'update.address',
+                    'delete.address',
                 ],
             ],
 
@@ -185,6 +198,12 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'reset.group.code',
+                    'view.all.addresses',
+                    'view.address',
+                    'edit.address',
+                    'create.address',
+                    'update.address',
+                    'delete.address',
                 ],
             ],
 
@@ -222,6 +241,12 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'reset.group.code',
+                    'view.all.addresses',
+                    'view.address',
+                    'edit.address',
+                    'create.address',
+                    'update.address',
+                    'delete.address',
                 ],
             ],
 
@@ -259,6 +284,12 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'reset.group.code',
+                    'view.all.addresses',
+                    'view.address',
+                    'edit.address',
+                    'create.address',
+                    'update.address',
+                    'delete.address',
                 ],
             ],
 
@@ -287,6 +318,9 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'reset.group.code',
+                    'view.address',
+                    'edit.address',
+                    'create.address',
                 ],
             ],
 
@@ -324,6 +358,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.feed',
+                    'view.address',
                 ],
             ],
 
@@ -344,6 +379,10 @@ return [
                     'view.user.groups',
                     'view.user.orgs',
                     'view.feed',
+                    'view.address',
+                    'create.address',
+                    'update.address',
+                    'delete.address',
                 ],
             ],
 
@@ -366,6 +405,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
+                    'view.address',
                 ],
             ],
 
@@ -384,6 +424,7 @@ return [
                     'view.user.adult',
                     'view.user.child',
                     'view.user.flip',
+                    'view.address',
                 ],
             ],
 

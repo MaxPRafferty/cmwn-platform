@@ -39,7 +39,7 @@ class AddressMigration extends AbstractMigration
             ->addColumn('dependent_locality', 'string', ['limit' => 255, 'null' => true])
             ->addColumn('postal_code', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('thoroughfare', 'string', ['limit' => 255, 'null' => false])
-            ->addColumn('premise', 'string', ['limit' => 255, 'null' => false])
+            ->addColumn('premise', 'string', ['limit' => 255, 'null' => true])
             ->create();
     }
 }
