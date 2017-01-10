@@ -2,7 +2,7 @@
 
 namespace SecurityTest\Service;
 
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Builder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
@@ -242,13 +242,12 @@ class SecurityServiceTest extends TestCase
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P1D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -282,13 +281,12 @@ class SecurityServiceTest extends TestCase
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P30D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -321,13 +319,12 @@ class SecurityServiceTest extends TestCase
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P15D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -360,13 +357,12 @@ class SecurityServiceTest extends TestCase
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P5D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(

@@ -12,8 +12,6 @@ use Security\Service\SecurityServiceInterface;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\Exception\RuntimeException;
 use Zend\Authentication\Result;
-use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Validator\StaticValidator;
 
