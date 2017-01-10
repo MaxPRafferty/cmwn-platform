@@ -32,7 +32,11 @@ class AcknowledgeFlip implements ProviderInterface
     public function __construct(EarnedFlipInterface $earnedFlip, string $providerName = self::PROVIDER_NAME)
     {
         if ($earnedFlip->isAcknowledged()) {
-            throw new RuntimeException('You cannot set an acknowledge flip to: ' . static::class);
+            throw new RuntimeException(sprintf(
+                'Flip "%s" for user "%s" has already been acknowledge',
+                $earnedFlip->getFlipId(),
+                $earnedFlip->getEarnedBy()
+            ));
         }
 
         $this->earnedFlip   = $earnedFlip;

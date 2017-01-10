@@ -33,7 +33,7 @@ class FlipAcknowledge extends AbstractMigration
         $table = $this->table('user_flips');
 
         if (!$table->hasColumn('acknowledge_id')) {
-            $table->addColumn('acknowledge_id', 'string')
+            $table->addColumn('acknowledge_id', 'string', ['null' => true])
                 ->save();
         }
     }
