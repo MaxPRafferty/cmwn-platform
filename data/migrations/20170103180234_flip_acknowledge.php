@@ -36,5 +36,10 @@ class FlipAcknowledge extends AbstractMigration
             $table->addColumn('acknowledge_id', 'string', ['null' => true])
                 ->save();
         }
+
+        $this->execute(
+            'UPDATE user_flips ' .
+            'SET acknowledge_id = NULL, flip_id = flip_id, user_id = user_id, earned = earned'
+        );
     }
 }
