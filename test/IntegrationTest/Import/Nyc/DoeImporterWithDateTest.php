@@ -3,18 +3,14 @@
 namespace IntegrationTest\Import\Nyc;
 
 use Application\Utils\Date\DateTimeFactory;
-use Group\GroupInterface;
-use Group\Service\GroupServiceInterface;
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\DbUnitConnectionTrait;
 use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Parser;
 use \PHPUnit_Framework_TestCase as TestCase;
 use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
 use Security\Service\SecurityServiceInterface;
-use User\Adult;
-use User\Child;
 
 /**
  * Test DoeImporterTest
@@ -108,8 +104,7 @@ class DoeImporterWithDateTest extends TestCase
 
         $user = $this->securityService->fetchUserByEmail('sandoval@gmail.com');
 
-        $config       = new Configuration();
-        $compareToken = $config->getParser()->parse($user->getCode());
+        $compareToken = (new Parser())->parse($user->getCode());
         $this->assertEquals(
             $codeStart->getTimestamp(),
             $compareToken->getClaim('nbf'),
