@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d78c8abc9cb93ce37f5eb682552e23a7",
-    "content-hash": "eee03191d7ac862f7b917d47110c2911",
+    "hash": "bef3f15f4e40bff5e64355154ffd5b02",
+    "content-hash": "f767889771bb263c16258d92b63b50b0",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -210,26 +210,33 @@
         },
         {
             "name": "bshaffer/oauth2-server-php",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bshaffer/oauth2-server-php.git",
-                "reference": "058c98f73209f9c49495e1799d32c035196fe8b8"
+                "reference": "8856aed1a98d6da596ae3f9b8095b5c7a1581697"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/058c98f73209f9c49495e1799d32c035196fe8b8",
-                "reference": "058c98f73209f9c49495e1799d32c035196fe8b8",
+                "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/8856aed1a98d6da596ae3f9b8095b5c7a1581697",
+                "reference": "8856aed1a98d6da596ae3f9b8095b5c7a1581697",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.9"
             },
+            "require-dev": {
+                "aws/aws-sdk-php": "~2.8",
+                "firebase/php-jwt": "~2.2",
+                "mongodb/mongodb": "^1.1",
+                "predis/predis": "dev-master",
+                "thobbs/phpcassa": "dev-master"
+            },
             "suggest": {
-                "aws/aws-sdk-php": "~2.8 is required to use the DynamoDB storage engine",
-                "firebase/php-jwt": "~2.2 is required to use JWT features",
-                "predis/predis": "Required to use the Redis storage engine",
-                "thobbs/phpcassa": "Required to use the Cassandra storage engine"
+                "aws/aws-sdk-php": "~2.8 is required to use DynamoDB storage",
+                "firebase/php-jwt": "~1.1 is required to use MondoDB storage",
+                "predis/predis": "Required to use Redis storage",
+                "thobbs/phpcassa": "Required to use Cassandra storage"
             },
             "type": "library",
             "autoload": {
@@ -255,7 +262,7 @@
                 "oauth",
                 "oauth2"
             ],
-            "time": "2015-09-18 18:05:10"
+            "time": "2017-01-06 23:20:00"
         },
         {
             "name": "chrisboulton/php-resque",
@@ -499,83 +506,30 @@
             "time": "2016-06-24 23:00:38"
         },
         {
-            "name": "lcobucci/jose-parsing",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/lcobucci/jose-parsing.git",
-                "reference": "056085468c867e62fd1cb3b93f001850f0a0e833"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jose-parsing/zipball/056085468c867e62fd1cb3b93f001850f0a0e833",
-                "reference": "056085468c867e62fd1cb3b93f001850f0a0e833",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~7.0"
-            },
-            "require-dev": {
-                "phpmd/phpmd": "~2.3",
-                "phpunit/phpunit": "~5.1",
-                "squizlabs/php_codesniffer": "~2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Lcobucci\\Jose\\Parsing\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Luís Otávio Cobucci Oblonczyk",
-                    "email": "lcobucci@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A basic Base64Url and JSON encoding/decoding implementation",
-            "keywords": [
-                "JOSE",
-                "base64url"
-            ],
-            "time": "2015-12-20 23:15:12"
-        },
-        {
             "name": "lcobucci/jwt",
-            "version": "dev-master",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "c7bcebd027cdfbc4d26ee965151b049ef4e6950d"
+                "reference": "ddce703826f9c5229781933b1a39069e38e6a0f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/c7bcebd027cdfbc4d26ee965151b049ef4e6950d",
-                "reference": "c7bcebd027cdfbc4d26ee965151b049ef4e6950d",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/ddce703826f9c5229781933b1a39069e38e6a0f3",
+                "reference": "ddce703826f9c5229781933b1a39069e38e6a0f3",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
-                "lcobucci/jose-parsing": "~2.1",
-                "php": ">=7.0"
+                "php": ">=5.5"
             },
             "require-dev": {
-                "humbug/humbug": "dev-master@dev",
-                "mdanter/ecc": "~0.4",
-                "mikey179/vfsstream": "~1.6",
-                "phpmd/phpmd": "~2.4",
+                "mdanter/ecc": "~0.3.1",
+                "mikey179/vfsstream": "~1.5",
+                "phpmd/phpmd": "~2.2",
                 "phpunit/php-invoker": "~1.1",
-                "phpunit/phpunit": "~5.5",
-                "squizlabs/php_codesniffer": "~2.6"
+                "phpunit/phpunit": "~4.5",
+                "squizlabs/php_codesniffer": "~2.3"
             },
             "suggest": {
                 "mdanter/ecc": "Required to use Elliptic Curves based algorithms."
@@ -583,7 +537,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -607,7 +561,7 @@
                 "JWS",
                 "jwt"
             ],
-            "time": "2016-11-01 10:09:53"
+            "time": "2016-10-31 20:09:32"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -3406,16 +3360,16 @@
         },
         {
             "name": "zfcampus/zf-development-mode",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zfcampus/zf-development-mode.git",
-                "reference": "909413a0a6b45995de804db75b52b44428102dd4"
+                "reference": "ffef6ab8cf84ee1d1a77a2b51ba2240d2707c05d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zfcampus/zf-development-mode/zipball/909413a0a6b45995de804db75b52b44428102dd4",
-                "reference": "909413a0a6b45995de804db75b52b44428102dd4",
+                "url": "https://api.github.com/repos/zfcampus/zf-development-mode/zipball/ffef6ab8cf84ee1d1a77a2b51ba2240d2707c05d",
+                "reference": "ffef6ab8cf84ee1d1a77a2b51ba2240d2707c05d",
                 "shasum": ""
             },
             "require": {
@@ -3432,8 +3386,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev",
-                    "dev-develop": "3.1-dev"
+                    "dev-master": "3.1-dev",
+                    "dev-develop": "3.2-dev"
                 }
             },
             "autoload": {
@@ -3451,7 +3405,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2016-06-22 20:39:20"
+            "time": "2017-01-09 23:34:49"
         },
         {
             "name": "zfcampus/zf-hal",
@@ -4310,16 +4264,16 @@
         },
         {
             "name": "pdepend/pdepend",
-            "version": "2.3.2",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "8d7ab8fe8c1f9de5056bb7ea2c0852f4ddd44f90"
+                "reference": "64ba7e6d0507729e2bb482cf20cd12c4d96d99bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/8d7ab8fe8c1f9de5056bb7ea2c0852f4ddd44f90",
-                "reference": "8d7ab8fe8c1f9de5056bb7ea2c0852f4ddd44f90",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/64ba7e6d0507729e2bb482cf20cd12c4d96d99bc",
+                "reference": "64ba7e6d0507729e2bb482cf20cd12c4d96d99bc",
                 "shasum": ""
             },
             "require": {
@@ -4346,7 +4300,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2016-11-23 20:25:02"
+            "time": "2017-01-10 13:45:16"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -6953,7 +6907,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "lcobucci/jwt": 20,
         "zendframework/zend-component-installer": 20,
         "mockery/mockery": 20
     },
