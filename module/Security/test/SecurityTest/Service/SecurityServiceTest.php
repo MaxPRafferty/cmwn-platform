@@ -2,7 +2,7 @@
 
 namespace SecurityTest\Service;
 
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Builder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
@@ -243,8 +243,7 @@ class SecurityServiceTest extends TestCase
                 $expires->add(new \DateInterval('P1D'));
                 $expires->setTime(23, 59, 59);
 
-                $token     = $jwtConfig->createBuilder()
-                    ->setAudience('student')
+                $token     = (new Builder())->setAudience('student')
                     ->setIssuedAt(time())
                     ->setNotBefore($start->getTimestamp())
                     ->setExpiration($expires->getTimestamp())
@@ -283,8 +282,7 @@ class SecurityServiceTest extends TestCase
                 $expires->add(new \DateInterval('P30D'));
                 $expires->setTime(23, 59, 59);
 
-                $token     = $jwtConfig->createBuilder()
-                    ->setAudience('student')
+                $token     = (new Builder())->setAudience('student')
                     ->setIssuedAt(time())
                     ->setNotBefore($start->getTimestamp())
                     ->setExpiration($expires->getTimestamp())
@@ -322,8 +320,7 @@ class SecurityServiceTest extends TestCase
                 $expires->add(new \DateInterval('P15D'));
                 $expires->setTime(23, 59, 59);
 
-                $token     = $jwtConfig->createBuilder()
-                    ->setAudience('student')
+                $token     = (new Builder())->setAudience('student')
                     ->setIssuedAt(time())
                     ->setNotBefore($start->getTimestamp())
                     ->setExpiration($expires->getTimestamp())
@@ -361,8 +358,7 @@ class SecurityServiceTest extends TestCase
                 $expires->add(new \DateInterval('P5D'));
                 $expires->setTime(23, 59, 59);
 
-                $token     = $jwtConfig->createBuilder()
-                    ->setAudience('student')
+                $token     = (new Builder())->setAudience('student')
                     ->setIssuedAt(time())
                     ->setNotBefore($start->getTimestamp())
                     ->setExpiration($expires->getTimestamp())
