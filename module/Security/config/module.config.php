@@ -57,6 +57,11 @@ return [
             \Zend\Authentication\Adapter\Http::class,
             \Security\Guard\CsrfGuard::class,
         ],
+
+        \Security\Listeners\UserRouteListener::class => [
+            \User\Service\UserServiceInterface::class,
+            \Security\Authorization\Assertion\UserAssertion::class,
+        ],
     ],
 
     \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
@@ -133,6 +138,7 @@ return [
         \Security\Listeners\UpdateSession::class,
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
+        \Security\Listeners\UserRouteListener::class,
         \Security\Listeners\FetchUserImageListener::class,
     ],
 

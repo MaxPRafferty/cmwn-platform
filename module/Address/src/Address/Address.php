@@ -4,7 +4,6 @@ namespace Address;
 
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
-use Zend\Stdlib\ArraySerializableInterface;
 
 /**
  * Class Address

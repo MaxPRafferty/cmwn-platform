@@ -7,6 +7,11 @@ return [
         \Api\V1\Rest\Address\AddressResource::class => [
             \Address\Service\AddressServiceInterface::class,
         ],
+        \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
+            \Address\Service\GroupAddressServiceInterface::class,
+            \Address\Service\AddressServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class
+        ],
     ],
 
     'shared-listeners' => [
@@ -385,6 +390,15 @@ return [
                     ],
                 ],
             ],
+            'api.rest.group-address'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/group/:group_id/address[/:address_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\GroupAddress\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -420,6 +434,7 @@ return [
             'api.rest.group-reset',
             'api.rest.acknowledge',
             'api.rest.address',
+            'api.rest.group-address',
         ],
     ],
     'zf-rest'                => [
@@ -673,7 +688,7 @@ return [
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Suggest\SuggestEntity::class,
-            'collection_class'           => \Api\V1\Rest\Suggest\SuggestionCollection::class,
+            'collection_class'           => \Api\V1\Rest\Suggest\SuggestCollection::class,
             'service_name'               => 'Suggest',
         ],
         'Api\V1\Rest\Reset\Controller'          => [
@@ -838,6 +853,20 @@ return [
             'collection_class'           => \Api\V1\Rest\Address\AddressCollection::class,
             'service_name'               => 'Address',
         ],
+        'Api\V1\Rest\GroupAddress\Controller' => [
+            'listener'                   => \Api\V1\Rest\GroupAddress\GroupAddressResource::class,
+            'route_name'                 => 'api.rest.group-address',
+            'route_identifier_name'      => 'address_id',
+            'collection_name'            => 'addresses',
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'page',
+            'entity_class'               => \Api\V1\Rest\GroupAddress\GroupAddressEntity::class,
+            'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
+            'service_name'               => 'GroupAddress',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers'            => [
@@ -869,7 +898,8 @@ return [
             'Api\V1\Rest\GameData\Controller'       => 'HalJson',
             'Api\V1\Rest\Flag\Controller'           => 'HalJson',
             'Api\V1\Rest\GroupReset\Controller'     => 'HalJson',
-            'Api\V1\Rest\Address\Controller'     => 'HalJson',
+            'Api\V1\Rest\Address\Controller'        => 'HalJson',
+            'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1012,6 +1042,11 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\GroupAddress\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1127,6 +1162,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\Address\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\GroupAddress\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1494,6 +1533,18 @@ return [
             \Api\V1\Rest\Address\AddressCollection::class         => [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\GroupAddress\GroupAddressEntity::class             => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\GroupAddress\GroupAddressCollection::class         => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
             ],

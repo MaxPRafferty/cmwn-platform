@@ -7,7 +7,6 @@ use Address\Service\AddressService;
 use Address\Service\AddressServiceInterface;
 use Application\Exception\NotFoundException;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -17,12 +16,15 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class AddressDelegator implements AddressServiceInterface
 {
-    use EventManagerAwareTrait;
-
     /**
      * @var AddressService
      */
     protected $realService;
+
+    /**
+     * @var EventManagerInterface
+     */
+    private $eventManager;
 
     /**
      * AddressDelegator constructor.
@@ -32,7 +34,15 @@ class AddressDelegator implements AddressServiceInterface
     public function __construct(AddressService $addressService, EventManagerInterface $eventManager)
     {
         $this->realService = $addressService;
-        $this->setEventManager($eventManager);
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 
     /**
@@ -43,7 +53,7 @@ class AddressDelegator implements AddressServiceInterface
         $event = new Event(
             'fetch.address',
             $this->realService,
-            [ 'address_id' => $addressId, 'prototype' => $prototype]
+            ['address_id' => $addressId, 'prototype' => $prototype]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -73,7 +83,7 @@ class AddressDelegator implements AddressServiceInterface
         $event = new Event(
             'fetch.all.addresses',
             $this->realService,
-            [ 'where' => $where, 'prototype' => $prototype]
+            ['where' => $where, 'prototype' => $prototype]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -81,7 +91,7 @@ class AddressDelegator implements AddressServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->fetchAll($where, $prototype);
+        $return = $this->realService->fetchAll($where, $prototype);
         $event->setName('fetch.all.addresses.post');
         $event->setParam('addresses', $return);
         $this->getEventManager()->triggerEvent($event);
@@ -97,7 +107,7 @@ class AddressDelegator implements AddressServiceInterface
         $event = new Event(
             'create.address',
             $this->realService,
-            [ 'address' => $address ]
+            ['address' => $address]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -105,7 +115,7 @@ class AddressDelegator implements AddressServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->createAddress($address);
+        $return = $this->realService->createAddress($address);
         $event->setName('create.address.post');
         $event->setParam('return', $return);
         $this->getEventManager()->triggerEvent($event);
@@ -121,7 +131,7 @@ class AddressDelegator implements AddressServiceInterface
         $event = new Event(
             'update.address',
             $this->realService,
-            [ 'address' => $address ]
+            ['address' => $address]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -129,7 +139,7 @@ class AddressDelegator implements AddressServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->updateAddress($address);
+        $return = $this->realService->updateAddress($address);
         $event->setName('update.address.post');
         $event->setParam('return', $return);
         $this->getEventManager()->triggerEvent($event);
@@ -145,7 +155,7 @@ class AddressDelegator implements AddressServiceInterface
         $event = new Event(
             'delete.address',
             $this->realService,
-            [ 'address' => $address ]
+            ['address' => $address]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -153,7 +163,7 @@ class AddressDelegator implements AddressServiceInterface
             return $response->last();
         }
 
-        $return   = $this->realService->deleteAddress($address);
+        $return = $this->realService->deleteAddress($address);
         $event->setName('delete.address.post');
         $event->setParam('return', $return);
         $this->getEventManager()->triggerEvent($event);

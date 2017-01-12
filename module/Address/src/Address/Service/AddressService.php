@@ -91,8 +91,6 @@ class AddressService implements AddressServiceInterface
      */
     public function updateAddress(AddressInterface $address) : bool
     {
-        $this->fetchAddress($address->getAddressId());
-
         $data = $address->getArrayCopy();
 
         $this->tableGateway->update($data, ['address_id' => $address->getAddressId()]);
@@ -105,8 +103,6 @@ class AddressService implements AddressServiceInterface
      */
     public function deleteAddress(AddressInterface $address) : bool
     {
-        $this->fetchAddress($address->getAddressId());
-
         $this->tableGateway->delete(['address_id' => $address->getAddressId()]);
 
         return true;

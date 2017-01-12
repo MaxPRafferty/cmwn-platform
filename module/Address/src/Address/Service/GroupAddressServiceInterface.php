@@ -3,6 +3,7 @@
 namespace Address\Service;
 
 use Address\AddressInterface;
+use Application\Exception\NotFoundException;
 use Group\GroupInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -33,4 +34,12 @@ interface GroupAddressServiceInterface
      * @return DbSelect
      */
     public function fetchAllAddressesForGroup(GroupInterface $group, $where = null, $prototype = null) : DbSelect;
+
+    /**
+     * @param GroupInterface $group
+     * @param AddressInterface $address
+     * @return array
+     * @throws NotFoundException
+     */
+    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address);
 }

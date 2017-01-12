@@ -7,7 +7,6 @@ use Address\Service\GroupAddressService;
 use Address\Service\GroupAddressServiceInterface;
 use Group\GroupInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -17,12 +16,15 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class GroupAddressDelegator implements GroupAddressServiceInterface
 {
-    use EventManagerAwareTrait;
-
     /**
      * @var GroupAddressService
      */
     protected $realService;
+
+    /**
+     * @var EventManagerInterface
+     */
+    private $eventManager;
 
     /**
      * GroupAddressDelegator constructor.
@@ -32,7 +34,15 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     public function __construct(GroupAddressService $groupAddressService, EventManagerInterface $eventManager)
     {
         $this->realService = $groupAddressService;
-        $this->setEventManager($eventManager);
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 
     /**
@@ -41,7 +51,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     public function attachAddressToGroup(GroupInterface $group, AddressInterface $address) : bool
     {
         $event = new Event(
-            'attach.address',
+            'attach.group.address',
             $this->realService,
             [ 'group' => $group, 'address' => $address ]
         );
@@ -52,7 +62,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         }
 
         $return   = $this->realService->attachAddressToGroup($group, $address);
-        $event->setName('attach.address.post');
+        $event->setName('attach.group.address.post');
         $event->setParam('return', $return);
         $this->getEventManager()->triggerEvent($event);
 
@@ -65,7 +75,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     public function detachAddressFromGroup(GroupInterface $group, AddressInterface $address) : bool
     {
         $event = new Event(
-            'detach.address',
+            'detach.group.address',
             $this->realService,
             [ 'group' => $group, 'address' => $address ]
         );
@@ -76,7 +86,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         }
 
         $return   = $this->realService->detachAddressFromGroup($group, $address);
-        $event->setName('detach.address.post');
+        $event->setName('detach.group.address.post');
         $event->setParam('return', $return);
         $this->getEventManager()->triggerEvent($event);
 
@@ -89,7 +99,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     public function fetchAllAddressesForGroup(GroupInterface $group, $where = null, $prototype = null) : DbSelect
     {
         $event = new Event(
-            'fetch.all.addresses.group',
+            'fetch.all.group.addresses',
             $this->realService,
             [ 'group' => $group, 'where' => $where, 'prototype' => $prototype ]
         );
@@ -100,8 +110,32 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         }
 
         $return   = $this->realService->fetchAllAddressesForGroup($group, $where, $prototype);
-        $event->setName('fetch.all.addresses.group.post');
+        $event->setName('fetch.all.group.addresses.post');
         $event->setParam('addresses', $return);
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address)
+    {
+        $event = new Event(
+            'fetch.group.address',
+            $this->realService,
+            [ 'group' => $group, 'address' => $address ]
+        );
+
+        $response = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        $return   = $this->realService->fetchAddressForGroup($group, $address);
+        $event->setName('fetch.group.address.post');
+        $event->setParam('address', $return);
         $this->getEventManager()->triggerEvent($event);
 
         return $return;

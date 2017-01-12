@@ -127,6 +127,11 @@ return [
                 'PUT'    => 'update.address',
                 'DELETE' => 'delete.address',
             ],
+            'api.rest.group-address' => [
+                'GET'    => 'view.all.group.addresses',
+                'POST'   => 'attach.group.address',
+                'DELETE' => 'detach.group.address',
+            ],
         ],
     ],
 ];
