@@ -35,6 +35,10 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     {
         $this->realService = $groupAddressService;
         $this->eventManager = $eventManager;
+        $eventManager->addIdentifiers(array_merge(
+            [GroupAddressServiceInterface::class, static::class, GroupAddressService::class],
+            $eventManager->getIdentifiers()
+        ));
     }
 
     /**

@@ -35,6 +35,10 @@ class AddressDelegator implements AddressServiceInterface
     {
         $this->realService = $addressService;
         $this->eventManager = $eventManager;
+        $eventManager->addIdentifiers(array_merge(
+            [AddressServiceInterface::class, static::class, AddressService::class],
+            $eventManager->getIdentifiers()
+        ));
     }
 
     /**

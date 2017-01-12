@@ -9,6 +9,7 @@ use Org\Organization;
 use Org\Delegator\OrganizationServiceDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test OrganizationServiceDelegatorTest
@@ -55,8 +56,9 @@ class OrganizationServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new OrganizationServiceDelegator($this->orgService);
+        $this->delegator    = new OrganizationServiceDelegator($this->orgService, $events);
         $this->delegator->getEventManager()->clearListeners('save.org');
         $this->delegator->getEventManager()->clearListeners('save.new.org');
         $this->delegator->getEventManager()->clearListeners('fetch.org.post');

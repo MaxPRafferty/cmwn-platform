@@ -8,6 +8,7 @@ use Asset\Image;
 use Asset\Delegator\ImageServiceDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test ImageServiceDelegatorTest
@@ -58,8 +59,9 @@ class ImageServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new ImageServiceDelegator($this->imageService);
+        $this->delegator    = new ImageServiceDelegator($this->imageService, $events);
         $this->delegator->getEventManager()->clearListeners('save.image');
         $this->delegator->getEventManager()->clearListeners('fetch.image.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.images');
