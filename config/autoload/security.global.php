@@ -106,6 +106,9 @@ return [
             'api.rest.feed' => [
                 'GET'  => 'view.feed',
             ],
+            'api.rest.feed-user' => [
+                'GET' => 'view.user.feed',
+            ],
             'api.rest.game-data' => [
                 'GET' => 'view.game-data',
             ],

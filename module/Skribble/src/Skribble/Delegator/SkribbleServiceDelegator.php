@@ -20,6 +20,11 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface
     use ServiceTrait;
 
     /**
+     * @var array
+     */
+    protected $eventIdentifier = [SkribbleServiceInterface::class];
+
+    /**
      * @var SkribbleService
      */
     protected $realService;

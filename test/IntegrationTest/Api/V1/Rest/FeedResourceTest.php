@@ -3,8 +3,8 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
-use Zend\Json\Json;
 use IntegrationTest\DataSets\ArrayDataSet;
+use Zend\Json\Json;
 
 /**
  * Class FeedResourceTest
@@ -33,89 +33,96 @@ class FeedResourceTest extends TestCase
     {
         $this->injectValidCsrfToken();
         $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException('/user/' . $user. '/feed', $method, $params);
+        $this->assertChangePasswordException('/feed', $method, $params);
     }
 
     /**
      * @test
-     * @dataProvider changePasswordDataProvider
      */
-    public function testItShouldCheckIfUserIsLoggedIn($login)
+    public function testItShouldCheckIfUserIsLoggedIn()
     {
         $this->injectValidCsrfToken();
-        $this->dispatch('/user/' . $login . '/feed');
+        $this->dispatch('/feed');
         $this->assertResponseStatusCode(401);
     }
 
     /**
      * @test
      */
-    public function testItShouldHaveSenderNullIfFeedIsGame()
+    public function testItShouldFetchFeedById()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/feed');
+        $this->logInUser('super_user');
+        $this->dispatch('/feed/es_friend_feed');
         $this->assertResponseStatusCode(200);
-
+        $this->assertMatchedRouteName('api.rest.feed');
+        $this->assertControllerName('api\v1\rest\feed\controller');
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('feed', $body['_embedded']);
-
-        $feeds = $body['_embedded']['feed'];
-
-        foreach ($feeds as $feed) {
-            $this->assertEquals('game', $feed['type']);
-            $this->assertEquals(null, $feed['sender']);
-        }
+        $this->assertArrayHasKey('feed_id', $body);
+        $this->assertArrayHasKey('sender', $body);
+        $this->assertArrayHasKey('title', $body);
+        $this->assertArrayHasKey('message', $body);
+        $this->assertArrayHasKey('priority', $body);
+        $this->assertArrayHasKey('posted', $body);
+        $this->assertArrayHasKey('visibility', $body);
+        $this->assertArrayHasKey('type', $body);
+        $this->assertArrayHasKey('type_version', $body);
     }
 
     /**
      * @test
      */
-    public function testItShouldAddGameLinkToTheFeed()
+    public function testItShouldFetchAllFeed()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/feed');
+        $this->logInUser('super_user');
+        $this->dispatch('/feed');
         $this->assertResponseStatusCode(200);
-
+        $this->assertMatchedRouteName('api.rest.feed');
+        $this->assertControllerName('api\v1\rest\feed\controller');
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('feed', $body['_embedded']);
-
-        $feeds = $body['_embedded']['feed'];
-
-        foreach ($feeds as $feed) {
-            $this->assertArrayHasKey('_links', $feed);
-            $this->assertArrayHasKey('games', $feed['_links']);
+        $this->assertArrayHasKey("_embedded", $body);
+        $body = $body['_embedded'];
+        $this->assertArrayHasKey('feed', $body);
+        $feeds = $body['feed'];
+        $expected = [
+            'es_friend_feed',
+            'ms_friend_feed',
+            'es_game_feed',
+            'ms_game_feed',
+            'os_game_feed',
+            'es_flip_feed',
+            'ms_flip_feed',
+            'os_flip_feed',
+        ];
+        $actual = [];
+        foreach ($feeds as $body) {
+            $this->assertArrayHasKey('feed_id', $body);
+            $this->assertArrayHasKey('sender', $body);
+            $this->assertArrayHasKey('title', $body);
+            $this->assertArrayHasKey('message', $body);
+            $this->assertArrayHasKey('priority', $body);
+            $this->assertArrayHasKey('posted', $body);
+            $this->assertArrayHasKey('visibility', $body);
+            $this->assertArrayHasKey('type', $body);
+            $this->assertArrayHasKey('type_version', $body);
+            $actual[] = $body['feed_id'];
         }
+        $this->assertEquals($expected, $actual);
     }
 
     /**
      * @test
-     * TODO This test will be used when more types of feed are added
+     * @dataProvider loginDataProvider
      */
-    public function testItShouldCheckIfImageIsBeingSentCorrectly()
+    public function testItShouldNotAllowOthersToAccessFeed($login)
     {
-        $this->markTestIncomplete("To be done once more types of feed are added");
         $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/feed');
-        $this->assertResponseStatusCode(200);
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('feed', $body['_embedded']);
-
-        $feeds = $body['_embedded']['feed'];
-
-        foreach ($feeds as $feed) {
-            if ($feed['type']==='game') {
-                continue;
-            }
-            $this->assertArrayHasKey('sender', $feed);
-            $this->assertArrayHasKey('image', $feed['sender']);
-        }
+        $this->logInUser($login);
+        $this->dispatch('/feed');
+        $this->assertResponseStatusCode(403);
+        $this->assertMatchedRouteName('api.rest.feed');
+        $this->assertControllerName('api\v1\rest\feed\controller');
     }
 
     /**
@@ -127,7 +134,6 @@ class FeedResourceTest extends TestCase
             'English Student' => ['english_student'],
             'English Teacher' => ['english_teacher'],
             'Principal' => ['principal'],
-            'Super Admin' => ['super_user'],
         ];
     }
 
@@ -145,6 +151,9 @@ class FeedResourceTest extends TestCase
             ],
             'English Teacher' => [
                 'english_teacher',
+            ],
+            'Super User' => [
+                'super_user',
             ],
         ];
     }

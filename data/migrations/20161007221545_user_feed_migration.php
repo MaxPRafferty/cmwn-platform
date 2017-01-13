@@ -35,7 +35,6 @@ class UserFeedMigration extends AbstractMigration
         $userFeedTable->addColumn('user_id', 'string')
             ->addColumn('feed_id', 'string')
             ->addColumn('read_flag', 'integer', ['signed' => false])
-            ->addColumn('posted', 'timestamp', ['default' => false])
             ->addForeignKey('user_id', 'users', 'user_id', ['delete' => 'CASCADE'])
             ->addForeignKey('feed_id', 'feed', 'feed_id', ['delete' => 'CASCADE'])
             ->create();
