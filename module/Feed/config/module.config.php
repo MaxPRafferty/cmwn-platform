@@ -8,8 +8,6 @@ return [
         'aliases' => [
             \Feed\Service\FeedServiceInterface::class => \Feed\Service\FeedService::class,
             \Feed\Service\FeedUserServiceInterface::class => \Feed\Service\FeedUserService::class,
-            \Feed\FeedInterface::class => \Feed\Feed::class,
-            \Feed\UserFeedInterface::class => \Feed\UserFeed::class,
         ],
         'factories' => [
             \Feed\Service\FeedService::class => \Feed\Service\FeedServiceFactory::class,

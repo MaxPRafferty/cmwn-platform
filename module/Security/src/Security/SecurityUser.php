@@ -3,7 +3,7 @@
 namespace Security;
 
 use Group\GroupInterface;
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\ValidationData;
 use User\User;
 
@@ -103,8 +103,7 @@ class SecurityUser extends User implements SecurityUserInterface
             return static::CODE_INVALID;
         }
         try {
-            $config       = new Configuration();
-            $compareToken = $config->getParser()->parse($this->code);
+            $compareToken = (new Parser())->parse($this->code);
             $validator    = new ValidationData();
             $validator->setId($code);
 
