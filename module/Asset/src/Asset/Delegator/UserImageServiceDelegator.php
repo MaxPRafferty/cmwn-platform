@@ -10,13 +10,13 @@ use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class UserImageServiceDelegator
  */
-class UserImageServiceDelegator implements UserImageServiceInterface, EventManagerAwareInterface
+class UserImageServiceDelegator implements UserImageServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -30,12 +30,31 @@ class UserImageServiceDelegator implements UserImageServiceInterface, EventManag
     protected $realService;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * UserImageServiceDelegator constructor.
      * @param UserImageService $userImageService
+     * @param EventManagerInterface $events
      */
-    public function __construct(UserImageService $userImageService)
+    public function __construct(UserImageService $userImageService, EventManagerInterface $events)
     {
         $this->realService = $userImageService;
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [UserImageServiceInterface::class, static::class, UserImageService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace SecurityTest;
 
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Builder;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 
@@ -40,12 +40,11 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldPassCode()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time())
-            ->expiresAt(time() + 50)
-            ->identifiedBy('some_code')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time())
+            ->setExpiration(time() + 50)
+            ->setId('some_code')
             ->getToken();
 
         $userData = [
@@ -64,12 +63,11 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldFailCodeWhenPastExpiration()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() - 180)
-            ->expiresAt(time() - 50)
-            ->identifiedBy('some_code')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() - 180)
+            ->setExpiration(time() - 50)
+            ->setId('some_code')
             ->getToken();
 
         $userData = [
@@ -88,12 +86,11 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldFailCodeWhenThereIsAMisMatch()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() - 50)
-            ->expiresAt(time() + 50)
-            ->identifiedBy('some_code')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() - 50)
+            ->setExpiration(time() + 50)
+            ->setId('some_code')
             ->getToken();
 
         $userData = [
@@ -112,12 +109,11 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldPassCodeIfInWindow()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() - 50)
-            ->expiresAt(time() + 50)
-            ->identifiedBy('some_code')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() - 50)
+            ->setExpiration(time() + 50)
+            ->setId('some_code')
             ->getToken();
 
         $userData = [
@@ -136,12 +132,11 @@ class SecurityUserTest extends TestCase
      */
     public function testItShouldFailCodeIfNotInWindow()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() - 100)
-            ->expiresAt(time() - 50)
-            ->identifiedBy('some_code')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() - 100)
+            ->setExpiration(time() - 50)
+            ->setId('some_code')
             ->getToken();
 
         $userData = [

@@ -2,12 +2,13 @@
 
 namespace Game\Delegator;
 
-use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Game\GameInterface;
+use Game\Service\GameService;
 use Game\Service\GameServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class GameDelegator
@@ -24,12 +25,31 @@ class GameDelegator implements GameServiceInterface
     protected $gameService;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * GameDelegator constructor.
      * @param GameServiceInterface $gameService
+     * @param EventManagerInterface $events
      */
-    public function __construct(GameServiceInterface $gameService)
+    public function __construct(GameServiceInterface $gameService, EventManagerInterface $events)
     {
         $this->gameService = $gameService;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [GameServiceInterface::class, static::class, GameService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

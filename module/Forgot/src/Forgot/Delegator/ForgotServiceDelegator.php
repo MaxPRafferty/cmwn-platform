@@ -8,6 +8,7 @@ use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class ForgotServiceDelegator
@@ -27,12 +28,31 @@ class ForgotServiceDelegator implements ForgotServiceInterface, EventManagerAwar
     protected $eventIdentifier = 'Forgot\Service\ForgotServiceInterface';
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * ForgotServiceDelegator constructor.
      * @param ForgotService $realService
+     * @param EventManagerInterface $events
      */
-    public function __construct(ForgotService $realService)
+    public function __construct(ForgotService $realService, EventManagerInterface $events)
     {
         $this->realService = $realService;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [ForgotServiceInterface::class, static::class, ForgotService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

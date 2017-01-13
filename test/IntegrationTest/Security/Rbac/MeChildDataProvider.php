@@ -36,5 +36,7 @@ class MeChildDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.user.groups');
         $this->setAllowed('view.feed');
         $this->setAllowed('flag.image');
+        $this->setAllowed('view.address');
+        $this->setAllowed('view.all.group.addresses');
     }
 }

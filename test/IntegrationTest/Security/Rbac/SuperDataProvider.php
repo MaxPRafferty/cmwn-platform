@@ -66,5 +66,13 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('update.game');
         $this->setAllowed('view.game');
         $this->setAllowed('reset.group.code');
+        $this->setAllowed('view.all.addresses');
+        $this->setAllowed('view.address');
+        $this->setAllowed('create.address');
+        $this->setAllowed('update.address');
+        $this->setAllowed('delete.address');
+        $this->setAllowed('view.all.group.addresses');
+        $this->setAllowed('attach.group.address');
+        $this->setAllowed('detach.group.address');
     }
 }

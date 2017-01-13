@@ -10,6 +10,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class GameDelegatorTest
@@ -49,7 +50,8 @@ class GameDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $this->gameDelegator = new GameDelegator($this->gameService);
+        $events = new EventManager();
+        $this->gameDelegator = new GameDelegator($this->gameService, $events);
         $this->gameDelegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

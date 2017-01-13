@@ -4,10 +4,17 @@ return [
         \Api\V1\Rest\Ack\AckResource::class => [
             \Flip\Service\FlipUserServiceInterface::class,
         ],
+        \Api\V1\Rest\Address\AddressResource::class => [
+            \Address\Service\AddressServiceInterface::class,
+        ],
+        \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
+            \Address\Service\GroupAddressServiceInterface::class,
+            \Address\Service\AddressServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class
+        ],
     ],
 
     'shared-listeners' => [
-        \Api\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ImportRouteListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -38,8 +45,6 @@ return [
                 \Api\Factory\ImportRouteListenerFactory::class,
             \Api\Listeners\ScopeListener::class                       =>
                 \Api\Factory\ScopeListenerFactory::class,
-            \Api\Listeners\UserRouteListener::class                   =>
-                \Api\Factory\UserRouteListenerFactory::class,
             \Api\Listeners\UserGroupListener::class                   =>
                 \Api\Factory\UserGroupListenerFactory::class,
             \Api\Listeners\GroupRouteListener::class                  =>
@@ -376,6 +381,24 @@ return [
                     ],
                 ],
             ],
+            'api.rest.address'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/address[/:address_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\Address\Controller',
+                    ],
+                ],
+            ],
+            'api.rest.group-address'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/group/:group_id/address[/:address_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\GroupAddress\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -410,6 +433,8 @@ return [
             'api.rest.flag',
             'api.rest.group-reset',
             'api.rest.acknowledge',
+            'api.rest.address',
+            'api.rest.group-address',
         ],
     ],
     'zf-rest'                => [
@@ -663,7 +688,7 @@ return [
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Suggest\SuggestEntity::class,
-            'collection_class'           => \Api\V1\Rest\Suggest\SuggestionCollection::class,
+            'collection_class'           => \Api\V1\Rest\Suggest\SuggestCollection::class,
             'service_name'               => 'Suggest',
         ],
         'Api\V1\Rest\Reset\Controller'          => [
@@ -814,6 +839,34 @@ return [
             'entity_http_methods'        => ['PUT'],
             'service_name'               => 'AckFlip',
         ],
+        'Api\V1\Rest\Address\Controller' => [
+            'listener'                   => \Api\V1\Rest\Address\AddressResource::class,
+            'route_name'                 => 'api.rest.address',
+            'route_identifier_name'      => 'address_id',
+            'collection_name'            => 'addresses',
+            'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET', 'POST'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'page',
+            'entity_class'               => \Api\V1\Rest\Address\AddressEntity::class,
+            'collection_class'           => \Api\V1\Rest\Address\AddressCollection::class,
+            'service_name'               => 'Address',
+        ],
+        'Api\V1\Rest\GroupAddress\Controller' => [
+            'listener'                   => \Api\V1\Rest\GroupAddress\GroupAddressResource::class,
+            'route_name'                 => 'api.rest.group-address',
+            'route_identifier_name'      => 'address_id',
+            'collection_name'            => 'addresses',
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'page',
+            'entity_class'               => \Api\V1\Rest\GroupAddress\GroupAddressEntity::class,
+            'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
+            'service_name'               => 'GroupAddress',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers'            => [
@@ -845,6 +898,8 @@ return [
             'Api\V1\Rest\GameData\Controller'       => 'HalJson',
             'Api\V1\Rest\Flag\Controller'           => 'HalJson',
             'Api\V1\Rest\GroupReset\Controller'     => 'HalJson',
+            'Api\V1\Rest\Address\Controller'        => 'HalJson',
+            'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -982,6 +1037,16 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\Address\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\GroupAddress\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1093,6 +1158,14 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\GroupReset\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\Address\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\GroupAddress\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1451,6 +1524,30 @@ return [
                 'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
+            \Api\V1\Rest\Address\AddressEntity::class             => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\Address\AddressCollection::class         => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\GroupAddress\GroupAddressEntity::class             => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\GroupAddress\GroupAddressCollection::class         => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
         ],
     ],
     'zf-content-validation'  => [
@@ -1513,6 +1610,9 @@ return [
         ],
         'Api\V1\Rest\GroupReset\Controller'     => [
             'input_filter' => 'Api\V1\Rest\GroupReset\Validator',
+        ],
+        'Api\V1\Rest\Address\Controller'     => [
+            'input_filter' => 'Api\V1\Rest\Address\Validator',
         ],
     ],
     'input_filter_specs'     => [
@@ -2206,5 +2306,56 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
+        'Api\V1\Rest\Address\Validator' => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'administrative_area',
+                'description' => 'State / Province / Region',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'sub_administrative_area',
+                'description' => 'County / District',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'locality',
+                'description' => 'City / Town',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'dependent_locality',
+                'description' => 'Dependent locality',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'postal_code',
+                'description' => 'Postal code / ZIP Code',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'thoroughfare',
+                'description' => 'Street address',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'premise',
+                'description' => 'Apartment, Suite, Box number, etc',
+            ],
+        ]
     ],
 ];

@@ -51,4 +51,5 @@ return [
     'Flag',
     'Sa',
     'Rule',
+    'Address',
 ];
