@@ -13,7 +13,7 @@ class SuperFlagLink extends Link
 {
     /**
      * SuperFlagLink constructor.
-     * @param string $user
+     * @param string|UserInterface $user
      */
     public function __construct($user = null)
     {

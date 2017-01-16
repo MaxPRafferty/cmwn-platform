@@ -2,12 +2,14 @@
 
 namespace Sa\Listeners;
 
+use Api\Links\SuperFlagLink;
 use Sa\Links\SuperAdminSettingsLink;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\SecurityUser;
+use Security\Service\SecurityServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -27,6 +29,20 @@ class SaSettingsLinkListener implements AuthenticationServiceAwareInterface, Rba
      * @var CallbackHandler
      */
     protected $listener;
+
+    /**
+     * @var SecurityServiceInterface
+     */
+    protected $securityService;
+
+    /**
+     * SaSettingsLinkListener constructor.
+     * @param SecurityServiceInterface $securityService
+     */
+    public function __construct(SecurityServiceInterface $securityService)
+    {
+        $this->securityService = $securityService;
+    }
 
     /**
      * @param SharedEventManagerInterface $events
@@ -66,10 +82,22 @@ class SaSettingsLinkListener implements AuthenticationServiceAwareInterface, Rba
 
         /** @var SecurityUser $authUser */
         $authUser = $this->getAuthenticationService()->getIdentity();
-        if (!$this->getRbac()->isGranted($authUser->getRole(), 'sa.settings')) {
+
+        /** @var SecurityUser $realEntity */
+        $realEntity = $this->securityService->fetchUserByUserName($realEntity->getUserName());
+
+        if ($this->getRbac()->isGranted($authUser->getRole(), 'sa.settings') && $realEntity->isSuper()) {
+            $entity->getLinks()->add(new SuperAdminSettingsLink());
+        }
+
+        if (!$this->getRbac()->isGranted($authUser->getRole(), 'set.super')) {
             return;
         }
 
-        $entity->getLinks()->add(new SuperAdminSettingsLink());
+        if ($realEntity->getType() !== UserInterface::TYPE_ADULT) {
+            return;
+        }
+
+        $entity->getLinks()->add(new SuperFlagLink($realEntity));
     }
 }

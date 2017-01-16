@@ -1,14 +1,17 @@
 <?php
 
 return [
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Sa\Listeners\SaSettingsLinkListener::class => [
+            \Security\Service\SecurityServiceInterface::class,
+        ],
+    ],
     'shared-listeners'       => [
         \Sa\Listeners\SaSettingsLinkListener::class,
     ],
     'service_manager'        => [
         'factories' => [
             \Sa\V1\Rest\SuperAdminSettings\SuperAdminSettingsResource::class =>
-                \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Sa\Listeners\SaSettingsLinkListener::class                      =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
     ],
