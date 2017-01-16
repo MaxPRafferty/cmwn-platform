@@ -4,6 +4,10 @@ return [
         \Api\V1\Rest\Ack\AckResource::class => [
             \Flip\Service\FlipUserServiceInterface::class,
         ],
+        \Api\V1\Rest\SuperFlag\SuperFlagResource::class => [
+            \Security\Service\SecurityServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
+        ],
     ],
 
     'shared-listeners' => [
@@ -376,6 +380,15 @@ return [
                     ],
                 ],
             ],
+            'api.rest.super-flag'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/user/:user_id/super',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\SuperFlag\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -410,6 +423,7 @@ return [
             'api.rest.flag',
             'api.rest.group-reset',
             'api.rest.acknowledge',
+            'api.rest.super-flag',
         ],
     ],
     'zf-rest'                => [
@@ -814,6 +828,20 @@ return [
             'entity_http_methods'        => ['PUT'],
             'service_name'               => 'AckFlip',
         ],
+        'Api\V1\Rest\SuperFlag\Controller'     => [
+            'listener'                   => \Api\V1\Rest\SuperFlag\SuperFlagResource::class,
+            'route_name'                 => 'api.rest.super-flag',
+            'route_identifier_name'      => 'user_id',
+            'collection_name'            => 'super-flag',
+            'entity_http_methods'        => ['POST'],
+            'collection_http_methods'    => ['POST'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\SuperFlag\SuperFlagEntity::class,
+            'collection_class'           => \Api\V1\Rest\SuperFlag\SuperFlagCollection::class,
+            'service_name'               => 'SuperFlag',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers'            => [
@@ -845,6 +873,7 @@ return [
             'Api\V1\Rest\GameData\Controller'       => 'HalJson',
             'Api\V1\Rest\Flag\Controller'           => 'HalJson',
             'Api\V1\Rest\GroupReset\Controller'     => 'HalJson',
+            'Api\V1\Rest\SuperFlag\Controller'      => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -982,6 +1011,11 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\SuperFlag\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1093,6 +1127,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\GroupReset\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\SuperFlag\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1451,6 +1489,18 @@ return [
                 'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
+            \Api\V1\Rest\GroupReset\SuperFlagEntity::class             => [
+                'entity_identifier_name' => 'user_id',
+                'route_name'             => 'api.rest.super-flag',
+                'route_identifier_name'  => 'user_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\GroupReset\SuperFlagCollection::class         => [
+                'entity_identifier_name' => 'user_id',
+                'route_name'             => 'api.rest.super-flag',
+                'route_identifier_name'  => 'user_id',
+                'is_collection'          => true,
+            ],
         ],
     ],
     'zf-content-validation'  => [
@@ -1513,6 +1563,9 @@ return [
         ],
         'Api\V1\Rest\GroupReset\Controller'     => [
             'input_filter' => 'Api\V1\Rest\GroupReset\Validator',
+        ],
+        'Api\V1\Rest\SuperFlag\Controller'     => [
+            'input_filter' => 'Api\V1\Rest\SuperFlag\Validator',
         ],
     ],
     'input_filter_specs'     => [
@@ -2204,6 +2257,24 @@ return [
                 'filters'     => [],
                 'name'        => 'code',
                 'description' => 'The temporary code to use',
+            ],
+        ],
+        'Api\V1\Rest\SuperFlag\Validator'     => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => 'all'],
+                    ],
+                    [
+                        'name'    => \Zend\Filter\ToInt::class,
+                        'options' => [],
+                    ],
+                ],
+                'name'        => 'super',
+                'description' => 'The super flag',
             ],
         ],
     ],

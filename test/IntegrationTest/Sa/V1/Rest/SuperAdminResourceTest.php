@@ -67,7 +67,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_links', $body);
 
         $actual = [];
-        $expected = ['Manage Users', 'Manage Games', 'Survey Results'];
+        $expected = ['Manage Users', 'Manage Games', 'Survey Results', 'Manage Groups', 'Manage Organizations'];
 
         foreach ($body['_links'] as $link) {
             $actual[] = $link['label'];

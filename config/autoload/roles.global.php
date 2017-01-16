@@ -72,6 +72,7 @@ return [
             'edit.flag'            => 'Edit flag',
             'delete.flag'          => 'delete flag',
             'view.flagged.image'   => 'view a flagged image using flag_id',
+            'set.super'            => 'update the super status of a user',
 
 
             // skribble
@@ -147,6 +148,7 @@ return [
                     'update.game',
                     'delete.game',
                     'reset.group.code',
+                    'set.super',
                 ],
             ],
 
