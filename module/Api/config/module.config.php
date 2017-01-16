@@ -1489,13 +1489,13 @@ return [
                 'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\GroupReset\SuperFlagEntity::class             => [
+            \Api\V1\Rest\SuperFlag\SuperFlagEntity::class             => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.super-flag',
                 'route_identifier_name'  => 'user_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\GroupReset\SuperFlagCollection::class         => [
+            \Api\V1\Rest\SuperFlag\SuperFlagCollection::class         => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.super-flag',
                 'route_identifier_name'  => 'user_id',
