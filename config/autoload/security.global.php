@@ -135,6 +135,9 @@ return [
                 'POST'   => 'attach.group.address',
                 'DELETE' => 'detach.group.address',
             ],
+            'api.rest.super-flag' => [
+                'POST' => 'set.super',
+            ],
         ],
     ],
 ];

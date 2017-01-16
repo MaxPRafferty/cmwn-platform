@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d991641e6520c87a64980a56e55bd6bb",
-    "content-hash": "24f10621b4e39ded6d13f208d68f86be",
+    "hash": "be698c8342d53aa4cb4ac1c148d9b6d3",
+    "content-hash": "ff71a515bfc3780a9e943dbb5713d139",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -2060,16 +2060,16 @@
         },
         {
             "name": "zendframework/zend-mime",
-            "version": "2.6.0",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-mime.git",
-                "reference": "340769c3d962ac4d9d3cf9da7e75419368e56fcc"
+                "reference": "9e53a97a3c190d45cc5d584daaaf487d509a9285"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/340769c3d962ac4d9d3cf9da7e75419368e56fcc",
-                "reference": "340769c3d962ac4d9d3cf9da7e75419368e56fcc",
+                "url": "https://api.github.com/repos/zendframework/zend-mime/zipball/9e53a97a3c190d45cc5d584daaaf487d509a9285",
+                "reference": "9e53a97a3c190d45cc5d584daaaf487d509a9285",
                 "shasum": ""
             },
             "require": {
@@ -2077,8 +2077,8 @@
                 "zendframework/zend-stdlib": "^2.7 || ^3.0"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "1.7.*",
-                "phpunit/phpunit": "~4.0",
+                "phpunit/phpunit": "^4.7 || ^5.7",
+                "zendframework/zend-coding-standard": "~1.0.0",
                 "zendframework/zend-mail": "^2.6"
             },
             "suggest": {
@@ -2105,7 +2105,7 @@
                 "mime",
                 "zf2"
             ],
-            "time": "2016-04-20 21:02:01"
+            "time": "2017-01-16 16:43:38"
         },
         {
             "name": "zendframework/zend-modulemanager",
@@ -3938,6 +3938,7 @@
                 "schema",
                 "validate"
             ],
+            "abandoned": "kherge/json",
             "time": "2013-10-30 16:51:34"
         },
         {
@@ -3995,6 +3996,7 @@
                 "phar",
                 "update"
             ],
+            "abandoned": true,
             "time": "2013-10-30 17:23:01"
         },
         {
@@ -4103,6 +4105,7 @@
             ],
             "description": "A parsing and comparison library for semantic versioning.",
             "homepage": "http://github.com/kherge/Version",
+            "abandoned": true,
             "time": "2012-08-16 17:13:03"
         },
         {

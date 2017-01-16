@@ -75,5 +75,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.group.addresses');
         $this->setAllowed('attach.group.address');
         $this->setAllowed('detach.group.address');
+        $this->setAllowed('set.super');
     }
 }
