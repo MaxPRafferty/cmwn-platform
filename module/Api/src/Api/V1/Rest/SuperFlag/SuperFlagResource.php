@@ -2,6 +2,7 @@
 
 namespace Api\V1\Rest\SuperFlag;
 
+use Api\V1\Rest\User\UserEntity;
 use Security\Service\SecurityServiceInterface;
 use User\Service\UserServiceInterface;
 use User\UserInterface;
@@ -53,6 +54,6 @@ class SuperFlagResource extends AbstractResourceListener
 
         $this->securityService->setSuper($userId, $super);
 
-        return new ApiProblem(200, 'Super status updated');
+        return new UserEntity($user->getArrayCopy());
     }
 }

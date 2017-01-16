@@ -77,7 +77,7 @@ class SuperFlagResourceTest extends TestCase
         $userBefore = $this->securityService->fetchUserByUserName($login);
         $this->assertFalse($userBefore->isSuper());
         $this->dispatch('/user/' . $login . '/super', 'POST', ['super' => true]);
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.super-flag');
         $this->assertControllerName('api\v1\rest\superflag\controller');
 
@@ -95,7 +95,7 @@ class SuperFlagResourceTest extends TestCase
         $userBefore = $this->securityService->fetchUserByUserName('super_user');
         $this->assertTrue($userBefore->isSuper());
         $this->dispatch('/user/super_user/super', 'POST', ['super' => false]);
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.super-flag');
         $this->assertControllerName('api\v1\rest\superflag\controller');
 
@@ -115,7 +115,7 @@ class SuperFlagResourceTest extends TestCase
         $userBefore = $this->securityService->fetchUserByUserName('english_student');
         $this->assertFalse($userBefore->isSuper());
         $this->dispatch('/user/' . $login . '/super', 'POST', ['super' => false]);
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(201);
         $this->assertMatchedRouteName('api.rest.super-flag');
         $this->assertControllerName('api\v1\rest\superflag\controller');
 
