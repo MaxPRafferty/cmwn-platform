@@ -97,7 +97,6 @@ abstract class AbstractApigilityTestCase extends TestCase
             ->addHeaderLine('Origin: https://unit-test.changemyworldnow.com');
 
         $this->getApplication()->run();
-        $this->assertCorrectCorsHeaders();
     }
 
     /**
@@ -144,17 +143,5 @@ abstract class AbstractApigilityTestCase extends TestCase
                 $this->getResponse()->getContent()
             )
         );
-    }
-
-    /**
-     * Helps check that all the CORS headers are set
-     */
-    public function assertCorrectCorsHeaders()
-    {
-        $this->assertResponseHeaderContains('Access-Control-Allow-Credentials', 'true');
-        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', 'https://unit-test.changemyworldnow.com');
-        $this->assertResponseHeaderContains('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS, PUT, DELETE');
-        $this->assertResponseHeaderContains('Access-Control-Allow-Headers', 'Origin, Content-Type, X-CSRF');
-        $this->assertResponseHeaderContains('Access-Control-Max-Age', '28800');
     }
 }

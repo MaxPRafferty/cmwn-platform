@@ -2,10 +2,10 @@
 
 namespace Notice\Factory;
 
+use Interop\Container\ContainerInterface;
 use Notice\EmailModel\ImportSuccessModel;
 use Notice\Listeners\ImportListener;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ImportListenerFactory
@@ -13,15 +13,11 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class ImportListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config       = $serviceLocator->get('Config');
-        $successModel = new ImportSuccessModel(['image_domain' => $config['options']['image_domain']]);
-        return new ImportListener($successModel);
+        $config = $container->get('Config');
+        return new ImportListener(new ImportSuccessModel(['image_domain' => $config['options']['image_domain']]));
     }
 }

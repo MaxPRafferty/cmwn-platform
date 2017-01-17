@@ -10,13 +10,14 @@ use Group\GroupAwareInterface;
 use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
 use Job\Service\JobServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\NotificationAwareInterface;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\InputFilter\Factory;
 use Zend\InputFilter\InputFilter;
-use Zend\Mvc\Router\Http\RouteMatch;
+use Zend\Router\Http\RouteMatch;
 use Zend\ServiceManager\ServiceManager;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\ResourceEvent;
@@ -36,6 +37,8 @@ use ZF\Rest\ResourceEvent;
  */
 class ImportResourceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|AuthenticationServiceInterface
      */

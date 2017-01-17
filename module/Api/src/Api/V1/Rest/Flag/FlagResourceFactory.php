@@ -3,23 +3,19 @@
 namespace Api\V1\Rest\Flag;
 
 use Flag\Service\FlagServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FlagResourceFactory
- * @package Api\V1\Rest\Flag
  */
 class FlagResourceFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return FlagResource
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $flagService = $serviceLocator->get(FlagServiceInterface::class);
-
-        return new FlagResource($flagService);
+        return new FlagResource($container->get(FlagServiceInterface::class));
     }
 }

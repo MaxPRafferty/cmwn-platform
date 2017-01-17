@@ -1,15 +1,12 @@
 <?php
 
-$environment = getenv('APP_NAME');
-$environment = !$environment ? 'api-local' : $environment;
-
 return [
     'log-settings' => [
         'rollbar' => [
             /**
              * Enabled module or not
              */
-            'enabled' => true,
+            'enabled' => false,
 
             /**
              * your project server-side access token
@@ -64,7 +61,7 @@ return [
             /**
              * environment name, e.g. 'production' or 'development'
              */
-            'environment' => $environment,
+            'environment' => 'local',
 
             /**
              * associative array mapping error numbers to sample rates.

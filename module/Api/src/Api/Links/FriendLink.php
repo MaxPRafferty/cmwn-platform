@@ -11,7 +11,9 @@ class FriendLink extends Link
 {
     /**
      * FriendLink constructor.
+     *
      * @param string $userId
+     * @param null $friendId
      */
     public function __construct($userId, $friendId = null)
     {

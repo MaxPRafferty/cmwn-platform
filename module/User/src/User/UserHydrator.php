@@ -3,12 +3,11 @@
 namespace User;
 
 use Zend\Hydrator\HydratorInterface;
-use Zend\Stdlib\Extractor\ExtractionInterface;
 
 /**
  * Class UserHydrator
  */
-class UserHydrator implements HydratorInterface, ExtractionInterface
+class UserHydrator implements HydratorInterface
 {
     /**
      * @var null|UserInterface
@@ -31,6 +30,7 @@ class UserHydrator implements HydratorInterface, ExtractionInterface
 
         $this->prototype = $prototype;
     }
+
 
     /**
      * Extract values from an object

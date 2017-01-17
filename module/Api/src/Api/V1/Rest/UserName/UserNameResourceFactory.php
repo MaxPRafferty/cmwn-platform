@@ -2,28 +2,20 @@
 
 namespace Api\V1\Rest\UserName;
 
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UserNameResourceFactory
- *
- * Creates a UserNameResource
  */
 class UserNameResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-        return new UserNameResource($userService);
+        return new UserNameResource($container->get(UserServiceInterface::class));
     }
 }

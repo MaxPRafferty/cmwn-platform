@@ -2,6 +2,7 @@
 
 namespace AssetTest\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Asset\Image;
 use Asset\Service\ImageService;
@@ -10,6 +11,7 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
 
 /**
  * Test ImageServiceTest
+ *
  * @group Image
  * @group Asset
  * @group Service
@@ -17,9 +19,11 @@ use Zend\Db\Sql\Predicate\Predicate as Where;
  */
 class ImageServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
-    * @var ImageService
-    */
+     * @var ImageService
+     */
     protected $imageService;
 
     /**
@@ -71,6 +75,7 @@ class ImageServiceTest extends TestCase
             ->shouldReceive('select')
             ->andReturnUsing(function ($where) {
                 $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -90,6 +95,7 @@ class ImageServiceTest extends TestCase
             ->andReturnUsing(function ($where) use (&$expectedWhere) {
                 /** @var \Zend\Db\Sql\Predicate\Predicate $where */
                 $this->assertSame($expectedWhere, $where);
+
                 return new \ArrayIterator([]);
             })
             ->once();
@@ -122,6 +128,7 @@ class ImageServiceTest extends TestCase
                 $expected['moderation_status'] = 0;
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
+
                 return 1;
             })
             ->once();
@@ -144,7 +151,7 @@ class ImageServiceTest extends TestCase
             'deleted'      => '2016-02-28',
         ];
 
-        $image   = new Image($imageData);
+        $image = new Image($imageData);
         $image->setModerationStatus(-1);
         $result = new ResultSet();
         $result->initialize([$imageData]);
@@ -224,7 +231,7 @@ class ImageServiceTest extends TestCase
             'deleted'      => '',
         ];
 
-        $image   = new Image($imageData);
+        $image  = new Image($imageData);
         $result = new ResultSet();
         $result->initialize([$imageData]);
         $this->tableGateway->shouldReceive('select')
@@ -255,7 +262,7 @@ class ImageServiceTest extends TestCase
             'deleted'      => '',
         ];
 
-        $image   = new Image($imageData);
+        $image  = new Image($imageData);
         $result = new ResultSet();
         $result->initialize([$imageData]);
         $this->tableGateway->shouldReceive('select')

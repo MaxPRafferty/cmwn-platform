@@ -2,16 +2,17 @@
 
 namespace Application\Listeners;
 
+use Interop\Container\ContainerInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ListenersAggregate
+ * @deprecated Use Rule engineß
  */
 class ListenersAggregate
 {
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     public $services;
 
@@ -27,10 +28,11 @@ class ListenersAggregate
 
     /**
      * ListenersAggregate constructor.
-     * @param ServiceLocatorInterface $services
+     *
+     * @param ContainerInterface $services
      * @param array $config
      */
-    public function __construct(ServiceLocatorInterface $services, $config = [])
+    public function __construct(ContainerInterface $services, $config = [])
     {
         $this->services = $services;
         $this->config   = $config;

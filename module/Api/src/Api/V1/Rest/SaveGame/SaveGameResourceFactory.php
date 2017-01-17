@@ -3,8 +3,8 @@
 namespace Api\V1\Rest\SaveGame;
 
 use Game\Service\SaveGameServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SaveGameResourceFactory
@@ -12,16 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SaveGameResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SaveGameServiceInterface $saveService */
-        $saveService = $serviceLocator->get(SaveGameServiceInterface::class);
-        return new SaveGameResource($saveService);
+        return new SaveGameResource($container->get(SaveGameServiceInterface::class));
     }
 }

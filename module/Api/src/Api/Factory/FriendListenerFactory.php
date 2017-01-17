@@ -4,9 +4,9 @@ namespace Api\Factory;
 
 use Api\Listeners\FriendListener;
 use Friend\Service\FriendServiceInterface;
+use Interop\Container\ContainerInterface;
 use Suggest\Service\SuggestedServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FriendListenerFactory
@@ -14,16 +14,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FriendListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var FriendServiceInterface $friendService */
-        $friendService = $serviceLocator->get(FriendServiceInterface::class);
-        $suggestedService = $serviceLocator->get(SuggestedServiceInterface::class);
-        return new FriendListener($friendService, $suggestedService);
+        return new FriendListener(
+            $container->get(FriendServiceInterface::class),
+            $container->get(SuggestedServiceInterface::class)
+        );
     }
 }

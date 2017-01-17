@@ -53,7 +53,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     {
         $eventParams = ['user' => $user, 'where' => $where, 'prototype' => $prototype];
         $event       = new Event('fetch.all.friends', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -65,11 +65,11 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         } catch (\Exception $exception) {
             $event->setParam('exception', $exception);
             $event->setName('fetch.all.friends.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $exception;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -85,7 +85,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     {
         $eventParams = ['user' => $user, 'friend' => $friend];
         $event       = new Event('attach.friend', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -96,11 +96,11 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         } catch (\Exception $exception) {
             $event->setParam('exception', $exception);
             $event->setName('attach.friend.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $exception;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -116,7 +116,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     {
         $eventParams = ['user' => $user, 'friend' => $friend];
         $event       = new Event('detach.friend', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -127,11 +127,11 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         } catch (\Exception $exception) {
             $event->setParam('exception', $exception);
             $event->setName('detach.friend.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $exception;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -156,7 +156,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     {
         $eventParams = ['user' => $user, 'friend' => $friend, 'prototype' => $prototype];
         $event       = new Event('fetch.friend', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -167,11 +167,11 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         } catch (\Exception $exception) {
             $event->setParam('exception', $exception);
             $event->setName('fetch.friend.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $exception;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -187,7 +187,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     {
         $eventParams = ['user' => $user, 'friend' => $friend];
         $event       = new Event('fetch.friend.status', $this->realService, $eventParams);
-        $response    = $this->getEventManager()->trigger($event);
+        $response    = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -199,11 +199,11 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         } catch (\Exception $exception) {
             $event->setParam('exception', $exception);
             $event->setName('fetch.friend.status.error');
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $exception;
         }
 
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 }

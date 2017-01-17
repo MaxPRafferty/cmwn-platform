@@ -3,6 +3,7 @@
 namespace Application\Utils;
 
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Class PropertiesTrait
@@ -17,7 +18,7 @@ trait PropertiesTrait
      */
     public function __set($name, $value)
     {
-        $method = 'set' . ucfirst(StaticFilter::execute($name, 'Word\UnderscoreToCamelCase'));
+        $method = 'set' . ucfirst(StaticFilter::execute($name, UnderscoreToCamelCase::class));
         if (method_exists($this, $method)) {
             $this->{$method}($value);
         }
@@ -29,7 +30,7 @@ trait PropertiesTrait
      */
     public function __get($name)
     {
-        $method = 'get' . ucfirst(StaticFilter::execute($name, 'Word\UnderscoreToCamelCase'));
+        $method = 'get' . ucfirst(StaticFilter::execute($name, UnderscoreToCamelCase::class));
         if (method_exists($this, $method)) {
             return $this->{$method}();
         }

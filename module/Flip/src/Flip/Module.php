@@ -5,14 +5,12 @@ namespace Flip;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
 /**
- * Class Module
- *
- * @codeCoverageIgnore
+ * The Flips Module
  */
 class Module implements ConfigProviderInterface
 {
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getConfig()
     {

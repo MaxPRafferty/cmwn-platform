@@ -3,21 +3,18 @@
 namespace Api\Listeners;
 
 use Api\Links\GroupLink;
-use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
 use Org\Service\OrganizationServiceInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\ListenerAggregateTrait;
-use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
-use ZF\ApiProblem\ApiProblem;
 use ZF\Hal\Entity;
 
 /**
  * Class OrgRouteListener
  *
- * @TODO Make this a shared listener
+ * @TODO Make this a rule
  */
 class OrgRouteListener implements ListenerAggregateInterface
 {
@@ -39,16 +36,9 @@ class OrgRouteListener implements ListenerAggregateInterface
     }
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER, [$this, 'onRender']);
     }
@@ -66,7 +56,7 @@ class OrgRouteListener implements ListenerAggregateInterface
             return;
         }
 
-        $realEntity = $payload->entity;
+        $realEntity = $payload->getEntity();
 
         if (!$realEntity instanceof OrganizationInterface) {
             return;

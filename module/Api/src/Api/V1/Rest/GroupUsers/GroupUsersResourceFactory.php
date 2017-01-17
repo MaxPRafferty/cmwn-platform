@@ -4,26 +4,22 @@ namespace Api\V1\Rest\GroupUsers;
 
 use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class GroupUsersResourceFactory
- * @package Api\V1\Rest\GroupUsers
  */
 class GroupUsersResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $services
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $services)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var UserGroupServiceInterface $userGroupService */
-        $userGroupService = $services->get(UserGroupServiceInterface::class);
-        $groupService = $services->get(GroupServiceInterface::class);
-        return new GroupUsersResource($userGroupService, $groupService);
+        return new GroupUsersResource(
+            $container->get(UserGroupServiceInterface::class),
+            $container->get(GroupServiceInterface::class)
+        );
     }
 }

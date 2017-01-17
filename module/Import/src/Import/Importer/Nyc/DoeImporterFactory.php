@@ -3,10 +3,9 @@
 namespace Import\Importer\Nyc;
 
 use Group\Service\GroupServiceInterface;
-
 use Import\Importer\Nyc\Parser\DoeParser;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class DoeImporterFactory
@@ -14,18 +13,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class DoeImporterFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $services
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $services)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var DoeParser $parser */
-        /** @var GroupServiceInterface $groupService */
-        $parser       = $services->get(DoeParser::class);
-        $groupService = $services->get(GroupServiceInterface::class);
-
-        return new DoeImporter($parser, $groupService);
+        return new DoeImporter(
+            $container->get(DoeParser::class),
+            $container->get(GroupServiceInterface::class)
+        );
     }
 }

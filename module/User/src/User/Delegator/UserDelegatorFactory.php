@@ -2,33 +2,34 @@
 
 namespace User\Delegator;
 
-use User\Service\UserService;
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Utils\HideDeletedEntitiesListener;
+use Interop\Container\ContainerInterface;
+use Zend\EventManager\EventManagerInterface;
+use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
- * Creates a user Delegator
- *
- * @package User\Delegator
- * @codeCoverageIgnore
+ * Class UserDelegatorFactory
  */
 class UserDelegatorFactory implements DelegatorFactoryInterface
 {
     /**
-     * A factory that creates delegates of a given service
-     *
-     * @param ServiceLocatorInterface $serviceLocator the service locator which requested the service
-     * @param string $name the normalized service name
-     * @param string $requestedName the requested service name
-     * @param callable $callback the callback that is responsible for creating the service
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
+    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        /** @var UserService $userService */
-        $userService = call_user_func($callback);
-        $delegator   = new UserServiceDelegator($userService);
-        return $delegator;
+        $events = $container->get(EventManagerInterface::class);
+
+        $hideListener = new HideDeletedEntitiesListener(['fetch.all.users'], ['fetch.user.post']);
+        $hideListener->setEntityParamKey('user');
+        $hideListener->setDeletedField('u.deleted');
+        $hideListener->attach($events);
+
+        $checkUser = new CheckUserListener();
+        $checkUser->attach($events);
+
+        return new UserServiceDelegator(
+            $callback(),
+            $events
+        );
     }
 }

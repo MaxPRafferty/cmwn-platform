@@ -1,22 +1,11 @@
 <?php
-
-$dbName = getenv('DATABASE1_NAME');
-$dbHost = getenv('DATABASE1_HOST');
-$dbUser = getenv('DATABASE1_USER');
-$dbPass = getenv('DATABASE1_PASS');
-
-$dbName = empty($dbName) ? 'cmwn' : $dbName;
-$dbHost = empty($dbHost) ? 'localhost' : $dbHost;
-$dbUser = empty($dbUser) ? 'cmwn_user' : $dbUser;
-$dbPass = empty($dbPass) ? 'cmwn_pass123$' : $dbPass;
-
 return [
     'db' => [
         'driver'   => 'Pdo',
-        'dsn'      => 'mysql:dbname=' . $dbName . ';host=' . $dbHost,
-        'database' => $dbName,
-        'username' => $dbUser,
-        'password' => $dbPass,
+        'dsn'      => 'mysql:dbname=cmwn;host=127.0.0.1',
+        'database' => 'cmwn',
+        'username' => 'cmwn_user',
+        'password' => 'cmwn_pass123$',
         'driver_options' => [
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
         ],

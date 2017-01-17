@@ -2,6 +2,7 @@
 
 namespace NoticeTest\Listeners;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\EmailModel\ForgotEmailModel;
 use Notice\Listeners\ForgotPasswordListener;
 use \PHPUnit_Framework_TestCase as TestCase;
@@ -17,6 +18,8 @@ use Zend\EventManager\Event;
  */
 class ForgotPasswordListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var ForgotPasswordListener
      */
@@ -76,7 +79,6 @@ class ForgotPasswordListenerTest extends TestCase
         $this->message->shouldReceive('setSubject')
             ->once()
             ->with('Reset Password Code');
-
 
         $this->mailService->shouldReceive('setTemplate')
             ->once()

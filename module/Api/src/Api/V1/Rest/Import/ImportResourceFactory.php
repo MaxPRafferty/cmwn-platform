@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\Import;
 
+use Interop\Container\ContainerInterface;
 use Job\Service\JobServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ImportResourceFactory
@@ -13,15 +13,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class ImportResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $services
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $services)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var JobServiceInterface $jobService */
-        $jobService = $services->get(JobServiceInterface::class);
-        return new ImportResource($jobService, $services);
+        return new ImportResource($container->get(JobServiceInterface::class), $container);
     }
 }

@@ -55,7 +55,7 @@ class ErrorListener implements LoggerAwareInterface
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('\Zend\Mvc\Application', $listener);
+            $events->detach($listener, '\Zend\Mvc\Application');
         }
     }
 

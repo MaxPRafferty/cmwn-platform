@@ -2,6 +2,7 @@
 
 namespace SkribbleTest\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use Skribble\Service\SkribbleService;
@@ -31,6 +32,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class SkribbleServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var SkribbleService
      */

@@ -5,7 +5,6 @@ namespace Api\V1\Rest\UpdatePassword;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
-use Security\SecurityUser;
 use Security\Service\SecurityServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;

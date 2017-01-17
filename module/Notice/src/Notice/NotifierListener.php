@@ -2,18 +2,16 @@
 
 namespace Notice;
 
+use Interop\Container\ContainerInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class NotifierListener
- *
- * ${CARET}
  */
 class NotifierListener
 {
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $services;
 
@@ -24,10 +22,11 @@ class NotifierListener
 
     /**
      * NotifierListener constructor.
-     * @param ServiceLocatorInterface $services
+     *
+     * @param ContainerInterface $services
      * @param array $listeners
      */
-    public function __construct(ServiceLocatorInterface $services, array $listeners)
+    public function __construct(ContainerInterface $services, array $listeners)
     {
         $this->services       = $services;
         $this->listenerConfig = $listeners;

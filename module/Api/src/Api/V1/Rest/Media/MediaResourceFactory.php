@@ -1,9 +1,9 @@
 <?php
 namespace Api\V1\Rest\Media;
 
+use Interop\Container\ContainerInterface;
 use Media\Service\MediaServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class MediaResourceFactory
@@ -11,16 +11,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class MediaResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var MediaServiceInterface $mediaService */
-        $mediaService = $serviceLocator->get(MediaServiceInterface::class);
-        return new MediaResource($mediaService);
+        return new MediaResource($container->get(MediaServiceInterface::class));
     }
 }

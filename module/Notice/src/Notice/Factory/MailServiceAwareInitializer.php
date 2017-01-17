@@ -3,32 +3,23 @@
 namespace Notice\Factory;
 
 use AcMailer\Service\MailServiceAwareInterface;
-use AcMailer\Service\MailServiceInterface;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 /**
  * Class MailServiceAwareInitializer
- *
- * ${CARET}
  */
 class MailServiceAwareInitializer implements InitializerInterface
 {
     /**
-     * Initialize
-     *
-     * @param $instance
-     * @param ServiceLocatorInterface $services
-     * @return mixed
+     * @inheritDoc
      */
-    public function initialize($instance, ServiceLocatorInterface $services)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if (!$instance instanceof MailServiceAwareInterface) {
             return;
         }
 
-        /** @var MailServiceInterface $mailService */
-        $mailService = $services->get('acmailer.mailservice.default');
-        $instance->setMailService($mailService);
+        $instance->setMailService($container->get('acmailer.mailservice.default'));
     }
 }

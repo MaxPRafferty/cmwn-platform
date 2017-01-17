@@ -10,10 +10,10 @@ use \ArrayObject;
 use \ArrayAccess;
 use \BadMethodCallException;
 use \IteratorAggregate;
-use Org\OrganizationInterface;
 
 /**
  * Class ClassRegistry
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ClassRoomRegistry implements ArrayAccess, IteratorAggregate
 {

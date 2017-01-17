@@ -2,7 +2,6 @@
 namespace Api\V1\Rest\Logout;
 
 use Zend\Authentication\AuthenticationService;
-use Zend\Stdlib\ArrayObject;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 

@@ -2,11 +2,10 @@
 
 namespace Security\Controller;
 
-use Security\Authorization\Rbac;
+use Interop\Container\ContainerInterface;
 use Security\Utils\PermissionTableFactory;
-use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class PermControllerFactory
@@ -14,21 +13,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class PermControllerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-
-        /** @var Rbac $rbac */
-        $rbac = $serviceLocator->get(PermissionTableFactory::class);
-
-        return new PermController($rbac);
+        return new PermController($container->get(PermissionTableFactory::class));
     }
 }

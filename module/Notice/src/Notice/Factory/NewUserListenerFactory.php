@@ -2,26 +2,22 @@
 
 namespace Notice\Factory;
 
+use Interop\Container\ContainerInterface;
 use Notice\EmailModel\NewUserModel;
 use Notice\Listeners\NewUserEmailListener;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class NewUserListenerFactory
- * @package Notice\Factory
  */
 class NewUserListenerFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return NewUserEmailListener
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config       = $serviceLocator->get('Config');
-        $successModel = new NewUserModel(['image_domain' => $config['options']['image_domain']]);
-
-        return new NewUserEmailListener($successModel);
+        $config = $container->get('config');
+        return new NewUserEmailListener(new NewUserModel(['image_domain' => $config['options']['image_domain']]));
     }
 }

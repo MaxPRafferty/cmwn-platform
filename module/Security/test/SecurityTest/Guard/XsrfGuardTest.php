@@ -3,10 +3,11 @@
 namespace SecurityTest\Guard;
 
 use IntegrationTest\SessionManager;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Guard\XsrfGuard;
 use Zend\Http\Header\Cookie;
-use Zend\Mvc\Router\RouteMatch;
+use \Zend\Router\Http\RouteMatch;
 use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;
@@ -25,6 +26,8 @@ use ZF\ApiProblem\ApiProblemResponse;
  */
 class XsrfGuardTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var SessionManager
      */
@@ -80,8 +83,8 @@ class XsrfGuardTest extends TestCase
      */
     public function testItShouldNotFail()
     {
-        $response = new HttpResponse();
-        $request = \Mockery::mock('Zend\Http\PhpEnvironment\Request');
+        $response   = new HttpResponse();
+        $request    = \Mockery::mock('Zend\Http\PhpEnvironment\Request');
         $routeMatch = new RouteMatch([]);
 
         $this->event
@@ -108,9 +111,9 @@ class XsrfGuardTest extends TestCase
      */
     public function testItShouldReturnApiProblemIfNoToken()
     {
-        $request = \Mockery::mock('Zend\Http\PhpEnvironment\Request');
+        $request    = \Mockery::mock('Zend\Http\PhpEnvironment\Request');
         $routeMatch = new RouteMatch([]);
-        $cookie = new Cookie();
+        $cookie     = new Cookie();
         $cookie->offsetSet('XSRF-TOKEN', null);
 
         $this->event

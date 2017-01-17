@@ -7,17 +7,14 @@ use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
 /**
- * Class ExpireAuthSessionListener
- *
  * Soft Session expiration
- *
- * The reason
  */
 class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, LoggerAwareInterface
 {
@@ -28,11 +25,6 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
      * How many seconds to keep an authenticated session active
      */
     const AUTH_TIMEOUT = 600;
-
-    /**
-     * @var array
-     */
-    protected $listeners = [];
 
     /**
      * @var Container
@@ -54,10 +46,10 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach(
-            '*',
+        $events->attach(
+            Application::class,
             MvcEvent::EVENT_ROUTE,
-            [$this, 'onRoute'],
+            $this,
             PHP_INT_MAX
         );
     }
@@ -67,22 +59,21 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-        foreach ($this->listeners as $listener) {
-            $manager->detach('*', $listener);
-        }
+        $manager->detach(Application::class, $this);
     }
 
     /**
-     * @return void|ApiProblemResponse
+     * @return null|ApiProblemResponse
      */
-    public function onRoute()
+    public function __invoke()
     {
         // Do nothing if not logged in
         if (!$this->getAuthenticationService()->hasIdentity()) {
             $this->container->offsetUnset('last_seen');
+
             return null;
         }
-        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $now         = new \DateTime('now', new \DateTimeZone('UTC'));
         $currentTime = $lastSeen = $now->getTimestamp();
         if ($this->container->offsetExists('last_seen')) {
             $lastSeen = $this->container->offsetGet('last_seen');
@@ -99,6 +90,7 @@ class ExpireAuthSessionListener implements AuthenticationServiceAwareInterface, 
                 ['current_time' => $currentTime, 'last_seen' => $lastSeen]
             );
             $this->container->offsetUnset('last_seen');
+
             return new ApiProblemResponse(new ApiProblem(401, 'Expired'));
         }
 

@@ -3,7 +3,8 @@
 namespace SecurityTest\Authentication;
 
 use Application\Exception\NotFoundException;
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Builder;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\ChangePasswordUser;
@@ -28,6 +29,8 @@ use Zend\Authentication\Result;
  */
 class AuthAdapterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|SecurityServiceInterface
      */
@@ -168,19 +171,18 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldAllowLoginWithCodeUser()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() - 50)
-            ->expiresAt(time() + 50)
-            ->identifiedBy('nom-nom-nom')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() - 50)
+            ->setExpiration(time() + 50)
+            ->setId('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -207,19 +209,18 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldDenyLoginWhenCodeIsExpired()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() - 150)
-            ->expiresAt(time() - 50)
-            ->identifiedBy('nom-nom-nom')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() - 150)
+            ->setExpiration(time() - 50)
+            ->setId('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -246,19 +247,18 @@ class AuthAdapterTest extends TestCase
      */
     public function testItShouldDenyLoginWhenCodeIsOutsideWindow()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->issuedAt(time() + 150)
-            ->expiresAt(time() + 250)
-            ->identifiedBy('nom-nom-nom')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setIssuedAt(time() + 150)
+            ->setExpiration(time() + 250)
+            ->setId('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(
@@ -279,23 +279,23 @@ class AuthAdapterTest extends TestCase
             'Wrong password user was allowed to login'
         );
     }
+
     /**
      * @test
      */
     public function testItShouldDenyLoginWhenCodeHasNoStartDate()
     {
-        $jwtConfig = new Configuration();
-        $token     = $jwtConfig->createBuilder()
-            ->canOnlyBeUsedBy('abcd-efgh')
-            ->expiresAt(time() + 50)
-            ->identifiedBy('nom-nom-nom')
+
+        $token     = (new Builder())->setAudience('abcd-efgh')
+            ->setExpiration(time() + 50)
+            ->setId('nom-nom-nom')
             ->getToken();
 
-        $authUser    = new SecurityUser([
-            'user_id'      => 'man-chuck',
-            'username'     => 'manchuck',
-            'email'        => 'chuck@manchuck.com',
-            'code'         => $token->__toString(),
+        $authUser = new SecurityUser([
+            'user_id'  => 'man-chuck',
+            'username' => 'manchuck',
+            'email'    => 'chuck@manchuck.com',
+            'code'     => $token->__toString(),
         ]);
 
         $this->assertEquals(

@@ -36,6 +36,7 @@ class UserServiceListener implements RbacAwareInterface, AuthenticationServiceAw
 
     /**
      * UserServiceListener constructor.
+     *
      * @param UserGroupServiceInterface $userGroupService
      */
     public function __construct(UserGroupServiceInterface $userGroupService)
@@ -109,7 +110,8 @@ class UserServiceListener implements RbacAwareInterface, AuthenticationServiceAw
 
     /**
      * @param Event $event
-     * @return void|\Zend\Paginator\Adapter\DbSelect
+     *
+     * @return null|\Zend\Paginator\Adapter\DbSelect
      * @throws NotAuthorizedException
      */
     public function fetchAll(Event $event)
@@ -130,6 +132,7 @@ class UserServiceListener implements RbacAwareInterface, AuthenticationServiceAw
         }
 
         $event->stopPropagation(true);
+
         return $this->userGroupService->fetchAllUsersForUser(
             $user,
             $event->getParam('where'),
