@@ -6,7 +6,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\Authorization\Assertion\UserAssertion;
 use Security\Authorization\Rbac;
-use Security\Service\SecurityGroupServiceInterface;
+use Security\Service\SecurityUserServiceInterface;
 use User\Adult;
 use User\Child;
 
@@ -24,7 +24,7 @@ class UserAssertionTest extends TestCase
     use MockeryPHPUnitIntegration;
 
     /**
-     * @var \Mockery\MockInterface|SecurityGroupServiceInterface
+     * @var \Mockery\MockInterface|SecurityUserServiceInterface
      */
     protected $securityGroup;
 
@@ -43,7 +43,7 @@ class UserAssertionTest extends TestCase
      */
     public function setUpSecurityGroupService()
     {
-        $this->securityGroup = \Mockery::mock(SecurityGroupServiceInterface::class);
+        $this->securityGroup = \Mockery::mock(SecurityUserServiceInterface::class);
     }
 
     /**

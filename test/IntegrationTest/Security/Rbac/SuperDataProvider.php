@@ -66,5 +66,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('update.game');
         $this->setAllowed('view.game');
         $this->setAllowed('reset.group.code');
+        $this->setAllowed('view.feed');
     }
 }

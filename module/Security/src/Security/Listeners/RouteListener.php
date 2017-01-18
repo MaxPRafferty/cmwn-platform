@@ -10,9 +10,10 @@ use Security\Authorization\Assertion\DefaultAssertion;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
+use Security\Service\SecurityGroupServiceInterface;
 use Security\Utils\OpenRouteTrait;
 use Security\SecurityUser;
-use Security\Service\SecurityGroupService;
+use Security\Service\SecurityUserService;
 use Security\Service\SecurityOrgServiceInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
@@ -39,29 +40,36 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
     protected $routePerms = [];
 
     /**
+     * @var SecurityGroupServiceInterface
+     */
+    protected $securityGroupService;
+
+    /**
      * @var SecurityOrgServiceInterface
      */
     protected $orgService;
 
     /**
-     * @var SecurityGroupService
+     * @var SecurityUserService
      */
     protected $groupService;
 
     /**
      * RouteListener constructor.
-     *
      * @param array $config
      * @param SecurityOrgServiceInterface $orgService
-     * @param SecurityGroupService $groupService
+     * @param SecurityGroupServiceInterface $securityGroupService
+     * @param SecurityUserService $groupService
      */
     public function __construct(
         array $config,
         SecurityOrgServiceInterface $orgService,
-        SecurityGroupService $groupService
+        SecurityGroupServiceInterface $securityGroupService,
+        SecurityUserService $groupService
     ) {
         $config             = $config['cmwn-security'] ?? [];
         $this->routePerms   = isset($config['route-permissions']) ? $config['route-permissions'] : [];
+        $this->securityGroupService = $securityGroupService;
         $this->orgService   = $orgService;
         $this->groupService = $groupService;
         $this->setOpenRoutes(isset($config['open-routes']) ? $config['open-routes'] : []);
@@ -225,7 +233,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
 
         switch (true) {
             case $group !== false:
-                $foundRole = $this->orgService->getRoleForGroup($group, $identity);
+                $foundRole = $this->securityGroupService->getRoleForGroup($group, $identity);
                 break;
 
             case $orgId !== false:

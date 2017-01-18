@@ -30,6 +30,14 @@ class ArraySpecification extends AbstractEngineSpecification implements Specific
             }
         }
 
+        if (!is_string($spec['when']) && !is_array($spec['when'])) {
+            throw new RuntimeException(sprintf(
+                'when passed in %s should either be an array or a string, but %s given',
+                static::class,
+                gettype($spec['when'])
+            ));
+        }
+
         // check that items are arrays
         foreach (['rules', 'actions', 'providers'] as $mustBeArray) {
             if (isset($spec[$mustBeArray]) && !is_array($spec[$mustBeArray])) {

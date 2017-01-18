@@ -25,4 +25,20 @@ return [
             ],
         ],
     ],
+    \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
+        \Group\Rule\Provider\GroupTypesProvider::class => [
+            \Group\Service\GroupServiceInterface::class,
+        ],
+
+        \Group\Rule\Provider\ChildGroupTypesProvider::class      => [
+            \Group\Service\GroupServiceInterface::class,
+        ],
+    ],
+
+    'providers' => [
+        'shared' => [
+            \Group\Rule\Provider\GroupTypesProvider::class       => false,
+            \Group\Rule\Provider\ChildGroupTypesProvider::class => false,
+        ]
+    ]
 ];

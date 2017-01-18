@@ -39,11 +39,15 @@ class Engine
         foreach ($specs as $spec) {
             $newHandler = clone $handler;
             $newHandler->setSpecification($spec);
-            $events->attach(
-                '*',
-                $spec->getEventName(),
-                $newHandler
-            );
+
+            $specEvents = $spec->getEventName();
+            foreach ($specEvents as $specEvent) {
+                $events->attach(
+                    '*',
+                    $specEvent,
+                    $newHandler
+                );
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Api\Links;
 
+use User\UserInterface;
 use ZF\Hal\Link\Link;
 
 /**
@@ -12,10 +13,11 @@ class SaveGameLink extends Link
     /**
      * SaveGameLink constructor.
      *
-     * @param string $userId
+     * @param string | UserInterface $user
      */
-    public function __construct($userId)
+    public function __construct($user)
     {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         parent::__construct('save_game');
         $this->setRoute('api.rest.save-game', ['reuse_matched_params' => false]);
         $this->setRouteParams(['game_id' => '{game_id}', 'user_id' => $userId]);

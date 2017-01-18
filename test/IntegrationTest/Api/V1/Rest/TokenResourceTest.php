@@ -120,6 +120,7 @@ class TokenResourceTest extends TestCase
             'Super User'      => [
                 'user'  => 'super_user',
                 'links' => [
+                    'feed',
                     'flip',
                     'games',
                     'group_class',
@@ -130,7 +131,6 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
-                    'save_game',
                     'flags',
                     'sa_settings',
                 ],
@@ -139,6 +139,7 @@ class TokenResourceTest extends TestCase
             'Principal'       => [
                 'user'  => 'principal',
                 'links' => [
+                    'feed',
                     'flip',
                     'games',
                     'group_school',
@@ -149,7 +150,6 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
-                    'save_game',
                     'flags',
                 ],
                 'scope' => 2,
@@ -157,6 +157,7 @@ class TokenResourceTest extends TestCase
             'English Teacher' => [
                 'user'  => 'english_teacher',
                 'links' => [
+                    'feed',
                     'flip',
                     'games',
                     'group_school',
@@ -167,7 +168,6 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
-                    'save_game',
                     'flags',
                 ],
                 'scope' => 2,

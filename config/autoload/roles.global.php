@@ -147,6 +147,7 @@ return [
                     'update.game',
                     'delete.game',
                     'reset.group.code',
+                    'view.feed',
                 ],
             ],
 
