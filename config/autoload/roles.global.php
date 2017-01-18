@@ -83,7 +83,8 @@ return [
             'skribble.notice'      => 'Notify Skribble status',
 
             // god mode
-            'sa.settings'          => 'View God Mode Admin Dashboard'
+            'sa.settings'          => 'View God Mode Admin Dashboard',
+            'get.super.user'       => 'Fetch a super user',
         ],
         'roles'             => [
             'super' => [
@@ -149,6 +150,7 @@ return [
                     'delete.game',
                     'reset.group.code',
                     'set.super',
+                    'get.super.user',
                 ],
             ],
 

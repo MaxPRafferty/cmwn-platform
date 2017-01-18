@@ -8,6 +8,9 @@ return [
             \Security\Service\SecurityServiceInterface::class,
             \User\Service\UserServiceInterface::class,
         ],
+        \Api\V1\Rest\Super\SuperResource::class => [
+            \Security\Service\SecurityServiceInterface::class,
+        ],
     ],
 
     'shared-listeners' => [
@@ -389,6 +392,15 @@ return [
                     ],
                 ],
             ],
+            'api.rest.super'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/super/:user_id',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\Super\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -424,6 +436,7 @@ return [
             'api.rest.group-reset',
             'api.rest.acknowledge',
             'api.rest.super-flag',
+            'api.rest.super',
         ],
     ],
     'zf-rest'                => [
@@ -842,6 +855,20 @@ return [
             'collection_class'           => \Api\V1\Rest\SuperFlag\SuperFlagCollection::class,
             'service_name'               => 'SuperFlag',
         ],
+        'Api\V1\Rest\Super\Controller'     => [
+            'listener'                   => \Api\V1\Rest\Super\SuperResource::class,
+            'route_name'                 => 'api.rest.super',
+            'route_identifier_name'      => 'user_id',
+            'collection_name'            => 'super',
+            'entity_http_methods'        => ['GET'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\Super\SuperEntity::class,
+            'collection_class'           => \Api\V1\Rest\Super\SuperCollection::class,
+            'service_name'               => 'SuperFlag',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers'            => [
@@ -874,6 +901,7 @@ return [
             'Api\V1\Rest\Flag\Controller'           => 'HalJson',
             'Api\V1\Rest\GroupReset\Controller'     => 'HalJson',
             'Api\V1\Rest\SuperFlag\Controller'      => 'HalJson',
+            'Api\V1\Rest\Super\Controller'          => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1016,6 +1044,11 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\Super\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1131,6 +1164,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\SuperFlag\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\Super\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1496,6 +1533,18 @@ return [
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
             \Api\V1\Rest\SuperFlag\SuperFlagCollection::class         => [
+                'entity_identifier_name' => 'user_id',
+                'route_name'             => 'api.rest.super-flag',
+                'route_identifier_name'  => 'user_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\Super\SuperEntity::class             => [
+                'entity_identifier_name' => 'user_id',
+                'route_name'             => 'api.rest.super-flag',
+                'route_identifier_name'  => 'user_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\Super\SuperCollection::class         => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.super-flag',
                 'route_identifier_name'  => 'user_id',

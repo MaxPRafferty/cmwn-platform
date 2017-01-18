@@ -124,6 +124,9 @@ return [
             'api.rest.super-flag' => [
                 'POST' => 'set.super',
             ],
+            'api.rest.super' => [
+                'GET'  => 'get.super.user',
+            ],
         ],
     ],
 ];

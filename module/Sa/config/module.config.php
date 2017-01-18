@@ -2,9 +2,7 @@
 
 return [
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
-        \Sa\Listeners\SaSettingsLinkListener::class => [
-            \Security\Service\SecurityServiceInterface::class,
-        ],
+        \Sa\Listeners\SaSettingsLinkListener::class => [],
     ],
     'shared-listeners'       => [
         \Sa\Listeners\SaSettingsLinkListener::class,

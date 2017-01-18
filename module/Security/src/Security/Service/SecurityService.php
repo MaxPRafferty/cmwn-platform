@@ -6,7 +6,6 @@ use Application\Exception\NotFoundException;
 use Lcobucci\JWT\Builder;
 use Security\SecurityUser;
 use User\User;
-use User\Service\UserService;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
@@ -37,15 +36,17 @@ class SecurityService implements SecurityServiceInterface
     /**
      * @inheritdoc
      */
+    public function fetchUserByUserId($userId)
+    {
+        return $this->fetchHelper(['user_id' => $userId]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function fetchUserByEmail($email)
     {
-        $rowSet = $this->gateway->select(['email' => $email]);
-        $row    = $rowSet->current();
-        if (!$row) {
-            throw new NotFoundException("User not Found");
-        }
-
-        return new SecurityUser($row->getArrayCopy());
+        return $this->fetchHelper(['email' => $email]);
     }
 
     /**
@@ -58,14 +59,19 @@ class SecurityService implements SecurityServiceInterface
             new Operator('normalized_username', Operator::OP_EQ, User::normalizeUsername($username)),
         ], PredicateSet::OP_OR);
 
-        $rowSet = $this->gateway->select($predicateSet);
-        $row    = $rowSet->current();
-        if ($row) {
-            return new SecurityUser($row->getArrayCopy());
-        }
+        return $this->fetchHelper($predicateSet);
+    }
 
-        $rowSet = $this->gateway->select(['normalized_username' => UserService::normalizeUsername($username)]);
+    /**
+     * @param array | PredicateSet $where
+     * @return SecurityUser
+     * @throws NotFoundException
+     */
+    protected function fetchHelper($where)
+    {
+        $rowSet = $this->gateway->select($where);
         $row    = $rowSet->current();
+
         if (!$row) {
             throw new NotFoundException("User not Found");
         }
