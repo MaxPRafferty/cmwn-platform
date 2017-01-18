@@ -3,11 +3,12 @@
 namespace Api\V1\Rest\Media;
 
 use Media\Service\MediaServiceInterface;
+use Zend\Http\Client\Adapter\Exception\TimeoutException;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class MediaResource
+ * Resource that talks to the media server
  */
 class MediaResource extends AbstractResourceListener
 {
@@ -27,24 +28,30 @@ class MediaResource extends AbstractResourceListener
     }
 
     /**
-     * Fetch a resource
-     *
-     * @param  mixed $mediaId
-     * @return ApiProblem|mixed
+     * @inheritdoc
      */
     public function fetch($mediaId)
     {
-        return $this->mediaService->importMediaData($mediaId, new MediaEntity());
+        try {
+            return $this->mediaService->importMediaData($mediaId, new MediaEntity());
+        } catch (TimeoutException $timeout) {
+            // TODO move to rules engine
+        }
+
+        return new ApiProblem(408, $timeout);
     }
 
     /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return ApiProblem|mixed
+     * @inheritdoc
      */
     public function fetchAll($params = [])
     {
-        return $this->mediaService->importMediaData('', new MediaEntity());
+        try {
+            return $this->mediaService->importMediaData('', new MediaEntity());
+        } catch (TimeoutException $timeout) {
+            // TODO move to rules engine
+        }
+
+        return new ApiProblem(408, $timeout);
     }
 }
