@@ -23,6 +23,15 @@ interface SecurityServiceInterface
     /**
      * Fetches a user by the email
      *
+     * @param $userId
+     * @return SecurityUser
+     * @throws NotFoundException
+     */
+    public function fetchUserByUserId($userId);
+
+    /**
+     * Fetches a user by the email
+     *
      * @param $email
      * @return SecurityUser
      * @throws NotFoundException

@@ -85,6 +85,7 @@ return [
 
             // god mode
             'sa.settings'          => 'View God Mode Admin Dashboard',
+            'get.super.user'       => 'Fetch a super user',
 
             //address
             'view.all.addresses'   => 'View Addresses',
@@ -95,7 +96,6 @@ return [
             'view.all.group.addresses' => 'View addresses of a group',
             'attach.group.address' => 'attach address to a group',
             'detach.group.address' => 'detach address from a group',
-
         ],
         'roles'             => [
             'super' => [
@@ -170,6 +170,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                     'set.super',
+                    'get.super.user',
                 ],
             ],
 

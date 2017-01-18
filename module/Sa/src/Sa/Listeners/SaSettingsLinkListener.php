@@ -9,7 +9,6 @@ use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\SecurityUser;
-use Security\Service\SecurityServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -29,20 +28,6 @@ class SaSettingsLinkListener implements AuthenticationServiceAwareInterface, Rba
      * @var CallbackHandler
      */
     protected $listener;
-
-    /**
-     * @var SecurityServiceInterface
-     */
-    protected $securityService;
-
-    /**
-     * SaSettingsLinkListener constructor.
-     * @param SecurityServiceInterface $securityService
-     */
-    public function __construct(SecurityServiceInterface $securityService)
-    {
-        $this->securityService = $securityService;
-    }
 
     /**
      * @param SharedEventManagerInterface $events
@@ -83,10 +68,9 @@ class SaSettingsLinkListener implements AuthenticationServiceAwareInterface, Rba
         /** @var SecurityUser $authUser */
         $authUser = $this->getAuthenticationService()->getIdentity();
 
-        /** @var SecurityUser $realEntity */
-        $realEntity = $this->securityService->fetchUserByUserName($realEntity->getUserName());
-
-        if ($this->getRbac()->isGranted($authUser->getRole(), 'sa.settings') && $realEntity->isSuper()) {
+        if ($this->getRbac()->isGranted($authUser->getRole(), 'sa.settings')
+            && $realEntity->getUserId() === $authUser->getUserId()
+        ) {
             $entity->getLinks()->add(new SuperAdminSettingsLink());
         }
 
