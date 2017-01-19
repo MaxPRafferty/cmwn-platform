@@ -395,7 +395,7 @@ return [
             'api.rest.super'     => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/super/:user_id',
+                    'route'    => '/super[/:user_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\Super\Controller',
                     ],

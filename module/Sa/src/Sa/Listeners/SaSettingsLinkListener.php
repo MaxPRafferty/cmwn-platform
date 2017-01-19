@@ -3,6 +3,7 @@
 namespace Sa\Listeners;
 
 use Api\Links\SuperFlagLink;
+use Api\Links\SuperLink;
 use Sa\Links\SuperAdminSettingsLink;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
@@ -83,5 +84,6 @@ class SaSettingsLinkListener implements AuthenticationServiceAwareInterface, Rba
         }
 
         $entity->getLinks()->add(new SuperFlagLink($realEntity));
+        $entity->getLinks()->add(new SuperLink());
     }
 }
