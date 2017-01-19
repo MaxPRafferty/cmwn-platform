@@ -132,6 +132,7 @@ class TokenResourceTest extends TestCase
                     'user_image',
                     'save_game',
                     'super_flag',
+                    'super',
                     'flags',
                     'sa_settings',
                 ],
