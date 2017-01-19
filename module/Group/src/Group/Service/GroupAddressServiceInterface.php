@@ -1,6 +1,6 @@
 <?php
 
-namespace Address\Service;
+namespace Group\Service;
 
 use Address\AddressInterface;
 use Application\Exception\NotFoundException;
@@ -30,10 +30,14 @@ interface GroupAddressServiceInterface
     /**
      * @param GroupInterface $group
      * @param null $where
-     * @param null $prototype
+     * @param AddressInterface | null $prototype
      * @return DbSelect
      */
-    public function fetchAllAddressesForGroup(GroupInterface $group, $where = null, $prototype = null) : DbSelect;
+    public function fetchAllAddressesForGroup(
+        GroupInterface $group,
+        $where = null,
+        AddressInterface $prototype = null
+    ) : DbSelect;
 
     /**
      * @param GroupInterface $group

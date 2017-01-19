@@ -144,7 +144,7 @@ class AddressDelegatorTest extends TestCase
         }
 
         $this->assertEquals(
-            1,
+            2,
             count($this->calledEvents),
             AddressDelegator::class . ' did not trigger the correct number of events when fetching all with error'
         );
@@ -158,12 +158,21 @@ class AddressDelegatorTest extends TestCase
             $this->calledEvents[0],
             AddressDelegator::class . ' did not trigger the event correctly for fetch.all.addresses with error'
         );
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.addresses.error',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null, 'exception' => new \Exception()],
+            ],
+            $this->calledEvents[1],
+            AddressDelegator::class . ' did not trigger the event correctly for fetch.all.addresses with error'
+        );
     }
 
     /**
      * @test
      */
-    public function testItShouldCallNotFetchAllWhenEventStops()
+    public function testItShouldNotCallFetchAllWhenEventStops()
     {
         $result = new DbSelect(new Select(), $this->adapter, new HydratingResultSet());
         $this->addressService->shouldReceive('fetchAll')
@@ -412,6 +421,57 @@ class AddressDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldTriggerErrorEventWhenExceptionIsThrownOnCreateAddress()
+    {
+        $address = new Address([
+            'administrative_area'     => 'ny',
+            'sub_administrative_area' => null,
+            'locality'                => 'ny',
+            'dependent_locality'      => null,
+            'postal_code'             => '10036',
+            'thoroughfare'            => '21 W 46th St',
+            'premise'                 => null,
+        ]);
+
+        $this->addressService->shouldReceive('createAddress')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+
+        try {
+            $this->delegator->createAddress($address);
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                AddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'create.address',
+                    'target' => $this->addressService,
+                    'params' => ['address' => $address],
+                ],
+                $this->calledEvents[0],
+                AddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'create.address.error',
+                    'target' => $this->addressService,
+                    'params' => ['address' => $address, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1],
+                AddressDelegator::class . ' did not trigger the event correctly for create.address.error'
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCallUpdateAddress()
     {
         $address = new Address([
@@ -499,6 +559,55 @@ class AddressDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldTriggerErrorEventOnExceptionWhenUpdateAddressIsCalled()
+    {
+        $address = new Address([
+            'administrative_area'     => 'ny',
+            'sub_administrative_area' => null,
+            'locality'                => 'ny',
+            'dependent_locality'      => null,
+            'postal_code'             => '10036',
+            'thoroughfare'            => '21 W 46th St',
+            'premise'                 => null,
+        ]);
+
+        $this->addressService->shouldReceive('updateAddress')
+            ->andReturn(true)->once();
+
+        try {
+            $this->delegator->updateAddress($address);
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                AddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'update.address',
+                    'target' => $this->addressService,
+                    'params' => ['address' => $address],
+                ],
+                $this->calledEvents[0],
+                AddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'update.address.error',
+                    'target' => $this->addressService,
+                    'params' => ['address' => $address, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1],
+                AddressDelegator::class . ' did not trigger the event correctly for update.address.error'
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteAddress()
     {
         $address = new Address([
@@ -581,5 +690,57 @@ class AddressDelegatorTest extends TestCase
             $this->calledEvents[0],
             AddressDelegator::class . ' did not trigger the event correctly'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTriggerErrorEventWhenExceptionIsThrownOnDeleteAddress()
+    {
+        $address = new Address([
+            'administrative_area'     => 'ny',
+            'sub_administrative_area' => null,
+            'locality'                => 'ny',
+            'dependent_locality'      => null,
+            'postal_code'             => '10036',
+            'thoroughfare'            => '21 W 46th St',
+            'premise'                 => null,
+        ]);
+
+        $this->addressService->shouldReceive('deleteAddress')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+
+        try {
+            $this->delegator->deleteAddress($address);
+            $this->fail('exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                AddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'delete.address',
+                    'target' => $this->addressService,
+                    'params' => ['address' => $address],
+                ],
+                $this->calledEvents[0],
+                AddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'delete.address.error',
+                    'target' => $this->addressService,
+                    'params' => ['address' => $address, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1],
+                AddressDelegator::class . ' did not trigger the event correctly for delete.address.error'
+            );
+        }
     }
 }

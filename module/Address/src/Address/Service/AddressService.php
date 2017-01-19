@@ -38,7 +38,7 @@ class AddressService implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAddress(string $addressId, $prototype = null) : AddressInterface
+    public function fetchAddress(string $addressId, AddressInterface $prototype = null) : AddressInterface
     {
         $rowSet = $this->tableGateway->select(['address_id' => $addressId]);
 
@@ -57,7 +57,7 @@ class AddressService implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, $prototype = null) : DbSelect
+    public function fetchAll($where = null, AddressInterface $prototype = null) : DbSelect
     {
         $where = $this->createWhere($where);
         $prototype = $prototype ?? new Address([]);

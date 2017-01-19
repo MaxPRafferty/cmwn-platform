@@ -19,14 +19,14 @@ interface AddressServiceInterface
      * @return AddressInterface
      * @throws NotFoundException
      */
-    public function fetchAddress(string $addressId, $prototype = null) : AddressInterface;
+    public function fetchAddress(string $addressId, AddressInterface $prototype = null) : AddressInterface;
 
     /**
      * @param null $where
      * @param AddressInterface|null $prototype
      * @return DbSelect
      */
-    public function fetchAll($where = null, $prototype = null) : DbSelect;
+    public function fetchAll($where = null, AddressInterface $prototype = null) : DbSelect;
 
     /**
      * @param AddressInterface $address

@@ -4,7 +4,7 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use Address\Address;
 use Address\Service\AddressServiceInterface;
-use Address\Service\GroupAddressServiceInterface;
+use Group\Service\GroupAddressServiceInterface;
 use Application\Exception\NotFoundException;
 use Group\Group;
 use IntegrationTest\AbstractApigilityTestCase;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Address\Delegator;
+namespace Group\Delegator;
 
 use Address\AddressInterface;
-use Address\Service\GroupAddressService;
-use Address\Service\GroupAddressServiceInterface;
+use Group\Service\GroupAddressService;
+use Group\Service\GroupAddressServiceInterface;
 use Group\GroupInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
@@ -64,13 +64,19 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         if ($response->stopped()) {
             return $response->last();
         }
+        try {
+            $return = $this->realService->attachAddressToGroup($group, $address);
+            $event->setName('attach.group.address.post');
+            $event->setParam('return', $return);
+            $this->getEventManager()->triggerEvent($event);
 
-        $return   = $this->realService->attachAddressToGroup($group, $address);
-        $event->setName('attach.group.address.post');
-        $event->setParam('return', $return);
-        $this->getEventManager()->triggerEvent($event);
-
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('attach.group.address.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
     }
 
     /**
@@ -88,20 +94,29 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         if ($response->stopped()) {
             return $response->last();
         }
+        try {
+            $return = $this->realService->detachAddressFromGroup($group, $address);
+            $event->setName('detach.group.address.post');
+            $event->setParam('return', $return);
+            $this->getEventManager()->triggerEvent($event);
 
-        $return   = $this->realService->detachAddressFromGroup($group, $address);
-        $event->setName('detach.group.address.post');
-        $event->setParam('return', $return);
-        $this->getEventManager()->triggerEvent($event);
-
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('detach.group.address.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function fetchAllAddressesForGroup(GroupInterface $group, $where = null, $prototype = null) : DbSelect
-    {
+    public function fetchAllAddressesForGroup(
+        GroupInterface $group,
+        $where = null,
+        AddressInterface $prototype = null
+    ) : DbSelect {
         $event = new Event(
             'fetch.all.group.addresses',
             $this->realService,
@@ -112,13 +127,19 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         if ($response->stopped()) {
             return $response->last();
         }
+        try {
+            $return = $this->realService->fetchAllAddressesForGroup($group, $where, $prototype);
+            $event->setName('fetch.all.group.addresses.post');
+            $event->setParam('addresses', $return);
+            $this->getEventManager()->triggerEvent($event);
 
-        $return   = $this->realService->fetchAllAddressesForGroup($group, $where, $prototype);
-        $event->setName('fetch.all.group.addresses.post');
-        $event->setParam('addresses', $return);
-        $this->getEventManager()->triggerEvent($event);
-
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.all.group.addresses.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
     }
 
     /**
@@ -136,12 +157,18 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         if ($response->stopped()) {
             return $response->last();
         }
+        try {
+            $return = $this->realService->fetchAddressForGroup($group, $address);
+            $event->setName('fetch.group.address.post');
+            $event->setParam('address', $return);
+            $this->getEventManager()->triggerEvent($event);
 
-        $return   = $this->realService->fetchAddressForGroup($group, $address);
-        $event->setName('fetch.group.address.post');
-        $event->setParam('address', $return);
-        $this->getEventManager()->triggerEvent($event);
-
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.group.address.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
     }
 }

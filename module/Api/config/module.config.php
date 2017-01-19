@@ -8,7 +8,7 @@ return [
             \Address\Service\AddressServiceInterface::class,
         ],
         \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
-            \Address\Service\GroupAddressServiceInterface::class,
+            \Group\Service\GroupAddressServiceInterface::class,
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupServiceInterface::class
         ],
@@ -2306,7 +2306,7 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\V1\Rest\Address\Validator' => [
+        'Api\V1\Rest\Address\Validator' => [ //@todo i18n
             [
                 'required'    => true,
                 'validators'  => [],

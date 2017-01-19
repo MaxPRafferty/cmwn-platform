@@ -1,6 +1,6 @@
 <?php
 
-namespace Address\Delegator;
+namespace Group\Delegator;
 
 use Interop\Container\ContainerInterface;
 use Zend\EventManager\EventManagerInterface;

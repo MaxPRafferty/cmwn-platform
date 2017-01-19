@@ -3,7 +3,7 @@
 namespace AddressTest\Service;
 
 use Address\Address;
-use Address\Service\GroupAddressService;
+use Group\Service\GroupAddressService;
 use Api\V1\Rest\Address\AddressEntity;
 use Group\Group;
 use Zend\Db\Adapter\Adapter;
