@@ -15,7 +15,7 @@ build:
   steps:
     - script:
       name: install dependencies
-      code: composer install --no-interaction --ignore-platform-reqs
+      code: composer install --no-interaction
     - script:
       name: Setup test DB
       code: |-

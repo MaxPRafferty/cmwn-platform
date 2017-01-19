@@ -11,10 +11,10 @@ use Zend\EventManager\SharedEventManagerInterface;
 use ZF\Hal\Entity;
 
 /**
- * Class InjectUserListener
+ * Class InjectSenderListener
  * @package Api\Listeners
  */
-class InjectUserListener
+class InjectSenderListener
 {
     /**
      * @var array
@@ -27,7 +27,7 @@ class InjectUserListener
     protected $userService;
 
     /**
-     * InjectUserListener constructor.
+     * InjectSenderListener constructor.
      * @param UserServiceInterface $userService
      */
     public function __construct(UserServiceInterface $userService)

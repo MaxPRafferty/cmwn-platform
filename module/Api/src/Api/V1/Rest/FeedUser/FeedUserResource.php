@@ -26,7 +26,9 @@ class FeedUserResource extends AbstractResourceListener
         $this->feedUserService = $feedUserService;
     }
 
-    /**@inheritdoc */
+    /**
+     * @inheritdoc
+     * */
     public function fetchAll($params = [])
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
@@ -35,7 +37,9 @@ class FeedUserResource extends AbstractResourceListener
         return $result;
     }
 
-    /**@inheritdoc */
+    /**
+     * @inheritdoc
+     */
     public function fetch($feedId)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
@@ -43,7 +47,9 @@ class FeedUserResource extends AbstractResourceListener
         return new FeedUserEntity($userFeed->getArrayCopy());
     }
 
-    /**@Inheritdoc */
+    /**
+     * @Inheritdoc
+     * */
     public function create($data)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
@@ -57,7 +63,9 @@ class FeedUserResource extends AbstractResourceListener
         return new FeedUserEntity($userFeed->getArrayCopy());
     }
 
-    /**@Inheritdoc*/
+    /**
+     * @Inheritdoc
+     */
     public function update($feedId, $data)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
@@ -71,7 +79,9 @@ class FeedUserResource extends AbstractResourceListener
         return new FeedUserEntity($userFeed->getArrayCopy());
     }
 
-    /**@Inheritdoc*/
+    /**
+     * @Inheritdoc
+     */
     public function delete($feedId)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');

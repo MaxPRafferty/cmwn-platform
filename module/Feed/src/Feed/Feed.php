@@ -14,7 +14,7 @@ use Zend\Filter\Word\UnderscoreToCamelCase;
  * Class Feed
  * @package Feed
  */
-class Feed extends \ArrayObject implements FeedInterface
+class Feed implements FeedInterface
 {
     use DateCreatedTrait;
     use DateUpdatedTrait;
@@ -78,7 +78,7 @@ class Feed extends \ArrayObject implements FeedInterface
     /**
      * @inheritdoc
      */
-    public function exchangeArray($array = [])
+    public function exchangeArray(array $array = [])
     {
         $defaults = [
             'feed_id'      => null,
@@ -109,7 +109,7 @@ class Feed extends \ArrayObject implements FeedInterface
     /**
      * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy() : array
     {
         return [
             'feed_id'      => $this->getFeedId(),
@@ -129,23 +129,23 @@ class Feed extends \ArrayObject implements FeedInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getFeedId()
+    public function getFeedId() : string
     {
         return $this->feedId;
     }
 
     /**
-     * @param string $feedId
+     * @inheritdoc
      */
-    public function setFeedId($feedId)
+    public function setFeedId(string $feedId = null)
     {
-        $this->feedId = $feedId;
+        $this->feedId = (string) $feedId;
     }
 
     /**
-     * @return UserInterface|string|null
+     * @inheritdoc
      */
     public function getSender()
     {
@@ -153,7 +153,7 @@ class Feed extends \ArrayObject implements FeedInterface
     }
 
     /**
-     * @param UserInterface|string|null $sender
+     * @inheritdoc
      */
     public function setSender($sender)
     {
@@ -161,71 +161,71 @@ class Feed extends \ArrayObject implements FeedInterface
     }
 
     /**
-     * @return String
+     * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle() : string
     {
         return $this->title;
     }
 
     /**
-     * @param String $title
+     * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title = null)
     {
-        $this->title = $title;
+        $this->title = (string) $title;
     }
 
     /**
-     * @return mixed|String
+     * @inheritdoc
      */
-    public function getMessage()
+    public function getMessage() : string
     {
         return $this->message;
     }
 
     /**
-     * @param mixed|String $message
+     * @inheritdoc
      */
-    public function setMessage($message)
+    public function setMessage(string $message = null)
     {
-        $this->message = $message;
+        $this->message = (string) $message;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getPriority()
+    public function getPriority() : string
     {
         return $this->priority;
     }
 
     /**
-     * @param string $priority
+     * @inheritdoc
      */
-    public function setPriority($priority)
+    public function setPriority(string $priority = null)
     {
-        $this->priority = $priority;
+        $this->priority = (string) $priority;
     }
 
     /**
-     * @return \DateTime
+     * @inheritdoc
      */
-    public function getPosted()
+    public function getPosted() : string
     {
         return $this->posted;
     }
 
     /**
-     * @param \DateTime $posted
+     * @inheritdoc
      */
-    public function setPosted($posted)
+    public function setPosted(string $posted = null)
     {
-        $this->posted = $posted;
+        $this->posted = (string) $posted;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getVisibility()
     {
@@ -233,7 +233,7 @@ class Feed extends \ArrayObject implements FeedInterface
     }
 
     /**
-     * @param int $visibility
+     * @inheritdoc
      */
     public function setVisibility($visibility)
     {
@@ -241,34 +241,34 @@ class Feed extends \ArrayObject implements FeedInterface
     }
 
     /**
-     * @return String
+     * @inheritdoc
      */
-    public function getType()
+    public function getType() : string
     {
         return $this->type;
     }
 
     /**
-     * @param String $type
+     * @inheritdoc
      */
-    public function setType($type)
+    public function setType(string $type = null)
     {
-        $this->type = $type;
+        $this->type = (string) $type;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getTypeVersion()
+    public function getTypeVersion() : string
     {
         return $this->typeVersion;
     }
 
     /**
-     * @param string $typeVersion
+     * @inheritdoc
      */
-    public function setTypeVersion($typeVersion)
+    public function setTypeVersion(string $typeVersion = null)
     {
-        $this->typeVersion = $typeVersion;
+        $this->typeVersion = (string) $typeVersion;
     }
 }

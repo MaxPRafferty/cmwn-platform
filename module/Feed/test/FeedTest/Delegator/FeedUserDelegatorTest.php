@@ -9,6 +9,7 @@ use Feed\UserFeed;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class FeedUserDelegatorTest
@@ -46,7 +47,7 @@ class FeedUserDelegatorTest extends TestCase
     public function setUpDelegator()
     {
         $this->calledEvents = [];
-        $this->delegator = new FeedUserDelegator($this->service);
+        $this->delegator = new FeedUserDelegator($this->service, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
@@ -119,6 +120,43 @@ class FeedUserDelegatorTest extends TestCase
                 'params' => ['user' => 'english_student', 'where' => null, 'prototype' => null],
             ],
             $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenFetchAllThrowsException()
+    {
+        $e = new \Exception();
+        $this->service->shouldReceive('fetchAllFeedForUser')
+            ->with('english_student', null, null)
+            ->andThrow($e)
+            ->once();
+        $this->setExpectedException(\Exception::class);
+
+        $this->delegator->fetchAllFeedForUser('english_student');
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name' => 'fetch.all.user.feed',
+                'target' => $this->service,
+                'params' => ['user' => 'english_student', 'where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name' => 'fetch.all.user.feed.error',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'where' => null,
+                    'prototype' => null,
+                    'exception' => $e
+                ],
+            ],
+            $this->calledEvents[1]
         );
     }
 
@@ -279,7 +317,7 @@ class FeedUserDelegatorTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldNotCallAttachAllFeedForUserWhenEventStops()
+    public function testItShouldNotCallAttachFeedForUserWhenEventStops()
     {
         $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
         $this->service->shouldReceive('attach.user.feed')
@@ -303,6 +341,49 @@ class FeedUserDelegatorTest extends TestCase
                 ],
             ],
             $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenAttachFeedThrowsException()
+    {
+        $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
+        $e = new \Exception();
+
+        $this->setExpectedException(\Exception::class);
+
+        $this->service->shouldReceive('attachFeedForUser')
+            ->with('english_student', $userFeed)
+            ->andThrow($e)
+            ->once();
+
+        $this->delegator->attachFeedForUser('english_student', $userFeed);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name' => 'attach.user.feed',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'user_feed' => $userFeed,
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name' => 'attach.user.feed.error',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'user_feed' => $userFeed,
+                    'exception' => $e
+                ],
+            ],
+            $this->calledEvents[1]
         );
     }
 
@@ -377,6 +458,47 @@ class FeedUserDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldThrowExceptionWhenUpdateFeedThrowsException()
+    {
+        $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
+        $e = new \Exception();
+        $this->setExpectedException(\Exception::class);
+        $this->service->shouldReceive('updateFeedForUser')
+            ->with('english_student', $userFeed)
+            ->andThrow($e)
+            ->once();
+
+        $this->delegator->updateFeedForUser('english_student', $userFeed);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name' => 'update.user.feed',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'user_feed' => $userFeed,
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name' => 'update.user.feed.error',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'user_feed' => $userFeed,
+                    'exception' => $e
+                ],
+            ],
+            $this->calledEvents[1]
+        );
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteFeedForUser()
     {
         $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
@@ -439,6 +561,47 @@ class FeedUserDelegatorTest extends TestCase
                 ],
             ],
             $this->calledEvents[0]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenDeleteFeedThrowsException()
+    {
+        $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
+        $e = new \Exception();
+        $this->setExpectedException(\Exception::class);
+        $this->service->shouldReceive('deleteFeedForUser')
+            ->with('english_student', $userFeed)
+            ->andThrow($e)
+            ->once();
+
+        $this->delegator->deleteFeedForUser('english_student', $userFeed);
+
+        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            [
+                'name' => 'delete.user.feed',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'user_feed' => $userFeed,
+                ],
+            ],
+            $this->calledEvents[0]
+        );
+        $this->assertEquals(
+            [
+                'name' => 'delete.user.feed.error',
+                'target' => $this->service,
+                'params' => [
+                    'user' => 'english_student',
+                    'user_feed' => $userFeed,
+                    'exception' => $e
+                ],
+            ],
+            $this->calledEvents[1]
         );
     }
 }

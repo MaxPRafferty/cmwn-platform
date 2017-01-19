@@ -3,12 +3,13 @@
 namespace Feed;
 
 use User\UserInterface;
+use Zend\Stdlib\ArraySerializableInterface;
 
 /**
  * Interface FeedInterface
  * @package Feed
  */
-interface FeedInterface
+interface FeedInterface extends ArraySerializableInterface
 {
     const TYPE_FRIEND = 'FRIEND';
     const TYPE_GAME = 'GAME';
@@ -21,12 +22,12 @@ interface FeedInterface
     /**
      * @return string
      */
-    public function getFeedId();
+    public function getFeedId() : string;
 
     /**
      * @param string $feedId
      */
-    public function setFeedId($feedId);
+    public function setFeedId(string $feedId = null);
 
     /**
      * @return UserInterface|string|null
@@ -39,44 +40,44 @@ interface FeedInterface
     public function setSender($sender);
 
     /**
-     * @return String
+     * @return string
      */
-    public function getTitle();
+    public function getTitle() : string;
 
     /**
-     * @param String $title
+     * @param string $title
      */
-    public function setTitle($title);
-
-    /**
-     * @return mixed|String
-     */
-    public function getMessage();
-
-    /**
-     * @param mixed|String $message
-     */
-    public function setMessage($message);
+    public function setTitle(string $title = null);
 
     /**
      * @return string
      */
-    public function getPriority();
+    public function getMessage() : string;
+
+    /**
+     * @param mixed|String $message
+     */
+    public function setMessage(string $message = null);
+
+    /**
+     * @return string
+     */
+    public function getPriority() : string;
 
     /**
      * @param string $priority
      */
-    public function setPriority($priority);
+    public function setPriority(string $priority = null);
 
     /**
-     * @return \DateTime
+     * @return string
      */
-    public function getPosted();
+    public function getPosted() : string;
 
     /**
-     * @param \DateTime $posted
+     * @param string $posted
      */
-    public function setPosted($posted);
+    public function setPosted(string $posted = null);
 
     /**
      * @return int
@@ -91,31 +92,31 @@ interface FeedInterface
     /**
      * @return String
      */
-    public function getType();
+    public function getType() : string;
 
     /**
      * @param String $type
      */
-    public function setType($type);
+    public function setType(string $type = null);
 
     /**
      * @return string
      */
-    public function getTypeVersion();
+    public function getTypeVersion() : string;
 
     /**
      * @param string $typeVersion
      */
-    public function setTypeVersion($typeVersion);
+    public function setTypeVersion(string $typeVersion = null);
 
     /**
      * @return array
      */
-    public function getArrayCopy();
+    public function getArrayCopy() : array;
 
     /**
      * @param array $array
      * @return mixed
      */
-    public function exchangeArray($array = []);
+    public function exchangeArray(array $array = []);
 }

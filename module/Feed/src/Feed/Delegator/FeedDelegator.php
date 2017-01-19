@@ -7,6 +7,7 @@ use Feed\Service\FeedService;
 use Feed\Service\FeedServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class FeedDelegator
@@ -14,20 +15,37 @@ use Zend\EventManager\EventManagerAwareTrait;
  */
 class FeedDelegator implements FeedServiceInterface
 {
-    use EventManagerAwareTrait;
-
     /**
      * @var FeedService
      */
     protected $service;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * FeedDelegator constructor.
      * @param FeedService $feedService
+     * @param EventManagerInterface $events
      */
-    public function __construct(FeedService $feedService)
+    public function __construct(FeedService $feedService, EventManagerInterface $events)
     {
         $this->service = $feedService;
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [FeedServiceInterface::class, static::class, FeedService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**
@@ -46,18 +64,26 @@ class FeedDelegator implements FeedServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->createFeed($feed);
+        try {
+            $return = $this->service->createFeed($feed);
 
-        $event->setName('create.feed.post');
-        $this->getEventManager()->triggerEvent($event);
+            $event->setName('create.feed.post');
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('create.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function fetchFeed($feedId, $where = null, $prototype = null)
+    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null)
     {
         $event = new Event(
             'fetch.feed',
@@ -90,7 +116,7 @@ class FeedDelegator implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, $prototype = null)
+    public function fetchAll($where = null, FeedInterface $prototype = null)
     {
         $event = new Event(
             'fetch.all.feed',
@@ -103,14 +129,22 @@ class FeedDelegator implements FeedServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->fetchAll($where, $prototype);
+        try {
+            $return = $this->service->fetchAll($where, $prototype);
 
-        $event->setName('fetch.all.feed.post');
-        $event->setParam('feeds', $return);
+            $event->setName('fetch.all.feed.post');
+            $event->setParam('feeds', $return);
 
-        $this->getEventManager()->triggerEvent($event);
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.all.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 
     /**
@@ -129,12 +163,20 @@ class FeedDelegator implements FeedServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->updateFeed($feed);
+        try {
+            $return = $this->service->updateFeed($feed);
 
-        $event->setName('update.feed.post');
-        $this->getEventManager()->triggerEvent($event);
+            $event->setName('update.feed.post');
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('update.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 
     /**
@@ -153,11 +195,19 @@ class FeedDelegator implements FeedServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->deleteFeed($feed, $soft);
+        try {
+            $return = $this->service->deleteFeed($feed, $soft);
 
-        $event->setName('delete.feed.post');
-        $this->getEventManager()->triggerEvent($event);
+            $event->setName('delete.feed.post');
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('delete.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 }

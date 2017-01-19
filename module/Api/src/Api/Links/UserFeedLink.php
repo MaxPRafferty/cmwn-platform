@@ -13,9 +13,9 @@ class UserFeedLink extends Link
     /**
      * UserFeedLink constructor.
      * @param string $userId
-     * @param null $feedId
+     * @param string | null $feedId
      */
-    public function __construct($userId, $feedId = null)
+    public function __construct(string $userId, string $feedId = null)
     {
         parent::__construct('feed');
         $this->setProps(['label' => 'Feed']);

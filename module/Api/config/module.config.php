@@ -4,6 +4,15 @@ return [
         \Api\V1\Rest\Ack\AckResource::class => [
             \Flip\Service\FlipUserServiceInterface::class,
         ],
+        \Api\V1\Rest\Feed\FeedResource::class => [
+            \Feed\Service\FeedServiceInterface::class,
+        ],
+        \Api\V1\Rest\FeedUser\FeedUserResource::class => [
+            \Feed\Service\FeedUserServiceInterface::class,
+        ],
+        \Api\Listeners\InjectSenderListener::class => [
+            \User\Service\UserServiceInterface::class,
+        ]
     ],
     'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
@@ -101,10 +110,6 @@ return [
                 \Api\V1\Rest\Skribble\SkribbleResourceFactory::class,
             \Api\V1\Rest\SkribbleNotify\SkribbleNotifyResource::class =>
                 \Api\V1\Rest\SkribbleNotify\SkribbleNotifyResourceFactory::class,
-            \Api\V1\Rest\Feed\FeedResource::class                     =>
-                \Api\V1\Rest\Feed\FeedResourceFactory::class,
-            \Api\V1\Rest\FeedUser\FeedUserResource::class                     =>
-                \Api\V1\Rest\FeedUser\FeedUserResourceFactory::class,
             \Api\V1\Rest\GameData\GameDataResource::class             =>
                 \Api\V1\Rest\GameData\GameDataResourceFactory::class,
             \Api\V1\Rest\Flag\FlagResource::class                     =>
@@ -2127,25 +2132,12 @@ return [
             ],
             [
                 'required'      => false,
-                'validators'    => [
-                    [
-                        'name'    => \Zend\Validator\InArray::class,
-                        'options' => [
-                            'haystack' => [
-                                0,
-                                1,
-                            ],
-                        ],
-                    ],
-                ],
+                'allow_empty'   => true,
+                'validators'    => [],
                 'filters'       => [
                     [
                         'name'    => \Zend\Filter\Boolean::class,
                         'options' => ['type' => 'all'],
-                    ],
-                    [
-                        'name'    => \Zend\Filter\ToInt::class,
-                        'options' => [],
                     ],
                 ],
                 'name'          => 'read',
@@ -2212,25 +2204,12 @@ return [
             ],
             [
                 'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Zend\Validator\InArray::class,
-                        'options' => [
-                            'haystack' => [
-                                0,
-                                1,
-                            ],
-                        ],
-                    ],
-                ],
+                'allow_empty' => true,
+                'validators'  => [],
                 'filters'     => [
                     [
                         'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => 'all'],
-                    ],
-                    [
-                        'name'    => \Zend\Filter\ToInt::class,
-                        'options' => [],
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
                     ],
                 ],
                 'name'        => 'coming_soon',
@@ -2339,25 +2318,12 @@ return [
         'Api\\V1\\Rest\\FeedUser\\Validator' => [
             0 => [
                 'required' => false,
-                'validators' => [
-                    0 => [
-                        'name' => 'Zend\\Validator\\InArray',
-                        'options' => [
-                            'haystack' => [
-                                0 => 0,
-                                1 => 1,
-                            ],
-                        ],
-                    ],
-                ],
+                'allow_empty' => true,
+                'validators' => [],
                 'filters' => [
                     0 => [
                         'name' => 'Zend\\Filter\\Boolean',
                         'options' => ['type' => 'all'],
-                    ],
-                    1 => [
-                        'name' => 'Zend\\Filter\\ToInt',
-                        'options' => [],
                     ],
                 ],
                 'name' => 'read_flag',
