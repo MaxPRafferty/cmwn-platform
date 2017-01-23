@@ -16,8 +16,15 @@ class OrgLink extends Link
      * OrgLink constructor.
      * @param string $org
      */
-    public function __construct($org)
+    public function __construct($org = null)
     {
+        if (!$org) {
+            parent::__construct('org');
+            $this->setProps(['label' => 'org']);
+            $this->setRoute('api.rest.org');
+            return;
+        }
+
         $type = $org instanceof OrganizationInterface ? $org->getType() : $org;
         parent::__construct(strtolower('org_' . $type));
         $this->setProps(['label' => StaticType::getLabelForType($type)]);

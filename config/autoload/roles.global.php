@@ -72,6 +72,7 @@ return [
             'edit.flag'            => 'Edit flag',
             'delete.flag'          => 'delete flag',
             'view.flagged.image'   => 'view a flagged image using flag_id',
+            'set.super'            => 'update the super status of a user',
 
 
             // skribble
@@ -82,7 +83,8 @@ return [
             'skribble.notice'      => 'Notify Skribble status',
 
             // god mode
-            'sa.settings'          => 'View God Mode Admin Dashboard'
+            'sa.settings'          => 'View God Mode Admin Dashboard',
+            'get.super.user'       => 'Fetch a super user',
         ],
         'roles'             => [
             'super' => [
@@ -147,6 +149,8 @@ return [
                     'update.game',
                     'delete.game',
                     'reset.group.code',
+                    'set.super',
+                    'get.super.user',
                 ],
             ],
 
