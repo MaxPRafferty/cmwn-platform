@@ -124,6 +124,12 @@ return [
             'api.rest.group-reset' => [
                 'POST' => 'reset.group.code'
             ],
+            'api.rest.super-flag' => [
+                'POST' => 'set.super',
+            ],
+            'api.rest.super' => [
+                'GET'  => 'get.super.user',
+            ],
         ],
     ],
 ];
