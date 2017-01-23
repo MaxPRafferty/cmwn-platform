@@ -3,7 +3,6 @@
 namespace User\Service;
 
 use User\Child;
-use User\Delegator\UserServiceDelegator;
 use Zend\Db\Sql\Expression;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\EventManager\Event;
@@ -11,6 +10,7 @@ use Zend\EventManager\SharedEventManagerInterface;
 
 /**
  * Class RandomNameListener
+ *
  * @package User\Service
  */
 class RandomNameListener
@@ -27,6 +27,7 @@ class RandomNameListener
 
     /**
      * RandomNameListener constructor.
+     *
      * @param TableGateway $table
      */
     public function __construct(TableGateway $table)
@@ -36,18 +37,19 @@ class RandomNameListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     *
      * @codeCoverageIgnore
      */
     public function attachShared(SharedEventManagerInterface $manager)
     {
         $this->listeners[] = $manager->attach(
-            UserServiceDelegator::class,
+            UserServiceInterface::class,
             'save.new.user',
             [$this, 'reserveRandomName']
         );
 
         $this->listeners[] = $manager->attach(
-            UserServiceDelegator::class,
+            UserServiceInterface::class,
             'save.user',
             [$this, 'reserveRandomName']
         );
@@ -55,17 +57,19 @@ class RandomNameListener
 
     /**
      * @param SharedEventManagerInterface $manager
+     *
      * @codeCoverageIgnore
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
         foreach ($this->listeners as $listener) {
-            $manager->detach(UserServiceDelegator::class, $listener);
+            $manager->detach(UserServiceInterface::class, $listener);
         }
     }
 
     /**
      * @param Event $event
+     *
      * @return null
      */
     public function reserveRandomName(Event $event)

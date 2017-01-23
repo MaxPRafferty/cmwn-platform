@@ -4,11 +4,10 @@ namespace GroupTest\Service;
 
 use Group\Group;
 use Group\Service\UserGroupService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Organization;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
-
-
 use Zend\Permissions\Acl\Role\GenericRole;
 
 /**
@@ -21,6 +20,8 @@ use Zend\Permissions\Acl\Role\GenericRole;
  */
 class UserGroupServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var UserGroupService
      */
@@ -92,10 +93,11 @@ class UserGroupServiceTest extends TestCase
                 $expected = [
                     'user_id'  => 'foobar',
                     'group_id' => 'bazbat',
-                    'role'     => 'teacher'
+                    'role'     => 'teacher',
                 ];
 
                 $this->assertEquals($expected, $actual);
+
                 return 1;
             });
 
@@ -114,10 +116,11 @@ class UserGroupServiceTest extends TestCase
                 $expected = [
                     'user_id'  => 'foobar',
                     'group_id' => 'bazbat',
-                    'role'     => 'teacher'
+                    'role'     => 'teacher',
                 ];
 
                 $this->assertEquals($expected, $actual);
+
                 return 1;
             });
 
@@ -154,6 +157,7 @@ class UserGroupServiceTest extends TestCase
                 ];
 
                 $this->assertEquals($expected, $actual);
+
                 return 1;
             });
 

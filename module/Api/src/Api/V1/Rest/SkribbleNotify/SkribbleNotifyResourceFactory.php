@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\SkribbleNotify;
 
+use Interop\Container\ContainerInterface;
 use Skribble\Service\SkribbleServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SkribbleNotifyResourceFactory
@@ -14,10 +14,8 @@ class SkribbleNotifyResourceFactory implements FactoryInterface
     /**
      * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SkribbleServiceInterface $skribbleService */
-        $skribbleService = $serviceLocator->get(SkribbleServiceInterface::class);
-        return new SkribbleNotifyResource($skribbleService);
+        return new SkribbleNotifyResource($container->get(SkribbleServiceInterface::class));
     }
 }

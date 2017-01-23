@@ -2,26 +2,24 @@
 
 namespace Suggest\Listener;
 
+use Interop\Container\ContainerInterface;
 use Job\Service\JobServiceInterface;
 use Suggest\Engine\SuggestionEngine;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class TriggerSuggestionsListenerFactory
- *
- * @package Security\Factory
  */
 class TriggerSuggestionsListenerFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new TriggerSuggestionsListener(
-            $serviceLocator->get(SuggestionEngine::class),
-            $serviceLocator->get(JobServiceInterface::class)
+            $container->get(SuggestionEngine::class),
+            $container->get(JobServiceInterface::class)
         );
     }
 }

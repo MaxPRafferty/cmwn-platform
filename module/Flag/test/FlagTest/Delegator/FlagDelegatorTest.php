@@ -1,23 +1,27 @@
 <?php
 
-namespace FlagTest;
+namespace FlagTest\Delegator;
 
 use Application\Exception\NotFoundException;
 use Flag\Delegator\FlagDelegator;
 use Flag\Flag;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
 
 /**
  * Class FlagDelegatorTest
+ *
  * @package FlagTest
- * @group Delegator
- * @group Flag
- * @group FlagDelegator
+ * @group   Delegator
+ * @group   Flag
+ * @group   FlagDelegator
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FlagDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Flag\Service\FlagService
      */
@@ -47,7 +51,7 @@ class FlagDelegatorTest extends TestCase
     public function setUpDelegator()
     {
         $this->calledEvents = [];
-        $this->delegator = new FlagDelegator($this->flagService);
+        $this->delegator    = new FlagDelegator($this->flagService);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
@@ -59,10 +63,10 @@ class FlagDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
-    
+
     /**
      * @test
      */
@@ -103,6 +107,7 @@ class FlagDelegatorTest extends TestCase
             ->never();
         $this->delegator->getEventManager()->attach('fetch.all.flagged.images', function (Event $event) {
             $event->stopPropagation(true);
+
             return 'foo';
         });
 
@@ -136,7 +141,7 @@ class FlagDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.flagged.image',
                 'target' => $this->flagService,
-                'params' => ['flag_id'=> 'qwerty', 'prototype' => null],
+                'params' => ['flag_id' => 'qwerty', 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -144,7 +149,7 @@ class FlagDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.flagged.image.post',
                 'target' => $this->flagService,
-                'params' => ['flag_id'=> 'qwerty', 'prototype' => null, 'flagged-image' => $result],
+                'params' => ['flag_id' => 'qwerty', 'prototype' => null, 'flagged-image' => $result],
             ],
             $this->calledEvents[1]
         );
@@ -169,7 +174,7 @@ class FlagDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.flagged.image',
                 'target' => $this->flagService,
-                'params' => ['flag_id'=> 'qwerty','prototype' => null],
+                'params' => ['flag_id' => 'qwerty', 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -178,9 +183,9 @@ class FlagDelegatorTest extends TestCase
                 'name'   => 'fetch.flagged.image.error',
                 'target' => $this->flagService,
                 'params' => [
-                    'flag_id'=> 'qwerty',
+                    'flag_id'   => 'qwerty',
                     'prototype' => null,
-                    'exception' => 'No Flagged Image Found'
+                    'exception' => 'No Flagged Image Found',
                 ],
             ],
             $this->calledEvents[1]
@@ -197,6 +202,7 @@ class FlagDelegatorTest extends TestCase
             ->never();
         $this->delegator->getEventManager()->attach('fetch.flagged.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return 'foo';
         });
 
@@ -208,7 +214,7 @@ class FlagDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.flagged.image',
                 'target' => $this->flagService,
-                'params' => ['flag_id'=> 'qwerty', 'prototype' => null],
+                'params' => ['flag_id' => 'qwerty', 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -253,8 +259,9 @@ class FlagDelegatorTest extends TestCase
             ->with($flag)
             ->andReturn(true);
         $this->delegator->getEventManager()->attach('save.flagged.image', function (Event $event) {
-             $event->stopPropagation(true);
-             return false;
+            $event->stopPropagation(true);
+
+            return false;
         });
         $this->assertFalse($this->delegator->saveFlag($flag));
         $this->assertEquals(1, count($this->calledEvents));
@@ -267,7 +274,7 @@ class FlagDelegatorTest extends TestCase
             $this->calledEvents[0]
         );
     }
-    
+
     /**
      * @test
      */
@@ -307,6 +314,7 @@ class FlagDelegatorTest extends TestCase
             ->with($flag);
         $this->delegator->getEventManager()->attach('update.flagged.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
         $this->assertFalse($this->delegator->updateFlag($flag));
@@ -360,6 +368,7 @@ class FlagDelegatorTest extends TestCase
             ->with($flag);
         $this->delegator->getEventManager()->attach('delete.flagged.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return false;
         });
         $this->assertFalse($this->delegator->deleteFlag($flag));

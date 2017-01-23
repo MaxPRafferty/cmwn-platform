@@ -2,6 +2,7 @@
 
 namespace NoticeTest\Listeners;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\EmailModel\ImportSuccessModel;
 use Notice\Listeners\ImportListener;
 use \PHPUnit_Framework_TestCase as TestCase;
@@ -16,6 +17,8 @@ use Zend\EventManager\Event;
  */
 class ImportNotiferTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var ImportListener
      */
@@ -87,7 +90,6 @@ class ImportNotiferTest extends TestCase
         $this->message->shouldReceive('setSubject')
             ->once()
             ->with('User import error');
-
 
         $this->mailService->shouldReceive('setTemplate')
             ->once()

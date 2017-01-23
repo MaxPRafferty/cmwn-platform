@@ -8,14 +8,13 @@ return [
             \Group\Service\UserGroupServiceInterface::class => \Group\Service\UserGroupService::class,
             \Group\Service\GroupServiceInterface::class     => \Group\Service\GroupService::class,
         ],
-        'invokables' => [
-            \Group\Delegator\GroupDelegatorFactory::class            => \Group\Delegator\GroupDelegatorFactory::class,
-            \Group\Delegator\UserGroupServiceDelegatorFactory::class =>
-                \Group\Delegator\UserGroupServiceDelegatorFactory::class,
-        ],
         'factories'  => [
-            \Group\Service\GroupService::class     => \Group\Service\GroupServiceFactory::class,
-            \Group\Service\UserGroupService::class => \Group\Service\UserGroupServiceFactory::class,
+            \Group\Delegator\GroupDelegatorFactory::class            =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Group\Delegator\UserGroupServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Group\Service\GroupService::class                       => \Group\Service\GroupServiceFactory::class,
+            \Group\Service\UserGroupService::class                   => \Group\Service\UserGroupServiceFactory::class,
         ],
         'delegators' => [
             \Group\Service\GroupService::class     => [

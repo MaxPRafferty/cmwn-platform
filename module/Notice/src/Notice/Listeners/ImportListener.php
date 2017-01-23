@@ -9,7 +9,6 @@ use Import\ParserInterface;
 use Notice\EmailModel\ImportFailedModel;
 use Notice\EmailModel\ImportSuccessModel;
 use Notice\NoticeInterface;
-use Notice\NotificationAwareInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Log\LoggerAwareInterface;

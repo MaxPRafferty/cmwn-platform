@@ -2,8 +2,8 @@
 
 namespace Application\Listeners;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ListenersAggregateFactory
@@ -11,16 +11,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class ListenersAggregateFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $serviceLocator->get('config');
+        $config = $container->get('config');
         $config = isset($config['shared-listeners']) ? $config['shared-listeners'] : [];
-
-        return new ListenersAggregate($serviceLocator, $config);
+        return new ListenersAggregate($container, $config);
     }
 }

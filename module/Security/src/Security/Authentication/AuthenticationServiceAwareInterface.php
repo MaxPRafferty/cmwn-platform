@@ -5,7 +5,7 @@ namespace Security\Authentication;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
- * Interface AuthenticationServiceAwareInterface
+ * A Class that is aware of the authentication service
  */
 interface AuthenticationServiceAwareInterface
 {
@@ -17,5 +17,5 @@ interface AuthenticationServiceAwareInterface
     /**
      * @return AuthenticationServiceInterface
      */
-    public function getAuthenticationService();
+    public function getAuthenticationService(): AuthenticationServiceInterface;
 }

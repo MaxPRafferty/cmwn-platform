@@ -2,7 +2,6 @@
 
 namespace Friend\Service;
 
-use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\PredicateInterface;

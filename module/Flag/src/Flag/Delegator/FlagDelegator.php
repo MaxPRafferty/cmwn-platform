@@ -42,7 +42,7 @@ class FlagDelegator implements FlagServiceInterface
             [ 'where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -50,7 +50,7 @@ class FlagDelegator implements FlagServiceInterface
         $return   = $this->realService->fetchAll($where, $prototype);
         $event->setName('fetch.all.flagged.images.post');
         $event->setParam('flagged-images', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -61,7 +61,7 @@ class FlagDelegator implements FlagServiceInterface
     public function saveFlag(FlagInterface $flag)
     {
         $event    = new Event('save.flagged.image', $this->realService, ['flag-data' => $flag]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -69,7 +69,7 @@ class FlagDelegator implements FlagServiceInterface
 
         $return = $this->realService->saveFlag($flag);
         $event->setName('save.flagged.image.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -85,7 +85,7 @@ class FlagDelegator implements FlagServiceInterface
             [ 'flag_id' => $flagId, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -94,11 +94,11 @@ class FlagDelegator implements FlagServiceInterface
             $return = $this->realService->fetchFlag($flagId, $prototype);
             $event->setName('fetch.flagged.image.post');
             $event->setParam('flagged-image', $return);
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
         } catch (NotFoundException $nf) {
             $event->setName('fetch.flagged.image.error');
             $event->setParam('exception', $nf->getMessage());
-            $this->getEventManager()->trigger($event);
+            $this->getEventManager()->triggerEvent($event);
             throw $nf;
         }
 
@@ -111,7 +111,7 @@ class FlagDelegator implements FlagServiceInterface
     public function updateFlag(FlagInterface $flag)
     {
         $event    = new Event('update.flagged.image', $this->realService, ['flag-data' => $flag]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -119,7 +119,7 @@ class FlagDelegator implements FlagServiceInterface
 
         $return = $this->realService->updateFlag($flag);
         $event->setName('update.flagged.image.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -130,7 +130,7 @@ class FlagDelegator implements FlagServiceInterface
     public function deleteFlag(FlagInterface $flag)
     {
         $event    = new Event('delete.flagged.image', $this->realService, ['flag-data' => $flag]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -138,7 +138,7 @@ class FlagDelegator implements FlagServiceInterface
 
         $return = $this->realService->deleteFlag($flag);
         $event->setName('delete.flagged.image.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

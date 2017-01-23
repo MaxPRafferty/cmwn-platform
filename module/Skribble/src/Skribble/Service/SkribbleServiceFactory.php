@@ -2,9 +2,8 @@
 
 namespace Skribble\Service;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SkribbleServiceFactory
@@ -14,10 +13,8 @@ class SkribbleServiceFactory implements FactoryInterface
     /**
      * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var TableGateway $tableGateway */
-        $tableGateway = $serviceLocator->get('SkribblesTable');
-        return new SkribbleService($tableGateway);
+        return new SkribbleService($container->get('SkribblesTable'));
     }
 }

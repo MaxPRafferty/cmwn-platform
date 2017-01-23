@@ -5,7 +5,7 @@
  */
 
 return [
-    'router'          => [
+    'router' => [
         'routes' => [
             'home' => [
                 'type'    => 'Literal',
@@ -19,28 +19,71 @@ return [
             ],
         ],
     ],
-    'service_manager' => [
-        'invokables'         => [
-            \Application\Listeners\ErrorListener::class          => \Application\Listeners\ErrorListener::class,
-            \Application\Listeners\CacheExceptionListener::class =>
-                \Application\Listeners\CacheExceptionListener::class,
+
+    'rules' => [
+        'factories' => [
+            \Application\Rule\Session\Rule\HasValue::class            => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Application\Rule\Session\Rule\ValueEquals::class         => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Application\Rule\Session\Rule\ValueEqualsProvider::class => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
+        'shared'    => [
+            \Application\Rule\Session\Rule\HasValue::class            => false,
+            \Application\Rule\Session\Rule\ValueEquals::class         => false,
+            \Application\Rule\Session\Rule\ValueEqualsProvider::class => false,
+        ],
+    ],
+
+    'providers' => [
+        'factories' => [
+            \Application\Rule\Session\Provider\SessionContainer::class =>
+                \Rule\Provider\Service\BuildProviderFactory::class,
+            \Application\Rule\Session\Provider\SessionValue::class     =>
+                \Rule\Provider\Service\BuildProviderFactory::class,
+        ],
+        'shared'    => [
+            \Application\Rule\Session\Provider\SessionContainer::class => false,
+            \Application\Rule\Session\Provider\SessionValue::class     => false,
+        ],
+    ],
+
+    'actions'                                                         => [
+        'factories' => [
+            \Application\Rule\Session\Action\WriteProviderToSession::class =>
+                \Rule\Action\Service\BuildActionFactory::class,
+            \Application\Rule\Session\Action\WriteValueToSession::class    =>
+                \Rule\Action\Service\BuildActionFactory::class,
+        ],
+        'shared'    => [
+            \Application\Rule\Session\Action\WriteProviderToSession::class => false,
+            \Application\Rule\Session\Action\WriteValueToSession::class    => false,
+        ],
+    ],
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Application\Session\CmwnContainer::class => [\Zend\Session\SessionManager::class],
+    ],
+
+    'service_manager' => [
         'initializers'       => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],
         'factories'          => [
-            \Application\Listeners\ListenersAggregate::class =>
+            \Application\Listeners\ErrorListener::class          =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Application\Listeners\CacheExceptionListener::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Application\Listeners\ListenersAggregate::class     =>
                 \Application\Listeners\ListenersAggregateFactory::class,
-            \Application\Log\Rollbar\Options::class          => \Application\Log\Rollbar\OptionsFactory::class,
-            'Application\Log\Rollbar\Notifier'               => \Application\Log\Rollbar\NotifierFactory::class,
-            \Application\Log\Rollbar\Writer::class           => \Application\Log\Rollbar\WriterFactory::class,
-            \Zend\Http\Client::class                         => \Application\Factory\HttpClientFactory::class,
+            \Application\Log\Rollbar\Options::class              => \Application\Log\Rollbar\OptionsFactory::class,
+            'Application\Log\Rollbar\Notifier'                   => \Application\Log\Rollbar\NotifierFactory::class,
+            \Application\Log\Rollbar\Writer::class               => \Application\Log\Rollbar\WriterFactory::class,
+            \Zend\Http\Client::class                             => \Application\Factory\HttpClientFactory::class,
         ],
         'abstract_factories' => [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
             \Zend\Db\Adapter\AdapterAbstractServiceFactory::class,
             \Application\Log\LoggerFactory::class,
-            \Application\Utils\AbstractTableFactory::class,
+            \Application\Service\AbstractTableFactory::class,
+            \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
         ],
     ],
 
@@ -50,18 +93,18 @@ return [
     ],
 
     'controllers' => [
-        'aliases'    => [
+        'aliases'      => [
             \Application\Controller\IndexController::class => '\Application\Controller\Index',
         ],
-        'invokables' => [
+        'invokables'   => [
             'Application\Controller\Index' => \Application\Controller\IndexController::class,
         ],
-        'initializers'       => [
+        'initializers' => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],
-        'factories' => [
+        'factories'    => [
             'Application\Controller\Redis' => \Application\Controller\RedisControllerFactory::class,
-        ]
+        ],
     ],
 
     'view_manager' => [
@@ -93,7 +136,7 @@ return [
                         ],
                     ],
                 ],
-            ]
+            ],
         ],
     ],
 ];

@@ -10,11 +10,9 @@ return [
         'aliases'    => [
             \Friend\Service\FriendServiceInterface::class          => \Friend\Service\FriendService::class,
         ],
-        'invokables' => [
-            \Friend\Delegator\FriendServiceDelegatorFactory::class =>
-                \Friend\Delegator\FriendServiceDelegatorFactory::class,
-        ],
         'factories'  => [
+            \Friend\Delegator\FriendServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Friend\Service\FriendService::class          => \Friend\Service\FriendServiceFactory::class,
         ],
         'delegators' => [

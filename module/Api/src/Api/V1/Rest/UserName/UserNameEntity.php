@@ -2,7 +2,6 @@
 
 namespace Api\V1\Rest\UserName;
 
-use Zend\Stdlib\ArraySerializableInterface;
 use ZF\Hal\Entity;
 
 /**
@@ -21,6 +20,6 @@ class UserNameEntity extends Entity
     {
         parent::__construct(new \ArrayObject(), null);
 
-        $this->entity['user_name'] = $userName;
+        $this->getEntity()['user_name'] = $userName;
     }
 }

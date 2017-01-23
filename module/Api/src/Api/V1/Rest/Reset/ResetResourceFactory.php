@@ -3,8 +3,8 @@
 namespace Api\V1\Rest\Reset;
 
 use Forgot\Service\ForgotServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ResetResourceFactory
@@ -12,12 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class ResetResourceFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return ResetResource
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $forgotService = $serviceLocator->get(ForgotServiceInterface::class);
-        return new ResetResource($forgotService);
+        return new ResetResource($container->get(ForgotServiceInterface::class));
     }
 }

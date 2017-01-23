@@ -5,6 +5,7 @@ namespace ImportTest\Importer\Nyc\ClassRoom;
 use Group\GroupInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\AddClassRoomAction;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -19,6 +20,8 @@ use \PHPUnit_Framework_TestCase as TestCase;
  */
 class ClassRoomActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\GroupService
      */
@@ -90,6 +93,7 @@ class ClassRoomActionTest extends TestCase
                 );
 
                 $group->setExternalId('foo-bar');
+
                 return true;
             });
 

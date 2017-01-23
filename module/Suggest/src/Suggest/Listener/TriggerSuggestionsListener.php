@@ -63,7 +63,7 @@ class TriggerSuggestionsListener
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-        $manager->detach(UserServiceInterface::class, $this->listeners[0]);
+        $manager->detach($this->listeners[0], UserServiceInterface::class);
     }
 
     /**

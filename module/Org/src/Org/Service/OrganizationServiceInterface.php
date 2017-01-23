@@ -4,7 +4,6 @@ namespace Org\Service;
 
 use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
-use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Paginator\Adapter\DbSelect;

@@ -4,6 +4,7 @@ namespace SuggestTest\Filter;
 
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\SuggestionCollection;
@@ -21,6 +22,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class ClassFilterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var ClassFilter
      */
@@ -88,8 +91,8 @@ class ClassFilterTest extends TestCase
     public function testItShouldReturnUserFromMultipleGroups()
     {
         $student = new Child(['user_id' => 'english_student']);
-        $groups = $this->getUserGroups(5);
-        $users  = $this->getUsersForGroups($groups, 5);
+        $groups  = $this->getUserGroups(5);
+        $users   = $this->getUsersForGroups($groups, 5);
 
         $groupResult = \Mockery::mock(DbSelect::class);
         $groupResult->shouldReceive('getItems')
@@ -107,7 +110,7 @@ class ClassFilterTest extends TestCase
                 ->ordered('user_friends');
         }
 
-        $collection = new SuggestionCollection();
+        $collection  = new SuggestionCollection();
         $classFilter = new ClassFilter($this->userGroupService, 5, 5);
         $classFilter->getSuggestions($collection, $student);
         $this->assertEquals(

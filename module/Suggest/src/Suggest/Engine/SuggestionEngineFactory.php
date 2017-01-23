@@ -2,29 +2,28 @@
 
 namespace Suggest\Engine;
 
+use Interop\Container\ContainerInterface;
 use Suggest\Filter\FilterCollection;
 use Suggest\Rule\RuleCollection;
 use Suggest\Service\SuggestedServiceInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SuggestionEngineFactory
- * @package Suggest\Engine
  */
 class SuggestionEngineFactory implements FactoryInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new SuggestionEngine(
-            $serviceLocator->get(RuleCollection::class),
-            $serviceLocator->get(FilterCollection::class),
-            $serviceLocator->get(SuggestedServiceInterface::class),
-            $serviceLocator->get(UserServiceInterface::class)
+            $container->get(RuleCollection::class),
+            $container->get(FilterCollection::class),
+            $container->get(SuggestedServiceInterface::class),
+            $container->get(UserServiceInterface::class)
         );
     }
 }

@@ -5,6 +5,7 @@ namespace SuggestTest\Rule;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Rule\FriendRule;
 use Suggest\SuggestionCollection;
@@ -21,6 +22,8 @@ use User\Child;
  */
 class FriendRuleTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Friend\Service\FriendServiceInterface
      */
@@ -59,7 +62,7 @@ class FriendRuleTest extends TestCase
         $waitingApprove = new Child(['user_id' => 'waiting_approve']);
         $alreadyFriends = new Child(['user_id' => 'already_friends']);
 
-        $collection      = new SuggestionCollection();
+        $collection = new SuggestionCollection();
         $collection->append($notFriends1);
         $collection->append($pendingFriends);
         $collection->append($waitingApprove);

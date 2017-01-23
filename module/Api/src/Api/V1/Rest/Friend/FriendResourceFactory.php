@@ -3,8 +3,8 @@
 namespace Api\V1\Rest\Friend;
 
 use Friend\Service\FriendServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class FriendResourceFactory
@@ -12,15 +12,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FriendResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var FriendServiceInterface $friendService */
-        $friendService = $serviceLocator->get(FriendServiceInterface::class);
-        return new FriendResource($friendService);
+        return new FriendResource($container->get(FriendServiceInterface::class));
     }
 }

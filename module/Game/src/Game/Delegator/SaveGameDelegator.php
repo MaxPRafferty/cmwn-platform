@@ -8,12 +8,9 @@ use Game\SaveGame;
 use Game\SaveGameInterface;
 use Game\Service\SaveGameService;
 use Game\Service\SaveGameServiceInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
-use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class SaveGameDelegator
@@ -48,7 +45,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
     public function saveGame(SaveGameInterface $gameData)
     {
         $event    = new Event('save.user.game', $this->realService, ['game_data' => $gameData]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -56,7 +53,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
 
         $return = $this->realService->saveGame($gameData);
         $event->setName('save.user.game.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -72,7 +69,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
     public function deleteSaveForUser($user, $game)
     {
         $event    = new Event('delete.user.save.game', $this->realService, ['user' => $user, 'game' => $game]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -80,7 +77,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
 
         $return = $this->realService->deleteSaveForUser($user, $game);
         $event->setName('delete.user.save.game.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -110,14 +107,14 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
                 'where'     => $where
             ]
         );
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
         $return = $this->realService->fetchSaveGameForUser($user, $game, $prototype, $where);
         $event->setParam('game_data', $return);
         $event->setName('fetch.user.save.game.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -135,7 +132,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
                 'where'     => $where
             ]
         );
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -143,7 +140,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
         $return = $this->realService->fetchAllSaveGamesForUser($user, $where, $prototype);
         $event->setParam('user-saves', $return);
         $event->setName('fetch.user.saves.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -162,7 +159,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
             ]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -172,7 +169,7 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
 
         $event->setParam('game-data', $return);
         $event->setName('fetch.game-data.post');
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }

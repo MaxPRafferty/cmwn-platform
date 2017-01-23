@@ -4,9 +4,9 @@ namespace Api\Factory;
 
 use Api\Listeners\SuperMeListener;
 use Group\Service\GroupServiceInterface;
+use Interop\Container\ContainerInterface;
 use Org\Service\OrganizationServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SuperMeListenerFactory
@@ -14,17 +14,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SuperMeListenerFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return SuperMeListener
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var GroupServiceInterface $groupService */
-        /** @var OrganizationServiceInterface $orgService */
-        $groupService = $serviceLocator->get(GroupServiceInterface::class);
-        $orgService   = $serviceLocator->get(OrganizationServiceInterface::class);
-
-        return new SuperMeListener($orgService, $groupService);
+        return new SuperMeListener(
+            $container->get(OrganizationServiceInterface::class),
+            $container->get(GroupServiceInterface::class)
+        );
     }
 }

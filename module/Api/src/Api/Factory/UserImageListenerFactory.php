@@ -4,8 +4,8 @@ namespace Api\Factory;
 
 use Api\Listeners\UserImageListener;
 use Asset\Service\UserImageServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class UserImageListenerFactory
@@ -13,16 +13,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class UserImageListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var \Asset\Service\UserImageServiceInterface $userImageService */
-        $userImageService = $serviceLocator->get(UserImageServiceInterface::class);
-        return new UserImageListener($userImageService);
+        return new UserImageListener($container->get(UserImageServiceInterface::class));
     }
 }

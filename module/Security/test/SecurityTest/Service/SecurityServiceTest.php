@@ -2,12 +2,14 @@
 
 namespace SecurityTest\Service;
 
-use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Builder;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
 use User\Adult;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\PredicateSet;
 
 /**
  * Test SecurityServiceTest
@@ -24,6 +26,8 @@ use Zend\Db\ResultSet\ResultSet;
  */
 class SecurityServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var SecurityService
      */
@@ -153,13 +157,12 @@ class SecurityServiceTest extends TestCase
             'Application\Exception\NotFoundException',
             'User not Found'
         );
+
         $this->tableGateway->shouldReceive('select')
-            ->andReturn(new \ArrayIterator([]))
-            ->once();
-        $this->tableGateway->shouldReceive('select')
-            ->with(['normalized_username' => 'manchuck'])
-            ->andReturn(new \ArrayIterator([]))
-            ->once();
+            ->andReturnUsing(function ($predicateSet) {
+                $this->assertInstanceOf(PredicateSet::class, $predicateSet);
+                return new \ArrayIterator([]);
+            })->once();
 
         $this->securityService->fetchUserByUserName('manchuck');
     }
@@ -233,19 +236,18 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('now');
+                $start = new \DateTime('now');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P1D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -273,19 +275,18 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('now');
+                $start = new \DateTime('now');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P30D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -312,19 +313,18 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('now');
+                $start = new \DateTime('now');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P15D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -351,19 +351,18 @@ class SecurityServiceTest extends TestCase
                 $this->assertArrayHasKey('code', $set);
                 $this->assertArrayNotHasKey('code_expires', $set);
 
-                $start  = new \DateTime('tomorrow');
+                $start = new \DateTime('tomorrow');
                 $start->setTime(00, 00, 00);
 
                 $expires = clone $start;
                 $expires->add(new \DateInterval('P5D'));
                 $expires->setTime(23, 59, 59);
-                $jwtConfig = new Configuration();
-                $token     = $jwtConfig->createBuilder()
-                    ->canOnlyBeUsedBy('student')
-                    ->issuedAt(time())
-                    ->canOnlyBeUsedAfter($start->getTimestamp())
-                    ->expiresAt($expires->getTimestamp())
-                    ->identifiedBy('foobar')
+
+                $token     = (new Builder())->setAudience('student')
+                    ->setIssuedAt(time())
+                    ->setNotBefore($start->getTimestamp())
+                    ->setExpiration($expires->getTimestamp())
+                    ->setId('foobar')
                     ->getToken();
 
                 $this->assertEquals(
@@ -388,6 +387,6 @@ class SecurityServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturn($resultSet)->once();
         $this->tableGateway->shouldReceive('update')->twice();
-        $this->securityService->saveCodeToGroup('foobar', 'school');
+        $this->assertTrue($this->securityService->saveCodeToGroup('foobar', 'school'));
     }
 }

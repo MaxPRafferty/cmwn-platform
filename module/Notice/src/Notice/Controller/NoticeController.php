@@ -6,6 +6,7 @@ use AcMailer\Service\MailService;
 use AcMailer\Service\MailServiceAwareInterface;
 use AcMailer\Service\MailServiceAwareTrait;
 use Application\Utils\NoopLoggerAwareTrait;
+use Interop\Container\ContainerInterface;
 use Notice\EmailModel\ForgotEmailModel;
 use Notice\EmailModel\ImportFailedModel;
 use Notice\EmailModel\ImportSuccessModel;
@@ -15,7 +16,6 @@ use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractConsoleController;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Log\Filter\Priority;
 use Zend\Log\Formatter\Simple;
 use Zend\Log\Writer\Stream;
@@ -31,7 +31,7 @@ class NoticeController extends AbstractConsoleController implements LoggerAwareI
     use NoopLoggerAwareTrait;
 
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $service;
 
@@ -42,9 +42,10 @@ class NoticeController extends AbstractConsoleController implements LoggerAwareI
 
     /**
      * NoticeController constructor.
-     * @param ServiceLocatorInterface $service
+     *
+     * @param ContainerInterface $service
      */
-    public function __construct($service)
+    public function __construct(ContainerInterface $service)
     {
         $this->service = $service;
     }

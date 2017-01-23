@@ -6,6 +6,7 @@ use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddTeacherToGroupAction;
 use Import\Importer\Nyc\Teachers\Teacher;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 
@@ -21,6 +22,8 @@ use User\Adult;
  */
 class AddTeacherToGroupActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\UserGroupServiceInterface
      */
@@ -87,6 +90,7 @@ class AddTeacherToGroupActionTest extends TestCase
         $teacher->setRole('The man');
         $teacher->setClassRoom($this->classRoom);
         $teacher->setUser($this->teacherUser);
+
         return $teacher;
     }
 
@@ -96,7 +100,7 @@ class AddTeacherToGroupActionTest extends TestCase
     public function testItShouldReportCorrectAction()
     {
         $teacher = $this->getGoodTeacher();
-        $action = new AddTeacherToGroupAction($teacher, $this->userGroupService);
+        $action  = new AddTeacherToGroupAction($teacher, $this->userGroupService);
 
         $this->assertEquals(
             'Adding the_man chuck@manchuck.com to class [hist101] "History of the world"',
@@ -111,7 +115,7 @@ class AddTeacherToGroupActionTest extends TestCase
     public function testItShouldExecuteAction()
     {
         $teacher = $this->getGoodTeacher();
-        $action = new AddTeacherToGroupAction($teacher, $this->userGroupService);
+        $action  = new AddTeacherToGroupAction($teacher, $this->userGroupService);
 
         $this->assertEquals(10, $action->priority(), 'AddTeacherToGroupAction has incorrect priority');
         $this->userGroupService->shouldReceive('attachUserToGroup')

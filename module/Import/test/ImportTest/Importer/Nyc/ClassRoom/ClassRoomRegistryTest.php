@@ -7,6 +7,7 @@ use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidClassRoomException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 
 /**
@@ -20,6 +21,8 @@ use \PHPUnit_Framework_TestCase as TestCase;
  */
 class ClassRoomRegistryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\GroupService
      */

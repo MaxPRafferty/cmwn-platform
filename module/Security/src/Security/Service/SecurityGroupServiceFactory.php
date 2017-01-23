@@ -2,11 +2,11 @@
 
 namespace Security\Service;
 
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class SecurityGroupServiceFactory
@@ -14,23 +14,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class SecurityGroupServiceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Adapter $adapter */
-        $adapter = $serviceLocator->get(Adapter::class);
-
-        /** @var UserServiceInterface $userService */
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-
         return new SecurityGroupService(
-            new TableGateway('user_groups', $adapter),
-            $userService
+            new TableGateway('user_groups', $container->get(Adapter::class)),
+            $container->get(UserServiceInterface::class)
         );
     }
 }

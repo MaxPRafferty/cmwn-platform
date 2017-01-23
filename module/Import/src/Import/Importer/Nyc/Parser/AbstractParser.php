@@ -2,6 +2,7 @@
 
 namespace Import\Importer\Nyc\Parser;
 
+use Application\Utils\NoopLoggerAwareTrait;
 use Import\ActionInterface;
 use Import\ParserInterface;
 use Security\Authorization\Rbac;
@@ -70,12 +71,18 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface, 
         static::$logger = $logger;
     }
 
+    /**
+     * @param Rbac $rbac
+     */
     public function setRbac(Rbac $rbac)
     {
         static::$rbac = $rbac;
     }
 
-    public function getRbac()
+    /**
+     * @return Rbac
+     */
+    public function getRbac(): Rbac
     {
         return self::$rbac;
     }
@@ -125,10 +132,10 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface, 
      */
     protected function addError($message, $sheet = null, $row = null)
     {
-        $rowString      = $row !== null ? 'Row: <b>' . $row . '</b> ': "";
+        $rowString      = $row !== null ? 'Row: <b>' . $row . '</b> ' : "";
         $sheetString    = $sheet !== null ? 'Sheet <b>"' . $sheet . '"</b> ' : "";
         $errorMessage   = sprintf('%s%s%s', $sheetString, $rowString, $message);
-        self::$errors[] =  $errorMessage;
+        self::$errors[] = $errorMessage;
         $this->getLogger()->err($errorMessage);
     }
 
@@ -144,7 +151,7 @@ abstract class AbstractParser implements ParserInterface, LoggerAwareInterface, 
         $rowString        = $row !== null ? 'Row: <b>' . $row . '</b> ' : "";
         $sheetString      = $sheet !== null ? 'Sheet <b>"' . $sheet . '"</b> ' : "";
         $warningMessage   = sprintf('%s%s%s', $sheetString, $rowString, $message);
-        self::$warnings[] =  $warningMessage;
+        self::$warnings[] = $warningMessage;
         $this->getLogger()->warn($warningMessage);
     }
 

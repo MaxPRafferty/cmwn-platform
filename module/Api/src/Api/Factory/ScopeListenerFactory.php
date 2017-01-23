@@ -3,26 +3,20 @@
 namespace Api\Factory;
 
 use Api\Listeners\ScopeListener;
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityGroupServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ScopeListenerFactory
- * @codeCoverageIgnore
  */
 class ScopeListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SecurityGroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get(SecurityGroupServiceInterface::class);
-        return new ScopeListener($groupService);
+        return new ScopeListener($container->get(SecurityGroupServiceInterface::class));
     }
 }

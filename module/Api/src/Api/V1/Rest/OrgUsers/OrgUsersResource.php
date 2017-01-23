@@ -4,7 +4,6 @@ namespace Api\V1\Rest\OrgUsers;
 use Api\V1\Rest\User\UserEntity;
 use Group\Service\UserGroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
-use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -28,6 +27,7 @@ class OrgUsersResource extends AbstractResourceListener
      * OrgUsersResource constructor.
      *
      * @param UserGroupServiceInterface $groupService
+     * @param OrganizationServiceInterface $orgService
      */
     public function __construct(UserGroupServiceInterface $groupService, OrganizationServiceInterface $orgService)
     {

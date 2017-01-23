@@ -3,26 +3,20 @@
 namespace Api\Factory;
 
 use Api\Listeners\UserHalLinksListener;
+use Interop\Container\ContainerInterface;
 use Security\Service\SecurityGroupServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Class ResetHalLinkListener
+ * Class UserHalLinksListenerFactory
  */
 class UserHalLinksListenerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var SecurityGroupServiceInterface $groupService */
-        $groupService = $serviceLocator->get(SecurityGroupServiceInterface::class);
-        return new UserHalLinksListener($groupService);
+        return new UserHalLinksListener($container->get(SecurityGroupServiceInterface::class));
     }
 }

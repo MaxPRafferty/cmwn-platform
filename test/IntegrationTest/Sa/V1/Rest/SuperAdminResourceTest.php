@@ -10,7 +10,7 @@ use Zend\Json\Json;
  * Class SuperAdminSettingsResourceTest
  * @package IntegrationTest\Sa\Rest
  */
-class SuperAdminSettingsResourceTest extends AbstractApigilityTestCase
+class SuperAdminResourceTest extends AbstractApigilityTestCase
 {
     /**
      * @return ArrayDataSet
@@ -67,7 +67,7 @@ class SuperAdminSettingsResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_links', $body);
 
         $actual = [];
-        $expected = ['Manage Users', 'Manage Games', 'Survey Results'];
+        $expected = ['Manage Users', 'Manage Games', 'Survey Results', 'Manage Groups', 'Manage Organizations'];
 
         foreach ($body['_links'] as $link) {
             $actual[] = $link['label'];

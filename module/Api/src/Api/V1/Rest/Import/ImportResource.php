@@ -4,11 +4,11 @@ namespace Api\V1\Rest\Import;
 use Group\GroupAwareInterface;
 use Group\Service\GroupServiceInterface;
 use Import\ImporterInterface;
+use Interop\Container\ContainerInterface;
 use Job\Service\JobServiceInterface;
 use Notice\NotificationAwareInterface;
 use User\UserInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -22,24 +22,25 @@ use ZF\Rest\AbstractResourceListener;
 class ImportResource extends AbstractResourceListener
 {
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $services;
 
     /**
      * ImportResource constructor.
      *
-     * @param ServiceLocatorInterface $services
+     * @param ContainerInterface $services
      */
-    public function __construct(ServiceLocatorInterface $services)
+    public function __construct(ContainerInterface $services)
     {
-        $this->services   = $services;
+        $this->services = $services;
     }
 
     /**
      * Creates a new import job and sends it to the job service
      *
      * @param  mixed $data
+     *
      * @return ApiProblem|mixed
      */
     public function create($data)
@@ -49,7 +50,7 @@ class ImportResource extends AbstractResourceListener
             return new ApiProblem(500, 'Invalid importer type');
         }
 
-        $job  = $this->services->get($type);
+        $job = $this->services->get($type);
         if (!$job instanceof ImporterInterface) {
             return new ApiProblem(500, 'Not a valid importer');
         }
@@ -65,6 +66,7 @@ class ImportResource extends AbstractResourceListener
         }
 
         $token = $this->getJobService()->sendJob($job);
+
         return new ImportEntity($token);
     }
 

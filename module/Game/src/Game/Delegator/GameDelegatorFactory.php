@@ -3,26 +3,19 @@
 
 namespace Game\Delegator;
 
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
  * Class GameDelegatorFactory
- * @package Game\Delegator
  */
 class GameDelegatorFactory implements DelegatorFactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param string $name
-     * @param string $requestedName
-     * @param callable $callback
-     *
-     * @return GameDelegator
+     * @inheritDoc
      */
-    public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
+    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        $realService = call_user_func($callback);
-        return new GameDelegator($realService);
+        return new GameDelegator($callback());
     }
 }

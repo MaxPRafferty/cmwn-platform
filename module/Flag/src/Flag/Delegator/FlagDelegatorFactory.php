@@ -2,9 +2,8 @@
 
 namespace Flag\Delegator;
 
-use Flag\Service\FlagService;
-use Zend\ServiceManager\DelegatorFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
  * Class FlagDelegatorFactory
@@ -12,19 +11,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class FlagDelegatorFactory implements DelegatorFactoryInterface
 {
     /**
-     * A factory that creates delegates of a given service
-     *
-     * @param ServiceLocatorInterface $serviceLocator the service locator which requested the service
-     * @param string $name the normalized service name
-     * @param string $requestedName the requested service name
-     * @param callable $callback the callback that is responsible for creating the service
-     *
-     * @return mixed
+     * @inheritDoc
      */
-    public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
+    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        /** @var FlagService $flagImageService */
-        $flagImageService = call_user_func($callback);
-        return  new FlagDelegator($flagImageService);
+        return new FlagDelegator($callback());
     }
 }

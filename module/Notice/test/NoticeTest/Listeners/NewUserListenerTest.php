@@ -2,6 +2,7 @@
 
 namespace NoticeTest\Listeners;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\EmailModel\NewUserModel;
 use Notice\Listeners\NewUserEmailListener;
 use \PHPUnit_Framework_TestCase as TestCase;
@@ -12,10 +13,13 @@ use Zend\EventManager\Event;
 
 /**
  * Test NewUserListenerTest
+ *
  * @package NoticeTest\Listeners
  */
 class NewUserListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var NewUserEmailListener
      */
@@ -61,7 +65,7 @@ class NewUserListenerTest extends TestCase
     public function setUpListener()
     {
         $this->emailModel = \Mockery::mock('\Notice\EmailModel\NewUserModel');
-        $this->listener = new NewUserEmailListener($this->emailModel);
+        $this->listener   = new NewUserEmailListener($this->emailModel);
         $this->listener->setMailService($this->mailService);
     }
 
@@ -97,7 +101,7 @@ class NewUserListenerTest extends TestCase
         $this->mailService->shouldReceive('send')
             ->once();
 
-        $user = new Adult(['user_id'=>'foo', 'user_name'=>'bar', 'first_name'=> 'baz', 'email' => 'baz@bat.com']);
+        $user  = new Adult(['user_id' => 'foo', 'user_name' => 'bar', 'first_name' => 'baz', 'email' => 'baz@bat.com']);
         $event = new Event('save.new.user.post');
         $event->setParam('user', $user);
 
@@ -124,11 +128,11 @@ class NewUserListenerTest extends TestCase
         $this->mailService->shouldReceive('send')
             ->never();
 
-        $user = new SecurityUser(['user_id'=>'foo', 'email' => 'baz@bat.com']);
+        $user  = new SecurityUser(['user_id' => 'foo', 'email' => 'baz@bat.com']);
         $event = new Event('save.new.user.post');
         $event->setParam('user', $user);
 
-        $this->listener->notify($event);
+        $this->assertEmpty($this->listener->notify($event));
     }
 
     /**
@@ -154,7 +158,7 @@ class NewUserListenerTest extends TestCase
         $event = new Event('save.new.user.post');
         $event->setParam('user', 'foo');
 
-        $this->listener->notify($event);
+        $this->assertEmpty($this->listener->notify($event));
     }
 
     /**
@@ -177,11 +181,11 @@ class NewUserListenerTest extends TestCase
         $this->mailService->shouldReceive('send')
             ->never();
 
-        $user = new SecurityUser(['user_id'=>'foo', 'email' => 'baz@bat.com']);
+        $user = new SecurityUser(['user_id' => 'foo', 'email' => 'baz@bat.com']);
         $user->setType(User::TYPE_CHILD);
         $event = new Event('save.new.user.post');
         $event->setParam('user', $user);
 
-        $this->listener->notify($event);
+        $this->assertEmpty($this->listener->notify($event));
     }
 }

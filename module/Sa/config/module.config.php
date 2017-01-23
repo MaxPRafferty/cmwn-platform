@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'shared-listeners' => [
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Sa\Listeners\SaSettingsLinkListener::class => [],
+    ],
+    'shared-listeners'       => [
         \Sa\Listeners\SaSettingsLinkListener::class,
     ],
-    'service_manager' => [
+    'service_manager'        => [
         'factories' => [
-            'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource'
-                => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResourceFactory',
-        ],
-        'invokables' => [
-            \Sa\Listeners\SaSettingsLinkListener::class => \Sa\Listeners\SaSettingsLinkListener::class,
+            \Sa\V1\Rest\SuperAdminSettings\SuperAdminSettingsResource::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
     ],
-    'router' => [
+    'router'                 => [
         'routes' => [
             'sa.rest.settings' => [
-                'type' => 'Segment',
+                'type'    => 'Segment',
                 'options' => [
-                    'route' => '/sa/settings[/:settings_id]',
+                    'route'    => '/sa/settings[/:settings_id]',
                     'defaults' => [
                         'controller' => 'Sa\\V1\\Rest\\SuperAdminSettings\\Controller',
                     ],
@@ -26,34 +26,34 @@ return [
             ],
         ],
     ],
-    'zf-versioning' => [
+    'zf-versioning'          => [
         'uri' => [
             'sa.rest.settings',
         ],
     ],
-    'zf-rest' => [
+    'zf-rest'                => [
         'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => [
-            'listener' => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource',
-            'route_name' => 'sa.rest.settings',
-            'route_identifier_name' => 'settings_id',
-            'collection_name' => 'settings',
-            'entity_http_methods' => [],
-            'collection_http_methods' => [
+            'listener'                   => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsResource',
+            'route_name'                 => 'sa.rest.settings',
+            'route_identifier_name'      => 'settings_id',
+            'collection_name'            => 'settings',
+            'entity_http_methods'        => [],
+            'collection_http_methods'    => [
                 0 => 'GET',
             ],
             'collection_query_whitelist' => [],
-            'page_size' => 25,
-            'page_size_param' => 'per_page',
-            'entity_class' => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity',
-            'collection_class' => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsCollection',
-            'service_name' => 'SuperAdminSettings',
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity',
+            'collection_class'           => 'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsCollection',
+            'service_name'               => 'SuperAdminSettings',
         ],
     ],
     'zf-content-negotiation' => [
-        'controllers' => [
+        'controllers'            => [
             'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => 'HalJson',
         ],
-        'accept_whitelist' => [
+        'accept_whitelist'       => [
             'Sa\\V1\\Rest\\SuperAdminSettings\\Controller' => [
                 0 => 'application/vnd.api.v1+json',
                 1 => 'application/hal+json',
@@ -67,13 +67,13 @@ return [
             ],
         ],
     ],
-    'zf-hal' => [
+    'zf-hal'                 => [
         'metadata_map' => [
             'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity' => [
                 'entity_identifier_name' => 'settings_id',
-                'route_name' => 'api.rest.sa.settings',
-                'route_identifier_name' => 'settings_id',
-                'hydrator' => 'Zend\\Hydrator\\ArraySerializable',
+                'route_name'             => 'api.rest.sa.settings',
+                'route_identifier_name'  => 'settings_id',
+                'hydrator'               => 'Zend\\Hydrator\\ArraySerializable',
             ],
         ],
     ],
