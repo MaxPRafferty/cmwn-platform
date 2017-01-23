@@ -49,6 +49,7 @@ return [
     'Security',
     'Suggest',
     'Flag',
+    'Feed',
     'Sa',
     'Rule',
 ];

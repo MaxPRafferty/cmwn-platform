@@ -60,6 +60,7 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.flagged.images');
         $this->setAllowed('view.flagged.image');
         $this->setAllowed('delete.flag');
+        $this->setAllowed('view.feed');
         $this->setAllowed('sa.settings');
         $this->setAllowed('create.game');
         $this->setAllowed('delete.game');

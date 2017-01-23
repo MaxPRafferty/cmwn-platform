@@ -53,7 +53,7 @@ class DeleteSuggestionListener
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-        $manager->detach(FriendServiceInterface::class, $this->listeners[0]);
+        $manager->detach($this->listeners[0], FriendServiceInterface::class);
     }
 
     /**

@@ -19,6 +19,7 @@ return [
             'remove.user.child'    => 'Delete a Child user',
             'can.friend'           => 'Can friend users',
             'view.feed'            => 'Can view feed',
+            'view.user.feed'       => 'View user feed',
 
             // Flip
             'create.user.flip'     => 'Earn a flip',
@@ -143,6 +144,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'view.feed',
                     'sa.settings',
                     'create.game',
                     'view.game',
@@ -327,7 +329,7 @@ return [
                     'view.user.child',
                     'view.user.flip',
                     'view.user.groups',
-                    'view.feed',
+                    'view.user.feed',
                 ],
             ],
 
@@ -347,7 +349,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
-                    'view.feed',
+                    'view.user.feed',
                 ],
             ],
 
