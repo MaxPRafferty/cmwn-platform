@@ -12,7 +12,7 @@ return [
         ],
         \Api\Listeners\InjectSenderListener::class => [
             \User\Service\UserServiceInterface::class,
-        ]
+        ],
         \Api\V1\Rest\SuperFlag\SuperFlagResource::class => [
             \Security\Service\SecurityServiceInterface::class,
             \User\Service\UserServiceInterface::class,
