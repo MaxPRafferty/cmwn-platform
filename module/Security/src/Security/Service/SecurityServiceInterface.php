@@ -21,6 +21,15 @@ interface SecurityServiceInterface
     public static function encryptPassword($password);
 
     /**
+     * Fetches a user by the user id
+     *
+     * @param $userId
+     * @return SecurityUser
+     * @throws NotFoundException
+     */
+    public function fetchUserByUserId($userId);
+
+    /**
      * Fetches a user by the email
      *
      * @param $email

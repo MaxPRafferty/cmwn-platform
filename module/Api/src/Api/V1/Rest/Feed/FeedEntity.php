@@ -2,31 +2,13 @@
 
 namespace Api\V1\Rest\Feed;
 
-use Api\FeedEntityInterface;
-use Api\Links\GameLink;
-use Game\Game;
-use Game\GameInterface;
+use Feed\Feed;
+use Feed\FeedInterface;
 
 /**
  * Class FeedEntity
  * @package Api\V1\Rest\Feed
  */
-class FeedEntity extends Game implements FeedEntityInterface, GameInterface
+class FeedEntity extends Feed implements FeedInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public function getArrayCopy()
-    {
-        return [
-            'feed_id' => null,
-            'sender' => null,
-            'header' => $this->getTitle(),
-            'message' => $this->getDescription(),
-            'image' => null,
-            'created' => $this->getCreated(),
-            'type' => 'game',
-            'link' => new GameLink($this->getGameId()),
-        ];
-    }
 }
