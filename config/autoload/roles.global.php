@@ -19,6 +19,7 @@ return [
             'remove.user.child'    => 'Delete a Child user',
             'can.friend'           => 'Can friend users',
             'view.feed'            => 'Can view feed',
+            'view.user.feed'       => 'View user feed',
 
             // Flip
             'create.user.flip'     => 'Earn a flip',
@@ -72,6 +73,7 @@ return [
             'edit.flag'            => 'Edit flag',
             'delete.flag'          => 'delete flag',
             'view.flagged.image'   => 'view a flagged image using flag_id',
+            'set.super'            => 'update the super status of a user',
 
 
             // skribble
@@ -82,7 +84,8 @@ return [
             'skribble.notice'      => 'Notify Skribble status',
 
             // god mode
-            'sa.settings'          => 'View God Mode Admin Dashboard'
+            'sa.settings'          => 'View God Mode Admin Dashboard',
+            'get.super.user'       => 'Fetch a super user',
         ],
         'roles'             => [
             'super' => [
@@ -141,6 +144,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'view.feed',
                     'sa.settings',
                     'create.game',
                     'view.game',
@@ -148,6 +152,9 @@ return [
                     'delete.game',
                     'reset.group.code',
                     'view.feed',
+                    'set.super',
+                    'get.super.user',
+                    'view.user.feed',
                 ],
             ],
 
@@ -324,7 +331,7 @@ return [
                     'view.user.child',
                     'view.user.flip',
                     'view.user.groups',
-                    'view.feed',
+                    'view.user.feed',
                 ],
             ],
 
@@ -344,7 +351,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
-                    'view.feed',
+                    'view.user.feed',
                 ],
             ],
 

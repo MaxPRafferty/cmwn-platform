@@ -2,12 +2,9 @@
 
 namespace Api\Rule\Provider;
 
-use Api\Rule\Provider\EntityFromEventProvider;
 use Group\GroupInterface;
 use Rule\Event\Provider\AbstractEventProvider;
-use Rule\Event\Provider\EventProviderInterface;
 use Security\Service\SecurityGroupServiceInterface;
-use Security\Service\SecurityOrgServiceInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\Hal\Entity;
 

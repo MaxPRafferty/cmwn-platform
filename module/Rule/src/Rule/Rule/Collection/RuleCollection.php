@@ -93,6 +93,8 @@ class RuleCollection implements RuleCollectionInterface, \Countable
             return false;
         }
 
+        $this->timesSatisfied = 0;
+
         foreach ($this as $rule) {
             if ($rule->isSatisfiedBy($event)) {
                 $this->timesSatisfied++;

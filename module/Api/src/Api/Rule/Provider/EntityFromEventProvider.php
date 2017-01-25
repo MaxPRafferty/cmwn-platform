@@ -1,14 +1,15 @@
 <?php
 
-
 namespace Api\Rule\Provider;
 
 use Rule\Event\Provider\AbstractEventProvider;
-use Rule\Event\Provider\EventProviderInterface;
-use Rule\Provider\ProviderInterface;
 use ZF\Hal\Entity;
 use ZF\Hal\Link\LinkCollectionAwareInterface;
 
+/**
+ * Class EntityFromEventProvider
+ * This fetches the entity from the event
+ */
 class EntityFromEventProvider extends AbstractEventProvider
 {
     const PROVIDER_NAME = "entity";
@@ -22,6 +23,9 @@ class EntityFromEventProvider extends AbstractEventProvider
         parent::__construct($providerName);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getValue()
     {
         $entity = $this->getEvent()->getParam('entity');

@@ -1,5 +1,5 @@
 <?php
-return [];
+
 return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
         'org-types-hal-link' => [

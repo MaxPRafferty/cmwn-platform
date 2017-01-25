@@ -159,4 +159,24 @@ class RuleCollectionTest extends TestCase
             'Rule Collection should add all rules as the AND operator'
         );
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldPassWhenSameCollectionIsPassedMultipleTimes()
+    {
+        $collection = new RuleCollection();
+        $collection->append(new AlwaysSatisfiedRule())
+            ->append(new NeverSatisfiedRule());
+
+        $this->assertFalse(
+            $collection->isSatisfiedBy(new BasicRuleItem()),
+            'Rule Collection should fail on the first call'
+        );
+
+        $this->assertFalse(
+            $collection->isSatisfiedBy(new BasicRuleItem()),
+            'Rule Collection should fail on the second call'
+        );
+    }
 }

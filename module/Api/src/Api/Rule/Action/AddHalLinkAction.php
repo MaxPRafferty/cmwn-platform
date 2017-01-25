@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Api\Rule\Action;
 
 use Rule\Action\ActionInterface;

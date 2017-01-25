@@ -44,7 +44,7 @@ class UserRelationshipProvider extends AbstractEventProvider
     }
 
     /**
-     * @inheritdoc
+     * @return string
      */
     public function getValue()
     {

@@ -1,11 +1,11 @@
 <?php
-return [];
+
 return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
         'username-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'username-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
+            'name'                => 'Attaches the username hal link for a child entity if it has permissions',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -50,7 +50,7 @@ return [
         'friend-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'friend-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
+            'name'                => 'Attach the friend hal link for an entity if it has permissions',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -88,7 +88,7 @@ return [
         'skribble-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'skribble-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
+            'name'                => 'Attaches the skribble hal links for an entity if it has permissions',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -126,8 +126,8 @@ return [
         'forgot-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'forgot-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
-            'when'                => ['renderEntity', 'renderCollection.entity'],
+            'name'                => 'Attaches the forgot hal links for an entity if it has permissions',
+            'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
                 'rules'                 => [

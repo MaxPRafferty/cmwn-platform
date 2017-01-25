@@ -17,6 +17,6 @@ class ForgotLink extends Link
     {
         parent::__construct('forgot');
         $this->setProps(['label' => 'Forgot Password']);
-        $this->setRoute('api.rest.forgot');
+        $this->setRoute('api.rest.forgot', [], ['reuse_matched_params' => false]);
     }
 }

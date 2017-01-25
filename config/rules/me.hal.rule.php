@@ -1,5 +1,5 @@
 <?php
-return [];
+
 return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
         'me-hal-links' => [
@@ -62,7 +62,7 @@ return [
         'feed-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'feed-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
+            'name'                => 'Attaches the feed hal links for a me entity if it has permissions',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -104,10 +104,55 @@ return [
             ],
         ],
 
+        'user-feed-hal-link' => [
+            'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
+            'id'                  => 'user-feed-hal-link',
+            'name'                => 'Attaches the user feed hal links for a me entity if it has permissions',
+            'when'                => 'renderEntity',
+            'rules'               => [
+                'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
+                'rules'                 => [
+                    // entity has permissions
+                    [
+                        'name'    => \Security\Rule\Rule\HasPermission::class,
+                        'options' => [
+                            \Security\Authorization\Rbac::class,
+                            'view.user.feed',
+                            \Api\Rule\Provider\UserRelationshipProvider::class,
+                        ],
+                    ],
+                    [
+                        'name'    => \Rule\Rule\Object\IsTypeRule::class,
+                        'options' => [
+                            \Api\V1\Rest\User\MeEntity::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'actions'             => [
+                'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
+                'actions'                 => [
+                    //Add a hal link to the entity
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\UserFeedLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
+                        ],
+                    ],
+                ],
+            ],
+            'providers'           => [
+                \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\UserRelationshipProvider::class,
+            ],
+        ],
+
         'flag-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'flag-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
+            'name'                => 'Attaches the flag hal links for a me entity if it has permissions',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -152,7 +197,7 @@ return [
         'save-game-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'save-game-hal-link',
-            'name'                => 'Attaches the hal links for an entity if it has permissions',
+            'name'                => 'Attaches the save game hal links for a me entity if it has permissions',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -199,6 +244,7 @@ return [
         'factories' => [
             'me-hal-links' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'feed-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'user-feed-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'flag-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'save-game-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
