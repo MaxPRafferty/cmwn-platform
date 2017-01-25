@@ -26,7 +26,7 @@ class UserFeed extends Feed implements UserFeedInterface
     /**
      * @inheritdoc
      */
-    public function exchangeArray($array = [])
+    public function exchangeArray(array $array = [])
     {
         parent::exchangeArray($array);
         if (isset($array['read_flag'])) {
@@ -37,7 +37,7 @@ class UserFeed extends Feed implements UserFeedInterface
     /**
      * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy() : array
     {
         $data = parent::getArrayCopy();
         $data['read_flag'] = $this->getReadFlag();

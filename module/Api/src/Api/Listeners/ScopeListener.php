@@ -9,7 +9,7 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
-use Security\Service\SecurityGroupServiceInterface;
+use Security\Service\SecurityUserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -29,15 +29,15 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
     protected $listeners = [];
 
     /**
-     * @var SecurityGroupServiceInterface
+     * @var SecurityUserServiceInterface
      */
     protected $securityGroupService;
 
     /**
      * ScopeListener constructor.
-     * @param SecurityGroupServiceInterface $securityGroupService
+     * @param SecurityUserServiceInterface $securityGroupService
      */
-    public function __construct(SecurityGroupServiceInterface $securityGroupService)
+    public function __construct(SecurityUserServiceInterface $securityGroupService)
     {
         $this->securityGroupService = $securityGroupService;
     }

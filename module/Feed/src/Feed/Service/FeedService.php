@@ -65,7 +65,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeed($feedId, $where = null, $prototype = null)
+    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null)
     {
         $prototype = $prototype === null ? new Feed() : $prototype;
         $where = $this->createWhere($where);
@@ -85,7 +85,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, $prototype = null)
+    public function fetchAll($where = null, FeedInterface $prototype = null)
     {
         $where = $this->createWhere($where);
         $where->isNull('ft.deleted');

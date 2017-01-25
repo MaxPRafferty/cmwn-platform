@@ -45,6 +45,7 @@ class SuperFlagResource extends AbstractResourceListener
         $userId = $this->getEvent()->getRouteParam('user_id');
         $user = $this->userService->fetchUser($userId);
 
+        //@todo create a new validator to make this check
         if ($user->getType()!== UserInterface::TYPE_ADULT) {
             return new ApiProblem(403, 'Action forbidden for non adult users');
         }

@@ -57,7 +57,7 @@ class ArraySpecificationTest extends TestCase
         $spec = [
             'id'        => 'foo-bar',
             'name'      => 'This is a test that the foo will bar',
-            'when'      => 'some.event',
+            'when'      => ['some.event'],
             'rules'     => [
                 AlwaysSatisfiedRule::class,
             ],

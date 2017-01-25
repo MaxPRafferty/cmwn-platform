@@ -20,17 +20,17 @@ interface FeedServiceInterface
     /**
      * @param string $feedId
      * @param null $where
-     * @param null $prototype
+     * @param FeedInterface | null $prototype
      * @return mixed | FeedInterface
      */
-    public function fetchFeed($feedId, $where = null, $prototype = null);
+    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null);
 
     /**
      * @param null $where
-     * @param null $prototype
+     * @param FeedInterface | null $prototype
      * @return mixed | DbSelect
      */
-    public function fetchAll($where = null, $prototype = null);
+    public function fetchAll($where = null, FeedInterface $prototype = null);
 
     /**
      * @param FeedInterface $feed

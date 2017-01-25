@@ -605,24 +605,6 @@ class UserResourceTest extends TestCase
         $this->assertResponseStatusCode(422);
     }
 
-    /**
-     * test
-     * @ticket CORE-2746
-     */
-    public function testItShouldFetchUsersByType()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/user?type=CHILD');
-        $this->assertMatchedRouteName('api.rest.user');
-        $this->assertControllerName('api\v1\rest\user\controller');
-        $this->assertResponseStatusCode(200);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('_links', $body);
-        $this->assertArrayHasKey('total_items', $body);
-    }
-
     /** test
      * @ticket CORE-2331
      * @group MissingApiRoute
@@ -676,6 +658,47 @@ class UserResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $this->dispatch('/user?email=foo@ginasink.com');
+    }
+
+    /**
+     * test
+     * @ticket CORE-2746
+     */
+    public function testItShouldFetchUsersByType()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?type=CHILD');
+        $this->assertMatchedRouteName('api.rest.user');
+        $this->assertControllerName('api\v1\rest\user\controller');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('_links', $body);
+        $this->assertArrayHasKey('total_items', $body);
+    }
+
+    /**
+     * @test
+     * @dataProvider halLinkDataProvider
+     */
+    public function testItShouldCorrectlyAddHalLinksOnFetch($login, $user, $expected)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+        $this->dispatch('/user/' . $user);
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'];
+
+        $actual = [];
+        foreach ($links as $label => $link) {
+            $actual[] = $label;
+        }
+        $this->assertEquals($actual, $expected);
     }
 
     /**
@@ -757,6 +780,107 @@ class UserResourceTest extends TestCase
             1 => [
                 'math_student',
                 '/user/math_student',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function halLinkDataProvider()
+    {
+        return [
+            0 => [
+                'super_user',
+                'principal',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'forgot',
+                    4 => 'super_flag',
+                    5 => 'super',
+                    6 => 'group_class',
+                    7 => 'group_school',
+                    8 => 'org_district',
+                ]
+            ],
+            1 => [
+                'super_user',
+                'english_teacher',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'forgot',
+                    4 => 'super_flag',
+                    5 => 'super',
+                    6 => 'group_class',
+                    7 => 'group_school',
+                    8 => 'org_district',
+                ]
+            ],
+            2 => [
+                'super_user',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'user_name',
+                    5 => 'reset',
+                    6 => 'group_class',
+                ]
+            ],
+            3 => [
+                'principal',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'reset',
+                    5 => 'group_class',
+                ]
+            ],
+            4 => [
+                'principal',
+                'english_teacher',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'forgot',
+                    4 => 'group_class',
+                    5 => 'group_school',
+                    6 => 'org_district',
+                ]
+            ],
+            5 => [
+                'english_teacher',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'reset',
+                    5 => 'group_class',
+                ]
+            ],
+            6 => [
+                'math_student',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'friend',
+                    5 => 'group_class',
+                ]
             ],
         ];
     }

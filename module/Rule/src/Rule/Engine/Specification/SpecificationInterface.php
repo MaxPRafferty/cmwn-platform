@@ -35,7 +35,7 @@ interface SpecificationInterface
      *
      * @return string
      */
-    public function getEventName(): string;
+    public function getEventName();
 
     /**
      * Allows the specification to build all the rules from the container

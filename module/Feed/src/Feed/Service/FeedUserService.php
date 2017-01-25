@@ -45,7 +45,7 @@ class FeedUserService implements FeedUserServiceInterface
     public function attachFeedForUser($user, UserFeedInterface $feed)
     {
         try {
-            $this->fetchFeedForUser($user, $feed);
+            $this->fetchFeedForUser($user, $feed->getFeedId());
             throw new DuplicateEntryException('User feed already exists');
         } catch (NotFoundException $nf) {
             $data = [
@@ -62,7 +62,7 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeedForUser($user, $feed, $where = null, UserFeedInterface $prototype = null)
+    public function fetchFeedForUser($user, string $feed, $where = null, UserFeedInterface $prototype = null)
     {
         $userId = $user instanceof UserInterface? $user->getUserId() : $user;
         $feedId = $feed instanceof FeedInterface? $feed->getFeedId() : $feed;
@@ -137,7 +137,7 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteFeedForUser($user, $feed)
+    public function deleteFeedForUser($user, UserFeedInterface $feed)
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 

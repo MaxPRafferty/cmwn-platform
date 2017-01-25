@@ -8,6 +8,7 @@ use Feed\Feed;
 use Feed\Service\FeedService;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class FeedDelegatorTest
@@ -45,7 +46,7 @@ class FeedDelegatorTest extends TestCase
     public function setUpDelegator()
     {
         $this->calledEvents = [];
-        $this->delegator = new FeedDelegator($this->feedService);
+        $this->delegator = new FeedDelegator($this->feedService, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
@@ -119,6 +120,41 @@ class FeedDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldThrowExceptionWhenFetchAllThrowsException()
+    {
+        $e = new \Exception();
+        $this->feedService
+            ->shouldReceive('fetchAll')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+        try {
+            $this->delegator->fetchAll();
+            $this->fail('exception is not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(2, count($this->calledEvents));
+            $this->assertEquals(
+                [
+                    'name' => 'fetch.all.feed',
+                    'target' => $this->feedService,
+                    'params' => ['where' => null, 'prototype' => null],
+                ],
+                $this->calledEvents[0]
+            );
+            $this->assertEquals(
+                [
+                    'name' => 'fetch.all.feed.error',
+                    'target' => $this->feedService,
+                    'params' => ['where' => null, 'prototype' => null, 'exception' => $e],
+                ],
+                $this->calledEvents[1]
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCallFetchFeed()
     {
         $feed = new Feed(['feed_id' => 'es_friend_feed']);
@@ -178,7 +214,7 @@ class FeedDelegatorTest extends TestCase
         $exception = new NotFoundException('feed not found');
         $this->feedService
             ->shouldReceive('fetchFeed')
-            ->andThrow($exception);
+            ->andThrow($exception)->once();
 
         $this->setExpectedException(NotFoundException::class);
         $this->delegator->fetchFeed('es_friend_feed');
@@ -265,6 +301,40 @@ class FeedDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldThrowExceptionWhenExceptionIsThrownOnCreateFeed()
+    {
+        $feed = new Feed(['feed_id' => 'es_friend_feed']);
+        $this->feedService
+            ->shouldReceive('createFeed')
+            ->with($feed)
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+        try {
+            $this->delegator->createFeed($feed);
+        } catch (\Exception $e) {
+            $this->assertEquals(2, count($this->calledEvents));
+            $this->assertEquals(
+                [
+                    'name' => 'create.feed',
+                    'target' => $this->feedService,
+                    'params' => ['feed' => $feed],
+                ],
+                $this->calledEvents[0]
+            );
+            $this->assertEquals(
+                [
+                    'name' => 'create.feed.error',
+                    'target' => $this->feedService,
+                    'params' => ['feed' => $feed, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1]
+            );
+        }
+    }
+    /**
+     * @test
+     */
     public function testItShouldCallUpdateFeed()
     {
         $feed = new Feed(['feed_id' => 'es_friend_feed']);
@@ -321,6 +391,41 @@ class FeedDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldThrowExceptionIfUpdateFeedThrowsException()
+    {
+        $feed = new Feed(['feed_id' => 'es_friend_feed']);
+        $this->feedService
+            ->shouldReceive('updateFeed')
+            ->with($feed)
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+        try {
+            $this->delegator->updateFeed($feed);
+        } catch (\Exception $e) {
+            $this->assertEquals(2, count($this->calledEvents));
+            $this->assertEquals(
+                [
+                    'name' => 'update.feed',
+                    'target' => $this->feedService,
+                    'params' => ['feed' => $feed],
+                ],
+                $this->calledEvents[0]
+            );
+            $this->assertEquals(
+                [
+                    'name' => 'update.feed.error',
+                    'target' => $this->feedService,
+                    'params' => ['feed' => $feed, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1]
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCallDeleteFeed()
     {
         $feed = new Feed(['feed_id' => 'es_friend_feed']);
@@ -372,5 +477,38 @@ class FeedDelegatorTest extends TestCase
             ],
             $this->calledEvents[0]
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionIfDeleteFeedThrowsException()
+    {
+        $feed = new Feed(['feed_id' => 'es_friend_feed']);
+        $this->feedService
+            ->shouldReceive('deleteFeed')
+            ->with($feed, true)
+            ->once();
+        try {
+            $this->delegator->deleteFeed($feed);
+        } catch (\Exception $e) {
+            $this->assertEquals(2, count($this->calledEvents));
+            $this->assertEquals(
+                [
+                    'name' => 'delete.feed',
+                    'target' => $this->feedService,
+                    'params' => ['feed' => $feed, 'soft' => true],
+                ],
+                $this->calledEvents[0]
+            );
+            $this->assertEquals(
+                [
+                    'name' => 'delete.feed.error',
+                    'target' => $this->feedService,
+                    'params' => ['feed' => $feed, 'soft' => true, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1]
+            );
+        }
     }
 }

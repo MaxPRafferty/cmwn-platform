@@ -30,7 +30,7 @@ interface FeedUserServiceInterface
      * @throws NotFoundException
      * @return UserFeedInterface
      */
-    public function fetchFeedForUser($user, $feedId, $where = null, UserFeedInterface $prototype = null);
+    public function fetchFeedForUser($user, string $feedId, $where = null, UserFeedInterface $prototype = null);
 
     /**
      * @param $user
@@ -49,8 +49,8 @@ interface FeedUserServiceInterface
 
     /**
      * @param string | UserInterface $user
-     * @param string | UserFeedInterface $feed
+     * @param UserFeedInterface $feed
      * @return bool
      */
-    public function deleteFeedForUser($user, $feed);
+    public function deleteFeedForUser($user, UserFeedInterface $feed);
 }

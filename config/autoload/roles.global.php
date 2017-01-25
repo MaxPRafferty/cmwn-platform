@@ -169,8 +169,10 @@ return [
                     'view.all.group.addresses',
                     'attach.group.address',
                     'detach.group.address',
+                    'view.feed',
                     'set.super',
                     'get.super.user',
+                    'view.user.feed',
                 ],
             ],
 

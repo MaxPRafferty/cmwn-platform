@@ -6,7 +6,7 @@ use Feed\Service\FeedUserService;
 use Feed\Service\FeedUserServiceInterface;
 use Feed\UserFeedInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class FeedUserDelegator
@@ -14,17 +14,37 @@ use Zend\EventManager\EventManagerAwareTrait;
  */
 class FeedUserDelegator implements FeedUserServiceInterface
 {
-    use EventManagerAwareTrait;
-
+    /**
+     * @var FeedUserService
+     */
     protected $service;
+
+    /**
+     * @var EventManagerInterface
+     */
+    protected $events;
 
     /**
      * FeedUserDelegator constructor.
      * @param FeedUserService $service
+     * @param EventManagerInterface $events
      */
-    public function __construct(FeedUserService $service)
+    public function __construct(FeedUserService $service, EventManagerInterface $events)
     {
         $this->service = $service;
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [FeedUserServiceInterface::class, static::class, FeedUserService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**
@@ -62,7 +82,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeedForUser($user, $feedId, $where = null, UserFeedInterface $prototype = null)
+    public function fetchFeedForUser($user, string $feedId, $where = null, UserFeedInterface $prototype = null)
     {
         $event = new Event(
             'fetch.user.feed',
@@ -108,14 +128,22 @@ class FeedUserDelegator implements FeedUserServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->fetchAllFeedForUser($user, $where, $prototype);
+        try {
+            $return = $this->service->fetchAllFeedForUser($user, $where, $prototype);
 
-        $event->setName('fetch.all.user.feed.post');
-        $event->setParam('user_feeds', $return);
+            $event->setName('fetch.all.user.feed.post');
+            $event->setParam('user_feeds', $return);
 
-        $this->getEventManager()->triggerEvent($event);
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.all.user.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 
     /**
@@ -134,18 +162,26 @@ class FeedUserDelegator implements FeedUserServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->updateFeedForUser($user, $feed);
+        try {
+            $return = $this->service->updateFeedForUser($user, $feed);
 
-        $event->setName('update.user.feed.post');
-        $this->getEventManager()->triggerEvent($event);
+            $event->setName('update.user.feed.post');
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('update.user.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function deleteFeedForUser($user, $feed)
+    public function deleteFeedForUser($user, UserFeedInterface $feed)
     {
         $event = new Event(
             'delete.user.feed',
@@ -158,11 +194,19 @@ class FeedUserDelegator implements FeedUserServiceInterface
             return $response->last();
         }
 
-        $return = $this->service->deleteFeedForUser($user, $feed);
+        try {
+            $return = $this->service->deleteFeedForUser($user, $feed);
 
-        $event->setName('delete.user.feed.post');
-        $this->getEventManager()->triggerEvent($event);
+            $event->setName('delete.user.feed.post');
+            $this->getEventManager()->triggerEvent($event);
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('delete.user.feed.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $e;
+        }
     }
 }
