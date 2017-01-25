@@ -180,7 +180,7 @@ return [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'reset-password-hal-link',
             'name'                => 'Attaches the hal links for an entity if it has permissions',
-            'when'                => ['renderEntity', 'renderCollection.entity'],
+            'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
                 'rules'                 => [

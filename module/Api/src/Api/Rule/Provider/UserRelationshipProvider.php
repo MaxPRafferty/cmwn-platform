@@ -63,6 +63,6 @@ class UserRelationshipProvider extends AbstractEventProvider
             return 'super';
         }
 
-        return $this->securityUserService->fetchRelationshipRole($user, $authUser);
+        return $this->securityUserService->fetchRelationshipRole($authUser, $user);
     }
 }

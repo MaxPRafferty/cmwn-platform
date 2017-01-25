@@ -12,7 +12,6 @@ class SuperLink extends Link
 {
     /**
      * SuperLink constructor.
-     * @param null $userId
      */
     public function __construct()
     {
