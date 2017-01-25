@@ -2,9 +2,9 @@
 
 namespace Api\V1\Rest\Feed;
 
-use Api\V1\Rest\Game\GameResource;
-use Game\Service\GameService;
-use Zend\Paginator\Adapter\DbSelect;
+use Feed\Feed;
+use Feed\Service\FeedServiceInterface;
+use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
@@ -13,17 +13,17 @@ use ZF\Rest\AbstractResourceListener;
 class FeedResource extends AbstractResourceListener
 {
     /**
-     * @var GameResource
+     * @var FeedServiceInterface
      */
-    protected $gameService;
+    protected $feedService;
 
     /**
      * FeedResource constructor.
-     * @param GameService $gameService
+     * @param FeedServiceInterface $feedService
      */
-    public function __construct($gameService)
+    public function __construct(FeedServiceInterface $feedService)
     {
-        $this->gameService = $gameService;
+        $this->feedService = $feedService;
     }
 
     /**
@@ -32,9 +32,55 @@ class FeedResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        /**@var DbSelect $games*/
-        $feeds = $this->gameService->fetchAll(null, true, new FeedEntity());
+        /**@var \Zend\Paginator\Adapter\DbSelect $feeds*/
+        $feeds = $this->feedService->fetchAll(null, new FeedEntity());
 
         return new FeedCollection($feeds);
+    }
+
+    /**
+     * @param mixed $feedId
+     * @return FeedEntity
+     */
+    public function fetch($feedId)
+    {
+        $feed = $this->feedService->fetchFeed($feedId);
+        return new FeedEntity($feed->getArrayCopy());
+    }
+
+    /**
+     * @param array $data
+     * @return FeedEntity
+     */
+    public function create($data)
+    {
+        $data = $this->getInputFilter()->getValues();
+        $feed = new Feed($data);
+        $this->feedService->createFeed($feed);
+        return new FeedEntity($feed->getArrayCopy());
+    }
+
+    /**
+     * @param mixed $feedId
+     * @param mixed $data
+     * @return FeedEntity
+     */
+    public function update($feedId, $data)
+    {
+        $data = $this->getInputFilter()->getValues();
+        $feed = $this->fetch($feedId);
+        $this->feedService->updateFeed($feed->exchangeArray($data));
+        return new FeedEntity($feed->getArrayCopy());
+    }
+
+    /**
+     * @param mixed $feedId
+     * @return ApiProblem
+     */
+    public function delete($feedId)
+    {
+        $feed = $this->fetch($feedId);
+        $this->feedService->deleteFeed($feed);
+        return new ApiProblem(200, 'feed deleted', 'Ok');
     }
 }

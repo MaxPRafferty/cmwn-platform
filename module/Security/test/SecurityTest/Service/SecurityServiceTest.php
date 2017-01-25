@@ -9,6 +9,7 @@ use Security\SecurityUser;
 use Security\Service\SecurityService;
 use User\Adult;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\PredicateSet;
 
 /**
  * Test SecurityServiceTest
@@ -156,13 +157,12 @@ class SecurityServiceTest extends TestCase
             'Application\Exception\NotFoundException',
             'User not Found'
         );
+
         $this->tableGateway->shouldReceive('select')
-            ->andReturn(new \ArrayIterator([]))
-            ->once();
-        $this->tableGateway->shouldReceive('select')
-            ->with(['normalized_username' => 'manchuck'])
-            ->andReturn(new \ArrayIterator([]))
-            ->once();
+            ->andReturnUsing(function ($predicateSet) {
+                $this->assertInstanceOf(PredicateSet::class, $predicateSet);
+                return new \ArrayIterator([]);
+            })->once();
 
         $this->securityService->fetchUserByUserName('manchuck');
     }

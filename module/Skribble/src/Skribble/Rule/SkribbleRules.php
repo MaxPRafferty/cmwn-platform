@@ -11,6 +11,7 @@ use Zend\Filter\Word\UnderscoreToCamelCase;
 /**
  * Class SkribbleRules
  * @todo Add ability to remove rules?
+ * @SuppressWarnings(PHPMD)
  */
 class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterface
 {
