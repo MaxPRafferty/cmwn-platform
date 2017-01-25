@@ -2,6 +2,7 @@
 
 namespace Api\Links;
 
+use User\UserInterface;
 use ZF\Hal\Link\Link;
 
 /**
@@ -12,11 +13,13 @@ class FriendLink extends Link
     /**
      * FriendLink constructor.
      *
-     * @param string $userId
+     * @param string $user
      * @param null $friendId
      */
-    public function __construct($userId, $friendId = null)
+    public function __construct($user, $friendId = null)
     {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
+
         parent::__construct('friend');
         $this->setProps(['label' => 'My Friends']);
         $this->setRoute(
