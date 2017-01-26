@@ -34,6 +34,7 @@ class GameDelegator implements GameServiceInterface
     public function __construct(GameServiceInterface $gameService, EventManagerInterface $events)
     {
         $this->gameService = $gameService;
+
         $this->events = $events;
         $deleted = new HideDeletedEntitiesListener(
             ['fetch.all.games'],
@@ -42,7 +43,6 @@ class GameDelegator implements GameServiceInterface
 
         $deleted->attach($events, PHP_INT_MIN);
         $deleted->setEntityParamKey('game');
-
         $events->addIdentifiers(array_merge(
             [GameServiceInterface::class, static::class, GameService::class],
             $events->getIdentifiers()

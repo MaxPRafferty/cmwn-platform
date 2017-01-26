@@ -29,5 +29,12 @@ class MeAdultDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.user.orgs');
         $this->setAllowed('view.user.feed');
         $this->setAllowed('flag.image');
+        $this->setAllowed('view.address');
+        $this->setAllowed('create.address');
+        $this->setAllowed('update.address');
+        $this->setAllowed('delete.address');
+        $this->setAllowed('view.all.group.addresses');
+        $this->setAllowed('attach.group.address');
+        $this->setAllowed('detach.group.address');
     }
 }

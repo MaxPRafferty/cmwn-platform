@@ -9,6 +9,7 @@ use Skribble\Delegator\SkribbleServiceDelegator;
 use Skribble\Service\SkribbleServiceInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test SkribbleServiceDelegatorTest
@@ -58,8 +59,9 @@ class SkribbleServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new SkribbleServiceDelegator($this->skribbleService);
+        $this->delegator    = new SkribbleServiceDelegator($this->skribbleService, $events);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

@@ -9,6 +9,7 @@ use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test SaveGameDelegatorTest
@@ -56,7 +57,7 @@ class SaveGameDelegatorTest extends TestCase
     public function setUpDelegator()
     {
         $this->calledEvents = [];
-        $this->delegator    = new SaveGameDelegator($this->service);
+        $this->delegator    = new SaveGameDelegator($this->service, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

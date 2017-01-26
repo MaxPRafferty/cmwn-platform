@@ -59,6 +59,10 @@ return [
             \Security\Guard\CsrfGuard::class,
         ],
 
+        \Security\Listeners\UserRouteListener::class => [
+            \User\Service\UserServiceInterface::class,
+            \Security\Authorization\Assertion\UserAssertion::class,
+        ],
         \Security\Service\SecurityUserService::class => [
             'Table/UserGroups',
             \User\Service\UserServiceInterface::class,
@@ -144,6 +148,7 @@ return [
         \Security\Listeners\UpdateSession::class,
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
+        \Security\Listeners\UserRouteListener::class,
         \Security\Listeners\FetchUserImageListener::class,
     ],
 

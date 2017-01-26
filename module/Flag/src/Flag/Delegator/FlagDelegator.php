@@ -8,6 +8,7 @@ use Flag\Service\FlagService;
 use Flag\Service\FlagServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class FlagDelegator
@@ -23,12 +24,31 @@ class FlagDelegator implements FlagServiceInterface
     protected $realService;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * FlagDelegator constructor.
      * @param $realService
+     * @param EventManagerInterface $events
      */
-    public function __construct($realService)
+    public function __construct($realService, EventManagerInterface $events)
     {
         $this->realService = $realService;
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [FlagServiceInterface::class, static::class, FlagService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

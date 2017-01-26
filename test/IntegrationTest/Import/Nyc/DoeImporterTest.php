@@ -163,7 +163,7 @@ class DoeImporterTest extends TestCase
         $this->assertRegExp(
             '/^[a-z]+-[a-z]+\d{3}$/',
             $student->getUserName(),
-            'Importer did not make user names for children'
+            'Importer did not make user names for children' . $student->getUserName()
         );
     }
 }

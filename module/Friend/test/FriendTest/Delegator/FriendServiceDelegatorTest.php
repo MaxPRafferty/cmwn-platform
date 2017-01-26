@@ -10,6 +10,7 @@ use Friend\Delegator\FriendServiceDelegator;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use User\Child;
+use Zend\EventManager\EventManager;
 
 /**
  * Test FriendServiceDelegatorTest
@@ -95,7 +96,8 @@ class FriendServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $this->delegator = new FriendServiceDelegator($this->friendService);
+        $events = new EventManager();
+        $this->delegator = new FriendServiceDelegator($this->friendService, $events);
         $this->delegator->getEventManager()->clearListeners('*');
         if ($this->delegator->getEventManager()->getSharedManager()) {
             $this->delegator->getEventManager()

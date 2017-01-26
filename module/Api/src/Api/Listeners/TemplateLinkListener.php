@@ -73,7 +73,9 @@ class TemplateLinkListener
             return;
         }
 
-        $firstParts['query'] = '{?page,per_page}';
+        $firstParts['query'] = !empty($firstParts['query'])
+            ? '?' . $firstParts['query'] . '{&page,per_page}'
+            : '{?page,per_page}';
 
         $url = $firstParts['scheme'] . '://';
         unset($firstParts['scheme']);

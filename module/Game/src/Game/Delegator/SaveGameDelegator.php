@@ -9,15 +9,13 @@ use Game\SaveGameInterface;
 use Game\Service\SaveGameService;
 use Game\Service\SaveGameServiceInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class SaveGameDelegator
  */
-class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareInterface
+class SaveGameDelegator implements SaveGameServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -26,13 +24,31 @@ class SaveGameDelegator implements SaveGameServiceInterface, EventManagerAwareIn
     protected $realService;
 
     /**
-     * SaveGameDelegator constructor.
-     *
-     * @param SaveGameService $realService
+     * @var EventManagerInterface
      */
-    public function __construct(SaveGameService $realService)
+    protected $events;
+
+    /**
+     * SaveGameDelegator constructor.
+     * @param SaveGameService $realService
+     * @param EventManagerInterface $events
+     */
+    public function __construct(SaveGameService $realService, EventManagerInterface $events)
     {
         $this->realService = $realService;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [SaveGameServiceInterface::class, static::class, SaveGameService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

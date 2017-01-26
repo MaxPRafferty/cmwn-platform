@@ -57,9 +57,7 @@ class FeedResourceTest extends TestCase
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.feed');
         $this->assertControllerName('api\v1\rest\feed\controller');
-
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
         $this->assertArrayHasKey('feed_id', $body);
         $this->assertArrayHasKey('sender', $body);
         $this->assertArrayHasKey('title', $body);
@@ -82,14 +80,11 @@ class FeedResourceTest extends TestCase
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.feed');
         $this->assertControllerName('api\v1\rest\feed\controller');
-
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey("_embedded", $body);
         $body = $body['_embedded'];
         $this->assertArrayHasKey('feed', $body);
-
         $feeds = $body['feed'];
-
         $expected = [
             'es_friend_feed',
             'ms_friend_feed',
@@ -101,7 +96,6 @@ class FeedResourceTest extends TestCase
             'os_flip_feed',
         ];
         $actual = [];
-
         foreach ($feeds as $body) {
             $this->assertArrayHasKey('feed_id', $body);
             $this->assertArrayHasKey('sender', $body);
@@ -112,7 +106,6 @@ class FeedResourceTest extends TestCase
             $this->assertArrayHasKey('visibility', $body);
             $this->assertArrayHasKey('type', $body);
             $this->assertArrayHasKey('type_version', $body);
-
             $actual[] = $body['feed_id'];
         }
         $this->assertEquals($expected, $actual);

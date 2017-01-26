@@ -604,6 +604,7 @@ class UserResourceTest extends TestCase
         $this->dispatch('/user', 'POST', $postData);
         $this->assertResponseStatusCode(422);
     }
+
     /** test
      * @ticket CORE-2331
      * @group MissingApiRoute

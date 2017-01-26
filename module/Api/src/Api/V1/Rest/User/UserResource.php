@@ -7,7 +7,6 @@ use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
-use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
@@ -99,7 +98,6 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
 
         if (isset($params['type'])) {
             $type = $params['type'];
-
             $where = [];
             $where['u.type'] = $type;
             $where['u.super'] = 0;

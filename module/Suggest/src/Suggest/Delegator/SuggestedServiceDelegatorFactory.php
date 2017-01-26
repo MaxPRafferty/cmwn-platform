@@ -3,6 +3,7 @@
 namespace Suggest\Delegator;
 
 use Interop\Container\ContainerInterface;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
@@ -15,6 +16,6 @@ class SuggestedServiceDelegatorFactory implements DelegatorFactoryInterface
      */
     public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        return new SuggestedServiceDelegator($callback());
+        return new SuggestedServiceDelegator($callback(), $container->get(EventManagerInterface::class));
     }
 }

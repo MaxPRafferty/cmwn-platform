@@ -116,7 +116,7 @@ return [
     ],
     'users'            => [
         [
-            'user_id'      => 'english_student',
+            'user_id'      => 'english_stud',
             'username'     => 'english_student',
             'email'        => 'english_student@ginasink.com',
             'code'         => null,
@@ -300,7 +300,7 @@ return [
     'user_friends'     => [],
     'user_groups'      => [
         [
-            'user_id'  => 'english_student',
+            'user_id'  => 'english_stud',
             'group_id' => 'english',
             'role'     => 'student',
         ],
