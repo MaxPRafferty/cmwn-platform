@@ -13,7 +13,7 @@ class UserImageLink extends Link
 {
     /**
      * UserImageLink constructor.
-     * @param string $userId
+     * @param string | UserInterface $userId
      */
     public function __construct($userId)
     {

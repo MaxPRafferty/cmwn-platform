@@ -13,7 +13,7 @@ class UserFeedLink extends Link
 {
     /**
      * UserFeedLink constructor.
-     * @param $user
+     * @param string | UserInterface $user
      * @param string | null $feedId
      */
     public function __construct($user, string $feedId = null)
