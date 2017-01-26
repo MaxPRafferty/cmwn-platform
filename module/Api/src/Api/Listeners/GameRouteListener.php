@@ -43,7 +43,8 @@ class GameRouteListener
         $this->listeners['Zend\Mvc\Application'] = $events->attach(
             'Zend\Mvc\Application',
             MvcEvent::EVENT_ROUTE,
-            [$this, 'onRoute']
+            [$this, 'onRoute'],
+            -3
         );
     }
 

@@ -7,6 +7,7 @@ use Application\Utils\ServiceTrait;
 use Game\Game;
 use Game\GameInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -40,45 +41,32 @@ class GameService implements GameServiceInterface
     }
 
     /**
-     * @param null|PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
+     * @inheritdoc
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null)
+    public function fetchAll($where = null, $prototype = null)
     {
         $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
-        if ($paginate) {
-            $select    = new Select(['g' => $this->gameTableGateway->getTable()]);
-            $select->where($where);
-            $select->order(['g.title']);
 
-            return new DbSelect(
-                $select,
-                $this->gameTableGateway->getAdapter(),
-                $resultSet
-            );
-        }
+        $select    = new Select($this->gameTableGateway->getTable());
+        $select->where($where);
+        $select->order(['title']);
 
-        $results = $this->gameTableGateway->select($where);
-        $resultSet->initialize($results);
-        return $resultSet;
+        return new DbSelect(
+            $select,
+            $this->gameTableGateway->getAdapter(),
+            $resultSet
+        );
     }
 
     /**
-     * Fetches one game from the DB using the id
-     *
-     * @param $gameId
-     * @return GameInterface
-     * @throws NotFoundException
+     * @inheritdoc
      */
     public function fetchGame($gameId)
     {
         $where = new Where();
         $where->equalTo('game_id', $gameId);
-        $where->isNull('deleted');
         $rowSet = $this->gameTableGateway->select($where);
         $row    = $rowSet->current();
         if (!$row) {
@@ -97,8 +85,6 @@ class GameService implements GameServiceInterface
         $data = $game->getArrayCopy();
 
         $data['meta'] = Json::encode($data['meta']);
-
-        unset($data['deleted']);
 
         $this->fetchGame($game->getGameId());
 

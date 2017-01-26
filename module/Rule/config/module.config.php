@@ -53,11 +53,13 @@ return [
             \Rule\Action\Collection\ActionCollectionInterface::class => \Rule\Action\Collection\ActionCollection::class,
         ],
         'factories'          => [
+            \Rule\Event\Action\SetEventParamAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Rule\Action\NoopAction::class                  => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Action\Collection\ActionCollection::class => \Rule\Action\Service\BuildActionCollectionFactory::class,
         ],
         'shared'             => [
             \Rule\Action\Collection\ActionCollection::class => false,
+            \Rule\Event\Action\SetEventParamAction::class   => false,
         ],
         'abstract_factories' => [
             \Rule\Action\Service\BuildActionFromConfigFactory::class =>

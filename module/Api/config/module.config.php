@@ -45,6 +45,7 @@ return [
 
         'shared' => [
             \Api\Rule\Action\AddHalLinkAction::class => false,
+            \Api\Rule\Action\AddTypeLinksAction::class => false,
         ]
     ],
 
@@ -2339,6 +2340,19 @@ return [
                 ],
                 'name'        => 'coming_soon',
                 'description' => 'if the game is coming soon',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'undelete',
+                'description' => 'undelete the game',
             ],
             [
                 'required'    => false,
