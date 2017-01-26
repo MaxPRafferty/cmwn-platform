@@ -18,11 +18,10 @@ interface GameServiceInterface
 
     /**
      * @param null|PredicateInterface|array $where
-     * @param bool $paginate
      * @param null|object $prototype
      * @return HydratingResultSet|DbSelect
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null);
+    public function fetchAll($where = null, $prototype = null);
 
     /**
      * Fetches one game from the DB using the id

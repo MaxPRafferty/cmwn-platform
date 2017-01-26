@@ -62,6 +62,7 @@ return [
             'update.game'          => 'Update existing game details',
             'delete.game'          => 'delete game',
             'save.game'            => 'Save Game progress',
+            'view.deleted.games'   => 'view all games including soft deleted ones',
 
             // misc
             'adult.code'           => 'Send adult reset code',
@@ -143,7 +144,7 @@ return [
                     'view.flagged.image',
                     'view.flip',
                     'view.game-data',
-                    'view.games',
+                    'view.deleted.games',
                     'view.group',
                     'view.group.users',
                     'view.org',
