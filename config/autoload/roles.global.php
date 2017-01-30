@@ -25,6 +25,9 @@ return [
             'create.user.flip'     => 'Earn a flip',
             'view.flip'            => 'View flip information',
             'view.user.flip'       => 'View Flips for a user',
+            'create.flip'          => 'Create a new flip',
+            'edit.flip'            => 'Update existing flip',
+            'delete.flip'          => 'Delete a flip',
 
             // group
             'create.child.group'   => 'Create a sub group',
@@ -132,6 +135,9 @@ return [
                     'view.all.child.groups',
                     'view.flagged.image',
                     'view.flip',
+                    'create.flip',
+                    'edit.flip',
+                    'delete.flip',
                     'view.game-data',
                     'view.games',
                     'view.group',

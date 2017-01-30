@@ -69,5 +69,8 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('reset.group.code');
         $this->setAllowed('set.super');
         $this->setAllowed('get.super.user');
+        $this->setAllowed('create.flip');
+        $this->setAllowed('edit.flip');
+        $this->setAllowed('delete.flip');
     }
 }

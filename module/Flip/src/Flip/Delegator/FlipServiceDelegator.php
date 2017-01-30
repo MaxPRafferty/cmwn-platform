@@ -16,7 +16,6 @@ use Zend\Paginator\Adapter\AdapterInterface;
  */
 class FlipServiceDelegator implements FlipServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -25,15 +24,32 @@ class FlipServiceDelegator implements FlipServiceInterface
     protected $realService;
 
     /**
+     * @var EventManagerInterface $events
+     */
+    protected $events;
+
+    /**
      * FlipServiceDelegator constructor.
      *
      * @param FlipService $flipService
-     * @param EventManagerInterface $eventManager
+     * @param EventManagerInterface $events
      */
-    public function __construct(FlipService $flipService, EventManagerInterface $eventManager)
+    public function __construct(FlipService $flipService, EventManagerInterface $events)
     {
         $this->realService = $flipService;
-        $this->setEventManager($eventManager);
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [FlipServiceInterface::class, static::class, FlipService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**
@@ -93,6 +109,90 @@ class FlipServiceDelegator implements FlipServiceInterface
 
         $event->setParam('flip', $return);
         $event->setName('fetch.flip.post');
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createFlip(FlipInterface $flip): bool
+    {
+        $event = new Event('create.flip', $this->realService, ['flip' => $flip]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->createFlip($flip);
+        } catch (\Throwable $createFlipException) {
+            $event->setName('create.flip.error');
+            $event->setParam('error', $createFlipException);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $createFlipException;
+        }
+
+        $event->setParam('return', $return);
+        $event->setName('create.flip.post');
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateFlip(FlipInterface $flip): bool
+    {
+        $event = new Event('update.flip', $this->realService, ['flip' => $flip]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->updateFlip($flip);
+        } catch (\Throwable $updateFlipException) {
+            $event->setName('update.flip.error');
+            $event->setParam('error', $updateFlipException);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $updateFlipException;
+        }
+
+        $event->setParam('return', $return);
+        $event->setName('update.flip.post');
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteFlip(FlipInterface $flip): bool
+    {
+        $event = new Event('delete.flip', $this->realService, ['flip' => $flip]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->deleteFlip($flip);
+        } catch (\Throwable $deleteFlipException) {
+            $event->setName('delete.flip.error');
+            $event->setParam('error', $deleteFlipException);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $deleteFlipException;
+        }
+
+        $event->setParam('return', $return);
+        $event->setName('delete.flip.post');
         $this->getEventManager()->triggerEvent($event);
 
         return $return;
