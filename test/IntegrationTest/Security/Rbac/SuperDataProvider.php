@@ -78,5 +78,8 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('set.super');
         $this->setAllowed('get.super.user');
         $this->setAllowed('view.deleted.games');
+        $this->setAllowed('create.flip');
+        $this->setAllowed('edit.flip');
+        $this->setAllowed('delete.flip');
     }
 }
