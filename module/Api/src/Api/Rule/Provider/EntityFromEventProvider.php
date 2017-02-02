@@ -7,7 +7,6 @@ use ZF\Hal\Entity;
 use ZF\Hal\Link\LinkCollectionAwareInterface;
 
 /**
- * Class EntityFromEventProvider
  * This fetches the entity from the event
  */
 class EntityFromEventProvider extends AbstractEventProvider

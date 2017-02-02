@@ -7,8 +7,7 @@ use Group\Service\GroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 /**
- * Class GroupTypesProviderTest
- * @package GroupTest\Rule\Provider
+ * Unit tests for group type provider
  */
 class GroupTypeProviderTest extends \PHPUnit_Framework_TestCase
 {

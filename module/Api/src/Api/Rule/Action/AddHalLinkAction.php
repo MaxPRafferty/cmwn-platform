@@ -48,9 +48,6 @@ class AddHalLinkAction implements ActionInterface
      */
     public function __invoke(RuleItemInterface $item)
     {
-        /**
-         * @var LinkCollectionAwareInterface $object
-         */
         $object = $item->getParam($this->provider);
 
         if (!$object instanceof LinkCollectionAwareInterface) {

@@ -37,8 +37,8 @@ return [
 
     'providers' => [
         'shared' => [
-            \Group\Rule\Provider\GroupTypesProvider::class       => false,
-            \Group\Rule\Provider\ChildGroupTypesProvider::class => false,
+            \Group\Rule\Provider\GroupTypesProvider::class       => true,
+            \Group\Rule\Provider\ChildGroupTypesProvider::class => true,
         ]
     ]
 ];

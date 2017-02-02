@@ -29,8 +29,8 @@ return [
 
     'providers' => [
         'shared' => [
-            \Org\Rule\Provider\OrgTypesProvider::class => false,
-            \Org\Rule\Provider\OrgGroupTypesProvider::class => false,
+            \Org\Rule\Provider\OrgTypesProvider::class => true,
+            \Org\Rule\Provider\OrgGroupTypesProvider::class => true,
         ],
     ],
 ];

@@ -12,11 +12,12 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\Hal\Entity;
 
 /**
- * Class UserRelationshipProvider
- * @package Api\Rule\Rule
+ *  This provides relationship between active user and the user given
  */
 class UserRelationshipProvider extends AbstractEventProvider
 {
+    const PROVIDER_NAME = self::class;
+
     /**
      * @var AuthenticationServiceInterface
      */
@@ -36,7 +37,7 @@ class UserRelationshipProvider extends AbstractEventProvider
     public function __construct(
         AuthenticationServiceInterface $authService,
         SecurityUserServiceInterface $securityUserService,
-        string $providerName = UserRelationshipProvider::class
+        string $providerName = self::PROVIDER_NAME
     ) {
         parent::__construct($providerName);
         $this->authService = $authService;

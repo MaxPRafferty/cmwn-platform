@@ -80,6 +80,18 @@ return [
         \Security\Rule\Provider\RoleProvider::class       => [
             \Security\Authentication\AuthenticationService::class,
         ],
+        \Api\Rule\Provider\UserRelationshipProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityUserServiceInterface::class,
+        ],
+        \Api\Rule\Provider\ActiveUserGroupRoleProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityGroupServiceInterface::class,
+        ],
+        \Api\Rule\Provider\ActiveUserOrgRoleProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityOrgServiceInterface::class,
+        ],
     ],
 
     'service_manager' => [
@@ -180,6 +192,12 @@ return [
 
             \Security\Rule\Provider\ActiveUserProvider::class =>
                 \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Provider\UserRelationshipProvider::class => false,
+            \Api\Rule\Provider\ActiveUserGroupRoleProvider::class  => false,
+            \Api\Rule\Provider\ActiveUserOrgRoleProvider::class    => false,
         ],
     ],
 
