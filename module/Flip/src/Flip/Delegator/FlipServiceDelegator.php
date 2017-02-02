@@ -16,7 +16,6 @@ use Zend\Paginator\Adapter\AdapterInterface;
  */
 class FlipServiceDelegator implements FlipServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -25,15 +24,32 @@ class FlipServiceDelegator implements FlipServiceInterface
     protected $realService;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * FlipServiceDelegator constructor.
      *
      * @param FlipService $flipService
-     * @param EventManagerInterface $eventManager
+     * @param EventManagerInterface $events
      */
-    public function __construct(FlipService $flipService, EventManagerInterface $eventManager)
+    public function __construct(FlipService $flipService, EventManagerInterface $events)
     {
         $this->realService = $flipService;
-        $this->setEventManager($eventManager);
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [FlipServiceInterface::class, static::class, FlipService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

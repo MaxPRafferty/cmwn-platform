@@ -8,6 +8,7 @@ use Flag\Flag;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class FlagDelegatorTest
@@ -50,8 +51,9 @@ class FlagDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new FlagDelegator($this->flagService);
+        $this->delegator    = new FlagDelegator($this->flagService, $events);
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

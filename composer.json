@@ -89,7 +89,8 @@
       "Skribble\\": "module\\Skribble\\src\\Skribble",
       "Suggest\\": "module\\Suggest\\src\\Suggest",
       "User\\": "module\\User\\src\\User",
-      "Sa\\": "module\\Sa\\src\\Sa"
+      "Sa\\": "module\\Sa\\src\\Sa",
+      "Address\\": "module\\Address\\src\\Address"
     }
   },
   "autoload-dev": {
@@ -114,7 +115,8 @@
       "UserTest\\": "module\\User\\test\\UserTest",
       "FeedTest\\": "module\\Feed\\test\\FeedTest",
       "SaTest\\": "module\\Sa\\test\\SaTest",
-      "IntegrationTest\\": "test\\IntegrationTest"
+      "IntegrationTest\\": "test\\IntegrationTest",
+      "AddressTest\\": "module\\Address\\test\\AddressTest"
     }
   }
 }

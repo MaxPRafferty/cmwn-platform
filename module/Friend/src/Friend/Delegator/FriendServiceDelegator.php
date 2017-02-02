@@ -10,6 +10,7 @@ use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -31,13 +32,31 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
     protected $realService;
 
     /**
-     * FriendServiceDelegator constructor.
-     *
-     * @param FriendService $realService
+     * @var EventManagerInterface
      */
-    public function __construct(FriendService $realService)
+    protected $events;
+
+    /**
+     * FriendServiceDelegator constructor.
+     * @param FriendService $realService
+     * @param EventManagerInterface $events
+     */
+    public function __construct(FriendService $realService, EventManagerInterface $events)
     {
         $this->realService = $realService;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [FriendServiceInterface::class, static::class, FriendService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

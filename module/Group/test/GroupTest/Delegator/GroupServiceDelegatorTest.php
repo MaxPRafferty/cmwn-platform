@@ -9,6 +9,7 @@ use Group\Group;
 use Group\Delegator\GroupDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test GroupServiceDelegatorTest
@@ -58,8 +59,9 @@ class GroupServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new GroupDelegator($this->groupService);
+        $this->delegator    = new GroupDelegator($this->groupService, $events);
         $this->delegator->getEventManager()->clearListeners('save.group');
         $this->delegator->getEventManager()->clearListeners('fetch.group.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.groups');

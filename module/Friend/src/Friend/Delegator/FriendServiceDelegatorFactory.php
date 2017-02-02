@@ -3,6 +3,7 @@
 namespace Friend\Delegator;
 
 use Interop\Container\ContainerInterface;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
@@ -15,6 +16,6 @@ class FriendServiceDelegatorFactory implements DelegatorFactoryInterface
      */
     public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        return new FriendServiceDelegator($callback());
+        return new FriendServiceDelegator($callback(), $container->get(EventManagerInterface::class));
     }
 }
