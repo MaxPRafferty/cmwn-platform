@@ -2,7 +2,10 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
+use Flip\Service\FlipService;
+use Flip\Service\FlipServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use IntegrationTest\TestHelper;
 use Zend\Json\Json;
 use IntegrationTest\DataSets\ArrayDataSet;
 
@@ -17,6 +20,19 @@ use IntegrationTest\DataSets\ArrayDataSet;
  */
 class FlipResourceTest extends TestCase
 {
+    /**
+     * @var FlipServiceInterface
+     */
+    protected $flipService;
+
+    /**
+     * @before
+     */
+    protected function setUpFlipService()
+    {
+        $this->flipService = TestHelper::getDbServiceManager()->get(FlipService::class);
+    }
+
     /**
      * @return ArrayDataSet
      */
@@ -151,13 +167,17 @@ class FlipResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.flip');
         $this->assertControllerName('api\v1\rest\flip\controller');
 
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('title', $body);
-        $this->assertArrayHasKey('description', $body);
-        $this->assertArrayHasKey('flip_id', $body);
-        $this->assertEquals('polar-bear', $body['flip_id']);
-        $this->assertEquals('Polar Bear', $body['title']);
-        $this->assertEquals('baz bat', $body['description']);
+//        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+//        $this->assertArrayHasKey('title', $body);
+//        $this->assertArrayHasKey('description', $body);
+//        $this->assertArrayHasKey('flip_id', $body);
+//        $this->assertEquals('polar-bear', $body['flip_id']);
+//        $this->assertEquals('Polar Bear', $body['title']);
+//        $this->assertEquals('baz bat', $body['description']);
+
+        $flip = $this->flipService->fetchFlipById('polar-bear');
+        $this->assertEquals('Polar Bear', $flip->getTitle());
+        $this->assertEquals('baz bat', $flip->getDescription());
     }
 
     /**

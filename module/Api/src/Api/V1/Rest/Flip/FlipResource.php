@@ -60,7 +60,7 @@ class FlipResource extends AbstractResourceListener
     public function update($id, $data)
     {
         $flip = $this->flipService->fetchFlipById($id);
-        $flip->exchangeArray(array_merge($flip->getArrayCopy(), (array) $data));
+        $flip->exchangeArray(array_merge($flip->getArrayCopy(), (array)$data));
         $this->flipService->updateFlip($flip);
         return new FlipEntity($flip->getArrayCopy());
     }

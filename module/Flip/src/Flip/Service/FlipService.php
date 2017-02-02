@@ -91,7 +91,7 @@ class FlipService implements FlipServiceInterface
     {
         $data = $flip->getArrayCopy();
         unset($data['flip_id']);
-        $this->flipTableGateway->update(['flip_id' => $flip->getFlipId()], $data);
+        $this->flipTableGateway->update($data, ['flip_id' => $flip->getFlipId()]);
 
         return true;
     }
