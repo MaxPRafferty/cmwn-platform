@@ -183,7 +183,7 @@ class FlipServiceTest extends TestCase
     {
         $flip = new Flip(['flip_id'=> 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
         $this->tableGateway->shouldReceive('update')
-            ->with(['flip_id' => $flip->getFlipId()], ['title' => 'Foo Bar', 'description' => 'baz bat'])
+            ->with(['title' => 'Foo Bar', 'description' => 'baz bat'], ['flip_id' => $flip->getFlipId()])
             ->andReturn(true)
             ->once();
 
