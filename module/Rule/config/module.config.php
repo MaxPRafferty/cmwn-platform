@@ -13,6 +13,7 @@ return [
             \Rule\Rule\Basic\EitherRule::class          => \Rule\Rule\Service\BuildDependantRuleFactory::class,
             \Rule\Rule\Collection\RuleCollection::class => \Rule\Rule\Service\BuildRuleCollectionFactory::class,
             \Rule\Rule\Object\IsTypeRule::class         => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Rule\Event\Rule\EventParamMatches::class   => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
         'shared'    => [
             \Rule\Rule\Basic\AlwaysSatisfiedRule::class => true,
@@ -22,6 +23,7 @@ return [
             \Rule\Rule\Basic\NotRule::class             => false,
             \Rule\Rule\Basic\EitherRule::class          => false,
             \Rule\Rule\Object\IsTypeRule::class         => false,
+            \Rule\Event\Rule\EventParamMatches::class   => false,
         ],
     ],
 
