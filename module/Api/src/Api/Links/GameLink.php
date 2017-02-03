@@ -13,13 +13,23 @@ class GameLink extends Link
 {
     /**
      * GameLink constructor.
+     * @param $entity
      * @param string|null $deleted
      */
-    public function __construct($deleted = null)
+    public function __construct($entity, $deleted = null)
     {
-        $query = $deleted === 'true' ? ['deleted' => $deleted] : null;
-        parent::__construct('games');
-        $this->setProps(['label' => 'Games']);
+        $label = 'games';
+        $query = null;
+        $propsLabel = 'Games';
+
+        if ($deleted === 'true') {
+            $label .= '_deleted';
+            $query = ['deleted' => $deleted];
+            $propsLabel = 'Deleted Games';
+        }
+
+        parent::__construct($label);
+        $this->setProps(['label' => $propsLabel]);
         $this->setRoute('api.rest.game', [], ['query' => $query, 'reuse_matched_params' => false]);
     }
 }

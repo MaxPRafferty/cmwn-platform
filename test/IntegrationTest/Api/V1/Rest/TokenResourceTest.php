@@ -123,6 +123,7 @@ class TokenResourceTest extends TestCase
                     'feed',
                     'flip',
                     'games',
+                    'games_deleted',
                     'group_class',
                     'group_school',
                     'org_district',
