@@ -14,10 +14,7 @@ use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 
 /**
- * Class GameDelegatorTest
- *
- * @package GameTest\Delegator
- * @SuppressWarnings(PHPMD)
+ * Unit tests for game delegator
  */
 class GameDelegatorTest extends TestCase
 {
@@ -83,7 +80,11 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where([new IsNull('deleted')]), 'prototype' => null],
+                'params' => [
+                    'where' => new Where([new IsNull('deleted')]),
+                    'prototype' => null,
+                    'show_deleted' => false
+                ],
             ],
             $this->calledEvents[0]
         );
@@ -91,7 +92,11 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games.post',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where([new IsNull('deleted')]), 'prototype' => null],
+                'params' => [
+                    'where' => new Where([new IsNull('deleted')]),
+                    'prototype' => null,
+                    'show_deleted' => false
+                ],
             ],
             $this->calledEvents[1]
         );
@@ -119,7 +124,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where(), 'prototype' => null],
+                'params' => ['where' => new Where(), 'prototype' => null, 'show_deleted' => false],
             ],
             $this->calledEvents[0]
         );

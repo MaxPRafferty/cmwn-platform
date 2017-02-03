@@ -56,11 +56,11 @@ class GameResourceTest extends TestCase
      * @param $login
      * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldFetchAllGames($login, $expected)
+    public function testItShouldFetchAllGames($login, $route, $expected)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
-        $this->dispatch('/game');
+        $this->dispatch($route);
         $this->assertResponseStatusCode(200);
         $this->assertControllerName('api\v1\rest\game\controller');
         $this->assertMatchedRouteName('api.rest.game');
@@ -296,10 +296,18 @@ class GameResourceTest extends TestCase
     public function fetchAllDataProvider()
     {
         return [
-            ['super_user', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
-            ['english_student', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', ['animal-id', 'be-bright', 'Monarch']]
+            ['super_user', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['english_student', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['other_teacher', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['principal', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['super_user', '/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
+            ['english_student', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
+            ['other_teacher', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
+            ['principal', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
+            ['super_user', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['english_student', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['other_teacher', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['principal', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
         ];
     }
 

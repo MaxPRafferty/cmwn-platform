@@ -33,7 +33,8 @@ class GameResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         /** @var DbSelect $games */
-        $games = $this->service->fetchAll(null, new GameEntity());
+        $deleted = $params['deleted'] === 'true' ?? false;
+        $games = $this->service->fetchAll(null, new GameEntity(), $deleted);
         return new GameCollection($games);
     }
 

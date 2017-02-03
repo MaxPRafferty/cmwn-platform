@@ -60,13 +60,13 @@ class GameDelegator implements GameServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, $prototype = null)
+    public function fetchAll($where = null, $prototype = null, bool $deleted = false)
     {
         $where = $this->createWhere($where);
         $event = new Event(
             'fetch.all.games',
             $this->gameService,
-            ['where' => $where, 'prototype' => $prototype]
+            ['where' => $where, 'prototype' => $prototype, 'show_deleted' => $deleted]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -74,7 +74,7 @@ class GameDelegator implements GameServiceInterface
             return $response->last();
         }
 
-        $return = $this->gameService->fetchAll($where, $prototype);
+        $return = $this->gameService->fetchAll($where, $prototype, $event->getParam('show_deleted'));
         $event->setName('fetch.all.games.post');
 
         $this->getEventManager()->triggerEvent($event);

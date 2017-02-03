@@ -43,7 +43,7 @@ class GameService implements GameServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, $prototype = null)
+    public function fetchAll($where = null, $prototype = null, bool $deleted = false)
     {
         $where     = $this->createWhere($where);
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);

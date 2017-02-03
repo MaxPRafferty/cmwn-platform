@@ -513,7 +513,7 @@ return [
             'collection_name'            => 'game',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['page', 'per_page'],
+            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
