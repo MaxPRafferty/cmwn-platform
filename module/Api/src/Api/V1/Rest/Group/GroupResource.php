@@ -121,6 +121,6 @@ class GroupResource extends AbstractResourceListener
 
         $saveGroup = new Group(array_merge($group->getArrayCopy(), $data));
         $this->service->updateGroup($saveGroup);
-        return $group;
+        return $saveGroup;
     }
 }
