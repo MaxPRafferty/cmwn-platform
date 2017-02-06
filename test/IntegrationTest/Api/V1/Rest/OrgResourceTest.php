@@ -101,7 +101,7 @@ class OrgResourceTest extends TestCase
     public function testItShouldFetchOrg()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_teacher');
+        $this->logInUser('super_user');
 
         $this->dispatch('/org/district');
         $this->assertMatchedRouteName('api.rest.org');

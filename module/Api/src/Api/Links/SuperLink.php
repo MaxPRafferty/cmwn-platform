@@ -12,12 +12,11 @@ class SuperLink extends Link
 {
     /**
      * SuperLink constructor.
-     * @param null $userId
      */
-    public function __construct($userId = null)
+    public function __construct()
     {
         parent::__construct('super');
         $this->setProps(['label' => 'Super']);
-        $this->setRoute('api.rest.super', ['user_id' => $userId]);
+        $this->setRoute('api.rest.super', [], ['reuse_matched_params' => false]);
     }
 }

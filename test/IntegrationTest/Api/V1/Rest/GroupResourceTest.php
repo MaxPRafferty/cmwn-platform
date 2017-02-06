@@ -635,6 +635,27 @@ class GroupResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @dataProvider halLinkDataProvider
+     */
+    public function testItShouldAddCorrectHalLinksOnGroupEntities($login, $group, $expected)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+        $this->dispatch('/group/' . $group);
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'];
+
+        $actual = [];
+        foreach ($links as $label => $link) {
+            $actual[] = $label;
+        }
+        $this->assertEquals($actual, $expected);
+    }
+
+    /**
      * @return array
      */
     public function changePasswordDataProvider()
@@ -782,6 +803,93 @@ class GroupResourceTest extends TestCase
                 'principal',
                 'school',
                 ['english', 'math']
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function halLinkDataProvider()
+    {
+        return [
+            0 => [
+                'super_user',
+                'school',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_reset',
+                    3 => 'group_class',
+                    4 => 'import',
+                ]
+            ],
+            1 => [
+                'super_user',
+                'english',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_reset',
+                    3 => 'import',
+                ]
+            ],
+            2 => [
+                'principal',
+                'school',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_reset',
+                    3 => 'group_class',
+                    4 => 'import',
+                ]
+            ],
+            3 => [
+                'principal',
+                'english',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_reset',
+                    3 => 'import',
+                ]
+            ],
+            4 => [
+                'english_teacher',
+                'school',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_reset',
+                    3 => 'group_class',
+                ]
+            ],
+            5 => [
+                'english_teacher',
+                'english',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_reset',
+                ]
+            ],
+            6 => [
+                'english_student',
+                'school',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                    2 => 'group_class',
+                ]
+            ],
+            7 => [
+                'english_student',
+                'english',
+                [
+                    0 => 'self',
+                    1 => 'group_users',
+                ]
             ],
         ];
     }

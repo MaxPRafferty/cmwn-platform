@@ -12,7 +12,7 @@ class PasswordLink extends Link
 {
     /**
      * PasswordLink constructor.
-     * @param string $userId
+     * @param string | UserInterface $userId
      */
     public function __construct($userId)
     {

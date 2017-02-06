@@ -16,6 +16,6 @@ class FlipLink extends Link
     {
         parent::__construct('flip');
         $this->setProps(['label' => 'Discover Flips']);
-        $this->setRoute('api.rest.flip');
+        $this->setRoute('api.rest.flip', [], ['reuse_matched_params' => false]);
     }
 }

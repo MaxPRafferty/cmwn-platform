@@ -29,21 +29,38 @@ return [
             \Group\Service\GroupServiceInterface::class
         ],
     ],
+
+    'actions' => [
+        'factories' => [
+            \Api\Rule\Action\AddHalLinkAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Action\AddHalLinkAction::class => false,
+        ]
+    ],
+
+    'providers' => [
+        'factories' => [
+            \Api\Rule\Provider\EntityFromEventProvider::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Provider\EntityFromEventProvider::class  => false,
+        ],
+    ],
+
     'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
-        \Api\Listeners\ImportRouteListener::class,
         \Api\Listeners\ScopeListener::class,
-        \Api\Listeners\SuperMeListener::class,
         \Api\Listeners\UserImageListener::class,
         \Api\Listeners\ChangePasswordListener::class,
-        \Api\Listeners\GroupRouteListener::class,
         \Api\Listeners\FriendListener::class,
-        \Api\Listeners\UserHalLinksListener::class,
         \Api\Listeners\TemplateLinkListener::class,
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
-        \Api\Listeners\OrgLinkListener::class,
     ],
     'service_manager'  => [
         'factories' => [
@@ -53,24 +70,12 @@ return [
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Api\Listeners\UserParamListener::class                   =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Api\Listeners\OrgLinkListener::class                     =>
-                \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Api\Listeners\UserHalLinksListener::class                =>
-                \Api\Factory\UserHalLinksListenerFactory::class,
-            \Api\Listeners\ImportRouteListener::class                 =>
-                \Api\Factory\ImportRouteListenerFactory::class,
             \Api\Listeners\ScopeListener::class                       =>
                 \Api\Factory\ScopeListenerFactory::class,
             \Security\Listeners\UserRouteListener::class                   =>
                 \Api\Factory\UserRouteListenerFactory::class,
             \Api\Listeners\UserGroupListener::class                   =>
                 \Api\Factory\UserGroupListenerFactory::class,
-            \Api\Listeners\GroupRouteListener::class                  =>
-                \Api\Factory\GroupRouteListenerFactory::class,
-            \Api\Listeners\OrgRouteListener::class                    =>
-                \Api\Factory\OrgRouteListenerFactory::class,
-            \Api\Listeners\SuperMeListener::class                     =>
-                \Api\Factory\SuperMeListenerFactory::class,
             \Api\Listeners\UserImageListener::class                   =>
                 \Api\Factory\UserImageListenerFactory::class,
             \Api\V1\Rest\User\UserResource::class                     =>

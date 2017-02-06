@@ -12,12 +12,11 @@ class FeedLink extends Link
 {
     /**
      * FeedLink constructor.
-     * @param null $feedId
      */
-    public function __construct($feedId = null)
+    public function __construct()
     {
         parent::__construct('feed');
         $this->setProps(['label' => 'Feed']);
-        $this->setRoute('api.rest.feed', ['feed_id' => $feedId]);
+        $this->setRoute('api.rest.feed', [], ['reuse_matched_params' => false]);
     }
 }

@@ -7,6 +7,7 @@ use Rule\Action\Collection\ActionCollectionAwareTrait;
 use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\Service\ActionManager;
 use Rule\Action\StaticActionFactory;
+use Rule\Exception\RuntimeException;
 use Rule\Provider\Collection\ProviderCollectionAwareInterface;
 use Rule\Provider\Collection\ProviderCollectionAwareTrait;
 use Rule\Provider\Collection\ProviderCollectionInterface;
@@ -44,7 +45,7 @@ abstract class AbstractEngineSpecification implements
     /**
      * @var string
      */
-    protected $when;
+    protected $when = [];
 
     /**
      * @var array
@@ -66,7 +67,7 @@ abstract class AbstractEngineSpecification implements
      *
      * @param string $id
      * @param string $name
-     * @param string $when
+     * @param array | string $when
      * @param array $rules
      * @param array $actions
      * @param array $providers
@@ -74,14 +75,21 @@ abstract class AbstractEngineSpecification implements
     public function __construct(
         string $id,
         string $name,
-        string $when,
+        $when,
         array $rules,
         array $actions,
         array $providers = []
     ) {
         $this->id           = $id;
         $this->name         = $name;
-        $this->when         = $when;
+        if (!is_string($when) && !is_array($when)) {
+            throw new RuntimeException(sprintf(
+                'The key "when" passed in specification %s should be an array or a string, %s given',
+                $id,
+                gettype($when)
+            ));
+        }
+        $this->when         = is_string($when) ? [$when] : $when;
         $this->ruleSpec     = $rules;
         $this->actionSpec   = $actions;
         $this->providerSpec = $providers;
@@ -106,7 +114,7 @@ abstract class AbstractEngineSpecification implements
     /**
      * @inheritDoc
      */
-    public function getEventName(): string
+    public function getEventName(): array
     {
         return $this->when;
     }

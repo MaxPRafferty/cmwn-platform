@@ -12,6 +12,7 @@ return [
             \Rule\Rule\Basic\NotRule::class             => \Rule\Rule\Service\BuildDependantRuleFactory::class,
             \Rule\Rule\Basic\EitherRule::class          => \Rule\Rule\Service\BuildDependantRuleFactory::class,
             \Rule\Rule\Collection\RuleCollection::class => \Rule\Rule\Service\BuildRuleCollectionFactory::class,
+            \Rule\Rule\Object\IsTypeRule::class         => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
         'shared'    => [
             \Rule\Rule\Basic\AlwaysSatisfiedRule::class => true,
@@ -20,6 +21,7 @@ return [
             \Rule\Rule\Basic\AndRule::class             => false,
             \Rule\Rule\Basic\NotRule::class             => false,
             \Rule\Rule\Basic\EitherRule::class          => false,
+            \Rule\Rule\Object\IsTypeRule::class         => false,
         ],
     ],
 
@@ -32,7 +34,7 @@ return [
             \Rule\Provider\BasicValueProvider::class            => \Rule\Provider\Service\BuildProviderFactory::class,
             \Rule\Provider\Collection\ProviderCollection::class =>
                 \Rule\Provider\Service\BuildProviderCollectionFactory::class,
-            \Rule\Event\Provider\FromEventTargetProvider::class => \Rule\Provider\Service\BuildProviderFactory::class,
+            \Rule\Event\Provider\FromEventTargetProvider::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Event\Provider\EventProvider::class           => \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
         'abstract_factories' => [

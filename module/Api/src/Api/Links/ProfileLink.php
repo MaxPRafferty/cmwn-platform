@@ -15,7 +15,7 @@ class ProfileLink extends Link
     /**
      * ProfileLink constructor.
      *
-     * @param string $userId
+     * @param string | UserInterface $userId
      */
     public function __construct($userId)
     {
