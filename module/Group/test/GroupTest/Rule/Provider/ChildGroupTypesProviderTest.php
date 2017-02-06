@@ -11,8 +11,7 @@ use Zend\EventManager\Event;
 use ZF\Hal\Entity;
 
 /**
- * Class ChildGroupTypesProviderTest
- * @package GroupTest\Rule\Provider
+ * Unit tests for child group type provider
  */
 class ChildGroupTypesProviderTest extends \PHPUnit_Framework_TestCase
 {

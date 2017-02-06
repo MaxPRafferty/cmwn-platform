@@ -13,7 +13,7 @@ class ResetLink extends Link
     /**
      * ResetLink constructor.
      *
-     * @param string $user
+     * @param string|UserInterface $user
      */
     public function __construct($user)
     {

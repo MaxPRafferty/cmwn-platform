@@ -44,7 +44,24 @@ return [
                         'options' => [
                             \Api\Links\GameLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            true,
                             ['true'],
+                        ],
+                    ],
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\GroupLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            false,
+                        ],
+                    ],
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\OrgLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            false,
                         ],
                     ],
                 ],

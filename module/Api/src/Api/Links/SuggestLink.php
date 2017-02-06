@@ -12,7 +12,7 @@ class SuggestLink extends Link
 {
     /**
      * FriendLink constructor.
-     * @param string $user
+     * @param string|UserInterface $user
      */
     public function __construct($user)
     {

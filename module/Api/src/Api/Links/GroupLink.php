@@ -4,6 +4,7 @@ namespace Api\Links;
 
 use Application\Utils\StaticType;
 use Group\GroupInterface;
+use Org\OrganizationInterface;
 use ZF\Hal\Link\Link;
 
 /**
@@ -17,30 +18,36 @@ class GroupLink extends Link
      * GroupLink constructor.
      *
      * @param string $group
-     * @param null $parent
-     * @param null $orgId
+     * @param $options
      */
-    public function __construct($group = null, $parent = null, $orgId = null)
+    public function __construct($group = null, ...$options)
     {
+        $query = [];
+
+        array_walk($options, function ($option) use (&$query) {
+            switch (true) {
+                case $option instanceof GroupInterface:
+                    $query['parent'] = $option->getGroupId();
+                    break;
+
+                case $option instanceof OrganizationInterface:
+                    $query['org_id'] = $option->getOrgId();
+                    break;
+
+                default:
+                    // Nothing to see here
+            }
+        });
+
         $type  = $group instanceof GroupInterface ? $group->getType() : $group;
         $label = 'group';
-        $query = [];
         if (!empty($type)) {
             $label .= '_' . $type;
-            $query = ['type' => $type];
+            $query['type'] = $type;
             $this->setProps(['label' => StaticType::getLabelForType($type)]);
         }
 
         parent::__construct(strtolower($label));
-
-        if ($orgId !== null) {
-            $query['org_id'] = $orgId;
-        }
-
-        if ($parent !== null) {
-            $query['parent'] = $parent;
-        }
-
         $this->setRoute('api.rest.group', [], ['query' => $query, 'reuse_matched_params' => false]);
     }
 }

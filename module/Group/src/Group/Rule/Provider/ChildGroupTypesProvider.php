@@ -8,12 +8,12 @@ use Rule\Event\Provider\AbstractEventProvider;
 use ZF\Hal\Entity;
 
 /**
- * Class ChildGroupTypesProvider
  * this provider gives the types of child groups a group has
  */
 class ChildGroupTypesProvider extends AbstractEventProvider
 {
     const PROVIDER_NAME = 'child-group-types';
+
     /**
      * @var GroupServiceInterface
      */

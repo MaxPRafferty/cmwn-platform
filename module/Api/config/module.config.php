@@ -30,21 +30,6 @@ return [
         ],
     ],
 
-    \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
-        \Api\Rule\Provider\UserRelationshipProvider::class => [
-            \Zend\Authentication\AuthenticationServiceInterface::class,
-            \Security\Service\SecurityUserServiceInterface::class,
-        ],
-        \Api\Rule\Provider\ActiveUserGroupRoleProvider::class => [
-            \Zend\Authentication\AuthenticationServiceInterface::class,
-            \Security\Service\SecurityGroupServiceInterface::class,
-        ],
-        \Api\Rule\Provider\ActiveUserOrgRoleProvider::class => [
-            \Zend\Authentication\AuthenticationServiceInterface::class,
-            \Security\Service\SecurityOrgServiceInterface::class,
-        ],
-    ],
-
     'actions' => [
         'factories' => [
             \Api\Rule\Action\AddHalLinkAction::class => \Rule\Action\Service\BuildActionFactory::class,
@@ -64,9 +49,6 @@ return [
 
         'shared' => [
             \Api\Rule\Provider\EntityFromEventProvider::class  => false,
-            \Api\Rule\Provider\UserRelationshipProvider::class => false,
-            \Api\Rule\Provider\ActiveUserGroupRoleProvider::class  => false,
-            \Api\Rule\Provider\ActiveUserOrgRoleProvider::class    => false,
         ],
     ],
 

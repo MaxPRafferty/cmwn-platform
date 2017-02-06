@@ -26,20 +26,29 @@ class AddHalLinkAction implements ActionInterface
     protected $provider;
 
     /**
+     * @var bool
+     */
+    protected $requireOptions;
+
+    /**
      * @var array
      */
     protected $options;
+
+
 
     /**
      * AddHalLinkAction constructor.
      * @param string $link
      * @param string $provider
+     * @param bool $requireOptions
      * @param array $options
      */
-    public function __construct(string $link, string $provider, array $options = [])
+    public function __construct(string $link, string $provider, bool $requireOptions = true, array $options = [])
     {
         $this->link = $link;
         $this->provider = $provider;
+        $this->requireOptions = $requireOptions;
         $this->options = $options;
     }
 
@@ -48,17 +57,20 @@ class AddHalLinkAction implements ActionInterface
      */
     public function __invoke(RuleItemInterface $item)
     {
-        /**
-         * @var LinkCollectionAwareInterface $object
-         */
         $object = $item->getParam($this->provider);
 
         if (!$object instanceof LinkCollectionAwareInterface) {
             return;
         }
 
-        $options = $this->options;
-        array_unshift($options, $object);
+        switch ($this->requireOptions) {
+            case true:
+                $options = $this->options;
+                array_unshift($options, $object);
+                break;
+            default:
+                $options = [];
+        }
 
         /**@var Link $halLink*/
         $halLink = new $this->link(...$options);

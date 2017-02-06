@@ -84,14 +84,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * @param LinkCollection $links
-     */
-    protected function injectLinks(LinkCollection $links)
-    {
-        parent::injectLinks($links);
-    }
-
-    /**
      * @return string
      */
     public function getEntityType()

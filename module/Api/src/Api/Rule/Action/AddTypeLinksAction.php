@@ -55,16 +55,7 @@ class AddTypeLinksAction implements ActionInterface
         }
 
         foreach ($types as $type) {
-            $options = [$type];
-
-            if ($entity instanceof GroupInterface) {
-                $options[] = $entity->getGroupId();
-            }
-
-            if ($entity instanceof OrganizationInterface) {
-                $options[] = null;
-                $options[] = $entity->getOrgId();
-            }
+            $options = [$type, $entity];
 
             /**@var Link $link*/
             $link = new $this->link(...$options);

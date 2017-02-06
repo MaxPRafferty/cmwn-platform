@@ -9,8 +9,7 @@ use Rule\Event\Provider\AbstractEventProvider;
 use ZF\Hal\Entity;
 
 /**
- * Class OrgGroupTypesProvider
- * @package Org\Rule\Provider
+ * Provides group types in an org
  */
 class OrgGroupTypesProvider extends AbstractEventProvider
 {
@@ -26,7 +25,7 @@ class OrgGroupTypesProvider extends AbstractEventProvider
      * @param OrganizationServiceInterface $orgService
      * @param string $providerName
      */
-    public function __construct(OrganizationServiceInterface $orgService, string $providerName = 'org-group-types')
+    public function __construct(OrganizationServiceInterface $orgService, string $providerName = self::PROVIDER_NAME)
     {
         parent::__construct($providerName);
         $this->orgService = $orgService;

@@ -114,7 +114,7 @@ abstract class AbstractEngineSpecification implements
     /**
      * @inheritDoc
      */
-    public function getEventName()
+    public function getEventName(): array
     {
         return $this->when;
     }

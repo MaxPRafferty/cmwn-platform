@@ -6,11 +6,12 @@ use Org\Service\OrganizationServiceInterface;
 use Rule\Provider\ProviderInterface;
 
 /**
- * Class OrgTypeProvider
  * This provider gives the types of organizations in the system
  */
 class OrgTypesProvider implements ProviderInterface
 {
+    const PROVIDER_NAME = 'org-types';
+
     /**
      * @var OrganizationServiceInterface $orgService
      */
@@ -34,7 +35,7 @@ class OrgTypesProvider implements ProviderInterface
      * @param OrganizationServiceInterface $orgService
      * @param string $providerName
      */
-    public function __construct(OrganizationServiceInterface $orgService, string $providerName = 'org-types')
+    public function __construct(OrganizationServiceInterface $orgService, string $providerName = self::PROVIDER_NAME)
     {
         $this->orgService = $orgService;
         $this->providerName = $providerName;

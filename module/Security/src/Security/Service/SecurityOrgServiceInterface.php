@@ -6,7 +6,7 @@ use User\UserInterface;
 use Org\OrganizationInterface;
 
 /**
- * Interface SecurityOrgServiceInterface
+ * this declares the signature for getting role between a user and an org
  */
 interface SecurityOrgServiceInterface
 {
