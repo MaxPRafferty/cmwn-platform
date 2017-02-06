@@ -2,6 +2,7 @@
 namespace Api\V1\Rest\Group;
 
 use Group\Group;
+use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Org\Service\OrganizationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
@@ -71,14 +72,7 @@ class GroupResource extends AbstractResourceListener
     {
         $group = $this->service->fetchGroup($groupId);
 
-        $org = $this->orgService->fetchOrganization($group->getOrganizationId());
-
-        $parent = null;
-        if ($group->getParentId() !== null) {
-            $parent = $this->service->fetchGroup($group->getParentId());
-        }
-
-        return new GroupEntity($group->getArrayCopy(), $org, $parent);
+        return $this->injectEntities($group);
     }
 
     /**
@@ -121,6 +115,24 @@ class GroupResource extends AbstractResourceListener
 
         $saveGroup = new Group(array_merge($group->getArrayCopy(), $data));
         $this->service->updateGroup($saveGroup);
-        return new GroupEntity($saveGroup->getArrayCopy());
+
+        return $this->injectEntities($saveGroup);
+    }
+
+    /**
+     * Injects the organization and parent (if exists) entities for a group entity
+     * @param GroupInterface $group
+     * @return GroupEntity
+     */
+    protected function injectEntities(GroupInterface $group)
+    {
+        $org = $this->orgService->fetchOrganization($group->getOrganizationId());
+
+        $parent = null;
+        if ($group->getParentId() !== null) {
+            $parent = $this->service->fetchGroup($group->getParentId());
+        }
+
+        return new GroupEntity($group->getArrayCopy(), $org, $parent);
     }
 }
