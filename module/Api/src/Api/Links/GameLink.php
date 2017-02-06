@@ -13,12 +13,11 @@ class GameLink extends Link
 {
     /**
      * GameLink constructor.
-     * @param $gameId
      */
-    public function __construct($gameId = null)
+    public function __construct()
     {
         parent::__construct('games');
         $this->setProps(['label' => 'Games']);
-        $this->setRoute('api.rest.game', ['game_id' => $gameId]);
+        $this->setRoute('api.rest.game');
     }
 }

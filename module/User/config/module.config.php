@@ -27,4 +27,13 @@ return [
     'shared-listeners' => [
         \User\Service\RandomNameListener::class,
     ],
+    'rules' => [
+        'factories' => [
+            \User\Rule\TypeRule::class => \Rule\Rule\Service\BuildRuleFactory::class
+        ],
+
+        'shared'    => [
+            \User\Rule\TypeRule::class => false,
+        ],
+    ],
 ];

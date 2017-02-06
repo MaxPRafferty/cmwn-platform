@@ -17,6 +17,6 @@ class FlagLink extends Link
     {
         parent::__construct('flags');
         $this->setProps(['label'=>'Flags']);
-        $this->setRoute('api.rest.flag');
+        $this->setRoute('api.rest.flag', [], ['reuse_matched_params' => false]);
     }
 }

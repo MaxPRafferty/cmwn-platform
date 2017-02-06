@@ -2,7 +2,7 @@
 
 namespace Security\Authorization\Assertion;
 
-use Security\Service\SecurityGroupServiceInterface;
+use Security\Service\SecurityUserServiceInterface;
 use User\UserInterface;
 use Zend\Permissions\Rbac\Rbac;
 
@@ -24,16 +24,16 @@ class UserAssertion implements AssertionInterface
     protected $requestedUser;
 
     /**
-     * @var SecurityGroupServiceInterface
+     * @var SecurityUserServiceInterface
      */
     protected $securityGroupService;
 
     /**
      * UserAssertion constructor.
      *
-     * @param SecurityGroupServiceInterface $securityGroupService
+     * @param SecurityUserServiceInterface $securityGroupService
      */
-    public function __construct(SecurityGroupServiceInterface $securityGroupService)
+    public function __construct(SecurityUserServiceInterface $securityGroupService)
     {
         $this->securityGroupService = $securityGroupService;
     }

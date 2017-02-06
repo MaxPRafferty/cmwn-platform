@@ -162,6 +162,7 @@ return [
                     'update.game',
                     'delete.game',
                     'reset.group.code',
+                    'view.feed',
                     'set.super',
                     'get.super.user',
                     'view.all.addresses',
@@ -172,6 +173,7 @@ return [
                     'view.all.group.addresses',
                     'attach.group.address',
                     'detach.group.address',
+                    'view.user.feed',
                 ],
             ],
 
