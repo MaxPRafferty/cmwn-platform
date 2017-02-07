@@ -15,6 +15,7 @@ use Zend\Validator\StringLength;
 
 /**
  * Class UserController
+ * @todo move to dev module
  */
 class UserController extends AbstractConsoleController
 {

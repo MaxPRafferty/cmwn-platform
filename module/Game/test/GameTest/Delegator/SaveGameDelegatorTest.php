@@ -4,6 +4,7 @@ namespace GameTest\Delegator;
 
 use Game\Delegator\SaveGameDelegator;
 use Game\SaveGame;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
@@ -19,6 +20,8 @@ use Zend\EventManager\Event;
  */
 class SaveGameDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Game\Service\SaveGameService
      */
@@ -65,7 +68,7 @@ class SaveGameDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -98,7 +101,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'save.user.game',
                 'target' => $this->service,
-                'params' => ['game_data' => $this->saveGame]
+                'params' => ['game_data' => $this->saveGame],
             ],
             $this->calledEvents[0]
         );
@@ -107,7 +110,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'save.user.game.post',
                 'target' => $this->service,
-                'params' => ['game_data' => $this->saveGame]
+                'params' => ['game_data' => $this->saveGame],
             ],
             $this->calledEvents[1]
         );
@@ -123,6 +126,7 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('save.user.game', function (Event $event) {
             $event->stopPropagation(true);
+
             return true;
         });
 
@@ -133,7 +137,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'save.user.game',
                 'target' => $this->service,
-                'params' => ['game_data' => $this->saveGame]
+                'params' => ['game_data' => $this->saveGame],
             ],
             $this->calledEvents[0]
         );
@@ -156,7 +160,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.save.game',
                 'target' => $this->service,
-                'params' => ['user' => 'manchuck', 'game' => 'monarch']
+                'params' => ['user' => 'manchuck', 'game' => 'monarch'],
             ],
             $this->calledEvents[0]
         );
@@ -165,11 +169,12 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.save.game.post',
                 'target' => $this->service,
-                'params' => ['user' => 'manchuck', 'game' => 'monarch']
+                'params' => ['user' => 'manchuck', 'game' => 'monarch'],
             ],
             $this->calledEvents[1]
         );
     }
+
     /**
      * @test
      */
@@ -180,9 +185,10 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('delete.user.save.game', function (Event $event) {
             $event->stopPropagation(true);
+
             return true;
         });
-        
+
         $this->assertTrue($this->delegator->deleteSaveForUser('manchuck', 'monarch'));
 
         $this->assertEquals(1, count($this->calledEvents));
@@ -190,12 +196,12 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.save.game',
                 'target' => $this->service,
-                'params' => ['user' => 'manchuck', 'game' => 'monarch']
+                'params' => ['user' => 'manchuck', 'game' => 'monarch'],
             ],
             $this->calledEvents[0]
         );
     }
-    
+
     /**
      * @test
      */
@@ -205,7 +211,6 @@ class SaveGameDelegatorTest extends TestCase
             ->with('manchuck', 'monarch', null, \Mockery::any())
             ->once()
             ->andReturn($this->saveGame);
-
 
         $this->delegator->fetchSaveGameForUser('manchuck', 'monarch');
 
@@ -233,7 +238,7 @@ class SaveGameDelegatorTest extends TestCase
                     'game'      => 'monarch',
                     'prototype' => null,
                     'where'     => new Where(),
-                    'game_data' => $this->saveGame
+                    'game_data' => $this->saveGame,
                 ],
             ],
             $this->calledEvents[1]
@@ -252,6 +257,7 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.user.save.game', function (Event $event) use (&$return) {
             $event->stopPropagation(true);
+
             return $return;
         });
 
@@ -305,10 +311,10 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.saves.post',
                 'target' => $this->service,
                 'params' => [
-                    'user'      => 'manchuck',
-                    'prototype' => null,
-                    'where'     => null,
-                    'user-saves' => $resultSet
+                    'user'       => 'manchuck',
+                    'prototype'  => null,
+                    'where'      => null,
+                    'user-saves' => $resultSet,
                 ],
             ],
             $this->calledEvents[1]
@@ -327,6 +333,7 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.user.saves', function (Event $event) use (&$return) {
             $event->stopPropagation(true);
+
             return $return;
         });
 
@@ -380,7 +387,7 @@ class SaveGameDelegatorTest extends TestCase
                 'params' => [
                     'prototype' => null,
                     'where'     => null,
-                    'game-data' => $resultSet
+                    'game-data' => $resultSet,
                 ],
             ],
             $this->calledEvents[1]
@@ -399,6 +406,7 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.game-data', function (Event $event) use (&$return) {
             $event->stopPropagation(true);
+
             return $return;
         });
 

@@ -4,6 +4,7 @@ namespace GroupTest\Delegator;
 
 use Application\Exception\NotFoundException;
 use Group\Delegator\UserGroupServiceDelegator;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Group\Group;
 use User\Adult;
@@ -29,6 +30,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class UserGroupServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Group\Service\UserGroupService
      */

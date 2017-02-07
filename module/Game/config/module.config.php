@@ -6,12 +6,10 @@ return [
             \Game\Service\GameServiceInterface::class     => \Game\Service\GameService::class,
             \Game\Service\SaveGameServiceInterface::class => \Game\Service\SaveGameService::class,
         ],
-        'invokables' => [
-            \Game\Delegator\SaveGameDelegatorFactory::class => \Game\Delegator\SaveGameDelegatorFactory::class,
-        ],
         'factories'  => [
-            \Game\Service\GameService::class     => \Game\Service\GameServiceFactory::class,
-            \Game\Service\SaveGameService::class => \Game\Service\SaveGameServiceFactory::class,
+            \Game\Delegator\SaveGameDelegatorFactory::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Game\Service\GameService::class                => \Game\Service\GameServiceFactory::class,
+            \Game\Service\SaveGameService::class            => \Game\Service\SaveGameServiceFactory::class,
         ],
         'delegators' => [
             \Game\Service\SaveGameService::class => [

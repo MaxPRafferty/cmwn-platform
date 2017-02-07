@@ -7,6 +7,7 @@ use Group\Group;
 use Group\GroupInterface;
 use Import\Importer\Nyc\DoeImporter;
 use Import\ProcessorErrorException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\EventManager\Event;
 
@@ -22,6 +23,8 @@ use Zend\EventManager\Event;
  */
 class DoeImporterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Import\Importer\Nyc\Parser\DoeParser
      */

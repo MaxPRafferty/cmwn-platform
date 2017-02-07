@@ -8,10 +8,7 @@ use Application\Utils\ServiceTrait;
 use Org\Service\OrganizationService;
 use Org\Service\OrganizationServiceInterface;
 use Org\OrganizationInterface;
-use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
@@ -54,7 +51,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post'], 'o');
         $hideListener->setEntityParamKey('org');
 
-        $this->getEventManager()->attach($hideListener);
+        $hideListener->attach($this->getEventManager());
     }
 
     /**
@@ -64,7 +61,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     public function createOrganization(OrganizationInterface $org)
     {
         $event    = new Event('save.new.org', $this->realService, ['org' => $org]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -73,7 +70,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $return = $this->realService->createOrganization($org);
 
         $event    = new Event('save.new.org.post', $this->realService, ['org' => $org]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -85,7 +82,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     public function updateOrganization(OrganizationInterface $org)
     {
         $event    = new Event('save.org', $this->realService, ['org' => $org]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -94,7 +91,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $return = $this->realService->updateOrganization($org);
 
         $event    = new Event('save.org.post', $this->realService, ['org' => $org]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -109,7 +106,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     public function fetchOrganization($orgId)
     {
         $event    = new Event('fetch.org', $this->realService, ['org_id' => $orgId]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -117,7 +114,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
 
         $return = $this->realService->fetchOrganization($orgId);
         $event    = new Event('fetch.org.post', $this->realService, ['org_id' => $orgId, 'org' => $return]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -133,7 +130,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     public function deleteOrganization(OrganizationInterface $org, $soft = true)
     {
         $event    = new Event('delete.org', $this->realService, ['org' => $org, 'soft' => $soft]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -141,7 +138,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
 
         $return = $this->realService->deleteOrganization($org, $soft);
         $event  = new Event('delete.org.post', $this->realService, ['org' => $org, 'soft' => $soft]);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -160,7 +157,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
         if ($response->stopped()) {
             return $response->last();
         }
@@ -171,7 +168,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
             $this->realService,
             ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'orgs' => $return]
         );
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
@@ -185,7 +182,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     public function fetchGroupTypes($organization)
     {
         $event    = new Event('fetch.org.group.types', $this->realService, ['organization' => $organization]);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -194,7 +191,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $return = $this->realService->fetchGroupTypes($organization);
         $event->setName('fetch.org.group.types.post');
         $event->setParam('results', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 
@@ -206,7 +203,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     public function fetchOrgTypes()
     {
         $event    = new Event('fetch.org.types', $this->realService);
-        $response = $this->getEventManager()->trigger($event);
+        $response = $this->getEventManager()->triggerEvent($event);
 
         if ($response->stopped()) {
             return $response->last();
@@ -215,7 +212,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
         $return = $this->realService->fetchOrgTypes();
         $event->setName('fetch.org.types.post');
         $event->setParam('results', $return);
-        $this->getEventManager()->trigger($event);
+        $this->getEventManager()->triggerEvent($event);
         return $return;
     }
 }

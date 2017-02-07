@@ -2,42 +2,29 @@
 
 namespace Application\Service;
 
-use Zend\Log\Logger;
+use Interop\Container\ContainerInterface;
 use Zend\Log\LoggerAwareInterface;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class LoggerAwareInitializer
- *
- * ${CARET}
  */
 class LoggerAwareInitializer implements InitializerInterface
 {
     /**
-     * Initialize
-     *
-     * @param $instance
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $instance)
     {
         if (!$instance instanceof LoggerAwareInterface) {
             return;
         }
 
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-
-        if (!$serviceLocator->has('Log\App')) {
+        if (!$container->has('Log\App')) {
             return ;
         }
 
-        /** @var Logger $logger */
-        $logger = $serviceLocator->get('Log\App');
-        $instance->setLogger($logger);
+        $instance->setLogger($container->get('Log\App'));
     }
 }

@@ -3,25 +3,20 @@
 
 namespace Notice\Controller;
 
-use Zend\ServiceManager\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class NoticeControllerFactory
- * @package Notice\Controller
  */
 class NoticeControllerFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return NoticeController
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-        return new NoticeController($serviceLocator);
+        return new NoticeController($container);
     }
 }

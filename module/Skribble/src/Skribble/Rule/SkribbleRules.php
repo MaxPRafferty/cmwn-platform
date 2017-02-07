@@ -6,10 +6,12 @@ use Skribble\InvalidArgumentException;
 use Skribble\OverflowException;
 use Skribble\UnexpectedValueException;
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Class SkribbleRules
  * @todo Add ability to remove rules?
+ * @SuppressWarnings(PHPMD)
  */
 class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterface
 {
@@ -200,7 +202,7 @@ class SkribbleRules implements RuleCompositeInterface, RuleSpecificationInterfac
                 continue;
             }
 
-            $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
+            $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }

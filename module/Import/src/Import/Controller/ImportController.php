@@ -5,6 +5,7 @@ namespace Import\Controller;
 use Application\Utils\NoopLoggerAwareTrait;
 use Import\ImporterInterface;
 use Import\ProcessorErrorException;
+use Interop\Container\ContainerInterface;
 use Job\Feature\DryRunInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
@@ -19,7 +20,6 @@ use Zend\Log\LoggerAwareInterface;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
 use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ImportController
@@ -31,7 +31,7 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
     use NoopLoggerAwareTrait;
 
     /**
-     * @var ServiceLocatorInterface
+     * @var ContainerInterface
      */
     protected $services;
 
@@ -43,10 +43,10 @@ class ImportController extends ConsoleController implements LoggerAwareInterface
     /**
      * ImportController constructor.
      *
-     * @param ServiceLocatorInterface $services
+     * @param ContainerInterface $services
      * @param AuthenticationService $authenticationService
      */
-    public function __construct(ServiceLocatorInterface $services, AuthenticationService $authenticationService)
+    public function __construct(ContainerInterface $services, AuthenticationService $authenticationService)
     {
         $this->services     = $services;
         $this->setAuthenticationService($authenticationService);

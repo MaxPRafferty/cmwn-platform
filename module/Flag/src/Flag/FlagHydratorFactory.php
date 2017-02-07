@@ -2,23 +2,21 @@
 
 namespace Flag;
 
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
+ *
  * Class FlagHydratorFactory
- * @package Flag
  */
 class FlagHydratorFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return FlagHydrator
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-        return new FlagHydrator($userService);
+        return new FlagHydrator($container->get(UserServiceInterface::class));
     }
 }

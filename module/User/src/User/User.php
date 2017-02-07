@@ -10,6 +10,7 @@ use Application\Utils\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
 use Application\Utils\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
@@ -76,7 +77,13 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     protected $externalId;
 
     /**
+     * @return string
+     */
+    protected $normalizedUsername;
+
+    /**
      * User constructor.
+     *
      * @param array|null $options
      */
     public function __construct(array $options = null)
@@ -91,7 +98,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
      */
     public function __toString()
     {
-        return (string) $this->getUserName();
+        return (string)$this->getUserName();
     }
 
     /**
@@ -128,7 +135,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
         $array = array_merge($defaults, $array);
 
         foreach ($array as $key => $value) {
-            $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
+            $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }
@@ -144,7 +151,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     {
         return [
             'user_id'     => $this->getUserId(),
-            'username'    => (string) $this->getUserName(),
+            'username'    => (string)$this->getUserName(),
             'email'       => $this->getEmail(),
             'first_name'  => $this->getFirstName(),
             'middle_name' => $this->getMiddleName(),
@@ -170,6 +177,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param string $externalId
+     *
      * @return User
      */
     public function setExternalId($externalId)
@@ -184,16 +192,17 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
      */
     public function getUserId()
     {
-        return $this->userId;
+        return (string) $this->userId;
     }
 
     /**
      * @param string $userId
+     *
      * @return User
      */
     public function setUserId($userId)
     {
-        $this->userId = (string) $userId;
+        $this->userId = (string)$userId;
 
         return $this;
     }
@@ -208,11 +217,13 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param string $userName
+     *
      * @return User
      */
     public function setUserName($userName)
     {
         $this->userName = $userName;
+
         return $this;
     }
 
@@ -226,11 +237,13 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param string $email
+     *
      * @return User
      */
     public function setEmail($email)
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -244,6 +257,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param null|string $firstName
+     *
      * @return User
      */
     public function setFirstName($firstName)
@@ -263,6 +277,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param null|string $middleName
+     *
      * @return User
      */
     public function setMiddleName($middleName)
@@ -282,6 +297,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param null|string $lastName
+     *
      * @return User
      */
     public function setLastName($lastName)
@@ -301,11 +317,12 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param \DateTime|null $birthdate
+     *
      * @return User
      */
     public function setBirthdate($birthdate)
     {
-        $birthdate = DateTimeFactory::factory($birthdate);
+        $birthdate       = DateTimeFactory::factory($birthdate);
         $this->birthdate = $birthdate;
 
         return $this;
@@ -321,20 +338,39 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
 
     /**
      * @param string $gender
+     *
      * @return User
      */
     public function setGender($gender)
     {
         $this->gender = $gender;
+
         return $this;
     }
 
     /**
      * @param string $username
+     *
      * @return string
      */
     public static function normalizeUsername($username)
     {
         return strtolower(preg_replace('/((?![a-zA-Z0-9]+).)/', '', $username));
+    }
+
+    /**
+     * @return string
+     */
+    public function getNormalizedUsername()
+    {
+        return $this->normalizedUsername;
+    }
+
+    /**
+     * @param $normalizedUsername
+     */
+    public function setNormalizedUsername($normalizedUsername)
+    {
+        $this->normalizedUsername = $normalizedUsername;
     }
 }

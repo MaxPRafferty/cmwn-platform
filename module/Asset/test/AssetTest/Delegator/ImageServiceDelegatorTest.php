@@ -2,6 +2,7 @@
 
 namespace AssetTest\Delegator;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Asset\Image;
 use Asset\Delegator\ImageServiceDelegator;
@@ -22,6 +23,8 @@ use Zend\EventManager\Event;
  */
 class ImageServiceDelegatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|\Asset\Service\ImageService
      */
@@ -80,7 +83,7 @@ class ImageServiceDelegatorTest extends TestCase
         $this->calledEvents[] = [
             'name'   => $event->getName(),
             'target' => $event->getTarget(),
-            'params' => $event->getParams()
+            'params' => $event->getParams(),
         ];
     }
 
@@ -94,7 +97,6 @@ class ImageServiceDelegatorTest extends TestCase
             ->andReturn(true)
             ->once();
 
-
         $this->delegator->saveImage($this->image);
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -102,7 +104,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.image',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image]
+                'params' => ['image' => $this->image],
             ],
             $this->calledEvents[0]
         );
@@ -110,7 +112,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.image.post',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image]
+                'params' => ['image' => $this->image],
             ],
             $this->calledEvents[1]
         );
@@ -126,7 +128,6 @@ class ImageServiceDelegatorTest extends TestCase
             ->andReturn(true)
             ->once();
 
-
         $this->delegator->saveNewImage($this->image);
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -134,7 +135,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.image',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image]
+                'params' => ['image' => $this->image],
             ],
             $this->calledEvents[0]
         );
@@ -142,7 +143,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.image.post',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image]
+                'params' => ['image' => $this->image],
             ],
             $this->calledEvents[1]
         );
@@ -159,6 +160,7 @@ class ImageServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('save.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
 
@@ -169,7 +171,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.image',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image]
+                'params' => ['image' => $this->image],
             ],
             $this->calledEvents[0]
         );
@@ -186,6 +188,7 @@ class ImageServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('save.new.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return ['foo' => 'bar'];
         });
 
@@ -196,7 +199,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.image',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image]
+                'params' => ['image' => $this->image],
             ],
             $this->calledEvents[0]
         );
@@ -222,7 +225,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.image',
                 'target' => $this->imageService,
-                'params' => ['image_id' => $this->image->getImageId()]
+                'params' => ['image_id' => $this->image->getImageId()],
             ],
             $this->calledEvents[0]
         );
@@ -230,7 +233,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.image.post',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image, 'image_id' => $this->image->getImageId()]
+                'params' => ['image' => $this->image, 'image_id' => $this->image->getImageId()],
             ],
             $this->calledEvents[1]
         );
@@ -248,6 +251,7 @@ class ImageServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return $this->image;
         });
 
@@ -261,7 +265,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.image',
                 'target' => $this->imageService,
-                'params' => ['image_id' => $this->image->getImageId()]
+                'params' => ['image_id' => $this->image->getImageId()],
             ],
             $this->calledEvents[0]
         );
@@ -287,7 +291,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.image',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image, 'soft' => true]
+                'params' => ['image' => $this->image, 'soft' => true],
             ],
             $this->calledEvents[0]
         );
@@ -295,7 +299,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.image.post',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image, 'soft' => true]
+                'params' => ['image' => $this->image, 'soft' => true],
             ],
             $this->calledEvents[1]
         );
@@ -313,6 +317,7 @@ class ImageServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('delete.image', function (Event $event) {
             $event->stopPropagation(true);
+
             return $this->image;
         });
 
@@ -326,7 +331,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.image',
                 'target' => $this->imageService,
-                'params' => ['image' => $this->image, 'soft' => true]
+                'params' => ['image' => $this->image, 'soft' => true],
             ],
             $this->calledEvents[0]
         );
@@ -352,7 +357,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.images',
                 'target' => $this->imageService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[0]
         );
@@ -361,7 +366,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.images.post',
                 'target' => $this->imageService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'images' => $result]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'images' => $result],
             ],
             $this->calledEvents[1]
         );
@@ -379,6 +384,7 @@ class ImageServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.all.images', function (Event $event) use (&$result) {
             $event->stopPropagation(true);
+
             return $result;
         });
 
@@ -392,7 +398,7 @@ class ImageServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.images',
                 'target' => $this->imageService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
             ],
             $this->calledEvents[0]
         );

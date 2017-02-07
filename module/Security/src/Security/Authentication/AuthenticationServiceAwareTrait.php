@@ -5,9 +5,7 @@ namespace Security\Authentication;
 use Zend\Authentication\AuthenticationServiceInterface;
 
 /**
- * Trait AuthenticationServiceAwareTrait
- *
- * ${CARET}
+ * A trait that helps satisfied AuthenticationServiceAwareInterface
  */
 trait AuthenticationServiceAwareTrait
 {
@@ -27,7 +25,7 @@ trait AuthenticationServiceAwareTrait
     /**
      * @return AuthenticationServiceInterface
      */
-    public function getAuthenticationService()
+    public function getAuthenticationService(): AuthenticationServiceInterface
     {
         return $this->authService;
     }

@@ -3,6 +3,7 @@
 namespace Media;
 
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Class Media
@@ -106,7 +107,7 @@ class Media implements MediaInterface
                 continue;
             }
 
-            $method = 'set' . ucfirst(StaticFilter::execute($key, 'Word\UnderscoreToCamelCase'));
+            $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }

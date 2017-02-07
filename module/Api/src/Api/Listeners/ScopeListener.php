@@ -56,7 +56,7 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
     public function detachShared(SharedEventManagerInterface $manager)
     {
         foreach ($this->listeners as $listener) {
-            $manager->detach('ZF\Hal\Plugin\Hal', $listener);
+            $manager->detach($listener, 'ZF\Hal\Plugin\Hal');
         }
     }
 
@@ -76,12 +76,12 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
             return;
         }
 
-        if (!$entity->entity instanceof ScopeAwareInterface) {
+        if (!$entity->getEntity() instanceof ScopeAwareInterface) {
             return;
         }
 
         $role    = $this->getRole($entity);
-        $payload['scope'] =$this->rbac->getScopeForEntity($role, $entity->entity->getEntityType());
+        $payload['scope'] =$this->rbac->getScopeForEntity($role, $entity->getEntity()->getEntityType());
     }
 
     /**
@@ -102,7 +102,7 @@ class ScopeListener implements AuthenticationServiceAwareInterface, RbacAwareInt
             return $user->getRole();
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
         if ($realEntity instanceof UserInterface) {
             return $this->securityGroupService->fetchRelationshipRole($user, $realEntity);
         }

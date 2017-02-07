@@ -3,7 +3,6 @@ namespace Api\V1\Rest\GroupUsers;
 
 use Api\V1\Rest\User\UserEntity;
 use Application\Exception\NotFoundException;
-use Group\GroupInterface;
 use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
 use ZF\ApiProblem\ApiProblem;

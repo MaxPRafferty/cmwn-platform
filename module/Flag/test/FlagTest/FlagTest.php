@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FlagTest;
 
 use Flag\Flag;
@@ -11,8 +10,9 @@ use User\UserInterface;
 
 /**
  * Class FlagTest
+ *
  * @package FlagTest
- * @group Flag
+ * @group   Flag
  */
 class FlagTest extends TestCase
 {
@@ -28,8 +28,8 @@ class FlagTest extends TestCase
     {
         $this->flagData = [
             'flag_id' => 'foobar',
-            'flagger' => new Child(['user_id'=>'english_student']),
-            'flaggee' => new Child(['user_id'=>'math_student']),
+            'flagger' => new Child(['user_id' => 'english_student', 'username' => 'flagger']),
+            'flaggee' => new Child(['user_id' => 'math_student', 'username' => 'flaggee']),
             'reason'  => 'foo',
             'url'     => '/bar',
         ];
@@ -54,8 +54,8 @@ class FlagTest extends TestCase
      */
     public function testItShouldExtractWithValidFlagData()
     {
-        $flag = new Flag($this->flagData);
-        $data = $this->flagData;
+        $flag            = new Flag($this->flagData);
+        $data            = $this->flagData;
         $data['flagger'] = $this->flagData['flagger']->getArrayCopy();
         $data['flaggee'] = $this->flagData['flaggee']->getArrayCopy();
         $this->assertEquals($data, $flag->getArrayCopy());
@@ -84,9 +84,9 @@ class FlagTest extends TestCase
      */
     public function testItShouldConvertFlagIdToString()
     {
-        $data = $this->flagData;
+        $data            = $this->flagData;
         $data['flag_id'] = Uuid::uuid1();
-        $flag = new Flag($data);
+        $flag            = new Flag($data);
         $this->assertTrue(is_string($flag->getFlagId()));
     }
 
@@ -95,10 +95,10 @@ class FlagTest extends TestCase
      */
     public function testItShouldCreateUserIfFlaggerAndFlaggeeAreArrays()
     {
-        $data = $this->flagData;
+        $data            = $this->flagData;
         $data['flagger'] = $this->flagData['flagger']->getArrayCopy();
         $data['flaggee'] = $this->flagData['flaggee']->getArrayCopy();
-        $flag = new Flag($data);
+        $flag            = new Flag($data);
 
         $this->assertInstanceOf(UserInterface::class, $flag->getFlagger());
         $this->assertInstanceOf(UserInterface::class, $flag->getFlaggee());

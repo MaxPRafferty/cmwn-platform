@@ -4,6 +4,7 @@ namespace GameTest\Service;
 
 use Game\SaveGame;
 use Game\Service\SaveGameService;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
@@ -21,6 +22,8 @@ use Zend\Json\Json;
  */
 class SaveGameServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var SaveGameService
      */
@@ -82,6 +85,7 @@ class SaveGameServiceTest extends TestCase
                 $actualData['created'] = $saveGame->getCreated()->format("Y-m-d H:i:s");
 
                 $this->assertEquals($actualData, $data, '');
+
                 return true;
             });
 
@@ -98,7 +102,7 @@ class SaveGameServiceTest extends TestCase
             ->andReturn(true)
             ->once();
 
-        $this->gameService->deleteSaveForUser('manchuck', 'monarch');
+        $this->assertTrue($this->gameService->deleteSaveForUser('manchuck', 'monarch'));
     }
 
     /**
@@ -106,7 +110,8 @@ class SaveGameServiceTest extends TestCase
      */
     public function testItShouldFetchSaveForUserWithNoWhere()
     {
-        $date = new \DateTime();
+        $this->markTestIncomplete('This is not doing anything');
+        $date     = new \DateTime();
         $gameData = [
             'game_id' => 'monarch',
             'user_id' => 'manchuck',
@@ -132,10 +137,11 @@ class SaveGameServiceTest extends TestCase
      */
     public function testItShouldFetchSaveForUserWithCustomWhereAndPrototype()
     {
+        $this->markTestIncomplete('This is doing nothing ');
         $where = new Where();
         $where->addPredicate(new Operator('foo', '=', 'bar'));
 
-        $date = new \DateTime();
+        $date     = new \DateTime();
         $gameData = [
             'game_id' => 'monarch',
             'user_id' => 'manchuck',
@@ -151,6 +157,7 @@ class SaveGameServiceTest extends TestCase
             ->once()
             ->andReturnUsing(function ($actualWhere) use (&$result, &$where) {
                 $this->assertSame($where, $actualWhere, 'Where was not passed through');
+
                 return $result;
             });
     }
@@ -160,7 +167,7 @@ class SaveGameServiceTest extends TestCase
      */
     public function testItShouldRemoveOldSaveBeforeSaving()
     {
-        $date = new \DateTime();
+        $date     = new \DateTime();
         $gameData = [
             'game_id' => 'monarch',
             'user_id' => 'manchuck',
@@ -171,10 +178,6 @@ class SaveGameServiceTest extends TestCase
 
         $result = new ResultSet();
         $result->initialize([$gameData]);
-
-        $this->tableGateway->shouldReceive()
-            ->once()
-            ->andReturn($result);
 
         $saveGame = new SaveGame([
             'game_id' => 'monarch',
@@ -197,6 +200,7 @@ class SaveGameServiceTest extends TestCase
                 $actualData['created'] = $saveGame->getCreated()->format("Y-m-d H:i:s");
 
                 $this->assertEquals($actualData, $data, '');
+
                 return true;
             });
 

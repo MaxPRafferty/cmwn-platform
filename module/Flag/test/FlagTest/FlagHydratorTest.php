@@ -5,6 +5,7 @@ namespace FlagTest;
 use Application\Exception\NotFoundException;
 use Flag\Flag;
 use Flag\FlagHydrator;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use User\Adult;
 use User\Child;
@@ -13,15 +14,18 @@ use User\UserInterface;
 
 /**
  * Class FlagHydratorTest
+ *
  * @package FlagTest
- * @group Flag
- * @group Hydrator
- * @group FlagHydrator
- * @group API
- * @group UnitTest
+ * @group   Flag
+ * @group   Hydrator
+ * @group   FlagHydrator
+ * @group   API
+ * @group   UnitTest
  */
 class FlagHydratorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var FlagHydrator
      */
@@ -53,7 +57,7 @@ class FlagHydratorTest extends TestCase
     public function setUpHydrator()
     {
         $this->userService = \Mockery::mock('User\Service\UserService');
-        $this->hydrator = new FlagHydrator($this->userService);
+        $this->hydrator    = new FlagHydrator($this->userService);
     }
 
     /**
@@ -147,8 +151,8 @@ class FlagHydratorTest extends TestCase
             $this->data,
             ['flagger' => $this->flagger, 'flaggee' => $this->flaggee]
         );
-        $flag = new Flag($array);
-        $data = $this->hydrator->extract($flag);
+        $flag  = new Flag($array);
+        $data  = $this->hydrator->extract($flag);
         $this->assertEquals(
             $data,
             array_merge(
@@ -203,8 +207,8 @@ class FlagHydratorTest extends TestCase
      */
     public function testItShouldNoCallsShouldBeMadeToFetchUserWhenFlaggerAndFlaggeeAreUsers()
     {
-        $flag = new Flag();
-        $data = $this->data;
+        $flag            = new Flag();
+        $data            = $this->data;
         $data['flagger'] = new Child(['user_id' => 'english_student']);
         $data['flaggee'] = new Child(['user_id' => 'math_student']);
         $this->userService->shouldReceive('fetchUser')

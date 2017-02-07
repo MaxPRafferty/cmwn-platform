@@ -83,7 +83,7 @@ class ChangePasswordListener implements AuthenticationServiceAwareInterface
     /**
      * Short Circuits an API Problem Response if the user needs to change password
      *
-     * @return void|ApiProblemResponse
+     * @return null|ApiProblemResponse
      */
     public function onDispatch()
     {

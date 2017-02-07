@@ -2,28 +2,21 @@
 
 namespace User;
 
+use Interop\Container\ContainerInterface;
 use User\Service\UserServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 /**
  * Class UpdateEmailValidatorFactory
- * @package User
  */
 class UpdateEmailValidatorFactory implements FactoryInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return UpdateEmailValidator
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-        /**@var UserServiceInterface $userService*/
-        $userService = $serviceLocator->get(UserServiceInterface::class);
-        return new UpdateEmailValidator([], $userService);
+        return new UpdateEmailValidator([], $container->get(UserServiceInterface::class));
     }
 }

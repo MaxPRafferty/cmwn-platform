@@ -3,11 +3,10 @@
 namespace Flip;
 
 /**
- * Interface FlipInterface
+ * An Interface that defines a flip
  */
 interface FlipInterface
 {
-
     /**
      * @return string
      */
@@ -17,7 +16,6 @@ interface FlipInterface
      * Exchange internal values from provided array
      *
      * @param  array $array
-     * @return void
      */
     public function exchangeArray(array $array);
 
@@ -26,50 +24,59 @@ interface FlipInterface
      *
      * @return array
      */
-    public function getArrayCopy();
+    public function getArrayCopy(): array;
 
     /**
      * Gets the flip Id
      *
      * @return string
      */
-    public function getFlipId();
+    public function getFlipId(): string;
 
     /**
      * Sets the Flip Id
      *
+     * Designed to be fluent
+     *
      * @param string $flipId
-     * @return Flip
+     *
+     * @return FlipInterface
      */
-    public function setFlipId($flipId);
+    public function setFlipId(string $flipId): FlipInterface;
 
     /**
      * Gets the flip title
      *
      * @return string
      */
-    public function getTitle();
+    public function getTitle(): string;
 
     /**
      * Sets the title of the flip
      *
+     * Designed to be fluent
+     *
      * @param string $title
-     * @return Flip
+     *
+     * @return FlipInterface
      */
-    public function setTitle($title);
+    public function setTitle(string $title): FlipInterface;
 
     /**
-     * Gets the description of the flip
+     * Gets the description on how to earn the flip
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
-     * Gets the flip Description
+     * Sets a description on how to earn a flip
+     *
+     * Designed to be fluent
      *
      * @param string $description
-     * @return Flip
+     *
+     * @return FlipInterface
      */
-    public function setDescription($description);
+    public function setDescription(string $description): FlipInterface;
 }

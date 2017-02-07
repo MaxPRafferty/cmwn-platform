@@ -2,13 +2,11 @@
 
 namespace Application\Log\Rollbar;
 
+use Interop\Container\ContainerInterface;
 use Security\Authentication\AuthenticationService;
-use Security\Authentication\AuthenticationServiceAwareInterface;
-use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
 use User\UserInterface;
 use Zend\Log\Writer\AbstractWriter;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class Writer
@@ -20,15 +18,19 @@ class Writer extends AbstractWriter
      */
     protected $rollbar;
 
+    /**
+     * @var ContainerInterface
+     */
     protected $services;
 
     /**
      * Writer constructor.
      *
      * @param \RollbarNotifier $rollbar
-     * @param array|\Traversable|null $options
+     * @param ContainerInterface $services
+     * @param null $options
      */
-    public function __construct(\RollbarNotifier $rollbar, ServiceLocatorInterface $services, $options = null)
+    public function __construct(\RollbarNotifier $rollbar, ContainerInterface $services, $options = null)
     {
         $this->rollbar  = $rollbar;
         $this->services = $services;

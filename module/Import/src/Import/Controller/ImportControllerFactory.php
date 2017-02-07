@@ -2,29 +2,21 @@
 
 namespace Import\Controller;
 
-use Zend\ServiceManager\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ImportControllerFactory
- * @codeCoverageIgnore
  */
 class ImportControllerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $serviceLocator = $serviceLocator instanceof ServiceLocatorAwareInterface
-            ? $serviceLocator->getServiceLocator()
-            : $serviceLocator;
-
-        $authService = $serviceLocator->get('authentication');
-        return new ImportController($serviceLocator, $authService);
+        return new ImportController($container, $container->get(AuthenticationServiceInterface::class));
     }
 }

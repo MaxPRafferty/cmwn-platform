@@ -128,16 +128,9 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
     }
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         foreach ($this->whereEvents as $eventName) {
             $this->listeners[] = $events->attach($eventName, [$this, 'addPredicateToWhere']);

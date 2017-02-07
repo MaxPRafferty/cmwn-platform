@@ -8,9 +8,7 @@ return [
         ],
         'factories'  => [
             \Job\Processor\JobRunner::class => \Job\Processor\JobRunnerFactory::class,
-        ],
-        'invokables' => [
-            \Job\Service\JobService::class => \Job\Service\JobService::class,
+            \Job\Service\JobService::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
         'abstract_factories' => [
             \Job\Aws\Sqs\SqsJobServiceAbstractFactory::class,

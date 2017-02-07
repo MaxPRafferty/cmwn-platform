@@ -3,25 +3,19 @@
 namespace Api\V1\Rest\Game;
 
 use Game\Service\GameServiceInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class GameResourceFactory
- * @package Api\V1\Rest\Game
  */
 class GameResourceFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var GameServiceInterface $gameService */
-        $gameService = $serviceLocator->get(GameServiceInterface::class);
-        return new GameResource($gameService);
+        return new GameResource($container->get(GameServiceInterface::class));
     }
 }

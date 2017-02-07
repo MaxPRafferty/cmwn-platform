@@ -1,9 +1,9 @@
 <?php
 
-
 namespace SuggestTest\Listener;
 
 use Job\Service\JobServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Suggest\Engine\SuggestionEngine;
 use Suggest\Listener\TriggerSuggestionsListener;
@@ -23,6 +23,8 @@ use Zend\EventManager\EventManager;
  */
 class TriggerSuggestionListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface | SuggestionEngine
      */
@@ -44,7 +46,7 @@ class TriggerSuggestionListenerTest extends TestCase
     public function setUpServices()
     {
         $this->suggestionEngine = \Mockery::mock(SuggestionEngine::class);
-        $this->jobService = \Mockery::mock(JobServiceInterface::class);
+        $this->jobService       = \Mockery::mock(JobServiceInterface::class);
     }
 
     /**
@@ -60,7 +62,7 @@ class TriggerSuggestionListenerTest extends TestCase
      */
     public function testItShouldTriggerSuggestionsForChild()
     {
-        $user = new Child(['user_id' => 'english_student']);
+        $user  = new Child(['user_id' => 'english_student']);
         $event = new Event();
         $event->setName('save.new.user.post');
         $event->setTarget(UserServiceInterface::class);
@@ -72,7 +74,7 @@ class TriggerSuggestionListenerTest extends TestCase
         $this->suggestionEngine->shouldReceive('exchangeArray')->once();
         $this->jobService->shouldReceive('sendJob')->once();
 
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
         $this->assertFalse($response->stopped());
     }
 
@@ -81,7 +83,7 @@ class TriggerSuggestionListenerTest extends TestCase
      */
     public function testItShouldNotTriggerSuggestionsForAdult()
     {
-        $user = new Adult(['user_id' => 'english_teacher']);
+        $user  = new Adult(['user_id' => 'english_teacher']);
         $event = new Event();
         $event->setName('save.new.user.post');
         $event->setTarget(UserServiceInterface::class);
@@ -93,7 +95,7 @@ class TriggerSuggestionListenerTest extends TestCase
         $this->suggestionEngine->shouldReceive('exchangeArray')->never();
         $this->jobService->shouldReceive('sendJob')->never();
 
-        $response = $eventManager->trigger($event);
+        $response = $eventManager->triggerEvent($event);
         $this->assertFalse($response->stopped());
     }
 }

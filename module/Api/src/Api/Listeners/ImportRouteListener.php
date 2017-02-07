@@ -61,7 +61,7 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->listeners as $listener) {
-            $events->detach('ZF\Hal\Plugin\Hal', $listener);
+            $events->detach($listener, 'ZF\Hal\Plugin\Hal');
         }
     }
 
@@ -80,7 +80,7 @@ class ImportRouteListener implements RbacAwareInterface, AuthenticationServiceAw
             return;
         }
 
-        $realEntity = $entity->entity;
+        $realEntity = $entity->getEntity();
 
         if (!$realEntity instanceof GroupInterface) {
             return;

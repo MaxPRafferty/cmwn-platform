@@ -2,8 +2,8 @@
 
 namespace Application\Log\Rollbar;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class NotifierFactory
@@ -11,16 +11,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class NotifierFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     *
-     * @return \RollbarNotifier
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var Options $options */
-        $options = $serviceLocator->get(Options::class);
-        return new \RollbarNotifier($options->toArray());
+        return new \RollbarNotifier($container->get(Options::class)->toArray());
     }
 }
