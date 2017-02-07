@@ -105,7 +105,7 @@ class Address implements AddressInterface
     /**
      * @return string
      */
-    public function getAddressId()
+    public function getAddressId() : string
     {
         return $this->addressId;
     }
@@ -113,15 +113,15 @@ class Address implements AddressInterface
     /**
      * @param string $addressId
      */
-    public function setAddressId($addressId)
+    public function setAddressId(string $addressId = null)
     {
-        $this->addressId = $addressId;
+        $this->addressId = (string) $addressId;
     }
 
     /**
      * @return string
      */
-    public function getAdministrativeArea()
+    public function getAdministrativeArea() : string
     {
         return $this->administrativeArea;
     }
@@ -129,15 +129,15 @@ class Address implements AddressInterface
     /**
      * @param string $administrativeArea
      */
-    public function setAdministrativeArea($administrativeArea)
+    public function setAdministrativeArea(string $administrativeArea = null)
     {
-        $this->administrativeArea = $administrativeArea;
+        $this->administrativeArea = (string) $administrativeArea;
     }
 
     /**
      * @return string
      */
-    public function getSubAdministrativeArea()
+    public function getSubAdministrativeArea() : string
     {
         return $this->subAdministrativeArea;
     }
@@ -145,15 +145,15 @@ class Address implements AddressInterface
     /**
      * @param string $subAdministrativeArea
      */
-    public function setSubAdministrativeArea($subAdministrativeArea)
+    public function setSubAdministrativeArea(string $subAdministrativeArea = null)
     {
-        $this->subAdministrativeArea = $subAdministrativeArea;
+        $this->subAdministrativeArea = (string) $subAdministrativeArea;
     }
 
     /**
      * @return string
      */
-    public function getLocality()
+    public function getLocality() : string
     {
         return $this->locality;
     }
@@ -161,15 +161,15 @@ class Address implements AddressInterface
     /**
      * @param string $locality
      */
-    public function setLocality($locality)
+    public function setLocality(string $locality = null)
     {
-        $this->locality = $locality;
+        $this->locality = (string) $locality;
     }
 
     /**
      * @return string
      */
-    public function getDependentLocality()
+    public function getDependentLocality() : string
     {
         return $this->dependentLocality;
     }
@@ -177,15 +177,15 @@ class Address implements AddressInterface
     /**
      * @param string $dependentLocality
      */
-    public function setDependentLocality($dependentLocality)
+    public function setDependentLocality(string $dependentLocality = null)
     {
-        $this->dependentLocality = $dependentLocality;
+        $this->dependentLocality = (string) $dependentLocality;
     }
 
     /**
      * @return string
      */
-    public function getPostalCode()
+    public function getPostalCode() : string
     {
         return $this->postalCode;
     }
@@ -193,15 +193,15 @@ class Address implements AddressInterface
     /**
      * @param string $postalCode
      */
-    public function setPostalCode($postalCode)
+    public function setPostalCode(string $postalCode = null)
     {
-        $this->postalCode = $postalCode;
+        $this->postalCode = (string) $postalCode;
     }
 
     /**
      * @return string
      */
-    public function getThoroughfare()
+    public function getThoroughfare() : string
     {
         return $this->thoroughfare;
     }
@@ -209,15 +209,15 @@ class Address implements AddressInterface
     /**
      * @param string $thoroughfare
      */
-    public function setThoroughfare($thoroughfare)
+    public function setThoroughfare(string $thoroughfare = null)
     {
-        $this->thoroughfare = $thoroughfare;
+        $this->thoroughfare = (string) $thoroughfare;
     }
 
     /**
      * @return string
      */
-    public function getPremise()
+    public function getPremise() : string
     {
         return $this->premise;
     }
@@ -225,8 +225,8 @@ class Address implements AddressInterface
     /**
      * @param string $premise
      */
-    public function setPremise($premise)
+    public function setPremise(string $premise = null)
     {
-        $this->premise = $premise;
+        $this->premise = (string) $premise;
     }
 }

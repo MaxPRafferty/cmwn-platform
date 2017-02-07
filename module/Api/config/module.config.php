@@ -4,14 +4,6 @@ return [
         \Api\V1\Rest\Ack\AckResource::class => [
             \Flip\Service\FlipUserServiceInterface::class,
         ],
-        \Api\V1\Rest\Address\AddressResource::class => [
-            \Address\Service\AddressServiceInterface::class,
-        ],
-        \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
-            \Address\Service\GroupAddressServiceInterface::class,
-            \Address\Service\AddressServiceInterface::class,
-            \Group\Service\GroupServiceInterface::class,
-        ],
         \Api\V1\Rest\Feed\FeedResource::class => [
             \Feed\Service\FeedServiceInterface::class,
         ],
@@ -21,12 +13,17 @@ return [
         \Api\Listeners\InjectSenderListener::class => [
             \User\Service\UserServiceInterface::class,
         ],
-        \Api\V1\Rest\SuperFlag\SuperFlagResource::class => [
+        \Api\V1\Rest\Super\SuperResource::class => [
             \Security\Service\SecurityServiceInterface::class,
             \User\Service\UserServiceInterface::class,
         ],
-        \Api\V1\Rest\Super\SuperResource::class => [
-            \Security\Service\SecurityServiceInterface::class,
+        \Api\V1\Rest\Address\AddressResource::class => [
+            \Address\Service\AddressServiceInterface::class,
+        ],
+        \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
+            \Group\Service\GroupAddressServiceInterface::class,
+            \Address\Service\AddressServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class
         ],
     ],
 
@@ -429,15 +426,6 @@ return [
                     ],
                 ],
             ],
-            'api.rest.super-flag'     => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/user/:user_id/super',
-                    'defaults' => [
-                        'controller' => 'Api\V1\Rest\SuperFlag\Controller',
-                    ],
-                ],
-            ],
             'api.rest.super'     => [
                 'type'    => 'Segment',
                 'options' => [
@@ -481,10 +469,9 @@ return [
             'api.rest.flag',
             'api.rest.group-reset',
             'api.rest.acknowledge',
+            'api.rest.super',
             'api.rest.address',
             'api.rest.group-address',
-            'api.rest.super-flag',
-            'api.rest.super',
         ],
     ],
     'zf-rest'                => [
@@ -924,6 +911,20 @@ return [
             'entity_http_methods'        => ['PUT'],
             'service_name'               => 'AckFlip',
         ],
+        'Api\V1\Rest\Super\Controller'     => [
+            'listener'                   => \Api\V1\Rest\Super\SuperResource::class,
+            'route_name'                 => 'api.rest.super',
+            'route_identifier_name'      => 'user_id',
+            'collection_name'            => 'super',
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\Super\SuperEntity::class,
+            'collection_class'           => \Api\V1\Rest\Super\SuperCollection::class,
+            'service_name'               => 'SuperFlag',
+        ],
         'Api\V1\Rest\Address\Controller' => [
             'listener'                   => \Api\V1\Rest\Address\AddressResource::class,
             'route_name'                 => 'api.rest.address',
@@ -951,34 +952,6 @@ return [
             'entity_class'               => \Api\V1\Rest\GroupAddress\GroupAddressEntity::class,
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
-        ],
-        'Api\V1\Rest\SuperFlag\Controller'     => [
-            'listener'                   => \Api\V1\Rest\SuperFlag\SuperFlagResource::class,
-            'route_name'                 => 'api.rest.super-flag',
-            'route_identifier_name'      => 'user_id',
-            'collection_name'            => 'super-flag',
-            'entity_http_methods'        => ['POST'],
-            'collection_http_methods'    => ['POST'],
-            'collection_query_whitelist' => [],
-            'page_size'                  => 25,
-            'page_size_param'            => 'per_page',
-            'entity_class'               => \Api\V1\Rest\SuperFlag\SuperFlagEntity::class,
-            'collection_class'           => \Api\V1\Rest\SuperFlag\SuperFlagCollection::class,
-            'service_name'               => 'SuperFlag',
-        ],
-        'Api\V1\Rest\Super\Controller'     => [
-            'listener'                   => \Api\V1\Rest\Super\SuperResource::class,
-            'route_name'                 => 'api.rest.super',
-            'route_identifier_name'      => 'user_id',
-            'collection_name'            => 'super',
-            'entity_http_methods'        => ['GET'],
-            'collection_http_methods'    => ['GET'],
-            'collection_query_whitelist' => [],
-            'page_size'                  => 25,
-            'page_size_param'            => 'per_page',
-            'entity_class'               => \Api\V1\Rest\Super\SuperEntity::class,
-            'collection_class'           => \Api\V1\Rest\Super\SuperCollection::class,
-            'service_name'               => 'SuperFlag',
         ],
     ],
     'zf-content-negotiation' => [
@@ -1012,10 +985,9 @@ return [
             'Api\V1\Rest\GameData\Controller'       => 'HalJson',
             'Api\V1\Rest\Flag\Controller'           => 'HalJson',
             'Api\V1\Rest\GroupReset\Controller'     => 'HalJson',
+            'Api\V1\Rest\Super\Controller'          => 'HalJson',
             'Api\V1\Rest\Address\Controller'        => 'HalJson',
             'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
-            'Api\V1\Rest\SuperFlag\Controller'      => 'HalJson',
-            'Api\V1\Rest\Super\Controller'          => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1158,22 +1130,17 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\Super\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
             'Api\V1\Rest\Address\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
             ],
             'Api\V1\Rest\GroupAddress\Controller'     => [
-                'application/vnd.api.v1+json',
-                'application/hal+json',
-                'application/json',
-            ],
-            'Api\V1\Rest\SuperFlag\Controller'     => [
-                'application/vnd.api.v1+json',
-                'application/hal+json',
-                'application/json',
-            ],
-            'Api\V1\Rest\Super\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1301,10 +1268,6 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\GroupAddress\Controller'     => [
-                'application/vnd.api.v1+json',
-                'application/json',
-            ],
-            'Api\V1\Rest\SuperFlag\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1672,6 +1635,18 @@ return [
                 'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
+            \Api\V1\Rest\Super\SuperEntity::class             => [
+                'entity_identifier_name' => 'user_id',
+                'route_name'             => 'api.rest.super',
+                'route_identifier_name'  => 'user_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\Super\SuperCollection::class         => [
+                'entity_identifier_name' => 'user_id',
+                'route_name'             => 'api.rest.super',
+                'route_identifier_name'  => 'user_id',
+                'is_collection'          => true,
+            ],
             \Api\V1\Rest\Address\AddressEntity::class             => [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.address',
@@ -1694,30 +1669,6 @@ return [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
-                'is_collection'          => true,
-            ],
-            \Api\V1\Rest\SuperFlag\SuperFlagEntity::class             => [
-                'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super-flag',
-                'route_identifier_name'  => 'user_id',
-                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Api\V1\Rest\SuperFlag\SuperFlagCollection::class         => [
-                'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super-flag',
-                'route_identifier_name'  => 'user_id',
-                'is_collection'          => true,
-            ],
-            \Api\V1\Rest\Super\SuperEntity::class             => [
-                'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super',
-                'route_identifier_name'  => 'user_id',
-                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Api\V1\Rest\Super\SuperCollection::class         => [
-                'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super',
-                'route_identifier_name'  => 'user_id',
                 'is_collection'          => true,
             ],
         ],
@@ -1794,9 +1745,6 @@ return [
         ],
         'Api\V1\Rest\Address\Controller'     => [
             'input_filter' => 'Api\V1\Rest\Address\Validator',
-        ],
-        'Api\V1\Rest\SuperFlag\Controller'     => [
-            'input_filter' => 'Api\V1\Rest\SuperFlag\Validator',
         ],
     ],
     'input_filter_specs'     => [
@@ -2629,24 +2577,6 @@ return [
                 'name' => 'read_flag',
                 'description' => 'The Read flag for user feed',
                 'error_message' => 'Invalid read flag for user feed',
-            ],
-        ],
-        'Api\V1\Rest\SuperFlag\Validator'     => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => 'all'],
-                    ],
-                    [
-                        'name'    => \Zend\Filter\ToInt::class,
-                        'options' => [],
-                    ],
-                ],
-                'name'        => 'super',
-                'description' => 'The super flag',
             ],
         ],
     ],

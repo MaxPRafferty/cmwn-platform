@@ -1,10 +1,11 @@
 <?php
 
-namespace AddressTest\Delegator;
+namespace GroupTest\Delegator;
 
 use Address\Address;
-use Address\Delegator\GroupAddressDelegator;
-use Address\Service\GroupAddressService;
+use Application\Exception\NotFoundException;
+use Group\Delegator\GroupAddressDelegator;
+use Group\Service\GroupAddressService;
 use Group\Group;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
@@ -18,6 +19,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class GroupAddressDelegatorTest
  * @package AddressTest\Delegator
+ * @SuppressWarnings(PHPMD)
  */
 class GroupAddressDelegatorTest extends TestCase
 {
@@ -86,7 +88,7 @@ class GroupAddressDelegatorTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldCallAttachddress()
+    public function testItShouldCallAttachAddress()
     {
         $address = new Address([
             'address_id' => 'foo'
@@ -163,6 +165,54 @@ class GroupAddressDelegatorTest extends TestCase
             $this->calledEvents[0],
             GroupAddressDelegator::class . ' did not trigger the event correctly'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTriggerErrorEventWhenExceptionOnAttachAddress()
+    {
+        $address = new Address([
+            'address_id' => 'foo'
+        ]);
+
+        $group = new Group(['group_id' => 'bar']);
+
+        $this->addressService->shouldReceive('attachAddressToGroup')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+
+        try {
+            $this->delegator->attachAddressToGroup($group, $address);
+            $this->fail('exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                GroupAddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'attach.group.address',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'address' => $address],
+                ],
+                $this->calledEvents[0],
+                GroupAddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'attach.group.address.error',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'address' => $address, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1],
+                GroupAddressDelegator::class . ' did not trigger the event correctly for attach.group.address.error'
+            );
+        }
     }
 
     /**
@@ -250,6 +300,54 @@ class GroupAddressDelegatorTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldTriggerErrorEventOnExceptionWhileDetachAddress()
+    {
+        $address = new Address([
+            'address_id' => 'foo'
+        ]);
+
+        $group = new Group(['group_id' => 'bar']);
+
+        $this->addressService->shouldReceive('detachAddressFromGroup')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+
+        try {
+            $this->delegator->detachAddressFromGroup($group, $address);
+            $this->fail('exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                GroupAddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'detach.group.address',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'address' => $address],
+                ],
+                $this->calledEvents[0],
+                GroupAddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'detach.group.address.error',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'address' => $address, 'exception' => new \Exception()],
+                ],
+                $this->calledEvents[1],
+                GroupAddressDelegator::class . ' did not trigger the event correctly for detach.group.address.error'
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldCallFetchAllAddressesForGroup()
     {
         $dbSelect = new DbSelect(new Select(), $this->adapter, new HydratingResultSet());
@@ -291,7 +389,7 @@ class GroupAddressDelegatorTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldNotCalFetchAllAddressesForGroupWhenEventStops()
+    public function testItShouldNotCallFetchAllAddressesForGroupWhenEventStops()
     {
         $dbSelect = new DbSelect(new Select(), $this->adapter, new HydratingResultSet());
 
@@ -325,6 +423,54 @@ class GroupAddressDelegatorTest extends TestCase
             $this->calledEvents[0],
             GroupAddressDelegator::class . ' did not trigger the event correctly'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTriggerErrorEventOnExceptionWhileFetchAllGroupAddresses()
+    {
+        $group = new Group(['group_id' => 'bar']);
+
+        $this->addressService->shouldReceive('fetchAllAddressesForGroup')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+        try {
+            $this->delegator->fetchAllAddressesForGroup($group);
+            $this->fail('exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                GroupAddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'fetch.all.group.addresses',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'where' => null, 'prototype' => null],
+                ],
+                $this->calledEvents[0],
+                GroupAddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'fetch.all.group.addresses.error',
+                    'target' => $this->addressService,
+                    'params' => [
+                        'group' => $group,
+                        'where' => null,
+                        'prototype' => null,
+                        'exception' => new \Exception
+                    ],
+                ],
+                $this->calledEvents[1],
+                GroupAddressDelegator::class . ' did not trigger the correct event for fetch.all.group.addresses.error'
+            );
+        }
     }
 
     /**
@@ -407,5 +553,53 @@ class GroupAddressDelegatorTest extends TestCase
             $this->calledEvents[0],
             GroupAddressDelegator::class . ' did not trigger the event correctly'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTriggerErrorEventOnExceptionWhileFetchingGroupAddress()
+    {
+        $address = new Address([
+            'address_id' => 'foo'
+        ]);
+
+        $group = new Group(['group_id' => 'bar']);
+
+        $this->addressService->shouldReceive('fetchAddressForGroup')
+            ->andReturnUsing(function () {
+                throw new NotFoundException();
+            })->once();
+
+        try {
+            $this->delegator->fetchAddressForGroup($group, $address);
+            $this->fail('exception is not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                GroupAddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'fetch.group.address',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'address' => $address],
+                ],
+                $this->calledEvents[0],
+                GroupAddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name' => 'fetch.group.address.error',
+                    'target' => $this->addressService,
+                    'params' => ['group' => $group, 'address' => $address, 'exception' => new NotFoundException()],
+                ],
+                $this->calledEvents[1],
+                GroupAddressDelegator::class . ' did not trigger the event correctly for fetch.group.address.error'
+            );
+        }
     }
 }

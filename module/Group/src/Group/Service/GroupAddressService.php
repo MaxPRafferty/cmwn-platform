@@ -1,6 +1,6 @@
 <?php
 
-namespace Address\Service;
+namespace Group\Service;
 
 use Address\Address;
 use Address\AddressInterface;
@@ -68,8 +68,11 @@ class GroupAddressService implements GroupAddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllAddressesForGroup(GroupInterface $group, $where = null, $prototype = null) : DbSelect
-    {
+    public function fetchAllAddressesForGroup(
+        GroupInterface $group,
+        $where = null,
+        AddressInterface $prototype = null
+    ) : DbSelect {
         $groupId = $group->getGroupId();
         $where = $this->createWhere($where);
         $prototype = $prototype ?? new Address([]);

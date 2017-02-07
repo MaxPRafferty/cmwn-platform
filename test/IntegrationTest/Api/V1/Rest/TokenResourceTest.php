@@ -134,7 +134,6 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
-                    'super_flag',
                     'super',
                     'flags',
                     'sa_settings',

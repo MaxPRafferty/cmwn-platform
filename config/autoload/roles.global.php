@@ -406,6 +406,7 @@ return [
                     'view.user.flip',
                     'view.user.groups',
                     'view.user.orgs',
+                    'view.user.feed',
                     'view.address',
                     'create.address',
                     'update.address',
@@ -413,7 +414,6 @@ return [
                     'view.all.group.addresses',
                     'attach.group.address',
                     'detach.group.address',
-                    'view.user.feed',
                 ],
             ],
 

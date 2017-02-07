@@ -3,7 +3,7 @@
 namespace Api\V1\Rest\GroupAddress;
 
 use Address\Service\AddressServiceInterface;
-use Address\Service\GroupAddressServiceInterface;
+use Group\Service\GroupAddressServiceInterface;
 use Api\V1\Rest\Address\AddressCollection;
 use Api\V1\Rest\Address\AddressEntity;
 use Group\Service\GroupServiceInterface;

@@ -13,79 +13,79 @@ interface AddressInterface extends ArraySerializableInterface
     /**
      * @return string
      */
-    public function getAddressId();
+    public function getAddressId() : string;
 
     /**
      * @param string $addressId
      */
-    public function setAddressId($addressId);
+    public function setAddressId(string $addressId = null);
 
     /**
      * @return string
      */
-    public function getAdministrativeArea();
+    public function getAdministrativeArea() : string;
 
     /**
      * @param string $administrativeArea
      */
-    public function setAdministrativeArea($administrativeArea);
+    public function setAdministrativeArea(string $administrativeArea = null);
     /**
      * @return string
      */
-    public function getSubAdministrativeArea();
+    public function getSubAdministrativeArea() : string;
 
     /**
      * @param string $subAdministrativeArea
      */
-    public function setSubAdministrativeArea($subAdministrativeArea);
+    public function setSubAdministrativeArea(string $subAdministrativeArea = null);
 
     /**
      * @return string
      */
-    public function getLocality();
+    public function getLocality() : string;
 
     /**
      * @param string $locality
      */
-    public function setLocality($locality);
+    public function setLocality(string $locality = null);
 
     /**
      * @return string
      */
-    public function getDependentLocality();
+    public function getDependentLocality() : string;
 
     /**
      * @param string $dependentLocality
      */
-    public function setDependentLocality($dependentLocality);
+    public function setDependentLocality(string $dependentLocality = null);
 
     /**
      * @return string
      */
-    public function getPostalCode();
+    public function getPostalCode() : string;
 
     /**
      * @param string $postalCode
      */
-    public function setPostalCode($postalCode);
+    public function setPostalCode(string $postalCode = null);
 
     /**
      * @return string
      */
-    public function getThoroughfare();
+    public function getThoroughfare() : string;
 
     /**
      * @param string $thoroughfare
      */
-    public function setThoroughfare($thoroughfare);
+    public function setThoroughfare(string $thoroughfare = null);
 
     /**
      * @return string
      */
-    public function getPremise();
+    public function getPremise() : string;
 
     /**
      * @param string $premise
      */
-    public function setPremise($premise);
+    public function setPremise(string $premise = null);
 }
