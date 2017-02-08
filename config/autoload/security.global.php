@@ -66,6 +66,8 @@ return [
             ],
             'api.rest.group-users'     => [
                 'GET' => 'view.group.users',
+                'POST' => 'add.group.user',
+                'DELETE' => 'remove.group.user',
             ],
             'api.rest.org-users'       => [
                 'GET' => 'view.org.users',

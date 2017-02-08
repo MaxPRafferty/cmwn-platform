@@ -5,6 +5,7 @@ namespace Api\V1\Rest\GroupUsers;
 use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
 use Interop\Container\ContainerInterface;
+use User\Service\UserServiceInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
@@ -19,7 +20,8 @@ class GroupUsersResourceFactory implements FactoryInterface
     {
         return new GroupUsersResource(
             $container->get(UserGroupServiceInterface::class),
-            $container->get(GroupServiceInterface::class)
+            $container->get(GroupServiceInterface::class),
+            $container->get(UserServiceInterface::class)
         );
     }
 }

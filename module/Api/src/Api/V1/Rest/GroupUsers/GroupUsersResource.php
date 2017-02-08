@@ -5,6 +5,7 @@ use Api\V1\Rest\User\UserEntity;
 use Application\Exception\NotFoundException;
 use Group\Service\GroupServiceInterface;
 use Group\Service\UserGroupServiceInterface;
+use User\Service\UserServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -25,29 +26,24 @@ class GroupUsersResource extends AbstractResourceListener
     protected $groupService;
 
     /**
+     * @var UserServiceInterface
+     */
+    protected $userService;
+
+    /**
      * GroupUsersResource constructor.
      * @param UserGroupServiceInterface $userGroupService
      * @param GroupServiceInterface $groupService
+     * @param UserServiceInterface $userService
      */
-    public function __construct(UserGroupServiceInterface $userGroupService, GroupServiceInterface $groupService)
-    {
+    public function __construct(
+        UserGroupServiceInterface $userGroupService,
+        GroupServiceInterface $groupService,
+        UserServiceInterface $userService
+    ) {
         $this->userGroupService = $userGroupService;
         $this->groupService = $groupService;
-    }
-
-    /**
-     * @param mixed $groupId
-     * @return GroupUsersCollection
-     */
-    public function fetch($groupId)
-    {
-        try {
-            $group = $this->groupService->fetchGroup($groupId);
-        } catch (NotFoundException $notFound) {
-            return new ApiProblem(421, 'Routing error');
-        }
-
-        return new GroupUsersCollection($this->userGroupService->fetchUsersForGroup($group, [], new UserEntity()));
+        $this->userService = $userService;
     }
 
     /**
@@ -62,5 +58,32 @@ class GroupUsersResource extends AbstractResourceListener
 
 
         return new GroupUsersCollection($this->userGroupService->fetchUsersForGroup($group, [], new UserEntity()));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function create($data)
+    {
+        $groupId = $this->getEvent()->getRouteParam('group_id');
+        $userId = $this->getEvent()->getRouteParam('user_id');
+        $data = (array) $data;
+        $role = $data['role'];
+        $group = $this->groupService->fetchGroup($groupId);
+        $user = $this->userService->fetchUser($userId);
+        $this->userGroupService->attachUserToGroup($group, $user, $role);
+        return new UserEntity($user->getArrayCopy());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delete($userId)
+    {
+        $groupId = $this->getEvent()->getRouteParam('group_id');
+        $group = $this->groupService->fetchGroup($groupId);
+        $user = $this->userService->fetchUser($userId);
+        $this->userGroupService->detachUserFromGroup($group, $user);
+        return new ApiProblem(200, 'user removed from group');
     }
 }
