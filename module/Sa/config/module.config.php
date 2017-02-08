@@ -64,8 +64,7 @@ return [
     'zf-hal'                 => [
         'metadata_map' => [
             'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity' => [
-                'entity_identifier_name' => 'settings_id',
-                'route_name'             => 'api.rest.sa.settings',
+                'route_name'             => 'sa.rest.settings',
                 'route_identifier_name'  => 'settings_id',
                 'hydrator'               => 'Zend\\Hydrator\\ArraySerializable',
             ],
