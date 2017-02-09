@@ -81,7 +81,7 @@ class SuggestionEngineTest extends AbstractDbTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/suggest.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/suggest.dataset.php');
     }
 
     /**

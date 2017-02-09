@@ -76,6 +76,12 @@ return [
         \Security\Service\SecurityGroupService::class => [
             \Zend\Db\Adapter\Adapter::class,
         ],
+
+        \Security\Authentication\AuthenticationService::class => [
+            \Zend\EventManager\EventManagerInterface::class,
+            \Zend\Authentication\Storage\StorageInterface::class,
+            \Security\Authentication\AuthAdapter::class,
+        ],
     ],
 
     \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [

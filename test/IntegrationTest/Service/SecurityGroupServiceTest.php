@@ -4,7 +4,7 @@ namespace IntegrationTest\Service;
 
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Service\SecurityGroupServiceInterface;
 use User\Adult;
 
@@ -31,7 +31,7 @@ class SecurityGroupServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/org.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/org.dataset.php');
     }
 
     /**

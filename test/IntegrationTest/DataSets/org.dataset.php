@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'flips'            => [],
+
     'organizations'    => [
         [
             'org_id'      => 'district',
@@ -24,7 +24,7 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'            => [],
+
     'groups'           => [
         [
             'group_id'        => 'other_school',
@@ -112,8 +112,8 @@ return [
             'network_id'      => 'other_school',
         ],
     ],
-    'images'           => [],
-    'names'            => [],
+
+
     'users'            => [
         [
             'user_id'      => 'english_student',
@@ -287,8 +287,8 @@ return [
             'external_id'  => null,
         ],
     ],
-    'user_flips'       => [],
-    'user_friends'     => [],
+
+
     'user_groups'      => [
         [
             'user_id'  => 'english_student',
@@ -331,8 +331,8 @@ return [
             'role'     => 'principal',
         ],
     ],
-    'user_images'      => [],
-    'image_flags'      => [],
-    'user_saves'       => [],
+
+
+
     'user_suggestions' => [],
 ];

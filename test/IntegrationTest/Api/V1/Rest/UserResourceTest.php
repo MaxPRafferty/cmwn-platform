@@ -33,7 +33,7 @@ class UserResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/users.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/users.dataset.php');
     }
 
     /**
@@ -478,7 +478,7 @@ class UserResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->loadUserFromDb('english_student');
     }
 

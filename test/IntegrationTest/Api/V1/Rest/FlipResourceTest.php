@@ -22,7 +22,7 @@ class FlipResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/flip.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/flip.dataset.php');
     }
 
     /**

@@ -33,7 +33,7 @@ class SuperResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/default.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/default.dataset.php');
     }
 
     /**
