@@ -48,7 +48,8 @@
     "aws/aws-sdk-php-zf2": "~4",
     "lcobucci/jwt": "~3.2",
     "zendframework/zend-mvc-i18n": "^1.0",
-    "zfcampus/zf-development-mode": "^3.0"
+    "zfcampus/zf-development-mode": "^3.0",
+    "bacon/bacon-string-utils": "dev-master"
   },
   "require-dev": {
     "robmorgan/phinx": "0.6.4",

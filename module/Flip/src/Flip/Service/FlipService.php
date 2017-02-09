@@ -76,8 +76,6 @@ class FlipService implements FlipServiceInterface
      */
     public function createFlip(FlipInterface $flip): bool
     {
-        $flipId = str_replace(' ', '-', strtolower($flip->getTitle()));
-        $flip->setFlipId($flipId);
         $data = $flip->getArrayCopy();
         $this->flipTableGateway->insert($data);
 
