@@ -6,7 +6,7 @@ use ZF\Hal\Link\Link;
 
 /**
  * Class GameLink
- *
+ * TODO Make this as a templated link with same label
  * Hal link for a game
  */
 class GameLink extends Link
