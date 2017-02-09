@@ -2,12 +2,15 @@
 
 namespace GameTest\Service;
 
+use Application\Exception\NotFoundException;
 use Game\Game;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Game\Service\GameService;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
+use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Test GameServiceTest
@@ -56,14 +59,21 @@ class GameServiceTest extends TestCase
      */
     public function setUpService()
     {
+        $this->gameService = new GameService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpGateWay()
+    {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
 
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-        $this->gameService = new GameService($this->tableGateway);
     }
 
     /**
@@ -147,7 +157,7 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGameIsNotFound()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Game not Found');
 
         $result = new ResultSet();

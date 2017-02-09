@@ -2,7 +2,7 @@
 
 namespace RuleTest\Rule\Service;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Rule\Basic\AndRule;

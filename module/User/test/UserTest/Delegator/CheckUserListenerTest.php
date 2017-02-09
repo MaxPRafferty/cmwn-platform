@@ -4,12 +4,13 @@ namespace UserTest\Delegator;
 
 use Application\Exception\DuplicateEntryException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Delegator\CheckUserListener;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\EventManager\Event;
+use Zend\Paginator\Adapter\ArrayAdapter;
 
 /**
  * Test CheckUserListenerTest
@@ -64,7 +65,7 @@ class CheckUserListenerTest extends TestCase
 
         $this->userService->shouldReceive('fetchAll')
             ->once()
-            ->andReturnUsing(function ($predicate, $pageParam) {
+            ->andReturnUsing(function ($predicate) {
                 $expectedPredicate = new PredicateSet([
                     new PredicateSet([
                         new Operator('email', Operator::OP_EQ, 'chuck@manchuck.com'),
@@ -76,9 +77,8 @@ class CheckUserListenerTest extends TestCase
                 ]);
 
                 $this->assertEquals($expectedPredicate, $predicate);
-                $this->assertFalse($pageParam);
 
-                return new \ArrayIterator([]);
+                return new ArrayAdapter([]);
             });
 
         $listener = new CheckUserListener();
@@ -101,7 +101,7 @@ class CheckUserListenerTest extends TestCase
 
         $this->userService->shouldReceive('fetchAll')
             ->once()
-            ->andReturnUsing(function ($predicate, $pageParam) {
+            ->andReturnUsing(function ($predicate) {
                 $expectedPredicate = new PredicateSet([
                     new PredicateSet([
                         new Operator('email', Operator::OP_EQ, 'chuck@manchuck.com'),
@@ -113,9 +113,8 @@ class CheckUserListenerTest extends TestCase
                 ]);
 
                 $this->assertEquals($expectedPredicate, $predicate);
-                $this->assertFalse($pageParam);
 
-                return new \ArrayIterator(['foo']);
+                return new ArrayAdapter(['foo']);
             });
 
         $listener = new CheckUserListener();

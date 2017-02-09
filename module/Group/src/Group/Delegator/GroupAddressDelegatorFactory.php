@@ -8,7 +8,6 @@ use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
  * Class AddressDelegatorFactory
- * @package Address\Delegator
  */
 class GroupAddressDelegatorFactory implements DelegatorFactoryInterface
 {

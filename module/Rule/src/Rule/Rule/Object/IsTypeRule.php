@@ -25,13 +25,13 @@ class IsTypeRule implements RuleInterface
 
     /**
      * IsTypeRule constructor.
+     *
      * @param string $objectType
      * @param string $providerName
      */
     public function __construct(string $objectType, string $providerName)
     {
-
-        $this->objectType = $objectType;
+        $this->objectType   = $objectType;
         $this->providerName = $providerName;
     }
 
@@ -43,8 +43,10 @@ class IsTypeRule implements RuleInterface
         $object = $item->getParam($this->providerName);
         if ($object instanceof $this->objectType) {
             $this->timesSatisfied++;
+
             return true;
         }
+
         return false;
     }
 }

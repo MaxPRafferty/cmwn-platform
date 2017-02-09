@@ -2,12 +2,15 @@
 
 namespace UserTest\Service;
 
+use Application\Exception\NotFoundException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Service\UserService;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\Sql\Predicate\Predicate as Where;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Test UserServiceTest
@@ -48,10 +51,10 @@ class UserServiceTest extends TestCase
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
 
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('users')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
@@ -66,43 +69,7 @@ class UserServiceTest extends TestCase
             ->never();
 
         $result = $this->userService->fetchAll(null);
-        $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
-    {
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->userService->fetchAll(null, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
-    {
-        $expectedWhere = new Where();
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) use (&$expectedWhere) {
-                /** @var \Zend\Db\Sql\Predicate\Predicate $where */
-                $this->assertSame($expectedWhere, $where);
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->userService->fetchAll($expectedWhere, false);
-        $this->assertInstanceOf('\Iterator', $result);
+        $this->assertInstanceOf(AdapterInterface::class, $result);
     }
 
     /**
@@ -124,17 +91,17 @@ class UserServiceTest extends TestCase
 
                 $this->assertTrue(is_array($data));
 
-                $expected = $newUser->getArrayCopy();
-                $expected['meta'] = '[]';
-                $expected['created'] = $newUser->getCreated()->format("Y-m-d H:i:s");
-                $expected['updated'] = $newUser->getUpdated()->format("Y-m-d H:i:s");
+                $expected                        = $newUser->getArrayCopy();
+                $expected['meta']                = '[]';
+                $expected['created']             = $newUser->getCreated()->format("Y-m-d H:i:s");
+                $expected['updated']             = $newUser->getUpdated()->format("Y-m-d H:i:s");
                 $expected['normalized_username'] = '';
                 unset($expected['password']);
                 unset($expected['deleted']);
 
-
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
+
                 return 1;
             })
             ->once();
@@ -173,7 +140,7 @@ class UserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('update')
             ->andReturnUsing(function ($data, $where) use (&$user) {
                 $this->assertEquals(['user_id' => $user->getUserId()], $where);
-                $expected = $user->getArrayCopy();
+                $expected         = $user->getArrayCopy();
                 $expected['meta'] = '[]';
 
                 unset($expected['password']);
@@ -208,7 +175,7 @@ class UserServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
-            'type'        => Adult::TYPE_ADULT
+            'type'        => Adult::TYPE_ADULT,
         ];
 
         $result = new ResultSet();
@@ -217,7 +184,7 @@ class UserServiceTest extends TestCase
             ->with(['user_id' => $userData['user_id']])
             ->andReturn($result);
 
-        $this->assertInstanceOf('User\Adult', $this->userService->fetchUser($userData['user_id']));
+        $this->assertInstanceOf(Adult::class, $this->userService->fetchUser($userData['user_id'], null));
     }
 
     /**
@@ -238,7 +205,7 @@ class UserServiceTest extends TestCase
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
             'type'        => Adult::TYPE_ADULT,
-            'external_id' => 'foo-bar'
+            'external_id' => 'foo-bar',
         ];
 
         $result = new ResultSet();
@@ -247,7 +214,7 @@ class UserServiceTest extends TestCase
             ->with(['external_id' => $userData['external_id']])
             ->andReturn($result);
 
-        $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByExternalId($userData['external_id']));
+        $this->assertInstanceOf(Adult::class, $this->userService->fetchUserByExternalId($userData['external_id']));
     }
 
     /**
@@ -268,7 +235,7 @@ class UserServiceTest extends TestCase
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
             'type'        => Adult::TYPE_ADULT,
-            'external_id' => 'foo-bar'
+            'external_id' => 'foo-bar',
         ];
 
         $result = new ResultSet();
@@ -277,7 +244,7 @@ class UserServiceTest extends TestCase
             ->with(['email' => $userData['email']])
             ->andReturn($result);
 
-        $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByEmail($userData['email']));
+        $this->assertInstanceOf(Adult::class, $this->userService->fetchUserByEmail($userData['email']));
     }
 
     /**
@@ -298,7 +265,7 @@ class UserServiceTest extends TestCase
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
             'type'        => Adult::TYPE_ADULT,
-            'external_id' => 'foo-bar'
+            'external_id' => 'foo-bar',
         ];
 
         $result = new ResultSet();
@@ -307,7 +274,7 @@ class UserServiceTest extends TestCase
             ->with(['username' => $userData['username']])
             ->andReturn($result);
 
-        $this->assertInstanceOf('User\Adult', $this->userService->fetchUserByUsername($userData['username']));
+        $this->assertInstanceOf(Adult::class, $this->userService->fetchUserByUsername($userData['username']));
     }
 
     /**
@@ -315,7 +282,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFound()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('User not Found');
 
         $result = new ResultSet();
@@ -323,7 +290,7 @@ class UserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturn($result);
 
-        $this->userService->fetchUser('foo');
+        $this->userService->fetchUser('foo', null);
     }
 
     /**
@@ -331,7 +298,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByExternalId()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('User not Found');
 
         $result = new ResultSet();
@@ -347,7 +314,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByEmail()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('User not Found');
 
         $result = new ResultSet();
@@ -375,7 +342,7 @@ class UserServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '',
-            'type'        => Adult::TYPE_ADULT
+            'type'        => Adult::TYPE_ADULT,
         ];
 
         $user   = new Adult($userData);
@@ -411,7 +378,7 @@ class UserServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '',
-            'type'        => Adult::TYPE_ADULT
+            'type'        => Adult::TYPE_ADULT,
         ];
 
         $user   = new Adult($userData);

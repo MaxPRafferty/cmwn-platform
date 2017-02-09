@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Asset\Image;
 use Asset\Service\UserImageService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
@@ -51,7 +51,7 @@ class UserImageServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpGateway()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
         $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');

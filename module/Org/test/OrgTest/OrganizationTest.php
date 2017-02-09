@@ -2,8 +2,9 @@
 
 namespace OrgTest;
 
+use Application\Utils\Type\TypeInterface;
 use Org\Organization;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test OrganizationTest
@@ -17,20 +18,28 @@ class OrganizationTest extends TestCase
      */
     public function testItShouldExtractAndHydrateWithNulls()
     {
-        $expected = [
-            'org_id'      => null,
-            'title'       => null,
-            'description' => null,
-            'meta'        => [],
-            'created'     => null,
-            'updated'     => null,
-            'deleted'     => null,
-            'type'        => null,
-        ];
 
         $org = new Organization();
-        $org->exchangeArray($expected);
-        $this->assertEquals($expected, $org->getArrayCopy());
+        $org->exchangeArray([
+            'org_id'      => 'foo-bar',
+            'title'       => 'school of rock',
+            'description' => 'are you ready to roll?',
+            'type'        => TypeInterface::TYPE_DISTRICT,
+        ]);
+        $this->assertEquals(
+            [
+                'org_id'      => 'foo-bar',
+                'title'       => 'school of rock',
+                'description' => 'are you ready to roll?',
+                'type'        => TypeInterface::TYPE_DISTRICT,
+                'meta'        => [],
+                'created'     => null,
+                'updated'     => null,
+                'deleted'     => null
+            ],
+            $org->getArrayCopy(),
+            Organization::class . ' did not exchange the array correctly'
+        );
     }
 
     /**
@@ -48,7 +57,7 @@ class OrganizationTest extends TestCase
             'created'     => $date->format(\DateTime::ISO8601),
             'updated'     => $date->format(\DateTime::ISO8601),
             'deleted'     => $date->format(\DateTime::ISO8601),
-            'type'        => 'test'
+            'type'        => TypeInterface::TYPE_GENERIC
         ];
 
         $org = new Organization();

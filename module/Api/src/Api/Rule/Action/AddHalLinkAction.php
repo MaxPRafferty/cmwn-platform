@@ -5,6 +5,7 @@ namespace Api\Rule\Action;
 use Rule\Action\ActionInterface;
 use Rule\Item\RuleItemInterface;
 use Rule\Utils\ProviderTypeTrait;
+use ZF\Hal\Entity;
 use ZF\Hal\Link\LinkCollectionAwareInterface;
 use ZF\Hal\Link\Link;
 
@@ -35,10 +36,9 @@ class AddHalLinkAction implements ActionInterface
      */
     protected $options;
 
-
-
     /**
      * AddHalLinkAction constructor.
+     *
      * @param string $link
      * @param string $provider
      * @param bool $requireOptions
@@ -46,10 +46,10 @@ class AddHalLinkAction implements ActionInterface
      */
     public function __construct(string $link, string $provider, bool $requireOptions = true, array $options = [])
     {
-        $this->link = $link;
-        $this->provider = $provider;
+        $this->link           = $link;
+        $this->provider       = $provider;
         $this->requireOptions = $requireOptions;
-        $this->options = $options;
+        $this->options        = $options;
     }
 
     /**
@@ -57,12 +57,12 @@ class AddHalLinkAction implements ActionInterface
      */
     public function __invoke(RuleItemInterface $item)
     {
-        $object = $item->getParam($this->provider);
-
-        if (!$object instanceof LinkCollectionAwareInterface) {
+        $entity = $item->getParam($this->provider);
+        if (!$entity instanceof LinkCollectionAwareInterface) {
             return;
         }
 
+        $object = $entity instanceof Entity ? $entity->getEntity() : $entity;
         switch ($this->requireOptions) {
             case true:
                 $options = $this->options;
@@ -72,10 +72,10 @@ class AddHalLinkAction implements ActionInterface
                 $options = [];
         }
 
-        /**@var Link $halLink*/
+        /**@var Link $halLink */
         $halLink = new $this->link(...$options);
-        if (!$object->getLinks()->has($halLink->getRelation())) {
-            $object->getLinks()->add($halLink);
+        if (!$entity->getLinks()->has($halLink->getRelation())) {
+            $entity->getLinks()->add($halLink);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace UserTest;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\UserName;
 
 /**
@@ -43,7 +43,7 @@ class UserNameTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenAccessingInvalidProperty()
     {
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid Property: foo');
 
         $userName = new UserName('foo', 'bar');

@@ -15,6 +15,7 @@ use Zend\EventManager\EventInterface;
 class EventRuleItem implements RuleItemInterface, ProviderCollectionAwareInterface
 {
     use ProviderCollectionAwareTrait;
+    use RuleItemTrait;
 
     /**
      * @var EventInterface
@@ -57,4 +58,5 @@ class EventRuleItem implements RuleItemInterface, ProviderCollectionAwareInterfa
         $this->getProviderCollection()->append($provider);
         return $this;
     }
+
 }

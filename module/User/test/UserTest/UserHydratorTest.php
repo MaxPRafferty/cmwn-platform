@@ -2,7 +2,7 @@
 
 namespace UserTest;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Child;
 use User\UserHydrator;
@@ -25,7 +25,7 @@ class UserHydratorTest extends TestCase
      */
     public function setUpData()
     {
-        $date = new \DateTime();
+        $date           = new \DateTime();
         $this->userData = [
             'user_id'     => 'abcd-efgh-ijklm-nop',
             'username'    => 'manchuck',
@@ -61,7 +61,7 @@ class UserHydratorTest extends TestCase
     {
         $hydrator = new UserHydrator(new Child());
         $user     = $hydrator->hydrate($this->userData, new \stdClass());
-        $this->assertInstanceOf('User\Child', $user);
+        $this->assertInstanceOf(Adult::class, $user);
     }
 
     /**
@@ -79,7 +79,7 @@ class UserHydratorTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenNonUserPassedAsPrototype()
     {
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('This Hydrator can only hydrate Users');
         new UserHydrator(new \stdClass());
     }
@@ -89,7 +89,7 @@ class UserHydratorTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToExtractNonUser()
     {
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('This Hydrator can only extract Users');
         $hydrator = new UserHydrator();
         $hydrator->extract(new \stdClass());

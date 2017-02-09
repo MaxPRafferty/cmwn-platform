@@ -6,7 +6,7 @@ use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Rule\FriendRule;
 use Suggest\SuggestionCollection;
 use User\Child;

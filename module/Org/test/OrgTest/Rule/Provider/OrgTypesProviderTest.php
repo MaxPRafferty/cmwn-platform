@@ -5,13 +5,12 @@ namespace OrgTest\Rule\Provider;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Rule\Provider\OrgTypesProvider;
 use Org\Service\OrganizationServiceInterface;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class OrgTypesProviderTest
  * @package OrgTest\Rule\Provider
  */
-class OrgTypesProviderTest extends TestCase
+class OrgTypesProviderTest extends \PHPUnit_Framework_TestCase
 {
     use MockeryPHPUnitIntegration;
 

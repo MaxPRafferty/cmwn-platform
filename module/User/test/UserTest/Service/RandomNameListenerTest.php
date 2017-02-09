@@ -3,7 +3,7 @@
 namespace UserTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Child;
 use User\Service\RandomNameListener;
@@ -35,15 +35,6 @@ class RandomNameListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpListener()
-    {
-        $this->markTestSkipped('Fix the StaticNameService');
-        $this->listener = new RandomNameListener($this->tableGateway);
-    }
-
-    /**
-     * @before
-     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -53,6 +44,15 @@ class RandomNameListenerTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('users')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
+    }
+
+    /**
+     * @before
+     */
+    public function setUpListener()
+    {
+        $this->markTestSkipped('Fix the StaticNameService');
+        $this->listener = new RandomNameListener($this->tableGateway);
     }
 
     /**

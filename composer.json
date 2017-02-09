@@ -48,7 +48,8 @@
     "aws/aws-sdk-php-zf2": "~4",
     "lcobucci/jwt": "~3.2",
     "zendframework/zend-mvc-i18n": "^1.0",
-    "zfcampus/zf-development-mode": "^3.0"
+    "zfcampus/zf-development-mode": "^3.0",
+    "zircote/swagger-php": "^2.0"
   },
   "require-dev": {
     "robmorgan/phinx": "0.6.4",
@@ -90,7 +91,8 @@
       "Suggest\\": "module\\Suggest\\src\\Suggest",
       "User\\": "module\\User\\src\\User",
       "Sa\\": "module\\Sa\\src\\Sa",
-      "Address\\": "module\\Address\\src\\Address"
+      "Address\\": "module\\Address\\src\\Address",
+      "Search\\": "module\\Search\\src\\Search"
     }
   },
   "autoload-dev": {
@@ -116,7 +118,8 @@
       "FeedTest\\": "module\\Feed\\test\\FeedTest",
       "SaTest\\": "module\\Sa\\test\\SaTest",
       "IntegrationTest\\": "test\\IntegrationTest",
-      "AddressTest\\": "module\\Address\\test\\AddressTest"
+      "AddressTest\\": "module\\Address\\test\\AddressTest",
+      "SearchTest\\": "module\\Search\\test\\SearchTest"
     }
   }
 }

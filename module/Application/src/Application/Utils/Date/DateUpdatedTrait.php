@@ -3,14 +3,15 @@
 namespace Application\Utils\Date;
 
 /**
- * Trait DateUpdatedTrait
+ * Trait to help satisfy DateUpdatedInterface
  *
- * Trait to help a class define a date updated property
+ * @see DateUpdatedInterface
+ *
  */
 trait DateUpdatedTrait
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $dateUpdated;
 
@@ -24,12 +25,26 @@ trait DateUpdatedTrait
 
     /**
      * @param \DateTime|null $updated
+     *
      * @return $this
      */
     public function setUpdated($updated)
     {
-        $updated = DateTimeFactory::factory($updated);
+        $updated           = DateTimeFactory::factory($updated);
         $this->dateUpdated = $updated;
+
         return $this;
+    }
+
+    /**
+     * Gets the data formatted or null if not set
+     *
+     * @param string $format
+     *
+     * @return null|string
+     */
+    protected function formatUpdated(string $format)
+    {
+        return ($this->dateUpdated !== null) ? $this->dateUpdated->format($format) : null;
     }
 }

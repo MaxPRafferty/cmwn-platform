@@ -51,6 +51,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
 
     /**
      * @test
+     * @group Hal
      */
     public function testItShouldGetSaSettingsLinks()
     {

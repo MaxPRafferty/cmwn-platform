@@ -14,12 +14,11 @@ use Zend\Db\Sql\Sql;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
- * Class OrganizationService
- * @package Org\Service
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * A Service that handles organizations in a database
  */
 class OrganizationService implements OrganizationServiceInterface
 {
@@ -31,77 +30,64 @@ class OrganizationService implements OrganizationServiceInterface
     protected $orgTableGateway;
 
     /**
+     * @var ArraySerializable
+     */
+    protected $hydrator;
+
+    /**
      * OrganizationService constructor.
+     *
      * @param TableGateway $gateway
      */
     public function __construct(TableGateway $gateway)
     {
         $this->orgTableGateway = $gateway;
+        $this->hydrator        = new ArraySerializable();
     }
 
     /**
-     * Fetches all Organizations
-     *
-     * Returns a pagination adapter by default
-     *
-     * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
+     * @inheritdoc
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null)
+    public function fetchAll($where = null, OrganizationInterface $prototype = null): AdapterInterface
     {
+        $prototype = $prototype ?? new Organization();
         $where     = $this->createWhere($where);
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
+        $select    = new Select(['o' => $this->orgTableGateway->getTable()]);
+        $select->where($where);
+        $select->order(['o.title']);
 
-        if ($paginate) {
-            $select    = new Select(['o' => $this->orgTableGateway->getTable()]);
-            $select->where($where);
-            $select->order(['o.title']);
-            return new DbSelect(
-                $select,
-                $this->orgTableGateway->getAdapter(),
-                $resultSet
-            );
-        }
-
-        $results = $this->orgTableGateway->select($where);
-        $resultSet->initialize($results);
-        return $resultSet;
+        return new DbSelect(
+            $select,
+            $this->orgTableGateway->getAdapter(),
+            $resultSet
+        );
     }
 
     /**
-     * Saves an Organization
-     *
-     * If the org_id is null, then a new Organization is created
-     *
-     * @param OrganizationInterface $org
-     * @return bool
+     * @inheritdoc
      */
-    public function createOrganization(OrganizationInterface $org)
+    public function createOrganization(OrganizationInterface $org): bool
     {
         $org->setUpdated(new \DateTime());
         $org->setCreated(new \DateTime());
-        $org->setOrgId((string) Uuid::uuid1());
+        $org->setOrgId((string)Uuid::uuid1());
         $data = $org->getArrayCopy();
 
-        $data['meta']    = Json::encode($data['meta']);
-        $data['org_id']  = $org->getOrgId();
+        $data['meta']   = Json::encode($data['meta']);
         unset($data['deleted']);
+        unset($data['links']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
         unset($data['scope']);
 
         $this->orgTableGateway->insert($data);
+
         return true;
     }
 
     /**
-     * Saves an existing Organization
-     *
-     * @param OrganizationInterface $org
-     * @return bool
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function updateOrganization(OrganizationInterface $org)
+    public function updateOrganization(OrganizationInterface $org): bool
     {
         $this->fetchOrganization($org->getOrgId());
         $org->setUpdated(new \DateTime());
@@ -111,42 +97,36 @@ class OrganizationService implements OrganizationServiceInterface
         unset($data['deleted']);
         unset($data['org_id']);
         unset($data['created']);
-        unset($data['links']);
+        unset($data['links']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
         $this->orgTableGateway->update(
             $data,
             ['org_id' => $org->getOrgId()]
         );
+
         return true;
     }
 
     /**
-     * Fetches one Organization from the DB using the id
-     *
-     * @param $orgId
-     * @return OrganizationInterface
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function fetchOrganization($orgId)
+    public function fetchOrganization(string $orgId, OrganizationInterface $prototype = null): OrganizationInterface
     {
-        $rowSet = $this->orgTableGateway->select(['org_id' => $orgId]);
-        $row    = $rowSet->current();
+        $prototype = $prototype ?? new Organization();
+        $rowSet    = $this->orgTableGateway->select(['org_id' => $orgId]);
+        $row       = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Organization not Found");
         }
 
-        return new Organization((array) $row);
+        $this->hydrator->hydrate($row->getArrayCopy(), $prototype);
+
+        return $prototype;
     }
 
     /**
-     * Deletes an Organization from the database
-     *
-     * Soft deletes unless soft is false
-     *
-     * @param OrganizationInterface $org
-     * @param bool $soft
-     * @return bool
+     * @inheritdoc
      */
-    public function deleteOrganization(OrganizationInterface $org, $soft = true)
+    public function deleteOrganization(OrganizationInterface $org, bool $soft = true): bool
     {
         $this->fetchOrganization($org->getOrgId());
 
@@ -162,19 +142,16 @@ class OrganizationService implements OrganizationServiceInterface
         }
 
         $this->orgTableGateway->delete(['org_id' => $org->getOrgId()]);
+
         return true;
     }
 
     /**
-     * Fetches the type of groups that are in this organization
-     *
-     * @param $organization
-     * @return string[]
+     * @inheritdoc
      */
-    public function fetchGroupTypes($organization)
+    public function fetchGroupTypes(OrganizationInterface $organization): array
     {
-        $orgId  = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
-        $where = $this->createWhere(['organization_id' => $orgId]);
+        $where  = $this->createWhere(['organization_id' => $organization->getOrgId()]);
         $select = new Select();
         $select->columns([new Expression('DISTINCT(type) AS type')]);
         $select->from('groups');
@@ -184,21 +161,20 @@ class OrganizationService implements OrganizationServiceInterface
         $stmt    = $sql->prepareStatementForSqlObject($select);
         $results = $stmt->execute();
 
-        $types   = [];
+        $types = [];
         foreach ($results as $row) {
             $types[] = $row['type'];
         }
 
         sort($types);
+
         return array_unique($types);
     }
 
     /**
-     * Fetches all the types of organizations
-     *
-     * @return string[]
+     * @inheritdoc
      */
-    public function fetchOrgTypes()
+    public function fetchOrgTypes(): array
     {
         $select = new Select();
         $select->columns([new Expression('DISTINCT(type) AS type')]);
@@ -211,6 +187,7 @@ class OrganizationService implements OrganizationServiceInterface
         }
 
         sort($types);
+
         return array_unique($types);
     }
 }

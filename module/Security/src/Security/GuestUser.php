@@ -60,7 +60,7 @@ class GuestUser extends User implements SecurityUserInterface
     /**
      * @inheritDoc
      */
-    public function getType()
+    public function getType(): string
     {
         return 'guest';
     }

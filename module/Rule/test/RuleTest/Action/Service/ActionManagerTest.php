@@ -2,7 +2,7 @@
 
 namespace RuleTest\Action\Service;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Action\CallbackAction;
 use Rule\Action\Collection\ActionCollection;
 use Rule\Action\Collection\ActionCollectionInterface;

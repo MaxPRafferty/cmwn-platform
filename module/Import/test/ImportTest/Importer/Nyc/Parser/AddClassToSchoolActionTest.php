@@ -92,7 +92,7 @@ class AddClassToSchoolActionTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldAddChildToGroup()
+    public function testItShouldattachChildToGroup()
     {
         $this->groupService->shouldReceive('addChildToGroup')
             ->once()
