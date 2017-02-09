@@ -6,7 +6,7 @@ use Flip\Rule\Rule\EarnedFlip as Rule;
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\BasicRuleItem;
 use Rule\Provider\BasicValueProvider;

@@ -13,7 +13,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -39,6 +39,14 @@ class GroupAddressServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->groupAddressService = new GroupAddressService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|Adapter $adapter */
@@ -49,14 +57,6 @@ class GroupAddressServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('group_addresses')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->groupAddressService = new GroupAddressService($this->tableGateway);
     }
 
     /**
@@ -93,7 +93,7 @@ class GroupAddressServiceTest extends TestCase
      */
     public function testItShouldThrowPDOExceptionIfItIsNotDuplicateEntryException()
     {
-        $this->setExpectedException(\PDOException::class);
+        $this->expectException(\PDOException::class);
 
         $this->tableGateway->shouldReceive('insert')
             ->with(['group_id' => 'foo', 'address_id' => 'bar'])
@@ -104,7 +104,7 @@ class GroupAddressServiceTest extends TestCase
             new Address(['address_id' => 'bar'])
         ));
     }
-    
+
     /**
      * @test
      */
@@ -118,7 +118,7 @@ class GroupAddressServiceTest extends TestCase
             new Address(['address_id' => 'bar'])
         ));
     }
-    
+
     /**
      * @test
      */

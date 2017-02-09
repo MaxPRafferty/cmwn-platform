@@ -6,7 +6,7 @@ use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Suggest\Rule\FriendRule;
 use Suggest\SuggestionCollection;
 use User\Child;
@@ -37,17 +37,17 @@ class FriendRuleTest extends TestCase
     /**
      * @before
      */
-    public function setUpFriendService()
+    public function setUpFriendRule()
     {
-        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
+        $this->friendRule = new FriendRule($this->friendService);
     }
 
     /**
      * @before
      */
-    public function setUpFriendRule()
+    public function setUpFriendService()
     {
-        $this->friendRule = new FriendRule($this->friendService);
+        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
     }
 
     /**

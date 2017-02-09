@@ -2,7 +2,7 @@
 
 namespace SuggestTest;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Suggest\InvalidSuggestionException;
 use Suggest\SuggestionCollection;
 use User\Child;
@@ -22,7 +22,7 @@ class SuggestionCollectionTest extends TestCase
      */
     public function testItShouldOnlyAllowUsersToBeAdded()
     {
-        $this->setExpectedException(InvalidSuggestionException::class);
+        $this->expectException(InvalidSuggestionException::class);
         $collection = new SuggestionCollection();
         $collection->append(new \stdClass());
     }

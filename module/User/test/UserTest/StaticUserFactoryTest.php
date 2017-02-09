@@ -2,7 +2,7 @@
 
 namespace UserTest;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\StaticUserFactory;
 use User\UserInterface;
 
@@ -67,7 +67,7 @@ class StaticUserFactoryTest extends TestCase
     public function testItShouldReturnAdultWhenAdultIsPassedAsParameter()
     {
         unset($this->userData['type']);
-        
+
         $user = StaticUserFactory::createUser($this->userData, UserInterface::TYPE_ADULT);
         $this->assertInstanceOf('User\Adult', $user);
         $this->assertEquals($this->userData['username'], $user->getUserName());
@@ -90,7 +90,7 @@ class StaticUserFactoryTest extends TestCase
     public function testItShouldReturnChildWhenChildIsPassedIAsParameter()
     {
         unset($this->userData['type']);
-        
+
         $user = StaticUserFactory::createUser($this->userData, UserInterface::TYPE_CHILD);
         $this->assertInstanceOf('User\Child', $user);
         $this->assertEquals($this->userData['username'], $user->getUserName());
@@ -101,10 +101,8 @@ class StaticUserFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenInvalidTypePassedInArray()
     {
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Invalid user type: foo'
-        );
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid user type: foo');
 
         StaticUserFactory::createUser(['type' => 'foo']);
     }
@@ -114,10 +112,8 @@ class StaticUserFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenInvalidTypePassedAsParameter()
     {
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Invalid user type: foo'
-        );
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid user type: foo');
 
         StaticUserFactory::createUser([], 'foo');
     }
@@ -127,10 +123,8 @@ class StaticUserFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenDataIsInvalid()
     {
-        $this->setExpectedException(
-            'InvalidArgumentException',
-            'Data must be an array or ArrayObject'
-        );
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Data must be an array or ArrayObject');
 
         StaticUserFactory::createUser('foo');
     }

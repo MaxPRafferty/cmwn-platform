@@ -3,7 +3,7 @@
 namespace FlipTest;
 
 use Flip\EarnedFlip;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test EarnedFlipTest

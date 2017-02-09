@@ -4,7 +4,7 @@ namespace AddressTest;
 
 use Address\Address;
 use Address\AddressInterface;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Class AddressTest

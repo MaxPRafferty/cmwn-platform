@@ -5,7 +5,7 @@ namespace ImportTest\Importer\Nyc\Teachers;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Exception\InvalidTeacherException;
 use Import\Importer\Nyc\Teachers\Teacher;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Child;
 
@@ -47,7 +47,7 @@ class TeacherTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToSetChildAsUser()
     {
-        $this->setExpectedException(InvalidTeacherException::class);
+        $this->expectException(InvalidTeacherException::class);
         $teacher = new Teacher();
         $teacher->setUser(new Child());
     }

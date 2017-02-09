@@ -3,6 +3,7 @@
 namespace ApplicationTest\Utils\Date;
 
 use Application\Utils\Date\DateTimeFactory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class DateTimeFactoryTest
@@ -10,7 +11,7 @@ use Application\Utils\Date\DateTimeFactory;
  * @group Utils
  * @group Date
  */
-class DateTimeFactoryTest extends \PHPUnit_Framework_TestCase
+class DateTimeFactoryTest extends TestCase
 {
     /**
      * @test

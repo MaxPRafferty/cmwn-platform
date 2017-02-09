@@ -2,7 +2,7 @@
 
 namespace RuleTest\Rule\Service;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Rule\Basic\AndRule;
@@ -48,6 +48,23 @@ class RuleManagerTest extends TestCase
     /**
      * @before
      */
+    public function setUpManager()
+    {
+        $this->manager = $this->container->get(RuleManager::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpContainer()
+    {
+        $this->container = new ServiceManager($this->config['service_manager']);
+        $this->container->setService('Config', $this->config);
+    }
+
+    /**
+     * @before
+     */
     public function setUpConfig()
     {
         $this->config = [
@@ -87,23 +104,6 @@ class RuleManagerTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @before
-     */
-    public function setUpContainer()
-    {
-        $this->container = new ServiceManager($this->config['service_manager']);
-        $this->container->setService('Config', $this->config);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpManager()
-    {
-        $this->manager = $this->container->get(RuleManager::class);
     }
 
     /**

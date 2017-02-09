@@ -2,7 +2,7 @@
 
 namespace SaTest\V1\Rest;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Sa\V1\Rest\SuperAdminSettings\SuperAdminSettingsEntity;
 use ZF\Hal\Link\LinkCollection;
 

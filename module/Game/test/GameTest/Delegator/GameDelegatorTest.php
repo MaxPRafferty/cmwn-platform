@@ -7,7 +7,7 @@ use Game\Delegator\GameDelegator;
 use Game\Game;
 use Game\Service\GameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -40,19 +40,19 @@ class GameDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->gameService = \Mockery::mock(GameService::class);
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $events = new EventManager();
         $this->gameDelegator = new GameDelegator($this->gameService, $events);
         $this->gameDelegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->gameService = \Mockery::mock(GameService::class);
     }
 
     /**
