@@ -11,6 +11,7 @@ use User\UserInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class SuggestedServiceDelegatorTest
@@ -77,7 +78,8 @@ class SuggestedServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $this->delegator = new SuggestedServiceDelegator($this->suggestedService);
+        $events = new EventManager();
+        $this->delegator = new SuggestedServiceDelegator($this->suggestedService, $events);
         $this->delegator->getEventManager()->clearListeners('fetch.suggested.friends');
         $this->delegator->getEventManager()->clearListeners('fetch.suggested.friends.post');
         $this->delegator->getEventManager()->clearListeners('attach.suggested.friends');

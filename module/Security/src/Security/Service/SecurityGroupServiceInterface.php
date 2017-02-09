@@ -2,51 +2,32 @@
 
 namespace Security\Service;
 
+use Group\GroupInterface;
 use User\UserInterface;
 
 /**
- * A Service used to find the role between 2 users
+ * Interface SecurityGroupServiceInterface
+ * @package Security\Service
  */
 interface SecurityGroupServiceInterface
 {
     /**
-     * Finds the role the user has to another user
+     * Finds the role for a user in a specific group
      *
-     * SELECT
-     *  requested_user.user_id AS requested_user_id,
+     * SELECT ug.role AS role
+     * FROM user_groups AS ug
+     *  LEFT JOIN groups AS active_group ON active_group.group_id = ug.group_id
+     *  LEFT JOIN groups AS parent_group ON parent_group.group_id = active_group.parent_id
+     *  LEFT JOIN groups AS g ON  (g.head BETWEEN active_group.head AND active_group.tail)
+     *      OR (g.group_id = parent_group.group_id)
+     * WHERE ug.user_id = :user_id
+     *  AND g.group_id = :group_id
+     *  AND g.network_id = active_group.network_id
      *
-     *  active_user.role AS active_role,
-     *
-     *  active_group.head AS active_head,
-     *  active_group.tail AS active_tail,
-     *
-     *  active_parent_group.head AS active_parent_head,
-     *  active_parent_group.tail AS active_parent_tail,
-     *  active_parent_group.group_id AS active_parent_group,
-     *
-     *  requested_group.head AS requested_head,
-     *  requested_group.tail AS requested_tail,
-     *  requested_group.group_id AS requested_group,
-     *
-     *  requested_parent_group.head AS requested_parent_head,
-     *  requested_parent_group.tail AS requested_parent_tail,
-     *  requested_parent_group.group_id AS requested_parent_group
-     *
-     * FROM user_groups AS active_user
-     *  LEFT JOIN user_groups AS requested_user ON requested_user.user_id = :user_id
-     *  LEFT JOIN groups AS active_group ON active_group.group_id = requested_user.group_id
-     *  LEFT JOIN groups AS active_parent_group ON active_parent_group.group_id = active_group.parent_id
-     *  LEFT JOIN groups AS requested_group ON requested_group.group_id = requested_user.group_id
-     *  LEFT JOIN groups AS requested_parent_group ON requested_parent_group.group_id = requested_group.parent_id
-     *
-     * WHERE active_user.user_id = :user_id
-     *  AND active_group.organization_id = requested_group.organization_id
-     *
-     *
-     * @param UserInterface $activeUser
-     * @param UserInterface|string $requestedUser
+     * @param GroupInterface|string $group the group you want
+     * @param UserInterface $user the user you want to get
      *
      * @return string
      */
-    public function fetchRelationshipRole(UserInterface $activeUser, $requestedUser);
+    public function getRoleForGroup($group, UserInterface $user);
 }

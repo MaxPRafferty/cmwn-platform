@@ -12,6 +12,7 @@ use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
@@ -19,9 +20,8 @@ use Zend\Permissions\Acl\Role\RoleInterface;
  * Class UserGroupServiceDelegator
  * @package Group\Delegator
  */
-class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManagerAwareInterface
+class UserGroupServiceDelegator implements UserGroupServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -38,12 +38,32 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface, EventManag
     ];
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * UserGroupServiceDelegator constructor.
      * @param UserGroupService $realService
+     * @param EventManagerInterface $events
      */
-    public function __construct(UserGroupService $realService)
+    public function __construct(UserGroupService $realService, EventManagerInterface $events)
     {
         $this->realService     = $realService;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [UserGroupServiceInterface::class, static::class, UserGroupService::class],
+            $events->getIdentifiers()
+        ));
+        $this->attachDefaultListeners();
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

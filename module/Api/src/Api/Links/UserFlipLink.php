@@ -2,6 +2,7 @@
 
 namespace Api\Links;
 
+use User\UserInterface;
 use ZF\Hal\Link\Link;
 
 /**
@@ -12,10 +13,11 @@ class UserFlipLink extends Link
     /**
      * UserFlipLink constructor.
      *
-     * @param null|string $userId
+     * @param null | string | UserInterface $user
      */
-    public function __construct($userId = null)
+    public function __construct($user = null)
     {
+        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         parent::__construct('user_flip');
         $this->setProps(['label' => 'My Earned Flips']);
         $this->setRoute('api.rest.flip-user', ['user_id' => $userId]);

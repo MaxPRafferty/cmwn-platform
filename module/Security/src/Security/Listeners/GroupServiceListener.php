@@ -12,7 +12,7 @@ use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Exception\ChangePasswordException;
 use Security\SecurityUser;
-use Security\Service\SecurityOrgServiceInterface;
+use Security\Service\SecurityGroupServiceInterface;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -37,22 +37,22 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
     protected $userGroupService;
 
     /**
-     * @var SecurityOrgServiceInterface $securityOrgService
+     * @var SecurityGroupServiceInterface $securityOrgService
      */
-    protected $securityOrgService;
+    protected $securityGroupService;
 
     /**
      * GroupServiceListener constructor.
      *
      * @param UserGroupServiceInterface $userGroupService
-     * @param SecurityOrgServiceInterface $securityOrgService
+     * @param SecurityGroupServiceInterface $securityGroupService
      */
     public function __construct(
         UserGroupServiceInterface $userGroupService,
-        SecurityOrgServiceInterface $securityOrgService
+        SecurityGroupServiceInterface $securityGroupService
     ) {
         $this->userGroupService   = $userGroupService;
-        $this->securityOrgService = $securityOrgService;
+        $this->securityGroupService = $securityGroupService;
     }
 
     /**
@@ -140,7 +140,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
             $user = $changePassword->getUser();
         }
 
-        $user->setRole($this->securityOrgService->getRoleForGroup($groupId, $user));
+        $user->setRole($this->securityGroupService->getRoleForGroup($groupId, $user));
 
         if (!$this->getRbac()->isGranted($user->getRole(), 'view.user.groups')) {
             throw new NotAuthorizedException;
@@ -167,7 +167,7 @@ class GroupServiceListener implements RbacAwareInterface, AuthenticationServiceA
             $user = $changePassword->getUser();
         }
 
-        $user->setRole($this->securityOrgService->getRoleForGroup($groupId, $user));
+        $user->setRole($this->securityGroupService->getRoleForGroup($groupId, $user));
 
         // User is allowed to view all child groups
         if ($this->getRbac()->isGranted($user->getRole(), 'view.all.child.groups')) {

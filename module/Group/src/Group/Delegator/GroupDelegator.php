@@ -5,6 +5,7 @@ namespace Group\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
+use Group\Service\GroupService;
 use Group\Service\GroupServiceInterface;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -12,6 +13,7 @@ use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -20,9 +22,8 @@ use Zend\Paginator\Adapter\DbSelect;
  * @package Group\Delegator
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class GroupDelegator implements GroupServiceInterface, EventManagerAwareInterface
+class GroupDelegator implements GroupServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -36,13 +37,32 @@ class GroupDelegator implements GroupServiceInterface, EventManagerAwareInterfac
     protected $eventIdentifier = 'Group\Service\GroupServiceInterface';
 
     /**
-     * GroupDelegator constructor.
-     *
-     * @param GroupServiceInterface $service
+     * @var EventManagerInterface
      */
-    public function __construct(GroupServiceInterface $service)
+    protected $events;
+
+    /**
+     * GroupDelegator constructor.
+     * @param GroupServiceInterface $service
+     * @param EventManagerInterface $events
+     */
+    public function __construct(GroupServiceInterface $service, EventManagerInterface $events)
     {
         $this->realService = $service;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [GroupServiceInterface::class, static::class, GroupService::class],
+            $events->getIdentifiers()
+        ));
+        $this->attachDefaultListeners();
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

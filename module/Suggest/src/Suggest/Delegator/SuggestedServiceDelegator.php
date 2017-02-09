@@ -7,13 +7,13 @@ use Suggest\Service\SuggestedService;
 use Suggest\Service\SuggestedServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class SuggestedServiceDelegator
  */
 class SuggestedServiceDelegator implements SuggestedServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -22,13 +22,31 @@ class SuggestedServiceDelegator implements SuggestedServiceInterface
     protected $realService;
 
     /**
-     * SuggestedServiceDelegator constructor.
-     *
-     * @param SuggestedService $realService
+     * @var EventManagerInterface
      */
-    public function __construct(SuggestedService $realService)
+    protected $events;
+
+    /**
+     * SuggestedServiceDelegator constructor.
+     * @param SuggestedService $realService
+     * @param EventManagerInterface $events
+     */
+    public function __construct(SuggestedService $realService, EventManagerInterface $events)
     {
         $this->realService = $realService;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [SuggestedServiceInterface::class, static::class, SuggestedService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

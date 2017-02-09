@@ -17,4 +17,20 @@ return [
             ],
         ],
     ],
+
+    \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
+        \Org\Rule\Provider\OrgTypesProvider::class => [
+            \Org\Service\OrganizationServiceInterface::class,
+        ],
+        \Org\Rule\Provider\OrgGroupTypesProvider::class => [
+            \Org\Service\OrganizationServiceInterface::class,
+        ],
+    ],
+
+    'providers' => [
+        'shared' => [
+            \Org\Rule\Provider\OrgTypesProvider::class => true,
+            \Org\Rule\Provider\OrgGroupTypesProvider::class => true,
+        ],
+    ],
 ];

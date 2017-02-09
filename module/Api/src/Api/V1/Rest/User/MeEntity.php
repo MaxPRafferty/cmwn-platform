@@ -84,66 +84,6 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * @param LinkCollection $links
-     */
-    protected function injectLinks(LinkCollection $links)
-    {
-        parent::injectLinks($links);
-
-        if (!$links->has('user')) {
-            $links->add(new UserLink());
-        }
-
-        if (!$links->has('games')) {
-            $links->add(new GameLink());
-        }
-
-        if (!$links->has('flip')) {
-            $links->add(new FlipLink());
-        }
-
-        if (!$links->has('password') && !empty($this->getUserId())) {
-            $links->add(new PasswordLink($this->getUserId()));
-        }
-
-        if (!$links->has('save_game') && !empty($this->getUserId())) {
-            $links->add(new SaveGameLink($this->getUserId()));
-        }
-
-        if (!$links->has('flags')) {
-            $links->add(new FlagLink());
-        }
-
-        $this->injectChildLinks($links);
-    }
-
-    /**
-     * @param LinkCollection $links
-     */
-    protected function injectChildLinks(LinkCollection $links)
-    {
-        if ($this->getType() !== UserInterface::TYPE_CHILD) {
-            return;
-        }
-
-        if (!$links->has('user_name')) {
-            $links->add(new UserNameLink());
-        }
-
-        if (!$links->has('friend') && !empty($this->getUserId())) {
-            $links->add(new FriendLink($this->getUserId()));
-        }
-
-        if (!$links->has('skribbles') && !empty($this->getUserId())) {
-            $links->add(new SkribbleLink($this->getUserId()));
-        }
-
-        if (!$links->has('feed') && !empty($this->getUserId())) {
-            $links->add(new FeedLink($this->getUserId()));
-        }
-    }
-
-    /**
      * @return string
      */
     public function getEntityType()

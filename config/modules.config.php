@@ -52,4 +52,5 @@ return [
     'Feed',
     'Sa',
     'Rule',
+    'Address',
 ];
