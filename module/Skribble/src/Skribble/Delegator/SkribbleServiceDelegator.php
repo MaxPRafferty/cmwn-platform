@@ -10,14 +10,14 @@ use Skribble\SkribbleInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class SkribbleServiceDelegator
  */
-class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManagerAwareInterface
+class SkribbleServiceDelegator implements SkribbleServiceInterface
 {
     use ServiceTrait;
-    use EventManagerAwareTrait;
 
     /**
      * @var array
@@ -30,13 +30,32 @@ class SkribbleServiceDelegator implements SkribbleServiceInterface, EventManager
     protected $realService;
 
     /**
-     * SkribbleServiceDelegator constructor.
-     *
-     * @param SkribbleService $service
+     * @var EventManagerInterface
      */
-    public function __construct(SkribbleService $service)
+    protected $events;
+
+    /**
+     * SkribbleServiceDelegator constructor.
+     * @param SkribbleService $service
+     * @param EventManagerInterface $events
+     */
+    public function __construct(SkribbleService $service, EventManagerInterface $events)
     {
         $this->realService = $service;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [SkribbleServiceInterface::class, static::class, SkribbleService::class],
+            $events->getIdentifiers()
+        ));
+        $this->attachDefaultListeners();
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

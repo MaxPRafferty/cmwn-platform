@@ -247,10 +247,6 @@ class SecurityUserService implements SecurityUserServiceInterface
         return 'neighbor.adult';
     }
 
-    protected function findRequestedInTree(\stdClass $row)
-    {
-    }
-
     /**
      * Quick helper to check the requested and active are the same type
      *

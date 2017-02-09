@@ -9,11 +9,12 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\Hal\Entity;
 
 /**
- * Class GroupEntityProvider
- * @package Api\Rule\Rule
+ * This provides relationship between active user and the group given
  */
 class ActiveUserGroupRoleProvider extends AbstractEventProvider
 {
+    const PROVIDER_NAME = self::class;
+
     /**
      * @var AuthenticationServiceInterface
      */
@@ -33,7 +34,7 @@ class ActiveUserGroupRoleProvider extends AbstractEventProvider
     public function __construct(
         AuthenticationServiceInterface $authService,
         SecurityGroupServiceInterface $securityGroupService,
-        string $providerName = ActiveUserGroupRoleProvider::class
+        string $providerName = self::PROVIDER_NAME
     ) {
         parent::__construct($providerName);
         $this->securityGroupService = $securityGroupService;

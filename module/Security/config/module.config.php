@@ -59,6 +59,11 @@ return [
             \Security\Guard\CsrfGuard::class,
         ],
 
+        \Security\Listeners\UserRouteListener::class => [
+            \User\Service\UserServiceInterface::class,
+            \Security\Authorization\Assertion\UserAssertion::class,
+        ],
+
         \Security\Service\SecurityUserService::class => [
             'Table/UserGroups',
             \User\Service\UserServiceInterface::class,
@@ -79,6 +84,18 @@ return [
         ],
         \Security\Rule\Provider\RoleProvider::class       => [
             \Security\Authentication\AuthenticationService::class,
+        ],
+        \Api\Rule\Provider\UserRelationshipProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityUserServiceInterface::class,
+        ],
+        \Api\Rule\Provider\ActiveUserGroupRoleProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityGroupServiceInterface::class,
+        ],
+        \Api\Rule\Provider\ActiveUserOrgRoleProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityOrgServiceInterface::class,
         ],
     ],
 
@@ -144,6 +161,7 @@ return [
         \Security\Listeners\UpdateSession::class,
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
+        \Security\Listeners\UserRouteListener::class,
         \Security\Listeners\FetchUserImageListener::class,
     ],
 
@@ -180,6 +198,12 @@ return [
 
             \Security\Rule\Provider\ActiveUserProvider::class =>
                 \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Provider\UserRelationshipProvider::class => false,
+            \Api\Rule\Provider\ActiveUserGroupRoleProvider::class  => false,
+            \Api\Rule\Provider\ActiveUserOrgRoleProvider::class    => false,
         ],
     ],
 

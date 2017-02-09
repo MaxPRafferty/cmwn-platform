@@ -508,4 +508,6 @@ return [
     ],
     'user_saves'       => [],
     'user_suggestions' => [],
+    'addresses'        => [],
+    'group_addresses'  => [],
 ];

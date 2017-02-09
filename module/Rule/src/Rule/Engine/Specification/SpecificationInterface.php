@@ -33,9 +33,9 @@ interface SpecificationInterface
     /**
      * The Name of the event to listen for
      *
-     * @return string
+     * @return array
      */
-    public function getEventName();
+    public function getEventName() : array;
 
     /**
      * Allows the specification to build all the rules from the container

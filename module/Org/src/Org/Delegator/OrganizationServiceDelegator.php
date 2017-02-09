@@ -12,6 +12,7 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -19,9 +20,8 @@ use Zend\Paginator\Adapter\DbSelect;
  *
  * @package Organization\Delegator
  */
-class OrganizationServiceDelegator implements OrganizationServiceInterface, EventManagerAwareInterface
+class OrganizationServiceDelegator implements OrganizationServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
 
     /**
@@ -35,12 +35,32 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface, Even
     protected $realService;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * OrganizationServiceDelegator constructor.
      * @param OrganizationService $service
+     * @param EventManagerInterface $events
      */
-    public function __construct(OrganizationService $service)
+    public function __construct(OrganizationService $service, EventManagerInterface $events)
     {
         $this->realService = $service;
+        $this->events      = $events;
+        $events->addIdentifiers(array_merge(
+            [OrganizationServiceInterface::class, static::class, OrganizationService::class],
+            $events->getIdentifiers()
+        ));
+        $this->attachDefaultListeners();
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

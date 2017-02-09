@@ -7,7 +7,9 @@ use Api\Rule\Action\AddTypeLinksAction;
 use Api\V1\Rest\User\UserEntity;
 use Application\Utils\StaticType;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Rule\Item\BasicRuleItem;
 use Rule\Item\RuleItemInterface;
+use Rule\Provider\BasicValueProvider;
 
 /**
  * Class AddTypeLinksActionTest
@@ -27,7 +29,7 @@ class AddTypeLinksActionTest extends \PHPUnit_Framework_TestCase
      */
     public function setUpProviders()
     {
-        $this->item = \Mockery::mock(RuleItemInterface::class);
+        $this->item = new BasicRuleItem();
     }
 
     /**
@@ -35,14 +37,9 @@ class AddTypeLinksActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldAddTypeLinks()
     {
-        $this->item->shouldReceive('getParam')
-            ->with('types')
-            ->andReturn(['class', 'school']);
         $entity = new UserEntity();
-        $this->item->shouldReceive('getParam')
-            ->with('provider')
-            ->andReturn($entity)
-            ->once();
+        $this->item->append(new BasicValueProvider('types', ['class', 'school']));
+        $this->item->append(new BasicValueProvider('provider', $entity));
 
         StaticType::setTypes(['class' => 'group_class', 'school' => 'group_school']);
 
@@ -61,14 +58,8 @@ class AddTypeLinksActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldNotAddLinksIfEntityIsNotLinksAware()
     {
-        $this->item->shouldReceive('getParam')
-            ->with('types')
-            ->andReturn(['class', 'school']);
         $entity = new UserEntity();
-        $this->item->shouldReceive('getParam')
-            ->with('provider')
-            ->andReturn($entity->getArrayCopy())
-            ->once();
+        $this->item->append(new BasicValueProvider('provider', $entity->getArrayCopy()));
         StaticType::setTypes(['class' => 'group_class', 'school' => 'group_school']);
 
         $this->assertFalse($entity->getLinks()->has('group_class'));

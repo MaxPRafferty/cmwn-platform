@@ -13,6 +13,7 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -70,8 +71,9 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
+        $events = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new UserGroupServiceDelegator($this->groupService);
+        $this->delegator    = new UserGroupServiceDelegator($this->groupService, $events);
         $this->delegator->getEventManager()->clearListeners('save.group');
         $this->delegator->getEventManager()->clearListeners('fetch.group.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.groups');

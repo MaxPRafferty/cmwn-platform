@@ -130,6 +130,17 @@ return [
             'api.rest.super' => [
                 'GET'  => 'get.super.user',
             ],
+            'api.rest.address' => [
+                'GET'    => ['view.all.addresses', 'view.address'],
+                'POST'   => 'create.address',
+                'PUT'    => 'update.address',
+                'DELETE' => 'delete.address',
+            ],
+            'api.rest.group-address' => [
+                'GET'    => 'view.all.group.addresses',
+                'POST'   => 'attach.group.address',
+                'DELETE' => 'detach.group.address',
+            ],
         ],
     ],
 ];

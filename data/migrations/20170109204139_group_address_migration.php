@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class FlipAcknowledgeFix extends AbstractMigration
+class GroupAddressMigration extends AbstractMigration
 {
     /**
      * Change Method.
@@ -27,11 +27,15 @@ class FlipAcknowledgeFix extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('user_flips');
+        $groupAddressTable = $this->table(
+            'group_addresses',
+            ['id' => false, 'primary_key' => ['group_id', 'address_id']]
+        );
 
-        if ($table->hasColumn('acknowledge_id')) {
-            $table->changeColumn('acknowledge_id', 'string', ['null' => true])
-                ->save();
-        }
+        $groupAddressTable->addColumn('group_id', 'string')
+            ->addColumn('address_id', 'string')
+            ->addForeignKey('group_id', 'groups', 'group_id', ['delete' => 'CASCADE'])
+            ->addForeignKey('address_id', 'addresses', 'address_id', ['delete' => 'CASCADE'])
+            ->create();
     }
 }

@@ -8,6 +8,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test ForgotServiceDelegatorTest
@@ -64,7 +65,8 @@ class ForgotServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $this->delegator = new ForgotServiceDelegator($this->forgotService);
+        $events = new EventManager();
+        $this->delegator = new ForgotServiceDelegator($this->forgotService, $events);
         $this->delegator->getEventManager()->clearListeners('forgot.password');
         $this->delegator->getEventManager()->clearListeners('forgot.password.post');
         $this->delegator->getEventManager()->clearListeners('forgot.password.errors');
