@@ -8,8 +8,7 @@ use IntegrationTest\DbUnitConnectionTrait;
 use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use Lcobucci\JWT\Parser;
-use \PHPUnit_Framework_TestCase as TestCase;
-use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
+use PHPUnit\DbUnit\TestCase as TestCase;
 use Security\Service\SecurityServiceInterface;
 
 /**
@@ -31,7 +30,6 @@ use Security\Service\SecurityServiceInterface;
  */
 class DoeImporterWithDateTest extends TestCase
 {
-    use DbTestCaseTrait;
     use DbUnitConnectionTrait;
     use LoginUserTrait;
 
@@ -60,7 +58,7 @@ class DoeImporterWithDateTest extends TestCase
                 array_push($data['names'], ['name' => $name, 'position' => 'RIGHT', 'count' => 1]);
             }
 
-            static::$dataSet = new ArrayDataSet($data);
+            static::$dataSet = $this->createArrayDataSet($data);
         }
 
         return static::$dataSet;

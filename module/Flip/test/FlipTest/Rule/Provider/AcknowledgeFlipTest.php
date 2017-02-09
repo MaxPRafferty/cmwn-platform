@@ -5,7 +5,7 @@ namespace FlipTest\Rule\Provider;
 use Flip\EarnedFlip;
 use Flip\Exception\RuntimeException;
 use Flip\Rule\Provider\AcknowledgeFlip;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test AcknowledgeFlipTest

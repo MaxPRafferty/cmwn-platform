@@ -2,7 +2,7 @@
 
 namespace RuleTest\Action\Collection;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Action\Collection\ActionCollection;
 use Rule\Action\CallbackAction;
 use Rule\Item\BasicRuleItem;

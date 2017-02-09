@@ -5,6 +5,7 @@ namespace ApiTest\Rule\Provider;
 use Api\Rule\Provider\EntityFromEventProvider;
 use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Zend\EventManager\Event;
 use ZF\Hal\Entity;
 
@@ -12,7 +13,7 @@ use ZF\Hal\Entity;
  * Class EntityFromEventProviderTest
  * @package ApiTest\Rule\Provider
  */
-class EntityFromEventProviderTest extends \PHPUnit_Framework_TestCase
+class EntityFromEventProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

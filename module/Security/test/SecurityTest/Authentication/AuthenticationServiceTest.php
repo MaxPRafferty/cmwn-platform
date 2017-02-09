@@ -2,7 +2,7 @@
 
 namespace SecurityTest\Authentication;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\Authentication\AuthenticationService;
 use Security\ChangePasswordUser;
@@ -51,6 +51,20 @@ class AuthenticationServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpAuthenticationService()
+    {
+        $this->calledEvents = [];
+        $this->authService  = new AuthenticationService(
+            new EventManager(),
+            $this->storage,
+            $this->authAdapter
+        );
+        $this->authService->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
     public function setUpAuthAdapter()
     {
         $this->authAdapter = \Mockery::mock(AuthAdapter::class);
@@ -62,20 +76,6 @@ class AuthenticationServiceTest extends TestCase
     public function setUpStorage()
     {
         $this->storage = new NonPersistent();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpAuthenticationService()
-    {
-        $this->calledEvents = [];
-        $this->authService  = new AuthenticationService(
-            new EventManager(),
-            $this->storage,
-            $this->authAdapter
-        );
-        $this->authService->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**

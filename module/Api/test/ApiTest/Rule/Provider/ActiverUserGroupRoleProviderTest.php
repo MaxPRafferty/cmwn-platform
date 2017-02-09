@@ -6,6 +6,7 @@ use Api\Rule\Provider\ActiveUserGroupRoleProvider;
 use Api\V1\Rest\Group\GroupEntity;
 use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityGroupServiceInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
@@ -15,7 +16,7 @@ use ZF\Hal\Entity;
 /**
  * Class ActiverUserGroupRoleProviderTest
  */
-class ActiverUserGroupRoleProviderTest extends \PHPUnit_Framework_TestCase
+class ActiverUserGroupRoleProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

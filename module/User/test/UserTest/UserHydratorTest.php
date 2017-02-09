@@ -2,7 +2,7 @@
 
 namespace UserTest;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Child;
 use User\UserHydrator;
@@ -79,10 +79,8 @@ class UserHydratorTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenNonUserPassedAsPrototype()
     {
-        $this->setExpectedException(
-            '\InvalidArgumentException',
-            'This Hydrator can only hydrate Users'
-        );
+        $this->expectException('\InvalidArgumentException');
+        $this->expectExceptionMessage('This Hydrator can only hydrate Users');
         new UserHydrator(new \stdClass());
     }
 
@@ -91,10 +89,8 @@ class UserHydratorTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToExtractNonUser()
     {
-        $this->setExpectedException(
-            '\InvalidArgumentException',
-            'This Hydrator can only extract Users'
-        );
+        $this->expectException('\InvalidArgumentException');
+        $this->expectExceptionMessage('This Hydrator can only extract Users');
         $hydrator = new UserHydrator();
         $hydrator->extract(new \stdClass());
     }

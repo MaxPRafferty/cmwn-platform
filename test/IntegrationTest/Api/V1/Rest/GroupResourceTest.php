@@ -36,7 +36,7 @@ class GroupResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
     }
 
     /**
@@ -468,7 +468,7 @@ class GroupResourceTest extends TestCase
 
         $this->dispatch('/group/school', 'DELETE');
         $this->assertResponseStatusCode(200);
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $group = $this->groupService->fetchGroup('school')->getArrayCopy();
     }
 

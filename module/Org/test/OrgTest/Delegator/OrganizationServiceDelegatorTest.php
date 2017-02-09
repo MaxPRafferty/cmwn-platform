@@ -4,7 +4,7 @@ namespace OrgTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Service\OrganizationServiceInterface;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Org\Organization;
 use Org\Delegator\OrganizationServiceDelegator;
 use Zend\Db\Sql\Where;
@@ -46,14 +46,6 @@ class OrganizationServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->orgService = \Mockery::mock('\Org\Service\OrganizationService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $events = new EventManager();
@@ -64,6 +56,14 @@ class OrganizationServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('fetch.org.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.orgs');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->orgService = \Mockery::mock('\Org\Service\OrganizationService');
     }
 
     /**

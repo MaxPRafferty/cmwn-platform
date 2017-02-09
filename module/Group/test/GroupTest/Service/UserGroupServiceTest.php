@@ -6,7 +6,7 @@ use Group\Group;
 use Group\Service\UserGroupService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Organization;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use Zend\Permissions\Acl\Role\GenericRole;
 
@@ -45,7 +45,7 @@ class UserGroupServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpService()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
         $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
@@ -54,13 +54,6 @@ class UserGroupServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('user_groups')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
         $this->groupService = new UserGroupService($this->tableGateway);
     }
 
@@ -132,10 +125,8 @@ class UserGroupServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenRoleIsInvalidType()
     {
-        $this->setExpectedException(
-            '\RuntimeException',
-            'Role must either be a sting or instance of Zend\PermissionAcl\RoleInterface'
-        );
+        $this->expectException('\RuntimeException');
+        $this->expectExceptionMessage('Role must either be a sting or instance of Zend\PermissionAcl\RoleInterface');
 
         $this->tableGateway->shouldReceive('insert')
             ->never();

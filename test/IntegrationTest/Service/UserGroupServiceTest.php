@@ -35,7 +35,7 @@ class UserGroupServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
     }
 
     /**

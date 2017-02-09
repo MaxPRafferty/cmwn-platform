@@ -36,7 +36,7 @@ class SkribbleServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/skribble.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/skribble.dataset.php');
     }
 
     /**
@@ -389,7 +389,7 @@ class SkribbleServiceTest extends TestCase
     public function testItShouldSoftDeleteSkribble()
     {
         $this->skribbleService->deleteSkribble('foo-bar');
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->skribbleService->fetchSkribble('foo-bar');
     }
 
@@ -398,7 +398,7 @@ class SkribbleServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenSkribbleNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->skribbleService->fetchSkribble('not-real');
     }
 }

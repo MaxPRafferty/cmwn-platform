@@ -6,7 +6,7 @@ use Address\Address;
 use Address\Service\AddressService;
 use Application\Exception\NotFoundException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Select;
@@ -36,6 +36,14 @@ class AddressServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->addressService = new AddressService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|Adapter $adapter */
@@ -45,14 +53,6 @@ class AddressServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('addresses')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->addressService = new AddressService($this->tableGateway);
     }
 
     /**
@@ -102,7 +102,7 @@ class AddressServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionIfAddressNotExists()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $resultSet = new HydratingResultSet();
         $resultSet->initialize([]);
         $this->tableGateway->shouldReceive('select')

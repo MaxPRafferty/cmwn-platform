@@ -4,7 +4,7 @@ namespace ApiTest\Links;
 
 use Api\Links\ImportLink;
 use Group\Group;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test ImportLinkTest

@@ -5,7 +5,7 @@ namespace NoticeTest\Listeners;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\EmailModel\NewUserModel;
 use Notice\Listeners\NewUserEmailListener;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\SecurityUser;
 use User\Adult;
 use User\User;
@@ -43,9 +43,11 @@ class NewUserListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpMessage()
+    public function setUpListener()
     {
-        $this->message = \Mockery::mock('\Zend\Mail\Message');
+        $this->emailModel = \Mockery::mock('\Notice\EmailModel\NewUserModel');
+        $this->listener   = new NewUserEmailListener($this->emailModel);
+        $this->listener->setMailService($this->mailService);
     }
 
     /**
@@ -62,11 +64,9 @@ class NewUserListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpListener()
+    public function setUpMessage()
     {
-        $this->emailModel = \Mockery::mock('\Notice\EmailModel\NewUserModel');
-        $this->listener   = new NewUserEmailListener($this->emailModel);
-        $this->listener->setMailService($this->mailService);
+        $this->message = \Mockery::mock('\Zend\Mail\Message');
     }
 
     /**
