@@ -75,7 +75,7 @@ class DoeImporterTest extends TestCase
      */
     public function setUpImporter()
     {
-        $this->importer = TestHelper::getDbServiceManager()->get('Nyc\DoeImporter');
+        $this->importer = TestHelper::getServiceManager()->get('Nyc\DoeImporter');
     }
 
     /**
@@ -83,7 +83,7 @@ class DoeImporterTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
+        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
     }
 
     /**
@@ -91,7 +91,7 @@ class DoeImporterTest extends TestCase
      */
     public function setUpGroupService()
     {
-        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**

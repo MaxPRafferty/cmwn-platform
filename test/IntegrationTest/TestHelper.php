@@ -2,6 +2,7 @@
 
 namespace IntegrationTest;
 
+use Search\Service\ElasticServiceInterface;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Authentication\Storage\StorageInterface;
 use Zend\Db\Adapter\Adapter;
@@ -65,22 +66,20 @@ class TestHelper
 
         static::$serviceManager = Application::init(static::getApplicationConfig())->getServiceManager();
 
+        // We cannot connect to elastic outside the office IP Block
+        // To avoid the rules engine mucking up elastic search we just prevent elastic
+        // from doing anything with a mock
+
+        /** @var \Mockery\MockInterface|ElasticServiceInterface $elasticService */
+        $elasticService = \Mockery::mock(ElasticServiceInterface::class);
+        $elasticService->shouldReceive('searchByType')->byDefalt();
+        $elasticService->shouldReceive('search')->byDefalt();
+        $elasticService->shouldReceive('fetchDocumentByTypeAndId')->byDefalt();
+        $elasticService->shouldReceive('saveDocument')->byDefalt();
+        $elasticService->shouldReceive('deleteDocument')->byDefalt();
+        static::$serviceManager->setService(ElasticServiceInterface::class, $elasticService);
+
         return static::$serviceManager;
-    }
-
-    /**
-     * @before
-     * @return ServiceManager
-     */
-    public static function getDbServiceManager()
-    {
-        if (null !== static::$dbServiceManager) {
-            return static::$dbServiceManager;
-        }
-
-        static::$dbServiceManager = Application::init(static::getApplicationConfig())->getServiceManager();
-
-        return static::$dbServiceManager;
     }
 
     /**

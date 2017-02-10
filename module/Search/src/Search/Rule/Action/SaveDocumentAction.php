@@ -33,7 +33,7 @@ class SaveDocumentAction implements ActionInterface
      */
     public function __construct(ElasticServiceInterface $service, string $documentProvider)
     {
-        $this->service = $service;
+        $this->service          = $service;
         $this->documentProvider = $documentProvider;
     }
 

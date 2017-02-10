@@ -47,7 +47,7 @@ class OrgResourceTest extends TestCase
      */
     public function setUpOrgService()
     {
-        $this->orgService = TestHelper::getDbServiceManager()->get(OrganizationServiceInterface::class);
+        $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
     }
 
     /**
@@ -55,7 +55,7 @@ class OrgResourceTest extends TestCase
      */
     public function setUpRbac()
     {
-        $this->rbac = TestHelper::getDbServiceManager()->get(Rbac::class);
+        $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 
     /**

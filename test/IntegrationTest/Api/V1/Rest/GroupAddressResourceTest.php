@@ -41,8 +41,8 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
      */
     public function setUpServices()
     {
-        $this->addressService = TestHelper::getDbServiceManager()->get(AddressServiceInterface::class);
-        $this->groupAddressService = TestHelper::getDbServiceManager()->get(GroupAddressServiceInterface::class);
+        $this->addressService = TestHelper::getServiceManager()->get(AddressServiceInterface::class);
+        $this->groupAddressService = TestHelper::getServiceManager()->get(GroupAddressServiceInterface::class);
     }
 
     /**
