@@ -71,7 +71,7 @@ class CheckUserListener implements ListenerAggregateInterface
             $predicate->addPredicate(new Operator('user_id', Operator::OP_NE, $user->getUserId()));
         }
 
-        $results = $userService->fetchAll($predicate, false);
+        $results = $userService->fetchAll($predicate);
 
         if (count($results) > 0) {
             $event->stopPropagation(true);

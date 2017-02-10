@@ -2,7 +2,7 @@
 
 namespace RuleTest\Provider;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Provider\BasicValueProvider;
 
 /**

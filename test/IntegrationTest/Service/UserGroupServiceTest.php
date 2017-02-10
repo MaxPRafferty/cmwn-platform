@@ -7,6 +7,9 @@ use Group\Service\UserGroupServiceInterface;
 use IntegrationTest\AbstractDbTestCase as TestCase;
 use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
+use Org\Organization;
+use User\Adult;
+use User\Child;
 use User\UserInterface;
 use Zend\Paginator\Paginator;
 
@@ -35,7 +38,7 @@ class UserGroupServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
     }
 
     /**
@@ -74,7 +77,9 @@ class UserGroupServiceTest extends TestCase
      */
     public function testItShouldReturnAllUsersForOrg($organizationId, array $expectedIds)
     {
-        $userPage  = new Paginator($this->userGroupService->fetchUsersForOrg($organizationId));
+        $org = new Organization();
+        $org->setOrgId($organizationId);
+        $userPage  = new Paginator($this->userGroupService->fetchUsersForOrg($org));
         $actualIds = [];
         /** @var UserInterface $user */
         foreach ($userPage as $user) {
@@ -91,8 +96,10 @@ class UserGroupServiceTest extends TestCase
     /**
      * @dataProvider userRelationshipProvider
      */
-    public function testItShouldFetchAllUsersThatUserHasRelationshipWith($user, array $expectedIds)
+    public function testItShouldFetchAllUsersThatUserHasRelationshipWith($userId, array $expectedIds, $type = 'adult')
     {
+        $user = $type === 'child' ? new Child() : new Adult();
+        $user->setUserId($userId);
         $userPage = new Paginator($this->userGroupService->fetchAllUsersForUser($user));
         $actualIds = [];
         /** @var UserInterface $user */
@@ -145,6 +152,7 @@ class UserGroupServiceTest extends TestCase
                     'english_teacher',
                     'principal',
                 ],
+                'type' => 'child',
             ],
 
             'Math Student' => [
@@ -153,6 +161,7 @@ class UserGroupServiceTest extends TestCase
                     'math_teacher',
                     'principal',
                 ],
+                'type' => 'child',
             ],
         ];
     }

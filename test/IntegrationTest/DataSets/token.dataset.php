@@ -3,7 +3,7 @@
  * This is just a place holder from which you can copy into the dataset that you need
  */
 return [
-    'flips'            => [],
+
     'organizations'    => [
         [
             'org_id'      => 'district',
@@ -26,7 +26,7 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'            => [],
+
     'groups'           => [
         [
             'group_id'        => 'other_school',
@@ -296,8 +296,8 @@ return [
             'external_id'  => null,
         ],
     ],
-    'user_flips'       => [],
-    'user_friends'     => [],
+
+
     'user_groups'      => [
         [
             'user_id'  => 'english_stud',
@@ -340,7 +340,7 @@ return [
             'role'     => 'principal',
         ],
     ],
-    'image_flags'      => [],
-    'user_saves'       => [],
+
+
     'user_suggestions' => [],
 ];

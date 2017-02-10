@@ -2,7 +2,7 @@
 
 namespace SkribbleTest\Rule;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Skribble\Rule\Background;
 use Skribble\Rule\Effect;
 use Skribble\Rule\Item;
@@ -42,10 +42,8 @@ class RuleStaticFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTypeNotInArray()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            'Cannot create rule: missing type'
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot create rule: missing type');
 
         RuleStaticFactory::createRuleFromArray([]);
     }
@@ -56,10 +54,8 @@ class RuleStaticFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTypeHasInvalidClass($type)
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            sprintf('Cannot create rule of type "%s": does not exist', $type)
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf('Cannot create rule of type "%s": does not exist', $type));
 
         RuleStaticFactory::createRuleFromArray(['asset_type' => $type]);
     }
@@ -69,10 +65,8 @@ class RuleStaticFactoryTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTypeIsNotARule()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            sprintf('Cannot create rule of type "%s": is not a rule', 'RuleStaticFactory')
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(sprintf('Cannot create rule of type "%s": is not a rule', 'RuleStaticFactory'));
 
         RuleStaticFactory::createRuleFromArray(['asset_type' => 'RuleStaticFactory']);
     }

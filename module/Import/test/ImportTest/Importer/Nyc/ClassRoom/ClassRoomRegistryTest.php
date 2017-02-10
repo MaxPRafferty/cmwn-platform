@@ -8,7 +8,7 @@ use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\ClassRoomRegistry;
 use Import\Importer\Nyc\Exception\InvalidClassRoomException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test ClassRoomRegistryTest
@@ -36,19 +36,19 @@ class ClassRoomRegistryTest extends TestCase
     /**
      * @before
      */
-    public function setUpGroupService()
+    public function setUpRegistry()
     {
-        $this->groupService = \Mockery::mock('\Group\Service\GroupService');
-        $this->groupService->shouldReceive('fetchGroupByExternalId')->andThrow(new NotFoundException())->byDefault();
+        $this->registry = new ClassRoomRegistry($this->groupService);
+        $this->registry->setNetworkId('foo-bar');
     }
 
     /**
      * @before
      */
-    public function setUpRegistry()
+    public function setUpGroupService()
     {
-        $this->registry = new ClassRoomRegistry($this->groupService);
-        $this->registry->setNetworkId('foo-bar');
+        $this->groupService = \Mockery::mock('\Group\Service\GroupService');
+        $this->groupService->shouldReceive('fetchGroupByExternalId')->andThrow(new NotFoundException())->byDefault();
     }
 
     /**
@@ -153,10 +153,8 @@ class ClassRoomRegistryTest extends TestCase
      */
     public function testItShouldThrowBadMethodCallExceptionOnUnset()
     {
-        $this->setExpectedException(
-            \BadMethodCallException::class,
-            'Cannot unset values from the Classroom Registry'
-        );
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot unset values from the Classroom Registry');
 
         $this->registry->offsetUnset('foo');
     }
@@ -168,10 +166,8 @@ class ClassRoomRegistryTest extends TestCase
     {
         $classRoom = new ClassRoom('', '');
         $this->assertFalse($classRoom->isValid(), 'Unable to crate invalid classroom');
-        $this->setExpectedException(
-            InvalidClassRoomException::class,
-            'Class has invalid keys'
-        );
+        $this->expectException(InvalidClassRoomException::class);
+        $this->expectExceptionMessage('Class has invalid keys');
 
         $this->registry->addClassroom($classRoom);
     }

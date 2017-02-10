@@ -2,195 +2,239 @@
 
 namespace User;
 
+use Application\Utils\Date\SoftDeleteInterface;
+use Application\Utils\Date\StandardDateInterface;
+use Application\Utils\Meta\MetaDataInterface;
+use Search\SearchableDocumentInterface;
+
 /**
- * Interface UserInterface
+ * A User is able to login to the system
  *
- * Defines what is needed for a user
+ * There are 2 types of users: ADULT and CHILD.  For the most part they will behave the same way.  A child will be
+ * restricted to some functions (like having an email or custom username)
+ *
+ * @SWG\Definition(
+ *     definition="User",
+ *     description="A User is able to login to the system",
+ *     required={"user_id","user_name","email","first_name","last_name","type"},
+ *     x={
+ *          "search-doc-id":"user_id",
+ *          "search-doc-type":"user"
+ *     },
+ *     allOf={
+ *          @SWG\Schema(ref="#/definitions/DateCreated"),
+ *          @SWG\Schema(ref="#/definitions/DateUpdated"),
+ *          @SWG\Schema(ref="#/definitions/DateDeleted"),
+ *          @SWG\Schema(ref="#/definitions/Searchable"),
+ *          @SWG\Schema(ref="#/definitions/MetaData")
+ *     },
+ *     @SWG\Property(
+ *          property="type",
+ *          type="string",
+ *          description="The type of user",
+ *          enum={"CHILD","ADULT"},
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          format="uuid",
+ *          property="user_id",
+ *          description="The id of the user"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="user_name",
+ *          description="A Custom name the for the user"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          format="email",
+ *          property="email",
+ *          description="The Email of the user"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="first_name",
+ *          description="The first name of the user"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="middle_name",
+ *          description="The middle name of the user"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="last_name",
+ *          description="The last name of the user"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          format="date-time",
+ *          property="birthdate",
+ *          description="The users birthday"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="gender",
+ *          description="The Gender the user supplied"
+ *     ),
+ *     @SWG\Property(
+ *         type="string",
+ *         property="external_id",
+ *         description="An identifier of the user in a 3rd party system (like the school)"
+ *     )
+ * )
  */
-interface UserInterface
+interface UserInterface extends
+    SearchableDocumentInterface,
+    StandardDateInterface,
+    SoftDeleteInterface,
+    MetaDataInterface
 {
     const TYPE_ADULT = 'ADULT';
     const TYPE_CHILD = 'CHILD';
 
-    /**
-     * @param $externalId
-     * @return $this
-     */
-    public function setExternalId($externalId);
+    //  This by no means is a stab at the LGBT community, currently DOE only has male and female
+    const GENDER_MALE   = 'Male';
+    const GENDER_FEMALE = 'Female';
 
     /**
-     * @return mixed
+     * @param $externalId
+     *
+     * @return UserInterface
+     */
+    public function setExternalId(string $externalId = null): UserInterface;
+
+    /**
+     * @return string|null
      */
     public function getExternalId();
-    
+
     /**
      * Gets the type of user
      *
      * @return string
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Converts an Array into something that can be digested here
      *
      * @param array $array
+     *
+     * @return UserInterface
      */
-    public function exchangeArray(array $array);
+    public function exchangeArray(array $array): UserInterface;
 
     /**
      * Return this object represented as an array
      *
      * @return array
      */
-    public function getArrayCopy();
+    public function getArrayCopy(): array;
 
     /**
      * @return string
      */
-    public function getUserId();
+    public function getUserId(): string;
 
     /**
      * @param string $userId
-     * @return User
+     *
+     * @return UserInterface
      */
-    public function setUserId($userId);
+    public function setUserId(string $userId): UserInterface;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUserName();
 
     /**
      * @param string $userName
-     * @return User
+     *
+     * @return UserInterface
      */
-    public function setUserName($userName);
+    public function setUserName(string $userName): UserInterface;
 
     /**
      * @return string
      */
-    public function getEmail();
+    public function getEmail(): string;
 
     /**
      * @param string $email
-     * @return User
+     *
+     * @return UserInterface
      */
-    public function setEmail($email);
+    public function setEmail(string $email): UserInterface;
 
     /**
-     * @return null|string
+     * Gets the first name of the user
+     *
+     * @return string
      */
-    public function getFirstName();
+    public function getFirstName(): string;
 
     /**
-     * @param null|string $firstName
-     * @return User
+     * @param string $firstName
+     *
+     * @return UserInterface
      */
-    public function setFirstName($firstName);
+    public function setFirstName(string $firstName): UserInterface;
 
     /**
-     * @return null|string
+     * Gets the users Middle name if supplied
+     *
+     * @return string|null
      */
     public function getMiddleName();
 
     /**
      * @param null|string $middleName
-     * @return User
+     *
+     * @return UserInterface
      */
-    public function setMiddleName($middleName);
+    public function setMiddleName(string $middleName = null);
 
     /**
-     * @return null|string
+     * Gets the last name of the user
+     *
+     * @return string
      */
-    public function getLastName();
+    public function getLastName(): string;
 
     /**
      * @param null|string $lastName
-     * @return User
+     *
+     * @return UserInterface
      */
-    public function setLastName($lastName);
+    public function setLastName(string $lastName): UserInterface;
 
     /**
+     * Gets the users birthday
+     *
      * @return \DateTime|null
      */
     public function getBirthdate();
 
     /**
      * @param \DateTime|null $birthdate
-     * @return User
+     *
+     * @return UserInterface
      */
-    public function setBirthdate($birthdate);
+    public function setBirthdate($birthdate): UserInterface;
 
     /**
-     * @return string
+     * Gets the gender the user supplied to the user
+     *
+     * @return string|null
      */
     public function getGender();
 
     /**
      * @param string $gender
-     * @return User
-     */
-    public function setGender($gender);
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getCreated();
-
-    /**
-     * @param \DateTime|string|null $created
-     * @return $this
-     */
-    public function setCreated($created);
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getDeleted();
-
-    /**
-     * @param \DateTime|string|null $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted);
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdated();
-
-    /**
-     * @param \DateTime|null $updated
-     * @return $this
-     */
-    public function setUpdated($updated);
-
-    /**
-     * Test to see if the user is deleted
      *
-     * @return bool
+     * @return UserInterface
      */
-    public function isDeleted();
-
-
-    /**
-     * Sets the meta data
-     * @param array $meta
-     */
-    public function setMeta($meta = []);
-
-    /**
-     * Gets all the meta data
-     *
-     * @return array
-     */
-    public function getMeta();
-
-    /**
-     * Add a value to meta data
-     *
-     * @param $key
-     * @param $value
-     */
-    public function addToMeta($key, $value);
+    public function setGender(string $gender): UserInterface;
 }

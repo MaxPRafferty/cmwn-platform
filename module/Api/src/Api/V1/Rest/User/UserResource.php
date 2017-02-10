@@ -1,80 +1,242 @@
 <?php
 namespace Api\V1\Rest\User;
 
-use Security\Authentication\AuthenticationServiceAwareInterface;
-use Security\Authentication\AuthenticationServiceAwareTrait;
 use Security\Exception\ChangePasswordException;
 use User\Service\UserServiceInterface;
-use User\StaticUserFactory;
+use User\UserHydrator;
 use User\UserInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class UserResource
+ * The Resource for dealing with users
  */
-class UserResource extends AbstractResourceListener implements AuthenticationServiceAwareInterface
+class UserResource extends AbstractResourceListener
 {
-    use AuthenticationServiceAwareTrait;
-
     /**
      * @var UserServiceInterface
      */
     protected $service;
 
     /**
-     * UserResource constructor.
-     * @param UserServiceInterface $service
+     * @var UserHydrator
      */
-    public function __construct(UserServiceInterface $service)
+    protected $hydrator;
+
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    protected $authService;
+
+    /**
+     * UserResource constructor.
+     *
+     * @param UserServiceInterface $service
+     * @param AuthenticationServiceInterface $authService
+     */
+    public function __construct(UserServiceInterface $service, AuthenticationServiceInterface $authService)
     {
-        $this->service = $service;
+        $this->authService = $authService;
+        $this->service     = $service;
+        $this->hydrator    = new UserHydrator();
     }
 
     /**
-     * Create a resource
+     * Create a new user
      *
+     * The Authenticated user needs permission to create a user in order to create a new user
+     *
+     * @SWG\Post(path="/user",
+     *   tags={"user"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *   @SWG\Parameter(
+     *     in="body",
+     *     name="body",
+     *     description="User data",
+     *     required=true,
+     *     @SWG\Schema(ref="#/definitions/User")
+     *   ),
+     *   @SWG\Response(
+     *     response=201,
+     *     description="successful operation",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=422,
+     *     description="validation failed"
+     *   ),
+     *   @SWG\Response(
+     *     response=404,
+     *     description="User not found",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   )
+     * )
      * @param  mixed $data
-     * @return ApiProblem|mixed
+     *
+     * @return UserEntity|UserInterface
      */
     public function create($data)
     {
         $data = $this->getInputFilter()->getValues();
         unset($data['user_id']);
-        $user = StaticUserFactory::createUser($data);
-
+        $user = $this->hydrator->hydrate($data, new UserEntity());
         $this->service->createUser($user);
 
-        return new UserEntity($user->getArrayCopy());
+        return $user;
     }
 
     /**
-     * Delete a resource
+     * Delete a user
      *
-     * @param  mixed $userId
+     * The user is fetched first to ensure the authenticated user can access the user to delete.  By default users are
+     * soft deleted unless the "hard" query parameter is set.  The authenticated user needs permission to hard delete
+     * users
+     *
+     * @SWG\Delete(path="/user/{user_id}",
+     *   tags={"user"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *   @SWG\Parameter(
+     *     name="user_id",
+     *     in="path",
+     *     description="User Id to deleted",
+     *     required=true,
+     *     type="string",
+     *     format="uuid",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Parameter(
+     *     name="hard",
+     *     in="query",
+     *     description="Hard delete the user",
+     *     type="boolean",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Response(
+     *     response=200,
+     *     description="User was deleted",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=404,
+     *     description="User not found",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=403,
+     *     description="Not Authorized to delete or access user",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   )
+     * )
+     * @param  string $userId
+     *
      * @return ApiProblem|mixed
      */
     public function delete($userId)
     {
         $user = $this->fetch($userId);
+        if ($this->service->deleteUser($user)) {
+            return true;
+        }
 
-        $this->service->deleteUser($user);
-
-        return new ApiProblem(200, 'User deleted', 'Ok');
+        return new ApiProblem(500, 'Failed to delete user');
     }
 
     /**
-     * Fetch a resource
+     * Fetch a user
      *
-     * @param  mixed $userId
+     * If the authenticated user is not allowed access, than a 403 is thrown.
+     *
+     * @SWG\Get(path="/user/{user_id}",
+     *   tags={"user"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *   @SWG\Parameter(
+     *     name="user_id",
+     *     in="path",
+     *     description="User Id to fetch",
+     *     required=true,
+     *     type="string",
+     *     format="uuid",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Response(
+     *     response=200,
+     *     description="",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=404,
+     *     description="User not found",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   )
+     * )
+     *
+     * @param  string $userId
+     *
      * @return ApiProblem|UserEntity|UserInterface
      */
     public function fetch($userId)
     {
-        $user         = $this->getEvent()->getRouteParam('user', false);
+        $user = $this->service->fetchUser($userId, new UserEntity());
         try {
-            $loggedInUser = $this->getAuthenticationService()->getIdentity();
+            $loggedInUser = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePassword) {
             $loggedInUser = $changePassword->getUser();
         }
@@ -83,52 +245,157 @@ class UserResource extends AbstractResourceListener implements AuthenticationSer
             return new MeEntity($loggedInUser);
         }
 
-        return new UserEntity($user->getArrayCopy());
+        return $user;
     }
 
     /**
-     * Fetch all or a subset of resources
+     * Fetches multiple users that the authenticated user can access
      *
+     * If the user is not allowed to list users a 403 is returned
+     *
+     * @SWG\Get(path="/user",
+     *   tags={"user"},
+     *   x={"prime-for":"user"},
+     *   @SWG\Parameter(
+     *     name="type",
+     *     in="query",
+     *     description="Type of user to fetch",
+     *     type="string",
+     *     enum={"CHILD","ADULT"},
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Parameter(
+     *     name="deleted",
+     *     in="query",
+     *     description="Fetch deleted users",
+     *     type="boolean",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Page number to fetch",
+     *     type="integer",
+     *     format="int32",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Parameter(
+     *     name="per_page",
+     *     in="query",
+     *     description="Number of users on each page",
+     *     type="integer",
+     *     format="int32",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Response(
+     *     response=200,
+     *     description="Paged users",
+     *     @SWG\Schema(
+     *          type="array",
+     *          @SWG\Items(ref="#/definitions/UserCollection")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=404,
+     *     description="User not found"
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   )
+     * )
      * @param  array $params
+     *
      * @return ApiProblem|mixed
      */
     public function fetchAll($params = [])
     {
-        $where = null;
-
-        if (isset($params['type'])) {
-            $type = $params['type'];
-            $where = [];
-            $where['u.type'] = $type;
-            $where['u.super'] = 0;
-        }
-
-        /** @var DbSelect $users */
-        $users = $this->service->fetchAll($where, true, new UserEntity());
-
-        return new UserCollection($users);
+        return new UserCollection($this->service->fetchAll($params, new UserEntity()));
     }
 
     /**
-     * Update a resource
+     * Updates a user
      *
-     * @param  mixed $userId
-     * @param  mixed $data
+     * The user to be updated is fetched first to ensure the user has access to edit the user.  All valid data for the
+     * user is needed.
+     *
+     * @SWG\Put(path="/user/{user_id}",
+     *   tags={"user"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *   @SWG\Parameter(
+     *     name="user_id",
+     *     in="path",
+     *     description="User Id to update",
+     *     required=true,
+     *     type="string",
+     *     format="uuid",
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Parameter(
+     *     in="body",
+     *     name="body",
+     *     description="User data",
+     *     required=true,
+     *     @SWG\Schema(ref="#/definitions/User")
+     *   ),
+     *   @SWG\Response(
+     *     response=200,
+     *     description="successful operation",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=422,
+     *     description="validation failed",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=403,
+     *     description="Not Authorized to create a user",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   )
+     * )
+     *
+     * @param  string $userId
+     * @param  array $data
+     *
      * @return ApiProblem|mixed
      */
     public function update($userId, $data)
     {
         $user = $this->fetch($userId);
-
         $data = $this->getInputFilter()->getValues();
-        $data['user_id'] = $userId;
 
         foreach ($data as $key => $value) {
             $user->__set($key, $value);
         }
 
-        $saveUser = StaticUserFactory::createUser($user->getArrayCopy());
-        $this->service->updateUser($saveUser);
+        $this->service->updateUser($user);
+
         return $user;
     }
 }

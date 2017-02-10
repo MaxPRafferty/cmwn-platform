@@ -6,8 +6,7 @@ use User\UserInterface;
 use ZF\Hal\Link\Link;
 
 /**
- * Class SuperLink
- * @package Api\Links
+ * Added to a user entity when that entity can be promoted to a super user
  */
 class SuperLink extends Link
 {

@@ -3,7 +3,7 @@
 namespace SuggestTest\Engine;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Engine\SuggestionEngine;
 use Suggest\Filter\FilterCollection;
 use Suggest\Rule\RuleCollection;
@@ -60,6 +60,19 @@ class SuggestionEngineTest extends TestCase
     /**
      * @before
      */
+    public function setUpEngine()
+    {
+        $this->engine = new SuggestionEngine(
+            $this->ruleCollection,
+            $this->filterCollection,
+            $this->suggestService,
+            $this->userService
+        );
+    }
+
+    /**
+     * @before
+     */
     public function setUpFriendService()
     {
         $this->suggestService = \Mockery::mock(SuggestedServiceInterface::class);
@@ -87,19 +100,6 @@ class SuggestionEngineTest extends TestCase
     public function setUpUserService()
     {
         $this->userService = \Mockery::mock(UserServiceInterface::class);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpEngine()
-    {
-        $this->engine = new SuggestionEngine(
-            $this->ruleCollection,
-            $this->filterCollection,
-            $this->suggestService,
-            $this->userService
-        );
     }
 
     /**
@@ -163,10 +163,8 @@ class SuggestionEngineTest extends TestCase
      */
     public function testItShouldFailToPerformWhenMissingUser()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            'Missing user for suggestion engine'
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Missing user for suggestion engine');
 
         $this->suggestService->shouldNotReceive('deleteAllSuggestionsForUser');
         $this->suggestService->shouldNotReceive('attachSuggestedFriendForUser');

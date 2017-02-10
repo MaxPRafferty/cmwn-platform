@@ -75,6 +75,12 @@ return [
         \Security\Service\SecurityGroupService::class => [
             \Zend\Db\Adapter\Adapter::class,
         ],
+
+        \Security\Authentication\AuthenticationService::class => [
+            \Zend\EventManager\EventManagerInterface::class,
+            \Zend\Authentication\Storage\StorageInterface::class,
+            \Security\Authentication\AuthAdapter::class,
+        ],
     ],
 
     \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
@@ -118,9 +124,6 @@ return [
             \Security\Listeners\UserUpdateListener::class     => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Service\SecurityService::class          => \Security\Service\SecurityServiceFactory::class,
-
-            \Security\Authentication\AuthenticationService::class =>
-                \Security\Authentication\AuthenticationServiceFactory::class,
 
             \Security\Listeners\ExpireAuthSessionListener::class =>
                 \Security\Factory\ExpireAuthSessionListenerFactory::class,

@@ -2,12 +2,15 @@
 
 namespace GameTest\Service;
 
+use Application\Exception\NotFoundException;
 use Game\Game;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Game\Service\GameService;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
+use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Test GameServiceTest
@@ -54,23 +57,23 @@ class GameServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpService()
     {
-        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
-        $adapter->shouldReceive('getPlatform')->byDefault();
-
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
-        $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
-        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
+        $this->gameService = new GameService($this->tableGateway);
     }
 
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpGateWay()
     {
-        $this->gameService = new GameService($this->tableGateway);
+        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
+        $adapter = \Mockery::mock(Adapter::class);
+        $adapter->shouldReceive('getPlatform')->byDefault();
+
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
+        $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
+        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
 
     /**
@@ -113,10 +116,8 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGameIsNotFound()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'Game not Found'
-        );
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Game not Found');
 
         $result = new ResultSet();
         $result->initialize([]);

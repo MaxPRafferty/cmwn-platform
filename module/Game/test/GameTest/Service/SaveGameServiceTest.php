@@ -5,11 +5,13 @@ namespace GameTest\Service;
 use Game\SaveGame;
 use Game\Service\SaveGameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Where;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Json\Json;
 
 /**
@@ -37,26 +39,26 @@ class SaveGameServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpSaveGameService()
     {
-        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
-        $adapter->shouldReceive('getPlatform')->byDefault();
-
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
-        $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
-        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-        $this->tableGateway->shouldReceive('select')
-            ->andReturn(new \ArrayIterator([]))
-            ->byDefault();
+        $this->gameService = new SaveGameService($this->tableGateway);
     }
 
     /**
      * @before
      */
-    public function setUpSaveGameService()
+    public function setUpGateWay()
     {
-        $this->gameService = new SaveGameService($this->tableGateway);
+        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
+        $adapter = \Mockery::mock(Adapter::class);
+        $adapter->shouldReceive('getPlatform')->byDefault();
+
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
+        $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
+        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
+        $this->tableGateway->shouldReceive('select')
+            ->andReturn(new \ArrayIterator([]))
+            ->byDefault();
     }
 
     /**

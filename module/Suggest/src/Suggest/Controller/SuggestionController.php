@@ -89,7 +89,7 @@ class SuggestionController extends ConsoleController implements LoggerAwareInter
             $job = $this->suggestionEngine;
             $userId = $request->getParam('userId');
 
-            $user = $this->userService->fetchUser($userId);
+            $user = $this->userService->fetchUser($userId, null);
 
             if ($user->getType() !== UserInterface::TYPE_CHILD) {
                 return;

@@ -5,7 +5,7 @@ namespace FlipTest\Rule\Provider;
 use Flip\EarnedFlip;
 use Flip\Exception\RuntimeException;
 use Flip\Rule\Provider\AcknowledgeFlip;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test AcknowledgeFlipTest
@@ -70,8 +70,12 @@ class AcknowledgeFlipTest extends TestCase
     public function testItShouldThrowExceptionWhenFlipIsAcknowledged()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('You cannot set an acknowledge flip to: ' . AcknowledgeFlip::class);
+        $this->expectExceptionMessage(
+            'Flip "foo-bar" for user "fizz-buzz" has already been acknowledge'
+        );
         $flip     = new EarnedFlip();
+        $flip->setEarnedBy('fizz-buzz');
+        $flip->setFlipId('foo-bar');
         $provider = new AcknowledgeFlip($flip);
     }
 }

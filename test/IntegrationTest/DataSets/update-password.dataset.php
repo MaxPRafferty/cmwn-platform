@@ -3,10 +3,10 @@
  * This is just a place holder from which you can copy into the dataset that you need
  */
 return [
-    'flips'            => [],
-    'organizations'    => [],
-    'games'            => [],
-    'groups'           => [],
+
+
+
+
     'users'            => [
         [
             'user_id'      => 'english_student',
@@ -29,10 +29,10 @@ return [
             'external_id'  => '8675309',
         ],
     ],
-    'user_flips'       => [],
-    'user_friends'     => [],
-    'user_groups'      => [],
-    'image_flags'      => [],
-    'user_saves'       => [],
+
+
+
+
+
     'user_suggestions' => [],
 ];

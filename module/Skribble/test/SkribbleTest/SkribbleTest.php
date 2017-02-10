@@ -2,7 +2,7 @@
 
 namespace SkribbleTest;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Skribble\Skribble;
 use User\Child;
 use Zend\Json\Json;
@@ -98,10 +98,8 @@ class SkribbleTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenInvalidRulesPassedIn()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'Only arrays, Json or instances of SkribbleRules can be set for rules'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Only arrays, Json or instances of SkribbleRules can be set for rules');
 
         $skribble = new Skribble();
         $skribble->setRules(new \stdClass());

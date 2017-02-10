@@ -7,7 +7,7 @@ use Import\Importer\Nyc\Exception\InvalidStudentException;
 use Import\Importer\Nyc\Students\Student;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 
 /**
@@ -36,20 +36,20 @@ class StudentRegistryTest extends TestCase
     /**
      * @before
      */
+    public function setUpRegistry()
+    {
+        $this->registry = new StudentRegistry($this->service);
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserService()
     {
         $this->service = \Mockery::mock('\User\Service\UserServiceInterface');
         $this->service->shouldReceive('fetchUserByExternalId')
             ->andThrow(new NotFoundException)
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpRegistry()
-    {
-        $this->registry = new StudentRegistry($this->service);
     }
 
     /**
@@ -136,10 +136,8 @@ class StudentRegistryTest extends TestCase
      */
     public function testItShouldThrowBadMethodCallExceptionOnUnset()
     {
-        $this->setExpectedException(
-            \BadMethodCallException::class,
-            'Cannot unset values from the Student Registry'
-        );
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot unset values from the Student Registry');
 
         $this->registry->offsetUnset('foo');
     }
@@ -151,10 +149,8 @@ class StudentRegistryTest extends TestCase
     {
         $student = new Student();
         $this->assertFalse($student->isValid(), 'I do not know how to make an invalid student any more');
-        $this->setExpectedException(
-            InvalidStudentException::class,
-            'Student has invalid keys'
-        );
+        $this->expectException(InvalidStudentException::class);
+        $this->expectExceptionMessage('Student has invalid keys');
         $this->registry->addStudent($student);
     }
 }

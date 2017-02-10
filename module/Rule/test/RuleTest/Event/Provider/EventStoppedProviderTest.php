@@ -2,7 +2,7 @@
 
 namespace RuleTest\Event\Provider;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Event\Provider\EventStoppedProvider;
 use Zend\EventManager\Event;
 

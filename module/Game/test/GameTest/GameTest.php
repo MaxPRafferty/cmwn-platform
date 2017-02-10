@@ -3,7 +3,7 @@
 namespace GameTest;
 
 use Game\Game;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test GameTest

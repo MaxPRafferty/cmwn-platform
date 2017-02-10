@@ -58,6 +58,7 @@ return [
             \Application\Rule\Session\Action\WriteValueToSession::class    => false,
         ],
     ],
+
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
         \Application\Session\CmwnContainer::class => [\Zend\Session\SessionManager::class],
     ],
@@ -77,6 +78,7 @@ return [
             'Application\Log\Rollbar\Notifier'                   => \Application\Log\Rollbar\NotifierFactory::class,
             \Application\Log\Rollbar\Writer::class               => \Application\Log\Rollbar\WriterFactory::class,
             \Zend\Http\Client::class                             => \Application\Factory\HttpClientFactory::class,
+            \Psr\Log\LoggerInterface::class                      => \Application\Log\PsrLoggerFactory::class,
         ],
         'abstract_factories' => [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,

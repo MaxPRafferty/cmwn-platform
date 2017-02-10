@@ -3,11 +3,12 @@
 namespace SkribbleTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Skribble\Service\SkribbleService;
 use Skribble\Skribble;
 use User\Child;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Expression;
@@ -15,6 +16,7 @@ use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -52,23 +54,23 @@ class SkribbleServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpService()
     {
-        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
-        $adapter->shouldReceive('getPlatform')->byDefault();
-
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
-        $this->tableGateway->shouldReceive('getTable')->andReturn('skribbles')->byDefault();
-        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
+        $this->skribbleService = new SkribbleService($this->tableGateway);
     }
 
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpGateWay()
     {
-        $this->skribbleService = new SkribbleService($this->tableGateway);
+        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
+        $adapter = \Mockery::mock(Adapter::class);
+        $adapter->shouldReceive('getPlatform')->byDefault();
+
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
+        $this->tableGateway->shouldReceive('getTable')->andReturn('skribbles')->byDefault();
+        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
 
     /**

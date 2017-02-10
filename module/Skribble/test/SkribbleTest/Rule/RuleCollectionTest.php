@@ -2,7 +2,7 @@
 
 namespace SkribbleTest\Rule;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Skribble\Rule\Item;
 use Skribble\Rule\RuleCollection;
 
@@ -83,7 +83,7 @@ class RuleCollectionTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenNonRulePassedIn()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $collection = new RuleCollection('item');
         $collection->append(new \stdClass());
     }

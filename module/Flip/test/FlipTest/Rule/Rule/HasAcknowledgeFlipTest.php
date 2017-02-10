@@ -7,7 +7,7 @@ use Flip\EarnedFlip;
 use Flip\Rule\Provider\AcknowledgeFlip;
 use Flip\Rule\Rule\HasAcknowledgeFlip;
 use Flip\Service\FlipUserServiceInterface;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Provider\BasicValueProvider;
 use Security\Rule\Provider\ActiveUserProvider;

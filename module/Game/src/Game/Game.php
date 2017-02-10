@@ -2,12 +2,9 @@
 
 namespace Game;
 
-use Application\Utils\Date\DateCreatedTrait;
-use Application\Utils\Date\DateDeletedTrait;
-use Application\Utils\Date\DateUpdatedTrait;
-use Application\Utils\MetaDataTrait;
-use Application\Utils\PropertiesTrait;
-use Application\Utils\SoftDeleteInterface;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
+use Application\Utils\Meta\MetaDataTrait;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
@@ -17,13 +14,15 @@ use Zend\Stdlib\ArraySerializableInterface;
  *
  * Game Model
  */
-class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInterface
+class Game implements ArraySerializableInterface, GameInterface
 {
-    use DateCreatedTrait;
-    use DateDeletedTrait;
-    use DateUpdatedTrait;
-    use PropertiesTrait;
-    use MetaDataTrait;
+    use StandardDatesTrait,
+        MetaDataTrait,
+        SoftDeleteTrait {
+        SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+    }
 
     /**
      * @var string
@@ -47,6 +46,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
 
     /**
      * Game constructor.
+     *
      * @param array|null $options
      */
     public function __construct(array $options = null)
@@ -60,6 +60,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
      * Exchange internal values from provided array
      *
      * @param  array $array
+     *
      * @return void
      */
     public function exchangeArray(array $array)
@@ -117,7 +118,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
      */
     public function setComingSoon($comingSoon)
     {
-        $this->comingSoon =  (bool) $comingSoon;
+        $this->comingSoon = (bool)$comingSoon;
     }
 
     /**
@@ -130,6 +131,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
 
     /**
      * @param string $gameId
+     *
      * @return Game
      */
     public function setGameId($gameId)
@@ -149,6 +151,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
 
     /**
      * @param string $title
+     *
      * @return Game
      */
     public function setTitle($title)
@@ -168,6 +171,7 @@ class Game implements SoftDeleteInterface, ArraySerializableInterface, GameInter
 
     /**
      * @param string $description
+     *
      * @return Game
      */
     public function setDescription($description)

@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use User\Child;
 use User\Service\UserService;
-use User\UpdateUsernameValidator;
+use User\Validator\UpdateUsernameValidator;
 
 /**
  * Class UpdateUsernameValidatorTest

@@ -38,16 +38,9 @@ class GameDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->gameService = \Mockery::mock(GameService::class);
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
+        $this->gameService = \Mockery::mock(GameService::class);
         $this->gameDelegator = new GameDelegator($this->gameService, new EventManager());
         $this->gameDelegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }

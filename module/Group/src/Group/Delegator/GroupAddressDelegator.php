@@ -8,6 +8,7 @@ use Group\Service\GroupAddressServiceInterface;
 use Group\GroupInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -116,7 +117,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         GroupInterface $group,
         $where = null,
         AddressInterface $prototype = null
-    ) : DbSelect {
+    ) : AdapterInterface {
         $event = new Event(
             'fetch.all.group.addresses',
             $this->realService,

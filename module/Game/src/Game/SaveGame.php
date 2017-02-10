@@ -2,7 +2,8 @@
 
 namespace Game;
 
-use Application\Utils\Date\DateCreatedTrait;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
 use Application\Utils\PropertiesTrait;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
@@ -13,9 +14,13 @@ use Zend\Json\Json;
  */
 class SaveGame implements SaveGameInterface
 {
-    use DateCreatedTrait;
-    use PropertiesTrait;
-
+    use StandardDatesTrait,
+        PropertiesTrait,
+        SoftDeleteTrait {
+        SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+    }
     /**
      * @var string
      */
@@ -84,7 +89,7 @@ class SaveGame implements SaveGameInterface
             'game_id' => $this->getGameId(),
             'user_id' => $this->getUserId(),
             'data'    => $this->getData(),
-            'created' => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
+            'created' => $this->formatCreated(\DateTime::ISO8601),
             'version' => $this->getVersion(),
         ];
     }

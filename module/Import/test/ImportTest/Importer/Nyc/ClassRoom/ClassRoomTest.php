@@ -3,7 +3,7 @@
 namespace ImportTest\Importer\Nyc\ClassRoom;
 
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test ClassRoomTest

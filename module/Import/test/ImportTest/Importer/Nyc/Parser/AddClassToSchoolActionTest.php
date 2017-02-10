@@ -6,7 +6,7 @@ use Group\Group;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddClassToSchoolAction;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test AddClassToSchoolActionTest
@@ -44,10 +44,10 @@ class AddClassToSchoolActionTest extends TestCase
     /**
      * @before
      */
-    public function setUpGroupService()
+    public function setUpClassRoom()
     {
-        /** @var  $this ->groupService */
-        $this->groupService = \Mockery::mock('\Group\Service\GroupServiceInterface');
+        $this->classRoom = new ClassRoom('History of the world', 'history 101', []);
+        $this->classRoom->setGroup($this->classRoomGroup);
     }
 
     /**
@@ -61,10 +61,10 @@ class AddClassToSchoolActionTest extends TestCase
     /**
      * @before
      */
-    public function setUpClassRoom()
+    public function setUpGroupService()
     {
-        $this->classRoom = new ClassRoom('History of the world', 'history 101', []);
-        $this->classRoom->setGroup($this->classRoomGroup);
+        /** @var  $this ->groupService */
+        $this->groupService = \Mockery::mock('\Group\Service\GroupServiceInterface');
     }
 
     /**
@@ -92,7 +92,7 @@ class AddClassToSchoolActionTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldAddChildToGroup()
+    public function testItShouldattachChildToGroup()
     {
         $this->groupService->shouldReceive('addChildToGroup')
             ->once()

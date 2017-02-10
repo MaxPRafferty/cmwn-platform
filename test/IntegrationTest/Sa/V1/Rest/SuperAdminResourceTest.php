@@ -17,7 +17,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/sa.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/sa.dataset.php');
     }
 
     /**
@@ -51,6 +51,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
 
     /**
      * @test
+     * @group Hal
      */
     public function testItShouldGetSaSettingsLinks()
     {

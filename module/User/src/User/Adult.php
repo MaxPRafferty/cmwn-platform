@@ -3,16 +3,14 @@
 namespace User;
 
 /**
- * Class Adult
- *
- * An Adult is a class of user that is considered older than 13
+ * An Adult user
  */
 class Adult extends User implements AdultInterface
 {
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getType()
+    public function getType(): string
     {
         return static::TYPE_ADULT;
     }

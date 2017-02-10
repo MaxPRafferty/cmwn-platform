@@ -2,7 +2,7 @@
 
 namespace RuleTest\Rule\Basic;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Rule\Basic\NotRule;

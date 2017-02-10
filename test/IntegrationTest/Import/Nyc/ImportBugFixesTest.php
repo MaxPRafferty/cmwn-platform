@@ -10,6 +10,8 @@ use IntegrationTest\TestHelper;
 use Security\Authentication\AuthenticationService;
 use Security\Authorization\Rbac;
 use Security\Service\SecurityService;
+use User\Adult;
+use User\Child;
 use Zend\Json\Json;
 use Zend\Log\Logger;
 use Zend\Paginator\Paginator;
@@ -45,7 +47,7 @@ class ImportBugFixesTest extends TestCase
     {
         $data = include __DIR__ . '/../../DataSets/same-district.import.dataset.php';
 
-        return new ArrayDataSet($data);
+        return $this->createArrayDataSet($data);
     }
 
     /**
@@ -61,12 +63,12 @@ class ImportBugFixesTest extends TestCase
     }
 
     /**
-     * @before
+     * @return DoeImporter
      */
-    public function setUpImporter()
+    public function getImporter()
     {
-        $this->importer = NycDoeTestImporterSetup::getImporter();
-        $this->importer->exchangeArray([
+        $importer = NycDoeTestImporterSetup::getImporter();
+        $importer->exchangeArray([
             'file'         => __DIR__ . '/_files/hogwarts.xlsx',
             'teacher_code' => 'Apple0007',
             'student_code' => 'pear0007',
@@ -74,7 +76,8 @@ class ImportBugFixesTest extends TestCase
             'email'        => 'test@example.com',
         ]);
 
-        $this->importer->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        $importer->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        return $importer;
     }
 
     /**
@@ -107,10 +110,12 @@ class ImportBugFixesTest extends TestCase
      */
     public function testItShouldNotShowUsersFromDifferentSchoolForAdministrator()
     {
-        $this->assertEmpty($this->importer->perform());
+        $this->assertEmpty($this->getImporter()->perform());
 
+        $user = new Adult();
+        $user->setUserId('english_teacher');
         // test the teacher from the default school
-        $usersForEnglishTeacher = new Paginator($this->getUserGroupService()->fetchAllUsersForUser('english_teacher'));
+        $usersForEnglishTeacher = new Paginator($this->getUserGroupService()->fetchAllUsersForUser($user));
 
         $expectedUsers = [
             'english_student',
@@ -136,11 +141,14 @@ class ImportBugFixesTest extends TestCase
      */
     public function testItShouldNotShowClassesForStudent()
     {
-        $this->assertEmpty($this->importer->perform());
+        $this->assertEmpty($this->getImporter()->perform());
+
+        $user = new Child();
+        $user->setUserId('english_student');
 
         // test the english student from the default school
         $classesForEnglishStudent = new Paginator(
-            $this->getUserGroupService()->fetchGroupsForUser('english_student', null, new Group())
+            $this->getUserGroupService()->fetchGroupsForUser($user)
         );
 
         $expectedGroups = [
@@ -167,7 +175,7 @@ class ImportBugFixesTest extends TestCase
      */
     public function testItShouldNotAllowStudentsToViewStudentsNotInTheirClass()
     {
-        $this->assertEmpty($this->importer->perform());
+        $this->assertEmpty($this->getImporter()->perform());
 
         $hogwartsStudent = $this->getUserService()->fetchUserByExternalId('01C123-0001');
 

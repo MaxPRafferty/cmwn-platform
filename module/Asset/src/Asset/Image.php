@@ -2,25 +2,26 @@
 
 namespace Asset;
 
-use Application\Utils\Date\DateCreatedTrait;
-use Application\Utils\Date\DateDeletedTrait;
-use Application\Utils\Date\DateUpdatedTrait;
-use Application\Utils\PropertiesTrait;
-use Application\Utils\SoftDeleteInterface;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
+use Application\Utils\Date\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
  * Class Image
+ *
  * @package Asset
  */
 class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInterface
 {
-    use DateCreatedTrait;
-    use DateDeletedTrait;
-    use DateUpdatedTrait;
-    use PropertiesTrait;
+    use StandardDatesTrait,
+        SoftDeleteTrait {
+        SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+    }
 
     /**
      * @var string
@@ -49,6 +50,7 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
 
     /**
      * Image constructor.
+     *
      * @param array|null $options
      */
     public function __construct(array $options = null)
@@ -62,6 +64,7 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
      * Exchange internal values from provided array
      *
      * @param  array $array
+     *
      * @return void
      */
     public function exchangeArray(array $array)
@@ -139,11 +142,13 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
 
     /**
      * @param boolean $moderated
+     *
      * @return Image
      */
     public function setModerated($moderated)
     {
-        $this->moderated = (bool) $moderated;
+        $this->moderated = (bool)$moderated;
+
         return $this;
     }
 
@@ -157,11 +162,13 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
 
     /**
      * @param string $imageId
+     *
      * @return Image
      */
     public function setImageId($imageId)
     {
         $this->imageId = $imageId;
+
         return $this;
     }
 
@@ -175,11 +182,13 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
 
     /**
      * @param string $url
+     *
      * @return Image
      */
     public function setUrl($url)
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -193,11 +202,13 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
 
     /**
      * @param string $type
+     *
      * @return Image
      */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -221,6 +232,7 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
      * Transform a status to its value
      *
      * @param $status
+     *
      * @return int
      */
     public static function statusToNumber($status)
@@ -228,7 +240,7 @@ class Image implements ArraySerializableInterface, SoftDeleteInterface, ImageInt
         $statuses = [
             static::IMAGE_APPROVED => 'approved',
             static::IMAGE_PENDING  => 'pending',
-            static::IMAGE_REJECTED => 'rejected'
+            static::IMAGE_REJECTED => 'rejected',
         ];
 
         $code = array_search($status, $statuses);

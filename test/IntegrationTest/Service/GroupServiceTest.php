@@ -4,7 +4,6 @@ namespace IntegrationTest\Service;
 
 use Group\Service\GroupServiceInterface;
 use Group\Group;
-use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
 use IntegrationTest\AbstractDbTestCase as TestCase;
@@ -33,11 +32,11 @@ class GroupServiceTest extends TestCase
     protected $groupService;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/group.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/group.dataset.php');
     }
 
     /**
@@ -64,7 +63,7 @@ class GroupServiceTest extends TestCase
         $district = new Organization([
             'org_id' => 'network_district',
             'title'  => 'Test network district',
-            'type'   => 'network_district',
+            'type'   => 'district',
         ]);
 
         /** @var OrganizationServiceInterface $orgService */
@@ -72,6 +71,7 @@ class GroupServiceTest extends TestCase
         $orgService->createOrganization($district);
 
         $schoolOne = new Group([
+            'group_id'        => 'school_1',
             'type'            => 'school',
             'title'           => 'School 1',
             'organization_id' => $district->getOrgId(),
@@ -79,6 +79,7 @@ class GroupServiceTest extends TestCase
         $schoolOne->setOrganizationId($district);
 
         $schoolTwo = new Group([
+            'group_id'        => 'school_2',
             'type'            => 'school',
             'title'           => 'School 2',
             'organization_id' => $district->getOrgId(),
@@ -86,6 +87,7 @@ class GroupServiceTest extends TestCase
         $schoolTwo->setOrganizationId($district);
 
         $mathForSchoolOne = new Group([
+            'group_id'        => 'class_1',
             'type'            => 'class',
             'title'           => 'Math for school 1',
             'organization_id' => $district->getOrgId(),
@@ -93,6 +95,7 @@ class GroupServiceTest extends TestCase
         $mathForSchoolOne->setOrganizationId($district);
 
         $mathForSchoolTwo = new Group([
+            'group_id'        => 'class_2',
             'type'            => 'class',
             'title'           => 'Math for school 2',
             'organization_id' => $district->getOrgId(),
@@ -100,6 +103,7 @@ class GroupServiceTest extends TestCase
         $mathForSchoolTwo->setOrganizationId($district);
 
         $lunchForSchoolOne = new Group([
+            'group_id'        => 'class_4',
             'type'            => 'class',
             'title'           => 'Lunch for school 1',
             'organization_id' => $district->getOrgId(),
@@ -107,6 +111,7 @@ class GroupServiceTest extends TestCase
         $lunchForSchoolOne->setOrganizationId($district);
 
         $lunchForSchoolTwo = new Group([
+            'group_id'        => 'class_3',
             'type'            => 'class',
             'title'           => 'Lunch for school 2',
             'organization_id' => $district->getOrgId(),
@@ -120,11 +125,11 @@ class GroupServiceTest extends TestCase
         $this->groupService->createGroup($lunchForSchoolOne);
         $this->groupService->createGroup($lunchForSchoolTwo);
 
-        $this->groupService->addChildToGroup($schoolOne, $mathForSchoolOne);
-        $this->groupService->addChildToGroup($schoolTwo, $mathForSchoolTwo);
+        $this->groupService->attachChildToGroup($schoolOne, $mathForSchoolOne);
+        $this->groupService->attachChildToGroup($schoolTwo, $mathForSchoolTwo);
 
-        $this->groupService->addChildToGroup($mathForSchoolOne, $lunchForSchoolOne);
-        $this->groupService->addChildToGroup($mathForSchoolTwo, $lunchForSchoolTwo);
+        $this->groupService->attachChildToGroup($mathForSchoolOne, $lunchForSchoolOne);
+        $this->groupService->attachChildToGroup($mathForSchoolTwo, $lunchForSchoolTwo);
 
         $updatedSchoolOne = $this->groupService->fetchGroup($schoolOne->getGroupId());
         $updatedMathOne   = $this->groupService->fetchGroup($mathForSchoolOne->getGroupId());
