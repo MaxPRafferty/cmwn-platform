@@ -33,7 +33,7 @@ class GameResourceTest extends TestCase
      */
     public function setUpService()
     {
-        $this->service = TestHelper::getDbServiceManager()->get(GameServiceInterface::class);
+        $this->service = TestHelper::getServiceManager()->get(GameServiceInterface::class);
     }
 
     /**

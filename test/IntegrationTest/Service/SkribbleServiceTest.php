@@ -44,7 +44,7 @@ class SkribbleServiceTest extends TestCase
      */
     public function setUpSkribbleService()
     {
-        $this->skribbleService = TestHelper::getDbServiceManager()->get(SkribbleServiceInterface::class);
+        $this->skribbleService = TestHelper::getServiceManager()->get(SkribbleServiceInterface::class);
     }
 
     /**

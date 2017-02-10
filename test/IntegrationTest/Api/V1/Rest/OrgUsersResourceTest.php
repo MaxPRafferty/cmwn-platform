@@ -41,7 +41,7 @@ class OrgUsersResourceTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
+        $this->userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
     }
 
     /**

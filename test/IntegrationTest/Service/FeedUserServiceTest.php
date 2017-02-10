@@ -40,8 +40,8 @@ class FeedUserServiceTest extends TestCase
      */
     public function setUpFeedUserService()
     {
-        $this->feedUserService = TestHelper::getDbServiceManager()->get(FeedUserService::class);
-        $this->feedService = TestHelper::getDbServiceManager()->get(FeedService::class);
+        $this->feedUserService = TestHelper::getServiceManager()->get(FeedUserService::class);
+        $this->feedService = TestHelper::getServiceManager()->get(FeedService::class);
     }
 
     /**
