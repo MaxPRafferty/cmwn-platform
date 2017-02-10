@@ -7,7 +7,6 @@ use Flip\Service\FlipServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * @group DB
@@ -30,11 +29,11 @@ class FlipResourceTest extends TestCase
      */
     protected function setUpFlipService()
     {
-        $this->flipService = TestHelper::getDbServiceManager()->get(FlipService::class);
+        $this->flipService = TestHelper::getServiceManager()->get(FlipService::class);
     }
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
