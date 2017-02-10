@@ -1,19 +1,27 @@
 <?php
 
 return [
+    
     \Zend\Config\AbstractConfigFactory::class => [
         \Search\ElasticHydrator::class => [
             \Zend\Config\Config::class,
         ],
     ],
 
-    'service_manager'              => [
+    'service_manager' => [
         'aliases'   => [
             \Search\Service\ElasticServiceInterface::class => \Search\Service\ElasticService::class,
             \Elasticsearch\Client::class                   => \Search\Service\ElasticService::class,
         ],
         'factories' => [
             \Search\Service\ElasticService::class => \Search\Service\ElasticServiceFactory::class,
+        ],
+    ],
+
+    'actions'                      => [
+        'factories' => [
+            \Search\Rule\Action\SaveDocumentAction::class   => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Search\Rule\Action\DeleteDocumentAction::class => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
     ],
 
