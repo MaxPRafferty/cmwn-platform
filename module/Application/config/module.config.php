@@ -5,21 +5,6 @@
  */
 
 return [
-    'router' => [
-        'routes' => [
-            'home' => [
-                'type'    => 'Literal',
-                'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => 'Application\Controller\Index',
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'rules' => [
         'factories' => [
             \Application\Rule\Session\Rule\HasValue::class            => \Rule\Rule\Service\BuildRuleFactory::class,
@@ -95,12 +80,6 @@ return [
     ],
 
     'controllers' => [
-        'aliases'      => [
-            \Application\Controller\IndexController::class => '\Application\Controller\Index',
-        ],
-        'invokables'   => [
-            'Application\Controller\Index' => \Application\Controller\IndexController::class,
-        ],
         'initializers' => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],

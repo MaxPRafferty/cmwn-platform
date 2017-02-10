@@ -40,12 +40,11 @@ return [
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupServiceInterface::class,
         ],
-        \Api\SwaggerHelper::class                             => [
+        Api\SwaggerHelper::class                              => [
             'Config',
         ],
         \Api\Controller\SwaggerController::class              => [
-            \Api\SwaggerHelper::class,
-
+            Api\SwaggerHelper::class,
         ],
     ],
 
@@ -64,7 +63,7 @@ return [
         'factories' => [
             \Api\Rule\Provider\EntityFromEventProvider::class     =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Api\Rule\Provider\RealEntityFromEventProvider::class     =>
+            \Api\Rule\Provider\RealEntityFromEventProvider::class =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Api\Rule\Provider\RealEntityFromEventProvider::class =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
@@ -475,8 +474,29 @@ return [
                     ],
                 ],
             ],
+            'doc.swagger'              => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/swagger',
+                    'defaults' => [
+                        'controller' => \Api\Controller\SwaggerController::class,
+                        'action'     => 'swagger',
+                    ],
+                ],
+            ],
         ],
     ],
+    'controllers'            => [
+        'factories' => [
+            \Api\Controller\SwaggerController::class =>
+                \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
+        ],
+    ],
+
+    \Api\SwaggerHelper::class => [
+        'swagger_file' => realpath(__DIR__ . '/../../../data/docs/swagger.json')
+    ],
+
     'zf-versioning'          => [
         'uri' => [
             'api.rest.user',

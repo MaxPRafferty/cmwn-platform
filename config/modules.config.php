@@ -21,7 +21,6 @@ return [
     'Zend\\Validator',
     'ZF\\Apigility',
     'ZF\\ApiProblem',
-    'ZF\\Configuration',
     'ZF\\ContentNegotiation',
     'ZF\\ContentValidation',
     'ZF\\Hal',
