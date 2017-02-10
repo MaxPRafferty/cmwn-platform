@@ -10,7 +10,6 @@ use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test UserResourceTest
@@ -29,7 +28,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 class UserResourceTest extends TestCase
 {
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {

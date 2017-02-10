@@ -7,7 +7,7 @@ use Elasticsearch\Serializers\ArrayToJSONSerializer;
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Search\ElasticHydrator;
-use Zend\Config\Config;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
@@ -20,7 +20,7 @@ class ElasticServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config        = $container->get(Config::class)['elastic'];
+        $config        = $container->get('Config')['elastic'];
         $hydrator      = $container->get(ElasticHydrator::class);
         $elasticClient = ClientBuilder::create()
             ->setHosts($config['hosts'])
@@ -31,7 +31,8 @@ class ElasticServiceFactory implements FactoryInterface
         return new ElasticService(
             $elasticClient,
             $hydrator,
-            $config
+            $config,
+            $container->get(EventManagerInterface::class)
         );
     }
 }

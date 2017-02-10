@@ -3,6 +3,8 @@
 namespace IntegrationTest;
 
 use PHPUnit\Framework\TestCase as TestCase;
+use Search\Service\ElasticService;
+use Search\Service\ElasticServiceInterface;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\ServiceManager\ServiceManager;
 
@@ -36,6 +38,9 @@ class ServiceManagerTest extends TestCase
         \ZF\Configuration\ConfigResource::class,
         \AwsModule\Session\SaveHandler\DynamoDb::class,
         'mailviewrenderer',
+        'ElasticServiceInterface',
+        ElasticService::class,
+        ElasticServiceInterface::class
     ];
 
     /**

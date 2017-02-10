@@ -52,4 +52,5 @@ return [
     'Sa',
     'Rule',
     'Address',
+    'Search',
 ];
