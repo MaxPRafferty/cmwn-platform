@@ -28,12 +28,15 @@ class SwaggerHelper
     /**
      * @return array
      */
-    public function getSwagger(): array
+    public function getSwagger(string $host = null): array
     {
         if (!file_exists($this->swaggerFile)) {
             return [];
         }
 
-        return Json::decode(file_get_contents($this->swaggerFile), Json::TYPE_ARRAY);
+        $swagger = Json::decode(file_get_contents($this->swaggerFile), Json::TYPE_ARRAY);
+        $swagger['host'] = $host ?? $swagger['host'];
+
+        return $swagger;
     }
 }
