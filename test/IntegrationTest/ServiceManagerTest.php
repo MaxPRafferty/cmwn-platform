@@ -40,7 +40,8 @@ class ServiceManagerTest extends TestCase
         'mailviewrenderer',
         'ElasticServiceInterface',
         ElasticService::class,
-        ElasticServiceInterface::class
+        ElasticServiceInterface::class,
+        'Elasticsearch\Client'
     ];
 
     /**

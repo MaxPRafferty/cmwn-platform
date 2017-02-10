@@ -20,10 +20,11 @@ class ElasticServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config        = $container->get('Config')['elastic'];
+        $config        = $container->get('Config');
+        $config        = $config['elastic'] ?? [];
         $hydrator      = $container->get(ElasticHydrator::class);
         $elasticClient = ClientBuilder::create()
-            ->setHosts($config['hosts'])
+            ->setHosts($config['hosts'] ?? [])
             ->setSerializer(ArrayToJSONSerializer::class)
             ->setLogger($container->get(LoggerInterface::class))
             ->build();
