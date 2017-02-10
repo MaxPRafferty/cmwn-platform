@@ -58,5 +58,4 @@ class EventRuleItem implements RuleItemInterface, ProviderCollectionAwareInterfa
         $this->getProviderCollection()->append($provider);
         return $this;
     }
-
 }
