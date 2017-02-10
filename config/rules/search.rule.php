@@ -40,9 +40,9 @@ return [
 
         'save-group-to-search' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
-            'id'                  => 'save-user-to-search',
-            'name'                => 'Saves the user to search',
-            'when'                => ['save.user.post', 'update.user.post'],
+            'id'                  => 'save-group-to-search',
+            'name'                => 'Saves the group to search',
+            'when'                => ['save.group.post', 'update.group.post'],
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
                 'rules'                 => [
@@ -56,7 +56,7 @@ return [
             'actions'             => [
                 'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
                 'actions'                 => [
-                    // Index the user document
+                    // Index the group document
                     [
                         'name'    => \Search\Rule\Action\SaveDocumentAction::class,
                         'options' => [
@@ -69,7 +69,7 @@ return [
             'providers'           => [
                 [
                     'name'    => \Rule\Event\Provider\FromEventParamProvider::PROVIDER_NAME,
-                    'options' => ['user'],
+                    'options' => ['group'],
                 ],
             ],
         ],
