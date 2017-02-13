@@ -1285,15 +1285,6 @@
                 }
             }
         },
-        "MetaData": {
-            "properties": {
-                "meta": {
-                    "description": "Additional meta data information",
-                    "type": "array",
-                    "items": {}
-                }
-            }
-        },
         "OuType": {
             "description": "Adds a qualifier to an Organization or Group that the user can understand",
             "properties": {
@@ -1390,9 +1381,6 @@
                 },
                 {
                     "$ref": "#/definitions/OuType"
-                },
-                {
-                    "$ref": "#/definitions/MetaData"
                 }
             ],
             "x-search-doc-id": "group_id",
@@ -1435,9 +1423,6 @@
                 },
                 {
                     "$ref": "#/definitions/OuType"
-                },
-                {
-                    "$ref": "#/definitions/MetaData"
                 }
             ],
             "x-search-doc-id": "org_id",
@@ -1517,9 +1502,6 @@
                 },
                 {
                     "$ref": "#/definitions/Searchable"
-                },
-                {
-                    "$ref": "#/definitions/MetaData"
                 }
             ],
             "x-search-doc-id": "user_id",

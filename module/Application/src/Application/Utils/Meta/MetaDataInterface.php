@@ -4,16 +4,6 @@ namespace Application\Utils\Meta;
 
 /**
  * An interface that allows an object to have meta data
- *
- * @SWG\Definition(
- *     definition="MetaData",
- *     @SWG\Property(
- *         type="array",
- *         property="meta",
- *         description="Additional meta data information",
- *         @SWG\Items()
- *     )
- * )
  */
 interface MetaDataInterface
 {

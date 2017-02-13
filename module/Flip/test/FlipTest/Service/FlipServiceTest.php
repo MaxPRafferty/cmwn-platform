@@ -160,4 +160,47 @@ class FlipServiceTest extends TestCase
 
         $this->flipService->fetchFlipById('foo-bar');
     }
+    
+    /**
+     * @test
+     */
+    public function testItShouldCreateFlip()
+    {
+        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
+        $this->tableGateway->shouldReceive('insert')
+            ->with(['flip_id' => 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue($this->flipService->createFlip($flip));
+        $this->assertEquals($flip->getFlipId(), 'foo-bar');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldUpdateFlip()
+    {
+        $flip = new Flip(['flip_id'=> 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
+        $this->tableGateway->shouldReceive('update')
+            ->with(['flip_id' => $flip->getFlipId()], ['title' => 'Foo Bar', 'description' => 'baz bat'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue($this->flipService->updateFlip($flip));
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldDeleteFlip()
+    {
+        $flip = new Flip(['flip_id' => 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
+        $this->tableGateway->shouldReceive('delete')
+            ->with(['flip_id' => 'foo-bar'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue($this->flipService->deleteFlip($flip));
+    }
 }

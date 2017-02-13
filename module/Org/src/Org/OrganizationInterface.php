@@ -26,8 +26,7 @@ use Search\SearchableDocumentInterface;
  *          @SWG\Schema(ref="#/definitions/DateUpdated"),
  *          @SWG\Schema(ref="#/definitions/DateDeleted"),
  *          @SWG\Schema(ref="#/definitions/Searchable"),
- *          @SWG\Schema(ref="#/definitions/OuType"),
- *          @SWG\Schema(ref="#/definitions/MetaData")
+ *          @SWG\Schema(ref="#/definitions/OuType")
  *     },
  *     @SWG\Property(
  *          type="string",
