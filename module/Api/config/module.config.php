@@ -56,7 +56,8 @@ return [
 
         'shared' => [
             \Api\Rule\Action\AddHalLinkAction::class => false,
-        ],
+            \Api\Rule\Action\AddTypeLinksAction::class => false,
+        ]
     ],
 
     'providers' => [
@@ -570,7 +571,7 @@ return [
             'collection_name'            => 'game',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['page', 'per_page'],
+            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
@@ -737,8 +738,8 @@ return [
             'route_name'                 => 'api.rest.flip',
             'route_identifier_name'      => 'flip_id',
             'collection_name'            => 'flip',
-            'entity_http_methods'        => ['GET'],
-            'collection_http_methods'    => ['GET'],
+            'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
             'page_size'                  => 25,
             'page_size_param'            => 'page',
@@ -1796,6 +1797,9 @@ return [
         'Api\V1\Rest\UserName\Controller'       => [
             'input_filter' => 'Api\V1\Rest\UserName\Validator',
         ],
+        'Api\V1\Rest\Flip\Controller'       => [
+            'input_filter' => 'Api\V1\Rest\Flip\Validator',
+        ],
         'Api\V1\Rest\FlipUser\Controller'       => [
             'input_filter' => 'Api\V1\Rest\FlipUser\Validator',
         ],
@@ -2257,6 +2261,22 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
+        'Api\V1\Rest\Flip\Validator'       => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'title',
+                'description' => 'The title of the flip',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'description',
+                'description' => 'The description of the flip',
+            ],
+        ],
         'Api\V1\Rest\FlipUser\Validator'       => [
             [
                 'required'    => true,
@@ -2471,6 +2491,19 @@ return [
                 ],
                 'name'        => 'coming_soon',
                 'description' => 'if the game is coming soon',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'undelete',
+                'description' => 'undelete the game',
             ],
             [
                 'required'    => false,

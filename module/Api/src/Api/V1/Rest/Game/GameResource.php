@@ -28,15 +28,13 @@ class GameResource extends AbstractResourceListener
     }
 
     /**
-     * Fetch all or a subset of resources
-     *
-     * @param  array $params
-     * @return ApiProblem|mixed
+     * @inheritdoc
      */
     public function fetchAll($params = [])
     {
         /** @var DbSelect $games */
-        $games = $this->service->fetchAll(null, true, new GameEntity());
+        $deleted = $params['deleted'] === 'true' ?? false;
+        $games = $this->service->fetchAll(null, new GameEntity(), $deleted);
         return new GameCollection($games);
     }
 
@@ -65,10 +63,15 @@ class GameResource extends AbstractResourceListener
      */
     public function update($gameId, $data)
     {
-        $game = $this->service->fetchGame($gameId);
         $data = $this->getInputFilter()->getValues();
+        $game = $this->service->fetchGame($gameId);
+        $game = $game->getArrayCopy();
 
-        $saveGame = new Game(array_merge($game->getArrayCopy(), $data));
+        if ($data['undelete']) {
+            unset($game['deleted']);
+        }
+
+        $saveGame = new Game(array_merge($game, $data));
         $this->service->saveGame($saveGame);
 
         return $saveGame;

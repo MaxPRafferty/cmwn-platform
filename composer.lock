@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8d6afb2afc23394df21fb865628865ff",
-    "content-hash": "6be1c7e780f6fc61fb59951797a73a16",
+    "hash": "4fa9d79e1ce283db38253e2531c1b6b1",
+    "content-hash": "88ca6616d61bda16dff58bddf7dda4c7",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -207,6 +207,59 @@
                 "zf2"
             ],
             "time": "2016-12-14 00:04:27"
+        },
+        {
+            "name": "bacon/bacon-string-utils",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bacon/BaconStringUtils.git",
+                "reference": "3d7818aca25190149a9a2415a0928d4964d6007e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bacon/BaconStringUtils/zipball/3d7818aca25190149a9a2415a0928d4964d6007e",
+                "reference": "3d7818aca25190149a9a2415a0928d4964d6007e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~3.7",
+                "satooshi/php-coveralls": "~0.6",
+                "squizlabs/php_codesniffer": "~1.5",
+                "zendframework/zendframework": "~2.0"
+            },
+            "suggest": {
+                "zendframework/zend-filter": "To use the Slugifier as a Zend\\Filter instance."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "BaconStringUtils": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Scholzen 'DASPRiD'",
+                    "email": "mail@dasprids.de",
+                    "homepage": "http://www.dasprids.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "BaconStringUtils contain utitilies to work with strings.",
+            "homepage": "https://github.com/Bacon/BaconStringUtils",
+            "time": "2014-10-11 16:58:02"
         },
         {
             "name": "bshaffer/oauth2-server-php",
@@ -6862,6 +6915,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "bacon/bacon-string-utils": 20,
         "zendframework/zend-component-installer": 20,
         "mockery/mockery": 20
     },

@@ -42,6 +42,15 @@ return [
                     [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
+                            \Api\Links\GameLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            true,
+                            ['true']
+                        ],
+                    ],
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
                             \Api\Links\GroupLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                             false,
@@ -110,7 +119,6 @@ return [
     ],
     'specifications'                                                => [
         'sa-settings-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-        'super-flag-hal-link'  => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-
+        'super-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
     ],
 ];
