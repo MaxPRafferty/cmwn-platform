@@ -8,7 +8,7 @@ use Group\GroupInterface;
 use Import\Importer\Nyc\DoeImporter;
 use Import\ProcessorErrorException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\Event;
 
 /**
@@ -53,12 +53,10 @@ class DoeImporterTest extends TestCase
     /**
      * @before
      */
-    public function setUpSchool()
+    public function setUpImporter()
     {
-        $this->school = new Group();
-        $this->school->setGroupId('school');
-        $this->school->setTitle('MANCHUCK School of Rock');
-        $this->school->setOrganizationId('district');
+        $this->importer = new DoeImporter($this->parser, $this->groupService);
+        $this->importer->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
@@ -82,6 +80,17 @@ class DoeImporterTest extends TestCase
     /**
      * @before
      */
+    public function setUpSchool()
+    {
+        $this->school = new Group();
+        $this->school->setGroupId('school');
+        $this->school->setTitle('MANCHUCK School of Rock');
+        $this->school->setOrganizationId('district');
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserGroupService()
     {
         $this->groupService = \Mockery::mock('\Group\Service\GroupServiceInterface');
@@ -89,15 +98,6 @@ class DoeImporterTest extends TestCase
             ->with('school')
             ->andReturn($this->school)
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpImporter()
-    {
-        $this->importer = new DoeImporter($this->parser, $this->groupService);
-        $this->importer->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**

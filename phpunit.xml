@@ -2,7 +2,7 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.6/phpunit.xsd"
-        bootstrap="./Bootstrap.php"
+        bootstrap="./test/Bootstrap.php"
         backupGlobals="false"
         backupStaticAttributes="false"
         convertErrorsToExceptions="true"
@@ -26,10 +26,10 @@
     </php>
     <testsuites>
         <testsuite name="Unit">
-            <directory>../module/*/test</directory>
+            <directory>./module/*/test</directory>
         </testsuite>
         <testsuite name="Integration">
-            <directory>./IntegrationTest</directory>
+            <directory>./test/IntegrationTest</directory>
         </testsuite>
     </testsuites>
     <filter>

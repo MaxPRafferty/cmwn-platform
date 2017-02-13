@@ -7,6 +7,7 @@ use Api\Rule\Action\AddTypeLinksAction;
 use Api\V1\Rest\User\UserEntity;
 use Application\Utils\StaticType;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\BasicValueProvider;
@@ -15,7 +16,7 @@ use Rule\Provider\BasicValueProvider;
  * Class AddTypeLinksActionTest
  * @package ApiTest\Rule\Action
  */
-class AddTypeLinksActionTest extends \PHPUnit_Framework_TestCase
+class AddTypeLinksActionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

@@ -2,18 +2,16 @@
 
 namespace IntegrationTest;
 
+use Zend\Authentication\Storage\NonPersistent;
+use Zend\Authentication\Storage\StorageInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Driver\Pdo\Pdo;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Noop;
 use ZF\Apigility\Application;
 use Zend\ServiceManager\ServiceManager;
+use PHPUnit\DbUnit\Database\DefaultConnection as TestConnection;
 
 /**
  * TestHelper
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
- * @codeCoverageIgnore
  */
 class TestHelper
 {
@@ -38,6 +36,16 @@ class TestHelper
     protected static $appConfig;
 
     /**
+     * @var TestConnection
+     */
+    protected static $testConn;
+
+    /**
+     * @var Adapter
+     */
+    protected static $dbAdapter;
+
+    /**
      * @return bool
      */
     public static function isBootstrapped()
@@ -56,13 +64,6 @@ class TestHelper
         }
 
         static::$serviceManager = Application::init(static::getApplicationConfig())->getServiceManager();
-        static::$serviceManager->setAllowOverride(true);
-
-        $testLogger = new Logger();
-        $testLogger->addWriter(new Noop());
-
-        static::$serviceManager->setService('Log\App', $testLogger);
-        static::$serviceManager->setAllowOverride(false);
 
         return static::$serviceManager;
     }
@@ -77,14 +78,7 @@ class TestHelper
             return static::$dbServiceManager;
         }
 
-        static::$dbServiceManager = Application::init(static::getApplicationConfigWithDb())->getServiceManager();
-        static::$dbServiceManager->setAllowOverride(true);
-
-        $testLogger = new Logger();
-        $testLogger->addWriter(new Noop());
-
-        static::$dbServiceManager->setService('Log\App', $testLogger);
-        static::$dbServiceManager->setAllowOverride(false);
+        static::$dbServiceManager = Application::init(static::getApplicationConfig())->getServiceManager();
 
         return static::$dbServiceManager;
     }
@@ -129,13 +123,16 @@ class TestHelper
                         __DIR__ . '/../../config/games/{games}{*}.php',
                         __DIR__ . '/../../config/rules/{*.}rule.php',
                     ],
-                    'config_cache_enabled'     => false,
-                    'module_map_cache_enabled' => false,
+                    'config_cache_key'         => 'test.config.cache',
+                    'module_map_cache_key'     => 'test.module.cache',
                     'cache_dir'                => realpath(__DIR__ . '/../../data/cache/'),
+                    'module_map_cache_enabled' => true,
+                    'config_cache_enabled'     => true,
                 ],
                 'service_manager'         => [
                     'services' => [
-                        Adapter::class => new Adapter(new Pdo(static::getPdoConnection())),
+                        Adapter::class          => static::getDbAdapter(),
+                        StorageInterface::class => new NonPersistent(),
                     ],
                 ],
             ];
@@ -145,12 +142,15 @@ class TestHelper
     }
 
     /**
-     * @return string[]
-     * @deprecated
+     * @return Adapter
      */
-    public static function getApplicationConfigWithDb()
+    public static function getDbAdapter(): Adapter
     {
-        return static::getApplicationConfig();
+        if (static::$dbAdapter == null) {
+            static::$dbAdapter = new Adapter(new Pdo(static::getPdoConnection()));
+        }
+
+        return static::$dbAdapter;
     }
 
     /**
@@ -202,5 +202,20 @@ class TestHelper
         }
 
         return static::$pdo;
+    }
+
+    /**
+     * @return TestConnection
+     */
+    public static function getTestConnection(): TestConnection
+    {
+        if (static::$testConn === null) {
+            static::$testConn = new TestConnection(
+                TestHelper::getPdoConnection(),
+                static::getTestDbConfig()['database']
+            );
+        }
+
+        return static::$testConn;
     }
 }

@@ -4,7 +4,7 @@ namespace GroupTest;
 
 use Group\Group;
 use Org\Organization;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test GroupTest

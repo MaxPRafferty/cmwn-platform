@@ -6,6 +6,7 @@ use Api\Rule\Provider\ActiveUserOrgRoleProvider;
 use Api\V1\Rest\Org\OrgEntity;
 use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityOrgServiceInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
@@ -16,7 +17,7 @@ use ZF\Hal\Entity;
  * Class ActiveUserOrgRoleProviderTest
  * @package ApiTest\Rule\Provider
  */
-class ActiveUserOrgRoleProviderTest extends \PHPUnit_Framework_TestCase
+class ActiveUserOrgRoleProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

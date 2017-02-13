@@ -4,6 +4,7 @@ namespace IntegrationTest\DataSets;
 
 /**
  * Class DefaultDataSet
+ * @deprecated
  */
 class ArrayDataSet extends \PHPUnit_Extensions_Database_DataSet_AbstractDataSet
 {

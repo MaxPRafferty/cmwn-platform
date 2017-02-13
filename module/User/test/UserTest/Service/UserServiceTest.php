@@ -3,7 +3,7 @@
 namespace UserTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Service\UserService;
 use Zend\Db\ResultSet\ResultSet;
@@ -37,6 +37,14 @@ class UserServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->userService = new UserService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -46,14 +54,6 @@ class UserServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('users')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->userService = new UserService($this->tableGateway);
     }
 
     /**
@@ -315,10 +315,8 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFound()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'User not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('User not Found');
 
         $result = new ResultSet();
         $result->initialize([]);
@@ -333,10 +331,8 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByExternalId()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'User not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('User not Found');
 
         $result = new ResultSet();
         $result->initialize([]);
@@ -351,10 +347,8 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenUserIsNotFoundByEmail()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'User not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('User not Found');
 
         $result = new ResultSet();
         $result->initialize([]);

@@ -38,7 +38,7 @@ class SkribbleResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/skribble.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/skribble.dataset.php');
     }
 
     /**
@@ -578,7 +578,7 @@ class SkribbleResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.skribble');
         $this->assertControllerName('api\v1\rest\skribble\controller');
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->skribbleService->fetchSkribble('foo-bar');
     }
 

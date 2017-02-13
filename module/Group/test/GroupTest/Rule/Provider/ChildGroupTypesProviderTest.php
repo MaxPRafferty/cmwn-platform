@@ -7,13 +7,14 @@ use Api\V1\Rest\User\UserEntity;
 use Group\Rule\Provider\ChildGroupTypesProvider;
 use Group\Service\GroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Zend\EventManager\Event;
 use ZF\Hal\Entity;
 
 /**
  * Unit tests for child group type provider
  */
-class ChildGroupTypesProviderTest extends \PHPUnit_Framework_TestCase
+class ChildGroupTypesProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use User\Adult;
 use Zend\Db\Adapter\Adapter;
@@ -50,6 +50,14 @@ class FlipUserServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->flipService = new FlipUserService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|Adapter $adapter */
@@ -59,14 +67,6 @@ class FlipUserServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('user_flips')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->flipService = new FlipUserService($this->tableGateway);
     }
 
     /**

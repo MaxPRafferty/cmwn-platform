@@ -5,7 +5,7 @@ namespace ImportTest\Importer\Nyc\Parser;
 use Application\Utils\Date\DateTimeFactory;
 use Import\Importer\Nyc\Parser\AddCodeToUserAction;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 
 /**
@@ -38,19 +38,19 @@ class AddCodeToUserActionTest extends TestCase
     /**
      * @before
      */
-    public function setUpUser()
+    public function setUpUserAware()
     {
-        $this->user = new Adult();
-        $this->user->setUserName('MANCHUCK');
+        $this->userAware = \Mockery::mock('\User\UserAwareInterface');
+        $this->userAware->shouldReceive('getUser')->andReturn($this->user)->byDefault();
     }
 
     /**
      * @before
      */
-    public function setUpUserAware()
+    public function setUpUser()
     {
-        $this->userAware = \Mockery::mock('\User\UserAwareInterface');
-        $this->userAware->shouldReceive('getUser')->andReturn($this->user)->byDefault();
+        $this->user = new Adult();
+        $this->user->setUserName('MANCHUCK');
     }
 
     /**

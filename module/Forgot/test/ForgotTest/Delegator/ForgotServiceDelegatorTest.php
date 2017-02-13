@@ -5,7 +5,7 @@ namespace ForgotTest\Delegator;
 use Application\Exception\NotFoundException;
 use Forgot\Delegator\ForgotServiceDelegator;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\SecurityUser;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -52,17 +52,6 @@ class ForgotServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpForgotService()
-    {
-        $this->forgotService = \Mockery::mock('\Forgot\Service\ForgotService');
-        $this->forgotService->shouldReceive('generateCode')
-            ->andReturn('foobar')
-            ->byDefault();
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $events = new EventManager();
@@ -71,6 +60,17 @@ class ForgotServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('forgot.password.post');
         $this->delegator->getEventManager()->clearListeners('forgot.password.errors');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpForgotService()
+    {
+        $this->forgotService = \Mockery::mock('\Forgot\Service\ForgotService');
+        $this->forgotService->shouldReceive('generateCode')
+            ->andReturn('foobar')
+            ->byDefault();
     }
 
     /**
