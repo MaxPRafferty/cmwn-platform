@@ -5,7 +5,7 @@ namespace SuggestTest\Filter;
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\Filter\FilterCollection;
 use Suggest\InvalidFilterException;
@@ -56,9 +56,10 @@ class FilterCollectionTest extends TestCase
     /**
      * @before
      */
-    public function setUpGroupService()
+    public function setUpUserGroupService()
     {
-        $this->userGroupService = \Mockery::mock(UserGroupServiceInterface::class);
+        $this->service = new ServiceManager();
+        $this->service->setService(ClassFilter::class, $this->classFilter);
     }
 
     /**
@@ -72,10 +73,9 @@ class FilterCollectionTest extends TestCase
     /**
      * @before
      */
-    public function setUpUserGroupService()
+    public function setUpGroupService()
     {
-        $this->service = new ServiceManager();
-        $this->service->setService(ClassFilter::class, $this->classFilter);
+        $this->userGroupService = \Mockery::mock(UserGroupServiceInterface::class);
     }
 
     /**
@@ -122,7 +122,8 @@ class FilterCollectionTest extends TestCase
         $config     = ['foo-bar' => 'foobar'];
         $rules      = new FilterCollection($services, $config);
         $collection = new SuggestionCollection();
-        $this->setExpectedException(InvalidFilterException::class, 'Missing filter: "foobar" from services');
+        $this->expectException(InvalidFilterException::class);
+        $this->expectExceptionMessage('Missing filter: "foobar" from services');
 
         $rules->getSuggestions($collection, new Child());
     }
@@ -137,7 +138,8 @@ class FilterCollectionTest extends TestCase
         $services->setService('foobar', new \stdClass());
         $rules      = new FilterCollection($services, $config);
         $collection = new SuggestionCollection();
-        $this->setExpectedException(InvalidFilterException::class, 'Invalid Filter Provided');
+        $this->expectException(InvalidFilterException::class);
+        $this->expectExceptionMessage('Invalid Filter Provided');
 
         $this->assertEmpty($rules->getSuggestions($collection, new Child()));
     }

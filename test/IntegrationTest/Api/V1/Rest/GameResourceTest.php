@@ -26,7 +26,7 @@ class GameResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
     }
 
     /**
@@ -175,7 +175,7 @@ class GameResourceTest extends TestCase
         $this->assertEquals(['desktop' => true, 'unity' => false], $game->getMeta());
         $this->assertFalse($game->isComingSoon());
     }
-    
+
     /**
      * @test
      */

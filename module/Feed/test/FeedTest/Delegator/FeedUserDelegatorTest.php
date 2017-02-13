@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Feed\Delegator\FeedUserDelegator;
 use Feed\Service\FeedUserService;
 use Feed\UserFeed;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -22,12 +22,12 @@ class FeedUserDelegatorTest extends TestCase
      * @var FeedUserService | \Mockery\MockInterface
      */
     protected $service;
-    
+
     /**
      * @var FeedUserDelegator
      */
     protected $delegator;
-    
+
     /**
      * @var array
      */
@@ -36,19 +36,19 @@ class FeedUserDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->service = \Mockery::mock(FeedUserService::class);
-    }
-    
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $this->calledEvents = [];
         $this->delegator = new FeedUserDelegator($this->service, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->service = \Mockery::mock(FeedUserService::class);
     }
 
     /**
@@ -62,7 +62,7 @@ class FeedUserDelegatorTest extends TestCase
             'params' => $event->getParams()
         ];
     }
-    
+
     /**
      * @test
      */
@@ -133,7 +133,7 @@ class FeedUserDelegatorTest extends TestCase
             ->with('english_student', null, null)
             ->andThrow($e)
             ->once();
-        $this->setExpectedException(\Exception::class);
+        $this->expectException(\Exception::class);
 
         $this->delegator->fetchAllFeedForUser('english_student');
         $this->assertEquals(2, count($this->calledEvents));
@@ -243,7 +243,7 @@ class FeedUserDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->delegator->fetchFeedForUser('english_student', 'es_friend_feed');
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -352,7 +352,7 @@ class FeedUserDelegatorTest extends TestCase
         $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
         $e = new \Exception();
 
-        $this->setExpectedException(\Exception::class);
+        $this->expectException(\Exception::class);
 
         $this->service->shouldReceive('attachFeedForUser')
             ->with('english_student', $userFeed)
@@ -462,7 +462,7 @@ class FeedUserDelegatorTest extends TestCase
     {
         $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
         $e = new \Exception();
-        $this->setExpectedException(\Exception::class);
+        $this->expectException(\Exception::class);
         $this->service->shouldReceive('updateFeedForUser')
             ->with('english_student', $userFeed)
             ->andThrow($e)
@@ -571,7 +571,7 @@ class FeedUserDelegatorTest extends TestCase
     {
         $userFeed = new UserFeed(['feed_id' => 'es_friend_feed']);
         $e = new \Exception();
-        $this->setExpectedException(\Exception::class);
+        $this->expectException(\Exception::class);
         $this->service->shouldReceive('deleteFeedForUser')
             ->with('english_student', $userFeed)
             ->andThrow($e)

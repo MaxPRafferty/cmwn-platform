@@ -4,7 +4,7 @@ namespace ForgotTest\Service;
 
 use Forgot\Service\ForgotService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\SecurityUser;
 
 /**
@@ -31,17 +31,17 @@ class ForgotServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpSecurityService()
+    public function setUpForgotService()
     {
-        $this->securityService = \Mockery::mock('\Security\Service\SecurityServiceInterface');
+        $this->forgotService = new ForgotService($this->securityService);
     }
 
     /**
      * @before
      */
-    public function setUpForgotService()
+    public function setUpSecurityService()
     {
-        $this->forgotService = new ForgotService($this->securityService);
+        $this->securityService = \Mockery::mock('\Security\Service\SecurityServiceInterface');
     }
 
     /**

@@ -7,7 +7,7 @@ use Flag\Flag;
 use Flag\FlagInterface;
 use Flag\Service\FlagService;
 use Flag\Service\FlagServiceInterface;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
@@ -50,6 +50,14 @@ class FlagServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpFlagService()
+    {
+        $this->flagService = new FlagService($this->tableGateway, $this->flagHydrator);
+    }
+
+    /**
+     * @before
+     */
     public function setUpTableGateway()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -67,14 +75,6 @@ class FlagServiceTest extends TestCase
     public function setUpHydrator()
     {
         $this->flagHydrator = \Mockery::mock(\Flag\FlagHydrator::class);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpFlagService()
-    {
-        $this->flagService = new FlagService($this->tableGateway, $this->flagHydrator);
     }
 
     /**
@@ -152,7 +152,7 @@ class FlagServiceTest extends TestCase
         $this->flagHydrator
             ->shouldReceive('setPrototype')
             ->once();
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->tableGateway
             ->shouldReceive('select')
             ->andReturn($resultSet)
@@ -219,7 +219,7 @@ class FlagServiceTest extends TestCase
         $this->flagHydrator
             ->shouldReceive('setPrototype')
             ->once();
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->tableGateway
             ->shouldReceive('select')
             ->andReturn($resultSet)

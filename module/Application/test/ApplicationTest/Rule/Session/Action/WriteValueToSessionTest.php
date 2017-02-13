@@ -3,7 +3,7 @@
 namespace ApplicationTest\Rule\Session\Action;
 
 use Application\Rule\Session\Action\WriteValueToSession;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Item\BasicRuleItem;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;

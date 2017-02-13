@@ -6,7 +6,7 @@ use Flip\Delegator\FlipServiceDelegator;
 use Flip\Flip;
 use Flip\Service\FlipService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -46,20 +46,20 @@ class FlipServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpFlipService()
-    {
-        $this->flipService = \Mockery::mock(FlipService::class);
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $events             = new EventManager();
         $this->calledEvents = [];
         $this->delegator    = new FlipServiceDelegator($this->flipService, $events);
         $events->attach('*', [$this, 'captureEvents'], PHP_INT_MAX);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpFlipService()
+    {
+        $this->flipService = \Mockery::mock(FlipService::class);
     }
 
     /**

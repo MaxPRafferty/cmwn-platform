@@ -5,7 +5,7 @@ namespace GroupTest\Delegator;
 use Application\Exception\NotFoundException;
 use Group\Delegator\UserGroupServiceDelegator;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Group\Group;
 use User\Adult;
 use User\User;
@@ -61,14 +61,6 @@ class UserGroupServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->groupService = \Mockery::mock('\Group\Service\UserGroupService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $events = new EventManager();
@@ -78,6 +70,14 @@ class UserGroupServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('fetch.group.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.groups');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->groupService = \Mockery::mock('\Group\Service\UserGroupService');
     }
 
     /**

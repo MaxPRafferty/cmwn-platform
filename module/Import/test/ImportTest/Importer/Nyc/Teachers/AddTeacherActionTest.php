@@ -7,7 +7,7 @@ use Import\Importer\Nyc\Teachers\AddTeacherAction;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 
 /**
@@ -38,20 +38,20 @@ class AddTeacherActionTest extends TestCase
     /**
      * @before
      */
+    public function setUpRegistry()
+    {
+        $this->registry = new TeacherRegistry($this->service);
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserService()
     {
         $this->service = \Mockery::mock('\User\Service\UserServiceInterface');
         $this->service->shouldReceive('fetchUserByEmail')
             ->andThrow(new NotFoundException())
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpRegistry()
-    {
-        $this->registry = new TeacherRegistry($this->service);
     }
 
     /**
