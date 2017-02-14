@@ -5,7 +5,7 @@ namespace FeedTest\Service;
 use Application\Exception\NotFoundException;
 use Feed\Feed;
 use Feed\Service\FeedService;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -46,11 +46,11 @@ class FeedServiceTest extends TestCase
     {
         $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
-        
+
         $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('feed')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-        
+
         $this->service = new FeedService($this->tableGateway);
     }
 
@@ -115,7 +115,7 @@ class FeedServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenFeedNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->tableGateway->shouldReceive('select')
             ->andReturnUsing(function ($where) {
@@ -128,7 +128,7 @@ class FeedServiceTest extends TestCase
             });
         $this->assertInstanceOf(NotFoundException::class, $this->service->fetchFeed('friend_feed'));
     }
-    
+
     /**
      * @test
      */
@@ -198,7 +198,7 @@ class FeedServiceTest extends TestCase
      */
     public function testItShouldNotUpdateWhenFeedNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->tableGateway->shouldReceive('select')
             ->andReturnUsing(function ($where) {

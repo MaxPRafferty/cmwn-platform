@@ -3,7 +3,7 @@
 namespace GroupTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Group\Group;
 use Group\Service\GroupService;
 use Zend\Db\ResultSet\ResultSet;
@@ -45,9 +45,9 @@ class GroupServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpConnection()
+    public function setUpService()
     {
-        $this->connection = \Mockery::mock('Zend\Db\Adapter\Driver\Pdo\Connection');
+        $this->groupService = new GroupService($this->tableGateway);
     }
 
     /**
@@ -73,9 +73,9 @@ class GroupServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpConnection()
     {
-        $this->groupService = new GroupService($this->tableGateway);
+        $this->connection = \Mockery::mock('Zend\Db\Adapter\Driver\Pdo\Connection');
     }
 
     /**
@@ -273,11 +273,9 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFound()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'Group not Found'
-        );
-
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('Group not Found');
+// \$this->setExpectedException\(?\s+?(.*)?,(.*)\);
         $result = new ResultSet();
         $result->initialize([]);
         $this->tableGateway->shouldReceive('select')
@@ -291,10 +289,8 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFoundByExternalId()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'Group not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('Group not Found');
 
         $result = new ResultSet();
         $result->initialize([]);

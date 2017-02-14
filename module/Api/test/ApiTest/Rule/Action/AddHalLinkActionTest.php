@@ -6,6 +6,7 @@ use Api\Links\UserLink;
 use Api\Rule\Action\AddHalLinkAction;
 use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\BasicValueProvider;
@@ -14,7 +15,7 @@ use Rule\Provider\BasicValueProvider;
  * Class AddHalLinkActionTest
  * @package ApiTest\Rule\Action
  */
-class AddHalLinkActionTest extends \PHPUnit_Framework_TestCase
+class AddHalLinkActionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

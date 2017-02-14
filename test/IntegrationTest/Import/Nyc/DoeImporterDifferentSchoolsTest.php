@@ -39,7 +39,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     {
         $data = include __DIR__ . '/../../DataSets/duplicate.import.dataset.php';
 
-        return new ArrayDataSet($data);
+        return $this->createArrayDataSet($data);
     }
 
     /**
@@ -55,12 +55,12 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     }
 
     /**
-     * @before
+     * @return DoeImporter
      */
-    public function setUpImporter()
+    public function getImporter()
     {
-        $this->importer = NycDoeTestImporterSetup::getImporter();
-        $this->importer->exchangeArray([
+        $importer = NycDoeTestImporterSetup::getImporter();
+        $importer->exchangeArray([
             'file'         => __DIR__ . '/_files/hogwarts.xlsx',
             'teacher_code' => 'Apple0007',
             'student_code' => 'pear0007',
@@ -68,7 +68,8 @@ class DoeImporterDifferentSchoolsTest extends TestCase
             'email'        => 'test@example.com',
         ]);
 
-        $this->importer->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        $importer->setLogger(new Logger(['writers' => [['name' => 'noop']]]));
+        return $importer;
     }
 
     /**
@@ -101,7 +102,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
      */
     public function testItShouldNotAssignStudentsToClassesThatShareStudentIdWithStudentsFromOtherDistrictsAndSchool()
     {
-        $this->assertEmpty($this->importer->perform());
+        $this->assertEmpty($this->getImporter()->perform());
         $this->checkAssociations();
     }
 

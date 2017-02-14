@@ -3,7 +3,7 @@
 namespace SecurityTest\Rule\Provider;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\GuestUser;
 use Security\Rule\Provider\ActiveUserProvider;
 use Zend\Authentication\AuthenticationServiceInterface;

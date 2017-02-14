@@ -32,7 +32,7 @@ class FeedUserServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/feed.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/feed.dataset.php');
     }
 
     /**
@@ -80,7 +80,7 @@ class FeedUserServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenFeedNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->assertInstanceOf(
             NotFoundException::class,
             $this->feedUserService->fetchFeedForUser('english_student', 'foobar'),
@@ -127,7 +127,7 @@ class FeedUserServiceTest extends TestCase
 
         $this->feedUserService->deleteFeedForUser('english_student', $userFeed);
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->assertInstanceOf(
             NotFoundException::class,

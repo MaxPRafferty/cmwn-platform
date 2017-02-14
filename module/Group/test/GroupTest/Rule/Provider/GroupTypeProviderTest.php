@@ -5,11 +5,12 @@ namespace GroupTest\Rule\Provider;
 use Group\Rule\Provider\GroupTypesProvider;
 use Group\Service\GroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for group type provider
  */
-class GroupTypeProviderTest extends \PHPUnit_Framework_TestCase
+class GroupTypeProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

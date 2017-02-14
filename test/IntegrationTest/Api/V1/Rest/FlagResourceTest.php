@@ -34,7 +34,7 @@ class FlagResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/flag.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/flag.dataset.php');
     }
 
     /**

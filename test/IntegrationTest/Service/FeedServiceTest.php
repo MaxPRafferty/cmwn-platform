@@ -21,7 +21,7 @@ class FeedServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/feed.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/feed.dataset.php');
     }
 
     /**
@@ -62,7 +62,7 @@ class FeedServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenFeedNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->assertInstanceOf(
             NotFoundException::class,
             $this->feedService->fetchFeed('foobar'),
@@ -128,7 +128,7 @@ class FeedServiceTest extends TestCase
         $this->assertEquals(1, $feed->getTypeVersion());
         $this->assertEquals('2016-04-15 11:49:08', $feed->getPosted());
     }
-    
+
     /**
      * @test
      */
@@ -160,7 +160,7 @@ class FeedServiceTest extends TestCase
     public function testItShouldHardDeleteFeed()
     {
         $this->feedService->deleteFeed(new Feed(['feed_id' => 'es_friend_feed']), false);
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->assertInstanceOf(
             NotFoundException::class,
             $this->feedService->fetchFeed('es_friend_feed'),

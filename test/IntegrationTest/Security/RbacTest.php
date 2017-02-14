@@ -4,7 +4,7 @@ namespace IntegrationTest\Security;
 
 use IntegrationTest\Security\Rbac\RbacDataProvider;
 use IntegrationTest\TestHelper;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Authorization\Rbac;
 use Zend\Permissions\Rbac\RoleInterface;
 

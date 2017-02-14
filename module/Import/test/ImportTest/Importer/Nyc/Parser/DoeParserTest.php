@@ -10,7 +10,7 @@ use Import\Importer\Nyc\Students\StudentRegistry;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use IntegrationTest\TestHelper;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Authorization\Rbac;
 
 /**
@@ -72,6 +72,34 @@ class DoeParserTest extends TestCase
     /**
      * @before
      */
+    public function setUpStudentRegistry()
+    {
+        /** @var \Mockery\MockInterface|\User\Service\UserServiceInterface $userService */
+        $userService = \Mockery::mock('\User\Service\UserServiceInterface');
+        $userService->shouldReceive('fetchUserByExternalId')
+            ->andThrow(NotFoundException::class)
+            ->byDefault();
+
+        $this->studentRegistry = new StudentRegistry($userService, $this->classRegistry);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpTeacherRegistry()
+    {
+        /** @var \Mockery\MockInterface|\User\Service\UserServiceInterface $userService */
+        $userService = \Mockery::mock('\User\Service\UserServiceInterface');
+        $userService->shouldReceive('fetchUserByEmail')
+            ->andThrow(NotFoundException::class)
+            ->byDefault();
+
+        $this->teacherRegistry = new TeacherRegistry($userService, $this->classRegistry);
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserGroupService()
     {
         $this->userGroupService = \Mockery::mock('\Group\Service\UserGroupServiceInterface');
@@ -107,34 +135,6 @@ class DoeParserTest extends TestCase
     {
         /** @var  $this ->securityService */
         $this->securityService = \Mockery::mock('\Security\Service\SecurityServiceInterface');
-    }
-
-    /**
-     * @before
-     */
-    public function setUpTeacherRegistry()
-    {
-        /** @var \Mockery\MockInterface|\User\Service\UserServiceInterface $userService */
-        $userService = \Mockery::mock('\User\Service\UserServiceInterface');
-        $userService->shouldReceive('fetchUserByEmail')
-            ->andThrow(NotFoundException::class)
-            ->byDefault();
-
-        $this->teacherRegistry = new TeacherRegistry($userService, $this->classRegistry);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpStudentRegistry()
-    {
-        /** @var \Mockery\MockInterface|\User\Service\UserServiceInterface $userService */
-        $userService = \Mockery::mock('\User\Service\UserServiceInterface');
-        $userService->shouldReceive('fetchUserByExternalId')
-            ->andThrow(NotFoundException::class)
-            ->byDefault();
-
-        $this->studentRegistry = new StudentRegistry($userService, $this->classRegistry);
     }
 
     /**
@@ -283,7 +283,7 @@ class DoeParserTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenFileNameNotSet()
     {
-        $this->setExpectedException(\RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->getParser()->preProcess();
     }
 

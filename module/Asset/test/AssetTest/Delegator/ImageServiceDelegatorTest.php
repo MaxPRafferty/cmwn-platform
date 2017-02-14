@@ -3,7 +3,7 @@
 namespace AssetTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Asset\Image;
 use Asset\Delegator\ImageServiceDelegator;
 use Zend\Db\Sql\Where;
@@ -49,14 +49,6 @@ class ImageServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->imageService = \Mockery::mock('\Asset\Service\ImageService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $events = new EventManager();
@@ -66,6 +58,14 @@ class ImageServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('fetch.image.post');
         $this->delegator->getEventManager()->clearListeners('fetch.all.images');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->imageService = \Mockery::mock('\Asset\Service\ImageService');
     }
 
     /**

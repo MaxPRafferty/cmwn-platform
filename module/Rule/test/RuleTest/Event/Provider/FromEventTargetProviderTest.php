@@ -2,7 +2,7 @@
 
 namespace RuleTest\Event\Provider;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Event\Provider\FromEventTargetProvider;
 use Zend\EventManager\Event;
 

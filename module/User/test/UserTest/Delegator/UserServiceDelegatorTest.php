@@ -3,7 +3,7 @@
 namespace UserTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Delegator\UserServiceDelegator;
 use Zend\Db\Sql\Where;
@@ -49,19 +49,19 @@ class UserServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->userService = \Mockery::mock('\User\Service\UserService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $this->calledEvents = [];
         $this->delegator    = new UserServiceDelegator($this->userService, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->userService = \Mockery::mock('\User\Service\UserService');
     }
 
     /**

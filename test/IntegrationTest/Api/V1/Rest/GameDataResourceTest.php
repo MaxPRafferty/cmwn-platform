@@ -25,7 +25,7 @@ class GameDataResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
     }
 
     /**
