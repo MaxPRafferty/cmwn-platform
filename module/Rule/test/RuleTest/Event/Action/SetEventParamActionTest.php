@@ -55,7 +55,7 @@ class SetEventParamActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldThrowExceptionIfEventNotInstanceOfEventInterface()
     {
-        $this->setExpectedException(InvalidProviderType::class);
+        $this->expectException(InvalidProviderType::class);
         $this->item->shouldReceive('getParam')
             ->with('event')
             ->once();
