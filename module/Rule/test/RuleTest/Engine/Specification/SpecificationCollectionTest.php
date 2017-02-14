@@ -2,7 +2,7 @@
 
 namespace RuleTest\Engine\Specification;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Action\NoopAction;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Engine\Specification\ArraySpecification;

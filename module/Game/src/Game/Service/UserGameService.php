@@ -9,7 +9,6 @@ use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
@@ -18,6 +17,7 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  *  Service that talks to the user_games table
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserGameService implements UserGameServiceInterface
 {
@@ -44,10 +44,11 @@ class UserGameService implements UserGameServiceInterface
         GameInterface $prototype = null
     ) : AdapterInterface {
         $select = $this->createSelect();
+        $select->where($where);
         $select->columns([]);
 
-        $select->where(['user_id' => $user->getUserId()]);
-
+        $select->where(['ug.user_id' => $user->getUserId()]);
+        $select->quantifier(Select::QUANTIFIER_DISTINCT);
         $prototype = $prototype ?? new Game();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect($select, $this->tableGateway->getAdapter(), $resultSet);

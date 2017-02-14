@@ -2,12 +2,14 @@
 
 namespace Game;
 
+use Application\Utils\Date\SoftDeleteInterface;
+
 /**
  * Interface GameInterface
  *
  * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
  */
-interface GameInterface
+interface GameInterface extends SoftDeleteInterface
 {
     /**
      * Exchange internal values from provided array

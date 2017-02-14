@@ -82,7 +82,7 @@ class UserUpdateListener implements AuthenticationServiceAwareInterface
             return;
         }
 
-        $existing = $userService->fetchUser($user->getUserId());
+        $existing = $userService->fetchUser($user->getUserId(), null);
 
         $user->setEmail($existing->getEmail());
     }

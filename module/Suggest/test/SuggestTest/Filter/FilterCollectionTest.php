@@ -5,13 +5,14 @@ namespace SuggestTest\Filter;
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\Filter\FilterCollection;
 use Suggest\InvalidFilterException;
 use Suggest\SuggestionCollection;
 use User\Adult;
 use User\Child;
+use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -85,24 +86,17 @@ class FilterCollectionTest extends TestCase
     {
         $student    = new Child(['user_id' => 'english_student']);
         $teacher    = new Adult(['user_id' => 'english_teacher']);
-        $paginator  = \Mockery::mock(DbSelect::class);
         $group      = new Group();
+        $paginator  = new ArrayAdapter([$student, $teacher]);
         $collection = new SuggestionCollection();
 
         $this->userGroupService->shouldReceive("fetchGroupsForUser")
-            ->andReturn($paginator)
-            ->once();
-
-        $paginator->shouldReceive('getItems')
-            ->andReturn([$group])
+            ->andReturn(new ArrayAdapter([$group]))
             ->once();
 
         $this->userGroupService->shouldReceive('fetchUsersForGroup')
             ->andReturn($paginator)
             ->once();
-
-        $paginator->shouldReceive('getItems')
-            ->andReturn([$student, $teacher]);
 
         $filterCollection = new FilterCollection($this->service, $this->filterConfig);
         $filterCollection->getSuggestions($collection, $student);

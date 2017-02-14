@@ -3,7 +3,7 @@
 namespace SecurityTest\Authorization\Assertion;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\Authorization\Assertion\UserAssertion;
 use Security\Authorization\Rbac;
 use Security\Service\SecurityUserServiceInterface;

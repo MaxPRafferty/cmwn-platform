@@ -5,7 +5,7 @@ namespace SuggestTest\Filter;
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\SuggestionCollection;
 use User\Adult;
@@ -155,7 +155,9 @@ class ClassFilterTest extends TestCase
     {
         $groups = [];
         for ($groupCount = 0; $groupCount < $number; $groupCount++) {
-            array_push($groups, new Group(['group_id' => 'group_' . $groupCount]));
+            $group = new Group();
+            $group->setGroupId('group_' . $groupCount);
+            array_push($groups, $group);
         }
 
         return $groups;

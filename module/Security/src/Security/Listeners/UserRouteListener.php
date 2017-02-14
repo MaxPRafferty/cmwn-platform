@@ -97,7 +97,7 @@ class UserRouteListener implements AuthenticationServiceAwareInterface
         }
 
         try {
-            $user = $this->userService->fetchUser($userId);
+            $user = $this->userService->fetchUser($userId, null);
         } catch (NotFoundException $notFound) {
             return new ApiProblemResponse(new ApiProblem(404, 'User not found'));
         }

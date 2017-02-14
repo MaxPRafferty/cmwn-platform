@@ -49,7 +49,52 @@ class UserGameResource extends AbstractResourceListener
     }
 
     /**
-     * @inheritdoc
+     * Attach a game to a user
+     *
+     * The authenticated user must be allowed to attach a game to a user in the system
+     *
+     * @SWG\Post(path="/user/:user_id/game/:game_id",
+     *   tags={"user-game"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *   @SWG\Parameter(
+     *     in="body",
+     *     name="body",
+     *     description="Game data",
+     *     required=true,
+     *     @SWG\Schema(ref="#/definitions/UserGame")
+     *   ),
+     *   @SWG\Response(
+     *     response=201,
+     *     description="Group was created",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/GroupEntity")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=422,
+     *     description="Validation failed",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *     )
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(
+     *          type="object",
+     *          @SWG\Items(ref="#/definitions/Error")
+     *     )
+     *   )
+     * )
+     * @param  mixed $data
+     *
+     * @return ApiProblem|mixed
      */
     public function create($data)
     {
@@ -74,8 +119,7 @@ class UserGameResource extends AbstractResourceListener
         $user = $this->userService->fetchUser($userId);
         $game = $this->gameService->fetchGame($gameId);
 
-        $this->userGameService->detachGameForUser($user, $game);
-        return new ApiProblem(200, 'game detached from user');
+        return $this->userGameService->detachGameForUser($user, $game);
     }
 
     /**
@@ -86,7 +130,7 @@ class UserGameResource extends AbstractResourceListener
         $userId = $this->getEvent()->getRouteParam('user_id');
         $user = $this->userService->fetchUser($userId);
 
-        return new GameCollection($this->userGameService->fetchAllGamesForUser($user, null, new GameEntity()));
+        return new GameCollection($this->userGameService->fetchAllGamesForUser($user, null, new UserGameEntity()));
     }
 
     /**
@@ -100,7 +144,7 @@ class UserGameResource extends AbstractResourceListener
         $user = $this->userService->fetchUser($userId);
         $game = $this->gameService->fetchGame($gameId);
 
-        $game = $this->userGameService->fetchGameForUser($user, $game, new GameEntity());
+        $game = $this->userGameService->fetchGameForUser($user, $game, new UserGameEntity());
         return new GameEntity($game->getArrayCopy());
     }
 }

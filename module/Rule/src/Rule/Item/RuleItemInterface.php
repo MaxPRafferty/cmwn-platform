@@ -2,6 +2,7 @@
 
 namespace Rule\Item;
 
+use Rule\Engine\Specification\SpecificationInterface;
 use Rule\Provider\ProviderInterface;
 
 /**
@@ -29,4 +30,20 @@ interface RuleItemInterface
      * @return RuleItemInterface
      */
     public function append(ProviderInterface $provider): RuleItemInterface;
+
+    /**
+     * Sets the specification that generated this item
+     *
+     * @param SpecificationInterface $specification
+     *
+     * @return RuleItemInterface
+     */
+    public function setSpecification(SpecificationInterface $specification): RuleItemInterface;
+
+    /**
+     * Gets the specification that generated this item
+     *
+     * @return SpecificationInterface
+     */
+    public function getSpecification(): SpecificationInterface;
 }

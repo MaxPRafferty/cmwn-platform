@@ -27,7 +27,7 @@ interface UserGameServiceInterface
 
     /**
      * @param UserInterface $user
-     * @param GameInterface $gameId
+     * @param GameInterface $game
      * @param GameInterface | null $prototype
      * @return GameInterface
      * @throws NotFoundException

@@ -3,9 +3,9 @@
 namespace Org;
 
 /**
- * Interface OrgAwareInterface
+ * An Object that is aware of an organization
  *
- * ${CARET}
+ * @deprecated
  */
 interface OrgAwareInterface
 {

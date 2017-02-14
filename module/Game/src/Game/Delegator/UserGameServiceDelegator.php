@@ -2,6 +2,7 @@
 
 namespace Game\Delegator;
 
+use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
 use Game\GameInterface;
 use Game\Service\UserGameService;
@@ -37,6 +38,16 @@ class UserGameServiceDelegator implements UserGameServiceInterface
     {
         $this->service = $userGameService;
         $this->events = $events;
+
+        $deleted = new HideDeletedEntitiesListener(
+            ['fetch.all.user.games'],
+            ['fetch.user.game.post'],
+            'g'
+        );
+
+        $deleted->attach($events, PHP_INT_MIN);
+        $deleted->setEntityParamKey('game');
+
         $events->addIdentifiers(array_merge(
             [UserGameServiceInterface::class, static::class, UserGameService::class],
             $events->getIdentifiers()
@@ -59,7 +70,7 @@ class UserGameServiceDelegator implements UserGameServiceInterface
         $where = null,
         GameInterface $prototype = null
     ) : AdapterInterface {
-        $this->createWhere($where);
+        $where = $this->createWhere($where);
         $event = new Event(
             'fetch.all.user.games',
             $this->service,

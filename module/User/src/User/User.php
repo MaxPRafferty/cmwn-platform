@@ -2,34 +2,30 @@
 
 namespace User;
 
-use Application\Utils\Date\DateCreatedTrait;
-use Application\Utils\Date\DateDeletedTrait;
 use Application\Utils\Date\DateTimeFactory;
-use Application\Utils\Date\DateUpdatedTrait;
-use Application\Utils\MetaDataTrait;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
+use Application\Utils\Meta\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
-use Application\Utils\SoftDeleteInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Abstract Class that helps all users
- *
- * @package User
- * @property string $userId
+ * An abstract user that satisfies some of UserInterface
  */
-abstract class User implements ArraySerializableInterface, UserInterface, SoftDeleteInterface
+abstract class User implements
+    ArraySerializableInterface,
+    UserInterface
 {
-    use DateCreatedTrait;
-    use DateDeletedTrait;
-    use DateUpdatedTrait;
-    use MetaDataTrait;
-    use PropertiesTrait;
-
-    //  This by no means is a stab at the LGBT community, currently DOE only has male and female
-    const GENDER_MALE   = 'Male';
-    const GENDER_FEMALE = 'Female';
+    use StandardDatesTrait,
+        MetaDataTrait,
+        PropertiesTrait,
+        SoftDeleteTrait {
+        SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+        SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+    }
 
     /**
      * @var string
@@ -102,33 +98,23 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * Returns the type of user
-     *
-     * @return string
+     * @inheritdoc
      */
-    abstract public function getType();
-
-    /**
-     * Converts an Array into something that can be digested here
-     *
-     * @param array $array
-     */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): UserInterface
     {
         $defaults = [
-            'user_id'     => null,
-            'username'    => null,
-            'email'       => null,
-            'first_name'  => null,
-            'middle_name' => null,
-            'last_name'   => null,
-            'gender'      => null,
+            'user_id'     => '',
+            'email'       => '',
+            'first_name'  => '',
+            'middle_name' => '',
+            'last_name'   => '',
+            'gender'      => '',
             'birthdate'   => null,
             'meta'        => [],
             'created'     => null,
             'updated'     => null,
             'deleted'     => null,
-            'type'        => null,
+            'type'        => '',
             'external_id' => null,
         ];
 
@@ -140,14 +126,14 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
                 $this->{$method}($value);
             }
         }
+
+        return $this;
     }
 
     /**
-     * Return this object represented as an array
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'user_id'     => $this->getUserId(),
@@ -159,16 +145,16 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
             'gender'      => $this->getGender(),
             'birthdate'   => $this->getBirthdate() !== null ? $this->getBirthdate()->format("Y-m-d H:i:s") : null,
             'meta'        => $this->getMeta(),
-            'created'     => $this->getCreated() !== null ? $this->getCreated()->format("Y-m-d H:i:s") : null,
-            'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format("Y-m-d H:i:s") : null,
-            'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format("Y-m-d H:i:s") : null,
+            'created'     => $this->formatCreated("Y-m-d H:i:s"),
+            'updated'     => $this->formatUpdated("Y-m-d H:i:s"),
+            'deleted'     => $this->formatDeleted("Y-m-d H:i:s"),
             'type'        => $this->getType(),
             'external_id' => $this->getExternalId(),
         ];
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getExternalId()
     {
@@ -176,11 +162,9 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @param string $externalId
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setExternalId($externalId)
+    public function setExternalId(string $externalId = null): UserInterface
     {
         $this->externalId = $externalId;
 
@@ -188,19 +172,17 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getUserId()
+    public function getUserId(): string
     {
-        return (string) $this->userId;
+        return (string)$this->userId;
     }
 
     /**
-     * @param string $userId
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setUserId($userId)
+    public function setUserId(string $userId): UserInterface
     {
         $this->userId = (string)$userId;
 
@@ -208,7 +190,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getUserName()
     {
@@ -216,11 +198,9 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @param string $userName
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setUserName($userName)
+    public function setUserName(string $userName): UserInterface
     {
         $this->userName = $userName;
 
@@ -228,19 +208,17 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getEmail()
+    public function getEmail(): string
     {
-        return $this->email;
+        return (string)$this->email;
     }
 
     /**
-     * @param string $email
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setEmail($email)
+    public function setEmail(string $email): UserInterface
     {
         $this->email = $email;
 
@@ -248,19 +226,17 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return null|string
+     * @inheritdoc
      */
-    public function getFirstName()
+    public function getFirstName(): string
     {
-        return $this->firstName;
+        return (string)$this->firstName;
     }
 
     /**
-     * @param null|string $firstName
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setFirstName($firstName)
+    public function setFirstName(string $firstName): UserInterface
     {
         $this->firstName = $firstName;
 
@@ -268,7 +244,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return null|string
+     * @inheritdoc
      */
     public function getMiddleName()
     {
@@ -276,11 +252,9 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @param null|string $middleName
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setMiddleName($middleName)
+    public function setMiddleName(string $middleName = null): UserInterface
     {
         $this->middleName = $middleName;
 
@@ -288,19 +262,17 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return null|string
+     * @inheritdoc
      */
-    public function getLastName()
+    public function getLastName(): string
     {
-        return $this->lastName;
+        return (string)$this->lastName;
     }
 
     /**
-     * @param null|string $lastName
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setLastName($lastName)
+    public function setLastName(string $lastName): UserInterface
     {
         $this->lastName = $lastName;
 
@@ -308,7 +280,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return \DateTime|null
+     * @inheritdoc
      */
     public function getBirthdate()
     {
@@ -316,11 +288,9 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @param \DateTime|null $birthdate
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setBirthdate($birthdate)
+    public function setBirthdate($birthdate): UserInterface
     {
         $birthdate       = DateTimeFactory::factory($birthdate);
         $this->birthdate = $birthdate;
@@ -329,7 +299,7 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getGender()
     {
@@ -337,11 +307,9 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
-     * @param string $gender
-     *
-     * @return User
+     * @inheritdoc
      */
-    public function setGender($gender)
+    public function setGender(string $gender): UserInterface
     {
         $this->gender = $gender;
 
@@ -349,28 +317,58 @@ abstract class User implements ArraySerializableInterface, UserInterface, SoftDe
     }
 
     /**
+     * Normalizes out the user name when little fingers cant type
+     *
      * @param string $username
      *
      * @return string
      */
-    public static function normalizeUsername($username)
+    public static function normalizeUsername(string $username = null): string
     {
         return strtolower(preg_replace('/((?![a-zA-Z0-9]+).)/', '', $username));
     }
 
     /**
+     * Gets the normalized username
+     *
      * @return string
      */
-    public function getNormalizedUsername()
+    public function getNormalizedUsername(): string
     {
-        return $this->normalizedUsername;
+        if ($this->normalizedUsername === null && $this->userName !== null) {
+            $this->setNormalizedUsername(static::setNormalizedUsername($this->userName));
+        }
+
+        return (string)$this->normalizedUsername;
     }
 
     /**
-     * @param $normalizedUsername
+     * Sets the normalized user name
+     *
+     * @param string $normalizedUsername
+     *
+     * @return UserInterface
      */
-    public function setNormalizedUsername($normalizedUsername)
+    public function setNormalizedUsername(string $normalizedUsername = null): UserInterface
     {
         $this->normalizedUsername = $normalizedUsername;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDocumentId(): string
+    {
+        return $this->getUserId();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDocumentType(): string
+    {
+        return 'user';
     }
 }

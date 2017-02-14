@@ -243,5 +243,9 @@ return [
             'user_id' => 'math_student',
             'game_id' => 'animal-id'
         ],
+        [
+            'user_id' => 'english_student',
+            'game_id' => 'deleted-game',
+        ]
     ],
 ];

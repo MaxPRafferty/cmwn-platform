@@ -5,23 +5,18 @@ namespace User\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Ramsey\Uuid\Uuid;
-use User\StaticUserFactory;
 use User\UserHydrator;
 use User\UserInterface;
 use User\User;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Json\Json;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
- * Class UserService
- *
- * @package User\Service
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * A User service that talks to the database
  */
 class UserService implements UserServiceInterface
 {
@@ -33,79 +28,71 @@ class UserService implements UserServiceInterface
     protected $userTableGateway;
 
     /**
+     * @var UserHydrator
+     */
+    protected $hydrator;
+
+    /**
      * UserService constructor.
+     *
      * @param TableGateway $gateway
      */
     public function __construct(TableGateway $gateway)
     {
         $this->userTableGateway = $gateway;
+        $this->hydrator         = new UserHydrator();
     }
 
     /**
      * @inheritdoc
-     * @param null|PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null)
+    public function fetchAll($where = null, UserInterface $prototype = null): AdapterInterface
     {
         $where     = $this->createWhere($where);
-        $resultSet = new HydratingResultSet(new UserHydrator($prototype), $prototype);
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
-        if ($paginate) {
-            $select    = new Select(['u' => $this->userTableGateway->getTable()]);
-            $select->where($where);
-            $select->order(['u.first_name', 'u.last_name']);
-            return new DbSelect(
-                $select,
-                $this->userTableGateway->getAdapter(),
-                $resultSet
-            );
-        }
+        $select = new Select(['u' => $this->userTableGateway->getTable()]);
+        $select->where($where);
+        $select->order(['u.first_name', 'u.last_name']);
 
-        $results = $this->userTableGateway->select($where);
-        $resultSet->initialize($results);
-        return $resultSet;
+        return new DbSelect(
+            $select,
+            $this->userTableGateway->getAdapter(),
+            $resultSet
+        );
     }
 
     /**
-     * Create a new user
-     *
-     * A User Id will be auto generated
-     *
-     * @param UserInterface $user
-     * @return bool
+     * @inheritdoc
      */
-    public function createUser(UserInterface $user)
+    public function createUser(UserInterface $user): bool
     {
         $user->setUpdated(new \DateTime());
         $user->setCreated(new \DateTime());
         $user->setUserId(Uuid::uuid1());
 
-        $data            = $user->getArrayCopy();
-        $data['meta']    = Json::encode($data['meta']);
-        $data['user_id'] = $user->getUserId();
-        $data['created'] = $user->getCreated()->format("Y-m-d H:i:s");
-        $data['updated'] = $user->getUpdated()->format("Y-m-d H:i:s");
+        $data                        = $this->hydrator->extract($user);
+        $data['meta']                = Json::encode($data['meta']);
+        $data['user_id']             = $user->getUserId();
+        $data['created']             = $user->getCreated()->format("Y-m-d H:i:s");
+        $data['updated']             = $user->getUpdated()->format("Y-m-d H:i:s");
         $data['normalized_username'] = User::normalizeUsername($data['username']);
 
         unset($data['password']);
         unset($data['deleted']);
         unset($data['super']);
+        unset($data['token']); // TODO Remove this check when the JWT is created
+        unset($data['links']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
 
         $this->userTableGateway->insert($data);
+
         return true;
     }
 
     /**
-     * Saves an Existing user
-     *
-     * @param UserInterface $user
-     * @return bool
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function updateUser(UserInterface $user)
+    public function updateUser(UserInterface $user): bool
     {
         $user->setUpdated(new \DateTime());
         $data            = $user->getArrayCopy();
@@ -119,8 +106,10 @@ class UserService implements UserServiceInterface
         unset($data['super']);
         unset($data['type']);
         unset($data['username']);
+        unset($data['token']); // TODO Remove this check when the JWT is created
+        unset($data['links']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
 
-        $this->fetchUser($user->getUserId());
+        $this->fetchUser($user->getUserId(), null);
 
         $this->userTableGateway->update(
             $data,
@@ -131,26 +120,22 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * Updates the username if the user wants to update his own username
-     * @param UserInterface $user
-     * @param $username
-     * @return bool
+     * @inheritdoc
      */
-    public function updateUserName(UserInterface $user, $username)
+    public function updateUserName(UserInterface $user, string $username): bool
     {
         $this->userTableGateway->update(
             ['username' => $username],
             ['user_id' => $user->getUserId()]
         );
+
         return true;
     }
 
     /**
-     * @param $array
-     * @return \User\Adult|\User\Child
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    protected function fetchHelper($array)
+    protected function fetchHelper($array, UserInterface $prototype = null)
     {
         $rowSet = $this->userTableGateway->select($array);
         $row    = $rowSet->current();
@@ -158,67 +143,47 @@ class UserService implements UserServiceInterface
             throw new NotFoundException("User not Found");
         }
 
-        return StaticUserFactory::createUser($row->getArrayCopy());
-    }
-    /**
-     * Fetches one user from the DB using the id
-     *
-     * @param $userId
-     * @return UserInterface
-     * @throws NotFoundException
-     */
-    public function fetchUser($userId)
-    {
-        return $this->fetchHelper(['user_id' => $userId]);
-    }
-
-    /**
-     * Fetches one user from the DB using the external id
-     *
-     * @param $externalId
-     * @return UserInterface
-     * @throws NotFoundException
-     */
-    public function fetchUserByExternalId($externalId)
-    {
-        return $this->fetchHelper(['external_id' => $externalId]);
-    }
-
-    /**
-     * Fetches one user from the DB using the email
-     *
-     * @param $email
-     * @return UserInterface
-     * @throws NotFoundException
-     */
-    public function fetchUserByEmail($email)
-    {
-        return $this->fetchHelper(['email' => $email]);
+        return $this->hydrator->hydrate($row->getArrayCopy(), $prototype);
     }
 
     /**
      * @inheritdoc
-     * @param $username
-     * @return UserInterface
-     * @throws NotFoundException
      */
-    public function fetchUserByUsername($username)
+    public function fetchUser(string $userId, UserInterface $prototype = null): UserInterface
     {
-        return $this->fetchHelper(['username' => $username]);
+        return $this->fetchHelper(['user_id' => $userId], $prototype);
     }
 
     /**
-     * Deletes a user from the database
-     *
-     * Soft deletes unless soft is false
-     *
-     * @param UserInterface $user
-     * @param bool $soft
-     * @return bool
+     * @inheritdoc
      */
-    public function deleteUser(UserInterface $user, $soft = true)
+    public function fetchUserByExternalId(string $externalId, UserInterface $prototype = null): UserInterface
     {
-        $this->fetchUser($user->getUserId());
+        return $this->fetchHelper(['external_id' => $externalId], $prototype);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchUserByEmail(string $email, UserInterface $prototype = null): UserInterface
+    {
+        return $this->fetchHelper(['email' => $email], $prototype);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchUserByUsername(string $username, UserInterface $prototype = null): UserInterface
+    {
+        return $this->fetchHelper(['username' => $username], $prototype);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteUser(UserInterface $user, bool $soft = true): bool
+    {
+        $this->fetchUser($user->getUserId(), null);
 
         if ($soft) {
             $user->setDeleted(new \DateTime());
@@ -232,6 +197,7 @@ class UserService implements UserServiceInterface
         }
 
         $this->userTableGateway->delete(['user_id' => $user->getUserId()]);
+
         return true;
     }
 }

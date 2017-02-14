@@ -6,7 +6,7 @@ use Application\Utils\Text\Table\Decorator\Csv;
 use Security\Authorization\RbacAwareInterface;
 use Security\Authorization\RbacAwareTrait;
 use Security\Utils\PermissionTableFactory;
-use Zend\Mvc\Controller\AbstractConsoleController;
+use Zend\Mvc\Console\Controller\AbstractConsoleController;
 use Zend\Text\Table\Decorator\Ascii;
 
 /**

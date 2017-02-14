@@ -4,7 +4,7 @@ namespace ApiTest\Links;
 
 use Api\Links\ImportLink;
 use Group\Group;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test ImportLinkTest
@@ -25,7 +25,8 @@ class ImportLinkTest extends TestCase
      */
     public function testItShouldHaveCorrectLabelWithGroup()
     {
-        $group = new Group(['group_id' => 'foo-bar']);
+        $group = new Group();
+        $group->setGroupId('foo-bar');
         $link = new ImportLink($group);
 
         $this->assertEquals(

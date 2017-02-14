@@ -79,7 +79,7 @@ class UserGameResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $this->dispatch('/user/english_student/game/Monarch', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->assertControllerName('api\v1\rest\usergame\controller');
         $this->assertMatchedRouteName('api.rest.user-game');
         try {
@@ -99,7 +99,7 @@ class UserGameResourceTest extends AbstractApigilityTestCase
      * @param $expected
      * @dataProvider userGameDataProvider
      */
-    public function testItShouldFetchAllGamesForUser($user, $expected)
+    public function testItShouldFetchAllGamesForUserExcludingDeletedGames($user, $expected)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($user);
@@ -156,6 +156,19 @@ class UserGameResourceTest extends AbstractApigilityTestCase
             $body['description']
         );
         $this->assertEquals('Monarch', $body['title']);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShould404WhenADeletedGameIsFetched()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('english_student');
+        $this->dispatch('/user/english_student/game/deleted-game');
+        $this->assertResponseStatusCode(404);
+        $this->assertControllerName('api\v1\rest\usergame\controller');
+        $this->assertMatchedRouteName('api.rest.user-game');
     }
 
     /**

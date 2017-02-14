@@ -30,7 +30,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('edit.user.adult');
         $this->setAllowed('edit.user.child');
         $this->setAllowed('import');
-        $this->setAllowed('pick.username');
         $this->setAllowed('remove.child.group');
         $this->setAllowed('remove.group');
         $this->setAllowed('remove.group.user');

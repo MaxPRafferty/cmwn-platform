@@ -2,7 +2,7 @@
 
 namespace SecurityTest\Authentication;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\Authentication\AuthenticationService;
 use Security\ChangePasswordUser;

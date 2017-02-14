@@ -5,27 +5,22 @@ namespace Group\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Group\Group;
-use Ramsey\Uuid\Uuid;
 use Group\GroupInterface;
 use Zend\Db\Adapter\Driver\Pdo\Connection;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Between;
 use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
- * Class GroupService
- *
- * @package Group\Service
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * Group Service that saves data to the database
  */
 class GroupService implements GroupServiceInterface
 {
@@ -37,6 +32,12 @@ class GroupService implements GroupServiceInterface
     protected $groupTableGateway;
 
     /**
+     * @var ArraySerializable
+     */
+    protected $hydrator;
+
+
+    /**
      * GroupService constructor.
      *
      * @param TableGateway $gateway
@@ -44,22 +45,23 @@ class GroupService implements GroupServiceInterface
     public function __construct(TableGateway $gateway)
     {
         $this->groupTableGateway = $gateway;
+        $this->hydrator          = new ArraySerializable();
     }
 
     /**
-     * @param GroupInterface $parent
-     * @param GroupInterface $child
-     *
-     * @return bool
-     * @throws \Exception
+     * @inheritdoc
      */
-    public function addChildToGroup(GroupInterface $parent, GroupInterface $child)
+    public function getAlias(): string
     {
-        // Set the child as descendant of the parent
-        $child->setParentId($parent);
+        return 'g';
+    }
 
-        // Add the child to the network
-        $child->setNetworkId($parent->getNetworkId());
+    /**
+     * @inheritdoc
+     */
+    public function attachChildToGroup(GroupInterface $parent, GroupInterface $child): bool
+    {
+        $child->attachToGroup($parent);
 
         // fetch the parent to get the latest head value
         $parent->exchangeArray($this->fetchGroup($parent->getGroupId())->getArrayCopy());
@@ -126,54 +128,39 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * @param null|PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     *
-     * @return HydratingResultSet|DbSelect
+     * @inheritdoc
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null)
+    public function fetchAll($where = null, GroupInterface $prototype = null): AdapterInterface
     {
         $where     = $this->createWhere($where);
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $prototype = $prototype ?? new Group();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
-        if ($paginate) {
-            $select = new Select(['g' => $this->groupTableGateway->getTable()]);
-            $select->where($where);
-            $select->order(['g.title']);
+        $select = new Select(['g' => $this->groupTableGateway->getTable()]);
+        $select->where($where);
+        $select->order(['g.title']);
 
-            return new DbSelect(
-                $select,
-                $this->groupTableGateway->getAdapter(),
-                $resultSet
-            );
-        }
-
-        $results = $this->groupTableGateway->select($where);
-        $resultSet->initialize($results);
-
-        return $resultSet;
+        return new DbSelect(
+            $select,
+            $this->groupTableGateway->getAdapter(),
+            $resultSet
+        );
     }
 
     /**
-     * Creates a new group
-     *
-     * @param GroupInterface $group
-     *
-     * @return bool
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function createGroup(GroupInterface $group)
+    public function createGroup(GroupInterface $group): bool
     {
         $group->setCreated(new \DateTime());
-        $group->setGroupId(Uuid::uuid1());
         $group->setUpdated(new \DateTime());
-        $data = $group->getArrayCopy();
-
+        $data         = $group->getArrayCopy();
         $data['meta'] = Json::encode($data['meta']);
 
         unset($data['depth']);
         unset($data['deleted']);
+        unset($data['organization']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
+        unset($data['parent']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
 
         $data['group_id'] = $group->getGroupId();
         $data['created']  = $group->getCreated()->format(\DateTime::ISO8601);
@@ -184,24 +171,17 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Saves a group
-     *
-     * If the group id is null, then a new group is created
-     *
-     * @param GroupInterface $group
-     *
-     * @return bool
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function updateGroup(GroupInterface $group)
+    public function updateGroup(GroupInterface $group): bool
     {
         $group->setUpdated(new \DateTime());
-        $data = $group->getArrayCopy();
-
+        $data         = $group->getArrayCopy();
         $data['meta'] = Json::encode($data['meta']);
-
         unset($data['depth']);
         unset($data['deleted']);
+        unset($data['organization']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
+        unset($data['parent']); // TODO Remove when ZF-Hal is respecting entities that are link collection aware
 
         $this->fetchGroup($group->getGroupId());
 
@@ -214,14 +194,9 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fetches one group from the DB using the id
-     *
-     * @param $groupId
-     *
-     * @return GroupInterface
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function fetchGroup($groupId)
+    public function fetchGroup(string $groupId, GroupInterface $prototype = null): GroupInterface
     {
         $rowSet = $this->groupTableGateway->select(['group_id' => $groupId]);
         $row    = $rowSet->current();
@@ -229,34 +204,36 @@ class GroupService implements GroupServiceInterface
             throw new NotFoundException("Group not Found");
         }
 
-        return new Group($row->getArrayCopy());
+        $prototype = $prototype ?? new Group();
+        $this->hydrator->hydrate($row->getArrayCopy(), $prototype);
+
+        return $prototype;
     }
 
     /**
      * @inheritdoc
      */
-    public function fetchGroupByExternalId($networkId, $externalId)
-    {
+    public function fetchGroupByExternalId(
+        string $networkId,
+        string $externalId,
+        GroupInterface $prototype = null
+    ): GroupInterface {
         $rowSet = $this->groupTableGateway->select(['network_id' => $networkId, 'external_id' => $externalId]);
         $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Group not Found");
         }
 
-        return new Group($row->getArrayCopy());
+        $prototype = $prototype ?? new Group();
+        $this->hydrator->hydrate($row->getArrayCopy(), $prototype);
+
+        return $prototype;
     }
 
     /**
-     * Deletes a group from the database
-     *
-     * Soft deletes unless soft is false
-     *
-     * @param GroupInterface $group
-     * @param bool $soft
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function deleteGroup(GroupInterface $group, $soft = true)
+    public function deleteGroup(GroupInterface $group, bool $soft = true): bool
     {
         $this->fetchGroup($group->getGroupId());
 
@@ -277,16 +254,9 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fetches all the types of groups for the children
-     *
-     * Used for hal link building
-     *
-     * @param GroupInterface $group
-     *
-     * @return string[]
-     * @deprecated
+     * @inheritdoc
      */
-    public function fetchChildTypes(GroupInterface $group)
+    public function fetchChildTypes(GroupInterface $group): array
     {
         if (!$group->hasChildren()) {
             return [];
@@ -315,17 +285,13 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fetches all the children groups for a given group
-     *
-     * @param GroupInterface $group
-     * @param null|PredicateInterface|array $where
-     * @param null|object $prototype
-     *
-     * @return DbSelect
-     * @deprecated
+     * @inheritdoc
      */
-    public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null)
-    {
+    public function fetchChildGroups(
+        GroupInterface $group,
+        $where = null,
+        GroupInterface $prototype = null
+    ): AdapterInterface {
         $where  = $this->createWhere($where);
         $select = new Select();
         $select->from(['g' => $this->groupTableGateway->getTable()]);
@@ -334,7 +300,8 @@ class GroupService implements GroupServiceInterface
         $where->addPredicate(new Between('g.head', ($group->getHead() + 1), ($group->getTail() - 1)));
         $select->where($where);
 
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $prototype = $prototype ?? new Group();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         return new DbSelect(
             $select,
@@ -344,11 +311,9 @@ class GroupService implements GroupServiceInterface
     }
 
     /**
-     * Fetches all the types of groups
-     *
-     * @return string[]
+     * @inheritdoc
      */
-    public function fetchGroupTypes()
+    public function fetchGroupTypes(): array
     {
         $select = new Select();
         $select->columns([new Expression('DISTINCT(type) AS type')]);

@@ -3,7 +3,7 @@
 namespace SecurityTest;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\PasswordValidator;

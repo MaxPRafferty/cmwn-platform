@@ -151,9 +151,12 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
         $this->assertMatchedRouteName('api.rest.group-address');
         $this->assertControllerName('api\v1\rest\groupaddress\controller');
 
+        $group = new Group();
+        $group->setGroupId('english');
+
         try {
             $this->groupAddressService->fetchAddressForGroup(
-                new Group(['group_id' => 'english']),
+                $group,
                 new Address(['address_id' => 'school_address'])
             );
         } catch (NotFoundException $nf) {
@@ -174,9 +177,12 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
         $this->assertMatchedRouteName('api.rest.group-address');
         $this->assertControllerName('api\v1\rest\groupaddress\controller');
 
+        $group = new Group();
+        $group->setGroupId('english');
+
         try {
             $this->groupAddressService->fetchAddressForGroup(
-                new Group(['group_id' => 'school']),
+                $group,
                 new Address(['address_id' => 'school_address'])
             );
             $this->fail("It did not detach address from group");
