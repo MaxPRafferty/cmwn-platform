@@ -76,16 +76,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.22.0",
+            "version": "3.22.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7ef8e6b785d7b522c478ce4e13630b2b93eea87b"
+                "reference": "9c64476e56091baf1202d7deffb9094fe87472e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7ef8e6b785d7b522c478ce4e13630b2b93eea87b",
-                "reference": "7ef8e6b785d7b522c478ce4e13630b2b93eea87b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9c64476e56091baf1202d7deffb9094fe87472e0",
+                "reference": "9c64476e56091baf1202d7deffb9094fe87472e0",
                 "shasum": ""
             },
             "require": {
@@ -152,7 +152,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2017-02-08 01:00:51"
+            "time": "2017-02-10 23:27:07"
         },
         {
             "name": "aws/aws-sdk-php-zf2",
@@ -4165,12 +4165,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "0b23f71799b3e43406f4ce7fef112ac3f0b7a385"
+                "reference": "f6b38e6c84ec6cf96402a7dd1ffda1fdf4c19056"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/0b23f71799b3e43406f4ce7fef112ac3f0b7a385",
-                "reference": "0b23f71799b3e43406f4ce7fef112ac3f0b7a385",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/f6b38e6c84ec6cf96402a7dd1ffda1fdf4c19056",
+                "reference": "f6b38e6c84ec6cf96402a7dd1ffda1fdf4c19056",
                 "shasum": ""
             },
             "require": {
@@ -4222,7 +4222,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2017-02-02 08:52:46"
+            "time": "2017-02-14 16:58:59"
         },
         {
             "name": "myclabs/deep-copy",
