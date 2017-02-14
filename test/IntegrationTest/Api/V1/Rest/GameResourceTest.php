@@ -53,13 +53,14 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
-     * @param $login
+     * @param $route
+     * @param $expected
      * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldFetchAllGames($login, $route, $expected)
+    public function testItShouldFetchAllGames($route, $expected)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser($login);
+        $this->logInUser('super_user');
         $this->dispatch($route);
         $this->assertResponseStatusCode(200);
         $this->assertControllerName('api\v1\rest\game\controller');
@@ -87,7 +88,7 @@ class GameResourceTest extends TestCase
     public function testItShouldFetchGame($login)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser($login);
+        $this->logInUser('super_user');
         $this->dispatch('/game/animal-id');
         $this->assertResponseStatusCode(200);
         $this->assertControllerName('api\v1\rest\game\controller');
@@ -296,18 +297,8 @@ class GameResourceTest extends TestCase
     public function fetchAllDataProvider()
     {
         return [
-            ['super_user', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['english_student', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['super_user', '/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
-            ['english_student', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
-            ['super_user', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
-            ['english_student', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
         ];
     }
 
