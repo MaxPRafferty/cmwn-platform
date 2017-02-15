@@ -9,6 +9,7 @@ use Game\GameInterface;
  * A UserGame Entity represents the game through the API
  *
  * @SWG\Definition(
+ *     definition="UserGameEntity",
  *     description="A UserGame Entity represents the game through the API",
  *     @SWG\Property(
  *         type="object",
@@ -19,7 +20,7 @@ use Game\GameInterface;
  *         }
  *     ),
  *     allOf={
- *         @SWG\Schema(ref="#/definitions/UserGame"),
+ *         @SWG\Schema(ref="#/definitions/Game"),
  *         @SWG\Schema(ref="#/definitions/SelfLink"),
  *     }
  * )

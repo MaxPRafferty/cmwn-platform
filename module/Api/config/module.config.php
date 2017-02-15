@@ -2568,6 +2568,19 @@ return [
                 'name'        => 'meta',
                 'description' => 'meta data for game',
             ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'global',
+                'description' => 'flag to specify if the game is globally visible',
+            ],
         ],
         'Api\V1\Rest\GroupReset\Validator'     => [
             [

@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Game\Service\UserGameService;
 use Game\Delegator\UserGameServiceDelegator;
 use User\Child;
+use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\Paginator\Adapter\Iterator;
@@ -328,6 +329,8 @@ class UserGameDelegatorTest extends TestCase
     {
         $result = new Iterator(new \ArrayIterator([]));
         $user = new Child(['user_id' => 'bar']);
+        $where = new Where();
+        $where->isNull("g.deleted");
 
         $this->userGameService->shouldReceive('fetchAllGamesForUser')
             ->andReturn($result)->once();
@@ -344,7 +347,7 @@ class UserGameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.user.games',
                 'target' => $this->userGameService,
-                'params' => ['user' => $user, 'where' => null, 'prototype' => null],
+                'params' => ['user' => $user, 'where' => $where, 'prototype' => null],
             ],
             $this->calledEvents[0],
             UserGameServiceDelegator::class . ' did not trigger the event correctly'
@@ -354,7 +357,7 @@ class UserGameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.user.games.post',
                 'target' => $this->userGameService,
-                'params' => ['user' => $user, 'where' => null, 'prototype' => null, 'games' => $result],
+                'params' => ['user' => $user, 'where' => $where, 'prototype' => null, 'games' => $result],
             ],
             $this->calledEvents[1],
             UserGameServiceDelegator::class . ' did not trigger the event correctly for fetch.all.user.games.post'
@@ -368,6 +371,7 @@ class UserGameDelegatorTest extends TestCase
     {
         $result = new Iterator(new \ArrayIterator());
         $user = new Child(['user_id' => 'bar']);
+        $where = new Where();
 
         $this->userGameService->shouldReceive('fetchAllGamesForUser')
             ->andReturn(true)->never();
@@ -392,7 +396,7 @@ class UserGameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.user.games',
                 'target' => $this->userGameService,
-                'params' => ['user' => $user, 'where' => null, 'prototype' => null],
+                'params' => ['user' => $user, 'where' => $where, 'prototype' => null],
             ],
             $this->calledEvents[0],
             UserGameServiceDelegator::class . ' did not trigger the event correctly'
@@ -405,6 +409,8 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventOnExceptionWhileFetchAllUserGames()
     {
         $user = new Child(['user_id' => 'bar']);
+        $where = new Where();
+        $where->isNull("g.deleted");
 
         $this->userGameService->shouldReceive('fetchAllGamesForUser')
             ->andReturnUsing(function () {
@@ -424,7 +430,7 @@ class UserGameDelegatorTest extends TestCase
                 [
                     'name' => 'fetch.all.user.games',
                     'target' => $this->userGameService,
-                    'params' => ['user' => $user, 'where' => null, 'prototype' => null],
+                    'params' => ['user' => $user, 'where' => $where, 'prototype' => null],
                 ],
                 $this->calledEvents[0],
                 UserGameServiceDelegator::class . ' did not trigger the event correctly'
@@ -436,7 +442,7 @@ class UserGameDelegatorTest extends TestCase
                     'target' => $this->userGameService,
                     'params' => [
                         'user' => $user,
-                        'where' => null,
+                        'where' => $where,
                         'prototype' => null,
                         'exception' => new \Exception
                     ],

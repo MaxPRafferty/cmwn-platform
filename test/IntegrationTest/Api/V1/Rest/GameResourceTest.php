@@ -160,7 +160,8 @@ class GameResourceTest extends TestCase
             'title' => 'animal-id',
             'description' => 'animal ids',
             'coming_soon' => false,
-            'meta' => ['desktop' => true, 'unity' => false]
+            'meta' => ['desktop' => true, 'unity' => false],
+            'global' => true,
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(200);
@@ -184,7 +185,7 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $this->dispatch('/game/animal-id', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->assertControllerName('api\v1\rest\game\controller');
         $this->assertMatchedRouteName('api.rest.game');
 
@@ -249,7 +250,7 @@ class GameResourceTest extends TestCase
             'description' => 'animal ids',
             'coming_soon' => true,
             'meta' => ['desktop' => true, 'unity' => false],
-            'undelete' => true
+            'undelete' => true,
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(403);

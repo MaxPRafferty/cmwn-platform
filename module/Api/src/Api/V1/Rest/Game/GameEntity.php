@@ -6,9 +6,24 @@ use Game\Game;
 use Game\GameInterface;
 
 /**
- * Class GameEntity
+ * A Game Entity represents the game through the API
  *
- * A Representation of a game for the API
+ * @SWG\Definition(
+ *     definition="GameEntity",
+ *     description="A Game Entity represents the game through the API",
+ *     @SWG\Property(
+ *         type="object",
+ *         property="_links",
+ *         description="Links the game might have",
+ *         allOf={
+ *             @SWG\Schema(ref="#/definitions/SelfLink"),
+ *         }
+ *     ),
+ *     allOf={
+ *         @SWG\Schema(ref="#/definitions/Game"),
+ *         @SWG\Schema(ref="#/definitions/SelfLink"),
+ *     }
+ * )
  */
 class GameEntity extends Game implements GameInterface
 {
