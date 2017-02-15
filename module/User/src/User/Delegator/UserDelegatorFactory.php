@@ -8,7 +8,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
- * Class UserDelegatorFactory
+ * Creates a UserServiceDelegator
  */
 class UserDelegatorFactory implements DelegatorFactoryInterface
 {
@@ -19,7 +19,10 @@ class UserDelegatorFactory implements DelegatorFactoryInterface
     {
         $events = $container->get(EventManagerInterface::class);
 
-        $hideListener = new HideDeletedEntitiesListener(['fetch.all.users'], ['fetch.user.post']);
+        $hideListener = new HideDeletedEntitiesListener(
+            ['fetch.all.users'],
+            ['fetch.user.post']
+        );
         $hideListener->setEntityParamKey('user');
         $hideListener->setDeletedField('u.deleted');
         $hideListener->attach($events);

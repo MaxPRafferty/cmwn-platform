@@ -16,7 +16,7 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'pick.username',
-                            \Api\Rule\Provider\UserRelationshipProvider::class,
+                            \Api\Rule\Provider\UserRelationshipProvider::PROVIDER_NAME,
                         ],
                     ],
                     [
@@ -36,7 +36,7 @@ return [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
                             \Api\Links\UserNameLink::class,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -61,7 +61,7 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'can.friend',
-                            \Api\Rule\Provider\UserRelationshipProvider::class,
+                            \Api\Rule\Provider\UserRelationshipProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -74,7 +74,7 @@ return [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
                             \Api\Links\FriendLink::class,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -99,7 +99,7 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'view.skribble',
-                            \Api\Rule\Provider\UserRelationshipProvider::class,
+                            \Api\Rule\Provider\UserRelationshipProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -112,7 +112,7 @@ return [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
                             \Api\Links\SkribbleLink::class,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -133,8 +133,8 @@ return [
                 'rules'                 => [
                     // entity has permissions
                     [
-                        'name'    => \Rule\Rule\Object\IsTypeRule::class,
-                        'options' => [
+                        'name'     => \Api\Rule\Rule\EntityIsType::class,
+                        'options'  => [
                             \Api\V1\Rest\User\MeEntity::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
@@ -152,7 +152,7 @@ return [
                         'name'    => \User\Rule\TypeRule::class,
                         'options' => [
                             \User\UserInterface::TYPE_ADULT,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
+                            \Api\Rule\Provider\RealEntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -172,6 +172,7 @@ return [
             ],
             'providers'           => [
                 \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\RealEntityFromEventProvider::class,
                 \Api\Rule\Provider\UserRelationshipProvider::class,
             ],
         ],
@@ -190,14 +191,14 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'child.code',
-                            \Api\Rule\Provider\UserRelationshipProvider::class,
+                            \Api\Rule\Provider\UserRelationshipProvider::PROVIDER_NAME,
                         ],
                     ],
                     [
                         'name'    => \User\Rule\TypeRule::class,
                         'options' => [
                             \User\UserInterface::TYPE_CHILD,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            \Api\Rule\Provider\RealEntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -217,18 +218,67 @@ return [
             ],
             'providers'           => [
                 \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\RealEntityFromEventProvider::class,
+                \Api\Rule\Provider\UserRelationshipProvider::class,
+            ],
+        ],
+
+        'view-flip-hal-link' => [
+            'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
+            'id'                  => 'view-flip-hal-link',
+            'name'                => 'View the users earned flips',
+            'when'                => 'renderEntity',
+            'rules'               => [
+                'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
+                'rules'                 => [
+                    // entity has permissions
+                    [
+                        'name'    => \Security\Rule\Rule\HasPermission::class,
+                        'options' => [
+                            \Security\Authorization\Rbac::class,
+                            'view.user.flip',
+                            \Api\Rule\Provider\UserRelationshipProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                    // Entity is a user
+                    [
+                        'name'     => \Api\Rule\Rule\EntityIsType::class,
+                        'options'  => [
+                            \Api\V1\Rest\User\UserEntity::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'actions'             => [
+                'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
+                'actions'                 => [
+                    //Add a hal link to the entity
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\UserFlipLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'providers'           => [
+                \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\RealEntityFromEventProvider::class,
                 \Api\Rule\Provider\UserRelationshipProvider::class,
             ],
         ],
     ],
 
+
     'specifications' => [
         'factories' => [
-            'username-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'friend-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'skribble-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'forgot-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'reset-password-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'username-hal-link'       => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'friend-hal-link'         => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'skribble-hal-link'       => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'forgot-hal-link'         => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'reset-password-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
     ],
 ];

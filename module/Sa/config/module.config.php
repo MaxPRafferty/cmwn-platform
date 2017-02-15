@@ -62,11 +62,15 @@ return [
         ],
     ],
     'zf-hal'                 => [
+        'renderer' => [
+            'render_embedded_entities'   => true,
+        ],
         'metadata_map' => [
             'Sa\\V1\\Rest\\SuperAdminSettings\\SuperAdminSettingsEntity' => [
                 'route_name'             => 'sa.rest.settings',
                 'route_identifier_name'  => 'settings_id',
                 'hydrator'               => 'Zend\\Hydrator\\ArraySerializable',
+                'force_self_link'        => true,
             ],
         ],
     ],

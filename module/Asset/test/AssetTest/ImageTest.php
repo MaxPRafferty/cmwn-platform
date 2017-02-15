@@ -3,7 +3,7 @@
 namespace AssetTest;
 
 use Asset\Image;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test ImageTest

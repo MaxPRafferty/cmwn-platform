@@ -26,7 +26,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/AddressDataSet.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/AddressDataSet.php');
     }
 
     /**
@@ -36,7 +36,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
     {
         $this->addressService = TestHelper::getDbServiceManager()->get(AddressServiceInterface::class);
     }
-    
+
     /**
      * @test
      */
@@ -68,7 +68,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->dispatch('/address');
         $this->assertResponseStatusCode(401);
     }
-    
+
     /**
      * @test
      * @dataProvider userDataProvider

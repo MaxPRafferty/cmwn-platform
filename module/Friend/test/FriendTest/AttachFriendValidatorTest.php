@@ -6,10 +6,12 @@ use Application\Exception\NotFoundException;
 use Friend\AttachFriendValidator;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
+use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Child;
+use User\Service\UserServiceInterface;
 use Zend\Hydrator\ArraySerializable;
 
 /**
@@ -42,9 +44,17 @@ class AttachFriendValidatorTest extends TestCase
     /**
      * @before
      */
+    public function setUpValidator()
+    {
+        $this->validator = new AttachFriendValidator($this->friendService, $this->userService);
+    }
+
+    /**
+     * @before
+     */
     public function setUpFriendService()
     {
-        $this->friendService = \Mockery::mock('\Friend\Service\FriendService');
+        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
     }
 
     /**
@@ -52,15 +62,7 @@ class AttachFriendValidatorTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->userService = \Mockery::mock('\User\Service\UserService');
-    }
-
-    /**
-     * @before
-     */
-    public function setUpValidator()
-    {
-        $this->validator = new AttachFriendValidator($this->friendService, $this->userService);
+        $this->userService = \Mockery::mock(UserServiceInterface::class);
     }
 
     /**

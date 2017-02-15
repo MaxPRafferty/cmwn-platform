@@ -13,7 +13,7 @@ use ZF\Hal\Entity;
  */
 class ActiveUserGroupRoleProvider extends AbstractEventProvider
 {
-    const PROVIDER_NAME = self::class;
+    const PROVIDER_NAME = 'ACTIVE_USER_GROUP_ROLE';
 
     /**
      * @var AuthenticationServiceInterface
@@ -27,6 +27,7 @@ class ActiveUserGroupRoleProvider extends AbstractEventProvider
 
     /**
      * ActiveUserGroupRoleProvider constructor.
+     *
      * @param AuthenticationServiceInterface $authService
      * @param SecurityGroupServiceInterface $securityGroupService
      * @param string $providerName
@@ -38,7 +39,7 @@ class ActiveUserGroupRoleProvider extends AbstractEventProvider
     ) {
         parent::__construct($providerName);
         $this->securityGroupService = $securityGroupService;
-        $this->authService = $authService;
+        $this->authService          = $authService;
     }
 
     /**
@@ -54,7 +55,8 @@ class ActiveUserGroupRoleProvider extends AbstractEventProvider
 
         $group = $entity->getEntity();
 
-        /**@var \Security\SecurityUser $authUser*/
+        /**@var \Security\SecurityUser $authUser */
+        // TODO get from a provider
         $authUser = $this->authService->getIdentity();
 
         if ($authUser->isSuper()) {

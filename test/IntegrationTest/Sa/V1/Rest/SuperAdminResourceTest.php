@@ -17,7 +17,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/sa.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/sa.dataset.php');
     }
 
     /**
@@ -51,6 +51,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
 
     /**
      * @test
+     * @group Hal
      */
     public function testItShouldGetSaSettingsLinks()
     {
@@ -67,17 +68,16 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_links', $body);
 
         $actual = [];
-        $expected = ['self', 'user', 'games', 'game-data', 'group', 'org'];
+        $expected = ['user', 'games_deleted', 'game-data', 'group', 'org', 'flip'];
         foreach ($body['_links'] as $key => $link) {
             $actual[] = $key;
         }
+        $this->assertEquals($expected, $actual);
 
         $this->assertArrayHasKey('roles', $body);
         $this->assertEquals(
             $body['roles'],
             ['group' => ['admin', 'asst_principal', 'principal', 'student', 'teacher'],]
         );
-
-        $this->assertEquals($expected, $actual);
     }
 }

@@ -5,7 +5,7 @@ namespace NoticeTest\Listeners;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Notice\EmailModel\ForgotEmailModel;
 use Notice\Listeners\ForgotPasswordListener;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\SecurityUser;
 use User\Child;
 use Zend\EventManager\Event;
@@ -38,9 +38,10 @@ class ForgotPasswordListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpMessage()
+    public function setUpListener()
     {
-        $this->message = \Mockery::mock('\Zend\Mail\Message');
+        $this->listener = new ForgotPasswordListener(new ForgotEmailModel([]));
+        $this->listener->setMailService($this->mailService);
     }
 
     /**
@@ -57,10 +58,9 @@ class ForgotPasswordListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpListener()
+    public function setUpMessage()
     {
-        $this->listener = new ForgotPasswordListener(new ForgotEmailModel([]));
-        $this->listener->setMailService($this->mailService);
+        $this->message = \Mockery::mock('\Zend\Mail\Message');
     }
 
     /**

@@ -5,21 +5,6 @@
  */
 
 return [
-    'router' => [
-        'routes' => [
-            'home' => [
-                'type'    => 'Literal',
-                'options' => [
-                    'route'    => '/',
-                    'defaults' => [
-                        'controller' => 'Application\Controller\Index',
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'rules' => [
         'factories' => [
             \Application\Rule\Session\Rule\HasValue::class            => \Rule\Rule\Service\BuildRuleFactory::class,
@@ -58,6 +43,7 @@ return [
             \Application\Rule\Session\Action\WriteValueToSession::class    => false,
         ],
     ],
+
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
         \Application\Session\CmwnContainer::class => [\Zend\Session\SessionManager::class],
     ],
@@ -77,6 +63,7 @@ return [
             'Application\Log\Rollbar\Notifier'                   => \Application\Log\Rollbar\NotifierFactory::class,
             \Application\Log\Rollbar\Writer::class               => \Application\Log\Rollbar\WriterFactory::class,
             \Zend\Http\Client::class                             => \Application\Factory\HttpClientFactory::class,
+            \Psr\Log\LoggerInterface::class                      => \Application\Log\PsrLoggerFactory::class,
         ],
         'abstract_factories' => [
             \Zend\Cache\Service\StorageCacheAbstractServiceFactory::class,
@@ -93,12 +80,6 @@ return [
     ],
 
     'controllers' => [
-        'aliases'      => [
-            \Application\Controller\IndexController::class => '\Application\Controller\Index',
-        ],
-        'invokables'   => [
-            'Application\Controller\Index' => \Application\Controller\IndexController::class,
-        ],
         'initializers' => [
             \Application\Service\LoggerAwareInitializer::class => \Application\Service\LoggerAwareInitializer::class,
         ],

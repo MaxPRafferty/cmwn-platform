@@ -7,7 +7,7 @@ use Import\Importer\Nyc\Exception\InvalidTeacherException;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 
 /**
@@ -36,20 +36,20 @@ class TeacherRegistryTest extends TestCase
     /**
      * @before
      */
+    public function setUpRegistry()
+    {
+        $this->registry = new TeacherRegistry($this->service);
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserService()
     {
         $this->service = \Mockery::mock('\User\Service\UserServiceInterface');
         $this->service->shouldReceive('fetchUserByEmail')
             ->andThrow(new NotFoundException())
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpRegistry()
-    {
-        $this->registry = new TeacherRegistry($this->service);
     }
 
     /**
@@ -136,10 +136,8 @@ class TeacherRegistryTest extends TestCase
      */
     public function testItShouldThrowBadMethodCallExceptionOnUnset()
     {
-        $this->setExpectedException(
-            \BadMethodCallException::class,
-            'Cannot unset values from the Teacher Registry'
-        );
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot unset values from the Teacher Registry');
 
         $this->registry->offsetUnset('foo');
     }
@@ -151,10 +149,8 @@ class TeacherRegistryTest extends TestCase
     {
         $teacher = new Teacher();
         $this->assertFalse($teacher->isValid(), 'I do not know how to make an invalid teacher any more');
-        $this->setExpectedException(
-            InvalidTeacherException::class,
-            'Teacher has invalid keys'
-        );
+        $this->expectException(InvalidTeacherException::class);
+        $this->expectExceptionMessage('Teacher has invalid keys');
         $this->registry->addTeacher($teacher);
     }
 }

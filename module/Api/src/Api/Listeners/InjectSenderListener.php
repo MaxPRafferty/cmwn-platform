@@ -83,7 +83,7 @@ class InjectSenderListener
         }
 
         try {
-            $sender = $this->userService->fetchUser($sender);
+            $sender = $this->userService->fetchUser($sender, null);
             $payLoad['sender'] = $sender->getArrayCopy();
         } catch (NotFoundException $nf) {
             throw new \InvalidArgumentException('invalid sender');

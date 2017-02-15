@@ -3,7 +3,7 @@
 namespace MediaTest;
 
 use Media\Media;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Json\Json;
 
 /**

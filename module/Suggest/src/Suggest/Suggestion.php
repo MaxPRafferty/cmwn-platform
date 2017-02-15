@@ -3,6 +3,7 @@
 namespace Suggest;
 
 use Friend\Friend;
+use User\UserInterface;
 
 /**
  * Class Suggestion
@@ -14,7 +15,7 @@ class Suggestion extends Friend implements SuggestionInterface
     /**
      * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         $array                  = parent::getArrayCopy();
         $array['suggest_id']    = $this->getUserId();
@@ -27,11 +28,12 @@ class Suggestion extends Friend implements SuggestionInterface
     /**
      * @inheritdoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): UserInterface
     {
         $array['suggest_id']    = isset($array['suggest_id']) ? $array['suggest_id'] : null;
         $array['friend_status'] = isset($array['friend_status']) ? $array['friend_status'] : null;
 
         parent::exchangeArray($array);
+        return $this;
     }
 }

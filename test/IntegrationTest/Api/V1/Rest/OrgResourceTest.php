@@ -39,7 +39,7 @@ class OrgResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
     }
 
     /**
@@ -211,7 +211,7 @@ class OrgResourceTest extends TestCase
             $actual[] = $org['org_id'];
         }
 
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -333,8 +333,8 @@ class OrgResourceTest extends TestCase
         $this->logInUser('super_user');
 
         $this->dispatch('/org/district', 'DELETE');
-        $this->assertResponseStatusCode(200);
-        $this->setExpectedException(NotFoundException::class);
+        $this->assertResponseStatusCode(204);
+        $this->expectException(NotFoundException::class);
         $this->orgService->fetchOrganization('district')->getArrayCopy();
     }
 
@@ -444,6 +444,7 @@ class OrgResourceTest extends TestCase
      * @test
      * @ticket CORE-2525
      * @group CORE-2525
+     * @group Hal
      */
     public function testItShouldNotShowUserOrgLinkWhenUserDoesNotHavePermissionToViewOrgUsers()
     {
@@ -471,6 +472,7 @@ class OrgResourceTest extends TestCase
      * @test
      * @ticket CORE-2525
      * @group CORE-2525
+     * @group Hal
      */
     public function testItShouldShowUserOrgLinkWhenUserHasPermissionToViewOrgUsers()
     {

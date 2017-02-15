@@ -3,9 +3,9 @@
 namespace Application\Utils\Date;
 
 /**
- * Trait DateDeletedTrait
+ * Trait to help satisfy DateDeletedInterface
  *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * @see DateDeletedInterface
  */
 trait DateDeletedTrait
 {
@@ -24,20 +24,26 @@ trait DateDeletedTrait
 
     /**
      * @param \DateTime|string|null $deleted
+     *
      * @return $this
      */
     public function setDeleted($deleted)
     {
-        $deleted = DateTimeFactory::factory($deleted);
+        $deleted           = DateTimeFactory::factory($deleted);
         $this->dateDeleted = $deleted;
+
         return $this;
     }
 
     /**
-     * @return bool
+     * Gets the data formatted or null if not set
+     *
+     * @param string $format
+     *
+     * @return null|string
      */
-    public function isDeleted()
+    protected function formatDeleted(string $format)
     {
-        return $this->dateDeleted !== null;
+        return ($this->dateDeleted !== null) ? $this->dateDeleted->format($format) : null;
     }
 }

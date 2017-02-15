@@ -3,7 +3,7 @@
 namespace UserTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Child;
 use User\Service\RandomNameListener;

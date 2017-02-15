@@ -1,0 +1,1746 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Change My World now API",
+        "description": "This is the API for change my world now",
+        "version": "1.0.0"
+    },
+    "host": "api.changemyworldnow.com",
+    "basePath": "/",
+    "schemes": [
+        "https"
+    ],
+    "consumes": [
+        "application/vnd.api.v1+json",
+        "application/hal+json",
+        "application/json"
+    ],
+    "produces": [
+        "application/vnd.api.v1+json",
+        "application/hal+json",
+        "application/json"
+    ],
+    "paths": {
+        "/group": {
+            "get": {
+                "tags": [
+                    "group"
+                ],
+                "summary": "Fetches multiple groups the authenticated user has access too",
+                "description": "A User can request all groups or all the child groups descending from parent.  Empty results are returned if the\nuser is not allowed access to a parent",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of group to fetch",
+                        "type": "string",
+                        "maximum": 1,
+                        "enum": [
+                            "district",
+                            "school",
+                            "class",
+                            "generic"
+                        ]
+                    },
+                    {
+                        "name": "parent",
+                        "in": "query",
+                        "description": "Fetch all the children of this group",
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of groups on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged groups",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GroupCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "group"
+                ],
+                "summary": "Create a new group",
+                "description": "The authenticated user must be allowed to create a new group in the system",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Group data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Group was created",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/GroupEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/group/{group_id}": {
+            "get": {
+                "tags": [
+                    "group"
+                ],
+                "summary": "Fetch data for a group",
+                "description": "Fetch the data for a group if the authenticated user is allowed access.",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Group Id to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The requested group",
+                        "schema": {
+                            "$ref": "#/definitions/GroupCollection"
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "group"
+                ],
+                "summary": "Update a group",
+                "description": "The user must be allowed access to the group and be allowed to edit groups.  403 is returned if the user is not\nallowed access to update the group. 404 is returned if the group is not found or the user is not allowed access",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Group Id to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Group data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/GroupEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to update a group",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "group"
+                ],
+                "summary": "Delete a group",
+                "description": "A fetch is done first to ensure the user has access to a group.  By default groups are soft deleted unless\nthe \"hard\" parameter is set in the query.  The authenticated user will get a 403 if the they are not allowed\nto hard delete a group",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Group Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "hard",
+                        "in": "query",
+                        "description": "Hard delete the group",
+                        "type": "boolean",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Group was deleted",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/GroupEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to delete or access group",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/group/{group_id}/user": {
+            "get": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Fetches the users in the group requested user has access to",
+                "description": "A user can request to see all the users in a group which he has access to",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Group Id of the group",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of games on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/group/{group_id}/user/{user_id}": {
+            "post": {
+                "tags": [
+                    "user-group"
+                ],
+                "summary": "Attach a user to a group",
+                "description": "The authenticated user must be allowed to attach a user to a group in the system",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Game Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id of the user",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Group Role",
+                        "required": true,
+                        "schema": {
+                            "property": "role",
+                            "description": "The role of the user in group",
+                            "type": "string",
+                            "readOnly": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User attached to group",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to attach user to group",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Problem occurred while attaching user to group",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Detach a game from a user",
+                "description": "A fetch is done first to ensure the user has access to a game. The authenticated user will get a 403\nif the they are not allowed to detach a game from a user",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "description": "Group Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id of the user",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User was detached from group"
+                    },
+                    "404": {
+                        "description": "Group or user not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to detach or access user or group",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Problem occurred during execution",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/org": {
+            "get": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Fetches multiple organizations",
+                "description": "This will fetch all organizations the user has access too.  If the user cannot fetch a list of orgaanizations\na 403 will be returned",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of organizations to fetch",
+                        "type": "string",
+                        "minimum": 1,
+                        "enum": [
+                            "school",
+                            "district",
+                            "class",
+                            "generic"
+                        ]
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of organizations to list on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The current page of organizations",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/OrgCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Org not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                },
+                "x-prime-for": "org"
+            },
+            "post": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Create an Organization",
+                "description": "This allows a user to create an organization if they are allowed too",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Organization data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Organization"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/OrgEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/org/{org_id}": {
+            "get": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Fetch an Organization",
+                "description": "Returns information about a specific organization the user has access too.  403 is thrown if the user is not\nallowed to access this organization",
+                "parameters": [
+                    {
+                        "name": "org_id",
+                        "in": "path",
+                        "description": "Id of the Organization to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "minimum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/OrgCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Org not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Update an organization",
+                "description": "A check is done to ensure the user has access to the organization in question.  A 404/403 is thrown if the user\nis not allowed access or denied access to the organization",
+                "parameters": [
+                    {
+                        "name": "org_id",
+                        "in": "path",
+                        "description": "Id of the organization to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1,
+                        "minimum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Organization data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Organization"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/OrgEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to create a org",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "organization"
+                ],
+                "summary": "Delete an Organization",
+                "description": "This will soft delete a organization by default unless the hard parameter is set in the query.  If the user\nis not allowed to soft or hard delete, a 403 will be thrown",
+                "parameters": [
+                    {
+                        "name": "org_id",
+                        "in": "path",
+                        "description": "Id of the organization to delete",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "minimum": 1
+                    },
+                    {
+                        "name": "hard",
+                        "in": "query",
+                        "description": "Hard delete the organization",
+                        "type": "boolean",
+                        "maximum": 1,
+                        "minimum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Organization that was deleted",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/OrgEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Organization not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to access or delete the organization",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Fetches multiple users that the authenticated user can access",
+                "description": "If the user is not allowed to list users a 403 is returned",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of user to fetch",
+                        "type": "string",
+                        "minimum": 1,
+                        "enum": [
+                            "CHILD",
+                            "ADULT"
+                        ]
+                    },
+                    {
+                        "name": "deleted",
+                        "in": "query",
+                        "description": "Fetch deleted users",
+                        "type": "boolean",
+                        "minimum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of users on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                },
+                "x-prime-for": "user"
+            },
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a new user",
+                "description": "The Authenticated user needs permission to create a user in order to create a new user",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "User data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed"
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user_id}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Fetch a user",
+                "description": "If the authenticated user is not allowed access, than a 403 is thrown.",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "minimum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Updates a user",
+                "description": "The user to be updated is fetched first to ensure the user has access to edit the user.  All valid data for the\nuser is needed.",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "minimum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "User data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to create a user",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete a user",
+                "description": "The user is fetched first to ensure the authenticated user can access the user to delete.  By default users are\nsoft deleted unless the \"hard\" query parameter is set.  The authenticated user needs permission to hard delete\nusers",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "minimum": 1
+                    },
+                    {
+                        "name": "hard",
+                        "in": "query",
+                        "description": "Hard delete the user",
+                        "type": "boolean",
+                        "minimum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User was deleted",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to delete or access user",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ValidationError": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Error"
+                }
+            ]
+        },
+        "Error": {
+            "description": "Common error format",
+            "properties": {
+                "detail": {
+                    "description": "HTTP Status",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "HTTP Status Code",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "Detailed message",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "RFC for the status code",
+                    "type": "string",
+                    "format": "uri"
+                }
+            },
+            "type": "object"
+        },
+        "NotFoundError": {
+            "description": "Entity was not found",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Error"
+                }
+            ]
+        },
+        "Pagination": {
+            "description": "Standards pagination links",
+            "properties": {
+                "page": {
+                    "description": "The current page",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "page_count": {
+                    "description": "The total number of pages",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "per_page": {
+                    "description": "The total number of items on a page",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "total_items": {
+                    "description": "Total count of items",
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "_links": {
+                    "description": "HAL Links",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FindLink"
+                        },
+                        {
+                            "$ref": "#/definitions/NextLink"
+                        },
+                        {
+                            "$ref": "#/definitions/PrevLink"
+                        },
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        },
+                        {
+                            "$ref": "#/definitions/FirstLink"
+                        },
+                        {
+                            "$ref": "#/definitions/LastLink"
+                        }
+                    ]
+                }
+            },
+            "type": "object"
+        },
+        "FindLink": {
+            "description": "HAL Link that describes a find endpoint",
+            "properties": {
+                "find": {
+                    "description": "Class Module",
+                    "properties": {
+                        "href": {
+                            "description": "HREF to find items",
+                            "type": "string",
+                            "format": "uri",
+                            "readOnly": true
+                        },
+                        "templated": {
+                            "description": "Whether this uri is templated or not",
+                            "type": "boolean",
+                            "readOnly": true
+                        }
+                    },
+                    "type": "object",
+                    "readOnly": true
+                }
+            },
+            "type": "object",
+            "readOnly": true
+        },
+        "NextLink": {
+            "description": "HAL Link for the next page",
+            "properties": {
+                "next": {
+                    "description": "Class Module",
+                    "properties": {
+                        "href": {
+                            "description": "HREF to the next page",
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object",
+            "readOnly": true
+        },
+        "PrevLink": {
+            "description": "HAL Link for the previous page",
+            "properties": {
+                "prev": {
+                    "description": "Class Module",
+                    "properties": {
+                        "href": {
+                            "description": "HREF to the previous page",
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object",
+            "readOnly": true
+        },
+        "LastLink": {
+            "description": "HAL Link for the last page",
+            "properties": {
+                "last": {
+                    "description": "Class Module",
+                    "properties": {
+                        "href": {
+                            "description": "HREF to the last page",
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object",
+            "readOnly": true
+        },
+        "FirstLink": {
+            "description": "HAL Link for the first page",
+            "properties": {
+                "first": {
+                    "description": "Class Module",
+                    "properties": {
+                        "href": {
+                            "description": "HREF to the first page",
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "type": "object",
+            "readOnly": true
+        },
+        "SelfLink": {
+            "description": "HAL Link for the requested page",
+            "properties": {
+                "self": {
+                    "description": "Class Module",
+                    "properties": {
+                        "href": {
+                            "description": "HREF to the the current endpoint",
+                            "type": "string",
+                            "format": "uri",
+                            "readOnly": true
+                        }
+                    },
+                    "type": "object",
+                    "readOnly": true
+                }
+            },
+            "type": "object",
+            "readOnly": true
+        },
+        "GroupCollection": {
+            "description": "A Collection of Groups from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of Group Entities",
+                    "properties": {
+                        "group": {
+                            "description": "A List of groups",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GroupEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "GroupEntity": {
+            "description": "A Group Entity represents the group through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the group might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Group"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
+        "GroupUsersCollection": {
+            "description": "A Collection of Users of the group from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of User Entities",
+                    "properties": {
+                        "items": {
+                            "description": "A List of users in the group",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "OrgCollection": {
+            "description": "A Collection of Organizations from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of Organizations Entities",
+                    "properties": {
+                        "org": {
+                            "description": "A List of organizations",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/OrgEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "OrgEntity": {
+            "description": "An Org Entity represents the organization though the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the organization might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Organization"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
+        "UserCollection": {
+            "description": "A Collection of Users from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of User Entities",
+                    "properties": {
+                        "org": {
+                            "description": "A List of users",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "UserEntity": {
+            "description": "A UserEntity represents a user through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the user might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/User"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
+        "DateCreated": {
+            "description": "The date this entity was created",
+            "properties": {
+                "created": {
+                    "description": "The date this was created",
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "DateDeleted": {
+            "description": "The date this entity was deleted",
+            "properties": {
+                "deleted": {
+                    "description": "The date this was deleted",
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "DateUpdated": {
+            "description": "The date this entity was last updated",
+            "properties": {
+                "updated": {
+                    "description": "The date this was updated",
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "OuType": {
+            "description": "Adds a qualifier to an Organization or Group that the user can understand",
+            "properties": {
+                "type": {
+                    "description": "The type",
+                    "type": "string",
+                    "enum": [
+                        "generic",
+                        "district",
+                        "school",
+                        "class"
+                    ]
+                }
+            }
+        },
+        "Group": {
+            "description": "A Group is a node in an organization network that is used to define access to a system",
+            "required": [
+                "group_id",
+                "title",
+                "organization_id",
+                "type"
+            ],
+            "properties": {
+                "group_id": {
+                    "description": "The id of the group",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "title": {
+                    "description": "What to call this group",
+                    "type": "string"
+                },
+                "head": {
+                    "description": "The head value for this node",
+                    "type": "integer",
+                    "format": "int32",
+                    "readOnly": true
+                },
+                "tail": {
+                    "description": "The tail value for this node",
+                    "type": "integer",
+                    "format": "int32",
+                    "readOnly": true
+                },
+                "depth": {
+                    "description": "How deep this group is in the network",
+                    "type": "integer",
+                    "format": "int32",
+                    "readOnly": true
+                },
+                "organization_id": {
+                    "description": "The id of the organization this belongs too",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "description": {
+                    "description": "A Description for this group",
+                    "type": "string"
+                },
+                "has_children": {
+                    "description": "Whether the group has child nodes",
+                    "type": "boolean",
+                    "readOnly": true
+                },
+                "external_id": {
+                    "description": "An identifier of the group in a 3rd party system (like the school)",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "The parent group id",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "network_id": {
+                    "description": "The id of the network",
+                    "type": "string",
+                    "format": "uuid",
+                    "readOnly": true
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/DateCreated"
+                },
+                {
+                    "$ref": "#/definitions/DateUpdated"
+                },
+                {
+                    "$ref": "#/definitions/DateDeleted"
+                },
+                {
+                    "$ref": "#/definitions/Searchable"
+                },
+                {
+                    "$ref": "#/definitions/OuType"
+                }
+            ],
+            "x-search-doc-id": "group_id",
+            "x-search-doc-type": "group"
+        },
+        "Organization": {
+            "description": "An Organization represents a collection of groups",
+            "required": [
+                "org_id",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "org_id": {
+                    "description": "The id of the organization",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "title": {
+                    "description": "What to call this organization",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "A Description for this organization",
+                    "type": "string"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/DateCreated"
+                },
+                {
+                    "$ref": "#/definitions/DateUpdated"
+                },
+                {
+                    "$ref": "#/definitions/DateDeleted"
+                },
+                {
+                    "$ref": "#/definitions/Searchable"
+                },
+                {
+                    "$ref": "#/definitions/OuType"
+                }
+            ],
+            "x-search-doc-id": "org_id",
+            "x-search-doc-type": "org"
+        },
+        "Searchable": {
+            "description": "This entity is searchable"
+        },
+        "User": {
+            "description": "A User is able to login to the system",
+            "required": [
+                "user_id",
+                "user_name",
+                "email",
+                "first_name",
+                "last_name",
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "description": "The type of user",
+                    "type": "string",
+                    "enum": [
+                        "CHILD",
+                        "ADULT"
+                    ]
+                },
+                "user_id": {
+                    "description": "The id of the user",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "user_name": {
+                    "description": "A Custom name the for the user",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "The Email of the user",
+                    "type": "string",
+                    "format": "email"
+                },
+                "first_name": {
+                    "description": "The first name of the user",
+                    "type": "string"
+                },
+                "middle_name": {
+                    "description": "The middle name of the user",
+                    "type": "string"
+                },
+                "last_name": {
+                    "description": "The last name of the user",
+                    "type": "string"
+                },
+                "birthdate": {
+                    "description": "The users birthday",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "gender": {
+                    "description": "The Gender the user supplied",
+                    "type": "string"
+                },
+                "external_id": {
+                    "description": "An identifier of the user in a 3rd party system (like the school)",
+                    "type": "string"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/DateCreated"
+                },
+                {
+                    "$ref": "#/definitions/DateUpdated"
+                },
+                {
+                    "$ref": "#/definitions/DateDeleted"
+                },
+                {
+                    "$ref": "#/definitions/Searchable"
+                }
+            ],
+            "x-search-doc-id": "user_id",
+            "x-search-doc-type": "user"
+        }
+    }
+}

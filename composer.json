@@ -48,24 +48,23 @@
     "aws/aws-sdk-php-zf2": "~4",
     "lcobucci/jwt": "~3.2",
     "zendframework/zend-mvc-i18n": "^1.0",
-    "zfcampus/zf-development-mode": "^3.0"
+    "zfcampus/zf-development-mode": "^3.0",
+    "zircote/swagger-php": "^2.0",
+    "elasticsearch/elasticsearch": "^5.1",
+    "bacon/bacon-string-utils": "dev-master"
   },
   "require-dev": {
     "robmorgan/phinx": "0.6.4",
     "zendframework/zend-component-installer": "^1.0 || ^0.3 || ^1.0.0-dev@dev",
     "mockery/mockery": "dev-master",
-    "phpunit/phpunit": "~5.0",
-    "phpunit/dbunit": "~2.0",
+    "phpunit/phpunit": "~6.0",
+    "phpunit/dbunit": "~3.0",
     "phpunit/php-token-stream": "~1.4",
     "squizlabs/php_codesniffer": "2.5.1",
     "phpmd/phpmd": "~2.5",
-    "zfcampus/zf-apigility-admin": "~1.5",
-    "zfcampus/zf-apigility-admin-ui": "~1.3",
     "zfcampus/zf-deploy": "~1.0",
     "zendframework/zend-test": "~3",
-    "zfcampus/zf-asset-manager": "^1.0",
-    "zendframework/zend-developer-tools": "^1.1",
-    "zfcampus/zf-apigility-documentation": "^1.2"
+    "zfcampus/zf-asset-manager": "^1.0"
   },
   "autoload": {
     "psr-4": {
@@ -90,7 +89,9 @@
       "Suggest\\": "module\\Suggest\\src\\Suggest",
       "User\\": "module\\User\\src\\User",
       "Sa\\": "module\\Sa\\src\\Sa",
-      "Address\\": "module\\Address\\src\\Address"
+      "Address\\": "module\\Address\\src\\Address",
+      "Search\\": "module\\Search\\src\\Search",
+      "Doc\\": "module\\Api\\src\\Doc"
     }
   },
   "autoload-dev": {
@@ -116,7 +117,8 @@
       "FeedTest\\": "module\\Feed\\test\\FeedTest",
       "SaTest\\": "module\\Sa\\test\\SaTest",
       "IntegrationTest\\": "test\\IntegrationTest",
-      "AddressTest\\": "module\\Address\\test\\AddressTest"
+      "AddressTest\\": "module\\Address\\test\\AddressTest",
+      "SearchTest\\": "module\\Search\\test\\SearchTest"
     }
   }
 }

@@ -2,7 +2,7 @@
 
 namespace RuleTest\Event\Rule;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Event\Provider\EventProvider;
 use Rule\Event\Rule\EventNameRule;
 use Rule\Item\BasicRuleItem;

@@ -3,7 +3,7 @@
 namespace FeedTest;
 
 use Feed\Feed;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 
 /**
@@ -46,7 +46,7 @@ class FeedTest extends TestCase
         $feed = new Feed($this->data);
         $this->assertEquals($feed->getArrayCopy(), $this->data);
     }
-    
+
     /**
      * @test
      */

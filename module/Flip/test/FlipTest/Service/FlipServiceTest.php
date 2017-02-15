@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Flip\Flip;
 use Flip\Service\FlipService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
@@ -45,6 +45,14 @@ class FlipServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->flipService = new FlipService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|Adapter $adapter */
@@ -54,14 +62,6 @@ class FlipServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('flips')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->flipService = new FlipService($this->tableGateway);
     }
 
     /**
@@ -159,5 +159,48 @@ class FlipServiceTest extends TestCase
             ->andReturn($result);
 
         $this->flipService->fetchFlipById('foo-bar');
+    }
+    
+    /**
+     * @test
+     */
+    public function testItShouldCreateFlip()
+    {
+        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
+        $this->tableGateway->shouldReceive('insert')
+            ->with(['flip_id' => 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue($this->flipService->createFlip($flip));
+        $this->assertEquals($flip->getFlipId(), 'foo-bar');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldUpdateFlip()
+    {
+        $flip = new Flip(['flip_id'=> 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
+        $this->tableGateway->shouldReceive('update')
+            ->with(['flip_id' => $flip->getFlipId()], ['title' => 'Foo Bar', 'description' => 'baz bat'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue($this->flipService->updateFlip($flip));
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldDeleteFlip()
+    {
+        $flip = new Flip(['flip_id' => 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
+        $this->tableGateway->shouldReceive('delete')
+            ->with(['flip_id' => 'foo-bar'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue($this->flipService->deleteFlip($flip));
     }
 }

@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use User\Child;
 use User\Service\UserService;
-use User\UpdateEmailValidator;
+use User\Validator\UpdateEmailValidator;
 
 /**
  * Class UpdateEmailValidatorTest
@@ -17,7 +17,7 @@ class UpdateEmailValidatorTest extends \PHPUnit_Framework_TestCase
     use MockeryPHPUnitIntegration;
 
     /**
-     * @var UpdateEmailValidator
+     * @var \User\Validator\UpdateEmailValidator
      */
     protected $emailValidator;
 

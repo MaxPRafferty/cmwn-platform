@@ -2,6 +2,7 @@
 
 namespace Flip;
 
+use BaconStringUtils\Slugifier;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 
@@ -83,6 +84,11 @@ class Flip implements FlipInterface
      */
     public function getFlipId(): string
     {
+        if (empty($this->flipId)) {
+            $slug = new Slugifier();
+            $this->setFlipId($slug->slugify($this->getTitle()));
+        }
+
         return (string)$this->flipId;
     }
 

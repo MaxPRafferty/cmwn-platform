@@ -8,7 +8,7 @@ use Media\InvalidResponseException;
 use Media\MediaCollection;
 use Media\MediaInterface;
 use Media\Service\MediaService;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Http\Client as HttpClient;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -44,19 +44,19 @@ class MediaServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpHttpClient()
+    public function setUpMediaService()
     {
-        $this->adapter = new TestAdapter();
-        $this->client  = new HttpClient('http://www.google.com');
-        $this->client->setAdapter($this->adapter);
+        $this->mediaService = new MediaService($this->client);
     }
 
     /**
      * @before
      */
-    public function setUpMediaService()
+    public function setUpHttpClient()
     {
-        $this->mediaService = new MediaService($this->client);
+        $this->adapter = new TestAdapter();
+        $this->client  = new HttpClient('http://www.google.com');
+        $this->client->setAdapter($this->adapter);
     }
 
     /**
@@ -155,7 +155,7 @@ class MediaServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenResourceIsNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->adapter->setResponse(Response::fromString("HTTP/1.1 404 Not Found\r\n\r\n"));
         $this->mediaService->importMediaData('some-bad-id');
     }

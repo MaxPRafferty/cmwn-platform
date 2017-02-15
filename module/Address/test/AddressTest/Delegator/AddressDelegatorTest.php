@@ -7,7 +7,7 @@ use Address\Delegator\AddressDelegator;
 use Address\Service\AddressService;
 use Application\Exception\NotFoundException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Select;
@@ -47,6 +47,17 @@ class AddressDelegatorTest extends TestCase
     /**
      * @before
      */
+    public function setUpDelegator()
+    {
+        $events             = new EventManager();
+        $this->calledEvents = [];
+        $this->delegator    = new AddressDelegator($this->addressService, $events);
+        $events->attach('*', [$this, 'captureEvents'], PHP_INT_MAX);
+    }
+
+    /**
+     * @before
+     */
     public function setUpService()
     {
         $this->addressService = \Mockery::mock(AddressService::class);
@@ -59,17 +70,6 @@ class AddressDelegatorTest extends TestCase
     {
         $this->adapter = \Mockery::mock(Adapter::class);
         $this->adapter->shouldReceive('getPlatform')->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpDelegator()
-    {
-        $events             = new EventManager();
-        $this->calledEvents = [];
-        $this->delegator    = new AddressDelegator($this->addressService, $events);
-        $events->attach('*', [$this, 'captureEvents'], PHP_INT_MAX);
     }
 
     /**

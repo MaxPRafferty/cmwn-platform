@@ -2,7 +2,7 @@
 
 namespace UserTest;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 
 /**
@@ -19,19 +19,19 @@ class AdultTest extends TestCase
     {
         $expected = [
             'user_id'     => '',
-            'username'    => null,
-            'email'       => null,
-            'first_name'  => null,
-            'middle_name' => null,
-            'last_name'   => null,
-            'gender'      => null,
+            'username'    => '',
+            'email'       => '',
+            'first_name'  => '',
+            'middle_name' => '',
+            'last_name'   => '',
+            'gender'      => '',
             'birthdate'   => null,
             'created'     => null,
             'updated'     => null,
             'deleted'     => null,
             'type'        => Adult::TYPE_ADULT,
             'meta'        => [],
-            'external_id' => null,
+            'external_id' => '',
         ];
 
         $adult = new Adult();

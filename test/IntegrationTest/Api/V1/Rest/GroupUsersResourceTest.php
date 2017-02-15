@@ -48,7 +48,7 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/group.dataset.php');
     }
 
     /**
@@ -166,12 +166,12 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
      * @test
      * @dataProvider deleteDataProvider
      */
-    public function testItShouldDeleteUserInAGroup($login, $url, $user)
+    public function testItShouldDetachUserFromAGroup($login, $url, $user)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $this->dispatch($url . $user->getUserId(), 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->assertMatchedRouteName('api.rest.group-users');
         $this->assertControllerName('api\v1\rest\groupusers\controller');
 

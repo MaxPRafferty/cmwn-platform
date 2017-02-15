@@ -4,17 +4,18 @@ namespace GroupTest\Delegator;
 
 use Application\Exception\NotFoundException;
 use Group\Delegator\UserGroupServiceDelegator;
+use Group\Service\UserGroupService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use Org\Organization;
+use PHPUnit\Framework\TestCase;
 use Group\Group;
 use User\Adult;
 use User\User;
-use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\ArrayAdapter;
 
 /**
  * Class UserGroupServiceDelegatorTest
@@ -61,23 +62,24 @@ class UserGroupServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpDelegator()
     {
-        $this->groupService = \Mockery::mock('\Group\Service\UserGroupService');
+        $this->delegator    = new UserGroupServiceDelegator(
+            $this->groupService,
+            new EventManager()
+        );
+        $this->calledEvents = [];
+        $this->delegator->getEventManager()->clearListeners('fetch.group.users');
+        $this->delegator->getEventManager()->clearListeners('fetch.org.users');
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
      * @before
      */
-    public function setUpDelegator()
+    public function setUpService()
     {
-        $events = new EventManager();
-        $this->calledEvents = [];
-        $this->delegator    = new UserGroupServiceDelegator($this->groupService, $events);
-        $this->delegator->getEventManager()->clearListeners('save.group');
-        $this->delegator->getEventManager()->clearListeners('fetch.group.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.all.groups');
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->groupService = \Mockery::mock(UserGroupService::class);
     }
 
     /**
@@ -241,13 +243,14 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchUsersForGroup()
     {
+        $return = new ArrayAdapter([]);
         $this->groupService->shouldReceive('fetchUsersForGroup')
-            ->once();
+            ->once()
+            ->andReturn($return);
 
         $this->delegator->fetchUsersForGroup($this->group, null, $this->user);
 
         $where = new Where();
-        $where->addPredicate(new IsNull('u.deleted'));
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
@@ -263,7 +266,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.group.users.post',
                 'target' => $this->groupService,
-                'params' => ['group' => $this->group, 'where' => $where],
+                'params' => ['group' => $this->group, 'where' => $where, 'results' => $return],
             ],
             $this->calledEvents[1],
             'Post event for fetchUsersForGroup Is incorrect'
@@ -275,19 +278,21 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchUsersForOrg()
     {
+        $return = new ArrayAdapter([]);
+        $org    = new Organization();
         $this->groupService->shouldReceive('fetchUsersForOrg')
-            ->once();
+            ->once()
+            ->andReturn($return);
 
-        $this->delegator->fetchUsersForOrg($this->group, null, $this->user);
+        $this->delegator->fetchUsersForOrg($org, null, $this->user);
         $where = new Where();
-        $where->addPredicate(new IsNull('u.deleted'));
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
                 'name'   => 'fetch.org.users',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where],
+                'params' => ['organization' => $org, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForOrg Is incorrect'
@@ -297,7 +302,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users.post',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where],
+                'params' => ['organization' => $org, 'where' => $where, 'result' => $return],
             ],
             $this->calledEvents[1],
             'Post event for fetchUsersForOrg Is incorrect'
@@ -309,15 +314,17 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchUsersForGroupWhenEventStops()
     {
+        $return = new ArrayAdapter([]);
         $this->groupService->shouldReceive('fetchUsersForGroup')->never();
 
-        $this->delegator->getEventManager()->attach('fetch.group.users', function (Event $event) {
+        $this->delegator->getEventManager()->attach('fetch.group.users', function (Event $event) use ($return) {
             $event->stopPropagation(true);
+
+            return $return;
         });
 
         $this->delegator->fetchUsersForGroup($this->group, null, $this->user);
         $where = new Where();
-        $where->addPredicate(new IsNull('u.deleted'));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
@@ -336,23 +343,26 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchUsersForOrgWhenEventStops()
     {
+        $return = new ArrayAdapter([]);
+        $org    = new Organization();
         $this->groupService->shouldReceive('fetchUsersForOrg')
             ->never();
 
-        $this->delegator->getEventManager()->attach('fetch.org.users', function (Event $event) {
+        $this->delegator->getEventManager()->attach('fetch.org.users', function (Event $event) use ($return) {
             $event->stopPropagation(true);
+
+            return $return;
         });
 
-        $this->delegator->fetchUsersForOrg($this->group, null, $this->user);
+        $this->delegator->fetchUsersForOrg($org, null, $this->user);
         $where = new Where();
-        $where->addPredicate(new IsNull('u.deleted'));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
             [
                 'name'   => 'fetch.org.users',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where],
+                'params' => ['organization' => $org, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForGroup Is incorrect'
@@ -369,9 +379,13 @@ class UserGroupServiceDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->delegator->fetchUsersForGroup($this->group, null, $this->user);
+        try {
+            $this->delegator->fetchUsersForGroup($this->group, null, $this->user);
+            $this->fail(UserGroupServiceDelegator::class . ' did not re-throw the exception');
+        } catch (\Exception $actual) {
+            $this->assertSame($actual, $exception);
+        }
         $where = new Where();
-        $where->addPredicate(new IsNull('u.deleted'));
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -400,20 +414,25 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchUsersPostForOrgWhenErrorHappens()
     {
+        $org       = new Organization();
         $exception = new NotFoundException();
         $this->groupService->shouldReceive('fetchUsersForOrg')
             ->andThrow($exception);
 
-        $this->delegator->fetchUsersForOrg($this->group, null, $this->user);
+        try {
+            $this->delegator->fetchUsersForOrg($org, null, $this->user);
+            $this->fail('Exception was not thrown');
+        } catch (\Exception $actual) {
+            $this->assertSame($exception, $actual);
+        }
         $where = new Where();
-        $where->addPredicate(new IsNull('u.deleted'));
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
             [
                 'name'   => 'fetch.org.users',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where],
+                'params' => ['organization' => $org, 'where' => $where],
             ],
             $this->calledEvents[0],
             'Pre event for fetchUsersForOrg Is incorrect'
@@ -423,7 +442,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.org.users.error',
                 'target' => $this->groupService,
-                'params' => ['organization' => $this->group, 'where' => $where, 'exception' => $exception],
+                'params' => ['organization' => $org, 'where' => $where, 'exception' => $exception],
             ],
             $this->calledEvents[1],
             'Pre event for fetchUsersForOrg Is incorrect'
@@ -499,10 +518,10 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAllUsersForUser()
     {
-        $resultSet = new ResultSet([]);
+        $return = new ArrayAdapter([]);
         $this->groupService->shouldReceive('fetchAllUsersForUser')
             ->with($this->user, null, null)
-            ->andReturn($resultSet)
+            ->andReturn($return)
             ->once();
 
         $this->delegator->fetchAllUsersForUser($this->user);
@@ -520,7 +539,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.user.users.post',
                 'target' => $this->groupService,
-                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => $resultSet],
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => $return],
             ],
             $this->calledEvents[1]
         );
@@ -531,10 +550,11 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchAllUsersForUserWhenEventStopped()
     {
-        $this->delegator->getEventManager()->attach('fetch.all.user.users', function (Event $event) {
+        $return = new ArrayAdapter([]);
+        $this->delegator->getEventManager()->attach('fetch.all.user.users', function (Event $event) use ($return) {
             $event->stopPropagation(true);
 
-            return false;
+            return $return;
         });
 
         $this->groupService->shouldReceive('fetchAllUsersForUser')
@@ -564,7 +584,12 @@ class UserGroupServiceDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->delegator->fetchAllUsersForUser($this->user);
+        try {
+            $this->delegator->fetchAllUsersForUser($this->user);
+            $this->fail('Exception was not thrown');
+        } catch (\Exception $actual) {
+            $this->assertSame($exception, $actual);
+        }
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -590,7 +615,7 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchOrganizationsForUser()
     {
-        $resultSet = new ResultSet([]);
+        $resultSet = new ArrayAdapter([]);
         $this->groupService->shouldReceive('fetchOrganizationsForUser')
             ->with($this->user, null)
             ->andReturn($resultSet)
@@ -611,7 +636,7 @@ class UserGroupServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.user.orgs.post',
                 'target' => $this->groupService,
-                'params' => ['user' => $this->user],
+                'params' => ['user' => $this->user, 'result' => $resultSet],
             ],
             $this->calledEvents[1]
         );
@@ -622,10 +647,11 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchOrganizationsForUserWhenEventStopped()
     {
-        $this->delegator->getEventManager()->attach('fetch.user.orgs', function (Event $event) {
+        $return = new ArrayAdapter([]);
+        $this->delegator->getEventManager()->attach('fetch.user.orgs', function (Event $event) use ($return) {
             $event->stopPropagation(true);
 
-            return false;
+            return $return;
         });
 
         $this->groupService->shouldReceive('fetchOrganizationsForUser')
@@ -655,7 +681,12 @@ class UserGroupServiceDelegatorTest extends TestCase
             ->andThrow($exception)
             ->once();
 
-        $this->delegator->fetchOrganizationsForUser($this->user);
+        try {
+            $this->delegator->fetchOrganizationsForUser($this->user);
+            $this->fail('exception was no thrown');
+        } catch (\Exception $actual) {
+            $this->assertSame($exception, $actual);
+        }
 
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -681,7 +712,7 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchGroupsForUser()
     {
-        $resultSet = new ResultSet([]);
+        $resultSet = new ArrayAdapter([]);
         $this->groupService->shouldReceive('fetchGroupsForUser')
             ->with($this->user, null, null)
             ->andReturn($resultSet)
@@ -713,10 +744,11 @@ class UserGroupServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchGroupsForUserWhenEventStopped()
     {
-        $this->delegator->getEventManager()->attach('fetch.user.group', function (Event $event) {
+        $return = new ArrayAdapter([]);
+        $this->delegator->getEventManager()->attach('fetch.user.group', function (Event $event) use ($return) {
             $event->stopPropagation(true);
 
-            return false;
+            return $return;
         });
 
         $this->groupService->shouldReceive('fetchGroupsForUser')
