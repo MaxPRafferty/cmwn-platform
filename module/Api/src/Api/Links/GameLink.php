@@ -14,17 +14,17 @@ class GameLink extends Link
     /**
      * GameLink constructor.
      * @param $entity
-     * @param string|null $deleted
+     * @param bool $deleted
      */
-    public function __construct($entity, $deleted = null)
+    public function __construct($entity, $deleted = false)
     {
         $label = 'games';
         $query = null;
         $propsLabel = 'Games';
 
-        if ($deleted === 'true') {
+        if ($deleted) {
             $label .= '_deleted';
-            $query = ['deleted' => $deleted];
+            $query = ['deleted' => 'true'];
             $propsLabel = 'Deleted Games';
         }
 

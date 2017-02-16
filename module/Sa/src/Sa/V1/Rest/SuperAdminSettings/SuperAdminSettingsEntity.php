@@ -25,7 +25,7 @@ class SuperAdminSettingsEntity extends Entity
         $userLink = new UserLink();
         $userLink->setProps(['label' => 'Manage Users']);
 
-        $gameLink = new GameLink(null, 'true');
+        $gameLink = new GameLink(null, true);
         $gameLink->setProps(['label' => 'Manage Games']);
 
         $gameDataLink = new GameDataLink('all-about-you');
