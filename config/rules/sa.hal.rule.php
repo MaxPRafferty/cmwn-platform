@@ -45,7 +45,7 @@ return [
                             \Api\Links\GameLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                             true,
-                            ['true'],
+                            [true]
                         ],
                     ],
                     [

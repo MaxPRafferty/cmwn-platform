@@ -278,6 +278,19 @@ class GameResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @param $user
+     * @dataProvider postDataProvider
+     */
+    public function testItShould403IfOthersTryToAccessDeletedGames($user)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($user);
+        $this->dispatch('/game?deleted=true');
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
      * @return array
      */
     public function loginDataProvider()
@@ -301,9 +314,6 @@ class GameResourceTest extends TestCase
             ['other_teacher', '/game', ['animal-id', 'be-bright', 'Monarch']],
             ['principal', '/game', ['animal-id', 'be-bright', 'Monarch']],
             ['super_user', '/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
-            ['english_student', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', '/game?deleted=true', ['animal-id', 'be-bright', 'Monarch']],
             ['super_user', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
             ['english_student', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
             ['other_teacher', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
@@ -319,7 +329,7 @@ class GameResourceTest extends TestCase
         return [
             ['english_student'],
             ['other_teacher'],
-            ['principal']
+            ['principal'],
         ];
     }
 

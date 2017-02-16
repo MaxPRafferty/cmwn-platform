@@ -7,11 +7,11 @@ use Game\Delegator\GameDelegator;
 use Game\Game;
 use Game\Service\GameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
-use Zend\Db\Sql\Predicate\IsNull;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
+use Zend\Db\Sql\Predicate\IsNull;
 
 /**
  * Unit tests for game delegator
@@ -40,9 +40,17 @@ class GameDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $this->gameService = \Mockery::mock(GameService::class);
-        $this->gameDelegator = new GameDelegator($this->gameService, new EventManager());
+        $events = new EventManager();
+        $this->gameDelegator = new GameDelegator($this->gameService, $events);
         $this->gameDelegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->gameService = \Mockery::mock(GameService::class);
     }
 
     /**

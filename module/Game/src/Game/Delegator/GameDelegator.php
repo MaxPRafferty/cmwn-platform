@@ -29,7 +29,9 @@ class GameDelegator implements GameServiceInterface
     protected $gameService;
 
     /**
-     * @inheritdoc
+     * GameDelegator constructor.
+     * @param GameServiceInterface $gameService
+     * @param EventManagerInterface $events
      */
     public function __construct(GameServiceInterface $gameService, EventManagerInterface $events)
     {
@@ -43,6 +45,7 @@ class GameDelegator implements GameServiceInterface
 
         $deleted->attach($events, PHP_INT_MIN);
         $deleted->setEntityParamKey('game');
+
         $events->addIdentifiers(array_merge(
             [GameServiceInterface::class, static::class, GameService::class],
             $events->getIdentifiers()
