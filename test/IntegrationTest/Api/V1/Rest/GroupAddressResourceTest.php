@@ -118,7 +118,7 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $this->dispatch('/group/school/address');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(20);
         $this->assertMatchedRouteName('api.rest.group-address');
         $this->assertControllerName('api\v1\rest\groupaddress\controller');
 

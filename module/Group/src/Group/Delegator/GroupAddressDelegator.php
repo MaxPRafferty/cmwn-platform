@@ -171,4 +171,34 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
             throw $e;
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null)
+    {
+        $event = new Event(
+            'fetch.address.groups',
+            $this->realService,
+            [ 'where' => $where, 'prototype' => $prototype]
+        );
+
+        $response = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+        try {
+            $return = $this->realService->fetchAllGroupsInAddress($where, $prototype);
+            $event->setName('fetch.address.groups.post');
+            $event->setParam('groups', $return);
+            $this->getEventManager()->triggerEvent($event);
+
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.address.groups.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
+    }
 }

@@ -6,8 +6,10 @@ use Address\Address;
 use Address\AddressInterface;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
+use Group\Group;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -91,6 +93,40 @@ class GroupAddressService implements GroupAddressServiceInterface
 
         $select->where($where);
 
+        return new DbSelect(
+            $select,
+            $this->tableGateway->getAdapter(),
+            $resultSet
+        );
+    }
+
+    /**
+     * @param $where
+     * @param GroupInterface|null $prototype
+     * @return DbSelect
+     */
+    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null)
+    {
+        $where = $this->createWhere($where);
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+        $select->columns([]);
+        $select->join(
+            ['at' => 'addresses'],
+            'ga.address_id = at.address_id'
+        );
+
+        $select->columns([]);
+
+        $select->join(
+            ['g' => 'groups'],
+            'ga.group_id = g.group_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+        $prototype = $prototype ?? new Group();
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect(
             $select,
             $this->tableGateway->getAdapter(),

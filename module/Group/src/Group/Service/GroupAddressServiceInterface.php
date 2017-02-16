@@ -46,4 +46,11 @@ interface GroupAddressServiceInterface
      * @throws NotFoundException
      */
     public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address);
+
+    /**
+     * @param $where
+     * @param GroupInterface|null $prototype
+     * @return DbSelect
+     */
+    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null);
 }
