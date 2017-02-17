@@ -52,14 +52,16 @@ class GroupResource extends AbstractResourceListener
      *     name="body",
      *     description="Group data",
      *     required=true,
-     *     @SWG\Schema(ref="#/definitions/Group")
+     *     @SWG\Schema(
+     *          type="object",
+     *          ref="#/definitions/Group")
      *   ),
      *   @SWG\Response(
      *     response=201,
      *     description="Group was created",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/GroupEntity")
+     *          ref="#/definitions/GroupEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -67,7 +69,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Validation failed",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *          ref="#/definitions/ValidationError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -75,7 +77,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -131,7 +133,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Group was deleted",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/GroupEntity")
+     *          ref="#/definitions/GroupEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -139,7 +141,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Group not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -147,7 +149,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authorized to delete or access group",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   ),
      *   @SWG\Response(
@@ -155,7 +157,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -199,14 +201,16 @@ class GroupResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="The requested group",
-     *     @SWG\Schema(ref="#/definitions/GroupCollection")
+     *     @SWG\Schema(
+     *          type="object",
+     *          ref="#/definitions/GroupCollection")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Group not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -214,7 +218,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -287,8 +291,8 @@ class GroupResource extends AbstractResourceListener
      *     response=200,
      *     description="Paged groups",
      *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/GroupCollection")
+     *          type="object",
+     *          ref="#/definitions/GroupCollection"
      *     )
      *   ),
      *   @SWG\Response(
@@ -296,7 +300,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Group not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -304,7 +308,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -360,7 +364,7 @@ class GroupResource extends AbstractResourceListener
      *     description="successful operation",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/GroupEntity")
+     *          ref="#/definitions/GroupEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -368,7 +372,7 @@ class GroupResource extends AbstractResourceListener
      *     description="validation failed",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *          ref="#/definitions/ValidationError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -376,7 +380,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authorized to update a group",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   ),
      *   @SWG\Response(
@@ -384,7 +388,7 @@ class GroupResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )

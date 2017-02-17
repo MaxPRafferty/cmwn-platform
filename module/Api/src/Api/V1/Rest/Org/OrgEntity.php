@@ -18,6 +18,11 @@ use Org\Organization;
  *             @SWG\Schema(ref="#/definitions/SelfLink"),
  *         }
  *     ),
+ *     @SWG\Property(
+ *          type="integer",
+ *          property="scope",
+ *          description="Binary bits the authenticated user has access for this entity"
+ *     ),
  *     allOf={
  *         @SWG\Schema(ref="#/definitions/Organization"),
  *         @SWG\Schema(ref="#/definitions/SelfLink"),
