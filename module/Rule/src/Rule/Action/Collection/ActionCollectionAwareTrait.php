@@ -24,6 +24,7 @@ trait ActionCollectionAwareTrait
     public function setActionCollection(ActionCollectionInterface $actionCollection)
     {
         $this->actionCollection = $actionCollection;
+        return $this;
     }
 
     /**

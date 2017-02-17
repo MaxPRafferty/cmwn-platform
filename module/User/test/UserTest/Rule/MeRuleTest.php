@@ -2,7 +2,7 @@
 
 namespace UserTest\Rule;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Provider\BasicValueProvider;
 use User\Adult;

@@ -2,7 +2,7 @@
 
 namespace SkribbleTest;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Skribble\Skribble;
 use User\Child;
 use Zend\Json\Json;

@@ -3,12 +3,14 @@
 namespace UserTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
 use User\Delegator\UserServiceDelegator;
+use User\Service\UserService;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
+use Zend\Paginator\Adapter\ArrayAdapter;
 
 /**
  * Test UserServiceDelegatorTest
@@ -61,7 +63,7 @@ class UserServiceDelegatorTest extends TestCase
      */
     public function setUpService()
     {
-        $this->userService = \Mockery::mock('\User\Service\UserService');
+        $this->userService = \Mockery::mock(UserService::class);
     }
 
     /**
@@ -73,6 +75,7 @@ class UserServiceDelegatorTest extends TestCase
         $this->user->setUserId(md5('foobar'));
         $this->user->setExternalId('foo-bar');
         $this->user->setEmail('chuck@manchuck.com');
+        $this->user->setUserName('manchuck');
     }
 
     /**
@@ -112,7 +115,7 @@ class UserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.new.user.post',
                 'target' => $this->userService,
-                'params' => ['user' => $this->user]
+                'params' => ['user' => $this->user, 'result' => true]
             ],
             $this->calledEvents[1]
         );
@@ -144,7 +147,7 @@ class UserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'save.user.post',
                 'target' => $this->userService,
-                'params' => ['user' => $this->user]
+                'params' => ['user' => $this->user, 'result' => true]
             ],
             $this->calledEvents[1]
         );
@@ -161,10 +164,10 @@ class UserServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('save.new.user', function (Event $event) {
             $event->stopPropagation(true);
-            return ['foo' => 'bar'];
+            return false;
         });
 
-        $this->assertEquals(['foo' => 'bar'], $this->delegator->createUser($this->user));
+        $this->assertFalse($this->delegator->createUser($this->user));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
@@ -188,10 +191,10 @@ class UserServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('save.user', function (Event $event) {
             $event->stopPropagation(true);
-            return ['foo' => 'bar'];
+            return false;
         });
 
-        $this->assertEquals(['foo' => 'bar'], $this->delegator->updateUser($this->user));
+        $this->assertFalse($this->delegator->updateUser($this->user));
 
         $this->assertEquals(1, count($this->calledEvents));
         $this->assertEquals(
@@ -210,13 +213,13 @@ class UserServiceDelegatorTest extends TestCase
     public function testItShouldCallFetchUser()
     {
         $this->userService->shouldReceive('fetchUser')
-            ->with($this->user->getUserId())
+            ->with($this->user->getUserId(), null)
             ->andReturn($this->user)
             ->once();
 
         $this->assertSame(
             $this->user,
-            $this->delegator->fetchUser($this->user->getUserId())
+            $this->delegator->fetchUser($this->user->getUserId(), null)
         );
 
         $this->assertEquals(2, count($this->calledEvents));
@@ -357,7 +360,7 @@ class UserServiceDelegatorTest extends TestCase
 
         $this->assertSame(
             $this->user,
-            $this->delegator->fetchUser($this->user->getUserId())
+            $this->delegator->fetchUser($this->user->getUserId(), null)
         );
 
         $this->assertEquals(1, count($this->calledEvents));
@@ -378,11 +381,10 @@ class UserServiceDelegatorTest extends TestCase
     {
         $this->userService->shouldReceive('deleteUser')
             ->with($this->user, true)
-            ->andReturn($this->user)
+            ->andReturn(true)
             ->once();
 
-        $this->assertSame(
-            $this->user,
+        $this->assertTrue(
             $this->delegator->deleteUser($this->user)
         );
 
@@ -399,7 +401,7 @@ class UserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.post',
                 'target' => $this->userService,
-                'params' => ['user' => $this->user, 'soft' => true]
+                'params' => ['user' => $this->user, 'soft' => true, 'result' => true]
             ],
             $this->calledEvents[1]
         );
@@ -412,16 +414,15 @@ class UserServiceDelegatorTest extends TestCase
     {
         $this->userService->shouldReceive('deleteUser')
             ->with($this->user, true)
-            ->andReturn($this->user)
+            ->andReturn(false)
             ->never();
 
         $this->delegator->getEventManager()->attach('delete.user', function (Event $event) {
             $event->stopPropagation(true);
-            return $this->user;
+            return false;
         });
 
-        $this->assertSame(
-            $this->user,
+        $this->assertFalse(
             $this->delegator->deleteUser($this->user)
         );
 
@@ -441,7 +442,7 @@ class UserServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAll()
     {
-        $result = new \ArrayIterator([['foo' => 'bar']]);
+        $result = new ArrayAdapter([['foo' => 'bar']]);
         $this->userService->shouldReceive('fetchAll')
             ->andReturn($result)
             ->once();
@@ -456,7 +457,7 @@ class UserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.users',
                 'target' => $this->userService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'prototype' => null]
             ],
             $this->calledEvents[0]
         );
@@ -465,7 +466,7 @@ class UserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.users.post',
                 'target' => $this->userService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null, 'users' => $result]
+                'params' => ['where' => new Where(), 'prototype' => null, 'users' => $result]
             ],
             $this->calledEvents[1]
         );
@@ -476,7 +477,7 @@ class UserServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAllWhenEventStops()
     {
-        $result = new \ArrayIterator([['foo' => 'bar']]);
+        $result = new ArrayAdapter([['foo' => 'bar']]);
         $this->userService->shouldReceive('fetchAll')
             ->andReturn($result)
             ->never();
@@ -496,7 +497,7 @@ class UserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.users',
                 'target' => $this->userService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null]
+                'params' => ['where' => new Where(), 'prototype' => null]
             ],
             $this->calledEvents[0]
         );

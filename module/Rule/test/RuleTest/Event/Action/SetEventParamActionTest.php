@@ -57,6 +57,7 @@ class SetEventParamActionTest extends TestCase
     public function testItShouldThrowExceptionIfEventNotInstanceOfEventInterface()
     {
         $this->expectException(InvalidProviderType::class);
+
         $this->item->shouldReceive('getParam')
             ->with('event')
             ->once();

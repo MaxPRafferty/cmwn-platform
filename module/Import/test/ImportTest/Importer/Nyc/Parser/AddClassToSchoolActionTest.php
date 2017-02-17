@@ -92,9 +92,9 @@ class AddClassToSchoolActionTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldAddChildToGroup()
+    public function testItShouldattachChildToGroup()
     {
-        $this->groupService->shouldReceive('addChildToGroup')
+        $this->groupService->shouldReceive('attachChildToGroup')
             ->once()
             ->with($this->school, $this->classRoomGroup);
 

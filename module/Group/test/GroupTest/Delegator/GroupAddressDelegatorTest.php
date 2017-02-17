@@ -8,19 +8,20 @@ use Group\Delegator\GroupAddressDelegator;
 use Group\Service\GroupAddressService;
 use Group\Group;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Select;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\Iterator;
 
 /**
  * Class GroupAddressDelegatorTest
+ *
  * @package AddressTest\Delegator
  * @SuppressWarnings(PHPMD)
- * @FixME no need for the adapter to be mocked
  */
 class GroupAddressDelegatorTest extends TestCase
 {
@@ -51,14 +52,17 @@ class GroupAddressDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $this->addressService = \Mockery::mock(GroupAddressService::class);
-        $this->adapter = \Mockery::mock(Adapter::class);
-        $this->adapter->shouldReceive('getPlatform')->byDefault();
-
-        $events             = new EventManager();
         $this->calledEvents = [];
-        $this->delegator    = new GroupAddressDelegator($this->addressService, $events);
-        $events->attach('*', [$this, 'captureEvents'], PHP_INT_MAX);
+        $this->delegator    = new GroupAddressDelegator($this->addressService, new EventManager());
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], PHP_INT_MAX);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpService()
+    {
+        $this->addressService = \Mockery::mock(GroupAddressService::class);
     }
 
     /**
@@ -79,10 +83,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldCallAttachAddress()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('attachAddressToGroup')
             ->andReturn(true)->once();
@@ -122,10 +127,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldNotCallAttachAddressWhenEventStops()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('attachAddressToGroup')
             ->andReturn(true)->never();
@@ -161,10 +167,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventWhenExceptionOnAttachAddress()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('attachAddressToGroup')
             ->andReturnUsing(function () {
@@ -183,7 +190,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'attach.group.address',
+                    'name'   => 'attach.group.address',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'address' => $address],
                 ],
@@ -193,7 +200,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'attach.group.address.error',
+                    'name'   => 'attach.group.address.error',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'address' => $address, 'exception' => new \Exception()],
                 ],
@@ -209,10 +216,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldCallDetachddress()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('detachAddressFromGroup')
             ->andReturn(true)->once();
@@ -252,10 +260,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldNotCallDetachAddressWhenEventStops()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('detachAddressFromGroup')
             ->andReturn(true)->never();
@@ -291,10 +300,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventOnExceptionWhileDetachAddress()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('detachAddressFromGroup')
             ->andReturnUsing(function () {
@@ -313,7 +323,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'detach.group.address',
+                    'name'   => 'detach.group.address',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'address' => $address],
                 ],
@@ -323,7 +333,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'detach.group.address.error',
+                    'name'   => 'detach.group.address.error',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'address' => $address, 'exception' => new \Exception()],
                 ],
@@ -338,9 +348,10 @@ class GroupAddressDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAllAddressesForGroup()
     {
-        $dbSelect = new DbSelect(new Select(), $this->adapter, new HydratingResultSet());
+        $dbSelect = new Iterator(new \ArrayIterator([]));
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('fetchAllAddressesForGroup')
             ->andReturn($dbSelect)->once();
@@ -379,9 +390,10 @@ class GroupAddressDelegatorTest extends TestCase
      */
     public function testItShouldNotCallFetchAllAddressesForGroupWhenEventStops()
     {
-        $dbSelect = new DbSelect(new Select(), $this->adapter, new HydratingResultSet());
+        $dbSelect = new Iterator(new \ArrayIterator([]));
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('fetchAllAddressesForGroup')
             ->andReturn(true)->never();
@@ -418,7 +430,8 @@ class GroupAddressDelegatorTest extends TestCase
      */
     public function testItShouldTriggerErrorEventOnExceptionWhileFetchAllGroupAddresses()
     {
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('fetchAllAddressesForGroup')
             ->andReturnUsing(function () {
@@ -436,7 +449,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.all.group.addresses',
+                    'name'   => 'fetch.all.group.addresses',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'where' => null, 'prototype' => null],
                 ],
@@ -446,13 +459,13 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.all.group.addresses.error',
+                    'name'   => 'fetch.all.group.addresses.error',
                     'target' => $this->addressService,
                     'params' => [
-                        'group' => $group,
-                        'where' => null,
+                        'group'     => $group,
+                        'where'     => null,
                         'prototype' => null,
-                        'exception' => new \Exception
+                        'exception' => new \Exception,
                     ],
                 ],
                 $this->calledEvents[1],
@@ -467,10 +480,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldCallFetchAddressForGroup()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('fetchAddressForGroup')
             ->andReturn($address)->once();
@@ -510,10 +524,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldNotCallFetchAddressForGroupWhenEventStops()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('fetchAddressForGroup')
             ->andReturn(true)->never();
@@ -521,7 +536,7 @@ class GroupAddressDelegatorTest extends TestCase
         $this->delegator->getEventManager()->attach('fetch.group.address', function (Event $event) {
             $event->stopPropagation(true);
 
-            return false;
+            return new Address([]);
         });
 
         $this->delegator->fetchAddressForGroup($group, $address);
@@ -549,10 +564,11 @@ class GroupAddressDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventOnExceptionWhileFetchingGroupAddress()
     {
         $address = new Address([
-            'address_id' => 'foo'
+            'address_id' => 'foo',
         ]);
 
-        $group = new Group(['group_id' => 'bar']);
+        $group = new Group();
+        $group->setGroupId('bar');
 
         $this->addressService->shouldReceive('fetchAddressForGroup')
             ->andReturnUsing(function () {
@@ -571,7 +587,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.group.address',
+                    'name'   => 'fetch.group.address',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'address' => $address],
                 ],
@@ -581,7 +597,7 @@ class GroupAddressDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.group.address.error',
+                    'name'   => 'fetch.group.address.error',
                     'target' => $this->addressService,
                     'params' => ['group' => $group, 'address' => $address, 'exception' => new NotFoundException()],
                 ],

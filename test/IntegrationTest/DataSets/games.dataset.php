@@ -14,6 +14,7 @@ return [
             'deleted'     => null,
             'meta'        => '{"desktop" : false, "unity" : false}',
             'coming_soon' => '0',
+            'global'      => '1',
         ],
         [
             'game_id'     => 'be-bright',
@@ -233,4 +234,18 @@ return [
         ],
     ],
     'user_saves' => [],
+    'user_games' => [
+        [
+            'user_id' => 'english_student',
+            'game_id' => 'Monarch',
+        ],
+        [
+            'user_id' => 'math_student',
+            'game_id' => 'animal-id'
+        ],
+        [
+            'user_id' => 'english_student',
+            'game_id' => 'deleted-game',
+        ]
+    ],
 ];

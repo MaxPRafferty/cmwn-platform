@@ -38,4 +38,14 @@ class ThrowExceptionTest extends TestCase
         $action = new ThrowException(NotAuthorizedException::class);
         $action(new BasicRuleItem());
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowRuntimeExceptionWhenIllegalExceptionClassNameIsGiven()
+    {
+        //$this->expectException(\RuntimeException::class);
+        $action = new ThrowException("foo");
+        $action(new BasicRuleItem());
+    }
 }

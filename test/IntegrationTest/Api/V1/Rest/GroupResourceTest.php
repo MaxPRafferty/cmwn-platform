@@ -7,7 +7,6 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test GroupResourceTest
@@ -32,7 +31,7 @@ class GroupResourceTest extends TestCase
     protected $groupService;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -467,9 +466,9 @@ class GroupResourceTest extends TestCase
         $this->logInUser('super_user');
 
         $this->dispatch('/group/school', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->expectException(NotFoundException::class);
-        $group = $this->groupService->fetchGroup('school')->getArrayCopy();
+        $this->groupService->fetchGroup('school')->getArrayCopy();
     }
 
     /**
@@ -637,6 +636,7 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      * @dataProvider halLinkDataProvider
+     * @group HAL
      */
     public function testItShouldAddCorrectHalLinksOnGroupEntities($login, $group, $expected)
     {
@@ -652,7 +652,10 @@ class GroupResourceTest extends TestCase
         foreach ($links as $label => $link) {
             $actual[] = $label;
         }
-        $this->assertEquals($actual, $expected);
+
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -813,7 +816,7 @@ class GroupResourceTest extends TestCase
     public function halLinkDataProvider()
     {
         return [
-            0 => [
+            'Super User for School' => [
                 'super_user',
                 'school',
                 [
@@ -824,7 +827,7 @@ class GroupResourceTest extends TestCase
                     4 => 'import',
                 ]
             ],
-            1 => [
+            'Super User for Class' => [
                 'super_user',
                 'english',
                 [
@@ -834,7 +837,7 @@ class GroupResourceTest extends TestCase
                     3 => 'import',
                 ]
             ],
-            2 => [
+            'Principla for School' => [
                 'principal',
                 'school',
                 [
@@ -845,7 +848,7 @@ class GroupResourceTest extends TestCase
                     4 => 'import',
                 ]
             ],
-            3 => [
+            'Principal for English' => [
                 'principal',
                 'english',
                 [
@@ -855,7 +858,7 @@ class GroupResourceTest extends TestCase
                     3 => 'import',
                 ]
             ],
-            4 => [
+            'English Teacher for school' => [
                 'english_teacher',
                 'school',
                 [
@@ -865,7 +868,7 @@ class GroupResourceTest extends TestCase
                     3 => 'group_class',
                 ]
             ],
-            5 => [
+            'English Teacher for English' => [
                 'english_teacher',
                 'english',
                 [
@@ -874,7 +877,7 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                 ]
             ],
-            6 => [
+            'English Student for School' => [
                 'english_student',
                 'school',
                 [
@@ -883,7 +886,7 @@ class GroupResourceTest extends TestCase
                     2 => 'group_class',
                 ]
             ],
-            7 => [
+            'English Student for class' => [
                 'english_student',
                 'english',
                 [

@@ -2,29 +2,30 @@
 
 namespace Group;
 
-use Application\Utils\Date\DateCreatedTrait;
-use Application\Utils\Date\DateDeletedTrait;
-use Application\Utils\Date\DateUpdatedTrait;
-use Application\Utils\MetaDataTrait;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
+use Application\Utils\Meta\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
-use Application\Utils\SoftDeleteInterface;
+use Application\Utils\Type\TypeTrait;
 use Org\OrganizationInterface;
 use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
-use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Class Group
- * @package Group
+ * Defines a group
  */
-class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInterface
+class Group implements GroupInterface
 {
-    use DateCreatedTrait;
-    use DateUpdatedTrait;
-    use DateDeletedTrait;
-    use PropertiesTrait;
-    use MetaDataTrait;
+    use StandardDatesTrait,
+        MetaDataTrait,
+        PropertiesTrait,
+        TypeTrait,
+        SoftDeleteTrait {
+            SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+            SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+            SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+        }
 
     /**
      * @var string
@@ -64,11 +65,6 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     /**
      * @var string
      */
-    protected $type;
-
-    /**
-     * @var string
-     */
     protected $externalId;
 
     /**
@@ -77,12 +73,13 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     protected $parentId;
 
     /**
-     * @var null|string
+     * @var string
      */
     protected $networkId;
 
     /**
      * Group constructor.
+     *
      * @param array|null $options
      */
     public function __construct(array $options = null)
@@ -97,33 +94,22 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
      */
     public function __toString()
     {
-        return (string) $this->getTitle();
+        return (string)$this->getTitle();
     }
 
     /**
-     * Exchange internal values from provided array
-     *
-     * @param  array $array
-     * @return void
+     * @inheritdoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): GroupInterface
     {
         $defaults = [
             'group_id'        => null,
             'organization_id' => null,
             'title'           => null,
-            'description'     => null,
             'type'            => null,
-            'meta'            => [],
-            'head'            => null,
-            'tail'            => null,
-            'depth'           => null,
-            'created'         => null,
-            'updated'         => null,
-            'deleted'         => null,
-            'external_id'     => null,
-            'parent_id'       => null,
-            'network_id'      => null,
+            'head'            => 0,
+            'tail'            => 0,
+            'depth'           => 0,
         ];
 
         $array = array_merge($defaults, $array);
@@ -134,14 +120,14 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
                 $this->{$method}($value);
             }
         }
+
+        return $this;
     }
 
     /**
-     * Return an array representation of the object
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'group_id'        => $this->getGroupId(),
@@ -154,68 +140,74 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
             'tail'            => $this->getTail(),
             'depth'           => $this->getDepth(),
             'external_id'     => $this->getExternalId(),
-            'created'         => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
-            'updated'         => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
-            'deleted'         => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
+            'created'         => $this->formatCreated(\DateTime::ISO8601),
+            'updated'         => $this->formatUpdated(\DateTime::ISO8601),
+            'deleted'         => $this->formatDeleted(\DateTime::ISO8601),
             'parent_id'       => $this->getParentId(),
             'network_id'      => $this->getNetworkId(),
         ];
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getGroupId()
+    public function getGroupId(): string
     {
+        if ($this->groupId === null) {
+            $this->setGroupId(Uuid::uuid1());
+        }
+
         return $this->groupId;
     }
 
     /**
-     * @param string $groupId
-     * @return Group
+     * @inheritdoc
      */
-    public function setGroupId($groupId)
+    public function setGroupId(string $groupId): GroupInterface
     {
-        $this->groupId = (string) $groupId;
+        $this->groupId = (string)$groupId;
+
         return $this;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getOrganizationId()
+    public function getOrganizationId(): string
     {
         return $this->organizationId;
     }
 
     /**
-     * @param string|OrganizationInterface $organizationId
-     * @return Group
+     * @inheritdoc
      */
-    public function setOrganizationId($organizationId)
+    public function setOrganizationId(string $organizationId): GroupInterface
     {
-        $organizationId = $organizationId instanceof OrganizationInterface
-            ? $organizationId->getOrgId()
-            : $organizationId;
-
         $this->organizationId = $organizationId;
 
         return $this;
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
-    public function getTitle()
+    public function attachToOrganization(OrganizationInterface $organization): GroupInterface
+    {
+        return $this->setOrganizationId($organization->getOrgId());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
-     * @param string $title
-     * @return Group
+     * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title): GroupInterface
     {
         $this->title = $title;
 
@@ -223,7 +215,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getDescription()
     {
@@ -231,10 +223,9 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     }
 
     /**
-     * @param string $description
-     * @return Group
+     * @inheritdoc
      */
-    public function setDescription($description)
+    public function setDescription(string $description = null): GroupInterface
     {
         $this->description = $description;
 
@@ -242,92 +233,71 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
-    public function getHead()
+    public function getHead(): int
     {
         return $this->head;
     }
 
     /**
-     * @param int $head
-     *
-     * @return Group
+     * @inheritdoc
      */
-    public function setHead($head)
+    public function setHead(int $head): GroupInterface
     {
         $this->head = abs($head);
+
         return $this;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
-    public function getTail()
+    public function getTail(): int
     {
         return $this->tail;
     }
 
     /**
-     * @param int $tail
-     *
-     * @return Group
+     * @inheritdoc
      */
-    public function setTail($tail)
+    public function setTail(int $tail): GroupInterface
     {
         $this->tail = abs($tail);
+
         return $this;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
-    public function getDepth()
+    public function getDepth(): int
     {
         return $this->depth;
     }
 
     /**
-     * @param int $depth
-     * @return Group
+     * @inheritdoc
      */
-    public function setDepth($depth)
+    public function setDepth(int $depth): GroupInterface
     {
         $this->depth = abs($depth);
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return Group
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
 
         return $this;
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function isRoot()
+    public function isRoot(): bool
     {
         return $this->head === 1;
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if ($this->head === 0 || $this->tail === 0) {
             return false;
@@ -337,9 +307,7 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     }
 
     /**
-     * Gets the users Identifier for this group
-     *
-     * @return null|string
+     * @inheritdoc
      */
     public function getExternalId()
     {
@@ -347,18 +315,17 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     }
 
     /**
-     * Sets the users identifier for this group
-     *
-     * @param $externalId
-     * @return string
+     * @inheritdoc
      */
-    public function setExternalId($externalId)
+    public function setExternalId(string $externalId = null): GroupInterface
     {
         $this->externalId = $externalId;
+
+        return $this;
     }
 
     /**
-     * @return null|string
+     * @inheritdoc
      */
     public function getParentId()
     {
@@ -366,18 +333,18 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     }
 
     /**
-     * @param null|string $parentId
+     * @inheritdoc
      */
-    public function setParentId($parentId)
+    public function setParentId(string $parentId = null): GroupInterface
     {
-        $parentId = $parentId instanceof static ? $parentId->getGroupId() : $parentId;
         $this->parentId = $parentId;
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function getNetworkId()
+    public function getNetworkId(): string
     {
         if (empty($this->networkId)) {
             $this->setNetworkId(Uuid::uuid1());
@@ -389,8 +356,35 @@ class Group implements SoftDeleteInterface, GroupInterface, ArraySerializableInt
     /**
      * @inheritDoc
      */
-    public function setNetworkId($networkId)
+    public function setNetworkId(string $networkId): GroupInterface
     {
-        $this->networkId = (string) $networkId;
+        $this->networkId = (string)$networkId;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function attachToGroup(GroupInterface $parent): GroupInterface
+    {
+        return $this->setNetworkId($parent->getNetworkId())
+            ->setParentId($parent->getGroupId());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDocumentType(): string
+    {
+        return 'group';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDocumentId(): string
+    {
+        return $this->getGroupId();
     }
 }

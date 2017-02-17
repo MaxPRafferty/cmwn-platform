@@ -2,23 +2,12 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\FeedLink;
-use Api\Links\FlagLink;
-use Api\Links\FlipLink;
-use Api\Links\FriendLink;
-use Api\Links\GameLink;
-use Api\Links\PasswordLink;
-use Api\Links\SaveGameLink;
-use Api\Links\SkribbleLink;
-use Api\Links\UserLink;
-use Api\Links\UserNameLink;
 use Api\TokenEntityInterface;
 use User\UserInterface;
-use ZF\Hal\Link\LinkCollection;
 
 /**
- * Class MeEntity
- * @package Api\V1\Rest\User
+ * Represents the authenticated user through the API
+ * @todo remove token with JWT switch
  */
 class MeEntity extends UserEntity implements TokenEntityInterface
 {
@@ -45,9 +34,7 @@ class MeEntity extends UserEntity implements TokenEntityInterface
 
 
     /**
-     * Me Entities cannot friend themselves
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function canFriend()
     {
@@ -55,9 +42,7 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * Me Entities cannot friend themselves
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getFriendStatus()
     {
@@ -65,7 +50,7 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * @param $token
+     * @inheritdoc
      */
     public function setToken($token)
     {
@@ -73,9 +58,9 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return array_merge(
             parent::getArrayCopy(),
@@ -84,7 +69,7 @@ class MeEntity extends UserEntity implements TokenEntityInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getEntityType()
     {

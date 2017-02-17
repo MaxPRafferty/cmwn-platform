@@ -6,7 +6,6 @@ use Api\Rule\Provider\UserRelationshipProvider;
 use Api\V1\Rest\Group\GroupEntity;
 use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityUserServiceInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
@@ -17,10 +16,10 @@ use ZF\Hal\Entity;
  * Class UserRelationshipProviderTest
  * @package ApiTest\Rule\Provider
  */
-class UserRelationshipProviderTest extends TestCase
+class UserRelationshipProviderTest extends \PHPUnit_Framework_TestCase
 {
     use MockeryPHPUnitIntegration;
-
+    
     /**
      * @var AuthenticationServiceInterface | \Mockery\MockInterface
      */

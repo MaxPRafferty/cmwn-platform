@@ -5,7 +5,7 @@ namespace SecurityTest\Authentication;
 use Application\Exception\NotFoundException;
 use Lcobucci\JWT\Builder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\ChangePasswordUser;
 use Security\GuestUser;

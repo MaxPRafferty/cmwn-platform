@@ -25,6 +25,9 @@ return [
             'create.user.flip'     => 'Earn a flip',
             'view.flip'            => 'View flip information',
             'view.user.flip'       => 'View Flips for a user',
+            'create.flip'          => 'Create a new flip',
+            'edit.flip'            => 'Update existing flip',
+            'delete.flip'          => 'Delete a flip',
 
             // group
             'create.child.group'   => 'Create a sub group',
@@ -63,6 +66,8 @@ return [
             'delete.game'          => 'delete game',
             'save.game'            => 'Save Game progress',
             'view.deleted.games'   => 'view all games including soft deleted ones',
+            'attach.user.game'     => 'attach a game to user',
+            'detach.user.game'     => 'detach a game from user',
 
             // misc
             'adult.code'           => 'Send adult reset code',
@@ -128,7 +133,6 @@ return [
                     'edit.user.child',
                     'flag.image',
                     'import',
-                    'pick.username',
                     'remove.child.group',
                     'remove.group',
                     'remove.group.user',
@@ -144,6 +148,9 @@ return [
                     'view.all.child.groups',
                     'view.flagged.image',
                     'view.flip',
+                    'create.flip',
+                    'edit.flip',
+                    'delete.flip',
                     'view.game-data',
                     'view.deleted.games',
                     'view.group',
@@ -159,7 +166,6 @@ return [
                     'view.feed',
                     'sa.settings',
                     'create.game',
-                    'view.game',
                     'update.game',
                     'delete.game',
                     'reset.group.code',
@@ -175,6 +181,8 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                     'view.user.feed',
+                    'attach.user.game',
+                    'detach.user.game',
                 ],
             ],
 

@@ -3,21 +3,19 @@
 namespace Group\Service;
 
 use Group\GroupInterface;
+use Org\OrganizationInterface;
 use User\UserInterface;
 use Zend\Db\Sql\Where;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
 /**
- * Interface UserGroupServiceInterface
- *
- * @package Group\Service
+ * Defines a service that matches users to groups
  */
 interface UserGroupServiceInterface
 {
-
     /**
-     * Attaches a user to a group
+     * Attaches a user to a group with a specified role
      *
      * @param GroupInterface $group
      * @param UserInterface $user
@@ -26,7 +24,7 @@ interface UserGroupServiceInterface
      * @return bool
      * @throws \RuntimeException
      */
-    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role);
+    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role): bool;
 
     /**
      * Detaches a user from a group
@@ -36,7 +34,7 @@ interface UserGroupServiceInterface
      *
      * @return bool
      */
-    public function detachUserFromGroup(GroupInterface $group, UserInterface $user);
+    public function detachUserFromGroup(GroupInterface $group, UserInterface $user): bool;
 
     /**
      * Finds all the users for a group descending down
@@ -57,11 +55,15 @@ interface UserGroupServiceInterface
      *
      * @param Where|GroupInterface|string $group
      * @param array $where
-     * @param object $prototype
+     * @param UserInterface $prototype
      *
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null);
+    public function fetchUsersForGroup(
+        GroupInterface $group,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface;
 
     /**
      *
@@ -77,11 +79,15 @@ interface UserGroupServiceInterface
      *
      * @param $organization
      * @param array $where
-     * @param null $prototype
+     * @param UserInterface|null $prototype
      *
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchUsersForOrg($organization, $where = null, $prototype = null);
+    public function fetchUsersForOrg(
+        OrganizationInterface $organization,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface;
 
     /**
      * Finds all the groups for a user
@@ -101,13 +107,17 @@ interface UserGroupServiceInterface
      * ORDER BY g.title ASC;
      *
      *
-     * @param Where|GroupInterface|string $user
+     * @param UserInterface $user
      * @param null $where
-     * @param object $prototype
+     * @param GroupInterface|null $prototype
      *
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchGroupsForUser($user, $where = null, $prototype = null);
+    public function fetchGroupsForUser(
+        UserInterface $user,
+        $where = null,
+        GroupInterface $prototype = null
+    ): AdapterInterface;
 
     /**
      * Fetches organizations for a user
@@ -123,12 +133,15 @@ interface UserGroupServiceInterface
      * GROUP BY o.org_id
      * ORDER BY o.title ASC
      *
-     * @param Where|UserInterface|string $user
-     * @param mixed $prototype
+     * @param UserInterface $user
+     * @param OrganizationInterface $prototype
      *
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchOrganizationsForUser($user, $prototype = null);
+    public function fetchOrganizationsForUser(
+        UserInterface $user,
+        OrganizationInterface $prototype = null
+    ): AdapterInterface;
 
     /**
      * Fetchs all the users and friends that belong to a user
@@ -151,11 +164,15 @@ interface UserGroupServiceInterface
      * HAVING u.user_id != 'english_student'
      * ORDER BY u.first_name ASC, u.last_name ASC
      *
-     * @param UserInterface|ß$user
+     * @param UserInterface|ß $user
      * @param $where
-     * @param null $prototype
+     * @param UserInterface $prototype
      *
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchAllUsersForUser($user, $where = null, $prototype = null);
+    public function fetchAllUsersForUser(
+        UserInterface $user,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface;
 }

@@ -15,6 +15,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -74,7 +75,7 @@ class GroupAddressService implements GroupAddressServiceInterface
         GroupInterface $group,
         $where = null,
         AddressInterface $prototype = null
-    ) : DbSelect {
+    ) : AdapterInterface {
         $groupId = $group->getGroupId();
         $where = $this->createWhere($where);
         $prototype = $prototype ?? new Address([]);
@@ -103,9 +104,9 @@ class GroupAddressService implements GroupAddressServiceInterface
     /**
      * @param $where
      * @param GroupInterface|null $prototype
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null)
+    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null) : AdapterInterface
     {
         $where = $this->createWhere($where);
         $select = new Select(['ga' => $this->tableGateway->getTable()]);
@@ -137,7 +138,7 @@ class GroupAddressService implements GroupAddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address)
+    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address) : AddressInterface
     {
         $addressId = $address->getAddressId();
         $where = new Where([new Operator('ga.address_id', Operator::OP_EQ, $addressId)]);
@@ -147,6 +148,6 @@ class GroupAddressService implements GroupAddressServiceInterface
             throw new NotFoundException("Address not found");
         }
 
-        return $addresses->getItems(0, 1);
+        return new Address($addresses->getItems(0, 1));
     }
 }

@@ -3,7 +3,7 @@
 namespace ApplicationTest\Rule\Session\Action;
 
 use Application\Rule\Session\Action\WriteProviderToSession;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Provider\BasicValueProvider;
 use Zend\Session\Container;

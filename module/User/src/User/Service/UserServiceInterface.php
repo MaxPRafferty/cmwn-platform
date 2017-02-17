@@ -4,51 +4,52 @@ namespace User\Service;
 
 use Application\Exception\NotFoundException;
 use User\UserInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Interface UserServiceInterface
+ * An interface that defines the UserService
  */
 interface UserServiceInterface
 {
     /**
      * Fetches one user from the DB using the id
      *
-     * @param $userId
+     * @param string $userId
+     * @param UserInterface $prototype
+     *
      * @return UserInterface
-     * @throws NotFoundException
      */
-    public function fetchUser($userId);
+    public function fetchUser(string $userId, UserInterface $prototype = null): UserInterface;
 
     /**
      * Fetches one user from the DB using the external id
      *
      * @param $externalId
+     *
      * @return UserInterface
      * @throws NotFoundException
      */
-    public function fetchUserByExternalId($externalId);
-
+    public function fetchUserByExternalId(string $externalId): UserInterface;
 
     /**
      * Fetch user from db by username
      *
      * @param $username
-     * @return \User\Adult|\User\Child
+     *
+     * @return UserInterface
      * @throws NotFoundException
      */
-    public function fetchUserByUsername($username);
+    public function fetchUserByUsername(string $username): UserInterface;
 
     /**
      * Fetches one user from the DB using the email
      *
      * @param $email
+     *
      * @return UserInterface
      * @throws NotFoundException
      */
-    public function fetchUserByEmail($email);
+    public function fetchUserByEmail(string $email): UserInterface;
 
     /**
      * Deletes a user from the database
@@ -57,17 +58,20 @@ interface UserServiceInterface
      *
      * @param UserInterface $user
      * @param bool $soft
+     *
      * @return bool
      */
-    public function deleteUser(UserInterface $user, $soft = true);
+    public function deleteUser(UserInterface $user, bool $soft = true): bool;
 
     /**
-     * @param null|PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
+     * Fethes all users
+     *
+     * @param null $where
+     * @param UserInterface|null $prototype
+     *
+     * @return AdapterInterface
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null);
+    public function fetchAll($where = null, UserInterface $prototype = null): AdapterInterface;
 
     /**
      * Create a new user
@@ -75,23 +79,26 @@ interface UserServiceInterface
      * A User Id will be auto generated
      *
      * @param UserInterface $user
+     *
      * @return bool
      */
-    public function createUser(UserInterface $user);
+    public function createUser(UserInterface $user): bool;
 
     /**
      * Saves an Existing user
      *
      * @param UserInterface $user
+     *
      * @return bool
      * @throws NotFoundException
      */
-    public function updateUser(UserInterface $user);
+    public function updateUser(UserInterface $user): bool;
 
     /**
-     * Updates the username if the user wants to update his own username
      * @param UserInterface $user
-     * @param $username
+     * @param string $username
+     *
+     * @return bool
      */
-    public function updateUserName(UserInterface $user, $username);
+    public function updateUserName(UserInterface $user, string $username): bool;
 }

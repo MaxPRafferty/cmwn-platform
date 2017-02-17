@@ -2,7 +2,6 @@
 
 namespace SuggestTest\Rule;
 
-use PHPUnit\Framework\TestCase;
 use Suggest\Rule\MeRule;
 use Suggest\SuggestionCollection;
 use User\Child;
@@ -14,7 +13,7 @@ use User\Child;
  * @group Suggest
  * @group Rule
  */
-class MeRuleTest extends TestCase
+class MeRuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test

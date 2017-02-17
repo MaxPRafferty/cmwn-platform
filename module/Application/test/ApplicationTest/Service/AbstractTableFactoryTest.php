@@ -4,7 +4,7 @@ namespace ApplicationTest\Service;
 
 use Application\Service\AbstractTableFactory;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\ServiceManager;
