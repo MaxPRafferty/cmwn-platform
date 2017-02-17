@@ -19,6 +19,11 @@ use Org\OrganizationInterface;
  *             @SWG\Schema(ref="#/definitions/SelfLink"),
  *         }
  *     ),
+ *     @SWG\Property(
+ *          type="integer",
+ *          property="scope",
+ *          description="Binary bits the authenticated user has access for this entity"
+ *     ),
  *     allOf={
  *         @SWG\Schema(ref="#/definitions/Group"),
  *         @SWG\Schema(ref="#/definitions/SelfLink"),

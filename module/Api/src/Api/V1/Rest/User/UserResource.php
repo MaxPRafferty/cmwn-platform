@@ -66,7 +66,7 @@ class UserResource extends AbstractResourceListener
      *     description="successful operation",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *          ref="#/definitions/UserEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -78,7 +78,7 @@ class UserResource extends AbstractResourceListener
      *     description="User not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -86,7 +86,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -139,7 +139,7 @@ class UserResource extends AbstractResourceListener
      *     description="User was deleted",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *          ref="#/definitions/UserEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -147,7 +147,7 @@ class UserResource extends AbstractResourceListener
      *     description="User not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -155,7 +155,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authorized to delete or access user",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   ),
      *   @SWG\Response(
@@ -163,7 +163,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -207,7 +207,7 @@ class UserResource extends AbstractResourceListener
      *     description="",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *          ref="#/definitions/UserEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -215,7 +215,7 @@ class UserResource extends AbstractResourceListener
      *     description="User not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -223,7 +223,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -291,8 +291,8 @@ class UserResource extends AbstractResourceListener
      *     response=200,
      *     description="Paged users",
      *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/UserCollection")
+     *          type="object",
+     *          ref="#/definitions/UserCollection"
      *     )
      *   ),
      *   @SWG\Response(
@@ -304,7 +304,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -351,7 +351,7 @@ class UserResource extends AbstractResourceListener
      *     description="successful operation",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/UserEntity")
+     *          ref="#/definitions/UserEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -359,7 +359,7 @@ class UserResource extends AbstractResourceListener
      *     description="validation failed",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *          ref="#/definitions/ValidationError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -367,7 +367,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authorized to create a user",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   ),
      *   @SWG\Response(
@@ -375,7 +375,7 @@ class UserResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )

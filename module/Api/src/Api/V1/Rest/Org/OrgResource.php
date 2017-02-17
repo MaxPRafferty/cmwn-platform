@@ -56,7 +56,7 @@ class OrgResource extends AbstractResourceListener
      *     description="successful operation",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/OrgEntity")
+     *          ref="#/definitions/OrgEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -64,7 +64,7 @@ class OrgResource extends AbstractResourceListener
      *     description="validation failed",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *          ref="#/definitions/ValidationError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -72,7 +72,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -126,7 +126,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Organization that was deleted",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/OrgEntity")
+     *          ref="#/definitions/OrgEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -134,7 +134,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Organization not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -142,7 +142,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authorized to access or delete the organization",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   ),
      *   @SWG\Response(
@@ -150,7 +150,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -197,7 +197,7 @@ class OrgResource extends AbstractResourceListener
      *     description="",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/OrgCollection")
+     *          ref="#/definitions/OrgCollection"
      *     )
      *   ),
      *   @SWG\Response(
@@ -205,7 +205,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Org not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -213,7 +213,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -268,8 +268,8 @@ class OrgResource extends AbstractResourceListener
      *     response=200,
      *     description="The current page of organizations",
      *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/OrgCollection")
+     *          type="object",
+     *          ref="#/definitions/OrgCollection"
      *     )
      *   ),
      *   @SWG\Response(
@@ -277,7 +277,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Org not found",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
+     *          ref="#/definitions/NotFoundError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -285,7 +285,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )
@@ -333,7 +333,7 @@ class OrgResource extends AbstractResourceListener
      *     description="successful operation",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/OrgEntity")
+     *          ref="#/definitions/OrgEntity"
      *     )
      *   ),
      *   @SWG\Response(
@@ -341,7 +341,7 @@ class OrgResource extends AbstractResourceListener
      *     description="validation failed",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
+     *          ref="#/definitions/ValidationError"
      *     )
      *   ),
      *   @SWG\Response(
@@ -349,7 +349,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authorized to create a org",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   ),
      *   @SWG\Response(
@@ -357,7 +357,7 @@ class OrgResource extends AbstractResourceListener
      *     description="Not Authenticated",
      *     @SWG\Schema(
      *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
+     *          ref="#/definitions/Error"
      *     )
      *   )
      * )

@@ -8,10 +8,10 @@ use Game\Game;
 use Game\Service\GameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
+use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
-use Zend\Db\Sql\Predicate\IsNull;
 
 /**
  * Unit tests for game delegator
