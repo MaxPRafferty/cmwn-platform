@@ -9,6 +9,7 @@ use Application\Exception\NotFoundException;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
+use ZF\MvcAuth\Authentication\AdapterInterface;
 
 /**
  * Class AddressDelegator
@@ -82,7 +83,7 @@ class AddressDelegator implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, AddressInterface $prototype = null) : DbSelect
+    public function fetchAll($where = null, AddressInterface $prototype = null) : AdapterInterface
     {
         $event = new Event(
             'fetch.all.addresses',

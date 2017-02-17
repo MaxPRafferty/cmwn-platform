@@ -3,6 +3,7 @@
 namespace Group\Delegator;
 
 use Address\AddressInterface;
+use Application\Utils\ServiceTrait;
 use Group\Service\GroupAddressService;
 use Group\Service\GroupAddressServiceInterface;
 use Group\GroupInterface;
@@ -17,6 +18,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class GroupAddressDelegator implements GroupAddressServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var GroupAddressService
      */
@@ -201,5 +204,15 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
             $this->getEventManager()->triggerEvent($event);
             throw $e;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchAddressesWithGroupsAttached(
+        $where = null,
+        AddressInterface $prototype = null
+    ) : AdapterInterface {
+        $where = $this->createWhere($where);
     }
 }

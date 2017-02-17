@@ -150,4 +150,31 @@ class GroupAddressService implements GroupAddressServiceInterface
 
         return new Address($addresses->getItems(0, 1));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAddressesWithGroupsAttached(
+        $where = null,
+        AddressInterface $prototype = null
+    ) : AdapterInterface {
+        $where = $this->createWhere($where);
+        $select = new Select(['ga' => 'group_addresses']);
+        $select->columns([]);
+        $select->join(
+            ['at' => $this->tableGateway->getTable()],
+            'at.address_id = ga.address_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+        $select->where($where);
+        $prototype = $prototype ?? new Address([]);
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        return new DbSelect(
+            $select,
+            $this->tableGateway->getAdapter(),
+            $resultSet
+        );
+    }
 }

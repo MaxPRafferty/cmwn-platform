@@ -6,6 +6,7 @@ namespace Address\Service;
 use Address\AddressInterface;
 use Application\Exception\NotFoundException;
 use Zend\Paginator\Adapter\DbSelect;
+use ZF\MvcAuth\Authentication\AdapterInterface;
 
 /**
  * Interface AddressServiceInterface

@@ -52,4 +52,14 @@ interface GroupAddressServiceInterface
      * @return AdapterInterface
      */
     public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null) : AdapterInterface;
+
+    /**
+     * @param null $where
+     * @param AddressInterface|null $prototype
+     * @return AdapterInterface
+     */
+    public function fetchAddressesWithGroupsAttached(
+        $where = null,
+        AddressInterface $prototype = null
+    ) : AdapterInterface;
 }
