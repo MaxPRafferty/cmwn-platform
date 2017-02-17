@@ -2,7 +2,7 @@
 
 namespace RuleTest\Engine\Specification;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\NoopAction;
 use Rule\Provider\BasicValueProvider;
@@ -35,18 +35,18 @@ class ArraySpecificationTest extends TestCase
     /**
      * @before
      */
-    public function setUpConfig()
+    public function setUpServiceManager()
     {
-        $this->config = include __DIR__ . '/../../../../config/module.config.php';
+        $this->serviceManager = new ServiceManager($this->config['service_manager']);
+        $this->serviceManager->setService('Config', $this->config);
     }
 
     /**
      * @before
      */
-    public function setUpServiceManager()
+    public function setUpConfig()
     {
-        $this->serviceManager = new ServiceManager($this->config['service_manager']);
-        $this->serviceManager->setService('Config', $this->config);
+        $this->config = include __DIR__ . '/../../../../config/module.config.php';
     }
 
     /**
@@ -57,7 +57,7 @@ class ArraySpecificationTest extends TestCase
         $spec = [
             'id'        => 'foo-bar',
             'name'      => 'This is a test that the foo will bar',
-            'when'      => 'some.event',
+            'when'      => ['some.event'],
             'rules'     => [
                 AlwaysSatisfiedRule::class,
             ],

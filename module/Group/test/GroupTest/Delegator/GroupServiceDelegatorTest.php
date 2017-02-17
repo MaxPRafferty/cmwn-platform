@@ -4,11 +4,12 @@ namespace GroupTest\Delegator;
 
 use Group\Service\GroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Group\Group;
 use Group\Delegator\GroupDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test GroupServiceDelegatorTest
@@ -48,22 +49,23 @@ class GroupServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpDelegator()
     {
-        $this->groupService = \Mockery::mock(GroupServiceInterface::class);
+        $events = new EventManager();
+        $this->calledEvents = [];
+        $this->delegator    = new GroupDelegator($this->groupService, $events);
+        $this->delegator->getEventManager()->clearListeners('save.group');
+        $this->delegator->getEventManager()->clearListeners('fetch.group.post');
+        $this->delegator->getEventManager()->clearListeners('fetch.all.groups');
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
      * @before
      */
-    public function setUpDelegator()
+    public function setUpService()
     {
-        $this->calledEvents = [];
-        $this->delegator    = new GroupDelegator($this->groupService);
-        $this->delegator->getEventManager()->clearListeners('save.group');
-        $this->delegator->getEventManager()->clearListeners('fetch.group.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.all.groups');
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->groupService = \Mockery::mock(GroupServiceInterface::class);
     }
 
     /**

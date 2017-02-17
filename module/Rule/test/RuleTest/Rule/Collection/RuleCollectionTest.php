@@ -2,7 +2,7 @@
 
 namespace RuleTest\Rule\Collection;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Rule\Basic\AlwaysSatisfiedRule;
 use Rule\Rule\Basic\NeverSatisfiedRule;
 use Rule\Item\BasicRuleItem;
@@ -157,6 +157,26 @@ class RuleCollectionTest extends TestCase
         $this->assertFalse(
             $collection->isSatisfiedBy(new BasicRuleItem()),
             'Rule Collection should add all rules as the AND operator'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldPassWhenSameCollectionIsPassedMultipleTimes()
+    {
+        $collection = new RuleCollection();
+        $collection->append(new AlwaysSatisfiedRule())
+            ->append(new NeverSatisfiedRule());
+
+        $this->assertFalse(
+            $collection->isSatisfiedBy(new BasicRuleItem()),
+            'Rule Collection should fail on the first call'
+        );
+
+        $this->assertFalse(
+            $collection->isSatisfiedBy(new BasicRuleItem()),
+            'Rule Collection should fail on the second call'
         );
     }
 }

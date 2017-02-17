@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'flips'            => [],
-    'organizations'    => [],
-    'games'            => [],
-    'groups'           => [],
-    'names'            => [],
+
+
+
+
+
     'users'            => [
         [
             'user_id'      => 'super_user',
@@ -27,10 +27,10 @@ return [
             'external_id'  => null,
         ],
     ],
-    'user_friends'     => [],
-    'user_groups'      => [],
-    'user_images'      => [],
-    'image_flags'      => [],
-    'user_saves'       => [],
+
+
+
+
+
     'user_suggestions' => [],
 ];

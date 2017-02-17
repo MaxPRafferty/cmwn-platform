@@ -3,11 +3,12 @@
 namespace AssetTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Asset\Image;
 use Asset\Delegator\ImageServiceDelegator;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test ImageServiceDelegatorTest
@@ -48,22 +49,23 @@ class ImageServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpDelegator()
     {
-        $this->imageService = \Mockery::mock('\Asset\Service\ImageService');
+        $events = new EventManager();
+        $this->calledEvents = [];
+        $this->delegator    = new ImageServiceDelegator($this->imageService, $events);
+        $this->delegator->getEventManager()->clearListeners('save.image');
+        $this->delegator->getEventManager()->clearListeners('fetch.image.post');
+        $this->delegator->getEventManager()->clearListeners('fetch.all.images');
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
      * @before
      */
-    public function setUpDelegator()
+    public function setUpService()
     {
-        $this->calledEvents = [];
-        $this->delegator    = new ImageServiceDelegator($this->imageService);
-        $this->delegator->getEventManager()->clearListeners('save.image');
-        $this->delegator->getEventManager()->clearListeners('fetch.image.post');
-        $this->delegator->getEventManager()->clearListeners('fetch.all.images');
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->imageService = \Mockery::mock('\Asset\Service\ImageService');
     }
 
     /**

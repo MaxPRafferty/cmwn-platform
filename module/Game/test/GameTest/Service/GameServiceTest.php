@@ -4,7 +4,7 @@ namespace GameTest\Service;
 
 use Game\Game;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Game\Service\GameService;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
@@ -54,7 +54,7 @@ class GameServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpService()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
         $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
@@ -63,13 +63,6 @@ class GameServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
         $this->gameService = new GameService($this->tableGateway);
     }
 
@@ -89,46 +82,6 @@ class GameServiceTest extends TestCase
     }
 
     /**
-     * Tests the service returns an iterator when asked
-     *
-     * @test
-     */
-    public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
-    {
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->gameService->fetchAll(null, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
-    {
-        $expectedWhere = new Where();
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) use (&$expectedWhere) {
-                /** @var \Zend\Db\Sql\Predicate\Predicate $where */
-                $this->assertSame($expectedWhere, $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->gameService->fetchAll($expectedWhere, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
      * @test
      */
     public function testItShouldFetchGameById()
@@ -137,7 +90,6 @@ class GameServiceTest extends TestCase
             ->andReturnUsing(function ($actual) {
                 $where = new Where();
                 $where->equalTo('game_id', 'sea-turtle');
-                $where->isNull('deleted');
 
                 $this->assertEquals($where, $actual);
                 $resultSet = new ResultSet();
@@ -154,10 +106,8 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGameIsNotFound()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'Game not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('Game not Found');
 
         $result = new ResultSet();
         $result->initialize([]);

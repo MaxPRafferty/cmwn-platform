@@ -6,8 +6,9 @@ use Application\Exception\NotFoundException;
 use Flag\Delegator\FlagDelegator;
 use Flag\Flag;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class FlagDelegatorTest
@@ -40,19 +41,20 @@ class FlagDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpFlagService()
+    public function setUpDelegator()
     {
-        $this->flagService = \Mockery::mock('Flag\Service\FlagService');
+        $events = new EventManager();
+        $this->calledEvents = [];
+        $this->delegator    = new FlagDelegator($this->flagService, $events);
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
      * @before
      */
-    public function setUpDelegator()
+    public function setUpFlagService()
     {
-        $this->calledEvents = [];
-        $this->delegator    = new FlagDelegator($this->flagService);
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->flagService = \Mockery::mock('Flag\Service\FlagService');
     }
 
     /**

@@ -5,7 +5,7 @@ namespace GameTest\Service;
 use Game\SaveGame;
 use Game\Service\SaveGameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateInterface;
@@ -37,7 +37,7 @@ class SaveGameServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpSaveGameService()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
         $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
@@ -49,13 +49,6 @@ class SaveGameServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturn(new \ArrayIterator([]))
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpSaveGameService()
-    {
         $this->gameService = new SaveGameService($this->tableGateway);
     }
 

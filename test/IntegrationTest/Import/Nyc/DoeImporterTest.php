@@ -8,8 +8,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\DbUnitConnectionTrait;
 use IntegrationTest\LoginUserTrait;
 use IntegrationTest\TestHelper;
-use \PHPUnit_Framework_TestCase as TestCase;
-use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
+use PHPUnit\DbUnit\TestCase as TestCase;
 use User\Adult;
 use User\Child;
 use User\Service\UserServiceInterface;
@@ -32,7 +31,6 @@ use User\Service\UserServiceInterface;
  */
 class DoeImporterTest extends TestCase
 {
-    use DbTestCaseTrait;
     use DbUnitConnectionTrait;
     use LoginUserTrait;
 
@@ -66,7 +64,7 @@ class DoeImporterTest extends TestCase
                 array_push($data['names'], ['name' => $name, 'position' => 'RIGHT', 'count' => 1]);
             }
 
-            static::$dataSet = new ArrayDataSet($data);
+            static::$dataSet = $this->createArrayDataSet($data);
         }
 
         return static::$dataSet;
@@ -163,7 +161,7 @@ class DoeImporterTest extends TestCase
         $this->assertRegExp(
             '/^[a-z]+-[a-z]+\d{3}$/',
             $student->getUserName(),
-            'Importer did not make user names for children'
+            'Importer did not make user names for children' . $student->getUserName()
         );
     }
 }

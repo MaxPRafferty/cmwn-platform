@@ -13,29 +13,54 @@ return [
         \Api\Listeners\InjectSenderListener::class => [
             \User\Service\UserServiceInterface::class,
         ],
-        \Api\V1\Rest\SuperFlag\SuperFlagResource::class => [
+        \Api\V1\Rest\Super\SuperResource::class => [
             \Security\Service\SecurityServiceInterface::class,
             \User\Service\UserServiceInterface::class,
         ],
-        \Api\V1\Rest\Super\SuperResource::class => [
-            \Security\Service\SecurityServiceInterface::class,
+        \Api\V1\Rest\Address\AddressResource::class => [
+            \Address\Service\AddressServiceInterface::class,
+        ],
+        \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
+            \Group\Service\GroupAddressServiceInterface::class,
+            \Address\Service\AddressServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class
         ],
     ],
+
+    'actions' => [
+        'factories' => [
+            \Api\Rule\Action\AddHalLinkAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Action\AddHalLinkAction::class   => false,
+            \Api\Rule\Action\AddTypeLinksAction::class => false,
+            \Api\Rule\Action\ThrowException::class     => false,
+        ]
+    ],
+
+    'providers' => [
+        'factories' => [
+            \Api\Rule\Provider\EntityFromEventProvider::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Provider\EntityFromEventProvider::class  => false,
+        ],
+    ],
+
     'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
-        \Api\Listeners\ImportRouteListener::class,
         \Api\Listeners\ScopeListener::class,
-        \Api\Listeners\SuperMeListener::class,
         \Api\Listeners\UserImageListener::class,
         \Api\Listeners\ChangePasswordListener::class,
-        \Api\Listeners\GroupRouteListener::class,
         \Api\Listeners\FriendListener::class,
-        \Api\Listeners\UserHalLinksListener::class,
         \Api\Listeners\TemplateLinkListener::class,
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
-        \Api\Listeners\OrgLinkListener::class,
     ],
     'service_manager'  => [
         'factories' => [
@@ -45,24 +70,12 @@ return [
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Api\Listeners\UserParamListener::class                   =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Api\Listeners\OrgLinkListener::class                     =>
-                \Zend\ServiceManager\Factory\InvokableFactory::class,
-            \Api\Listeners\UserHalLinksListener::class                =>
-                \Api\Factory\UserHalLinksListenerFactory::class,
-            \Api\Listeners\ImportRouteListener::class                 =>
-                \Api\Factory\ImportRouteListenerFactory::class,
             \Api\Listeners\ScopeListener::class                       =>
                 \Api\Factory\ScopeListenerFactory::class,
             \Security\Listeners\UserRouteListener::class                   =>
                 \Api\Factory\UserRouteListenerFactory::class,
             \Api\Listeners\UserGroupListener::class                   =>
                 \Api\Factory\UserGroupListenerFactory::class,
-            \Api\Listeners\GroupRouteListener::class                  =>
-                \Api\Factory\GroupRouteListenerFactory::class,
-            \Api\Listeners\OrgRouteListener::class                    =>
-                \Api\Factory\OrgRouteListenerFactory::class,
-            \Api\Listeners\SuperMeListener::class                     =>
-                \Api\Factory\SuperMeListenerFactory::class,
             \Api\Listeners\UserImageListener::class                   =>
                 \Api\Factory\UserImageListenerFactory::class,
             \Api\V1\Rest\User\UserResource::class                     =>
@@ -397,21 +410,30 @@ return [
                     ],
                 ],
             ],
-            'api.rest.super-flag'     => [
-                'type'    => 'Segment',
-                'options' => [
-                    'route'    => '/user/:user_id/super',
-                    'defaults' => [
-                        'controller' => 'Api\V1\Rest\SuperFlag\Controller',
-                    ],
-                ],
-            ],
             'api.rest.super'     => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/super[/:user_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\Super\Controller',
+                    ],
+                ],
+            ],
+            'api.rest.address'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/address[/:address_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\Address\Controller',
+                    ],
+                ],
+            ],
+            'api.rest.group-address'     => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/group/:group_id/address[/:address_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\GroupAddress\Controller',
                     ],
                 ],
             ],
@@ -449,8 +471,9 @@ return [
             'api.rest.flag',
             'api.rest.group-reset',
             'api.rest.acknowledge',
-            'api.rest.super-flag',
             'api.rest.super',
+            'api.rest.address',
+            'api.rest.group-address',
         ],
     ],
     'zf-rest'                => [
@@ -489,7 +512,7 @@ return [
             'collection_name'            => 'game',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['page', 'per_page'],
+            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
@@ -704,7 +727,7 @@ return [
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Suggest\SuggestEntity::class,
-            'collection_class'           => \Api\V1\Rest\Suggest\SuggestionCollection::class,
+            'collection_class'           => \Api\V1\Rest\Suggest\SuggestCollection::class,
             'service_name'               => 'Suggest',
         ],
         'Api\V1\Rest\Reset\Controller'          => [
@@ -890,26 +913,12 @@ return [
             'entity_http_methods'        => ['PUT'],
             'service_name'               => 'AckFlip',
         ],
-        'Api\V1\Rest\SuperFlag\Controller'     => [
-            'listener'                   => \Api\V1\Rest\SuperFlag\SuperFlagResource::class,
-            'route_name'                 => 'api.rest.super-flag',
-            'route_identifier_name'      => 'user_id',
-            'collection_name'            => 'super-flag',
-            'entity_http_methods'        => ['POST'],
-            'collection_http_methods'    => ['POST'],
-            'collection_query_whitelist' => [],
-            'page_size'                  => 25,
-            'page_size_param'            => 'per_page',
-            'entity_class'               => \Api\V1\Rest\SuperFlag\SuperFlagEntity::class,
-            'collection_class'           => \Api\V1\Rest\SuperFlag\SuperFlagCollection::class,
-            'service_name'               => 'SuperFlag',
-        ],
         'Api\V1\Rest\Super\Controller'     => [
             'listener'                   => \Api\V1\Rest\Super\SuperResource::class,
             'route_name'                 => 'api.rest.super',
             'route_identifier_name'      => 'user_id',
             'collection_name'            => 'super',
-            'entity_http_methods'        => ['GET'],
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
             'page_size'                  => 25,
@@ -917,6 +926,34 @@ return [
             'entity_class'               => \Api\V1\Rest\Super\SuperEntity::class,
             'collection_class'           => \Api\V1\Rest\Super\SuperCollection::class,
             'service_name'               => 'SuperFlag',
+        ],
+        'Api\V1\Rest\Address\Controller' => [
+            'listener'                   => \Api\V1\Rest\Address\AddressResource::class,
+            'route_name'                 => 'api.rest.address',
+            'route_identifier_name'      => 'address_id',
+            'collection_name'            => 'addresses',
+            'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET', 'POST'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'page',
+            'entity_class'               => \Api\V1\Rest\Address\AddressEntity::class,
+            'collection_class'           => \Api\V1\Rest\Address\AddressCollection::class,
+            'service_name'               => 'Address',
+        ],
+        'Api\V1\Rest\GroupAddress\Controller' => [
+            'listener'                   => \Api\V1\Rest\GroupAddress\GroupAddressResource::class,
+            'route_name'                 => 'api.rest.group-address',
+            'route_identifier_name'      => 'address_id',
+            'collection_name'            => 'addresses',
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 25,
+            'page_size_param'            => 'page',
+            'entity_class'               => \Api\V1\Rest\GroupAddress\GroupAddressEntity::class,
+            'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
+            'service_name'               => 'GroupAddress',
         ],
     ],
     'zf-content-negotiation' => [
@@ -950,8 +987,9 @@ return [
             'Api\V1\Rest\GameData\Controller'       => 'HalJson',
             'Api\V1\Rest\Flag\Controller'           => 'HalJson',
             'Api\V1\Rest\GroupReset\Controller'     => 'HalJson',
-            'Api\V1\Rest\SuperFlag\Controller'      => 'HalJson',
             'Api\V1\Rest\Super\Controller'          => 'HalJson',
+            'Api\V1\Rest\Address\Controller'        => 'HalJson',
+            'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1094,12 +1132,17 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\SuperFlag\Controller'     => [
+            'Api\V1\Rest\Super\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Super\Controller'     => [
+            'Api\V1\Rest\Address\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\GroupAddress\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1222,11 +1265,15 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\SuperFlag\Controller'     => [
+            'Api\V1\Rest\Super\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Super\Controller'     => [
+            'Api\V1\Rest\Address\Controller'     => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\GroupAddress\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1590,28 +1637,40 @@ return [
                 'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\SuperFlag\SuperFlagEntity::class             => [
-                'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super-flag',
-                'route_identifier_name'  => 'user_id',
-                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Api\V1\Rest\SuperFlag\SuperFlagCollection::class         => [
-                'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super-flag',
-                'route_identifier_name'  => 'user_id',
-                'is_collection'          => true,
-            ],
             \Api\V1\Rest\Super\SuperEntity::class             => [
                 'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super-flag',
+                'route_name'             => 'api.rest.super',
                 'route_identifier_name'  => 'user_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
             \Api\V1\Rest\Super\SuperCollection::class         => [
                 'entity_identifier_name' => 'user_id',
-                'route_name'             => 'api.rest.super-flag',
+                'route_name'             => 'api.rest.super',
                 'route_identifier_name'  => 'user_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\Address\AddressEntity::class             => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\Address\AddressCollection::class         => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\GroupAddress\GroupAddressEntity::class             => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\GroupAddress\GroupAddressCollection::class         => [
+                'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
             ],
         ],
@@ -1677,8 +1736,8 @@ return [
         'Api\V1\Rest\GroupReset\Controller'     => [
             'input_filter' => 'Api\V1\Rest\GroupReset\Validator',
         ],
-        'Api\V1\Rest\SuperFlag\Controller'     => [
-            'input_filter' => 'Api\V1\Rest\SuperFlag\Validator',
+        'Api\V1\Rest\Address\Controller'     => [
+            'input_filter' => 'Api\V1\Rest\Address\Validator',
         ],
     ],
     'input_filter_specs'     => [
@@ -2319,6 +2378,19 @@ return [
             ],
             [
                 'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'undelete',
+                'description' => 'undelete the game',
+            ],
+            [
+                'required'    => false,
                 'validators'  => [],
                 'filters'     => [
                     [
@@ -2433,22 +2505,55 @@ return [
                 'error_message' => 'Invalid read flag for user feed',
             ],
         ],
-        'Api\V1\Rest\SuperFlag\Validator'     => [
+        'Api\V1\Rest\Address\Validator' => [ //@todo i18n
             [
                 'required'    => true,
                 'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => 'all'],
-                    ],
-                    [
-                        'name'    => \Zend\Filter\ToInt::class,
-                        'options' => [],
-                    ],
-                ],
-                'name'        => 'super',
-                'description' => 'The super flag',
+                'filters'     => [],
+                'name'        => 'administrative_area',
+                'description' => 'State / Province / Region',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'sub_administrative_area',
+                'description' => 'County / District',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'locality',
+                'description' => 'City / Town',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'dependent_locality',
+                'description' => 'Dependent locality',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'postal_code',
+                'description' => 'Postal code / ZIP Code',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'thoroughfare',
+                'description' => 'Street address',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'premise',
+                'description' => 'Apartment, Suite, Box number, etc',
             ],
         ],
     ],

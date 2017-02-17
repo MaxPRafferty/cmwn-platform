@@ -3,7 +3,7 @@
 namespace AssetTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Asset\Image;
 use Asset\Service\ImageService;
 use Zend\Db\ResultSet\ResultSet;
@@ -34,6 +34,14 @@ class ImageServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->imageService = new ImageService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -43,14 +51,6 @@ class ImageServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('images')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->imageService = new ImageService($this->tableGateway);
     }
 
     /**
@@ -203,10 +203,8 @@ class ImageServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenImageIsNotFound()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'Image not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('Image not Found');
 
         $result = new ResultSet();
         $result->initialize([]);

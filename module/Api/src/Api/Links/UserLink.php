@@ -16,6 +16,6 @@ class UserLink extends Link
     {
         parent::__construct('user');
         $this->setProps(['label' => 'Friends and Network']);
-        $this->setRoute('api.rest.user');
+        $this->setRoute('api.rest.user', [], ['reuse_matched_params' => false]);
     }
 }

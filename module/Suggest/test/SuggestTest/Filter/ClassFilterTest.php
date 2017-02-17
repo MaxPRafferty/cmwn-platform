@@ -5,7 +5,7 @@ namespace SuggestTest\Filter;
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\SuggestionCollection;
 use User\Adult;
@@ -37,17 +37,17 @@ class ClassFilterTest extends TestCase
     /**
      * @before
      */
-    public function setUpGroupService()
+    public function setUpClassFilter()
     {
-        $this->userGroupService = \Mockery::mock(UserGroupServiceInterface::class);
+        $this->classFilter = new ClassFilter($this->userGroupService);
     }
 
     /**
      * @before
      */
-    public function setUpClassFilter()
+    public function setUpGroupService()
     {
-        $this->classFilter = new ClassFilter($this->userGroupService);
+        $this->userGroupService = \Mockery::mock(UserGroupServiceInterface::class);
     }
 
     /**

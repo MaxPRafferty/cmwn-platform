@@ -2,7 +2,7 @@
 
 namespace RuleTest\Engine\Service;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Action\NoopAction;
 use Rule\Action\Service\ActionManager;
 use Rule\Action\Service\ActionManagerFactory;
@@ -50,6 +50,23 @@ class SpecificationManagerTest extends TestCase
     /**
      * @before
      */
+    public function setUpManager()
+    {
+        $this->manager = $this->container->get(SpecificationManager::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpContainer()
+    {
+        $this->container = new ServiceManager($this->config['service_manager']);
+        $this->container->setService('Config', $this->config);
+    }
+
+    /**
+     * @before
+     */
     public function setUpConfig()
     {
         $this->config = [
@@ -87,23 +104,6 @@ class SpecificationManagerTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @before
-     */
-    public function setUpContainer()
-    {
-        $this->container = new ServiceManager($this->config['service_manager']);
-        $this->container->setService('Config', $this->config);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpManager()
-    {
-        $this->manager = $this->container->get(SpecificationManager::class);
     }
 
     /**

@@ -27,8 +27,7 @@ build:
     - script:
       name: PHPUNIT
       code: |-
-        export USE_ZEND_ALLOC=0
-        $PWD/vendor/bin/phpunit -c $PWD/test/phpunit.xml --stop-on-error --stop-on-failure --colors=never
+        $PWD/vendor/bin/phpunit -c $PWD/phpunit.xml --stop-on-error --stop-on-failure --colors=never
   after-steps:
     - slack-notifier:
       url: $SLACK_URL

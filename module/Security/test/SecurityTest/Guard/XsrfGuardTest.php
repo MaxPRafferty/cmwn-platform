@@ -4,7 +4,7 @@ namespace SecurityTest\Guard;
 
 use IntegrationTest\SessionManager;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Guard\XsrfGuard;
 use Zend\Http\Header\Cookie;
 use \Zend\Router\Http\RouteMatch;

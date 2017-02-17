@@ -44,7 +44,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.users');
         $this->setAllowed('view.all.child.groups');
         $this->setAllowed('view.flip');
-        $this->setAllowed('view.games');
         $this->setAllowed('view.group');
         $this->setAllowed('view.group.users');
         $this->setAllowed('view.org');
@@ -61,6 +60,7 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.flagged.image');
         $this->setAllowed('delete.flag');
         $this->setAllowed('view.feed');
+        $this->setAllowed('view.user.feed');
         $this->setAllowed('sa.settings');
         $this->setAllowed('create.game');
         $this->setAllowed('delete.game');
@@ -69,5 +69,14 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('reset.group.code');
         $this->setAllowed('set.super');
         $this->setAllowed('get.super.user');
+        $this->setAllowed('view.deleted.games');
+        $this->setAllowed('view.all.addresses');
+        $this->setAllowed('view.address');
+        $this->setAllowed('create.address');
+        $this->setAllowed('update.address');
+        $this->setAllowed('delete.address');
+        $this->setAllowed('view.all.group.addresses');
+        $this->setAllowed('attach.group.address');
+        $this->setAllowed('detach.group.address');
     }
 }

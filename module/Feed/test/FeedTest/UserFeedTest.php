@@ -3,7 +3,7 @@
 namespace FeedTest;
 
 use Feed\UserFeed;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 
 /**

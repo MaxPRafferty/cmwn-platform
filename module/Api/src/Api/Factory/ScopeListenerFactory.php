@@ -4,7 +4,7 @@ namespace Api\Factory;
 
 use Api\Listeners\ScopeListener;
 use Interop\Container\ContainerInterface;
-use Security\Service\SecurityGroupServiceInterface;
+use Security\Service\SecurityUserServiceInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
@@ -17,6 +17,6 @@ class ScopeListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ScopeListener($container->get(SecurityGroupServiceInterface::class));
+        return new ScopeListener($container->get(SecurityUserServiceInterface::class));
     }
 }

@@ -39,7 +39,7 @@ class OrgResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
     }
 
     /**
@@ -101,7 +101,7 @@ class OrgResourceTest extends TestCase
     public function testItShouldFetchOrg()
     {
         $this->injectValidCsrfToken();
-        $this->logInUser('english_teacher');
+        $this->logInUser('super_user');
 
         $this->dispatch('/org/district');
         $this->assertMatchedRouteName('api.rest.org');
@@ -334,7 +334,7 @@ class OrgResourceTest extends TestCase
 
         $this->dispatch('/org/district', 'DELETE');
         $this->assertResponseStatusCode(200);
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->orgService->fetchOrganization('district')->getArrayCopy();
     }
 

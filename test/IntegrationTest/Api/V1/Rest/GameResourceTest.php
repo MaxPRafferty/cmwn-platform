@@ -2,7 +2,6 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-use Application\Exception\NotFoundException;
 use Game\Service\GameServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\DataSets\ArrayDataSet;
@@ -26,7 +25,7 @@ class GameResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
     }
 
     /**
@@ -55,13 +54,13 @@ class GameResourceTest extends TestCase
     /**
      * @test
      * @param $login
-     * @dataProvider loginDataProvider
+     * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldFetchAllGames($login)
+    public function testItShouldFetchAllGames($login, $route, $expected)
     {
         $this->injectValidCsrfToken();
         $this->logInUser($login);
-        $this->dispatch('/game');
+        $this->dispatch($route);
         $this->assertResponseStatusCode(200);
         $this->assertControllerName('api\v1\rest\game\controller');
         $this->assertMatchedRouteName('api.rest.game');
@@ -72,7 +71,6 @@ class GameResourceTest extends TestCase
         $this->assertArrayHasKey('game', $body['_embedded']);
         $games = $body['_embedded']['game'];
 
-        $expected = ['animal-id', 'be-bright', 'Monarch'];
         $actual = [];
         foreach ($games as $game) {
             $actual[] = $game['game_id'];
@@ -83,6 +81,7 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     * @param $login
      * @dataProvider loginDataProvider
      */
     public function testItShouldFetchGame($login)
@@ -175,7 +174,7 @@ class GameResourceTest extends TestCase
         $this->assertEquals(['desktop' => true, 'unity' => false], $game->getMeta());
         $this->assertFalse($game->isComingSoon());
     }
-    
+
     /**
      * @test
      */
@@ -188,12 +187,38 @@ class GameResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\game\controller');
         $this->assertMatchedRouteName('api.rest.game');
 
-        try {
-            $this->service->fetchGame('animal-id');
-            $this->fail('not deleted');
-        } catch (NotFoundException $nf) {
-            //noop
-        }
+
+        $game = $this->service->fetchGame('animal-id');
+        $this->assertTrue($game->isDeleted(), 'game not deleted');
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldUnDeleteGame()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'title' => 'deleted game',
+            'description' => 'deleted game',
+            'coming_soon' => false,
+            'meta' => ['desktop' => true, 'unity' => false],
+            'undelete' => true
+        ];
+        $this->dispatch('/game/deleted-game', 'PUT', $postData);
+        $this->assertResponseStatusCode(200);
+        $this->assertControllerName('api\v1\rest\game\controller');
+        $this->assertMatchedRouteName('api.rest.game');
+
+        $game = $this->service->fetchGame('deleted-game');
+
+        $this->assertEquals('deleted-game', $game->getGameId());
+        $this->assertEquals('deleted game', $game->getTitle());
+        $this->assertEquals('deleted game', $game->getDescription());
+        $this->assertEquals(['desktop' => true, 'unity' => false], $game->getMeta());
+        $this->assertFalse($game->isComingSoon());
+        $this->assertFalse($game->isDeleted());
     }
 
     /**
@@ -222,7 +247,8 @@ class GameResourceTest extends TestCase
             'title' => 'animal-id',
             'description' => 'animal ids',
             'coming_soon' => true,
-            'meta' => ['desktop' => true, 'unity' => false]
+            'meta' => ['desktop' => true, 'unity' => false],
+            'undelete' => true
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(403);
@@ -252,6 +278,19 @@ class GameResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @param $user
+     * @dataProvider postDataProvider
+     */
+    public function testItShould403IfOthersTryToAccessDeletedGames($user)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($user);
+        $this->dispatch('/game?deleted=true');
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
      * @return array
      */
     public function loginDataProvider()
@@ -267,12 +306,30 @@ class GameResourceTest extends TestCase
     /**
      * @return array
      */
+    public function fetchAllDataProvider()
+    {
+        return [
+            ['super_user', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['english_student', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['other_teacher', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['principal', '/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['super_user', '/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
+            ['super_user', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['english_student', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['other_teacher', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['principal', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function postDataProvider()
     {
         return [
             ['english_student'],
             ['other_teacher'],
-            ['principal']
+            ['principal'],
         ];
     }
 

@@ -12,6 +12,8 @@ return [
             \Rule\Rule\Basic\NotRule::class             => \Rule\Rule\Service\BuildDependantRuleFactory::class,
             \Rule\Rule\Basic\EitherRule::class          => \Rule\Rule\Service\BuildDependantRuleFactory::class,
             \Rule\Rule\Collection\RuleCollection::class => \Rule\Rule\Service\BuildRuleCollectionFactory::class,
+            \Rule\Rule\Object\IsTypeRule::class         => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Rule\Event\Rule\EventParamMatches::class   => \Rule\Rule\Service\BuildRuleFactory::class,
         ],
         'shared'    => [
             \Rule\Rule\Basic\AlwaysSatisfiedRule::class => true,
@@ -20,6 +22,8 @@ return [
             \Rule\Rule\Basic\AndRule::class             => false,
             \Rule\Rule\Basic\NotRule::class             => false,
             \Rule\Rule\Basic\EitherRule::class          => false,
+            \Rule\Rule\Object\IsTypeRule::class         => false,
+            \Rule\Event\Rule\EventParamMatches::class   => false,
         ],
     ],
 
@@ -32,7 +36,7 @@ return [
             \Rule\Provider\BasicValueProvider::class            => \Rule\Provider\Service\BuildProviderFactory::class,
             \Rule\Provider\Collection\ProviderCollection::class =>
                 \Rule\Provider\Service\BuildProviderCollectionFactory::class,
-            \Rule\Event\Provider\FromEventTargetProvider::class => \Rule\Provider\Service\BuildProviderFactory::class,
+            \Rule\Event\Provider\FromEventTargetProvider::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Event\Provider\EventProvider::class           => \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
         'abstract_factories' => [
@@ -51,11 +55,13 @@ return [
             \Rule\Action\Collection\ActionCollectionInterface::class => \Rule\Action\Collection\ActionCollection::class,
         ],
         'factories'          => [
+            \Rule\Event\Action\SetEventParamAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Rule\Action\NoopAction::class                  => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Action\Collection\ActionCollection::class => \Rule\Action\Service\BuildActionCollectionFactory::class,
         ],
         'shared'             => [
             \Rule\Action\Collection\ActionCollection::class => false,
+            \Rule\Event\Action\SetEventParamAction::class   => false,
         ],
         'abstract_factories' => [
             \Rule\Action\Service\BuildActionFromConfigFactory::class =>

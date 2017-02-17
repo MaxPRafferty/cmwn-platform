@@ -4,7 +4,7 @@ namespace UserTest\Delegator;
 
 use Application\Exception\DuplicateEntryException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Delegator\CheckUserListener;
 use Zend\Db\Sql\Predicate\Operator;

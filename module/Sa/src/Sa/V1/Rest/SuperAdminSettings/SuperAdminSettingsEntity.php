@@ -6,7 +6,6 @@ use Api\Links\GameDataLink;
 use Api\Links\GameLink;
 use Api\Links\GroupLink;
 use Api\Links\OrgLink;
-use Api\Links\SuperFlagLink;
 use Api\Links\UserLink;
 use ZF\Hal\Entity;
 
@@ -26,7 +25,7 @@ class SuperAdminSettingsEntity extends Entity
         $userLink = new UserLink();
         $userLink->setProps(['label' => 'Manage Users']);
 
-        $gameLink = new GameLink();
+        $gameLink = new GameLink(null, true);
         $gameLink->setProps(['label' => 'Manage Games']);
 
         $gameDataLink = new GameDataLink('all-about-you');

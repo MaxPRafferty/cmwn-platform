@@ -5,7 +5,7 @@ namespace FlipTest\Rule\Action;
 use Flip\EarnedFlip;
 use Flip\Rule\Action\AddAcknowledgeHeaders;
 use Flip\Rule\Provider\AcknowledgeFlip;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Event\Provider\EventProvider;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\BasicRuleItem;
@@ -38,17 +38,10 @@ class AddAcknowledgeHeadersTest extends TestCase
     /**
      * @before
      */
-    public function setUpResponse()
+    public function setUp()
     {
         $this->response = new Response();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpEvent()
-    {
-        $this->event = new MvcEvent();
+        $this->event    = new MvcEvent();
         $this->event->setResponse($this->response);
     }
 

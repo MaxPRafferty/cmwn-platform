@@ -6,7 +6,7 @@ use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 use User\UserInterface;
 use Zend\Db\ResultSet\ResultSet;
@@ -50,6 +50,14 @@ class FriendServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->friendService = new FriendService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateway()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -60,14 +68,6 @@ class FriendServiceTest extends TestCase
         $this->tableGateway->shouldReceive('getTable')
             ->andReturn('user_friends')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->friendService = new FriendService($this->tableGateway);
     }
 
     /**
@@ -220,7 +220,7 @@ class FriendServiceTest extends TestCase
      */
     public function testItShouldThrowNotFriendsExceptionForUserIfNotFriends()
     {
-        $this->setExpectedException(NotFriendsException::class);
+        $this->expectException(NotFriendsException::class);
         $result = new ResultSet();
         $result->initialize([]);
         $this->tableGateway
@@ -297,7 +297,7 @@ class FriendServiceTest extends TestCase
     {
         $result = new ResultSet();
         $result->initialize([]);
-        $this->setExpectedException(NotFriendsException::class);
+        $this->expectException(NotFriendsException::class);
         $this->tableGateway
             ->shouldReceive('selectWith')
             ->andReturn($result);

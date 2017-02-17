@@ -3,7 +3,7 @@
 namespace OrgTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Org\Organization;
 use Org\Service\OrganizationService;
 use Zend\Db\ResultSet\ResultSet;
@@ -33,6 +33,14 @@ class OrganizationServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->organizationService = new OrganizationService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -42,14 +50,6 @@ class OrganizationServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('orgs')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->organizationService = new OrganizationService($this->tableGateway);
     }
 
     /**
@@ -204,10 +204,8 @@ class OrganizationServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenOrgIsNotFound()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'Organization not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('Organization not Found');
 
         $result = new ResultSet();
         $result->initialize([]);

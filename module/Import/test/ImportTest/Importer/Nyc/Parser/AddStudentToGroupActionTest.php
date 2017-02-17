@@ -7,7 +7,7 @@ use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddStudentToGroupAction;
 use Import\Importer\Nyc\Students\Student;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 
 /**
@@ -46,18 +46,18 @@ class AddStudentToGroupActionTest extends TestCase
     /**
      * @before
      */
-    public function setUpClassRoomGroup()
+    public function setUpClassRoom()
     {
-        $this->classRoomGroup = new Group();
+        $this->classRoom = new ClassRoom('History of the world', 'hist101', []);
+        $this->classRoom->setGroup($this->classRoomGroup);
     }
 
     /**
      * @before
      */
-    public function setUpClassRoom()
+    public function setUpClassRoomGroup()
     {
-        $this->classRoom = new ClassRoom('History of the world', 'hist101', []);
-        $this->classRoom->setGroup($this->classRoomGroup);
+        $this->classRoomGroup = new Group();
     }
 
     /**

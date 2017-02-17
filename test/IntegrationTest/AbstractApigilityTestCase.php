@@ -2,17 +2,17 @@
 
 namespace IntegrationTest;
 
-use \PHPUnit_Extensions_Database_TestCase_Trait as DbTestCaseTrait;
+use PHPUnit\DbUnit\TestCaseTrait as DbTestCaseTrait;
 use Security\Guard\CsrfGuard;
 use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
-use ZF\ContentNegotiation\Request;
 
 /**
  * Class AbstractApigilityTestCase
  *
- * @method Request getRequest()
  * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * @group Api
+ * @group Integration
  */
 abstract class AbstractApigilityTestCase extends TestCase
 {
@@ -31,7 +31,7 @@ abstract class AbstractApigilityTestCase extends TestCase
     public function setUp()
     {
         $this->setApplicationConfig(
-            TestHelper::getApplicationConfigWithDb()
+            TestHelper::getApplicationConfig()
         );
 
         parent::setUp();
@@ -67,7 +67,7 @@ abstract class AbstractApigilityTestCase extends TestCase
     public function injectValidCsrfToken()
     {
         /** @var CsrfGuard $xsrfGuard */
-        $xsrfGuard = TestHelper::getDbServiceManager()->get(CsrfGuard::class);
+        $xsrfGuard = TestHelper::getServiceManager()->get(CsrfGuard::class);
         $xsrfGuard->getSession()->offsetSet('hash', 'foobar');
 
         $this->getRequest()
@@ -81,8 +81,9 @@ abstract class AbstractApigilityTestCase extends TestCase
      * @param array $params
      * @param bool $isXmlHttpRequest
      */
-    public function dispatch($url, $method = 'GET', $params = [], $isXmlHttpRequest = false)
+    public function dispatch($url, $method = null, $params = [], $isXmlHttpRequest = false)
     {
+        $method = $method ?? 'GET';
         $this->url($url, $method, $params);
 
         if (!empty($params)) {
@@ -137,7 +138,7 @@ abstract class AbstractApigilityTestCase extends TestCase
             $match,
             sprintf(
                 'Failed asserting response code "%s", actual status code is "%s"'
-                . PHP_EOL . 'RESPONSE BODY:' . PHP_EOL .  '%s',
+                . PHP_EOL . 'RESPONSE BODY:' . PHP_EOL . '%s',
                 $code,
                 $match,
                 $this->getResponse()->getContent()

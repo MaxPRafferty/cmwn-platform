@@ -3,7 +3,7 @@
 namespace MediaTest;
 
 use Media\MediaProperties;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test MediaPropertiesTest
@@ -51,10 +51,8 @@ class MediaPropertiesTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToSetInvalidProperty()
     {
-        $this->setExpectedException(
-            \OutOfRangeException::class,
-            'Invalid property: "foo_bar"'
-        );
+        $this->expectException(\OutOfRangeException::class);
+        $this->expectExceptionMessage('Invalid property: "foo_bar"');
 
         $properties = new MediaProperties();
         $properties->setProperty('foo_bar', 'bax bat');
@@ -65,10 +63,8 @@ class MediaPropertiesTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToGetInvalidProperty()
     {
-        $this->setExpectedException(
-            \OutOfRangeException::class,
-            'Cannot access property: "foo_bar'
-        );
+        $this->expectException(\OutOfRangeException::class);
+        $this->expectExceptionMessage('Cannot access property: "foo_bar');
 
         $properties = new MediaProperties();
         $properties->getProperty('foo_bar');
@@ -79,10 +75,8 @@ class MediaPropertiesTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToSetInvalidPropertyFromObject()
     {
-        $this->setExpectedException(
-            \OutOfRangeException::class,
-            'Invalid property: "foo_bar"'
-        );
+        $this->expectException(\OutOfRangeException::class);
+        $this->expectExceptionMessage('Invalid property: "foo_bar"');
 
         $properties = new MediaProperties();
         $properties->foo_bar = 'bax bat';
@@ -93,10 +87,8 @@ class MediaPropertiesTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToGetInvalidPropertyFromObject()
     {
-        $this->setExpectedException(
-            \OutOfRangeException::class,
-            'Cannot access property: "foo_bar'
-        );
+        $this->expectException(\OutOfRangeException::class);
+        $this->expectExceptionMessage('Cannot access property: "foo_bar');
 
         $properties = new MediaProperties();
         $properties->foo_bar;

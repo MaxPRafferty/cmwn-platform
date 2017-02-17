@@ -4,6 +4,7 @@
 namespace Game\Delegator;
 
 use Interop\Container\ContainerInterface;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
@@ -16,6 +17,6 @@ class GameDelegatorFactory implements DelegatorFactoryInterface
      */
     public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        return new GameDelegator($callback());
+        return new GameDelegator($callback(), $container->get(EventManagerInterface::class));
     }
 }

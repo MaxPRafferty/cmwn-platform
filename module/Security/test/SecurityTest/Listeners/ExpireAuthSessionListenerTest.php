@@ -3,7 +3,7 @@
 namespace SecurityTest\Listeners;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Listeners\ExpireAuthSessionListener;
 use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
@@ -40,6 +40,16 @@ class ExpireAuthSessionListenerTest extends TestCase
     /**
      * @before
      */
+    public function setUpListener()
+    {
+        $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
+        $this->listener    = new ExpireAuthSessionListener($this->container);
+        $this->listener->setAuthenticationService($this->authService);
+    }
+
+    /**
+     * @before
+     */
     public function setUpContainer()
     {
         Container::setDefaultManager(null);
@@ -49,16 +59,6 @@ class ExpireAuthSessionListenerTest extends TestCase
 
         $manager         = new SessionManager($config);
         $this->container = new Container('Default', $manager);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpListener()
-    {
-        $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
-        $this->listener    = new ExpireAuthSessionListener($this->container);
-        $this->listener->setAuthenticationService($this->authService);
     }
 
     /**

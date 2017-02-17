@@ -29,7 +29,7 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'            => [],
+
     'groups'           => [
         [
             'group_id'        => 'school',
@@ -226,7 +226,7 @@ return [
             'earned'  => '2016-04-27 10:48:45',
         ],
     ],
-    'user_friends'     => [],
+
     'user_groups'      => [
         [
             'user_id'  => 'english_student',
@@ -249,7 +249,7 @@ return [
             'role'     => 'principal',
         ],
     ],
-    'image_flags'      => [],
-    'user_saves'       => [],
+
+
     'user_suggestions' => [],
 ];
