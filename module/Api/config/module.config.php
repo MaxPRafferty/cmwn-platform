@@ -31,10 +31,13 @@ return [
         'factories' => [
             \Api\Rule\Action\AddHalLinkAction::class => \Rule\Action\Service\BuildActionFactory::class,
             \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class => \Rule\Action\Service\BuildActionFactory::class,
         ],
 
         'shared' => [
-            \Api\Rule\Action\AddHalLinkAction::class => false,
+            \Api\Rule\Action\AddHalLinkAction::class   => false,
+            \Api\Rule\Action\AddTypeLinksAction::class => false,
+            \Api\Rule\Action\ThrowException::class     => false,
         ]
     ],
 
@@ -509,7 +512,7 @@ return [
             'collection_name'            => 'game',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['page', 'per_page'],
+            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
@@ -2372,6 +2375,19 @@ return [
                 ],
                 'name'        => 'coming_soon',
                 'description' => 'if the game is coming soon',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'undelete',
+                'description' => 'undelete the game',
             ],
             [
                 'required'    => false,

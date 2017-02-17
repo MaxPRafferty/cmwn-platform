@@ -82,46 +82,6 @@ class GameServiceTest extends TestCase
     }
 
     /**
-     * Tests the service returns an iterator when asked
-     *
-     * @test
-     */
-    public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
-    {
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->gameService->fetchAll(null, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
-    {
-        $expectedWhere = new Where();
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) use (&$expectedWhere) {
-                /** @var \Zend\Db\Sql\Predicate\Predicate $where */
-                $this->assertSame($expectedWhere, $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->gameService->fetchAll($expectedWhere, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
      * @test
      */
     public function testItShouldFetchGameById()
@@ -130,7 +90,6 @@ class GameServiceTest extends TestCase
             ->andReturnUsing(function ($actual) {
                 $where = new Where();
                 $where->equalTo('game_id', 'sea-turtle');
-                $where->isNull('deleted');
 
                 $this->assertEquals($where, $actual);
                 $resultSet = new ResultSet();
