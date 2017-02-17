@@ -45,7 +45,7 @@ return [
                             \Api\Links\GameLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                             true,
-                            ['true']
+                            [true]
                         ],
                     ],
                     [
@@ -118,7 +118,6 @@ return [
     ],
     'specifications' => [
         'sa-settings-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-        'super-flag-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         'super-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
     ],
 ];

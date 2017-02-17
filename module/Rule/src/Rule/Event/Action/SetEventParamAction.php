@@ -3,6 +3,7 @@
 namespace Rule\Event\Action;
 
 use Rule\Action\ActionInterface;
+use Rule\Event\Provider\EventProvider;
 use Rule\Item\RuleItemInterface;
 use Rule\Utils\ProviderTypeTrait;
 use Zend\EventManager\EventInterface;
@@ -35,11 +36,11 @@ class SetEventParamAction implements ActionInterface
      * @param $value
      * @param string $providerName
      */
-    public function __construct(string $id, $value, string $providerName = 'event')
+    public function __construct(string $id, $value, string $providerName = null)
     {
         $this->id = $id;
         $this->value = $value;
-        $this->providerName = $providerName;
+        $this->providerName = $providerName ?? EventProvider::PROVIDER_NAME;
     }
 
     /**

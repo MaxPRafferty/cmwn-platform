@@ -7,12 +7,13 @@ use Rule\Event\Action\SetEventParamAction;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\RuleItemInterface;
 use Zend\EventManager\Event;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Class SetEventParamActionTest
  * @package RuleTest\Event\Action
  */
-class SetEventParamActionTest extends \PHPUnit_Framework_TestCase
+class SetEventParamActionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
@@ -55,7 +56,7 @@ class SetEventParamActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testItShouldThrowExceptionIfEventNotInstanceOfEventInterface()
     {
-        $this->setExpectedException(InvalidProviderType::class);
+        $this->expectException(InvalidProviderType::class);
         $this->item->shouldReceive('getParam')
             ->with('event')
             ->once();
