@@ -682,7 +682,7 @@ return [
             'entity_http_methods'        => ['GET'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\Flip\FlipEntity::class,
             'collection_class'           => \Api\V1\Rest\Flip\FlipCollection::class,
