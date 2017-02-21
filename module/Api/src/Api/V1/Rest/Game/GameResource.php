@@ -290,16 +290,17 @@ class GameResource extends AbstractResourceListener
     {
         $data = $this->getInputFilter()->getValues();
         $game = $this->service->fetchGame($gameId);
-        $game = $game->getArrayCopy();
+
+        $data = array_merge($game->getArrayCopy(), $data);
 
         if ($data['undelete']) {
-            unset($game['deleted']);
+            unset($data['deleted']);
         }
 
-        $saveGame = new Game(array_merge($game, $data));
-        $this->service->saveGame($saveGame);
+        $game->exchangeArray($data);
+        $this->service->saveGame($game);
 
-        return $saveGame;
+        return $game;
     }
 
     /**

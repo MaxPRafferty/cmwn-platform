@@ -280,6 +280,19 @@ class GameResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @param $user
+     * @dataProvider postDataProvider
+     */
+    public function testItShould403IfOthersTryToAccessDeletedGames($user)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($user);
+        $this->dispatch('/game?deleted=true');
+        $this->assertResponseStatusCode(403);
+    }
+
+    /**
      * @return array
      */
     public function loginDataProvider()
@@ -311,7 +324,7 @@ class GameResourceTest extends TestCase
         return [
             ['english_student'],
             ['other_teacher'],
-            ['principal']
+            ['principal'],
         ];
     }
 

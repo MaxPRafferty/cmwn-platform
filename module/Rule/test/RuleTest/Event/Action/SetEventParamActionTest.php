@@ -7,7 +7,7 @@ use Rule\Event\Action\SetEventParamAction;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\RuleItemInterface;
 use Zend\EventManager\Event;
-use PHPUnit\Framework\TestCase as TestCase;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Class SetEventParamActionTest
@@ -56,7 +56,7 @@ class SetEventParamActionTest extends TestCase
      */
     public function testItShouldThrowExceptionIfEventNotInstanceOfEventInterface()
     {
-        $this->ExpectException(InvalidProviderType::class);
+        $this->expectException(InvalidProviderType::class);
         $this->item->shouldReceive('getParam')
             ->with('event')
             ->once();

@@ -33,12 +33,12 @@ return [
             'actions'             => [
                 'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
                 'actions'                 => [
-                    // Throw Exception Action (NotAuthorized)
                     [
-                        'name'    => \Rule\Event\Action\SetEventParamAction::class,
+                        'name'    => \Api\Rule\Action\ThrowException::class,
                         'options' => [
-                            'show_deleted',
-                            false,
+                            \Application\Exception\NotAuthorizedException::class,
+                            'Unauthorized',
+                            403,
                         ],
                     ],
                 ],

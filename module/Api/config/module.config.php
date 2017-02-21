@@ -57,11 +57,13 @@ return [
         'factories' => [
             \Api\Rule\Action\AddHalLinkAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class => \Rule\Action\Service\BuildActionFactory::class,
         ],
 
         'shared' => [
-            \Api\Rule\Action\AddHalLinkAction::class => false,
+            \Api\Rule\Action\AddHalLinkAction::class   => false,
             \Api\Rule\Action\AddTypeLinksAction::class => false,
+            \Api\Rule\Action\ThrowException::class     => false,
         ]
     ],
 
