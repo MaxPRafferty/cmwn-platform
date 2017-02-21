@@ -67,7 +67,7 @@ class SaveGameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
         $this->dispatch(
-            '/user/' .$userName . '/game/monarch',
+            '/user/' .$userName . '/save/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
@@ -99,7 +99,7 @@ class SaveGameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
         $this->dispatch(
-            '/user/' .$userName . '/game/monarch',
+            '/user/' .$userName . '/save/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
@@ -118,7 +118,7 @@ class SaveGameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser($userName);
         $this->dispatch(
-            '/user/other_student/game/monarch',
+            '/user/other_student/save/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
@@ -141,7 +141,7 @@ class SaveGameResourceTest extends TestCase
         $this->saveService->saveGame($saveGame);
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/game/monarch');
+        $this->dispatch('/user/english_student/save/monarch');
         $this->assertResponseStatusCode(200);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
@@ -172,7 +172,7 @@ class SaveGameResourceTest extends TestCase
         }
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/game/monarch');
+        $this->dispatch('/user/english_student/save/monarch');
         $this->assertResponseStatusCode(404);
         $this->assertMatchedRouteName('api.rest.save-game');
         $this->assertControllerName('api\v1\rest\savegame\controller');
@@ -193,7 +193,7 @@ class SaveGameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch(
-            '/user/english_student/game/monarch',
+            '/user/english_student/save/monarch',
             'POST',
             ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
         );
@@ -231,7 +231,7 @@ class SaveGameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $this->dispatch(
-            '/user/english_student/game/monarch',
+            '/user/english_student/save/monarch',
             'DELETE'
         );
         $this->assertResponseStatusCode(204);
@@ -282,17 +282,17 @@ class SaveGameResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/user/english_student/game/monarch'
+                '/user/english_student/save/monarch'
             ],
             1 => [
                 'english_student',
-                '/user/english_student/game/monarch',
+                '/user/english_student/save/monarch',
                 'POST',
                 ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
             ],
-            0 => [
+            2 => [
                 'english_student',
-                '/user/english_student/game/monarch',
+                '/user/english_student/save/monarch',
                 'DELETE'
             ],
         ];

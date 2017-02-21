@@ -7,7 +7,7 @@ use Game\Delegator\GameDelegator;
 use Game\Game;
 use Game\Service\GameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;

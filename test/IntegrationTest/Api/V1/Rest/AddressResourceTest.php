@@ -5,7 +5,6 @@ namespace IntegrationTest\Api\V1\Rest;
 use Address\Service\AddressServiceInterface;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase;
-use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
 

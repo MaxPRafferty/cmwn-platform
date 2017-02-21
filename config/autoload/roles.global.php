@@ -66,6 +66,8 @@ return [
             'delete.game'          => 'delete game',
             'save.game'            => 'Save Game progress',
             'view.deleted.games'   => 'view all games including soft deleted ones',
+            'attach.user.game'     => 'attach a game to user',
+            'detach.user.game'     => 'detach a game from user',
 
             // misc
             'adult.code'           => 'Send adult reset code',
@@ -163,7 +165,6 @@ return [
                     'view.feed',
                     'sa.settings',
                     'create.game',
-                    'view.game',
                     'update.game',
                     'delete.game',
                     'reset.group.code',
@@ -179,6 +180,8 @@ return [
                     'set.super',
                     'get.super.user',
                     'view.user.feed',
+                    'attach.user.game',
+                    'detach.user.game',
                 ],
             ],
 
