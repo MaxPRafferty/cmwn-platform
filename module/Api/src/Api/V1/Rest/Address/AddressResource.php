@@ -4,6 +4,7 @@ namespace Api\V1\Rest\Address;
 
 use Address\Address;
 use Address\Service\AddressServiceInterface;
+use Group\Service\GroupAddressServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -18,12 +19,21 @@ class AddressResource extends AbstractResourceListener
     protected $addressService;
 
     /**
+     * @var GroupAddressServiceInterface $groupAddressService
+     */
+    protected $groupAddressService;
+
+    /**
      * AddressResource constructor.
      * @param AddressServiceInterface $addressService
+     * @param GroupAddressServiceInterface $groupAddressService
      */
-    public function __construct(AddressServiceInterface $addressService)
-    {
+    public function __construct(
+        AddressServiceInterface $addressService,
+        GroupAddressServiceInterface $groupAddressService
+    ) {
         $this->addressService = $addressService;
+        $this->groupAddressService = $groupAddressService;
     }
 
     /**
@@ -39,7 +49,20 @@ class AddressResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new AddressCollection($this->addressService->fetchAll(null, new AddressEntity([])));
+        $where = null;
+        $prototype = new AddressEntity([]);
+
+        if (isset($params['postal_code'])) {
+            $where = ['postal_code' => $params['postal_code']];
+        }
+
+        if (isset($params['filter']) && $params['filter'] === 'group') {
+            return new AddressCollection(
+                $this->groupAddressService->fetchAddressesWithGroupsAttached($where, $prototype)
+            );
+        }
+
+        return new AddressCollection($this->addressService->fetchAll($where, $prototype));
     }
 
     /**

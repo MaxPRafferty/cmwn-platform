@@ -6,8 +6,10 @@ use Address\Address;
 use Address\AddressInterface;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
+use Group\Group;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -100,9 +102,43 @@ class GroupAddressService implements GroupAddressServiceInterface
     }
 
     /**
+     * @param $where
+     * @param GroupInterface|null $prototype
+     * @return AdapterInterface
+     */
+    public function fetchAllGroupsInAddress($where = null, GroupInterface $prototype = null) : AdapterInterface
+    {
+        $where = $this->createWhere($where);
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+        $select->columns([]);
+        $select->join(
+            ['at' => 'addresses'],
+            'ga.address_id = at.address_id'
+        );
+
+        $select->columns([]);
+
+        $select->join(
+            ['g' => 'groups'],
+            'ga.group_id = g.group_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+        $prototype = $prototype ?? new Group();
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        return new DbSelect(
+            $select,
+            $this->tableGateway->getAdapter(),
+            $resultSet
+        );
+    }
+
+    /**
      * @inheritdoc
      */
-    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address)
+    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address) : AddressInterface
     {
         $addressId = $address->getAddressId();
         $where = new Where([new Operator('ga.address_id', Operator::OP_EQ, $addressId)]);
@@ -112,6 +148,33 @@ class GroupAddressService implements GroupAddressServiceInterface
             throw new NotFoundException("Address not found");
         }
 
-        return $addresses->getItems(0, 1);
+        return new Address($addresses->getItems(0, 1));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAddressesWithGroupsAttached(
+        $where = null,
+        AddressInterface $prototype = null
+    ) : AdapterInterface {
+        $where = $this->createWhere($where);
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+        $select->columns([]);
+        $select->join(
+            ['at' => 'addresses'],
+            'at.address_id = ga.address_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+        $select->where($where);
+        $prototype = $prototype ?? new Address([]);
+        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+
+        return new DbSelect(
+            $select,
+            $this->tableGateway->getAdapter(),
+            $resultSet
+        );
     }
 }
