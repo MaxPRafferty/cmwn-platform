@@ -72,10 +72,15 @@ class UserGameService implements UserGameServiceInterface
     ) : GameInterface {
         $select = $this->createSelect();
 
-        $select->where([
-            new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()),
-            new Operator('g.game_id', Operator::OP_EQ, $game->getGameId())
-        ]);
+        $predicateSet = new PredicateSet([
+            new Expression('g.global =1'),
+            new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId())
+        ], PredicateSet::COMBINED_BY_OR);
+
+        $where = new Where([new Operator('g.game_id', Operator::OP_EQ, $game->getGameId())]);
+        $where->addPredicate($predicateSet);
+
+        $select->where($where);
 
         $rowSet = $this->tableGateway->selectWith($select);
         $row = $rowSet->current();
