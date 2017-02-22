@@ -31,4 +31,22 @@ interface FlipServiceInterface
      * @return FlipInterface
      */
     public function fetchFlipById($flipId, FlipInterface $prototype = null): FlipInterface;
+
+    /**
+     * @param FlipInterface $flip
+     * @return bool
+     */
+    public function createFlip(FlipInterface $flip): bool;
+
+    /**
+     * @param FlipInterface $flip
+     * @return bool
+     */
+    public function updateFlip(FlipInterface $flip): bool;
+
+    /**
+     * @param FlipInterface $flip
+     * @return bool
+     */
+    public function deleteFlip(FlipInterface $flip): bool;
 }
