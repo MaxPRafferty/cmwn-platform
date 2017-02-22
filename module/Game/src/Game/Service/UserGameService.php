@@ -9,6 +9,7 @@ use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
@@ -44,11 +45,18 @@ class UserGameService implements UserGameServiceInterface
         $where = null,
         GameInterface $prototype = null
     ) : AdapterInterface {
-        $select = $this->createSelect($user);
-        $select->where($where);
-        $select->columns([]);
+        $select = $this->createSelect();
+
+        $where = $where ?? new Where();
+        $where->addPredicate(
+            new PredicateSet([
+                new Expression('g.global =1'),
+                new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId())
+            ], PredicateSet::COMBINED_BY_OR)
+        );
 
         $select->quantifier(Select::QUANTIFIER_DISTINCT);
+        $select->where($where);
         $prototype = $prototype ?? new Game();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect($select, $this->tableGateway->getAdapter(), $resultSet);
@@ -62,7 +70,12 @@ class UserGameService implements UserGameServiceInterface
         GameInterface $game,
         GameInterface $prototype = null
     ) : GameInterface {
-        $select = $this->createSelect($user, $game);
+        $select = $this->createSelect();
+
+        $select->where([
+            new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()),
+            new Operator('g.game_id', Operator::OP_EQ, $game->getGameId())
+        ]);
 
         $rowSet = $this->tableGateway->selectWith($select);
         $row = $rowSet->current();
@@ -105,27 +118,18 @@ class UserGameService implements UserGameServiceInterface
     }
 
     /**
-     * @param UserInterface|null $user
-     * @param GameInterface|null $game
      * @return Select
      */
-    protected function createSelect(UserInterface $user, GameInterface $game = null) : Select
+    protected function createSelect() : Select
     {
         $select = new Select(['ug' => $this->tableGateway->getTable()]);
+        $select->columns([]);
         $select->join(
             ['g' => 'games'],
             'ug.game_id = g.game_id',
             '*',
             Select::JOIN_RIGHT_OUTER
         );
-
-        $where = new Where([new Expression('g.global = 1')]);
-
-        $where->orPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
-
-        if ($game instanceof GameInterface) {
-            $where->andPredicate(new Operator('g.game_id', Operator::OP_EQ, $game->getGameId()));
-        }
 
         return $select;
     }
