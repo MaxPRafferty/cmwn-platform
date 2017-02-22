@@ -7,9 +7,11 @@ use Game\Game;
 use Game\GameInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -44,11 +46,17 @@ class UserGameService implements UserGameServiceInterface
         GameInterface $prototype = null
     ) : AdapterInterface {
         $select = $this->createSelect();
-        $select->where($where);
-        $select->columns([]);
 
-        $select->where(['ug.user_id' => $user->getUserId()]);
+        $where = $where ?? new Where();
+        $where->addPredicate(
+            new PredicateSet([
+                new Expression('g.global =1'),
+                new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId())
+            ], PredicateSet::COMBINED_BY_OR)
+        );
+
         $select->quantifier(Select::QUANTIFIER_DISTINCT);
+        $select->where($where);
         $prototype = $prototype ?? new Game();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
         return new DbSelect($select, $this->tableGateway->getAdapter(), $resultSet);
@@ -63,8 +71,11 @@ class UserGameService implements UserGameServiceInterface
         GameInterface $prototype = null
     ) : GameInterface {
         $select = $this->createSelect();
-        $select->where(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
-        $select->where(new Operator('g.game_id', Operator::OP_EQ, $game->getGameId()));
+
+        $select->where([
+            new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()),
+            new Operator('g.game_id', Operator::OP_EQ, $game->getGameId())
+        ]);
 
         $rowSet = $this->tableGateway->selectWith($select);
         $row = $rowSet->current();
@@ -112,11 +123,12 @@ class UserGameService implements UserGameServiceInterface
     protected function createSelect() : Select
     {
         $select = new Select(['ug' => $this->tableGateway->getTable()]);
+        $select->columns([]);
         $select->join(
             ['g' => 'games'],
-            new Expression("ug.game_id = g.game_id or g.global = 1"),
+            'ug.game_id = g.game_id',
             '*',
-            Select::JOIN_LEFT
+            Select::JOIN_RIGHT_OUTER
         );
 
         return $select;
