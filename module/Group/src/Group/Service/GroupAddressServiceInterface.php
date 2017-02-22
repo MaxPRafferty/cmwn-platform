@@ -51,7 +51,7 @@ interface GroupAddressServiceInterface
      * @param GroupInterface|null $prototype
      * @return AdapterInterface
      */
-    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null) : AdapterInterface;
+    public function fetchAllGroupsInAddress($where = null, GroupInterface $prototype = null) : AdapterInterface;
 
     /**
      * @param null $where

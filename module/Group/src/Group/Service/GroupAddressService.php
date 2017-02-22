@@ -106,7 +106,7 @@ class GroupAddressService implements GroupAddressServiceInterface
      * @param GroupInterface|null $prototype
      * @return AdapterInterface
      */
-    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null) : AdapterInterface
+    public function fetchAllGroupsInAddress($where = null, GroupInterface $prototype = null) : AdapterInterface
     {
         $where = $this->createWhere($where);
         $select = new Select(['ga' => $this->tableGateway->getTable()]);
@@ -159,10 +159,10 @@ class GroupAddressService implements GroupAddressServiceInterface
         AddressInterface $prototype = null
     ) : AdapterInterface {
         $where = $this->createWhere($where);
-        $select = new Select(['ga' => 'group_addresses']);
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
         $select->columns([]);
         $select->join(
-            ['at' => $this->tableGateway->getTable()],
+            ['at' => 'addresses'],
             'at.address_id = ga.address_id',
             '*',
             Select::JOIN_LEFT

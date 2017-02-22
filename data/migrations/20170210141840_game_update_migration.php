@@ -33,5 +33,10 @@ class GameUpdateMigration extends AbstractMigration
             $table->addColumn('global', 'integer', ['limit' => MysqlAdapter::BLOB_TINY, 'null' => true, 'default' => 0])
                 ->save();
         }
+
+        $this->execute(
+            'UPDATE games ' .
+            'SET global = 1'
+        );
     }
 }

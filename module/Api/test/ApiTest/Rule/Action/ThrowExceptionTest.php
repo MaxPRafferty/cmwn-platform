@@ -44,7 +44,7 @@ class ThrowExceptionTest extends TestCase
      */
     public function testItShouldThrowRuntimeExceptionWhenIllegalExceptionClassNameIsGiven()
     {
-        //$this->expectException(\RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $action = new ThrowException("foo");
         $action(new BasicRuleItem());
     }

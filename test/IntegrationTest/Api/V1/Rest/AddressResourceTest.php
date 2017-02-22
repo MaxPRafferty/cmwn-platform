@@ -83,7 +83,31 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_embedded', $body);
         $this->assertArrayHasKey('addresses', $body['_embedded']);
         $addresses = $body['_embedded']['addresses'];
-        $expected = ['other_school_address', 'school_address'];
+        $expected = ['foo_school_address', 'other_school_address', 'school_address'];
+        $actual = [];
+
+        foreach ($addresses as $address) {
+            $this->assertArrayHasKey('address_id', $address);
+            $actual[] = $address['address_id'];
+        }
+        $this->assertEquals($actual, $expected);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchAllAddressesWithGroupsAttached()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/address?postal_code=07306&filter=group');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('addresses', $body['_embedded']);
+        $addresses = $body['_embedded']['addresses'];
+        $expected = ['foo_school_address', 'other_school_address'];
         $actual = [];
 
         foreach ($addresses as $address) {

@@ -8,8 +8,7 @@ use Address\Service\AddressServiceInterface;
 use Application\Exception\NotFoundException;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Paginator\Adapter\DbSelect;
-use ZF\MvcAuth\Authentication\AdapterInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Class AddressDelegator

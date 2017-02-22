@@ -179,7 +179,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllGroupsInAddress($where, GroupInterface $prototype = null) : AdapterInterface
+    public function fetchAllGroupsInAddress($where = null, GroupInterface $prototype = null) : AdapterInterface
     {
         $event = new Event(
             'fetch.address.groups',
@@ -213,6 +213,28 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         $where = null,
         AddressInterface $prototype = null
     ) : AdapterInterface {
-        $where = $this->createWhere($where);
+        $event = new Event(
+            'fetch.all.addresses.with.groups',
+            $this->realService,
+            ['where' => $where, 'prototype' => $prototype ]
+        );
+
+        $response = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+        try {
+            $return = $this->realService->fetchAddressesWithGroupsAttached($where, $prototype);
+            $event->setName('fetch.all.addresses.with.groups.post');
+            $event->setParam('addresses', $return);
+            $this->getEventManager()->triggerEvent($event);
+
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.all.addresses.with.groups.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
     }
 }

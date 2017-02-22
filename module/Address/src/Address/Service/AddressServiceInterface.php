@@ -5,8 +5,7 @@ namespace Address\Service;
 
 use Address\AddressInterface;
 use Application\Exception\NotFoundException;
-use Zend\Paginator\Adapter\DbSelect;
-use ZF\MvcAuth\Authentication\AdapterInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Interface AddressServiceInterface
@@ -25,9 +24,9 @@ interface AddressServiceInterface
     /**
      * @param null $where
      * @param AddressInterface|null $prototype
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchAll($where = null, AddressInterface $prototype = null) : DbSelect;
+    public function fetchAll($where = null, AddressInterface $prototype = null) : AdapterInterface;
 
     /**
      * @param AddressInterface $address
