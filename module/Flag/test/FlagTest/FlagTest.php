@@ -3,7 +3,7 @@
 namespace FlagTest;
 
 use Flag\Flag;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use User\Child;
 use User\UserInterface;

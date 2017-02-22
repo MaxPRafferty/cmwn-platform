@@ -4,7 +4,7 @@ namespace SuggestTest\Listener;
 
 use Job\Service\JobServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Suggest\Engine\SuggestionEngine;
 use Suggest\Listener\TriggerSuggestionsListener;
 use User\Adult;
@@ -43,18 +43,18 @@ class TriggerSuggestionListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpServices()
+    public function setUpListener()
     {
-        $this->suggestionEngine = \Mockery::mock(SuggestionEngine::class);
-        $this->jobService       = \Mockery::mock(JobServiceInterface::class);
+        $this->listener = new TriggerSuggestionsListener($this->suggestionEngine, $this->jobService);
     }
 
     /**
      * @before
      */
-    public function setUpListener()
+    public function setUpServices()
     {
-        $this->listener = new TriggerSuggestionsListener($this->suggestionEngine, $this->jobService);
+        $this->suggestionEngine = \Mockery::mock(SuggestionEngine::class);
+        $this->jobService       = \Mockery::mock(JobServiceInterface::class);
     }
 
     /**

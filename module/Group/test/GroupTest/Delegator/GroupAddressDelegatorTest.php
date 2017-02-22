@@ -8,7 +8,7 @@ use Group\Delegator\GroupAddressDelegator;
 use Group\Service\GroupAddressService;
 use Group\Group;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Select;
@@ -20,6 +20,7 @@ use Zend\Paginator\Adapter\DbSelect;
  * Class GroupAddressDelegatorTest
  * @package AddressTest\Delegator
  * @SuppressWarnings(PHPMD)
+ * @FixME no need for the adapter to be mocked
  */
 class GroupAddressDelegatorTest extends TestCase
 {
@@ -48,25 +49,12 @@ class GroupAddressDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->addressService = \Mockery::mock(GroupAddressService::class);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpAdapter()
-    {
-        $this->adapter = \Mockery::mock(Adapter::class);
-        $this->adapter->shouldReceive('getPlatform')->byDefault();
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
+        $this->addressService = \Mockery::mock(GroupAddressService::class);
+        $this->adapter = \Mockery::mock(Adapter::class);
+        $this->adapter->shouldReceive('getPlatform')->byDefault();
+
         $events             = new EventManager();
         $this->calledEvents = [];
         $this->delegator    = new GroupAddressDelegator($this->addressService, $events);

@@ -6,7 +6,7 @@ use Application\Exception\DuplicateEntryException;
 use Application\Exception\NotFoundException;
 use Feed\Service\FeedUserService;
 use Feed\UserFeed;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -105,7 +105,7 @@ class FeedUserServiceTest extends TestCase
             $this->service->fetchAllFeedForUser(new Child(['user_id' => 'english_student']))
         );
     }
-    
+
     /**
      * @test
      */
@@ -158,7 +158,7 @@ class FeedUserServiceTest extends TestCase
                 return $resultSet;
             })
             ->once();
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->assertInstanceOf(
             NotFoundException::class,
@@ -226,7 +226,7 @@ class FeedUserServiceTest extends TestCase
             })
             ->once();
 
-        $this->setExpectedException(DuplicateEntryException::class);
+        $this->expectException(DuplicateEntryException::class);
 
         $this->tableGateway->shouldReceive('insert')
             ->never();
@@ -292,7 +292,7 @@ class FeedUserServiceTest extends TestCase
             })
             ->once();
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->service->updateFeedForUser('english_student', new UserFeed($this->data));
     }
@@ -354,7 +354,7 @@ class FeedUserServiceTest extends TestCase
             })
             ->once();
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
 
         $this->tableGateway->shouldReceive('delete')->never();
 

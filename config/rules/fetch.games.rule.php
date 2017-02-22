@@ -33,12 +33,12 @@ return [
             'actions'             => [
                 'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
                 'actions'                 => [
-                    // Throw Exception Action (NotAuthorized)
                     [
-                        'name'    => \Rule\Event\Action\SetEventParamAction::class,
+                        'name'    => \Api\Rule\Action\ThrowException::class,
                         'options' => [
-                            'show_deleted',
-                            false,
+                            \Application\Exception\NotAuthorizedException::class,
+                            'Unauthorized',
+                            403,
                         ],
                     ],
                 ],
@@ -57,7 +57,7 @@ return [
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
                 'rules'                 => [
-                    // Has permission to earn flips
+                    // Has permission to fetch game
                     [
                         'name'    => \Security\Rule\Rule\HasPermission::class,
                         'options' => [

@@ -8,7 +8,7 @@ use Feed\Service\FeedUserServiceInterface;
 use Flip\Service\FlipServiceInterface;
 use Friend\FriendInterface;
 use Friend\Service\FriendServiceInterface;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Skribble\Skribble;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
@@ -38,19 +38,19 @@ class InjectFeedListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpServices()
+    public function setUpListener()
     {
-        $this->feedService = \Mockery::mock(FeedServiceInterface::class);
-        $this->feedUserService = \Mockery::mock(FeedUserServiceInterface::class);
-        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
+        $this->listener = new InjectFeedListener($this->feedService, $this->feedUserService, $this->friendService);
     }
 
     /**
      * @before
      */
-    public function setUpListener()
+    public function setUpServices()
     {
-        $this->listener = new InjectFeedListener($this->feedService, $this->feedUserService, $this->friendService);
+        $this->feedService = \Mockery::mock(FeedServiceInterface::class);
+        $this->feedUserService = \Mockery::mock(FeedUserServiceInterface::class);
+        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
     }
 
     /**
@@ -148,7 +148,7 @@ class InjectFeedListenerTest extends TestCase
 
         $this->assertFalse($response->stopped());
     }
-    
+
     /**
      * @test
      */

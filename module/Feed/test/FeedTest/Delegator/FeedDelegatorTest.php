@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Feed\Delegator\FeedDelegator;
 use Feed\Feed;
 use Feed\Service\FeedService;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 
@@ -35,19 +35,19 @@ class FeedDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpFeedService()
-    {
-        $this->feedService = \Mockery::mock(FeedService::class);
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $this->calledEvents = [];
         $this->delegator = new FeedDelegator($this->feedService, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpFeedService()
+    {
+        $this->feedService = \Mockery::mock(FeedService::class);
     }
 
     /**
@@ -216,7 +216,7 @@ class FeedDelegatorTest extends TestCase
             ->shouldReceive('fetchFeed')
             ->andThrow($exception)->once();
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->delegator->fetchFeed('es_friend_feed');
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(

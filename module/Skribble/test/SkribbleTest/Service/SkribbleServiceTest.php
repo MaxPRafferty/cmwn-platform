@@ -3,7 +3,7 @@
 namespace SkribbleTest\Service;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use Skribble\Service\SkribbleService;
 use Skribble\Skribble;
@@ -52,6 +52,14 @@ class SkribbleServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->skribbleService = new SkribbleService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -61,14 +69,6 @@ class SkribbleServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('skribbles')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->skribbleService = new SkribbleService($this->tableGateway);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace UserTest;
 
 use Application\Exception\NotFoundException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use User\Child;
 use User\Service\UserService;
 use User\UpdateEmailValidator;
@@ -12,7 +13,7 @@ use User\UpdateEmailValidator;
  * Class UpdateEmailValidatorTest
  * @package UserTest
  */
-class UpdateEmailValidatorTest extends \PHPUnit_Framework_TestCase
+class UpdateEmailValidatorTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

@@ -2,6 +2,7 @@
 
 namespace Rule\Event\Rule;
 
+use Rule\Event\Provider\EventProvider;
 use Rule\Item\RuleItemInterface;
 use Rule\Rule\RuleInterface;
 use Zend\EventManager\EventInterface;
@@ -19,8 +20,9 @@ class EventParamMatches extends AbstractEventRule implements RuleInterface
      * @param $expectedValue
      * @param $eventProviderName
      */
-    public function __construct($eventParam, $expectedValue, $eventProviderName = 'event')
+    public function __construct($eventParam, $expectedValue, $eventProviderName = null)
     {
+        $eventProviderName = $eventProviderName ?? EventProvider::PROVIDER_NAME;
         parent::__construct($eventProviderName, $expectedValue);
         $this->eventParam = $eventParam;
     }

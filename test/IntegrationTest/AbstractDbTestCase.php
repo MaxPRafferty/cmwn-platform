@@ -2,7 +2,7 @@
 
 namespace IntegrationTest;
 
-use PHPUnit_Extensions_Database_TestCase as TestCase;
+use PHPUnit\DbUnit\TestCase as TestCase;
 
 /**
  * Class AbstractDbTestCase

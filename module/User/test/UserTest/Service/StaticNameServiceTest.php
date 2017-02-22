@@ -3,7 +3,7 @@
 namespace UserTest\Service;
 
 use IntegrationTest\TestHelper;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Service\StaticNameService;
 use User\UserName;
 
@@ -82,10 +82,8 @@ class StaticNameServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenSelectingWrongPosition()
     {
-        $this->setExpectedException(
-            '\InvalidArgumentException',
-            'Invalid position: foo'
-        );
+        $this->expectException('\InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid position: foo');
 
         StaticNameService::getNames('foo');
     }

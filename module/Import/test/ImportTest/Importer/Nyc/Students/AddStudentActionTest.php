@@ -6,7 +6,7 @@ use Import\Importer\Nyc\Students\AddStudentAction;
 use Import\Importer\Nyc\Students\Student;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Child;
 
 /**
@@ -37,17 +37,17 @@ class AddStudentActionTest extends TestCase
     /**
      * @before
      */
-    public function setUpUserService()
+    public function setUpRegistry()
     {
-        $this->service = \Mockery::mock('\User\Service\UserServiceInterface');
+        $this->registry = new StudentRegistry($this->service);
     }
 
     /**
      * @before
      */
-    public function setUpRegistry()
+    public function setUpUserService()
     {
-        $this->registry = new StudentRegistry($this->service);
+        $this->service = \Mockery::mock('\User\Service\UserServiceInterface');
     }
 
     /**
