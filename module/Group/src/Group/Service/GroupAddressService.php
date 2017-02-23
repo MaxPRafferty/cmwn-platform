@@ -21,6 +21,7 @@ use Zend\Paginator\Adapter\DbSelect;
 /**
  * Class GroupAddressService
  * @package Address\Service
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GroupAddressService implements GroupAddressServiceInterface
 {
@@ -176,5 +177,13 @@ class GroupAddressService implements GroupAddressServiceInterface
             $this->tableGateway->getAdapter(),
             $resultSet
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlias() : string
+    {
+        return 'ga';
     }
 }

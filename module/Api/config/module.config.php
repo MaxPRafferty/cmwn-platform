@@ -52,6 +52,9 @@ return [
         \Api\Controller\SwaggerController::class              => [
             Api\SwaggerHelper::class,
         ],
+        \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
+            \Group\Service\GroupAddressServiceInterface::class,
+        ],
     ],
 
     'actions' => [
@@ -499,6 +502,15 @@ return [
                     'defaults' => [
                         'controller' => \Api\Controller\SwaggerController::class,
                         'action'     => 'swagger',
+                    ],
+                ],
+            ],
+            'api.rest.address-group'         => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/address/:address_id/group[/:group_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\AddressGroup\Controller',
                     ],
                 ],
             ],
@@ -1060,6 +1072,20 @@ return [
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
         ],
+        'Api\V1\Rest\AddressGroup\Controller'   => [
+            'listener'                   => \Api\V1\Rest\AddressGroup\AddressGroupResource::class,
+            'route_name'                 => 'api.rest.address-group',
+            'route_identifier_name'      => 'group_id',
+            'collection_name'            => 'groups',
+            'entity_http_methods'        => [],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page'],
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\AddressGroup\AddressGroupEntity::class,
+            'collection_class'           => \Api\V1\Rest\AddressGroup\AddressGroupCollection::class,
+            'service_name'               => 'AddressGroup',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers'            => [
@@ -1096,6 +1122,7 @@ return [
             'Api\V1\Rest\Super\Controller'          => 'HalJson',
             'Api\V1\Rest\Address\Controller'        => 'HalJson',
             'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
+            'Api\V1\Rest\AddressGroup\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1262,6 +1289,10 @@ return [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
+            ],'Api\V1\Rest\AddressGroup\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
             ],
         ],
         'content_type_whitelist' => [
@@ -1398,6 +1429,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\GroupAddress\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\AddressGroup\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1817,6 +1852,18 @@ return [
             ],
             \Api\V1\Rest\GroupAddress\GroupAddressCollection::class     => [
                 'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\AddressGroup\AddressGroupEntity::class         => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\AddressGroup\AddressGroupCollection::class     => [
+                'entity_identifier_name' => 'group_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,

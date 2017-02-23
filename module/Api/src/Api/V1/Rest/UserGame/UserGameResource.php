@@ -250,15 +250,7 @@ class UserGameResource extends AbstractResourceListener
      *          @SWG\Items(ref="#/definitions/UserGameCollection")
      *     )
      *   ),
-     *   @SWG\Response(
-     *     response=404,
-     *     description="Game not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
-     *   ),
-     *   @SWG\Response(
+     *      @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
      *     @SWG\Schema(
