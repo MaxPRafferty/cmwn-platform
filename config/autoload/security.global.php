@@ -29,6 +29,9 @@ return [
             ],
             'api.rest.flip'            => [
                 'GET' => 'view.flip',
+                'POST' => 'create.flip',
+                'PUT' => 'edit.flip',
+                'DELETE' => 'delete.flip',
             ],
             'api.rest.flip-user'       => [
                 'GET'  => 'view.user.flip',
