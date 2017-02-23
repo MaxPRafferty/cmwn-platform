@@ -3,7 +3,7 @@
 namespace SuggestTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Suggest\Delegator\SuggestedServiceDelegator;
 use Suggest\Suggestion;
 use User\Child;
@@ -11,6 +11,7 @@ use User\UserInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Class SuggestedServiceDelegatorTest
@@ -67,17 +68,10 @@ class SuggestedServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpSuggestedService()
-    {
-        $this->suggestedService = \Mockery::mock('\Suggest\Service\SuggestedService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
-        $this->delegator = new SuggestedServiceDelegator($this->suggestedService);
+        $events = new EventManager();
+        $this->delegator = new SuggestedServiceDelegator($this->suggestedService, $events);
         $this->delegator->getEventManager()->clearListeners('fetch.suggested.friends');
         $this->delegator->getEventManager()->clearListeners('fetch.suggested.friends.post');
         $this->delegator->getEventManager()->clearListeners('attach.suggested.friends');
@@ -85,6 +79,14 @@ class SuggestedServiceDelegatorTest extends TestCase
         $this->delegator->getEventManager()->clearListeners('delete.suggestion');
         $this->delegator->getEventManager()->clearListeners('delete.suggestion.post');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpSuggestedService()
+    {
+        $this->suggestedService = \Mockery::mock('\Suggest\Service\SuggestedService');
     }
 
     /**

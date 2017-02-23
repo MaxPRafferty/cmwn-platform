@@ -17,6 +17,7 @@ return [
             'Config',
             \Security\Service\SecurityOrgServiceInterface::class,
             \Security\Service\SecurityGroupServiceInterface::class,
+            \Security\Service\SecurityUserServiceInterface::class,
         ],
 
         \Security\Guard\CsrfGuard::class => [
@@ -25,7 +26,7 @@ return [
 
         \Security\Listeners\GroupServiceListener::class => [
             \Group\Service\UserGroupServiceInterface::class,
-            \Security\Service\SecurityOrgServiceInterface::class,
+            \Security\Service\SecurityGroupServiceInterface::class,
         ],
 
         \Security\Listeners\OrgServiceListener::class => [
@@ -38,7 +39,7 @@ return [
         ],
 
         \Security\Authorization\Assertion\UserAssertion::class => [
-            \Security\Service\SecurityGroupServiceInterface::class,
+            \Security\Service\SecurityUserServiceInterface::class,
         ],
 
         \Security\Listeners\UserServiceListener::class => [
@@ -57,6 +58,30 @@ return [
             \Zend\Authentication\Adapter\Http::class,
             \Security\Guard\CsrfGuard::class,
         ],
+
+        \Security\Listeners\UserRouteListener::class => [
+            \User\Service\UserServiceInterface::class,
+            \Security\Authorization\Assertion\UserAssertion::class,
+        ],
+
+        \Security\Service\SecurityUserService::class => [
+            'Table/UserGroups',
+            \User\Service\UserServiceInterface::class,
+        ],
+
+        \Security\Service\SecurityOrgService::class => [
+            \Zend\Db\Adapter\Adapter::class,
+        ],
+
+        \Security\Service\SecurityGroupService::class => [
+            \Zend\Db\Adapter\Adapter::class,
+        ],
+
+        \Security\Authentication\AuthenticationService::class => [
+            \Zend\EventManager\EventManagerInterface::class,
+            \Zend\Authentication\Storage\StorageInterface::class,
+            \Security\Authentication\AuthAdapter::class,
+        ],
     ],
 
     \Rule\Provider\Service\BuildProviderFromConfigFactory::class => [
@@ -66,6 +91,18 @@ return [
         \Security\Rule\Provider\RoleProvider::class       => [
             \Security\Authentication\AuthenticationService::class,
         ],
+        \Api\Rule\Provider\UserRelationshipProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityUserServiceInterface::class,
+        ],
+        \Api\Rule\Provider\ActiveUserGroupRoleProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityGroupServiceInterface::class,
+        ],
+        \Api\Rule\Provider\ActiveUserOrgRoleProvider::class => [
+            \Zend\Authentication\AuthenticationServiceInterface::class,
+            \Security\Service\SecurityOrgServiceInterface::class,
+        ],
     ],
 
     'service_manager' => [
@@ -73,13 +110,14 @@ return [
             'authentication' =>
                 \Security\Authentication\AuthenticationService::class,
 
-            \Security\Service\SecurityGroupServiceInterface::class     => \Security\Service\SecurityGroupService::class,
+            \Security\Service\SecurityUserServiceInterface::class     => \Security\Service\SecurityUserService::class,
             \Zend\Authentication\AuthenticationServiceInterface::class =>
                 \Security\Authentication\AuthenticationService::class,
             \Security\Service\SecurityServiceInterface::class          => \Security\Service\SecurityService::class,
             \Zend\Authentication\AuthenticationService::class          =>
                 \Security\Authentication\AuthenticationService::class,
             \Security\Service\SecurityOrgServiceInterface::class       => \Security\Service\SecurityOrgService::class,
+            \Security\Service\SecurityGroupServiceInterface::class => \Security\Service\SecurityGroupService::class,
         ],
 
         'factories' => [
@@ -87,10 +125,6 @@ return [
             \Security\Listeners\UserUpdateListener::class     => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Service\SecurityService::class          => \Security\Service\SecurityServiceFactory::class,
-            \Security\Service\SecurityOrgService::class       => \Security\Service\SecurityOrgServiceFactory::class,
-
-            \Security\Service\SecurityGroupService::class =>
-                \Security\Service\SecurityGroupServiceFactory::class,
 
             \Security\Authentication\AuthenticationService::class =>
                 \Security\Authentication\AuthenticationServiceFactory::class,
@@ -133,6 +167,7 @@ return [
         \Security\Listeners\UpdateSession::class,
         \Security\Listeners\HttpAuthListener::class,
         \Security\Listeners\UserUpdateListener::class,
+        \Security\Listeners\UserRouteListener::class,
         \Security\Listeners\FetchUserImageListener::class,
     ],
 
@@ -169,6 +204,12 @@ return [
 
             \Security\Rule\Provider\ActiveUserProvider::class =>
                 \Rule\Provider\Service\BuildProviderFromConfigFactory::class,
+        ],
+
+        'shared' => [
+            \Api\Rule\Provider\UserRelationshipProvider::class => false,
+            \Api\Rule\Provider\ActiveUserGroupRoleProvider::class  => false,
+            \Api\Rule\Provider\ActiveUserOrgRoleProvider::class    => false,
         ],
     ],
 

@@ -11,7 +11,7 @@ use Import\Importer\Nyc\Exception\InvalidWorksheetException;
 use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\ClassWorksheetParser;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test ClassWorksheetParserTest
@@ -44,21 +44,21 @@ class ClassWorksheetParserTest extends TestCase
     /**
      * @before
      */
+    public function setUpRegistry()
+    {
+        $this->registry = new ClassRoomRegistry($this->groupService);
+        $this->registry->setNetworkId('foo-bar');
+    }
+
+    /**
+     * @before
+     */
     public function setUpGroupService()
     {
         $this->groupService = \Mockery::mock('\Group\Service\GroupService');
         $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->andThrow(NotFoundException::class)
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpRegistry()
-    {
-        $this->registry = new ClassRoomRegistry($this->groupService);
-        $this->registry->setNetworkId('foo-bar');
     }
 
     /**
@@ -475,10 +475,8 @@ class ClassWorksheetParserTest extends TestCase
      */
     public function testItShouldErrorWhenMissingSheet()
     {
-        $this->setExpectedException(
-            InvalidWorksheetException::class,
-            'Missing worksheet "Classes"'
-        );
+        $this->expectException(InvalidWorksheetException::class);
+        $this->expectExceptionMessage('Missing worksheet "Classes"');
 
         $this->getParser(new \PHPExcel_Worksheet(new \PHPExcel()));
     }

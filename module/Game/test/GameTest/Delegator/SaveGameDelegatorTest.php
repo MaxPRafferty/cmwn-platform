@@ -5,10 +5,11 @@ namespace GameTest\Delegator;
 use Game\Delegator\SaveGameDelegator;
 use Game\SaveGame;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test SaveGameDelegatorTest
@@ -45,18 +46,11 @@ class SaveGameDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
-    {
-        $this->service = \Mockery::mock('\Game\Service\SaveGameService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
+        $this->service = \Mockery::mock('\Game\Service\SaveGameService');
         $this->calledEvents = [];
-        $this->delegator    = new SaveGameDelegator($this->service);
+        $this->delegator    = new SaveGameDelegator($this->service, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 

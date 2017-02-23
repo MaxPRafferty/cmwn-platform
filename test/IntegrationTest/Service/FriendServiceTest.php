@@ -45,7 +45,7 @@ class FriendServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/friends.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/friends.dataset.php');
     }
 
     /**
@@ -217,7 +217,7 @@ class FriendServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenNotFriends()
     {
-        $this->setExpectedException(NotFriendsException::class);
+        $this->expectException(NotFriendsException::class);
         $this->friendService->fetchFriendStatusForUser($this->user, new Child(['user_id' => 'english_student_3']));
     }
 }

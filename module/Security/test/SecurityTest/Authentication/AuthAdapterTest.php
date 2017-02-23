@@ -5,7 +5,7 @@ namespace SecurityTest\Authentication;
 use Application\Exception\NotFoundException;
 use Lcobucci\JWT\Builder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Authentication\AuthAdapter;
 use Security\ChangePasswordUser;
 use Security\GuestUser;
@@ -44,17 +44,17 @@ class AuthAdapterTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpAdapter()
     {
-        $this->securityService = \Mockery::mock(SecurityServiceInterface::class);
+        $this->adapter = new AuthAdapter($this->securityService);
     }
 
     /**
      * @before
      */
-    public function setUpAdapter()
+    public function setUpService()
     {
-        $this->adapter = new AuthAdapter($this->securityService);
+        $this->securityService = \Mockery::mock(SecurityServiceInterface::class);
     }
 
     /**

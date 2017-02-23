@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Flag\Flag;
 use Flag\FlagHydrator;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Child;
 use User\Service\UserServiceInterface;
@@ -167,7 +167,8 @@ class FlagHydratorTest extends TestCase
      */
     public function testItShouldNotExtractNonFlagObject()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, 'This Hydrator can only extract Flags');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('This Hydrator can only extract Flags');
         $this->hydrator->extract(new \stdClass());
     }
 
@@ -176,7 +177,8 @@ class FlagHydratorTest extends TestCase
      */
     public function testItShouldNotHydrateNonFlagObject()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, 'This Hydrator can only hydrate Flags');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('This Hydrator can only hydrate Flags');
         $this->hydrator->hydrate($this->data, new \stdClass());
     }
 

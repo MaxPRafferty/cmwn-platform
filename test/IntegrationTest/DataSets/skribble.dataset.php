@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'flips'         => [],
+
     'organizations' => [],
-    'games'         => [],
-    'groups'        => [],
-    'images'        => [],
-    'names'         => [],
-    'user_flips'    => [],
+
+
+
+
+
     'users'         => [
         [
             'user_id'      => 'english_student',
@@ -67,9 +67,9 @@ return [
             'external_id'  => null,
         ],
     ],
-    'user_friends'  => [],
-    'user_groups'   => [],
-    'user_images'   => [],
+
+
+
     'skribbles'     => [
         // draft for english_student
         [

@@ -3,12 +3,13 @@
 namespace SkribbleTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Skribble\Skribble;
 use Skribble\Delegator\SkribbleServiceDelegator;
 use Skribble\Service\SkribbleServiceInterface;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
+use Zend\EventManager\EventManager;
 
 /**
  * Test SkribbleServiceDelegatorTest
@@ -48,19 +49,20 @@ class SkribbleServiceDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpDelegator()
     {
-        $this->skribbleService = \Mockery::mock('\Skribble\Service\SkribbleService');
+        $events = new EventManager();
+        $this->calledEvents = [];
+        $this->delegator    = new SkribbleServiceDelegator($this->skribbleService, $events);
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
      * @before
      */
-    public function setUpDelegator()
+    public function setUpService()
     {
-        $this->calledEvents = [];
-        $this->delegator    = new SkribbleServiceDelegator($this->skribbleService);
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->skribbleService = \Mockery::mock('\Skribble\Service\SkribbleService');
     }
 
     /**

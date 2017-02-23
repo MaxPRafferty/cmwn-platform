@@ -45,7 +45,7 @@ class FlagServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/flag.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/flag.dataset.php');
     }
 
     /**
@@ -119,7 +119,7 @@ class FlagServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenFlagNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->flagService->fetchFlag('foo');
     }
 
@@ -176,7 +176,7 @@ class FlagServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenAttemptingToDeleteNonExistentFlag()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->flagService->deleteFlag($this->flag);
     }
 }

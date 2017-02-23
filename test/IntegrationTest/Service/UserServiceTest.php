@@ -49,7 +49,7 @@ class UserServiceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../DataSets/users.dataset.php');
     }
 
     /**
@@ -213,7 +213,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFound()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->userService->fetchUser('foo_bar');
     }
 
@@ -222,7 +222,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFoundByExternalId()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->userService->fetchUserByExternalId('foo_bar');
     }
 
@@ -231,7 +231,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFoundByEmail()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->userService->fetchUserByEmail('test@example.com');
     }
 
@@ -244,7 +244,7 @@ class UserServiceTest extends TestCase
         $child = new Child();
         $child->setUserId('english_student');
         $this->userService->deleteUser($child);
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->userService->fetchUser($child->getUserId());
     }
 
@@ -257,7 +257,7 @@ class UserServiceTest extends TestCase
         $child = new Child();
         $child->setUserId('english_student');
         $this->userService->deleteUser($child, true);
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->userService->fetchUser($child->getUserId());
     }
 
@@ -321,7 +321,7 @@ class UserServiceTest extends TestCase
         $this->markTestSkipped('Until bug CORE-2543 is resolved, we are not checking duplicates for children');
         $this->userService->createUser($this->child);
 
-        $this->setExpectedException(DuplicateEntryException::class);
+        $this->expectException(DuplicateEntryException::class);
         $this->assertFalse($this->userService->createUser($this->child));
     }
 
@@ -332,7 +332,7 @@ class UserServiceTest extends TestCase
     {
         $this->userService->createUser($this->adult);
 
-        $this->setExpectedException(DuplicateEntryException::class);
+        $this->expectException(DuplicateEntryException::class);
         $this->assertFalse($this->userService->createUser($this->adult));
     }
 
@@ -355,7 +355,7 @@ class UserServiceTest extends TestCase
      */
     public function testItShouldNotUpdateAdultWhenUserInvalid()
     {
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $user = new Adult();
         $user->setUserId('englihs_teacher');
         $this->assertFalse($this->userService->updateUser($user));

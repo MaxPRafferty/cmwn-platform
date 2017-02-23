@@ -12,6 +12,7 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -21,7 +22,6 @@ use Zend\Paginator\Adapter\DbSelect;
 class ImageServiceDelegator implements ImageServiceInterface
 {
     use ServiceTrait;
-    use EventManagerAwareTrait;
 
     /**
      * @var ImageService
@@ -29,12 +29,31 @@ class ImageServiceDelegator implements ImageServiceInterface
     protected $realService;
 
     /**
+     * @var EventManagerInterface
+     */
+    protected $events;
+
+    /**
      * ImageServiceDelegator constructor.
      * @param ImageServiceInterface $service
+     * @param EventManagerInterface $events
      */
-    public function __construct(ImageServiceInterface $service)
+    public function __construct(ImageServiceInterface $service, EventManagerInterface $events)
     {
         $this->realService = $service;
+        $this->events = $events;
+        $events->addIdentifiers(array_merge(
+            [ImageServiceInterface::class, static::class, ImageService::class],
+            $events->getIdentifiers()
+        ));
+    }
+
+    /**
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->events;
     }
 
     /**

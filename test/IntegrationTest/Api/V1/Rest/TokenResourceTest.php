@@ -25,7 +25,7 @@ class TokenResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/token.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/token.dataset.php');
     }
 
     /**
@@ -120,21 +120,24 @@ class TokenResourceTest extends TestCase
             'Super User'      => [
                 'user'  => 'super_user',
                 'links' => [
+                    'feed',
                     'flip',
                     'games',
+                    'games_deleted',
+                    'group',
                     'group_class',
                     'group_school',
+                    'org',
                     'org_district',
                     'password',
                     'profile',
                     'self',
                     'user',
                     'user_image',
-                    'save_game',
-                    'super_flag',
                     'super',
                     'flags',
                     'sa_settings',
+                    'user_feed',
                 ],
                 'scope' => -1,
             ],
@@ -151,8 +154,8 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
-                    'save_game',
                     'flags',
+                    'user_feed',
                 ],
                 'scope' => 2,
             ],
@@ -169,15 +172,14 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
-                    'save_game',
                     'flags',
+                    'user_feed',
                 ],
                 'scope' => 2,
             ],
             'English Student' => [
                 'user'  => 'english_student',
                 'links' => [
-                    'feed',
                     'flip',
                     'friend',
                     'games',
@@ -193,6 +195,7 @@ class TokenResourceTest extends TestCase
                     'user_name',
                     'save_game',
                     'flags',
+                    'user_feed',
                 ],
                 'scope' => 2,
             ],

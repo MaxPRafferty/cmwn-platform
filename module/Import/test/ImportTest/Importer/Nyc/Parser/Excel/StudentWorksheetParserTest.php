@@ -9,7 +9,7 @@ use Import\Importer\Nyc\Parser\AbstractParser;
 use Import\Importer\Nyc\Parser\Excel\StudentWorksheetParser;
 use Import\Importer\Nyc\Students\StudentRegistry;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test StudentWorksheetParserTest
@@ -53,6 +53,24 @@ class StudentWorksheetParserTest extends TestCase
     /**
      * @before
      */
+    public function setUpStudentRegistry()
+    {
+        $this->registry = new StudentRegistry($this->userService);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpClassRegistry()
+    {
+        AbstractParser::clear();
+        $this->classRegistry = new ClassRoomRegistry($this->groupService);
+        $this->classRegistry->setNetworkId('foo-bar');
+    }
+
+    /**
+     * @before
+     */
     public function setUpUserService()
     {
         $this->userService = \Mockery::mock('\User\Service\UserServiceInterface');
@@ -70,24 +88,6 @@ class StudentWorksheetParserTest extends TestCase
         $this->groupService->shouldReceive('fetchGroupByExternalId')
             ->andThrow(NotFoundException::class)
             ->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpStudentRegistry()
-    {
-        $this->registry = new StudentRegistry($this->userService);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpClassRegistry()
-    {
-        AbstractParser::clear();
-        $this->classRegistry = new ClassRoomRegistry($this->groupService);
-        $this->classRegistry->setNetworkId('foo-bar');
     }
 
     /**

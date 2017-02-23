@@ -5,7 +5,7 @@ namespace ImportTest\Importer\Nyc\Students;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Exception\InvalidStudentException;
 use Import\Importer\Nyc\Students\Student;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Child;
 
@@ -46,7 +46,7 @@ class StudentTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenTryingToSetAdultAsUser()
     {
-        $this->setExpectedException(InvalidStudentException::class);
+        $this->expectException(InvalidStudentException::class);
         $student = new Student();
         $student->setUser(new Adult());
     }

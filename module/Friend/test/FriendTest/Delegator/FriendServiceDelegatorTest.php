@@ -5,11 +5,12 @@ namespace FriendTest\Delegator;
 use Application\Utils\ServiceTrait;
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Friend\Delegator\FriendServiceDelegator;
 use User\UserInterface;
 use Zend\EventManager\Event;
 use User\Child;
+use Zend\EventManager\EventManager;
 
 /**
  * Test FriendServiceDelegatorTest
@@ -69,6 +70,25 @@ class FriendServiceDelegatorTest extends TestCase
     /**
      * @before
      */
+    public function setUpDelegator()
+    {
+        $events = new EventManager();
+        $this->delegator = new FriendServiceDelegator($this->friendService, $events);
+        $this->delegator->getEventManager()->clearListeners('*');
+        if ($this->delegator->getEventManager()->getSharedManager()) {
+            $this->delegator->getEventManager()
+                ->getSharedManager()
+                ->clearListeners(FriendServiceInterface::class, 'attach.friend.post');
+            $this->delegator->getEventManager()
+                ->getSharedManager()
+                ->clearListeners(FriendServiceDelegator::class, 'attach.friend.post');
+        }
+        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
     public function setUpFriendService()
     {
         $this->friendService = \Mockery::mock('\Friend\Service\FriendService');
@@ -88,24 +108,6 @@ class FriendServiceDelegatorTest extends TestCase
     public function setUpFriend()
     {
         $this->friend = new Child(['user_id' => 'friend_user']);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpDelegator()
-    {
-        $this->delegator = new FriendServiceDelegator($this->friendService);
-        $this->delegator->getEventManager()->clearListeners('*');
-        if ($this->delegator->getEventManager()->getSharedManager()) {
-            $this->delegator->getEventManager()
-                ->getSharedManager()
-                ->clearListeners(FriendServiceInterface::class, 'attach.friend.post');
-            $this->delegator->getEventManager()
-                ->getSharedManager()
-                ->clearListeners(FriendServiceDelegator::class, 'attach.friend.post');
-        }
-        $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**

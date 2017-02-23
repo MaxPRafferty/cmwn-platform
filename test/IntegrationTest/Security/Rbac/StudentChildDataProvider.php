@@ -27,5 +27,7 @@ class StudentChildDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.user.adult');
         $this->setAllowed('view.user.child');
         $this->setAllowed('view.user.flip');
+        $this->setAllowed('view.address');
+        $this->setAllowed('view.all.group.addresses');
     }
 }

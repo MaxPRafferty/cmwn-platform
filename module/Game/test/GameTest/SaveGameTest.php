@@ -2,8 +2,9 @@
 
 namespace GameTest;
 
+use Application\Utils\Date\DateTimeFactory;
 use Game\SaveGame;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test SaveGameTest
@@ -20,7 +21,7 @@ class SaveGameTest extends TestCase
      */
     public function testItShouldTakeArrayInConstructor()
     {
-        $date = new \DateTime();
+        $date = DateTimeFactory::factory('now');
 
         $data = [
             'game_id' => 'monarch',
@@ -34,7 +35,11 @@ class SaveGameTest extends TestCase
 
         $this->assertEquals('monarch', $saveGame->getGameId(), 'Game Id was not set from constructor');
         $this->assertEquals('manchuck', $saveGame->getUserId(), 'User Id was not set from constructor');
-        $this->assertEquals($date, $saveGame->getCreated(), 'Crated date was not set from constructor');
+        $this->assertEquals(
+            $date->format("Y-m-d H:i:s"),
+            $saveGame->getCreated()->format("Y-m-d H:i:s"),
+            'Crated date was not set from constructor'
+        );
         $this->assertEquals(
             ['foo' => 'bar', 'progress' => 100],
             $saveGame->getData(),

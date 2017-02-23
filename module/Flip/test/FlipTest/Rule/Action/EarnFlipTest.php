@@ -5,7 +5,7 @@ namespace FlipTest\Rule\Action;
 use Flip\Rule\Action\EarnFlip;
 use Flip\Service\FlipUserServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\BasicRuleItem;
 use Rule\Provider\BasicValueProvider;

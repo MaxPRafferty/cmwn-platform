@@ -47,7 +47,7 @@ return [
                 'DELETE' => 'delete.org',
             ],
             'api.rest.game'            => [
-                'GET'    => ['view.games', 'view.game'],
+                'GET'    => ['view.games', 'view.game', 'view.deleted.game'],
                 'POST'   => 'create.game',
                 'PUT'    => 'update.game',
                 'DELETE' => 'delete.game',
@@ -124,11 +124,20 @@ return [
             'api.rest.group-reset' => [
                 'POST' => 'reset.group.code'
             ],
-            'api.rest.super-flag' => [
-                'POST' => 'set.super',
-            ],
             'api.rest.super' => [
                 'GET'  => 'get.super.user',
+                'POST' => 'set.super',
+            ],
+            'api.rest.address' => [
+                'GET'    => ['view.all.addresses', 'view.address'],
+                'POST'   => 'create.address',
+                'PUT'    => 'update.address',
+                'DELETE' => 'delete.address',
+            ],
+            'api.rest.group-address' => [
+                'GET'    => 'view.all.group.addresses',
+                'POST'   => 'attach.group.address',
+                'DELETE' => 'detach.group.address',
             ],
         ],
     ],

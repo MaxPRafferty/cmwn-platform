@@ -33,7 +33,7 @@ class UserResourceTest extends TestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/users.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/users.dataset.php');
     }
 
     /**
@@ -478,7 +478,7 @@ class UserResourceTest extends TestCase
         $this->assertMatchedRouteName('api.rest.user');
         $this->assertControllerName('api\v1\rest\user\controller');
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->loadUserFromDb('english_student');
     }
 
@@ -680,6 +680,27 @@ class UserResourceTest extends TestCase
     }
 
     /**
+     * @test
+     * @dataProvider halLinkDataProvider
+     */
+    public function testItShouldCorrectlyAddHalLinksOnFetch($login, $user, $expected)
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser($login);
+        $this->dispatch('/user/' . $user);
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'];
+
+        $actual = [];
+        foreach ($links as $label => $link) {
+            $actual[] = $label;
+        }
+        $this->assertEquals($actual, $expected);
+    }
+
+    /**
      * @param $userId
      * @return \User\UserInterface
      */
@@ -758,6 +779,105 @@ class UserResourceTest extends TestCase
             1 => [
                 'math_student',
                 '/user/math_student',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function halLinkDataProvider()
+    {
+        return [
+            0 => [
+                'super_user',
+                'principal',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'forgot',
+                    4 => 'super',
+                    5 => 'group_class',
+                    6 => 'group_school',
+                    7 => 'org_district',
+                ]
+            ],
+            1 => [
+                'super_user',
+                'english_teacher',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'forgot',
+                    4 => 'super',
+                    5 => 'group_class',
+                    6 => 'group_school',
+                    7 => 'org_district',
+                ]
+            ],
+            2 => [
+                'super_user',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'user_name',
+                    5 => 'reset',
+                    6 => 'group_class',
+                ]
+            ],
+            3 => [
+                'principal',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'reset',
+                    5 => 'group_class',
+                ]
+            ],
+            4 => [
+                'principal',
+                'english_teacher',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'forgot',
+                    4 => 'group_class',
+                    5 => 'group_school',
+                    6 => 'org_district',
+                ]
+            ],
+            5 => [
+                'english_teacher',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'reset',
+                    5 => 'group_class',
+                ]
+            ],
+            6 => [
+                'math_student',
+                'english_student',
+                [
+                    0 => 'self',
+                    1 => 'profile',
+                    2 => 'user_image',
+                    3 => 'user_flip',
+                    4 => 'friend',
+                    5 => 'group_class',
+                ]
             ],
         ];
     }

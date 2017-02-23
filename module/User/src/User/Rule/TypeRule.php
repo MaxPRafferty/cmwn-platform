@@ -20,13 +20,20 @@ class TypeRule implements RuleInterface
     protected $type;
 
     /**
+     * @var string
+     */
+    protected $providerName;
+
+    /**
      * TypeRule constructor.
      *
      * @param string $type
+     * @param string $providerName
      */
-    public function __construct(string $type)
+    public function __construct(string $type, string $providerName = 'check_user')
     {
         $this->type = $type;
+        $this->providerName = $providerName;
     }
 
     /**
@@ -34,7 +41,7 @@ class TypeRule implements RuleInterface
      */
     public function isSatisfiedBy(RuleItemInterface $event): bool
     {
-        $checkUser = $event->getParam('check_user');
+        $checkUser = $event->getParam($this->providerName);
 
         if ($checkUser instanceof UserInterface && $checkUser->getType() === $this->type) {
             $this->timesSatisfied++;

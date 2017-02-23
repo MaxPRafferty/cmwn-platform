@@ -4,7 +4,7 @@ namespace SecurityTest\Service;
 
 use Lcobucci\JWT\Builder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
 use User\Adult;
@@ -41,6 +41,14 @@ class SecurityServiceTest extends TestCase
     /**
      * @before
      */
+    public function setUpService()
+    {
+        $this->securityService = new SecurityService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
@@ -50,14 +58,6 @@ class SecurityServiceTest extends TestCase
         $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
         $this->tableGateway->shouldReceive('getTable')->andReturn('users')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
-    }
-
-    /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->securityService = new SecurityService($this->tableGateway);
     }
 
     /**
@@ -153,10 +153,8 @@ class SecurityServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFoundByUserName()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'User not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('User not Found');
 
         $this->tableGateway->shouldReceive('select')
             ->andReturnUsing(function ($predicateSet) {
@@ -172,10 +170,8 @@ class SecurityServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFoundByUserEmail()
     {
-        $this->setExpectedException(
-            'Application\Exception\NotFoundException',
-            'User not Found'
-        );
+        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectExceptionMessage('User not Found');
 
         $this->tableGateway->shouldReceive('select')
             ->with(['email' => 'chuck@manchuck.com'])

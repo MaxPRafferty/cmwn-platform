@@ -7,7 +7,7 @@ use Friend\AttachFriendValidator;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 use User\Child;
 use Zend\Hydrator\ArraySerializable;
@@ -42,25 +42,11 @@ class AttachFriendValidatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpFriendService()
-    {
-        $this->friendService = \Mockery::mock('\Friend\Service\FriendService');
-    }
-
-    /**
-     * @before
-     */
-    public function setUpUserService()
-    {
-        $this->userService = \Mockery::mock('\User\Service\UserService');
-    }
-
-    /**
-     * @before
-     */
     public function setUpValidator()
     {
-        $this->validator = new AttachFriendValidator($this->friendService, $this->userService);
+        $this->friendService = \Mockery::mock('\Friend\Service\FriendService');
+        $this->userService   = \Mockery::mock('\User\Service\UserService');
+        $this->validator     = new AttachFriendValidator($this->friendService, $this->userService);
     }
 
     /**
