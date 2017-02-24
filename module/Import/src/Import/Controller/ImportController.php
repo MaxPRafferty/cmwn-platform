@@ -18,7 +18,7 @@ use Zend\Log\Formatter\Simple;
 use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\Writer\Stream;
-use Zend\Mvc\Controller\AbstractConsoleController as ConsoleController;
+use Zend\Mvc\Console\Controller\AbstractConsoleController as ConsoleController;
 use Zend\Mvc\MvcEvent;
 
 /**
