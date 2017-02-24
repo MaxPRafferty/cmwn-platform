@@ -4,12 +4,11 @@ namespace Job\Processor;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Zend\Filter\StaticFilter;
-use Zend\Log\Logger;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerInterface;
 
 /**
  * Class JobRunner
- * @codeCoverageIgnore
  */
 class JobRunner implements LoggerAwareInterface
 {
@@ -40,16 +39,18 @@ class JobRunner implements LoggerAwareInterface
 
     /**
      * JobRunner constructor.
+     *
      * @param array $config
+     * @param LoggerInterface $logger
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         if (array_key_exists('php_path', $config)) {
             $this->phpPath = $config['php_path'];
         }
 
         $this->allowedJobs = $config['allowed_jobs'];
-        $this->setLogger(new Logger());
+        $this->setLogger($logger);
     }
 
     /**
