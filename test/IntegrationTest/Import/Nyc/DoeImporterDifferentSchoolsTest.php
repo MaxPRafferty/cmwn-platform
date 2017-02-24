@@ -33,13 +33,11 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     protected $importer;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../DataSets/duplicate.import.dataset.php';
-
-        return $this->createArrayDataSet($data);
+        return $this->createArrayDataSet(include __DIR__ . '/../../DataSets/duplicate.import.dataset.php');
     }
 
     /**
