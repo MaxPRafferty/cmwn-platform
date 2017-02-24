@@ -267,15 +267,20 @@ class DoeImporter implements
      */
     public function getArrayCopy()
     {
-        return [
+        $array = [
             'type'         => get_class($this),
             'file'         => $this->getFileName(),
             'teacher_code' => $this->teacherCode,
             'student_code' => $this->studentCode,
             'school'       => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null,
             'email'        => $this->getEmail(),
-            'code_start'   => $this->getCodeStart() !== null ? $this->getCodeStart()->format("Y-m-d H:i:s") : null,
         ];
+
+        if (!empty($this->getCodeStart())) {
+            $array['code_start'] = $this->getCodeStart()->format("Y-m-d H:i:s") ;
+        }
+
+        return $array;
     }
 
     /**
@@ -292,7 +297,6 @@ class DoeImporter implements
             'student_code' => null,
             'school'       => null,
             'email'        => null,
-            'code_start'   => null,
         ];
 
         $data = array_merge($defaults, $data);
