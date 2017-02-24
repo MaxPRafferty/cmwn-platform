@@ -19,6 +19,7 @@ return [
     'Zend\\Serializer',
     'Zend\\Session',
     'Zend\\Validator',
+    'Zend\\I18n',
     'ZF\\Apigility',
     'ZF\\ApiProblem',
     'ZF\\Configuration',
