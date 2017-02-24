@@ -307,6 +307,6 @@ class DoeImporter implements
 
         $this->setSchool($data['school']);
         $this->setEmail($data['email']);
-        $this->setCodeStart($data['code_start']);
+        $this->setCodeStart($data['code_start'] ?? null);
     }
 }
