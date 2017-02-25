@@ -6,6 +6,7 @@ use Application\Utils\NoopLoggerAwareTrait;
 use Job\Feature\JobQueueFeatureInterface;
 use Job\JobInterface;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerInterface;
 
 /**
  * Class JobService
@@ -16,8 +17,6 @@ class JobService implements JobServiceInterface, LoggerAwareInterface
     use NoopLoggerAwareTrait;
 
     /**
-<<<<<<< Updated upstream
-=======
      * @var string a prefix for the queue
      */
     protected $queuePrefix;
@@ -37,7 +36,6 @@ class JobService implements JobServiceInterface, LoggerAwareInterface
      *
      * Prepends the job prefix if the prefix is not empty
      *
->>>>>>> Stashed changes
      * @param $job
      *
      * @return string
