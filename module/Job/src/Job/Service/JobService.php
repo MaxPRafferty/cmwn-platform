@@ -24,7 +24,7 @@ class JobService implements JobServiceInterface
      */
     public function __construct(array $config, LoggerInterface $logger)
     {
-        $config = $config['job-service'] ?? [];
+        $config            = $config['job-service'] ?? [];
         $this->queuePrefix = $config['queue-prefix'] ?? '';
         $this->setLogger($logger);
     }
@@ -35,6 +35,7 @@ class JobService implements JobServiceInterface
      * Prepends the job prefix if the prefix is not empty
      *
      * @param $job
+     *
      * @return string
      */
     protected function getJobQueue($job)
@@ -53,7 +54,7 @@ class JobService implements JobServiceInterface
     public function sendJob(JobInterface $job)
     {
         try {
-            return $returnJob =  \Resque::enqueue(
+            return $returnJob = \Resque::enqueue(
                 $this->getJobQueue($job),
                 get_class($job),
                 $job->getArrayCopy()
