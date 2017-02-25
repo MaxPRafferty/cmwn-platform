@@ -19,6 +19,7 @@ class JobRunner implements LoggerAwareInterface
      * Contains a list of allowed jobs that can be executed
      *
      * This list comes from the config using the allowed_jobs key.
+     *
      * @var array allowed jobs to be run
      */
     protected $allowedJobs = [];
@@ -46,6 +47,7 @@ class JobRunner implements LoggerAwareInterface
      */
     public function __construct(array $config, LoggerInterface $logger)
     {
+        $config = $config['job_runner'] ?? [];
         if (array_key_exists('php_path', $config)) {
             $this->phpPath = $config['php_path'];
         }
@@ -65,8 +67,8 @@ class JobRunner implements LoggerAwareInterface
         }
 
         $this->getLogger()->debug('Building job command');
-        $jobSpec  = $this->allowedJobs[$jobName];
-        $command  = $jobSpec['command'];
+        $jobSpec = $this->allowedJobs[$jobName];
+        $command = $jobSpec['command'];
 
         $this->getLogger()->debug('Command to run: ' . $command);
         $paramStr = '';
@@ -91,6 +93,7 @@ class JobRunner implements LoggerAwareInterface
         $fullCommand = $this->phpPath . ' ' . APPLICATION_PATH . '/public/index.php ' . $this->command;
         $this->getLogger()->notice('Executing: ' . $fullCommand);
         system($fullCommand, $exitCode);
+
         return $exitCode;
     }
 }
