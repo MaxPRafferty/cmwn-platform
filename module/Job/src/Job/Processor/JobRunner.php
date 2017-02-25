@@ -4,6 +4,7 @@ namespace Job\Processor;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Zend\Filter\StaticFilter;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Log\LoggerAwareInterface;
 use Zend\Log\LoggerInterface;
 
