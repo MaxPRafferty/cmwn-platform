@@ -50,7 +50,7 @@ class JobRunner implements LoggerAwareInterface
             $this->phpPath = $config['php_path'];
         }
 
-        $this->allowedJobs = $config['allowed_jobs'];
+        $this->allowedJobs = $config['allowed_jobs'] ?? [];
         $this->setLogger($logger);
     }
 

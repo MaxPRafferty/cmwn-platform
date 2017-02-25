@@ -1,14 +1,20 @@
 <?php
 
 return [
-    'service_manager' => [
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Job\Service\JobService::class  => [
+            'Config',
+            'Log\\App',
+        ],
+        \Job\Processor\JobRunner::class => [
+            'Config',
+            'Log\\App',
+        ],
+    ],
+    'service_manager'                                                 => [
         'aliases'            => [
             'Job\Service'                           => \Job\Service\JobService::class,
             \Job\Service\JobServiceInterface::class => \Job\Service\JobService::class,
-        ],
-        'factories'          => [
-            \Job\Processor\JobRunner::class => \Job\Processor\JobRunnerFactory::class,
-            \Job\Service\JobService::class  => \Job\Service\JobServiceFactory::class,
         ],
         'abstract_factories' => [
             \Job\Aws\Sqs\SqsJobServiceAbstractFactory::class,
