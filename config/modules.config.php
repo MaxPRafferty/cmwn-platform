@@ -22,7 +22,6 @@ return [
     'Zend\\I18n',
     'ZF\\Apigility',
     'ZF\\ApiProblem',
-    'ZF\\Configuration',
     'ZF\\ContentNegotiation',
     'ZF\\ContentValidation',
     'ZF\\Hal',
