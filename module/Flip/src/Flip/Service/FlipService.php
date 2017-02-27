@@ -70,4 +70,37 @@ class FlipService implements FlipServiceInterface
 
         return $flip;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function createFlip(FlipInterface $flip): bool
+    {
+        $data = $flip->getArrayCopy();
+        $this->flipTableGateway->insert($data);
+
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateFlip(FlipInterface $flip): bool
+    {
+        $data = $flip->getArrayCopy();
+        unset($data['flip_id']);
+        $this->flipTableGateway->update(['flip_id' => $flip->getFlipId()], $data);
+
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteFlip(FlipInterface $flip): bool
+    {
+        $this->flipTableGateway->delete(['flip_id' => $flip->getFlipId()]);
+
+        return true;
+    }
 }

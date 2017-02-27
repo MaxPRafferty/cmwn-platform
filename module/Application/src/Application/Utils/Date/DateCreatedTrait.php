@@ -3,14 +3,15 @@
 namespace Application\Utils\Date;
 
 /**
- * Trait DateCreatedTrait
+ * Trait to help satisfy DateCreatedInterface
  *
- * Trait to help define a property for date created
+ * @see DateCreatedInterface
+ *
  */
 trait DateCreatedTrait
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $dateCreated;
 
@@ -24,12 +25,26 @@ trait DateCreatedTrait
 
     /**
      * @param \DateTime|string|null $created
+     *
      * @return $this
      */
     public function setCreated($created)
     {
-        $created = DateTimeFactory::factory($created);
+        $created           = DateTimeFactory::factory($created);
         $this->dateCreated = $created;
+
         return $this;
+    }
+
+    /**
+     * Gets the data formatted or null if not set
+     *
+     * @param string $format
+     *
+     * @return null|string
+     */
+    protected function formatCreated(string $format)
+    {
+        return ($this->dateCreated !== null) ? $this->dateCreated->format($format) : null;
     }
 }

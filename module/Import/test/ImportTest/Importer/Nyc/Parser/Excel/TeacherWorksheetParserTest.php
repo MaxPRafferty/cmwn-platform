@@ -11,7 +11,7 @@ use Import\Importer\Nyc\Teachers\Teacher;
 use Import\Importer\Nyc\Teachers\TeacherRegistry;
 use IntegrationTest\TestHelper;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Security\Authorization\Rbac;
 use User\Adult;
 

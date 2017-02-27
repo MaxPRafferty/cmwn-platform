@@ -2,7 +2,7 @@
 
 namespace RuleTest\Action\Service;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Action\CallbackAction;
 use Rule\Action\Collection\ActionCollection;
 use Rule\Action\Collection\ActionCollectionInterface;
@@ -45,6 +45,23 @@ class ActionManagerTest extends TestCase
     /**
      * @before
      */
+    public function setUpManager()
+    {
+        $this->manager = $this->container->get(ActionManager::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpContainer()
+    {
+        $this->container = new ServiceManager($this->config['service_manager']);
+        $this->container->setService('Config', $this->config);
+    }
+
+    /**
+     * @before
+     */
     public function setUpConfig()
     {
         $this->config = [
@@ -76,23 +93,6 @@ class ActionManagerTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @before
-     */
-    public function setUpContainer()
-    {
-        $this->container = new ServiceManager($this->config['service_manager']);
-        $this->container->setService('Config', $this->config);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpManager()
-    {
-        $this->manager = $this->container->get(ActionManager::class);
     }
 
     /**

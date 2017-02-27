@@ -2,12 +2,12 @@
 
 namespace Game\Delegator;
 
+use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
 use Game\GameInterface;
 use Game\Service\GameService;
 use Game\Service\GameServiceInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 
 /**
@@ -16,18 +16,17 @@ use Zend\EventManager\EventManagerInterface;
  */
 class GameDelegator implements GameServiceInterface
 {
-    use EventManagerAwareTrait;
     use ServiceTrait;
-
-    /**
-     * @var GameServiceInterface
-     */
-    protected $gameService;
 
     /**
      * @var EventManagerInterface
      */
     protected $events;
+
+    /**
+     * @var GameServiceInterface
+     */
+    protected $gameService;
 
     /**
      * GameDelegator constructor.
@@ -37,7 +36,15 @@ class GameDelegator implements GameServiceInterface
     public function __construct(GameServiceInterface $gameService, EventManagerInterface $events)
     {
         $this->gameService = $gameService;
-        $this->events      = $events;
+        $this->events = $events;
+        $deleted = new HideDeletedEntitiesListener(
+            ['fetch.all.games'],
+            ['fetch.game.post']
+        );
+
+        $deleted->attach($events, PHP_INT_MIN);
+        $deleted->setEntityParamKey('game');
+
         $events->addIdentifiers(array_merge(
             [GameServiceInterface::class, static::class, GameService::class],
             $events->getIdentifiers()
@@ -55,13 +62,13 @@ class GameDelegator implements GameServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null)
+    public function fetchAll($where = null, $prototype = null, bool $deleted = false)
     {
         $where = $this->createWhere($where);
         $event = new Event(
             'fetch.all.games',
             $this->gameService,
-            ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
+            ['where' => $where, 'prototype' => $prototype, 'show_deleted' => $deleted]
         );
 
         $response = $this->getEventManager()->triggerEvent($event);
@@ -69,7 +76,7 @@ class GameDelegator implements GameServiceInterface
             return $response->last();
         }
 
-        $return = $this->gameService->fetchAll($where, $paginate, $prototype);
+        $return = $this->gameService->fetchAll($where, $prototype, $event->getParam('show_deleted'));
         $event->setName('fetch.all.games.post');
 
         $this->getEventManager()->triggerEvent($event);

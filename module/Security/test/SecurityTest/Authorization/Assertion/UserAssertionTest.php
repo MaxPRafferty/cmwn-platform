@@ -3,7 +3,7 @@
 namespace SecurityTest\Authorization\Assertion;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\Authorization\Assertion\UserAssertion;
 use Security\Authorization\Rbac;
 use Security\Service\SecurityUserServiceInterface;
@@ -41,6 +41,14 @@ class UserAssertionTest extends TestCase
     /**
      * @before
      */
+    public function setUpAssertion()
+    {
+        $this->assertion = new UserAssertion($this->securityGroup);
+    }
+
+    /**
+     * @before
+     */
     public function setUpSecurityGroupService()
     {
         $this->securityGroup = \Mockery::mock(SecurityUserServiceInterface::class);
@@ -52,14 +60,6 @@ class UserAssertionTest extends TestCase
     public function setUpRbac()
     {
         $this->rbac = \Mockery::mock(Rbac::class);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpAssertion()
-    {
-        $this->assertion = new UserAssertion($this->securityGroup);
     }
 
     /**

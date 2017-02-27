@@ -2,7 +2,7 @@
 
 namespace SkribbleTest\Rule;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Skribble\Rule\Message;
 
 /**

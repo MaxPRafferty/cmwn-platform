@@ -30,7 +30,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('edit.user.adult');
         $this->setAllowed('edit.user.child');
         $this->setAllowed('import');
-        $this->setAllowed('pick.username');
         $this->setAllowed('remove.child.group');
         $this->setAllowed('remove.group');
         $this->setAllowed('remove.group.user');
@@ -44,7 +43,6 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.users');
         $this->setAllowed('view.all.child.groups');
         $this->setAllowed('view.flip');
-        $this->setAllowed('view.games');
         $this->setAllowed('view.group');
         $this->setAllowed('view.group.users');
         $this->setAllowed('view.org');
@@ -66,10 +64,13 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('create.game');
         $this->setAllowed('delete.game');
         $this->setAllowed('update.game');
-        $this->setAllowed('view.game');
         $this->setAllowed('reset.group.code');
         $this->setAllowed('set.super');
         $this->setAllowed('get.super.user');
+        $this->setAllowed('create.flip');
+        $this->setAllowed('edit.flip');
+        $this->setAllowed('delete.flip');
+        $this->setAllowed('view.deleted.games');
         $this->setAllowed('view.all.addresses');
         $this->setAllowed('view.address');
         $this->setAllowed('create.address');
@@ -78,5 +79,7 @@ class SuperDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.group.addresses');
         $this->setAllowed('attach.group.address');
         $this->setAllowed('detach.group.address');
+        $this->setAllowed('attach.user.game');
+        $this->setAllowed('detach.user.game');
     }
 }

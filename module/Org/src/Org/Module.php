@@ -5,10 +5,7 @@ namespace Org;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
 /**
- * Core Classes for Org
- *
- * @package Org
- * @codeCoverageIgnore
+ * Organization module
  */
 class Module implements ConfigProviderInterface
 {

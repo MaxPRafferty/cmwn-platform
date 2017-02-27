@@ -13,6 +13,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -72,7 +73,7 @@ class GroupAddressService implements GroupAddressServiceInterface
         GroupInterface $group,
         $where = null,
         AddressInterface $prototype = null
-    ) : DbSelect {
+    ) : AdapterInterface {
         $groupId = $group->getGroupId();
         $where = $this->createWhere($where);
         $prototype = $prototype ?? new Address([]);

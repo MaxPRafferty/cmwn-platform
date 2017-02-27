@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Feed\Delegator\FeedDelegator;
 use Feed\Feed;
 use Feed\Service\FeedService;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 
@@ -35,19 +35,19 @@ class FeedDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpFeedService()
-    {
-        $this->feedService = \Mockery::mock(FeedService::class);
-    }
-
-    /**
-     * @before
-     */
     public function setUpDelegator()
     {
         $this->calledEvents = [];
         $this->delegator = new FeedDelegator($this->feedService, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpFeedService()
+    {
+        $this->feedService = \Mockery::mock(FeedService::class);
     }
 
     /**
@@ -216,7 +216,7 @@ class FeedDelegatorTest extends TestCase
             ->shouldReceive('fetchFeed')
             ->andThrow($exception)->once();
 
-        $this->setExpectedException(NotFoundException::class);
+        $this->expectException(NotFoundException::class);
         $this->delegator->fetchFeed('es_friend_feed');
         $this->assertEquals(2, count($this->calledEvents));
         $this->assertEquals(
@@ -485,9 +485,11 @@ class FeedDelegatorTest extends TestCase
     public function testItShouldThrowExceptionIfDeleteFeedThrowsException()
     {
         $feed = new Feed(['feed_id' => 'es_friend_feed']);
+        $exception = new \Exception();
         $this->feedService
             ->shouldReceive('deleteFeed')
             ->with($feed, true)
+            ->andThrow($exception)
             ->once();
         try {
             $this->delegator->deleteFeed($feed);
@@ -505,10 +507,14 @@ class FeedDelegatorTest extends TestCase
                 [
                     'name' => 'delete.feed.error',
                     'target' => $this->feedService,
-                    'params' => ['feed' => $feed, 'soft' => true, 'exception' => new \Exception()],
+                    'params' => ['feed' => $feed, 'soft' => true, 'exception' => $exception],
                 ],
                 $this->calledEvents[1]
             );
+
+            return;
         }
+
+        $this->fail('The delegator did not throw an exception');
     }
 }

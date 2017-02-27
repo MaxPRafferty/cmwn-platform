@@ -8,7 +8,6 @@ use User\Adult;
 use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test OrgUsersResourceTest
@@ -30,11 +29,11 @@ class OrgUsersResourceTest extends TestCase
     protected $userService;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/org.dataset.php');
     }
 
     /**
@@ -113,7 +112,9 @@ class OrgUsersResourceTest extends TestCase
      */
     public function testItShouldReturnBackCorrectUsersWhenDeleted($login, $orgId, $deleteUser, array $expectedIds)
     {
-        $this->userService->deleteUser(new Adult(['user_id' => $deleteUser]));
+        $user = new Adult();
+        $user->setUserId($deleteUser);
+        $this->assertTrue($this->userService->deleteUser($user));
         $this->testItShouldUsersForUsersForOrganization($login, $orgId, $expectedIds);
     }
 
@@ -163,7 +164,7 @@ class OrgUsersResourceTest extends TestCase
     public function changePasswordDataProvider()
     {
         return [
-            0 => [
+            'English Student' => [
                 'english_student',
                 '/org/district/users'
             ],

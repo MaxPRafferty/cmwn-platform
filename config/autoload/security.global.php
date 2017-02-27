@@ -29,6 +29,9 @@ return [
             ],
             'api.rest.flip'            => [
                 'GET' => 'view.flip',
+                'POST' => 'create.flip',
+                'PUT' => 'edit.flip',
+                'DELETE' => 'delete.flip',
             ],
             'api.rest.flip-user'       => [
                 'GET'  => 'view.user.flip',
@@ -47,10 +50,15 @@ return [
                 'DELETE' => 'delete.org',
             ],
             'api.rest.game'            => [
-                'GET'    => ['view.games', 'view.game'],
+                'GET'    => 'view.deleted.game',
                 'POST'   => 'create.game',
                 'PUT'    => 'update.game',
                 'DELETE' => 'delete.game',
+            ],
+            'api.rest.user-game'            => [
+                'GET'    => ['view.games', 'view.game'],
+                'POST'   => 'attach.user.game',
+                'DELETE' => 'detach.user.game',
             ],
             'api.rest.group'           => [
                 'GET'    => ['view.group', 'view.user.groups'],

@@ -2,7 +2,7 @@
 
 namespace RuleTest\Provider\Service;
 
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Provider\BasicValueProvider;
 use Rule\Provider\CallbackProvider;
 use Rule\Provider\Collection\ProviderCollection;
@@ -44,6 +44,23 @@ class ProviderManagerTest extends TestCase
     /**
      * @before
      */
+    public function setUpManager()
+    {
+        $this->manager = $this->container->get(ProviderManager::class);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpContainer()
+    {
+        $this->container = new ServiceManager($this->config['service_manager']);
+        $this->container->setService('Config', $this->config);
+    }
+
+    /**
+     * @before
+     */
     public function setUpConfig()
     {
         $this->config = [
@@ -72,23 +89,6 @@ class ProviderManagerTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @before
-     */
-    public function setUpContainer()
-    {
-        $this->container = new ServiceManager($this->config['service_manager']);
-        $this->container->setService('Config', $this->config);
-    }
-
-    /**
-     * @before
-     */
-    public function setUpManager()
-    {
-        $this->manager = $this->container->get(ProviderManager::class);
     }
 
     /**

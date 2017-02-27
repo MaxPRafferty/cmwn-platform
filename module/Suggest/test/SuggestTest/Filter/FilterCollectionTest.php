@@ -5,13 +5,14 @@ namespace SuggestTest\Filter;
 use Group\Group;
 use Group\Service\UserGroupServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Filter\ClassFilter;
 use Suggest\Filter\FilterCollection;
 use Suggest\InvalidFilterException;
 use Suggest\SuggestionCollection;
 use User\Adult;
 use User\Child;
+use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -56,9 +57,10 @@ class FilterCollectionTest extends TestCase
     /**
      * @before
      */
-    public function setUpGroupService()
+    public function setUpUserGroupService()
     {
-        $this->userGroupService = \Mockery::mock(UserGroupServiceInterface::class);
+        $this->service = new ServiceManager();
+        $this->service->setService(ClassFilter::class, $this->classFilter);
     }
 
     /**
@@ -72,10 +74,9 @@ class FilterCollectionTest extends TestCase
     /**
      * @before
      */
-    public function setUpUserGroupService()
+    public function setUpGroupService()
     {
-        $this->service = new ServiceManager();
-        $this->service->setService(ClassFilter::class, $this->classFilter);
+        $this->userGroupService = \Mockery::mock(UserGroupServiceInterface::class);
     }
 
     /**
@@ -85,24 +86,17 @@ class FilterCollectionTest extends TestCase
     {
         $student    = new Child(['user_id' => 'english_student']);
         $teacher    = new Adult(['user_id' => 'english_teacher']);
-        $paginator  = \Mockery::mock(DbSelect::class);
         $group      = new Group();
+        $paginator  = new ArrayAdapter([$student, $teacher]);
         $collection = new SuggestionCollection();
 
         $this->userGroupService->shouldReceive("fetchGroupsForUser")
-            ->andReturn($paginator)
-            ->once();
-
-        $paginator->shouldReceive('getItems')
-            ->andReturn([$group])
+            ->andReturn(new ArrayAdapter([$group]))
             ->once();
 
         $this->userGroupService->shouldReceive('fetchUsersForGroup')
             ->andReturn($paginator)
             ->once();
-
-        $paginator->shouldReceive('getItems')
-            ->andReturn([$student, $teacher]);
 
         $filterCollection = new FilterCollection($this->service, $this->filterConfig);
         $filterCollection->getSuggestions($collection, $student);
@@ -122,7 +116,8 @@ class FilterCollectionTest extends TestCase
         $config     = ['foo-bar' => 'foobar'];
         $rules      = new FilterCollection($services, $config);
         $collection = new SuggestionCollection();
-        $this->setExpectedException(InvalidFilterException::class, 'Missing filter: "foobar" from services');
+        $this->expectException(InvalidFilterException::class);
+        $this->expectExceptionMessage('Missing filter: "foobar" from services');
 
         $rules->getSuggestions($collection, new Child());
     }
@@ -137,7 +132,8 @@ class FilterCollectionTest extends TestCase
         $services->setService('foobar', new \stdClass());
         $rules      = new FilterCollection($services, $config);
         $collection = new SuggestionCollection();
-        $this->setExpectedException(InvalidFilterException::class, 'Invalid Filter Provided');
+        $this->expectException(InvalidFilterException::class);
+        $this->expectExceptionMessage('Invalid Filter Provided');
 
         $this->assertEmpty($rules->getSuggestions($collection, new Child()));
     }

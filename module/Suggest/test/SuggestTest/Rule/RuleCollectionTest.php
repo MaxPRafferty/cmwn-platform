@@ -7,7 +7,7 @@ use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\InvalidRuleException;
 use Suggest\Rule\FriendRule;
 use Suggest\Rule\MeRule;
@@ -61,9 +61,9 @@ class RuleCollectionTest extends TestCase
     /**
      * @before
      */
-    public function setUpFriendService()
+    public function setUpRuleCollection()
     {
-        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
+        $this->ruleCollection = new RuleCollection($this->service, $this->rulesConfig);
     }
 
     /**
@@ -81,9 +81,9 @@ class RuleCollectionTest extends TestCase
     /**
      * @before
      */
-    public function setUpRuleCollection()
+    public function setUpFriendService()
     {
-        $this->ruleCollection = new RuleCollection($this->service, $this->rulesConfig);
+        $this->friendService = \Mockery::mock(FriendServiceInterface::class);
     }
 
     /**
@@ -151,7 +151,8 @@ class RuleCollectionTest extends TestCase
         $config     = ['foo-bar' => 'foobar'];
         $rules      = new RuleCollection($services, $config);
         $collection = new SuggestionCollection();
-        $this->setExpectedException(InvalidRuleException::class, 'Missing rule: "foobar" from services');
+        $this->expectException(InvalidRuleException::class);
+        $this->expectExceptionMessage('Missing rule: "foobar" from services');
 
         $rules->apply($collection, new Child());
     }
@@ -166,7 +167,8 @@ class RuleCollectionTest extends TestCase
         $services->setService('foobar', new \stdClass());
         $rules      = new RuleCollection($services, $config);
         $collection = new SuggestionCollection();
-        $this->setExpectedException(InvalidRuleException::class, 'Invalid Rule Provided');
+        $this->expectException(InvalidRuleException::class);
+        $this->expectExceptionMessage('Invalid Rule Provided');
 
         $this->assertEmpty($rules->apply($collection, new Child()));
     }

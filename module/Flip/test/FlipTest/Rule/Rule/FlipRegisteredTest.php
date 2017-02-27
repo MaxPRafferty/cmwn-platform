@@ -6,7 +6,7 @@ use Application\Exception\NotFoundException;
 use Flip\Flip;
 use Flip\Rule\Rule\FlipRegistered as Rule;
 use Flip\Service\FlipServiceInterface;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Item\BasicRuleItem;
 
 /**

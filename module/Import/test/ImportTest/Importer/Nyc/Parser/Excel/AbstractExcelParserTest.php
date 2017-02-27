@@ -3,7 +3,7 @@
 namespace ImportTest\Importer\Nyc\Parser\Excel;
 
 use Import\Importer\Nyc\Parser\Excel\AbstractExcelParser;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test AbstractParserTest
@@ -34,7 +34,7 @@ class AbstractExcelParserTest extends TestCase
      */
     public function testItShouldThrowExceptionOnBadNumber($dString)
     {
-        $this->setExpectedException('Import\Importer\Nyc\Exception\InvalidDdbnnException');
+        $this->expectException('Import\Importer\Nyc\Exception\InvalidDdbnnException');
         AbstractExcelParser::parseDdbnnn($dString);
     }
 

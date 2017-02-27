@@ -7,7 +7,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
- * Class OrganizationDelegatorFactory
+ * Creates an Organization Delegator
  */
 class OrganizationDelegatorFactory implements DelegatorFactoryInterface
 {

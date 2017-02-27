@@ -9,7 +9,7 @@ use Security\SecurityUserInterface;
 use Zend\Permissions\Rbac\Rbac;
 
 /**
- * Class HasPermission
+ * A Rule that is satisfied if a role has a permission
  */
 class HasPermission implements RuleInterface
 {

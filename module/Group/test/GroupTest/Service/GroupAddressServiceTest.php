@@ -19,7 +19,6 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Class GroupAddressServiceTest
- * @package AddressTest\Service
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GroupAddressServiceTest extends TestCase
@@ -39,7 +38,15 @@ class GroupAddressServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpService()
+    {
+        $this->groupAddressService = new GroupAddressService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpGateway()
     {
         /** @var \Mockery\MockInterface|Adapter $adapter */
         $adapter = \Mockery::mock(Adapter::class);
@@ -52,14 +59,6 @@ class GroupAddressServiceTest extends TestCase
     }
 
     /**
-     * @before
-     */
-    public function setUpService()
-    {
-        $this->groupAddressService = new GroupAddressService($this->tableGateway);
-    }
-
-    /**
      * @test
      */
     public function testItShouldAttachAddressToGroup()
@@ -67,8 +66,10 @@ class GroupAddressServiceTest extends TestCase
         $this->tableGateway->shouldReceive('insert')
             ->with(['group_id' => 'foo', 'address_id' => 'bar']);
 
+        $group = new Group();
+        $group->setGroupId('foo');
         $this->assertTrue($this->groupAddressService->attachAddressToGroup(
-            new Group(['group_id' => 'foo']),
+            $group,
             new Address(['address_id' => 'bar'])
         ));
     }
@@ -82,8 +83,10 @@ class GroupAddressServiceTest extends TestCase
             ->with(['group_id' => 'foo', 'address_id' => 'bar'])
             ->andThrow(new \PDOException("", 23000));
 
+        $group = new Group();
+        $group->setGroupId('foo');
         $this->assertTrue($this->groupAddressService->attachAddressToGroup(
-            new Group(['group_id' => 'foo']),
+            $group,
             new Address(['address_id' => 'bar'])
         ));
     }
@@ -93,18 +96,20 @@ class GroupAddressServiceTest extends TestCase
      */
     public function testItShouldThrowPDOExceptionIfItIsNotDuplicateEntryException()
     {
-        $this->setExpectedException(\PDOException::class);
+        $this->expectException(\PDOException::class);
 
         $this->tableGateway->shouldReceive('insert')
             ->with(['group_id' => 'foo', 'address_id' => 'bar'])
             ->andThrow(new \PDOException());
 
+        $group = new Group();
+        $group->setGroupId('foo');
         $this->assertTrue($this->groupAddressService->attachAddressToGroup(
-            new Group(['group_id' => 'foo']),
+            $group,
             new Address(['address_id' => 'bar'])
         ));
     }
-    
+
     /**
      * @test
      */
@@ -113,12 +118,14 @@ class GroupAddressServiceTest extends TestCase
         $this->tableGateway->shouldReceive('delete')
             ->with(['group_id' => 'foo', 'address_id' => 'bar']);
 
+        $group = new Group();
+        $group->setGroupId('foo');
         $this->assertTrue($this->groupAddressService->detachAddressFromGroup(
-            new Group(['group_id' => 'foo']),
+            $group,
             new Address(['address_id' => 'bar'])
         ));
     }
-    
+
     /**
      * @test
      */
@@ -144,9 +151,11 @@ class GroupAddressServiceTest extends TestCase
 
         $expectedDbselect = new DbSelect($select, $adapter, $resultSet);
 
+        $group = new Group();
+        $group->setGroupId('foo');
         $this->assertEquals(
             $expectedDbselect,
-            $this->groupAddressService->fetchAllAddressesForGroup(new Group(['group_id' => 'foo']))
+            $this->groupAddressService->fetchAllAddressesForGroup($group)
         );
     }
 
@@ -175,10 +184,12 @@ class GroupAddressServiceTest extends TestCase
 
         $expectedDbselect = new DbSelect($select, $adapter, $resultSet);
 
+        $group = new Group();
+        $group->setGroupId('foo');
         $this->assertEquals(
             $expectedDbselect,
             $this->groupAddressService->fetchAllAddressesForGroup(
-                new Group(['group_id' => 'foo']),
+                $group,
                 new Where([new Operator('ga.address_id', Operator::OP_EQ, 'bar')]),
                 new AddressEntity([])
             )

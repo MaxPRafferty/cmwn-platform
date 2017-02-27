@@ -11,10 +11,10 @@ return [
         ],
     ],
     'organizations' => [],
-    'games'         => [],
-    'groups'        => [],
-    'images'        => [],
-    'names'         => [],
+
+
+
+
     'users'         => [
         [
             'user_id'     => 'english_student',
@@ -256,8 +256,8 @@ return [
             'acknowledge_id' => 'foo-bar',
         ],
     ],
-    'user_friends'  => [],
-    'user_groups'   => [],
-    'user_images'   => [],
-    'user_saves'    => [],
+
+
+
+
 ];

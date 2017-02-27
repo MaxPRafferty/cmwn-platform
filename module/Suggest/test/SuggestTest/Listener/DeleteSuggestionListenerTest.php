@@ -4,7 +4,7 @@ namespace SuggestTest\Listener;
 
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Listener\DeleteSuggestionListener;
 use Suggest\Service\SuggestedServiceInterface;
 use Zend\EventManager\Event;
@@ -40,17 +40,17 @@ class DeleteSuggestionListenerTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpListener()
     {
-        $this->suggestedService = \Mockery::mock(SuggestedServiceInterface::class);
+        $this->listener = new DeleteSuggestionListener($this->suggestedService);
     }
 
     /**
      * @before
      */
-    public function setUpListener()
+    public function setUpService()
     {
-        $this->listener = new DeleteSuggestionListener($this->suggestedService);
+        $this->suggestedService = \Mockery::mock(SuggestedServiceInterface::class);
     }
 
     /**

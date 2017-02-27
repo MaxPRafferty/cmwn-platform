@@ -3,17 +3,18 @@
 namespace Application\Utils\Date;
 
 /**
- * Class DateTimeFactory
- * @package Application\Utils\Date
+ * A Static factory that will transform strings or ints to a datetime
+ *
+ * All timezones will be set to UTC
  */
-class DateTimeFactory
+abstract class DateTimeFactory
 {
     /**
      * Converts a string to a \DateTime
      *
      * Sets the timezone to be UTC
      *
-     * @param  \DateTime|string|null $date
+     * @param  \DateTime|string|int|null $date
      * @return \DateTime|null
      */
     public static function factory($date)

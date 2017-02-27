@@ -6,7 +6,7 @@ use Group\GroupInterface;
 use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\ClassRoom\AddClassRoomAction;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test ClassRoomActionTest
@@ -69,6 +69,7 @@ class ClassRoomActionTest extends TestCase
         );
 
         $action = new AddClassRoomAction($this->groupService, $classRoom);
+        $action->setOrgId('foo-bar');
 
         $this->assertEquals(100, $action->priority(), 'Priority for class room has changed');
         $this->groupService->shouldReceive('createGroup')

@@ -7,7 +7,7 @@ use Import\Importer\Nyc\ClassRoom\ClassRoom;
 use Import\Importer\Nyc\Parser\AddTeacherToGroupAction;
 use Import\Importer\Nyc\Teachers\Teacher;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use User\Adult;
 
 /**
@@ -55,19 +55,19 @@ class AddTeacherToGroupActionTest extends TestCase
     /**
      * @before
      */
-    public function setUpClassRoomGroup()
+    public function setUpClassRoom()
     {
-        $this->classRoomGroup = new Group();
-        $this->classRoomGroup->setType('class');
+        $this->classRoom = new ClassRoom('History of the world', 'hist101', []);
+        $this->classRoom->setGroup($this->classRoomGroup);
     }
 
     /**
      * @before
      */
-    public function setUpClassRoom()
+    public function setUpClassRoomGroup()
     {
-        $this->classRoom = new ClassRoom('History of the world', 'hist101', []);
-        $this->classRoom->setGroup($this->classRoomGroup);
+        $this->classRoomGroup = new Group();
+        $this->classRoomGroup->setType('class');
     }
 
     /**

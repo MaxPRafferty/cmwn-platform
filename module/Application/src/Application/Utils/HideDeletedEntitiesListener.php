@@ -3,6 +3,7 @@
 namespace Application\Utils;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\Date\SoftDeleteInterface;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\EventManager\Event;
@@ -133,11 +134,11 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         foreach ($this->whereEvents as $eventName) {
-            $this->listeners[] = $events->attach($eventName, [$this, 'addPredicateToWhere']);
+            $this->listeners[] = $events->attach($eventName, [$this, 'addPredicateToWhere'], $priority);
         }
 
         foreach ($this->entityEvents as $eventName) {
-            $this->listeners[] = $events->attach($eventName, [$this, 'hideEntity']);
+            $this->listeners[] = $events->attach($eventName, [$this, 'hideEntity'], $priority);
         }
     }
 
@@ -148,6 +149,10 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
      */
     public function addPredicateToWhere(Event $event)
     {
+        if ($event->getParam('show_deleted', false)) {
+            return;
+        }
+
         $where = $event->getParam($this->whereParamKey);
         if (!$where instanceof PredicateSet) {
             return;
@@ -164,6 +169,10 @@ class HideDeletedEntitiesListener implements ListenerAggregateInterface
      */
     public function hideEntity(Event $event)
     {
+        if ($event->getParam('show_deleted', false)) {
+            return;
+        }
+
         $entity = $event->getParam($this->entityParamKey);
         if (!$entity instanceof SoftDeleteInterface) {
             return;

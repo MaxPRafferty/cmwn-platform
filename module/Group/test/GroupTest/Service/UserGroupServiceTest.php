@@ -2,13 +2,19 @@
 
 namespace GroupTest\Service;
 
+use Group\Exception\RuntimeException;
 use Group\Group;
+use Group\Service\GroupService;
 use Group\Service\UserGroupService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Organization;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Adult;
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Paginator\Adapter\DbSelect;
 use Zend\Permissions\Acl\Role\GenericRole;
+use Zend\Permissions\Rbac\RoleInterface;
 
 /**
  * Class UserGroupServiceTest
@@ -45,23 +51,23 @@ class UserGroupServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpService()
     {
-        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
-        $adapter->shouldReceive('getPlatform')->byDefault();
-
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
-        $this->tableGateway->shouldReceive('getTable')->andReturn('user_groups')->byDefault();
-        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
+        $this->groupService = new UserGroupService($this->tableGateway);
     }
 
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpGateway()
     {
-        $this->groupService = new UserGroupService($this->tableGateway);
+        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\Adapter $adapter */
+        $adapter = \Mockery::mock(Adapter::class);
+        $adapter->shouldReceive('getPlatform')->byDefault();
+
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
+        $this->tableGateway->shouldReceive('getTable')->andReturn('user_groups')->byDefault();
+        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
 
     /**
@@ -101,7 +107,10 @@ class UserGroupServiceTest extends TestCase
                 return 1;
             });
 
-        $this->groupService->attachUserToGroup($this->group, $this->user, 'teacher');
+        $this->assertTrue(
+            $this->groupService->attachUserToGroup($this->group, $this->user, 'teacher'),
+            GroupService::class . ' did not return true when attaching group'
+        );
     }
 
     /**
@@ -124,7 +133,10 @@ class UserGroupServiceTest extends TestCase
                 return 1;
             });
 
-        $this->groupService->attachUserToGroup($this->group, $this->user, $role);
+        $this->assertTrue(
+            $this->groupService->attachUserToGroup($this->group, $this->user, $role),
+            GroupService::class . ' did not return true when attaching user with a ' . RoleInterface::class
+        );
     }
 
     /**
@@ -132,15 +144,11 @@ class UserGroupServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenRoleIsInvalidType()
     {
-        $this->setExpectedException(
-            '\RuntimeException',
-            'Role must either be a sting or instance of Zend\PermissionAcl\RoleInterface'
-        );
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Role must either be a sting or instance of ' . RoleInterface::class);
 
-        $this->tableGateway->shouldReceive('insert')
-            ->never();
-
-        $this->groupService->attachUserToGroup($this->group, $this->user, []);
+        $this->tableGateway->shouldReceive('insert')->never();
+        $this->groupService->attachUserToGroup($this->group, $this->user, '');
     }
 
     /**
@@ -161,7 +169,10 @@ class UserGroupServiceTest extends TestCase
                 return 1;
             });
 
-        $this->groupService->detachUserFromGroup($this->group, $this->user);
+        $this->assertTrue(
+            $this->groupService->detachUserFromGroup($this->group, $this->user),
+            GroupService::class . ' did not return true when detaching a user from a group'
+        );
     }
 
     /**
@@ -172,23 +183,9 @@ class UserGroupServiceTest extends TestCase
         $result = $this->groupService->fetchUsersForGroup($this->group);
 
         $this->assertInstanceOf(
-            'Zend\Paginator\Adapter\DbSelect',
+            DbSelect::class,
             $result,
-            'Group Service did not return Paginator adapter'
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldFetchAllUsersForOrganizationUsingOrganizationId()
-    {
-        $result = $this->groupService->fetchUsersForOrg('fizzbuzz');
-
-        $this->assertInstanceOf(
-            'Zend\Paginator\Adapter\DbSelect',
-            $result,
-            'Group Service did not return Paginator adapter'
+            GroupService::class . ' did not return Paginator adapter'
         );
     }
 
@@ -202,9 +199,9 @@ class UserGroupServiceTest extends TestCase
         $result = $this->groupService->fetchUsersForOrg($org);
 
         $this->assertInstanceOf(
-            'Zend\Paginator\Adapter\DbSelect',
+            DbSelect::class,
             $result,
-            'Group Service did not return Paginator adapter'
+            GroupService::class . ' did not return Paginator adapter'
         );
     }
 }

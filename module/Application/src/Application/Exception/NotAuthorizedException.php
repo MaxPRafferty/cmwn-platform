@@ -3,8 +3,7 @@
 namespace Application\Exception;
 
 /**
- * Class NotAuthorizedException
- * @package Application\Exception
+ * Throw this when a user is not authorized to do something
  */
 class NotAuthorizedException extends \Exception
 {

@@ -3,8 +3,6 @@
 namespace Api\Rule\Provider;
 
 use Rule\Event\Provider\AbstractEventProvider;
-use Rule\Event\Provider\EventProviderInterface;
-use Rule\Provider\ProviderInterface;
 use Security\SecurityUser;
 use Security\Service\SecurityUserServiceInterface;
 use User\UserInterface;
@@ -12,11 +10,11 @@ use Zend\Authentication\AuthenticationServiceInterface;
 use ZF\Hal\Entity;
 
 /**
- *  This provides relationship between active user and the user given
+ * This provides relationship between active user and the user given
  */
 class UserRelationshipProvider extends AbstractEventProvider
 {
-    const PROVIDER_NAME = self::class;
+    const PROVIDER_NAME = 'USER_RELATIONSHIP_ROLE';
 
     /**
      * @var AuthenticationServiceInterface
@@ -30,6 +28,7 @@ class UserRelationshipProvider extends AbstractEventProvider
 
     /**
      * UserRelationshipProvider constructor.
+     *
      * @param AuthenticationServiceInterface $authService
      * @param SecurityUserServiceInterface $securityUserService
      * @param string $providerName
@@ -40,7 +39,7 @@ class UserRelationshipProvider extends AbstractEventProvider
         string $providerName = self::PROVIDER_NAME
     ) {
         parent::__construct($providerName);
-        $this->authService = $authService;
+        $this->authService         = $authService;
         $this->securityUserService = $securityUserService;
     }
 
@@ -57,7 +56,8 @@ class UserRelationshipProvider extends AbstractEventProvider
 
         $user = $entity->getEntity();
 
-        /**@var SecurityUser $authUser*/
+        /**@var SecurityUser $authUser */
+        // TODO get from a provider
         $authUser = $this->authService->getIdentity();
 
         if ($authUser->isSuper()) {

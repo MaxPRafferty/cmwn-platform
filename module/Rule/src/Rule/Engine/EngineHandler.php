@@ -78,6 +78,7 @@ class EngineHandler
         }
 
         $item = new EventRuleItem($event);
+        $item->setSpecification($this->spec);
         $item->setProviderCollection($this->spec->buildProvider($this->providerManager));
         if (!$this->spec->getRules($this->ruleManager)->isSatisfiedBy($item)) {
             return;

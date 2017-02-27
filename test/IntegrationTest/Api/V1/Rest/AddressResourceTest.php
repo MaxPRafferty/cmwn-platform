@@ -5,7 +5,6 @@ namespace IntegrationTest\Api\V1\Rest;
 use Address\Service\AddressServiceInterface;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase;
-use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
 
@@ -26,7 +25,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/AddressDataSet.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/AddressDataSet.php');
     }
 
     /**
@@ -36,7 +35,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
     {
         $this->addressService = TestHelper::getDbServiceManager()->get(AddressServiceInterface::class);
     }
-    
+
     /**
      * @test
      */
@@ -68,7 +67,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->dispatch('/address');
         $this->assertResponseStatusCode(401);
     }
-    
+
     /**
      * @test
      * @dataProvider userDataProvider

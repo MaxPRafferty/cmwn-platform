@@ -2,28 +2,29 @@
 
 namespace Org;
 
-use Application\Utils\Date\DateCreatedTrait;
-use Application\Utils\Date\DateDeletedTrait;
-use Application\Utils\Date\DateUpdatedTrait;
-use Application\Utils\MetaDataTrait;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
+use Application\Utils\Meta\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
-use Application\Utils\SoftDeleteInterface;
+use Application\Utils\Type\TypeTrait;
+use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
-use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Class Organization
- *
- * @package Org
+ * An Organization
  */
-class Organization implements OrganizationInterface, ArraySerializableInterface, SoftDeleteInterface
+class Organization implements OrganizationInterface
 {
-    use DateUpdatedTrait;
-    use DateCreatedTrait;
-    use DateDeletedTrait;
-    use MetaDataTrait;
-    use PropertiesTrait;
+    use StandardDatesTrait,
+        MetaDataTrait,
+        PropertiesTrait,
+        TypeTrait,
+        SoftDeleteTrait {
+            SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+            SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+            SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+        }
 
     /**
      * @var string
@@ -41,11 +42,6 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
     protected $description;
 
     /**
-     * @var string
-     */
-    protected $type;
-
-    /**
      * Organization constructor.
      * @param array|null $options
      */
@@ -57,21 +53,22 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
     }
 
     /**
-     * Converts an Array into something that can be digested here
-     *
-     * @param array $array
+     * @return string
      */
-    public function exchangeArray(array $array)
+    public function __toString()
+    {
+        return (string) $this->getOrgId();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function exchangeArray(array $array): OrganizationInterface
     {
         $defaults = [
             'org_id'      => null,
             'title'       => null,
-            'description' => null,
             'type'        => null,
-            'meta'        => [],
-            'created'     => null,
-            'updated'     => null,
-            'deleted'     => null,
         ];
 
         $array = array_merge($defaults, $array);
@@ -82,14 +79,14 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
                 $this->{$method}($value);
             }
         }
+
+        return $this;
     }
 
     /**
-     * Return this object represented as an array
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'org_id'      => $this->getOrgId(),
@@ -97,14 +94,14 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
             'description' => $this->getDescription(),
             'type'        => $this->getType(),
             'meta'        => $this->getMeta(),
-            'created'     => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
-            'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
-            'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
+            'created'     => $this->formatCreated(\DateTime::ISO8601),
+            'updated'     => $this->formatUpdated(\DateTime::ISO8601),
+            'deleted'     => $this->formatDeleted(\DateTime::ISO8601),
         ];
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getDescription()
     {
@@ -112,10 +109,9 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
     }
 
     /**
-     * @param string $description
-     * @return Organization
+     * @inheritdoc
      */
-    public function setDescription($description = null)
+    public function setDescription(string $description = null): OrganizationInterface
     {
         $this->description = $description;
 
@@ -125,16 +121,19 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
     /**
      * @return string
      */
-    public function getOrgId()
+    public function getOrgId(): string
     {
+        if ($this->orgId === null) {
+            $this->setOrgId(Uuid::uuid1());
+        }
+
         return $this->orgId;
     }
 
     /**
-     * @param string $orgId
-     * @return Organization
+     * @inheritdoc
      */
-    public function setOrgId($orgId)
+    public function setOrgId(string $orgId): OrganizationInterface
     {
         $this->orgId = $orgId;
 
@@ -142,18 +141,17 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
-     * @param string $title
-     * @return Organization
+     * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title): OrganizationInterface
     {
         $this->title = $title;
 
@@ -161,20 +159,18 @@ class Organization implements OrganizationInterface, ArraySerializableInterface,
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
-    public function getType()
+    public function getDocumentType(): string
     {
-        return $this->type;
+        return 'org';
     }
 
     /**
-     * @param string $type
-     * @return Organization
+     * @inheritDoc
      */
-    public function setType($type)
+    public function getDocumentId(): string
     {
-        $this->type = $type;
-        return $this;
+        return $this->getOrgId();
     }
 }

@@ -3,7 +3,7 @@
 namespace ImportTest\Importer\Nyc\Parser;
 
 use Import\Importer\Nyc\Parser\ClassIdValidator;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test ClassIdValidatorTest

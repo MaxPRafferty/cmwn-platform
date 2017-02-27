@@ -4,7 +4,7 @@ namespace ApplicationTest\Service;
 
 use Application\Service\AbstractTableFactory;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\ServiceManager;
@@ -35,20 +35,20 @@ class AbstractTableFactoryTest extends TestCase
     /**
      * @before
      */
-    public function setUpAdapter()
-    {
-        $this->adapter = \Mockery::mock(Adapter::class);
-        $this->adapter->shouldReceive('getPlatform')->byDefault();
-    }
-
-    /**
-     * @before
-     */
     public function setUpServiceManager()
     {
         $this->services = new ServiceManager();
         $this->services->setService(Adapter::class, $this->adapter);
         $this->services->addAbstractFactory(new AbstractTableFactory());
+    }
+
+    /**
+     * @before
+     */
+    public function setUpAdapter()
+    {
+        $this->adapter = \Mockery::mock(Adapter::class);
+        $this->adapter->shouldReceive('getPlatform')->byDefault();
     }
 
     /**

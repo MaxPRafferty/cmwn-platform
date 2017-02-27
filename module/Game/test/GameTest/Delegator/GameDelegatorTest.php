@@ -7,16 +7,14 @@ use Game\Delegator\GameDelegator;
 use Game\Game;
 use Game\Service\GameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 
 /**
- * Class GameDelegatorTest
- *
- * @package GameTest\Delegator
- * @SuppressWarnings(PHPMD)
+ * Unit tests for game delegator
  */
 class GameDelegatorTest extends TestCase
 {
@@ -40,19 +38,18 @@ class GameDelegatorTest extends TestCase
     /**
      * @before
      */
-    public function setUpService()
+    public function setUpDelegator()
     {
-        $this->gameService = \Mockery::mock(GameService::class);
+        $this->gameDelegator = new GameDelegator($this->gameService, new EventManager());
+        $this->gameDelegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
     /**
      * @before
      */
-    public function setUpDelegator()
+    public function setUpService()
     {
-        $events = new EventManager();
-        $this->gameDelegator = new GameDelegator($this->gameService, $events);
-        $this->gameDelegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
+        $this->gameService = \Mockery::mock(GameService::class);
     }
 
     /**
@@ -83,7 +80,11 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
+                'params' => [
+                    'where' => new Where([new IsNull('deleted')]),
+                    'prototype' => null,
+                    'show_deleted' => false
+                ],
             ],
             $this->calledEvents[0]
         );
@@ -91,7 +92,11 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games.post',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
+                'params' => [
+                    'where' => new Where([new IsNull('deleted')]),
+                    'prototype' => null,
+                    'show_deleted' => false
+                ],
             ],
             $this->calledEvents[1]
         );
@@ -119,7 +124,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.games',
                 'target' => $this->gameService,
-                'params' => ['where' => new Where(), 'paginate' => true, 'prototype' => null],
+                'params' => ['where' => new Where(), 'prototype' => null, 'show_deleted' => false],
             ],
             $this->calledEvents[0]
         );
