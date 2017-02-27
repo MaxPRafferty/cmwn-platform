@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6a658cbf6932088f8d512cf344ddb1d5",
-    "content-hash": "8ce27e4d4e1eea37b20cc637a5287999",
+    "hash": "8d01dad71caf8e2785fb31c93f2bde8b",
+    "content-hash": "420fb873771cee457b7c66a1a38809be",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
@@ -210,7 +210,7 @@
         },
         {
             "name": "bacon/bacon-string-utils",
-            "version": "dev-master",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconStringUtils.git",
@@ -7070,7 +7070,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "bacon/bacon-string-utils": 20,
         "zendframework/zend-component-installer": 20,
         "mockery/mockery": 20
     },

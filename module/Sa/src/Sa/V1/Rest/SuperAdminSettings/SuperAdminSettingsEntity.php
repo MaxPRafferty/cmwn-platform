@@ -13,7 +13,6 @@ use MenaraSolutions\Geographer\Earth;
 use Zend\Stdlib\ArraySerializableInterface;
 use ZF\Hal\Entity;
 use ZF\Hal\Link\Link;
-use ZF\Hal\Link\LinkCollectionAwareInterface;
 use ZF\Hal\Link\LinkCollectionAwareTrait;
 
 /**
@@ -43,6 +42,7 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
     }
 
     /**
+     * //@ToDo add states for all countries after i18n
      * @param mixed $countries
      */
     public function setCountries(array $countries = null)
@@ -73,11 +73,22 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
     }
 
     /**
-     * @param array $roles
+     * @param array $config
      */
-    public function setRoles(array $roles)
+    public function setRoles(array $config)
     {
-        $this->roles = $roles;
+        $groupRoles = [];
+
+        if (isset($config['cmwn-roles']) && isset($config['cmwn-roles']['roles'])) {
+            $config = $config['cmwn-roles']['roles'];
+            foreach ($config as $label => $role) {
+                if (isset($role['db-role']) && $role['db-role']) {
+                    $groupRoles[] = (explode('.', $label))[0];
+                }
+            }
+        }
+
+        $this->roles['group'] = $groupRoles;
     }
 
     /**
@@ -100,6 +111,7 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
     }
 
     /**
+     * //@ToDo listener should add hal links
      * SuperAdminSettingsEntity constructor.
      * @param array $array
      */
@@ -107,7 +119,7 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
     {
         $this->exchangeArray($array);
         $this->setCountries();
-        $this->setRoles($array['roles'] ?? ['group' => ['admin', 'asst_principal', 'principal', 'student', 'teacher']]);
+        $this->setRoles($array);
         $this->addLink(UserLink::class, 'Manage Users');
         $this->addLink(GameLink::class, 'Manage Games', [null, true]);
         $this->addLink(GameDataLink::class, 'Survey Results', ['all-about-you']);

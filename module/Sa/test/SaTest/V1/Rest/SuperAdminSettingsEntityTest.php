@@ -22,7 +22,18 @@ class SuperAdminSettingsEntityTest extends TestCase
      */
     protected function setUpEntity()
     {
-        $this->entity = new SuperAdminSettingsEntity();
+        $this->entity = new SuperAdminSettingsEntity([
+            'cmwn-roles' => [
+                'roles' => [
+                    'foo' => ['db-role' => false],
+                    'admin.adult' => ['db-role' => true],
+                    'asst_principal.adult' => ['db-role' => true],
+                    'principal.adult' => ['db-role' => true],
+                    'student.adult' => ['db-role' => true],
+                    'teacher.adult' => ['db-role' => true],
+                ],
+            ],
+        ]);
     }
 
     /**

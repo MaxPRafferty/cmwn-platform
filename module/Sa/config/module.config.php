@@ -6,12 +6,6 @@ return [
             'Config'
         ],
     ],
-//    'service_manager'        => [
-//        'factories' => [
-//            \Sa\V1\Rest\SuperAdminSettings\SuperAdminSettingsResource::class =>
-//                \Zend\ServiceManager\Factory\InvokableFactory::class,
-//        ],
-//    ],
     'router'                 => [
         'routes' => [
             'sa.rest.settings' => [
