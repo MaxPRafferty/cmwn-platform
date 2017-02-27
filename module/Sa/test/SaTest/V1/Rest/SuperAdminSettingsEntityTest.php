@@ -42,4 +42,13 @@ class SuperAdminSettingsEntityTest extends TestCase
 
         $this->assertEquals($links->count(), 6);
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldCorrectlySetRoles()
+    {
+        $roles = $this->entity->getRoles();
+        $this->assertEquals($roles, ['group' => ['admin', 'asst_principal', 'principal', 'student', 'teacher']]);
+    }
 }

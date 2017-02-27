@@ -8,44 +8,85 @@ use Api\Links\GameLink;
 use Api\Links\GroupLink;
 use Api\Links\OrgLink;
 use Api\Links\UserLink;
+use Zend\Stdlib\ArraySerializableInterface;
 use ZF\Hal\Entity;
+use ZF\Hal\Link\Link;
+use ZF\Hal\Link\LinkCollectionAwareTrait;
 
 /**
  * Class SuperAdminSettingsEntity
  * @package Api\SuperAdminSettings
  */
-class SuperAdminSettingsEntity extends Entity
+class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterface
 {
+    use LinkCollectionAwareTrait;
+
     /**
-     * SuperAdminSettingsEntity Constructor
+     * @var array $roles
      */
-    public function __construct()
+    protected $roles;
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
     {
-        parent::__construct([]);
+        return $this->roles;
+    }
 
-        $userLink = new UserLink();
-        $userLink->setProps(['label' => 'Manage Users']);
+    /**
+     * @param array $roles
+     */
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+    }
 
-        $gameLink = new GameLink(null, true);
-        $gameLink->setProps(['label' => 'Manage Games']);
+    /**
+     * @param array $array
+     */
+    public function exchangeArray(array $array)
+    {
+        $this->setRoles($array['roles'] ?? []);
+    }
 
-        $gameDataLink = new GameDataLink('all-about-you');
-        $gameDataLink->setProps(['label' => 'Survey Results']);
+    /**
+     * @return array
+     */
+    public function getArrayCopy()
+    {
+        return [
+            'roles' => $this->getRoles(),
+        ];
+    }
 
-        $groupLink = new GroupLink();
-        $groupLink->setProps(['label' => 'Manage Groups']);
+    /**
+     * SuperAdminSettingsEntity constructor.
+     * @param array $array
+     */
+    public function __construct(array $array = [])
+    {
+        $this->exchangeArray($array);
+        $this->setRoles($array['roles'] ?? ['group' => ['admin', 'asst_principal', 'principal', 'student', 'teacher']]);
+        $this->addLink(UserLink::class, 'Manage Users');
+        $this->addLink(GameLink::class, 'Manage Games', [null, 'true']);
+        $this->addLink(GameDataLink::class, 'Survey Results', ['all-about-you']);
+        $this->addLink(GroupLink::class, 'Manage Groups');
+        $this->addLink(OrgLink::class, 'Manage Organizations');
+        $this->addLink(FlipLink::class, 'Manage Flips');
+        parent::__construct($this);
+    }
 
-        $orgLink = new OrgLink();
-        $orgLink->setProps(['label' => 'Manage Organizations']);
-
-        $flipLink = new FlipLink();
-        $flipLink->setProps(['label' => 'Manage Flips']);
-
-        $this->getLinks()->add($userLink);
-        $this->getLinks()->add($gameLink);
-        $this->getLinks()->add($gameDataLink);
-        $this->getLinks()->add($groupLink);
-        $this->getLinks()->add($orgLink);
-        $this->getLinks()->add($flipLink);
+    /**
+     * @param $link
+     * @param $label
+     * @param array|null ...$options
+     */
+    protected function addLink($link, $label, array $options = [])
+    {
+        /**@var Link $link*/
+        $link = new $link(...$options);
+        $link->setProps(['label' => $label]);
+        $this->getLinks()->add($link);
     }
 }
