@@ -8,9 +8,12 @@ use Api\Links\GameLink;
 use Api\Links\GroupLink;
 use Api\Links\OrgLink;
 use Api\Links\UserLink;
+use MenaraSolutions\Geographer\Country;
+use MenaraSolutions\Geographer\Earth;
 use Zend\Stdlib\ArraySerializableInterface;
 use ZF\Hal\Entity;
 use ZF\Hal\Link\Link;
+use ZF\Hal\Link\LinkCollectionAwareInterface;
 use ZF\Hal\Link\LinkCollectionAwareTrait;
 
 /**
@@ -25,6 +28,41 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
      * @var array $roles
      */
     protected $roles;
+
+    /**
+     * @var array
+     */
+    protected $countries;
+
+    /**
+     * @return mixed
+     */
+    public function getCountries()
+    {
+        return $this->countries;
+    }
+
+    /**
+     * @param mixed $countries
+     */
+    public function setCountries(array $countries = null)
+    {
+        if (empty($countries)) {
+            $earthCountries = (new Earth())->getCountries()->toArray();
+            $countries = [];
+            array_walk($earthCountries, function ($country) use (&$countries) {
+                $code = $country['code'];
+                $countries[$code] = [];
+                $countries[$code]['name'] = $country['name'];
+                if ($code === 'US') {
+                    $us = Country::build('US');
+                    $countries[$code]['states'] = $us->getStates()->toArray();
+                }
+            });
+        }
+
+        $this->countries = $countries;
+    }
 
     /**
      * @return array
@@ -56,7 +94,8 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
     public function getArrayCopy()
     {
         return [
-            'roles' => $this->getRoles(),
+            'countries' => $this->getCountries(),
+            'roles'     => $this->getRoles(),
         ];
     }
 
@@ -67,9 +106,10 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
     public function __construct(array $array = [])
     {
         $this->exchangeArray($array);
+        $this->setCountries();
         $this->setRoles($array['roles'] ?? ['group' => ['admin', 'asst_principal', 'principal', 'student', 'teacher']]);
         $this->addLink(UserLink::class, 'Manage Users');
-        $this->addLink(GameLink::class, 'Manage Games', [null, 'true']);
+        $this->addLink(GameLink::class, 'Manage Games', [null, true]);
         $this->addLink(GameDataLink::class, 'Survey Results', ['all-about-you']);
         $this->addLink(GroupLink::class, 'Manage Groups');
         $this->addLink(OrgLink::class, 'Manage Organizations');
