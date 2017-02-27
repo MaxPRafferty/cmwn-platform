@@ -311,6 +311,71 @@
                 }
             }
         },
+        "/address/{address_id}/group": {
+            "get": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Fetches multiple groups in the requested address",
+                "description": "This resource allows a super user to view all the groups in a given address",
+                "parameters": [
+                    {
+                        "name": "address_id",
+                        "in": "path",
+                        "description": "Address Id of the address",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of groups on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged groups in address",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GroupCollection"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/game": {
             "get": {
                 "tags": [
@@ -644,27 +709,26 @@
                         "type": "integer",
                         "format": "int32",
                         "maximum": 1
+                    },
+                    {
+                        "name": "org_id",
+                        "in": "query",
+                        "description": "Fetch groups that belong to this org",
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Paged groups",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/GroupCollection"
-                        }
-                    },
-                    "404": {
-                        "description": "Group not found",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -683,7 +747,6 @@
                         "description": "Group data",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Group"
                         }
                     }
@@ -692,21 +755,18 @@
                     "201": {
                         "description": "Group was created",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/GroupEntity"
                         }
                     },
                     "422": {
                         "description": "Validation failed",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -735,21 +795,18 @@
                     "200": {
                         "description": "The requested group",
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/GroupCollection"
+                            "$ref": "#/definitions/GroupEntity"
                         }
                     },
                     "404": {
                         "description": "Group not found",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -785,28 +842,30 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/GroupEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update a group",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -837,31 +896,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Group was deleted",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/GroupEntity"
-                        }
+                    "204": {
+                        "description": "Group was deleted"
                     },
                     "404": {
                         "description": "Group not found",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access group",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -910,21 +962,12 @@
                     "200": {
                         "description": "The current page of organizations",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/OrgCollection"
-                        }
-                    },
-                    "404": {
-                        "description": "Org not found",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -952,21 +995,18 @@
                     "201": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/OrgEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -995,21 +1035,18 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/OrgCollection"
+                            "$ref": "#/definitions/OrgEntity"
                         }
                     },
                     "404": {
                         "description": "Org not found",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1046,28 +1083,30 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/OrgEntity"
+                        }
+                    },
+                    "404": {
+                        "description": "Organization not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
-                        "description": "Not Authorized to create a org",
+                        "description": "Not Authorized to update this organization",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1099,31 +1138,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Organization that was deleted",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/OrgEntity"
-                        }
+                    "204": {
+                        "description": "Organization was deleted"
                     },
                     "404": {
                         "description": "Organization not found",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to access or delete the organization",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1177,17 +1209,18 @@
                     "200": {
                         "description": "Paged users",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/UserCollection"
                         }
                     },
                     "404": {
-                        "description": "User not found"
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1215,24 +1248,24 @@
                     "201": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/UserEntity"
                         }
-                    },
-                    "422": {
-                        "description": "validation failed"
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/NotFoundError"
+                            "$ref": "#/definitions/UserEntity"
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1259,7 +1292,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "The User",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/UserEntity"
@@ -1268,14 +1301,18 @@
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "403": {
+                        "description": "Not allowed to access this user",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1311,28 +1348,24 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/UserEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
-                        "description": "Not Authorized to create a user",
+                        "description": "Not Authorized to update or access this user",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
@@ -1363,31 +1396,24 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "User was deleted",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/UserEntity"
-                        }
+                    "204": {
+                        "description": "User was deleted"
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access user",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/Error"
                         }
                     }
