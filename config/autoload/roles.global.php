@@ -228,6 +228,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'principal.adult' => [
@@ -272,6 +273,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'asst_principal.adult' => [
@@ -316,6 +318,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'teacher.adult' => [
@@ -351,6 +354,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'neighbor.adult' => [
@@ -361,6 +365,7 @@ return [
                     'view.user.adult',
                     'view.user.flip',
                 ],
+                'db-role' => false,
             ],
 
             'me.child' => [
@@ -390,6 +395,7 @@ return [
                     'view.all.group.addresses',
                     'view.user.feed',
                 ],
+                'db-role' => false,
             ],
 
             'me.adult' => [
@@ -417,6 +423,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => false,
             ],
 
             'neighbor.child'    => [
@@ -439,6 +446,7 @@ return [
                     'view.user.child',
                     'view.user.flip',
                 ],
+                'db-role' => false,
             ],
 
             'student.child' => [
@@ -459,6 +467,7 @@ return [
                     'view.address',
                     'view.all.group.addresses',
                 ],
+                'db-role' => true,
             ],
 
             'logged_in.child' => [
@@ -469,6 +478,7 @@ return [
                     'view.games',
                     'view.flip',
                 ],
+                'db-role' => false,
             ],
 
             'logged_in.adult' => [
@@ -479,6 +489,7 @@ return [
                     'view.games',
                     'view.flip',
                 ],
+                'db-role' => false,
             ],
 
             'guest' => [
