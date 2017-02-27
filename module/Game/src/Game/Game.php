@@ -5,6 +5,7 @@ namespace Game;
 use Application\Utils\Date\SoftDeleteTrait;
 use Application\Utils\Date\StandardDatesTrait;
 use Application\Utils\Meta\MetaDataTrait;
+use Application\Utils\PropertiesTrait;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
@@ -18,6 +19,7 @@ class Game implements ArraySerializableInterface, GameInterface
 {
     use StandardDatesTrait,
         MetaDataTrait,
+        PropertiesTrait,
         SoftDeleteTrait {
         SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
         SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
@@ -43,6 +45,11 @@ class Game implements ArraySerializableInterface, GameInterface
      * @var bool
      */
     protected $comingSoon = false;
+
+    /**
+     * @var bool
+     */
+    protected $global = false;
 
     /**
      * Game constructor.
@@ -74,6 +81,7 @@ class Game implements ArraySerializableInterface, GameInterface
             'updated'     => null,
             'deleted'     => null,
             'coming_soon' => false,
+            'global'      => false,
         ];
 
         $array = array_merge($defaults, $array);
@@ -102,6 +110,7 @@ class Game implements ArraySerializableInterface, GameInterface
             'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
             'coming_soon' => $this->isComingSoon(),
             'meta'        => $this->getMeta(),
+            'global'      => $this->isGlobal(),
         ];
     }
 
@@ -179,5 +188,21 @@ class Game implements ArraySerializableInterface, GameInterface
         $this->description = $description;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function isGlobal()
+    {
+        return $this->global;
+    }
+
+    /**
+     * @param mixed $global
+     */
+    public function setGlobal($global)
+    {
+        $this->global = (bool)$global;
     }
 }

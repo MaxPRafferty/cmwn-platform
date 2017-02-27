@@ -21,6 +21,295 @@
         "application/json"
     ],
     "paths": {
+        "/game": {
+            "get": {
+                "tags": [
+                    "game"
+                ],
+                "summary": "Fetches multiple games the authenticated user has access too",
+                "description": "A User can request all games or all the child games descending from parent.  Empty results are returned if the\nuser is not allowed access to a parent",
+                "parameters": [
+                    {
+                        "name": "deleted",
+                        "in": "query",
+                        "description": "Flag to fetch deleted games",
+                        "type": "boolean",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of games on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged games",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GameCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Game not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "game"
+                ],
+                "summary": "Create a new game",
+                "description": "The authenticated user must be allowed to create a new game in the system",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Game data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Game"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Game was created",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/GameEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to update a game",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/game/{game_id}": {
+            "get": {
+                "tags": [
+                    "game"
+                ],
+                "summary": "Fetch data for a game",
+                "description": "Fetch the data for a game if the authenticated user is allowed access.",
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "Game Id to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The requested game",
+                        "schema": {
+                            "$ref": "#/definitions/GameCollection"
+                        }
+                    },
+                    "404": {
+                        "description": "Game not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "game"
+                ],
+                "summary": "Update a game",
+                "description": "The user must be allowed access to the game and be allowed to edit games.  403 is returned if the user is not\nallowed access to update the game. 404 is returned if the game is not found or the user is not allowed access",
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "Game Id to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Game data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Game"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/GameEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to update a game",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "game"
+                ],
+                "summary": "Delete a game",
+                "description": "A fetch is done first to ensure the user has access to a game.  By default games are soft deleted unless\nthe \"hard\" parameter is set in the query.  The authenticated user will get a 403 if the they are not allowed\nto hard delete a game",
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "Game Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Game was deleted"
+                    },
+                    "404": {
+                        "description": "Game not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to delete or access game",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Problem occured during execution",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/group": {
             "get": {
                 "tags": [
@@ -910,6 +1199,262 @@
                     }
                 }
             }
+        },
+        "/user/{user_id}/game/{game_id}": {
+            "get": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Fetch a game for a user",
+                "description": "The authenticated user must be allowed to fetch a game",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id of the user",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "Game Id to be fetched",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Game was fetched",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserGameEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Game not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to access game",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Attach a game to a user",
+                "description": "The authenticated user must be allowed to attach a game to a user in the system",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id of the user",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "Game Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Game attached to user",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/UserGameEntity"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to attach game",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Detach a game from a user",
+                "description": "A fetch is done first to ensure the user has access to a game. The authenticated user will get a 403\nif the they are not allowed to detach a game from a user",
+                "parameters": [
+                    {
+                        "name": "game_id",
+                        "in": "path",
+                        "description": "Game Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id of the user",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Game was detached from user"
+                    },
+                    "404": {
+                        "description": "Game not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to detach or access game",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Problem occured during execution",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user_id}/game": {
+            "get": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Fetches multiple games the requested user has access too",
+                "description": "A User can request all games or all the child games descending from parent.  Empty results are returned if the\nuser is not allowed access to a parent",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User Id of the user",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of games on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged games",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserGameCollection"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Game not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1120,6 +1665,51 @@
             "type": "object",
             "readOnly": true
         },
+        "GameCollection": {
+            "description": "A Collection of Games from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of Game Entities",
+                    "properties": {
+                        "games": {
+                            "description": "A List of games",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GameEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "GameEntity": {
+            "description": "A Game Entity represents the game through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the game might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Game"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
         "GroupCollection": {
             "description": "A Collection of Groups from the API",
             "properties": {
@@ -1255,6 +1845,51 @@
                 }
             ]
         },
+        "UserGameCollection": {
+            "description": "A Collection of Games for users from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of UserGame Entities",
+                    "properties": {
+                        "games": {
+                            "description": "A List of user games",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserGameEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "UserGameEntity": {
+            "description": "A UserGame Entity represents the game through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the game might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Game"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
         "DateCreated": {
             "description": "The date this entity was created",
             "properties": {
@@ -1299,6 +1934,53 @@
                     ]
                 }
             }
+        },
+        "Game": {
+            "description": "A Game represents every game in the system and details about it",
+            "required": [
+                "game_id",
+                "title",
+                "description",
+                "coming_soon"
+            ],
+            "properties": {
+                "game_id": {
+                    "description": "The id of the game (usually the slug of game title)",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "title": {
+                    "description": "Title of the game",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "A Description for the game",
+                    "type": "string"
+                },
+                "coming_soon": {
+                    "description": "Whether the game is coming_soon",
+                    "type": "boolean",
+                    "readOnly": true
+                },
+                "global": {
+                    "description": "Whether the game is global",
+                    "type": "boolean",
+                    "readOnly": true
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/DateCreated"
+                },
+                {
+                    "$ref": "#/definitions/DateUpdated"
+                },
+                {
+                    "$ref": "#/definitions/DateDeleted"
+                }
+            ],
+            "x-search-doc-id": "game_id",
+            "x-search-doc-type": "game"
         },
         "Group": {
             "description": "A Group is a node in an organization network that is used to define access to a system",

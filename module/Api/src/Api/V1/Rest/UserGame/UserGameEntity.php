@@ -1,16 +1,16 @@
 <?php
 
-namespace Api\V1\Rest\Game;
+namespace Api\V1\Rest\UserGame;
 
 use Game\Game;
 use Game\GameInterface;
 
 /**
- * A Game Entity represents the game through the API
+ * A UserGame Entity represents the game through the API
  *
  * @SWG\Definition(
- *     definition="GameEntity",
- *     description="A Game Entity represents the game through the API",
+ *     definition="UserGameEntity",
+ *     description="A UserGame Entity represents the game through the API",
  *     @SWG\Property(
  *         type="object",
  *         property="_links",
@@ -25,6 +25,6 @@ use Game\GameInterface;
  *     }
  * )
  */
-class GameEntity extends Game implements GameInterface
+class UserGameEntity extends Game implements GameInterface
 {
 }

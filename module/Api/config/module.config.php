@@ -40,6 +40,11 @@ return [
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupServiceInterface::class,
         ],
+        \Api\V1\Rest\UserGame\UserGameResource::class         => [
+            \User\Service\UserServiceInterface::class,
+            \Game\Service\GameServiceInterface::class,
+            \Game\Service\UserGameServiceInterface::class,
+        ],
         Api\SwaggerHelper::class                              => [
             'Config',
         ],
@@ -195,6 +200,15 @@ return [
                     'route'    => '/game[/:game_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\Game\Controller',
+                    ],
+                ],
+            ],
+            'api.rest.user-game'            => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/user/:user_id/game[/:game_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\UserGame\Controller',
                     ],
                 ],
             ],
@@ -354,7 +368,7 @@ return [
             'api.rest.save-game'       => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/user/:user_id/game[/:game_id]',
+                    'route'    => '/user/:user_id/save[/:game_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\SaveGame\Controller',
                     ],
@@ -505,6 +519,7 @@ return [
             'api.rest.user',
             'api.rest.org',
             'api.rest.game',
+            'api.rest.user-game',
             'api.rest.image',
             'api.rest.group',
             'api.rest.token',
@@ -574,11 +589,25 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
             'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
             'service_name'               => 'Game',
+        ],
+        'Api\V1\Rest\UserGame\Controller'           => [
+            'listener'                   => \Api\V1\Rest\UserGame\UserGameResource::class,
+            'route_name'                 => 'api.rest.user-game',
+            'route_identifier_name'      => 'game_id',
+            'collection_name'            => 'game',
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
+            'page_size'                  => 100,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
+            'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
+            'service_name'               => 'UserGame',
         ],
         'Api\V1\Rest\Image\Controller'          => [
             'listener'                   => \Api\V1\Rest\Image\ImageResource::class,
@@ -743,7 +772,7 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\Flip\FlipEntity::class,
             'collection_class'           => \Api\V1\Rest\Flip\FlipCollection::class,
@@ -1036,6 +1065,7 @@ return [
             'Api\V1\Rest\User\Controller'           => 'HalJson',
             'Api\V1\Rest\Org\Controller'            => 'HalJson',
             'Api\V1\Rest\Game\Controller'           => 'HalJson',
+            'Api\V1\Rest\UserGame\Controller'       => 'HalJson',
             'Api\V1\Rest\Image\Controller'          => 'HalJson',
             'Api\V1\Rest\Group\Controller'          => 'HalJson',
             'Api\V1\Rest\Token\Controller'          => 'HalJson',
@@ -1078,6 +1108,11 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\Game\Controller'           => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\UserGame\Controller'           => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1238,6 +1273,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\Game\Controller'           => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\UserGame\Controller'           => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1407,6 +1446,18 @@ return [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.game',
                 'route_identifier_name'  => 'game_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\UserGame\UserGameEntity::class                         => [
+                'entity_identifier_name' => 'game_id',
+                'route_name'             => 'api.rest.user-game',
+                'route_identifier_name'  => 'user_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\UserGame\UserGameCollection::class                     => [
+                'entity_identifier_name' => 'game_id',
+                'route_name'             => 'api.rest.user-game',
+                'route_identifier_name'  => 'user_id',
                 'is_collection'          => true,
             ],
             \Api\V1\Rest\Image\ImageEntity::class                       => [
@@ -2518,6 +2569,19 @@ return [
                 ],
                 'name'        => 'meta',
                 'description' => 'meta data for game',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'global',
+                'description' => 'flag to specify if the game is globally visible',
             ],
         ],
         'Api\V1\Rest\GroupReset\Validator'     => [
