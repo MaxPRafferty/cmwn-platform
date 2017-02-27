@@ -9,7 +9,6 @@ use Application\Utils\ServiceTrait;
 use Group\Group;
 use Group\GroupInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -185,5 +184,20 @@ class GroupAddressService implements GroupAddressServiceInterface
     public function getAlias() : string
     {
         return 'ga';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function aliasKeys(array &$where)
+    {
+        foreach ($where as $field => $value) {
+            unset($where[$field]);
+            $alias = $this->getAlias();
+            if (!($field === 'group_id' || $field === 'address_id')) {
+                $alias = 'at';
+            }
+            $where[$alias . '.' . $field] = $value;
+        }
     }
 }

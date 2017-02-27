@@ -82,7 +82,7 @@ class StaticNameServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenSelectingWrongPosition()
     {
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid position: foo');
 
         StaticNameService::getNames('foo');

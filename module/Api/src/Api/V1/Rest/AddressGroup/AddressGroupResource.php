@@ -68,26 +68,17 @@ class AddressGroupResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Paged groups in address",
-     *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/GroupCollection")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GroupCollection")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      *  @SWG\Response(
      *     response=403,
      *     description="Not Authorized",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -96,10 +87,11 @@ class AddressGroupResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        $addressId = $this->getEvent()->getRouteParam('address_id');
+        $params = (array) $params;
+        unset($params['page']);
+        unset($params['per_page']);
+        $params['address_id'] = $this->getEvent()->getRouteParam('address_id');
 
-        $where = ['address_id' => $addressId];
-
-        return new GroupCollection($this->groupAddressService->fetchAllGroupsInAddress($where, new GroupEntity()));
+        return new GroupCollection($this->groupAddressService->fetchAllGroupsInAddress($params, new GroupEntity()));
     }
 }

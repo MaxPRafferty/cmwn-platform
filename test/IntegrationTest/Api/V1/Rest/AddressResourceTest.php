@@ -81,8 +81,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('addresses', $body['_embedded']);
-        $addresses = $body['_embedded']['addresses'];
+        $this->assertArrayHasKey('address', $body['_embedded']);
+        $addresses = $body['_embedded']['address'];
         $expected = ['foo_school_address', 'other_school_address', 'school_address'];
         $actual = [];
 
@@ -105,8 +105,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('addresses', $body['_embedded']);
-        $addresses = $body['_embedded']['addresses'];
+        $this->assertArrayHasKey('address', $body['_embedded']);
+        $addresses = $body['_embedded']['address'];
         $expected = ['foo_school_address', 'other_school_address'];
         $actual = [];
 
@@ -267,7 +267,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $this->dispatch('/address/school_address', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
 
         try {
             $this->addressService->fetchAddress('school_address');
