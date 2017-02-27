@@ -52,14 +52,14 @@ return [
         'factories' => [
             \Api\Rule\Action\AddHalLinkAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
-            \Api\Rule\Action\ThrowException::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class     => \Rule\Action\Service\BuildActionFactory::class,
         ],
 
         'shared' => [
             \Api\Rule\Action\AddHalLinkAction::class   => false,
             \Api\Rule\Action\AddTypeLinksAction::class => false,
             \Api\Rule\Action\ThrowException::class     => false,
-        ]
+        ],
     ],
 
     'providers' => [
@@ -88,7 +88,7 @@ return [
         ],
     ],
 
-    'shared-listeners'       => [
+    'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -99,7 +99,7 @@ return [
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
     ],
-    'service_manager'        => [
+    'service_manager'  => [
         'factories' => [
             \Api\Listeners\ChangePasswordListener::class              =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
@@ -169,7 +169,7 @@ return [
                 \Api\V1\Rest\GroupReset\GroupResetResourceFactory::class,
         ],
     ],
-    'router'                 => [
+    'router'           => [
         'routes' => [
             'api.rest.user'            => [
                 'type'    => 'Segment',
@@ -489,7 +489,7 @@ return [
             ],
         ],
     ],
-    'controllers'            => [
+    'controllers'      => [
         'factories' => [
             \Api\Controller\SwaggerController::class =>
                 \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
@@ -497,7 +497,7 @@ return [
     ],
 
     \Api\SwaggerHelper::class => [
-        'swagger_file' => realpath(__DIR__ . '/../../../data/docs/swagger.json')
+        'swagger_file' => realpath(__DIR__ . '/../../../data/docs/swagger.json'),
     ],
 
     'zf-versioning'          => [
@@ -545,7 +545,7 @@ return [
             'collection_name'            => 'user',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['type', 'page', 'per_page', 'deleted', 'username'],
+            'collection_query_whitelist' => ['type', 'page', 'per_page', 'deleted'],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\User\UserEntity::class,
@@ -880,19 +880,9 @@ return [
             'route_name'                 => 'api.rest.feed',
             'route_identifier_name'      => 'feed_id',
             'collection_name'            => 'feed',
-            'entity_http_methods'        => [
-                0 => 'GET',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods'    => [
-                0 => 'GET',
-                1 => 'POST',
-            ],
-            'collection_query_whitelist' => [
-                0 => 'page',
-                1 => 'per_page',
-            ],
+            'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET', 'POST'],
+            'collection_query_whitelist' => ['page', 'per_page'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => 'Api\\V1\\Rest\\Feed\\FeedEntity',
@@ -904,20 +894,9 @@ return [
             'route_name'                 => 'api.rest.feed-user',
             'route_identifier_name'      => 'feed_id',
             'collection_name'            => 'user-feed',
-            'entity_http_methods'        => [
-                0 => 'GET',
-                1 => 'POST',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods'    => [
-                0 => 'GET',
-            ],
-            'collection_query_whitelist' => [
-                0 => 'page',
-                1 => 'per_page',
-                2 => 'read',
-            ],
+            'entity_http_methods'        => ['GET', 'POST', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page', 'read'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => 'Api\\V1\\Rest\\FeedUser\\FeedUserEntity',
@@ -1799,7 +1778,7 @@ return [
         'Api\V1\Rest\UserName\Controller'       => [
             'input_filter' => 'Api\V1\Rest\UserName\Validator',
         ],
-        'Api\V1\Rest\Flip\Controller'       => [
+        'Api\V1\Rest\Flip\Controller'           => [
             'input_filter' => 'Api\V1\Rest\Flip\Validator',
         ],
         'Api\V1\Rest\FlipUser\Controller'       => [
@@ -2263,7 +2242,7 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
-        'Api\V1\Rest\Flip\Validator'       => [
+        'Api\V1\Rest\Flip\Validator'           => [
             [
                 'required'    => true,
                 'validators'  => [],
