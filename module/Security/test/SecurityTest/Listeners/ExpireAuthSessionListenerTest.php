@@ -3,11 +3,13 @@
 namespace SecurityTest\Listeners;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Security\Authentication\AuthenticationService;
 use Security\Listeners\ExpireAuthSessionListener;
 use Zend\Session\Config\StandardConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
+use Zend\Session\Storage\ArrayStorage;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
@@ -42,7 +44,7 @@ class ExpireAuthSessionListenerTest extends TestCase
      */
     public function setUpListener()
     {
-        $this->authService = \Mockery::mock('\Security\Authentication\AuthenticationService');
+        $this->authService = \Mockery::mock(AuthenticationService::class);
         $this->listener    = new ExpireAuthSessionListener($this->container);
         $this->listener->setAuthenticationService($this->authService);
     }
@@ -54,7 +56,7 @@ class ExpireAuthSessionListenerTest extends TestCase
     {
         Container::setDefaultManager(null);
         $config = new StandardConfig([
-            'storage' => 'Zend\\Session\\Storage\\ArrayStorage',
+            'storage' => ArrayStorage::class
         ]);
 
         $manager         = new SessionManager($config);

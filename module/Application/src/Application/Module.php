@@ -7,7 +7,7 @@
 namespace Application;
 
 use Application\Listeners\ListenersAggregate;
-use Application\Utils\StaticType;
+use Application\Utils\Type\StaticType;
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\EventManager\SharedEventManager;
 use Zend\Log\Logger;

@@ -69,6 +69,7 @@ class ClassRoomActionTest extends TestCase
         );
 
         $action = new AddClassRoomAction($this->groupService, $classRoom);
+        $action->setOrgId('foo-bar');
 
         $this->assertEquals(100, $action->priority(), 'Priority for class room has changed');
         $this->groupService->shouldReceive('createGroup')

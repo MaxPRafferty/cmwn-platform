@@ -6,10 +6,12 @@ use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use Friend\Service\FriendService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Child;
 use User\UserInterface;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 
 /**
@@ -61,10 +63,10 @@ class FriendServiceTest extends TestCase
     public function setUpGateway()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
 
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')
             ->andReturn('user_friends')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();

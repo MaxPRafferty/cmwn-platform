@@ -131,7 +131,6 @@ return [
                     'edit.user.child',
                     'flag.image',
                     'import',
-                    'pick.username',
                     'remove.child.group',
                     'remove.group',
                     'remove.group.user',

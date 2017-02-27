@@ -2,23 +2,33 @@
 
 namespace Api\V1\Rest\User;
 
-use Api\Links\ProfileLink;
-use Api\Links\UserFlipLink;
-use Api\Links\UserImageLink;
 use Api\ScopeAwareInterface;
 use Friend\FriendInterface;
 use Friend\FriendTrait;
 use User\User;
 use User\UserInterface;
-use ZF\Hal\Link\LinkCollection;
-use ZF\Hal\Link\LinkCollectionAwareInterface;
 
 /**
- * Class UserEntity
+ * A UserEntity represents a user through the API
+ *
+ * @SWG\Definition(
+ *     description="A UserEntity represents a user through the API",
+ *     @SWG\Property(
+ *         type="object",
+ *         property="_links",
+ *         description="Links the user might have",
+ *         allOf={
+ *             @SWG\Schema(ref="#/definitions/SelfLink"),
+ *         }
+ *     ),
+ *     allOf={
+ *         @SWG\Schema(ref="#/definitions/User"),
+ *         @SWG\Schema(ref="#/definitions/SelfLink"),
+ *     }
+ * )
  */
 class UserEntity extends User implements
     UserInterface,
-    LinkCollectionAwareInterface,
     ScopeAwareInterface,
     FriendInterface
 {
@@ -30,22 +40,8 @@ class UserEntity extends User implements
     protected $type;
 
     /**
-     * @var LinkCollection
-     */
-    protected $links;
-
-    /**
-     * @return mixed
-     */
-    public function getArrayCopy()
-    {
-        return array_merge(
-            parent::getArrayCopy(),
-            ['links' => $this->getLinks()]
-        );
-    }
-
-    /**
+     * There are different type of user but the entity is agnostic to those classes
+     *
      * @param $type
      */
     protected function setType($type)
@@ -56,63 +52,18 @@ class UserEntity extends User implements
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getType()
+    public function getType(): string
     {
-        return $this->type;
+        return (string)$this->type;
     }
 
     /**
-     * Set link collection
-     *
-     * @param  LinkCollection $links
-     * @return self
-     */
-    public function setLinks(LinkCollection $links)
-    {
-        $this->links = $links;
-        return $this;
-    }
-
-    /**
-     * Get link collection
-     *
-     * @return LinkCollection
-     */
-    public function getLinks()
-    {
-        if (!$this->links instanceof LinkCollection) {
-            $this->setLinks(new LinkCollection());
-        }
-
-        $this->injectLinks($this->links);
-        return $this->links;
-    }
-
-    /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getEntityType()
     {
         return strtolower($this->getType());
-    }
-
-    /**
-     * @param LinkCollection $links
-     */
-    protected function injectLinks(LinkCollection $links)
-    {
-        if (!$links->has('profile') && !empty($this->getUserId())) {
-            $links->add(new ProfileLink($this->getUserId()));
-        }
-
-        if (!$links->has('user_image') && !empty($this->getUserId())) {
-            $links->add(new UserImageLink($this->getUserId()));
-        }
-
-        if (!$links->has('user_flip') && $this->getType() === static::TYPE_CHILD) {
-            $links->add(new UserFlipLink($this->getUserId()));
-        }
     }
 }

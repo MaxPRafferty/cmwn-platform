@@ -16,11 +16,11 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'view.all.orgs',
-                            \Security\Rule\Provider\RoleProvider::PROVIDER_NAME
+                            \Security\Rule\Provider\RoleProvider::PROVIDER_NAME,
                         ],
                     ],
                     [
-                        'name'    => \Rule\Rule\Object\IsTypeRule::class,
+                        'name'    => \Api\Rule\Rule\EntityIsType::class,
                         'options' => [
                             \Api\V1\Rest\User\MeEntity::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
@@ -63,7 +63,7 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'view.org.users',
-                            \Api\Rule\Provider\ActiveUserOrgRoleProvider::class,
+                            \Api\Rule\Provider\ActiveUserOrgRoleProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -101,7 +101,7 @@ return [
                         'options' => [
                             \Security\Authorization\Rbac::class,
                             'import',
-                            \Api\Rule\Provider\ActiveUserGroupRoleProvider::class,
+                            \Api\Rule\Provider\ActiveUserGroupRoleProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -114,7 +114,7 @@ return [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
                             \Api\Links\ImportLink::class,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
                 ],
@@ -128,9 +128,9 @@ return [
 
     'specifications' => [
         'factories' => [
-            'org-types-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'org-user-hal-link'    => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'import-hal-link'   => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'org-types-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'org-user-hal-link'  => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'import-hal-link'    => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
     ],
 ];

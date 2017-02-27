@@ -2,7 +2,7 @@
 
 namespace SuggestTest;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\InvalidSuggestionException;
 use Suggest\SuggestionCollection;
 use User\Child;

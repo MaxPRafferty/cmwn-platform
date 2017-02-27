@@ -104,7 +104,7 @@ class UserServiceTest extends TestCase
         $expectedData = [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
-            'email'        => 'english_student@ginasink.com',
+            'email'        => 'english_student@changemyworldnow.com',
             'type'         => 'CHILD',
             'first_name'   => 'John',
             'middle_name'  => 'D',
@@ -133,7 +133,7 @@ class UserServiceTest extends TestCase
         $expectedData = [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
-            'email'        => 'english_student@ginasink.com',
+            'email'        => 'english_student@changemyworldnow.com',
             'type'         => 'CHILD',
             'first_name'   => 'John',
             'middle_name'  => 'D',
@@ -162,7 +162,7 @@ class UserServiceTest extends TestCase
         $expectedData = [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
-            'email'        => 'english_student@ginasink.com',
+            'email'        => 'english_student@changemyworldnow.com',
             'type'         => 'CHILD',
             'first_name'   => 'John',
             'middle_name'  => 'D',
@@ -191,7 +191,7 @@ class UserServiceTest extends TestCase
         $expectedData = [
             'user_id'      => 'english_student',
             'username'     => 'english_student',
-            'email'        => 'english_student@ginasink.com',
+            'email'        => 'english_student@changemyworldnow.com',
             'type'         => 'CHILD',
             'first_name'   => 'John',
             'middle_name'  => 'D',

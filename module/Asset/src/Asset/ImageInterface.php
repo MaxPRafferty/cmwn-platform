@@ -2,12 +2,15 @@
 
 namespace Asset;
 
+use Application\Utils\Date\SoftDeleteInterface;
+use Application\Utils\Date\StandardDateInterface;
+
 /**
  * Interface ImageInterface
  *
  * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
  */
-interface ImageInterface
+interface ImageInterface extends SoftDeleteInterface, StandardDateInterface
 {
     const IMAGE_APPROVED = 1;
     const IMAGE_PENDING  = 0;
@@ -86,21 +89,6 @@ interface ImageInterface
     public function setType($type);
 
     /**
-     * @return \DateTime|null
-     */
-    public function getUpdated();
-
-    /**
-     * @param \DateTime|null $updated
-     * @return $this
-     */
-    public function setUpdated($updated);
-    /**
-     * @return \DateTime|null
-     */
-    public function getDeleted();
-
-    /**
      * @param \DateTime|string|null $deleted
      * @return $this
      */
@@ -109,23 +97,7 @@ interface ImageInterface
     /**
      * @return bool
      */
-    public function isDeleted();
-
-    /**
-     * @return bool
-     */
     public function isRejected();
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getCreated();
-
-    /**
-     * @param \DateTime|string|null $created
-     * @return $this
-     */
-    public function setCreated($created);
 
     /**
      * @return integer

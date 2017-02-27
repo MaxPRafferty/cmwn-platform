@@ -10,7 +10,7 @@ use Zend\Log\LoggerAbstractServiceFactory;
 use Zend\Log\Writer\Noop;
 
 /**
- * Class LoggerFactory
+ * Creates a ZF Logger
  */
 class LoggerFactory extends LoggerAbstractServiceFactory
 {

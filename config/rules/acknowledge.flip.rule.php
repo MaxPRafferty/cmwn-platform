@@ -1,6 +1,6 @@
 <?php
-return [
 
+return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
         /**
          * This is a rule that check at login if the user has a flip that needs to be acknowledged

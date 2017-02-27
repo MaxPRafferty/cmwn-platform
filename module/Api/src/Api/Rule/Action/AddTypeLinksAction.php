@@ -31,14 +31,15 @@ class AddTypeLinksAction implements ActionInterface
 
     /**
      * AddGroupTypeLinks constructor.
+     *
      * @param string $link
      * @param string $typeProviderName
      * @param string $entityProviderName
      */
     public function __construct(string $link, string $typeProviderName, string $entityProviderName)
     {
-        $this->link = $link;
-        $this->typeProviderName = $typeProviderName;
+        $this->link               = $link;
+        $this->typeProviderName   = $typeProviderName;
         $this->entityProviderName = $entityProviderName;
     }
 
@@ -47,7 +48,7 @@ class AddTypeLinksAction implements ActionInterface
      */
     public function __invoke(RuleItemInterface $item)
     {
-        $types = $item->getParam($this->typeProviderName);
+        $types  = $item->getParam($this->typeProviderName);
         $entity = $item->getParam($this->entityProviderName);
 
         if (!$entity instanceof LinkCollectionAwareInterface) {
@@ -57,7 +58,7 @@ class AddTypeLinksAction implements ActionInterface
         foreach ($types as $type) {
             $options = [$type, $entity];
 
-            /**@var Link $link*/
+            /**@var Link $link */
             $link = new $this->link(...$options);
             if (!$entity->getLinks()->has($link->getRelation())) {
                 $entity->getLinks()->add($link);

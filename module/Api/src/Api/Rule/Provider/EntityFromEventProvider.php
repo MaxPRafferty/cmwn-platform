@@ -4,7 +4,6 @@ namespace Api\Rule\Provider;
 
 use Rule\Event\Provider\AbstractEventProvider;
 use ZF\Hal\Entity;
-use ZF\Hal\Link\LinkCollectionAwareInterface;
 
 /**
  * This fetches the entity from the event
@@ -24,16 +23,13 @@ class EntityFromEventProvider extends AbstractEventProvider
 
     /**
      * @inheritdoc
+     * @return Entity|null
      */
     public function getValue()
     {
         $entity = $this->getEvent()->getParam('entity');
 
         if ($entity instanceof Entity) {
-            return $entity->getEntity();
-        }
-
-        if ($entity instanceof LinkCollectionAwareInterface) {
             return $entity;
         }
 
