@@ -80,7 +80,7 @@ class AddressGroupResource extends AbstractResourceListener
      *          type="object",
      *          @SWG\Items(ref="#/definitions/Error")
      *     )
-     *   )
+     *   ),
      *  @SWG\Response(
      *     response=403,
      *     description="Not Authorized",

@@ -52,33 +52,22 @@ class GroupResource extends AbstractResourceListener
      *     name="body",
      *     description="Group data",
      *     required=true,
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Group")
+     *     @SWG\Schema(ref="#/definitions/Group")
      *   ),
      *   @SWG\Response(
      *     response=201,
      *     description="Group was created",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/GroupEntity"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GroupEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="Validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/ValidationError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $data
@@ -129,36 +118,23 @@ class GroupResource extends AbstractResourceListener
      *     maximum=1.0
      *   ),
      *   @SWG\Response(
-     *     response=200,
-     *     description="Group was deleted",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/GroupEntity"
-     *     )
+     *     response=204,
+     *     description="Group was deleted"
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Group not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to delete or access group",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  string $groupId
@@ -201,28 +177,20 @@ class GroupResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="The requested group",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/GroupCollection")
+     *     @SWG\Schema(ref="#/definitions/GroupEntity")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Group not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
-     * @param  mixed $groupId
+     * @param  string $groupId
      *
      * @return ApiProblem|GroupEntity
      */
@@ -287,29 +255,24 @@ class GroupResource extends AbstractResourceListener
      *     format="int32",
      *     maximum=1.0
      *   ),
+     *   @SWG\Parameter(
+     *     name="org_id",
+     *     in="query",
+     *     description="Fetch groups that belong to this org",
+     *     type="string",
+     *     format="uuid",
+     *     maximum=1.0,
+     *     maximum=1.0
+     *   ),
      *   @SWG\Response(
      *     response=200,
      *     description="Paged groups",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/GroupCollection"
-     *     )
-     *   ),
-     *   @SWG\Response(
-     *     response=404,
-     *     description="Group not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GroupCollection")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -319,6 +282,9 @@ class GroupResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         $params = (array)$params;
+        // TODO Provide a better way to remove these parameters using ZF\Rest\Controller options
+        unset($params['page']);
+        unset($params['per_page']);
         if (!isset($params['parent'])) {
             return new GroupCollection($this->service->fetchAll($params, new GroupEntity()));
         }
@@ -362,34 +328,27 @@ class GroupResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/GroupEntity"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GroupEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/ValidationError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to update a group",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
+     *   ),
+     *   @SWG\Response(
+     *     response=404,
+     *     description="Group not found",
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $groupId

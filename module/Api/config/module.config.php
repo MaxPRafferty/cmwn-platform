@@ -61,14 +61,14 @@ return [
         'factories' => [
             \Api\Rule\Action\AddHalLinkAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
-            \Api\Rule\Action\ThrowException::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class     => \Rule\Action\Service\BuildActionFactory::class,
         ],
 
         'shared' => [
             \Api\Rule\Action\AddHalLinkAction::class   => false,
             \Api\Rule\Action\AddTypeLinksAction::class => false,
             \Api\Rule\Action\ThrowException::class     => false,
-        ]
+        ],
     ],
 
     'providers' => [
@@ -573,7 +573,7 @@ return [
             'collection_name'            => 'user',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['type', 'page', 'per_page', 'deleted', 'username'],
+            'collection_query_whitelist' => ['type', 'page', 'per_page', 'deleted'],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\User\UserEntity::class,
@@ -922,19 +922,9 @@ return [
             'route_name'                 => 'api.rest.feed',
             'route_identifier_name'      => 'feed_id',
             'collection_name'            => 'feed',
-            'entity_http_methods'        => [
-                0 => 'GET',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods'    => [
-                0 => 'GET',
-                1 => 'POST',
-            ],
-            'collection_query_whitelist' => [
-                0 => 'page',
-                1 => 'per_page',
-            ],
+            'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET', 'POST'],
+            'collection_query_whitelist' => ['page', 'per_page'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => 'Api\\V1\\Rest\\Feed\\FeedEntity',
@@ -946,20 +936,9 @@ return [
             'route_name'                 => 'api.rest.feed-user',
             'route_identifier_name'      => 'feed_id',
             'collection_name'            => 'user-feed',
-            'entity_http_methods'        => [
-                0 => 'GET',
-                1 => 'POST',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods'    => [
-                0 => 'GET',
-            ],
-            'collection_query_whitelist' => [
-                0 => 'page',
-                1 => 'per_page',
-                2 => 'read',
-            ],
+            'entity_http_methods'        => ['GET', 'POST', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page', 'read'],
             'page_size'                  => 25,
             'page_size_param'            => 'per_page',
             'entity_class'               => 'Api\\V1\\Rest\\FeedUser\\FeedUserEntity',

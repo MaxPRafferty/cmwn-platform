@@ -54,26 +54,17 @@ class OrgResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=201,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/OrgEntity"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/OrgEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/ValidationError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $data
@@ -122,36 +113,23 @@ class OrgResource extends AbstractResourceListener
      *     maximum=1.0
      *   ),
      *   @SWG\Response(
-     *     response=200,
-     *     description="Organization that was deleted",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/OrgEntity"
-     *     )
+     *     response=204,
+     *     description="Organization was deleted"
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Organization not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to access or delete the organization",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $orgId
@@ -195,26 +173,17 @@ class OrgResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/OrgCollection"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/OrgEntity")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Org not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $orgId
@@ -267,26 +236,12 @@ class OrgResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="The current page of organizations",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/OrgCollection"
-     *     )
-     *   ),
-     *   @SWG\Response(
-     *     response=404,
-     *     description="Org not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/OrgCollection")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -295,6 +250,10 @@ class OrgResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
+        $params = (array)$params;
+        // TODO Provide a better way to remove these parameters using ZF\Rest\Controller options
+        unset($params['page']);
+        unset($params['per_page']);
         return new OrgCollection($this->service->fetchAll($params, new OrgEntity()));
     }
 
@@ -331,34 +290,27 @@ class OrgResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/OrgEntity"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/OrgEntity")
+     *   ),
+     *   @SWG\Response(
+     *     response=404,
+     *     description="Organization not found",
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/ValidationError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=403,
-     *     description="Not Authorized to create a org",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     description="Not Authorized to update this organization",
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $orgId

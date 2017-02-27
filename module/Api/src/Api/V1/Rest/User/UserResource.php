@@ -64,30 +64,22 @@ class UserResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=201,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/UserEntity"
-     *     )
-     *   ),
-     *   @SWG\Response(
-     *     response=422,
-     *     description="validation failed"
+     *     @SWG\Schema(ref="#/definitions/UserEntity")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="User not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/UserEntity")
+     *   ),
+     *   @SWG\Response(
+     *     response=422,
+     *     description="validation failed",
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $data
@@ -135,36 +127,23 @@ class UserResource extends AbstractResourceListener
      *     minimum=1.0
      *   ),
      *   @SWG\Response(
-     *     response=200,
-     *     description="User was deleted",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/UserEntity"
-     *     )
+     *     response=204,
+     *     description="User was deleted"
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="User not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to delete or access user",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  string $userId
@@ -204,7 +183,7 @@ class UserResource extends AbstractResourceListener
      *   ),
      *   @SWG\Response(
      *     response=200,
-     *     description="",
+     *     description="The User",
      *     @SWG\Schema(
      *          type="object",
      *          ref="#/definitions/UserEntity"
@@ -213,18 +192,17 @@ class UserResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=404,
      *     description="User not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/NotFoundError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
+     *   ),
+     *   @SWG\Response(
+     *     response=403,
+     *     description="Not allowed to access this user",
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      *
@@ -290,22 +268,17 @@ class UserResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Paged users",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/UserCollection"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/UserCollection")
      *   ),
      *   @SWG\Response(
      *     response=404,
-     *     description="User not found"
+     *     description="User not found",
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -314,6 +287,11 @@ class UserResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
+        $params = (array)$params;
+        // TODO Provide a better way to remove these parameters using ZF\Rest\Controller options
+        unset($params['page']);
+        unset($params['per_page']);
+
         return new UserCollection($this->service->fetchAll($params, new UserEntity()));
     }
 
@@ -349,34 +327,22 @@ class UserResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/UserEntity"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/UserEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/ValidationError"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=403,
-     *     description="Not Authorized to create a user",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     description="Not Authorized to update or access this user",
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          ref="#/definitions/Error"
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      *
