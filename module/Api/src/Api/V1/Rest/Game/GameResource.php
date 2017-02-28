@@ -67,26 +67,17 @@ class GameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Paged games",
-     *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/GameCollection")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GameCollection")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Game not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -131,18 +122,12 @@ class GameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=404,
      *     description="Game not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $gameId
@@ -178,34 +163,22 @@ class GameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=201,
      *     description="Game was created",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/GameEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GameEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="Validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to update a game",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $data
@@ -251,34 +224,22 @@ class GameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/GameEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/GameEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to update a game",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $gameId
@@ -327,40 +288,28 @@ class GameResource extends AbstractResourceListener
      *     maximum=1.0
      *   ),
      *   @SWG\Response(
-     *     response=200,
+     *     response=204,
      *     description="Game was deleted",
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Game not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to delete or access game",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=500,
      *     description="Problem occured during execution",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  string $gameId

@@ -15,7 +15,7 @@ use Zend\Paginator\Paginator;
  *         description="A List of Address Entities",
  *         @SWG\Property(
  *             type="array",
- *             property="group",
+ *             property="address",
  *             description="A List of Addresses",
  *             @SWG\Items(ref="#/definitions/AddressEntity")
  *         )

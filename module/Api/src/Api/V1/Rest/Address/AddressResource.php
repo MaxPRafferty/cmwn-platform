@@ -5,7 +5,6 @@ namespace Api\V1\Rest\Address;
 use Address\Address;
 use Address\Service\AddressServiceInterface;
 use Group\Service\GroupAddressServiceInterface;
-use Zend\Db\Sql\Predicate\Operator;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
@@ -61,34 +60,22 @@ class AddressResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Address was fetched",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/AddressEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/AddressEntity")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Address not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(@SWG\Items(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to access address",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $id
@@ -113,6 +100,21 @@ class AddressResource extends AbstractResourceListener
      *     securityDefinition="basic"
      *   ),
      *   @SWG\Parameter(
+     *     name="postal_code",
+     *     in="query",
+     *     description="Postal/zip code of the address",
+     *     type="string",
+     *     maximum=1.0
+     *   ),
+     *   @SWG\Parameter(
+     *     name="filter",
+     *     in="query",
+     *     description="type of entity requested",
+     *     enum={"group"}
+     *     type="string",
+     *     maximum=1.0
+     *   ),
+     *   @SWG\Parameter(
      *     name="page",
      *     in="query",
      *     description="Page number to fetch",
@@ -131,26 +133,17 @@ class AddressResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Paged addresses",
-     *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/AddressCollection")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/AddressCollection")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(@SWG\Items(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -159,20 +152,22 @@ class AddressResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        $where = null;
         $prototype = new AddressEntity([]);
 
-        if (isset($params['postal_code'])) {
-            $where = new Operator('postal_code', Operator::OP_EQ, $params['postal_code']);
-        }
+        $params = (array) $params;
 
+        unset($params['page']);
+        unset($params['per_page']);
         if (isset($params['filter']) && $params['filter'] === 'group') {
+            unset($params['filter']);
             return new AddressCollection(
-                $this->groupAddressService->fetchAddressesWithGroupsAttached($where, $prototype)
+                $this->groupAddressService->fetchAddressesWithGroupsAttached($params, $prototype)
             );
         }
-
-        return new AddressCollection($this->addressService->fetchAll($where, $prototype));
+        if (empty($params)) {
+            $params = null;
+        }
+        return new AddressCollection($this->addressService->fetchAll($params, $prototype));
     }
 
     /**
@@ -197,34 +192,22 @@ class AddressResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=201,
      *     description="Address was created",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/AddressEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/AddressEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="Validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $data
@@ -267,34 +250,22 @@ class AddressResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="successful operation",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/AddressEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/AddressEntity")
      *   ),
      *   @SWG\Response(
      *     response=422,
      *     description="validation failed",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/ValidationError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/ValidationError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to update address",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $id
@@ -333,36 +304,28 @@ class AddressResource extends AbstractResourceListener
      *     maximum=1.0
      *   ),
      *   @SWG\Response(
-     *     response=200,
+     *     response=204,
      *     description="address was deleted",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/AddressEntity")
-     *     )
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Address not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to delete or access address",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
+     *   )
+     *   @SWG\Response(
+     *     response=500,
+     *     description="Problem occurred during execution",
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  string $id
@@ -372,7 +335,10 @@ class AddressResource extends AbstractResourceListener
     public function delete($id)
     {
         $address = $this->addressService->fetchAddress($id);
-        $this->addressService->deleteAddress($address);
-        return new ApiProblem(200, 'Deleted, Ok.');
+        if ($this->addressService->deleteAddress($address)) {
+            return true;
+        }
+
+        return new ApiProblem(500, 'problem occured during address deletion');
     }
 }

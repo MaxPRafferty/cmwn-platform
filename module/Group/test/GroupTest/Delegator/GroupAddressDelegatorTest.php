@@ -10,11 +10,8 @@ use Group\Group;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Select;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
-use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Adapter\Iterator;
 
 /**
@@ -809,14 +806,13 @@ class GroupAddressDelegatorTest extends TestCase
      */
     public function testItShouldTriggerErrorEventOnExceptionWhileFetchAllGroupsInAddress()
     {
+        $exception = new NotFoundException('test');
         $this->addressService->shouldReceive('fetchAllGroupsInAddress')
-            ->andReturnUsing(function () {
-                throw new \Exception();
-            })->once();
+            ->andThrow($exception)->once();
         try {
             $this->delegator->fetchAllGroupsInAddress();
             $this->fail('exception not thrown');
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             $this->assertEquals(
                 2,
                 count($this->calledEvents),
@@ -840,7 +836,7 @@ class GroupAddressDelegatorTest extends TestCase
                     'params' => [
                         'where'     => null,
                         'prototype' => null,
-                        'exception' => new \Exception,
+                        'exception' => $exception,
                     ],
                 ],
                 $this->calledEvents[1],
