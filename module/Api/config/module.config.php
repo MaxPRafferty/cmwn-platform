@@ -97,12 +97,12 @@ return [
 
         ],
         'shared'    => [
-            \Api\Rule\Rule\EntityIsType::class => false,
+            \Api\Rule\Rule\EntityIsType::class                => false,
             \Api\Rule\Provider\EntityFromEventProvider::class => false,
         ],
     ],
 
-    'shared-listeners'       => [
+    'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -113,7 +113,7 @@ return [
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
     ],
-    'service_manager'        => [
+    'service_manager'  => [
         'factories' => [
             \Api\Listeners\ChangePasswordListener::class              =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
@@ -183,7 +183,7 @@ return [
                 \Api\V1\Rest\GroupReset\GroupResetResourceFactory::class,
         ],
     ],
-    'router'                 => [
+    'router'           => [
         'routes' => [
             'api.rest.user'            => [
                 'type'    => 'Segment',
@@ -212,7 +212,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.user-game'            => [
+            'api.rest.user-game'       => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/user/:user_id/game[/:game_id]',
@@ -467,9 +467,6 @@ return [
             'api.rest.feed'            => [
                 'type'    => 'Segment',
                 'options' => [
-            'api.rest.feed'            => [
-                'type'    => 'Segment',
-                'options' => [
                     'route'    => '/feed[/:feed_id]',
                     'defaults' => [
                         'controller' => 'Api\\V1\\Rest\\Feed\\Controller',
@@ -513,7 +510,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.group-address'   => [
+            'api.rest.address-group'   => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/address/:address_id/group[/:group_id]',
@@ -616,7 +613,7 @@ return [
             'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
             'service_name'               => 'Game',
         ],
-        'Api\V1\Rest\UserGame\Controller'           => [
+        'Api\V1\Rest\UserGame\Controller'       => [
             'listener'                   => \Api\V1\Rest\UserGame\UserGameResource::class,
             'route_name'                 => 'api.rest.user-game',
             'route_identifier_name'      => 'game_id',
@@ -1127,7 +1124,7 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\UserGame\Controller'           => [
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1296,7 +1293,7 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\UserGame\Controller'           => [
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1420,6 +1417,14 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
+            'Api\V1\Rest\Address\Controller'        => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\GroupAddress\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
         ],
     ],
     'zf-hal'                 => [
@@ -1468,13 +1473,13 @@ return [
                 'route_identifier_name'  => 'game_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\UserGame\UserGameEntity::class                         => [
+            \Api\V1\Rest\UserGame\UserGameEntity::class                 => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
                 'route_identifier_name'  => 'user_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\UserGame\UserGameCollection::class                     => [
+            \Api\V1\Rest\UserGame\UserGameCollection::class             => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
                 'route_identifier_name'  => 'user_id',
