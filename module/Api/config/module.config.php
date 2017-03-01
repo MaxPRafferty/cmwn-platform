@@ -2446,10 +2446,9 @@ return [
                 'filters'          => [],
                 'name'             => 'password_confirmation',
                 'description'      => 'Confirmed password',
-                'messageTemplates' => [
+                'messages'         => [
                     \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
                     \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
-
                 ],
             ],
         ],
