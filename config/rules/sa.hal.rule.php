@@ -71,6 +71,14 @@ return [
                             false,
                         ],
                     ],
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\AddressLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            false,
+                        ],
+                    ],
                 ],
             ],
             'providers'           => [

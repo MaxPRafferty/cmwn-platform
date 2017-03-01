@@ -3,7 +3,6 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase;
-use PHPUnit\DbUnit\DataSet\ArrayDataSet;
 use Zend\Json\Json;
 
 /**
@@ -16,7 +15,7 @@ class AddressGroupResourceTest extends AbstractApigilityTestCase
      */
     public function getDataSet()
     {
-        return new ArrayDataSet(include __DIR__ . '/../../../DataSets/AddressDataSet.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/AddressDataSet.php');
     }
 
     /**
@@ -59,8 +58,8 @@ class AddressGroupResourceTest extends AbstractApigilityTestCase
         $this->assertResponseStatusCode(200);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('groups', $body['_embedded']);
-        $groups = $body['_embedded']['groups'];
+        $this->assertArrayHasKey('group', $body['_embedded']);
+        $groups = $body['_embedded']['group'];
         $expected = ['foo_school'];
         $actual = [];
         foreach ($groups as $group) {

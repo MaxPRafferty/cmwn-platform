@@ -11,11 +11,25 @@ use ZF\Rest\AbstractResourceListener;
 class SuperAdminSettingsResource extends AbstractResourceListener
 {
     /**
+     * @var array
+     */
+    protected $config;
+
+    /**
+     * SuperAdminSettingsResource constructor.
+     * @param array $config
+     */
+    public function __construct(array $config = [])
+    {
+        $this->config = $config;
+    }
+
+    /**
      * @param array $params
      * @return SuperAdminSettingsEntity
      */
     public function fetchAll($params = [])
     {
-        return new SuperAdminSettingsEntity([]);
+        return new SuperAdminSettingsEntity($this->config);
     }
 }

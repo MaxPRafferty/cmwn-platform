@@ -79,26 +79,17 @@ class UserGameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=201,
      *     description="Game attached to user",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/UserGameEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/UserGameEntity")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to attach game",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $data
@@ -155,34 +146,22 @@ class UserGameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=404,
      *     description="Game not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to detach or access game",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=500,
      *     description="Problem occured during execution",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  string $id
@@ -245,18 +224,12 @@ class UserGameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Paged games",
-     *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref="#/definitions/UserGameCollection")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/UserGameCollection")
      *   ),
-     *      @SWG\Response(
+     *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -304,34 +277,22 @@ class UserGameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Game was fetched",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/UserGameEntity")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/UserGameEntity")
      *   ),
      *   @SWG\Response(
      *     response=404,
      *     description="Game not found",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/NotFoundError")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized to access game",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   ),
      *   @SWG\Response(
      *     response=401,
      *     description="Not Authenticated",
-     *     @SWG\Schema(
-     *          type="object",
-     *          @SWG\Items(ref="#/definitions/Error")
-     *     )
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  mixed $id
