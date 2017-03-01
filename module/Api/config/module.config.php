@@ -1719,7 +1719,7 @@ return [
             'input_filter' => 'Api\V1\Rest\Reset\Validator',
         ],
         'Api\V1\Rest\UpdatePassword\Controller' => [
-            'input_filter' => 'Api\V1\Rest\UpdatePassword\Validator',
+            'input_filter' => 'Api\V1\Rest\Password\Validator',
         ],
         'Api\V1\Rest\SaveGame\Controller'       => [
             'input_filter' => 'Api\V1\Rest\SaveGame\Validator',
@@ -2130,15 +2130,34 @@ return [
         ],
         'Api\V1\Rest\Password\Validator'       => [
             [
-                'required'   => true,
-                'validators' => [
+                'required'    => true,
+                'validators'  => [
                     [
                         'name'    => \Security\PasswordValidator::class,
                         'options' => [],
                     ],
                 ],
-                'filters'    => [],
-                'name'       => 'password',
+                'filters'     => [],
+                'name'        => 'password',
+                'description' => 'New Password',
+            ],
+            [
+                'required'         => true,
+                'validators'       => [
+                    [
+                        'name'    => \Zend\Validator\Identical::class,
+                        'options' => [
+                            'token' => 'password',
+                            'messages'         => [
+                                \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
+                                \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
+                            ],
+                        ],
+                    ],
+                ],
+                'filters'          => [],
+                'name'             => 'password_confirmation',
+                'description'      => 'Confirmed password',
             ],
         ],
         'Api\V1\Rest\Forgot\Validator'         => [
@@ -2227,38 +2246,7 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\V1\Rest\UpdatePassword\Validator' => [
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Security\PasswordValidator::class,
-                        'options' => [],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password',
-                'description' => 'New Password',
-            ],
-            [
-                'required'         => true,
-                'validators'       => [
-                    [
-                        'name'    => \Zend\Validator\Identical::class,
-                        'options' => [
-                            'token' => 'password',
-                        ],
-                    ],
-                ],
-                'filters'          => [],
-                'name'             => 'password_confirmation',
-                'description'      => 'Confirmed password',
-                'messages'         => [
-                    \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
-                    \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
-                ],
-            ],
-        ],
+
         'Api\V1\Rest\SaveGame\Validator'       => [
             [
                 'required'    => true,
