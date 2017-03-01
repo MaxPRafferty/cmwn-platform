@@ -201,6 +201,50 @@ return [
                 \Group\Rule\Provider\ChildGroupTypesProvider::class,
             ],
         ],
+        'group-address-hal-link' => [
+            'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
+            'id'                  => 'group-address-hal-link',
+            'name'                => 'Attaches the group address hal links for a group entity',
+            'when'                => 'renderEntity',
+            'rules'               => [
+                'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
+                'rules'                 => [
+                    // entity has permissions
+                    [
+                        'name'    => \Api\Rule\Rule\EntityIsType::class,
+                        'options' => [
+                            \Group\GroupInterface::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                    [
+                        'name'    => \Security\Rule\Rule\HasPermission::class,
+                        'options' => [
+                            \Security\Authorization\Rbac::class,
+                            'view.all.group.addresses',
+                            \Api\Rule\Provider\ActiveUserGroupRoleProvider::PROVIDER_NAME
+                        ],
+                    ],
+                ],
+            ],
+            'actions'             => [
+                'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
+                'actions'                 => [
+                    //Add a hal link to the entity
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\GroupAddressLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'providers'           => [
+                \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\ActiveUserGroupRoleProvider::class,
+            ],
+        ],
     ],
     'specifications'                                                => [
         'factories' => [

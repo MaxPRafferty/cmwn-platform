@@ -164,9 +164,7 @@ class AddressResource extends AbstractResourceListener
                 $this->groupAddressService->fetchAddressesWithGroupsAttached($params, $prototype)
             );
         }
-        if (empty($params)) {
-            $params = null;
-        }
+
         return new AddressCollection($this->addressService->fetchAll($params, $prototype));
     }
 
