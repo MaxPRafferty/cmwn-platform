@@ -32,6 +32,10 @@ return [
         \Api\V1\Rest\Org\OrgResource::class                   => [
             \Org\Service\OrganizationServiceInterface::class,
         ],
+        \Api\V1\Rest\Super\SuperResource::class               => [
+            \Security\Service\SecurityServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
+        ],
         \Api\V1\Rest\Address\AddressResource::class           => [
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupAddressServiceInterface::class,
@@ -94,10 +98,11 @@ return [
         ],
         'shared'    => [
             \Api\Rule\Rule\EntityIsType::class => false,
+            \Api\Rule\Provider\EntityFromEventProvider::class => false,
         ],
     ],
 
-    'shared-listeners' => [
+    'shared-listeners'       => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -108,7 +113,7 @@ return [
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
     ],
-    'service_manager'  => [
+    'service_manager'        => [
         'factories' => [
             \Api\Listeners\ChangePasswordListener::class              =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
@@ -178,7 +183,7 @@ return [
                 \Api\V1\Rest\GroupReset\GroupResetResourceFactory::class,
         ],
     ],
-    'router'           => [
+    'router'                 => [
         'routes' => [
             'api.rest.user'            => [
                 'type'    => 'Segment',
@@ -462,6 +467,9 @@ return [
             'api.rest.feed'            => [
                 'type'    => 'Segment',
                 'options' => [
+            'api.rest.feed'            => [
+                'type'    => 'Segment',
+                'options' => [
                     'route'    => '/feed[/:feed_id]',
                     'defaults' => [
                         'controller' => 'Api\\V1\\Rest\\Feed\\Controller',
@@ -505,7 +513,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.address-group'         => [
+            'api.rest.group-address'   => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/address/:address_id/group[/:group_id]',
@@ -1268,7 +1276,8 @@ return [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
-            ],'Api\V1\Rest\AddressGroup\Controller'   => [
+            ],
+            'Api\V1\Rest\AddressGroup\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -2420,8 +2429,8 @@ return [
                 'description' => 'New Password',
             ],
             [
-                'required'    => true,
-                'validators'  => [
+                'required'         => true,
+                'validators'       => [
                     [
                         'name'    => \Zend\Validator\Identical::class,
                         'options' => [
@@ -2429,9 +2438,14 @@ return [
                         ],
                     ],
                 ],
-                'filters'     => [],
-                'name'        => 'password_confirmation',
-                'description' => 'Confirmed password',
+                'filters'          => [],
+                'name'             => 'password_confirmation',
+                'description'      => 'Confirmed password',
+                'messageTemplates' => [
+                    \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
+                    \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
+
+                ],
             ],
         ],
         'Api\V1\Rest\SaveGame\Validator'       => [
@@ -2629,57 +2643,6 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\V1\Rest\Address\Validator'        => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'administrative_area',
-                'description' => 'State / Province / Region',
-            ],
-            [
-                'required'    => false,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'sub_administrative_area',
-                'description' => 'County / District',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'locality',
-                'description' => 'City / Town',
-            ],
-            [
-                'required'    => false,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'dependent_locality',
-                'description' => 'Dependent locality',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'postal_code',
-                'description' => 'Postal code / ZIP Code',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'thoroughfare',
-                'description' => 'Street address',
-            ],
-            [
-                'required'    => false,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'premise',
-                'description' => 'Apartment, Suite, Box number, etc',
-            ],
-        ],
         'Api\\V1\\Rest\\Feed\\Validator'       => [
             0 => [
                 'required'    => true,
@@ -2765,6 +2728,57 @@ return [
                 'name'          => 'read_flag',
                 'description'   => 'The Read flag for user feed',
                 'error_message' => 'Invalid read flag for user feed',
+            ],
+        ],
+        'Api\V1\Rest\Address\Validator'        => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'administrative_area',
+                'description' => 'State / Province / Region',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'sub_administrative_area',
+                'description' => 'County / District',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'locality',
+                'description' => 'City / Town',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'dependent_locality',
+                'description' => 'Dependent locality',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'postal_code',
+                'description' => 'Postal code / ZIP Code',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'thoroughfare',
+                'description' => 'Street address',
+            ],
+            [
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'premise',
+                'description' => 'Apartment, Suite, Box number, etc',
             ],
         ],
         'Api\V1\Rest\SuperFlag\Validator'      => [
