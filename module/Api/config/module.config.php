@@ -1,44 +1,44 @@
 <?php
 return [
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
-        \Api\V1\Rest\Ack\AckResource::class => [
+        \Api\V1\Rest\Ack\AckResource::class                   => [
             \Flip\Service\FlipUserServiceInterface::class,
         ],
-        \Api\V1\Rest\Feed\FeedResource::class => [
+        \Api\V1\Rest\Feed\FeedResource::class                 => [
             \Feed\Service\FeedServiceInterface::class,
         ],
-        \Api\V1\Rest\FeedUser\FeedUserResource::class => [
+        \Api\V1\Rest\FeedUser\FeedUserResource::class         => [
             \Feed\Service\FeedUserServiceInterface::class,
         ],
-        \Api\Listeners\InjectSenderListener::class => [
+        \Api\Listeners\InjectSenderListener::class            => [
             \User\Service\UserServiceInterface::class,
         ],
-        \Api\V1\Rest\Super\SuperResource::class => [
+        \Api\V1\Rest\Super\SuperResource::class               => [
             \Security\Service\SecurityServiceInterface::class,
             \User\Service\UserServiceInterface::class,
         ],
-        \Api\V1\Rest\Address\AddressResource::class => [
+        \Api\V1\Rest\Address\AddressResource::class           => [
             \Address\Service\AddressServiceInterface::class,
         ],
         \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
             \Address\Service\AddressServiceInterface::class,
-            \Group\Service\GroupServiceInterface::class
+            \Group\Service\GroupServiceInterface::class,
         ],
     ],
 
     'actions' => [
         'factories' => [
-            \Api\Rule\Action\AddHalLinkAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\AddHalLinkAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
-            \Api\Rule\Action\ThrowException::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class     => \Rule\Action\Service\BuildActionFactory::class,
         ],
 
         'shared' => [
             \Api\Rule\Action\AddHalLinkAction::class   => false,
             \Api\Rule\Action\AddTypeLinksAction::class => false,
             \Api\Rule\Action\ThrowException::class     => false,
-        ]
+        ],
     ],
 
     'providers' => [
@@ -47,11 +47,11 @@ return [
         ],
 
         'shared' => [
-            \Api\Rule\Provider\EntityFromEventProvider::class  => false,
+            \Api\Rule\Provider\EntityFromEventProvider::class => false,
         ],
     ],
 
-    'shared-listeners' => [
+    'shared-listeners'       => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -62,7 +62,7 @@ return [
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
     ],
-    'service_manager'  => [
+    'service_manager'        => [
         'factories' => [
             \Api\Listeners\ChangePasswordListener::class              =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
@@ -72,7 +72,7 @@ return [
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Api\Listeners\ScopeListener::class                       =>
                 \Api\Factory\ScopeListenerFactory::class,
-            \Security\Listeners\UserRouteListener::class                   =>
+            \Security\Listeners\UserRouteListener::class              =>
                 \Api\Factory\UserRouteListenerFactory::class,
             \Api\Listeners\UserGroupListener::class                   =>
                 \Api\Factory\UserGroupListenerFactory::class,
@@ -138,7 +138,7 @@ return [
                 \Api\V1\Rest\GroupReset\GroupResetResourceFactory::class,
         ],
     ],
-    'router' => [
+    'router'                 => [
         'routes' => [
             'api.rest.user'            => [
                 'type'    => 'Segment',
@@ -392,25 +392,25 @@ return [
                     ],
                 ],
             ],
-            'api.rest.feed' => [
-                'type' => 'Segment',
+            'api.rest.feed'            => [
+                'type'    => 'Segment',
                 'options' => [
-                    'route' => '/feed[/:feed_id]',
+                    'route'    => '/feed[/:feed_id]',
                     'defaults' => [
                         'controller' => 'Api\\V1\\Rest\\Feed\\Controller',
                     ],
                 ],
             ],
-            'api.rest.feed-user' => [
-                'type' => 'Segment',
+            'api.rest.feed-user'       => [
+                'type'    => 'Segment',
                 'options' => [
-                    'route' => '/user/:user_id/feed[/:feed_id]',
+                    'route'    => '/user/:user_id/feed[/:feed_id]',
                     'defaults' => [
                         'controller' => 'Api\\V1\\Rest\\FeedUser\\Controller',
                     ],
                 ],
             ],
-            'api.rest.super'     => [
+            'api.rest.super'           => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/super[/:user_id]',
@@ -419,7 +419,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.address'     => [
+            'api.rest.address'         => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/address[/:address_id]',
@@ -428,7 +428,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.group-address'     => [
+            'api.rest.group-address'   => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/group/:group_id/address[/:address_id]',
@@ -814,17 +814,17 @@ return [
             'collection_class'           => \Api\V1\Rest\SkribbleNotify\SkribbleNotifyCollection::class,
             'service_name'               => 'SkribbleNotify',
         ],
-        'Api\\V1\\Rest\\Feed\\Controller' => [
-            'listener' => 'Api\\V1\\Rest\\Feed\\FeedResource',
-            'route_name' => 'api.rest.feed',
-            'route_identifier_name' => 'feed_id',
-            'collection_name' => 'feed',
-            'entity_http_methods' => [
+        'Api\\V1\\Rest\\Feed\\Controller'       => [
+            'listener'                   => 'Api\\V1\\Rest\\Feed\\FeedResource',
+            'route_name'                 => 'api.rest.feed',
+            'route_identifier_name'      => 'feed_id',
+            'collection_name'            => 'feed',
+            'entity_http_methods'        => [
                 0 => 'GET',
                 2 => 'PUT',
-                3 => 'DELETE'
+                3 => 'DELETE',
             ],
-            'collection_http_methods' => [
+            'collection_http_methods'    => [
                 0 => 'GET',
                 1 => 'POST',
             ],
@@ -832,36 +832,36 @@ return [
                 0 => 'page',
                 1 => 'per_page',
             ],
-            'page_size' => 25,
-            'page_size_param' => 'per_page',
-            'entity_class' => 'Api\\V1\\Rest\\Feed\\FeedEntity',
-            'collection_class' => 'Api\\V1\\Rest\\Feed\\FeedCollection',
-            'service_name' => 'Feed',
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => 'Api\\V1\\Rest\\Feed\\FeedEntity',
+            'collection_class'           => 'Api\\V1\\Rest\\Feed\\FeedCollection',
+            'service_name'               => 'Feed',
         ],
-        'Api\\V1\\Rest\\FeedUser\\Controller' => [
-            'listener' => 'Api\\V1\\Rest\\FeedUser\\FeedUserResource',
-            'route_name' => 'api.rest.feed-user',
-            'route_identifier_name' => 'feed_id',
-            'collection_name' => 'user-feed',
-            'entity_http_methods' => [
+        'Api\\V1\\Rest\\FeedUser\\Controller'   => [
+            'listener'                   => 'Api\\V1\\Rest\\FeedUser\\FeedUserResource',
+            'route_name'                 => 'api.rest.feed-user',
+            'route_identifier_name'      => 'feed_id',
+            'collection_name'            => 'user-feed',
+            'entity_http_methods'        => [
                 0 => 'GET',
                 1 => 'POST',
                 2 => 'PUT',
-                3 => 'DELETE'
+                3 => 'DELETE',
             ],
-            'collection_http_methods' => [
+            'collection_http_methods'    => [
                 0 => 'GET',
             ],
             'collection_query_whitelist' => [
                 0 => 'page',
                 1 => 'per_page',
-                2 => 'read'
+                2 => 'read',
             ],
-            'page_size' => 25,
-            'page_size_param' => 'per_page',
-            'entity_class' => 'Api\\V1\\Rest\\FeedUser\\FeedUserEntity',
-            'collection_class' => 'Api\\V1\\Rest\\FeedUser\\FeedUserCollection',
-            'service_name' => 'FeedUser',
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => 'Api\\V1\\Rest\\FeedUser\\FeedUserEntity',
+            'collection_class'           => 'Api\\V1\\Rest\\FeedUser\\FeedUserCollection',
+            'service_name'               => 'FeedUser',
         ],
         'Api\V1\Rest\GameData\Controller'       => [
             'listener'                   => \Api\V1\Rest\GameData\GameDataResource::class,
@@ -905,15 +905,15 @@ return [
             'collection_class'           => \Api\V1\Rest\GroupReset\GroupResetCollection::class,
             'service_name'               => 'GroupReset',
         ],
-        'Api\V1\Rest\Ack\Controller'     => [
-            'listener'                   => \Api\V1\Rest\Ack\AckResource::class,
-            'route_name'                 => 'api.rest.acknowledge',
-            'route_identifier_name'      => 'ack_id',
-            'collection_name'            => 'acknowledge',
-            'entity_http_methods'        => ['PUT'],
-            'service_name'               => 'AckFlip',
+        'Api\V1\Rest\Ack\Controller'            => [
+            'listener'              => \Api\V1\Rest\Ack\AckResource::class,
+            'route_name'            => 'api.rest.acknowledge',
+            'route_identifier_name' => 'ack_id',
+            'collection_name'       => 'acknowledge',
+            'entity_http_methods'   => ['PUT'],
+            'service_name'          => 'AckFlip',
         ],
-        'Api\V1\Rest\Super\Controller'     => [
+        'Api\V1\Rest\Super\Controller'          => [
             'listener'                   => \Api\V1\Rest\Super\SuperResource::class,
             'route_name'                 => 'api.rest.super',
             'route_identifier_name'      => 'user_id',
@@ -927,7 +927,7 @@ return [
             'collection_class'           => \Api\V1\Rest\Super\SuperCollection::class,
             'service_name'               => 'SuperFlag',
         ],
-        'Api\V1\Rest\Address\Controller' => [
+        'Api\V1\Rest\Address\Controller'        => [
             'listener'                   => \Api\V1\Rest\Address\AddressResource::class,
             'route_name'                 => 'api.rest.address',
             'route_identifier_name'      => 'address_id',
@@ -941,7 +941,7 @@ return [
             'collection_class'           => \Api\V1\Rest\Address\AddressCollection::class,
             'service_name'               => 'Address',
         ],
-        'Api\V1\Rest\GroupAddress\Controller' => [
+        'Api\V1\Rest\GroupAddress\Controller'   => [
             'listener'                   => \Api\V1\Rest\GroupAddress\GroupAddressResource::class,
             'route_name'                 => 'api.rest.group-address',
             'route_identifier_name'      => 'address_id',
@@ -1117,7 +1117,7 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\FeedUser\Controller'           => [
+            'Api\V1\Rest\FeedUser\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1132,17 +1132,17 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Super\Controller'     => [
+            'Api\V1\Rest\Super\Controller'          => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Address\Controller'     => [
+            'Api\V1\Rest\Address\Controller'        => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\GroupAddress\Controller'     => [
+            'Api\V1\Rest\GroupAddress\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1249,7 +1249,7 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\FeedUser\Controller'           => [
+            'Api\V1\Rest\FeedUser\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1265,15 +1265,15 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Super\Controller'     => [
+            'Api\V1\Rest\Super\Controller'          => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Address\Controller'     => [
+            'Api\V1\Rest\Address\Controller'        => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\GroupAddress\Controller'     => [
+            'Api\V1\Rest\GroupAddress\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1589,13 +1589,13 @@ return [
                 'route_identifier_name'  => 'feed_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\FeedUser\FeedUserEntity::class                         => [
+            \Api\V1\Rest\FeedUser\FeedUserEntity::class                 => [
                 'route_name'            => 'api.rest.feed-user',
                 'route_identifier_name' => 'feed_id',
                 'hydrator'              => \Zend\Hydrator\ArraySerializable::class,
                 'max_depth'             => 3,
             ],
-            \Api\V1\Rest\FeedUser\FeedUserCollection::class                     => [
+            \Api\V1\Rest\FeedUser\FeedUserCollection::class             => [
                 'entity_identifier_name' => 'feed_id',
                 'route_name'             => 'api.rest.feed-user',
                 'route_identifier_name'  => 'feed_id',
@@ -1637,37 +1637,37 @@ return [
                 'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\Super\SuperEntity::class             => [
+            \Api\V1\Rest\Super\SuperEntity::class                       => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.super',
                 'route_identifier_name'  => 'user_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\Super\SuperCollection::class         => [
+            \Api\V1\Rest\Super\SuperCollection::class                   => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.super',
                 'route_identifier_name'  => 'user_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\Address\AddressEntity::class             => [
+            \Api\V1\Rest\Address\AddressEntity::class                   => [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.address',
                 'route_identifier_name'  => 'address_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\Address\AddressCollection::class         => [
+            \Api\V1\Rest\Address\AddressCollection::class               => [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.address',
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\GroupAddress\GroupAddressEntity::class             => [
+            \Api\V1\Rest\GroupAddress\GroupAddressEntity::class         => [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\GroupAddress\GroupAddressCollection::class         => [
+            \Api\V1\Rest\GroupAddress\GroupAddressCollection::class     => [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
@@ -1703,7 +1703,7 @@ return [
         'Api\V1\Rest\UserName\Controller'       => [
             'input_filter' => 'Api\V1\Rest\UserName\Validator',
         ],
-        'Api\V1\Rest\Flip\Controller'       => [
+        'Api\V1\Rest\Flip\Controller'           => [
             'input_filter' => 'Api\V1\Rest\Flip\Validator',
         ],
         'Api\V1\Rest\FlipUser\Controller'       => [
@@ -1719,7 +1719,7 @@ return [
             'input_filter' => 'Api\V1\Rest\Reset\Validator',
         ],
         'Api\V1\Rest\UpdatePassword\Controller' => [
-            'input_filter' => 'Api\V1\Rest\UpdatePassword\Validator',
+            'input_filter' => 'Api\V1\Rest\Password\Validator',
         ],
         'Api\V1\Rest\SaveGame\Controller'       => [
             'input_filter' => 'Api\V1\Rest\SaveGame\Validator',
@@ -1739,7 +1739,7 @@ return [
         'Api\V1\Rest\GroupReset\Controller'     => [
             'input_filter' => 'Api\V1\Rest\GroupReset\Validator',
         ],
-        'Api\V1\Rest\Address\Controller'     => [
+        'Api\V1\Rest\Address\Controller'        => [
             'input_filter' => 'Api\V1\Rest\Address\Validator',
         ],
     ],
@@ -2130,15 +2130,34 @@ return [
         ],
         'Api\V1\Rest\Password\Validator'       => [
             [
-                'required'   => true,
-                'validators' => [
+                'required'    => true,
+                'validators'  => [
                     [
                         'name'    => \Security\PasswordValidator::class,
                         'options' => [],
                     ],
                 ],
-                'filters'    => [],
-                'name'       => 'password',
+                'filters'     => [],
+                'name'        => 'password',
+                'description' => 'New Password',
+            ],
+            [
+                'required'         => true,
+                'validators'       => [
+                    [
+                        'name'    => \Zend\Validator\Identical::class,
+                        'options' => [
+                            'token' => 'password',
+                            'messages'         => [
+                                \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
+                                \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
+                            ],
+                        ],
+                    ],
+                ],
+                'filters'          => [],
+                'name'             => 'password_confirmation',
+                'description'      => 'Confirmed password',
             ],
         ],
         'Api\V1\Rest\Forgot\Validator'         => [
@@ -2164,7 +2183,7 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
-        'Api\V1\Rest\Flip\Validator'       => [
+        'Api\V1\Rest\Flip\Validator'           => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2227,34 +2246,7 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\V1\Rest\UpdatePassword\Validator' => [
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Security\PasswordValidator::class,
-                        'options' => [],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password',
-                'description' => 'New Password',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Zend\Validator\Identical::class,
-                        'options' => [
-                            'token' => 'password',
-                        ],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password_confirmation',
-                'description' => 'Confirmed password',
-            ],
-        ],
+
         'Api\V1\Rest\SaveGame\Validator'       => [
             [
                 'required'    => true,
@@ -2437,65 +2429,65 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\\V1\\Rest\\Feed\\Validator' => [
+        'Api\\V1\\Rest\\Feed\\Validator'       => [
             0 => [
-                'required' => true,
-                'validators' => [],
-                'filters' => [],
-                'name' => 'type',
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'type',
                 'description' => 'type of the feed',
             ],
             1 => [
-                'required' => false,
-                'validators' => [],
-                'filters' => [],
-                'name' => 'sender',
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'sender',
                 'description' => 'sender of the feed',
             ],
             2 => [
-                'required' => true,
-                'validators' => [],
-                'filters' => [],
-                'name' => 'message',
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'message',
                 'description' => 'message to be displayed',
             ],
             3 => [
-                'required' => true,
-                'validators' => [],
-                'filters' => [],
-                'name' => 'title',
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'title',
                 'description' => 'title of the feed',
             ],
             4 => [
-                'required' => false,
-                'validators' => [
-                    'name' => 'Zend\\I18n\\Validator\\DateTime',
+                'required'    => false,
+                'validators'  => [
+                    'name'    => 'Zend\\I18n\\Validator\\DateTime',
                     'options' => [
                         'pattern' => 'yyyy-MM-dd HH:mm:ss',
                     ],
                 ],
-                'filters' => [],
-                'name' => 'posted',
+                'filters'     => [],
+                'name'        => 'posted',
                 'description' => 'date when the feed is to be posted',
             ],
             5 => [
-                'required' => false,
-                'validators' => [],
-                'filters' => [],
-                'name' => 'priority',
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'priority',
                 'description' => 'priority of the feed',
             ],
             6 => [
-                'required' => false,
-                'validators' => [],
-                'filters' => [],
-                'name' => 'type_version',
+                'required'    => false,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'type_version',
                 'description' => 'type of the feed',
             ],
             7 => [
-                'required' => true,
-                'validators' => [
-                    'name' => 'Zend\\Validator\\InArray',
+                'required'    => true,
+                'validators'  => [
+                    'name'    => 'Zend\\Validator\\InArray',
                     'options' => [
                         'haystack' => [
                             0 => 0,
@@ -2503,28 +2495,28 @@ return [
                         ],
                     ],
                 ],
-                'filters' => [],
-                'name' => 'visibility',
+                'filters'     => [],
+                'name'        => 'visibility',
                 'description' => 'visibility level of the feed',
             ],
         ],
-        'Api\\V1\\Rest\\FeedUser\\Validator' => [
+        'Api\\V1\\Rest\\FeedUser\\Validator'   => [
             0 => [
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [],
-                'filters' => [
+                'required'      => false,
+                'allow_empty'   => true,
+                'validators'    => [],
+                'filters'       => [
                     0 => [
-                        'name' => 'Zend\\Filter\\Boolean',
+                        'name'    => 'Zend\\Filter\\Boolean',
                         'options' => ['type' => 'all'],
                     ],
                 ],
-                'name' => 'read_flag',
-                'description' => 'The Read flag for user feed',
+                'name'          => 'read_flag',
+                'description'   => 'The Read flag for user feed',
                 'error_message' => 'Invalid read flag for user feed',
             ],
         ],
-        'Api\V1\Rest\Address\Validator' => [ //@todo i18n
+        'Api\V1\Rest\Address\Validator'        => [
             [
                 'required'    => true,
                 'validators'  => [],
