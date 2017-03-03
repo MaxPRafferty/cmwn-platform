@@ -25,7 +25,7 @@ class SuperResourceTest extends AbstractApigilityTestCase
      */
     public function setUpService()
     {
-        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
     }
 
     /**

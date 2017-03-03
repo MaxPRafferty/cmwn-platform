@@ -749,7 +749,7 @@ class UserResourceTest extends TestCase
     protected function loadUserFromDb($userId)
     {
         /** @var UserServiceInterface $userService */
-        $userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
+        $userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
 
         return $userService->fetchUser($userId);
     }

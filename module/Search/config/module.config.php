@@ -1,11 +1,8 @@
 <?php
 
 return [
-    
-    \Zend\Config\AbstractConfigFactory::class => [
-        \Search\ElasticHydrator::class => [
-            \Zend\Config\Config::class,
-        ],
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Search\ElasticHydrator::class => ['Config'],
     ],
 
     'service_manager' => [
@@ -18,14 +15,17 @@ return [
         ],
     ],
 
-    'actions'                      => [
+    'actions' => [
         'factories' => [
-            \Search\Rule\Action\SaveDocumentAction::class   => \Rule\Rule\Service\BuildRuleFactory::class,
-            \Search\Rule\Action\DeleteDocumentAction::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Search\Rule\Action\SaveDocumentAction::class   => \Rule\Action\Service\BuildActionFactory::class,
+            \Search\Rule\Action\DeleteDocumentAction::class => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+        'shared'    => [
+            \Search\Rule\Action\SaveDocumentAction::class   => false,
+            \Search\Rule\Action\DeleteDocumentAction::class => false,
         ],
     ],
 
-    // TODO move to each module to make more SOLID
     \Search\ElasticHydrator::class => [
         'user' => [
             'hydrator'          => \User\UserHydrator::class,
