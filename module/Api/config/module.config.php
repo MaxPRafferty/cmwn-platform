@@ -32,6 +32,10 @@ return [
         \Api\V1\Rest\Org\OrgResource::class                   => [
             \Org\Service\OrganizationServiceInterface::class,
         ],
+        \Api\V1\Rest\Super\SuperResource::class               => [
+            \Security\Service\SecurityServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
+        ],
         \Api\V1\Rest\Address\AddressResource::class           => [
             \Address\Service\AddressServiceInterface::class,
         ],
@@ -89,7 +93,8 @@ return [
 
         ],
         'shared'    => [
-            \Api\Rule\Rule\EntityIsType::class => false,
+            \Api\Rule\Rule\EntityIsType::class                => false,
+            \Api\Rule\Provider\EntityFromEventProvider::class => false,
         ],
     ],
 
@@ -203,7 +208,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.user-game'            => [
+            'api.rest.user-game'       => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/user/:user_id/game[/:game_id]',
@@ -595,7 +600,7 @@ return [
             'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
             'service_name'               => 'Game',
         ],
-        'Api\V1\Rest\UserGame\Controller'           => [
+        'Api\V1\Rest\UserGame\Controller'       => [
             'listener'                   => \Api\V1\Rest\UserGame\UserGameResource::class,
             'route_name'                 => 'api.rest.user-game',
             'route_identifier_name'      => 'game_id',
@@ -1091,7 +1096,7 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\UserGame\Controller'           => [
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1255,7 +1260,7 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\UserGame\Controller'           => [
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1427,13 +1432,13 @@ return [
                 'route_identifier_name'  => 'game_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\UserGame\UserGameEntity::class                         => [
+            \Api\V1\Rest\UserGame\UserGameEntity::class                 => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
                 'route_identifier_name'  => 'user_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\UserGame\UserGameCollection::class                     => [
+            \Api\V1\Rest\UserGame\UserGameCollection::class             => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
                 'route_identifier_name'  => 'user_id',
@@ -1845,7 +1850,7 @@ return [
             'input_filter' => 'Api\V1\Rest\Reset\Validator',
         ],
         'Api\V1\Rest\UpdatePassword\Controller' => [
-            'input_filter' => 'Api\V1\Rest\UpdatePassword\Validator',
+            'input_filter' => 'Api\V1\Rest\Password\Validator',
         ],
         'Api\V1\Rest\SaveGame\Controller'       => [
             'input_filter' => 'Api\V1\Rest\SaveGame\Validator',
@@ -1873,7 +1878,7 @@ return [
         ],
     ],
     'input_filter_specs'     => [
-        'Api\V1\Rest\User\Validator'           => [
+        'Api\V1\Rest\User\Validator'      => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -1974,7 +1979,7 @@ return [
                 'error_message' => 'Invalid Birthdate',
             ],
         ],
-        'Api\V1\Rest\Org\Validator'            => [
+        'Api\V1\Rest\Org\Validator'       => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2030,7 +2035,7 @@ return [
                 'description' => 'Meta data for the organization',
             ],
         ],
-        'Api\V1\Rest\Image\Validator'          => [
+        'Api\V1\Rest\Image\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2076,7 +2081,7 @@ return [
                 'error_message' => 'Invalid Moderation status',
             ],
         ],
-        'Api\V1\Rest\Group\Validator'          => [
+        'Api\V1\Rest\Group\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [
@@ -2144,7 +2149,7 @@ return [
                 'error_message' => 'Invalid group type',
             ],
         ],
-        'Api\V1\Rest\Login\Validator'          => [
+        'Api\V1\Rest\Login\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2162,7 +2167,7 @@ return [
                 'error_message' => 'Invalid Password',
             ],
         ],
-        'Api\V1\Rest\UserImage\Validator'      => [
+        'Api\V1\Rest\UserImage\Validator' => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2179,7 +2184,7 @@ return [
                 'description' => 'Url for the image',
             ],
         ],
-        'Api\V1\Rest\Import\Validator'         => [
+        'Api\V1\Rest\Import\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2257,20 +2262,39 @@ return [
                 'description' => 'Start Date for Access Codes',
             ],
         ],
-        'Api\V1\Rest\Password\Validator'       => [
+        'Api\V1\Rest\Password\Validator'  => [
             [
-                'required'   => true,
-                'validators' => [
+                'required'    => true,
+                'validators'  => [
                     [
                         'name'    => \Security\PasswordValidator::class,
                         'options' => [],
                     ],
                 ],
-                'filters'    => [],
-                'name'       => 'password',
+                'filters'     => [],
+                'name'        => 'password',
+                'description' => 'New Password',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Zend\Validator\Identical::class,
+                        'options' => [
+                            'token'    => 'password',
+                            'messages' => [
+                                \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
+                                \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
+                            ],
+                        ],
+                    ],
+                ],
+                'filters'     => [],
+                'name'        => 'password_confirmation',
+                'description' => 'Confirmed password',
             ],
         ],
-        'Api\V1\Rest\Forgot\Validator'         => [
+        'Api\V1\Rest\Forgot\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2279,7 +2303,7 @@ return [
                 'description' => 'Email address or User Name of user to reset',
             ],
         ],
-        'Api\V1\Rest\UserName\Validator'       => [
+        'Api\V1\Rest\UserName\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2293,7 +2317,7 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
-        'Api\V1\Rest\Flip\Validator'           => [
+        'Api\V1\Rest\Flip\Validator'      => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2309,7 +2333,7 @@ return [
                 'description' => 'The description of the flip',
             ],
         ],
-        'Api\V1\Rest\FlipUser\Validator'       => [
+        'Api\V1\Rest\FlipUser\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2318,7 +2342,7 @@ return [
                 'description' => 'The Id of the flip the user has earned',
             ],
         ],
-        'Api\V1\Rest\Friend\Validator'         => [
+        'Api\V1\Rest\Friend\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2339,8 +2363,8 @@ return [
                 'description' => 'The user_id',
             ],
         ],
-        'Api\V1\Rest\Suggest\Validator'        => [],
-        'Api\V1\Rest\Reset\Validator'          => [
+        'Api\V1\Rest\Suggest\Validator'   => [],
+        'Api\V1\Rest\Reset\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2356,34 +2380,7 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\V1\Rest\UpdatePassword\Validator' => [
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Security\PasswordValidator::class,
-                        'options' => [],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password',
-                'description' => 'New Password',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Zend\Validator\Identical::class,
-                        'options' => [
-                            'token' => 'password',
-                        ],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password_confirmation',
-                'description' => 'Confirmed password',
-            ],
-        ],
+
         'Api\V1\Rest\SaveGame\Validator'       => [
             [
                 'required'    => true,
