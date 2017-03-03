@@ -2759,6 +2759,13 @@ return [
                 'required'    => true,
                 'validators'  => [],
                 'filters'     => [],
+                'name'        => 'country',
+                'description' => 'Country',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
                 'name'        => 'administrative_area',
                 'description' => 'State / Province / Region',
             ],
