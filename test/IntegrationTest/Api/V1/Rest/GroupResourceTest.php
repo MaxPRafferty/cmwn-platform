@@ -659,6 +659,28 @@ class GroupResourceTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function testItShouldLoadGroupsForPageTwoAndBuildCorrectFindLink()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/group?page=2&per_page=1');
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'] ?? [];
+
+        $this->assertArrayHasKey('find', $links);
+
+        $this->assertEquals(
+            ['href' => 'http://api.test.com/group?per_page=1{&page}', 'templated' => true],
+            $links['find'],
+            'Find link was incorrectly built for group endpoint'
+        );
+    }
+
+    /**
      * @return array
      */
     public function changePasswordDataProvider()
