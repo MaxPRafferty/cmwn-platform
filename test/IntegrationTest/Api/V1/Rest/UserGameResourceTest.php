@@ -25,7 +25,7 @@ class UserGameResourceTest extends AbstractApigilityTestCase
      */
     public function setUpService()
     {
-        $this->userGameService = TestHelper::getDbServiceManager()->get(UserGameServiceInterface::class);
+        $this->userGameService = TestHelper::getServiceManager()->get(UserGameServiceInterface::class);
     }
 
     /**
