@@ -1140,7 +1140,7 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\UserGame\Controller'           => [
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -2757,14 +2757,28 @@ return [
         'Api\V1\Rest\Address\Validator' => [
             [
                 'required'    => true,
-                'validators'  => [],
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'country',
+                        ],
+                    ],
+                ],
                 'filters'     => [],
                 'name'        => 'country',
                 'description' => 'Country',
             ],
             [
                 'required'    => true,
-                'validators'  => [],
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'administrative_area',
+                        ],
+                    ],
+                ],
                 'filters'     => [],
                 'name'        => 'administrative_area',
                 'description' => 'State / Province / Region',

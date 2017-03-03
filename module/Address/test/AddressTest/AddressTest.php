@@ -18,8 +18,9 @@ class AddressTest extends TestCase
     public function testItShouldHydrateCorrectly()
     {
         $data = [
+            'country'                 => 'US',
             'address_id'              => 'foo',
-            'administrative_area'     => 'ny',
+            'administrative_area'     => 'NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -40,8 +41,9 @@ class AddressTest extends TestCase
     public function testItShouldExtractCorrectly()
     {
         $address = new Address([
+            'country'                 => 'US',
             'address_id'              => 'foo',
-            'administrative_area'     => 'ny',
+            'administrative_area'     => 'NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -61,6 +63,7 @@ class AddressTest extends TestCase
      */
     protected function compareFields(AddressInterface $address, array $data)
     {
+        $this->assertEquals($address->getCountry(), $data['country']);
         $this->assertEquals($address->getAddressId(), $data['address_id']);
         $this->assertEquals($address->getAdministrativeArea(), $data['administrative_area']);
         $this->assertEquals($address->getSubAdministrativeArea(), $data['sub_administrative_area']);

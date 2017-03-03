@@ -138,7 +138,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $postData = [
-            'administrative_area'     => 'ny',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -170,6 +171,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $postData = [
+            'country'                 => null,
             'administrative_area'     => null,
             'sub_administrative_area' => null,
             'locality'                => null,
@@ -190,7 +192,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $postData = [
-            'administrative_area'     => 'ny',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -210,7 +213,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $postData = [
-            'administrative_area'     => 'ny',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -243,7 +247,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->logInUser($login);
         $postData = [
             'address_id'              => 'school_address',
-            'administrative_area'     => 'school admin area',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -255,7 +260,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->assertResponseStatusCode(200);
 
         $address = $this->addressService->fetchAddress('school_address');
-        $this->assertEquals('school admin area', $address->getAdministrativeArea());
+        $this->assertEquals('US-NY', $address->getAdministrativeArea());
     }
 
     /**

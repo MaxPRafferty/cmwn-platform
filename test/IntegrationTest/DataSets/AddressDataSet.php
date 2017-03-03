@@ -308,6 +308,7 @@ return [
             'premise'                 => null,
         ],
         [
+            'country'                 => 'US',
             'address_id'              => 'foo_school_address',
             'administrative_area'     => 'nj',
             'sub_administrative_area' => null,
