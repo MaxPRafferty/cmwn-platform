@@ -13,6 +13,16 @@ interface AddressInterface extends ArraySerializableInterface
     /**
      * @return string
      */
+    public function getCountry() : string;
+
+    /**
+     * @param string $country
+     */
+    public function setCountry(string $country = null);
+
+    /**
+     * @return string
+     */
     public function getAddressId() : string;
 
     /**
