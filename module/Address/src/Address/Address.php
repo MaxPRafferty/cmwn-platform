@@ -13,6 +13,11 @@ class Address implements AddressInterface
     /**
      * @var string
      */
+    protected $country;
+
+    /**
+     * @var string
+     */
     protected $addressId;
 
     /**
@@ -65,6 +70,7 @@ class Address implements AddressInterface
     public function exchangeArray(array $array)
     {
         $defaults = [
+            'country'                 => null,
             'address_id'              => null,
             'administrative_area'     => null,
             'sub_administrative_area' => null,
@@ -91,6 +97,7 @@ class Address implements AddressInterface
     public function getArrayCopy()
     {
         return [
+            'country'                 => $this->getCountry(),
             'address_id'              => $this->getAddressId(),
             'administrative_area'     => $this->getAdministrativeArea(),
             'sub_administrative_area' => $this->getSubAdministrativeArea(),
@@ -100,6 +107,22 @@ class Address implements AddressInterface
             'thoroughfare'            => $this->getThoroughfare(),
             'premise'                 => $this->getPremise(),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry(): string
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param string $country
+     */
+    public function setCountry(string $country = null)
+    {
+        $this->country = (string) $country;
     }
 
     /**

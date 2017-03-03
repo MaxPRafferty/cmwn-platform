@@ -286,8 +286,9 @@ return [
     'user_suggestions' => [],
     'addresses'        => [
         [
+            'country'                 => 'US',
             'address_id'              => 'school_address',
-            'administrative_area'     => 'ny',
+            'administrative_area'     => 'NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -296,8 +297,9 @@ return [
             'premise'                 => null,
         ],
         [
+            'country'                 => 'US',
             'address_id'              => 'other_school_address',
-            'administrative_area'     => 'nj',
+            'administrative_area'     => 'NY',
             'sub_administrative_area' => null,
             'locality'                => 'nj',
             'dependent_locality'      => null,
@@ -306,6 +308,7 @@ return [
             'premise'                 => null,
         ],
         [
+            'country'                 => 'US',
             'address_id'              => 'foo_school_address',
             'administrative_area'     => 'nj',
             'sub_administrative_area' => null,

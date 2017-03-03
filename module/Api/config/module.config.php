@@ -2725,7 +2725,28 @@ return [
         'Api\V1\Rest\Address\Validator'        => [
             [
                 'required'    => true,
-                'validators'  => [],
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'country',
+                        ],
+                    ],
+                ],
+                'filters'     => [],
+                'name'        => 'country',
+                'description' => 'Country',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'administrative_area',
+                        ],
+                    ],
+                ],
                 'filters'     => [],
                 'name'        => 'administrative_area',
                 'description' => 'State / Province / Region',
