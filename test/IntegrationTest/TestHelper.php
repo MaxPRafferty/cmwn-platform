@@ -2,6 +2,7 @@
 
 namespace IntegrationTest;
 
+use Search\Service\ElasticServiceInterface;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Authentication\Storage\StorageInterface;
 use Zend\Db\Adapter\Adapter;
@@ -21,9 +22,9 @@ class TestHelper
     protected static $serviceManager;
 
     /**
-     * @var ServiceManager
+     * @var \Mockery\MockInterface|ElasticServiceInterface
      */
-    protected static $dbServiceManager;
+    protected static $elasticMock;
 
     /**
      * @var \PDO
@@ -66,21 +67,6 @@ class TestHelper
         static::$serviceManager = Application::init(static::getApplicationConfig())->getServiceManager();
 
         return static::$serviceManager;
-    }
-
-    /**
-     * @before
-     * @return ServiceManager
-     */
-    public static function getDbServiceManager()
-    {
-        if (null !== static::$dbServiceManager) {
-            return static::$dbServiceManager;
-        }
-
-        static::$dbServiceManager = Application::init(static::getApplicationConfig())->getServiceManager();
-
-        return static::$dbServiceManager;
     }
 
     /**
@@ -131,8 +117,9 @@ class TestHelper
                 ],
                 'service_manager'         => [
                     'services' => [
-                        Adapter::class          => static::getDbAdapter(),
-                        StorageInterface::class => new NonPersistent(),
+                        Adapter::class                 => static::getDbAdapter(),
+                        StorageInterface::class        => new NonPersistent(),
+                        ElasticServiceInterface::class => static::getElasticMock(),
                     ],
                 ],
             ];
@@ -217,5 +204,29 @@ class TestHelper
         }
 
         return static::$testConn;
+    }
+
+    /**
+     * @return \Mockery\MockInterface|ElasticServiceInterface
+     */
+    public static function getElasticMock()
+    {
+        if (static::$elasticMock !== null) {
+            return static::$elasticMock;
+        }
+
+        // We cannot connect to elastic outside the office IP Block
+        // To avoid the rules engine mucking up elastic search we just prevent elastic
+        // from doing anything with a mock
+
+        /** @var \Mockery\MockInterface|ElasticServiceInterface $elasticService */
+        static::$elasticMock = \Mockery::mock(ElasticServiceInterface::class);
+        $reflect             = new \ReflectionClass(ElasticServiceInterface::class);
+        $methods             = $reflect->getMethods();
+        array_walk($methods, function (\ReflectionMethod $method) {
+            static::$elasticMock->shouldReceive($method->getName())->byDefault();
+        });
+
+        return static::$elasticMock;
     }
 }

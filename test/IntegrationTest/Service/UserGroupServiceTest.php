@@ -46,7 +46,7 @@ class UserGroupServiceTest extends TestCase
      */
     public function setUpUserGroupService()
     {
-        $this->userGroupService = TestHelper::getDbServiceManager()->get(UserGroupServiceInterface::class);
+        $this->userGroupService = TestHelper::getServiceManager()->get(UserGroupServiceInterface::class);
     }
 
     /**

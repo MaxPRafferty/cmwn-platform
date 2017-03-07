@@ -39,6 +39,7 @@
     "zendframework/zend-text": "~2.6",
     "zendframework/zend-uri": "^2.5",
     "zendframework/zend-validator": "~2.8",
+    "zendframework/zend-view": "2.8.1",
     "zfcampus/zf-apigility": "~1.3",
     "ramsey/uuid": "~3.0",
     "acelaya/zf2-acmailer": "~6.0",

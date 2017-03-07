@@ -33,7 +33,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
      */
     public function setUpAddressService()
     {
-        $this->addressService = TestHelper::getDbServiceManager()->get(AddressServiceInterface::class);
+        $this->addressService = TestHelper::getServiceManager()->get(AddressServiceInterface::class);
     }
 
     /**

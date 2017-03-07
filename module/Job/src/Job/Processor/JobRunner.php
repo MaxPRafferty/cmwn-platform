@@ -4,12 +4,12 @@ namespace Job\Processor;
 
 use Application\Utils\NoopLoggerAwareTrait;
 use Zend\Filter\StaticFilter;
-use Zend\Log\Logger;
+use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Log\LoggerAwareInterface;
+use Zend\Log\LoggerInterface;
 
 /**
  * Class JobRunner
- * @codeCoverageIgnore
  */
 class JobRunner implements LoggerAwareInterface
 {
@@ -19,6 +19,7 @@ class JobRunner implements LoggerAwareInterface
      * Contains a list of allowed jobs that can be executed
      *
      * This list comes from the config using the allowed_jobs key.
+     *
      * @var array allowed jobs to be run
      */
     protected $allowedJobs = [];
@@ -40,16 +41,19 @@ class JobRunner implements LoggerAwareInterface
 
     /**
      * JobRunner constructor.
+     *
      * @param array $config
+     * @param LoggerInterface $logger
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
+        $config = $config['job_runner'] ?? [];
         if (array_key_exists('php_path', $config)) {
             $this->phpPath = $config['php_path'];
         }
 
-        $this->allowedJobs = $config['allowed_jobs'];
-        $this->setLogger(new Logger());
+        $this->allowedJobs = $config['allowed_jobs'] ?? [];
+        $this->setLogger($logger);
     }
 
     /**
@@ -63,8 +67,8 @@ class JobRunner implements LoggerAwareInterface
         }
 
         $this->getLogger()->debug('Building job command');
-        $jobSpec  = $this->allowedJobs[$jobName];
-        $command  = $jobSpec['command'];
+        $jobSpec = $this->allowedJobs[$jobName];
+        $command = $jobSpec['command'];
 
         $this->getLogger()->debug('Command to run: ' . $command);
         $paramStr = '';
@@ -89,6 +93,7 @@ class JobRunner implements LoggerAwareInterface
         $fullCommand = $this->phpPath . ' ' . APPLICATION_PATH . '/public/index.php ' . $this->command;
         $this->getLogger()->notice('Executing: ' . $fullCommand);
         system($fullCommand, $exitCode);
+
         return $exitCode;
     }
 }
