@@ -124,9 +124,9 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('addresses', $body['_embedded']);
+        $this->assertArrayHasKey('address', $body['_embedded']);
 
-        $addresses = $body['_embedded']['addresses'];
+        $addresses = $body['_embedded']['address'];
         $actual    = [];
         $expected  = ['school_address'];
 

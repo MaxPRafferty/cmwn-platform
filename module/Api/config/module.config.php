@@ -38,6 +38,7 @@ return [
         ],
         \Api\V1\Rest\Address\AddressResource::class           => [
             \Address\Service\AddressServiceInterface::class,
+            \Group\Service\GroupAddressServiceInterface::class,
         ],
         \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
@@ -54,6 +55,9 @@ return [
         ],
         \Api\Controller\SwaggerController::class              => [
             Api\SwaggerHelper::class,
+        ],
+        \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
+            \Group\Service\GroupAddressServiceInterface::class,
         ],
     ],
 
@@ -503,6 +507,15 @@ return [
                     'defaults' => [
                         'controller' => \Api\Controller\SwaggerController::class,
                         'action'     => 'swagger',
+                    ],
+                ],
+            ],
+            'api.rest.address-group'         => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/address/:address_id/group[/:group_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\AddressGroup\Controller',
                     ],
                 ],
             ],
@@ -960,7 +973,7 @@ return [
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
             'page_size'                  => 25,
-            'page_size_param'            => 'page',
+            'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Flag\FlagEntity::class,
             'collection_class'           => \Api\V1\Rest\Flag\FlagCollection::class,
             'service_name'               => 'Flag',
@@ -1019,12 +1032,12 @@ return [
             'listener'                   => \Api\V1\Rest\Address\AddressResource::class,
             'route_name'                 => 'api.rest.address',
             'route_identifier_name'      => 'address_id',
-            'collection_name'            => 'addresses',
+            'collection_name'            => 'address',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => [],
+            'collection_query_whitelist' => ['postal_code', 'filter', 'page', 'per_page'],
             'page_size'                  => 25,
-            'page_size_param'            => 'page',
+            'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Address\AddressEntity::class,
             'collection_class'           => \Api\V1\Rest\Address\AddressCollection::class,
             'service_name'               => 'Address',
@@ -1033,15 +1046,29 @@ return [
             'listener'                   => \Api\V1\Rest\GroupAddress\GroupAddressResource::class,
             'route_name'                 => 'api.rest.group-address',
             'route_identifier_name'      => 'address_id',
-            'collection_name'            => 'addresses',
+            'collection_name'            => 'address',
             'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
             'page_size'                  => 25,
-            'page_size_param'            => 'page',
+            'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\GroupAddress\GroupAddressEntity::class,
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
+        ],
+        'Api\V1\Rest\AddressGroup\Controller'   => [
+            'listener'                   => \Api\V1\Rest\AddressGroup\AddressGroupResource::class,
+            'route_name'                 => 'api.rest.address-group',
+            'route_identifier_name'      => 'group_id',
+            'collection_name'            => 'group',
+            'entity_http_methods'        => [],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page'],
+            'page_size'                  => 25,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\AddressGroup\AddressGroupEntity::class,
+            'collection_class'           => \Api\V1\Rest\AddressGroup\AddressGroupCollection::class,
+            'service_name'               => 'AddressGroup',
         ],
     ],
     'zf-content-negotiation' => [
@@ -1079,6 +1106,7 @@ return [
             'Api\V1\Rest\Super\Controller'          => 'HalJson',
             'Api\V1\Rest\Address\Controller'        => 'HalJson',
             'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
+            'Api\V1\Rest\AddressGroup\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1245,6 +1273,10 @@ return [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
+            ],'Api\V1\Rest\AddressGroup\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
             ],
         ],
         'content_type_whitelist' => [
@@ -1381,6 +1413,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\GroupAddress\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\AddressGroup\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1800,6 +1836,18 @@ return [
             ],
             \Api\V1\Rest\GroupAddress\GroupAddressCollection::class     => [
                 'entity_identifier_name' => 'address_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\AddressGroup\AddressGroupEntity::class         => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\AddressGroup\AddressGroupCollection::class     => [
+                'entity_identifier_name' => 'group_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
@@ -2685,7 +2733,28 @@ return [
         'Api\V1\Rest\Address\Validator' => [
             [
                 'required'    => true,
-                'validators'  => [],
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'country',
+                        ],
+                    ],
+                ],
+                'filters'     => [],
+                'name'        => 'country',
+                'description' => 'Country',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'administrative_area',
+                        ],
+                    ],
+                ],
                 'filters'     => [],
                 'name'        => 'administrative_area',
                 'description' => 'State / Province / Region',

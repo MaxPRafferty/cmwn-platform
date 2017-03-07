@@ -250,7 +250,7 @@ class FlipUserServiceTest extends TestCase
 
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
         $expectedResultSet->initialize([$earnedFlip->getArrayCopy()]);
-        $where          = new PredicateSet();
+        $where          = new Where();
         $expectedSelect = new Select(['uf' => 'user_flips']);
 
         $expectedSelect->columns([

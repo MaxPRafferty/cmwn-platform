@@ -21,6 +21,296 @@
         "application/json"
     ],
     "paths": {
+        "/address/{address_id}": {
+            "get": {
+                "tags": [
+                    "address"
+                ],
+                "summary": "Fetch a address for a user",
+                "description": "The authenticated user must be allowed to fetch address",
+                "parameters": [
+                    {
+                        "name": "address_id",
+                        "in": "path",
+                        "description": "Address Id to be fetched",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address was fetched",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/AddressEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to access address",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "address"
+                ],
+                "summary": "Update address",
+                "parameters": [
+                    {
+                        "name": "address_id",
+                        "in": "path",
+                        "description": "Address Id to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Address data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/AddressEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to update address",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "address"
+                ],
+                "summary": "Delete address",
+                "description": "A fetch is done first to ensure the user has access to a address.  The addresses are hard deleted.",
+                "parameters": [
+                    {
+                        "name": "address_id",
+                        "in": "path",
+                        "description": "address id to be deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "address was deleted",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/AddressEntity"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/NotFoundError"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to delete or access address",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/address": {
+            "get": {
+                "tags": [
+                    "address"
+                ],
+                "summary": "Fetches multiple addresses the requested user has access too",
+                "description": "A User can request to view all addresses",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of addresses on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged addresses",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/AddressCollection"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "address"
+                ],
+                "summary": "Create a new address",
+                "description": "The authenticated user must be allowed to create a new address in the system",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Address data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Address was created",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/AddressEntity"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/ValidationError"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "type": "object",
+                            "items": {
+                                "$ref": "#/definitions/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/game": {
             "get": {
                 "tags": [
@@ -1435,15 +1725,6 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Game not found",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
-                        }
-                    },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
@@ -1664,6 +1945,95 @@
             },
             "type": "object",
             "readOnly": true
+        },
+        "Address": {
+            "description": "Address is a geographical address of a group",
+            "required": [
+                "administrative_area",
+                "locality",
+                "postal_code",
+                "thoroughfare"
+            ],
+            "properties": {
+                "address_id": {
+                    "description": "The id of the address",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "administrative_area": {
+                    "description": "state/province/region",
+                    "type": "string"
+                },
+                "sub_administrative_area": {
+                    "description": "County/District",
+                    "type": "string"
+                },
+                "locality": {
+                    "description": "city/town",
+                    "type": "string"
+                },
+                "dependent_locality": {
+                    "description": "dependent locality",
+                    "type": "string"
+                },
+                "postal_code": {
+                    "description": "postal code/ zip code",
+                    "type": "string"
+                },
+                "thoroughfare": {
+                    "description": "street address",
+                    "type": "string"
+                },
+                "premise": {
+                    "description": "Apartment, Suite, Box number, etc'",
+                    "type": "string"
+                }
+            }
+        },
+        "AddressCollection": {
+            "description": "A Collection of Addresses from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of Address Entities",
+                    "properties": {
+                        "group": {
+                            "description": "A List of Addresses",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/AddressEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "AddressEntity": {
+            "description": "A Address Entity represents the address through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the address might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Address"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
         },
         "GameCollection": {
             "description": "A Collection of Games from the API",

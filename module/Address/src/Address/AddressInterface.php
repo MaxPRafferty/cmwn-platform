@@ -5,11 +5,69 @@ namespace Address;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Interface AddressInterface
- * @package Address
+ * Address
+ *
+ * geographical address of a group
+ *
+ * @SWG\Definition(
+ *     definition="Address",
+ *     description="Address is a geographical address of a group",
+ *     required={"administrative_area","locality","postal_code","thoroughfare"},
+ *     @SWG\Property(
+ *          type="string",
+ *          format="uuid",
+ *          property="address_id",
+ *          description="The id of the address"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="administrative_area",
+ *          description="state/province/region"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="sub_administrative_area",
+ *          description="County/District"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="locality",
+ *          description="city/town"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="dependent_locality",
+ *          description="dependent locality"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="postal_code",
+ *          description="postal code/ zip code"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="thoroughfare",
+ *          description="street address"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="premise",
+ *          description="Apartment, Suite, Box number, etc'"
+ *     ),
+ * )
  */
 interface AddressInterface extends ArraySerializableInterface
 {
+    /**
+     * @return string
+     */
+    public function getCountry() : string;
+
+    /**
+     * @param string $country
+     */
+    public function setCountry(string $country = null);
+
     /**
      * @return string
      */
