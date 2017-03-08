@@ -381,8 +381,7 @@
                             "$ref": "#/definitions/Error"
                         }
                     }
-                },
-                "x-prime-for": "game"
+                }
             },
             "post": {
                 "tags": [
@@ -636,7 +635,8 @@
                             "$ref": "#/definitions/Error"
                         }
                     }
-                }
+                },
+                "x-prime-for": "group"
             },
             "post": {
                 "tags": [
@@ -773,8 +773,7 @@
                             "$ref": "#/definitions/Error"
                         }
                     }
-                },
-                "x-prime-for": "group"
+                }
             },
             "delete": {
                 "tags": [
