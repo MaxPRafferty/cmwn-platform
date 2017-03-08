@@ -203,7 +203,7 @@ class OrgResource extends AbstractResourceListener
      *
      * @SWG\Get(path="/org",
      *   tags={"organization"},
-     *   x={"prime-for":"org"},
+     *   x={"prime-for":"organization"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",

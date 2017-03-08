@@ -1417,14 +1417,6 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\Address\Controller'        => [
-                'application/vnd.api.v1+json',
-                'application/json',
-            ],
-            'Api\V1\Rest\GroupAddress\Controller'   => [
-                'application/vnd.api.v1+json',
-                'application/json',
-            ],
         ],
     ],
     'zf-hal'                 => [
@@ -1937,7 +1929,7 @@ return [
         ],
     ],
     'input_filter_specs'     => [
-        'Api\V1\Rest\User\Validator'           => [
+        'Api\V1\Rest\User\Validator'      => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2038,7 +2030,7 @@ return [
                 'error_message' => 'Invalid Birthdate',
             ],
         ],
-        'Api\V1\Rest\Org\Validator'            => [
+        'Api\V1\Rest\Org\Validator'       => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2094,7 +2086,7 @@ return [
                 'description' => 'Meta data for the organization',
             ],
         ],
-        'Api\V1\Rest\Image\Validator'          => [
+        'Api\V1\Rest\Image\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2140,7 +2132,7 @@ return [
                 'error_message' => 'Invalid Moderation status',
             ],
         ],
-        'Api\V1\Rest\Group\Validator'          => [
+        'Api\V1\Rest\Group\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [
@@ -2208,7 +2200,7 @@ return [
                 'error_message' => 'Invalid group type',
             ],
         ],
-        'Api\V1\Rest\Login\Validator'          => [
+        'Api\V1\Rest\Login\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2226,7 +2218,7 @@ return [
                 'error_message' => 'Invalid Password',
             ],
         ],
-        'Api\V1\Rest\UserImage\Validator'      => [
+        'Api\V1\Rest\UserImage\Validator' => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2243,7 +2235,7 @@ return [
                 'description' => 'Url for the image',
             ],
         ],
-        'Api\V1\Rest\Import\Validator'         => [
+        'Api\V1\Rest\Import\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2321,7 +2313,7 @@ return [
                 'description' => 'Start Date for Access Codes',
             ],
         ],
-        'Api\V1\Rest\Password\Validator'       => [
+        'Api\V1\Rest\Password\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2335,25 +2327,25 @@ return [
                 'description' => 'New Password',
             ],
             [
-                'required'         => true,
-                'validators'       => [
+                'required'    => true,
+                'validators'  => [
                     [
                         'name'    => \Zend\Validator\Identical::class,
                         'options' => [
-                            'token' => 'password',
-                            'messages'         => [
+                            'token'    => 'password',
+                            'messages' => [
                                 \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
                                 \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
                             ],
                         ],
                     ],
                 ],
-                'filters'          => [],
-                'name'             => 'password_confirmation',
-                'description'      => 'Confirmed password',
+                'filters'     => [],
+                'name'        => 'password_confirmation',
+                'description' => 'Confirmed password',
             ],
         ],
-        'Api\V1\Rest\Forgot\Validator'         => [
+        'Api\V1\Rest\Forgot\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2362,7 +2354,7 @@ return [
                 'description' => 'Email address or User Name of user to reset',
             ],
         ],
-        'Api\V1\Rest\UserName\Validator'       => [
+        'Api\V1\Rest\UserName\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2376,7 +2368,7 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
-        'Api\V1\Rest\Flip\Validator'           => [
+        'Api\V1\Rest\Flip\Validator'      => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2392,7 +2384,7 @@ return [
                 'description' => 'The description of the flip',
             ],
         ],
-        'Api\V1\Rest\FlipUser\Validator'       => [
+        'Api\V1\Rest\FlipUser\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2401,7 +2393,7 @@ return [
                 'description' => 'The Id of the flip the user has earned',
             ],
         ],
-        'Api\V1\Rest\Friend\Validator'         => [
+        'Api\V1\Rest\Friend\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2422,8 +2414,8 @@ return [
                 'description' => 'The user_id',
             ],
         ],
-        'Api\V1\Rest\Suggest\Validator'        => [],
-        'Api\V1\Rest\Reset\Validator'          => [
+        'Api\V1\Rest\Suggest\Validator'   => [],
+        'Api\V1\Rest\Reset\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2722,7 +2714,26 @@ return [
                 'error_message' => 'Invalid read flag for user feed',
             ],
         ],
-        'Api\V1\Rest\Address\Validator'        => [
+        'Api\V1\Rest\SuperFlag\Validator'      => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => 'all'],
+                    ],
+                    [
+                        'name'    => \Zend\Filter\ToInt::class,
+                        'options' => [],
+                    ],
+                ],
+                'name'        => 'super',
+                'description' => 'The super flag',
+            ],
+        ],
+
+        'Api\V1\Rest\Address\Validator'   => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2792,24 +2803,6 @@ return [
                 'filters'     => [],
                 'name'        => 'premise',
                 'description' => 'Apartment, Suite, Box number, etc',
-            ],
-        ],
-        'Api\V1\Rest\SuperFlag\Validator'      => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => 'all'],
-                    ],
-                    [
-                        'name'    => \Zend\Filter\ToInt::class,
-                        'options' => [],
-                    ],
-                ],
-                'name'        => 'super',
-                'description' => 'The super flag',
             ],
         ],
     ],

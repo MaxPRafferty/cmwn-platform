@@ -127,8 +127,8 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('address', $body['_embedded']);
 
         $addresses = $body['_embedded']['address'];
-        $actual = [];
-        $expected = ['school_address'];
+        $actual    = [];
+        $expected  = ['school_address'];
 
         foreach ($addresses as $address) {
             $this->assertArrayHasKey('address_id', $address);

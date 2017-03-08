@@ -43,37 +43,25 @@
                     "200": {
                         "description": "Address was fetched",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
+                            "$ref": "#/definitions/AddressEntity"
                         }
                     },
                     "404": {
                         "description": "Address not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to access address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -107,37 +95,25 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
+                            "$ref": "#/definitions/AddressEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -160,40 +136,31 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "address was deleted",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
-                        }
+                    "204": {
+                        "description": "address was deleted"
                     },
                     "404": {
                         "description": "Address not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Problem occurred during execution",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -207,6 +174,23 @@
                 "summary": "Fetches multiple addresses the requested user has access too",
                 "description": "A User can request to view all addresses",
                 "parameters": [
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal/zip code of the address",
+                        "type": "string",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "type of entity requested",
+                        "type": "string",
+                        "maximum": 1,
+                        "enum": [
+                            "group"
+                        ]
+                    },
                     {
                         "name": "page",
                         "in": "query",
@@ -228,28 +212,19 @@
                     "200": {
                         "description": "Paged addresses",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/AddressCollection"
-                            }
+                            "$ref": "#/definitions/AddressCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "403": {
                         "description": "Not Authorized",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -275,37 +250,25 @@
                     "201": {
                         "description": "Address was created",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
+                            "$ref": "#/definitions/AddressEntity"
                         }
                     },
                     "422": {
                         "description": "Validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "403": {
                         "description": "Not Authorized",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -349,28 +312,19 @@
                     "200": {
                         "description": "Paged groups in address",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/GroupCollection"
-                            }
+                            "$ref": "#/definitions/GroupCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "403": {
                         "description": "Not Authorized",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -412,31 +366,23 @@
                     "200": {
                         "description": "Paged games",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/GameCollection"
-                            }
+                            "$ref": "#/definitions/GameCollection"
                         }
                     },
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
-                }
+                },
+                "x-prime-for": "game"
             },
             "post": {
                 "tags": [
@@ -459,37 +405,25 @@
                     "201": {
                         "description": "Game was created",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GameEntity"
-                            }
+                            "$ref": "#/definitions/GameEntity"
                         }
                     },
                     "422": {
                         "description": "Validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update a game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -523,19 +457,13 @@
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -570,37 +498,25 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GameEntity"
-                            }
+                            "$ref": "#/definitions/GameEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update a game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -623,43 +539,31 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "Game was deleted"
                     },
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Problem occured during execution",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -869,7 +773,8 @@
                             "$ref": "#/definitions/Error"
                         }
                     }
-                }
+                },
+                "x-prime-for": "group"
             },
             "delete": {
                 "tags": [
@@ -972,7 +877,7 @@
                         }
                     }
                 },
-                "x-prime-for": "org"
+                "x-prime-for": "organization"
             },
             "post": {
                 "tags": [
@@ -1451,37 +1356,25 @@
                     "200": {
                         "description": "Game was fetched",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserGameEntity"
-                            }
+                            "$ref": "#/definitions/UserGameEntity"
                         }
                     },
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to access game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1516,28 +1409,19 @@
                     "201": {
                         "description": "Game attached to user",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserGameEntity"
-                            }
+                            "$ref": "#/definitions/UserGameEntity"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to attach game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1575,37 +1459,25 @@
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to detach or access game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Problem occured during execution",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1649,19 +1521,13 @@
                     "200": {
                         "description": "Paged games",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/UserGameCollection"
-                            }
+                            "$ref": "#/definitions/UserGameCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1926,7 +1792,7 @@
                 "_embedded": {
                     "description": "A List of Address Entities",
                     "properties": {
-                        "group": {
+                        "address": {
                             "description": "A List of Addresses",
                             "type": "array",
                             "items": {
@@ -2309,9 +2175,7 @@
                 {
                     "$ref": "#/definitions/DateDeleted"
                 }
-            ],
-            "x-search-doc-id": "game_id",
-            "x-search-doc-type": "game"
+            ]
         },
         "Group": {
             "description": "A Group is a node in an organization network that is used to define access to a system",

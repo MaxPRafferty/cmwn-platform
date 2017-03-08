@@ -74,7 +74,7 @@ class AddressGroupResource extends AbstractResourceListener
      *     response=401,
      *     description="Not Authenticated",
      *     @SWG\Schema(ref="#/definitions/Error")
-     *   )
+     *   ),
      *  @SWG\Response(
      *     response=403,
      *     description="Not Authorized",

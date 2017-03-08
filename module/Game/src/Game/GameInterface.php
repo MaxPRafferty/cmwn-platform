@@ -16,10 +16,6 @@ use Application\Utils\Meta\MetaDataInterface;
  *     definition="Game",
  *     description="A Game represents every game in the system and details about it",
  *     required={"game_id","title","description","coming_soon"},
- *     x={
- *          "search-doc-id":"game_id",
- *          "search-doc-type":"game"
- *     },
  *     allOf={
  *          @SWG\Schema(ref="#/definitions/DateCreated"),
  *          @SWG\Schema(ref="#/definitions/DateUpdated"),
