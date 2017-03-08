@@ -304,6 +304,7 @@ class GroupResource extends AbstractResourceListener
      *
      * @SWG\Put(path="/group/{group_id}",
      *   tags={"group"},
+     *   x={"prime-for":"group"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",
