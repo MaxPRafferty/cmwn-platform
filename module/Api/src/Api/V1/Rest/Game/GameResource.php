@@ -36,7 +36,6 @@ class GameResource extends AbstractResourceListener
      *
      * @SWG\Get(path="/game",
      *   tags={"game"},
-     *   x={"prime-for":"game"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",
