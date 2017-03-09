@@ -3,9 +3,10 @@
 namespace FriendTest\Delegator;
 
 use Application\Utils\ServiceTrait;
+use Friend\Service\FriendService;
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Friend\Delegator\FriendServiceDelegator;
 use User\UserInterface;
 use Zend\EventManager\Event;
@@ -72,17 +73,8 @@ class FriendServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $events = new EventManager();
-        $this->delegator = new FriendServiceDelegator($this->friendService, $events);
-        $this->delegator->getEventManager()->clearListeners('*');
-        if ($this->delegator->getEventManager()->getSharedManager()) {
-            $this->delegator->getEventManager()
-                ->getSharedManager()
-                ->clearListeners(FriendServiceInterface::class, 'attach.friend.post');
-            $this->delegator->getEventManager()
-                ->getSharedManager()
-                ->clearListeners(FriendServiceDelegator::class, 'attach.friend.post');
-        }
+        $this->delegator = new FriendServiceDelegator($this->friendService, new EventManager());
+        $this->delegator->getEventManager()->clearListeners('attach.friend.post');
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
@@ -91,7 +83,7 @@ class FriendServiceDelegatorTest extends TestCase
      */
     public function setUpFriendService()
     {
-        $this->friendService = \Mockery::mock('\Friend\Service\FriendService');
+        $this->friendService = \Mockery::mock(FriendService::class);
     }
 
     /**

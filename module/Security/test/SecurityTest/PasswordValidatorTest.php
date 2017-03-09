@@ -3,7 +3,7 @@
 namespace SecurityTest;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\ChangePasswordUser;
 use Security\Exception\ChangePasswordException;
 use Security\PasswordValidator;
@@ -46,7 +46,10 @@ class PasswordValidatorTest extends TestCase
     public function testItShouldPassWithStrongPassword($password)
     {
         $validator = new PasswordValidator($this->authService);
-        $this->assertTrue($validator->isValid($password));
+        $this->assertTrue(
+            $validator->isValid($password),
+            PasswordValidator::class . ' Did not validate correct password: ' . $password
+        );
     }
 
     /**
@@ -56,10 +59,24 @@ class PasswordValidatorTest extends TestCase
      *
      * @test
      */
-    public function testItShouldFailsWithWeakPassword($password)
+    public function testItShouldFailsWithWeakPassword($password, $message)
     {
         $validator = new PasswordValidator($this->authService);
-        $this->assertFalse($validator->isValid($password));
+        $this->assertFalse(
+            $validator->isValid($password),
+            PasswordValidator::class . ' passed an invalid password: ' . $password
+        );
+
+        $this->assertEquals(
+            $message,
+            $validator->getMessages(),
+            sprintf(
+                '%s is expected to have message "%s" for Invalid password %s',
+                PasswordValidator::class,
+                current($message),
+                $password
+            )
+        );
     }
 
     /**
@@ -122,14 +139,15 @@ class PasswordValidatorTest extends TestCase
      */
     public function testItShouldValidateFalseCodeMatchesNewPasswordOnChangePasswordUser()
     {
+        $exception = new ChangePasswordException(new ChangePasswordUser(['code' => 'aB1234567']));
         $validator = new PasswordValidator($this->authService);
 
         $this->authService
             ->shouldReceive('getIdentity')
-            ->andThrow(new ChangePasswordException(new ChangePasswordUser(['code' => 'a1234567'])))
+            ->andThrow($exception)
             ->once();
 
-        $this->assertFalse($validator->isValid('a1234567'));
+        $this->assertFalse($validator->isValid('aB1234567'));
     }
 
     /**
@@ -138,9 +156,22 @@ class PasswordValidatorTest extends TestCase
     public function validPasswords()
     {
         return [
-            ['a1234567'],
-            ['a1234567sdblkjeier'],
-            ['a1234567sdDSVWE'],
+            'Upper Lower and Number'  => ['Abcdef123'],
+            'With Symbol'             => ['Abcdef!23'],
+            'With Special Characters' => ['Ab3!@#$%^&*()'],
+            'Real Case'               => ['JUVD2106!!'],
+            'All Upper'               => ['ABCDEF123'],
+            'Mixed Case'              => ['a1234567sdDSVWE'],
+            'Many Special'            => ['Ab3!@#$%^&*()'],
+            'German Bread'            => ['DerBrötIstGroß1'],
+            'German Apple'            => ['Ichhabe1Äpfel'],
+            'Spanish'                 => ['Actuación2'],
+            'More Spanish '           => ['Animación¡1'],
+            'Spanish Question'        => ['¿Pudiñvón1?'],
+            'More Specials'           => ['¢¡™£∞§¶•ªº––≠ªº•§•¶1aA'],
+            'XKCD'                    => ['correct horse Batt3ry staple'],
+            'Specials (extended)'     => ['¢¡™£∞§¶•ªº––≠ªº•§•¶ab1c'],
+            'No Upper With Special'   => ['abcd1$%##@®'],
         ];
     }
 
@@ -150,9 +181,58 @@ class PasswordValidatorTest extends TestCase
     public function invalidPasswords()
     {
         return [
-            ['a123456'],
-            ['1234567'],
-            ['abcd$%##@®'],
+            'Not Long enough'          => [
+                'password' => 'aA12345',
+                'message'  => ['toShort' => 'Password must be at least 8 characters'],
+            ],
+            'Just Specials (standard)' => [
+                'password' => '!@#$%^&*()',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'No Numbers'               => [
+                'password' => 'abcdEF$%##@®',
+                'message'  => ['noNumber' => 'You must have at least one number'],
+            ],
+            'One Letter rest numbers'  => [
+                'password' => '12345678',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'Just Words'               => [
+                'password' => 'correct horse battery staple',
+                'message'  => ['noNumber' => 'You must have at least one number'],
+            ],
+            'Spanish Question'         => [
+                'password' => '¿Pudiñvón?',
+                'message'  => ['noNumber' => 'You must have at least one number'],
+            ],
+            'German Bread'             => [
+                'password' => 'DerBrötIstGroß',
+                'message'  => ['noNumber' => 'You must have at least one number'],
+            ],
+            'Chinese'                  => [
+                'password' => '对所有帐户都要使用优良和强壮的密码零',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'Chuck with 42 Telugu'     => [
+                'password' => 'చక్౪౨రీవ్స్౪౨',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'India Telugu'             => [
+                'password' => 'ఇండియా౨౨౨',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'Hello 1234 Arabic'        => [
+                'password' => 'مرحبا 1234',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'Greetings in Russian'     => [
+                'password' => 'Приветствую',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
+            'Greek'                    => [
+                'password' => 'Χαιρετίσματα',
+                'message'  => ['noLetter' => 'You must have at least one letter'],
+            ],
         ];
     }
 
@@ -162,7 +242,7 @@ class PasswordValidatorTest extends TestCase
     public function passEqualsCode()
     {
         return [
-            ['foobar123'],
+            ['Foobar123'],
             ['fOoBar123'],
             ['FooBar123'],
             ['FOOBar123'],

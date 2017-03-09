@@ -2,7 +2,7 @@
 
 namespace Api\Links;
 
-use Application\Utils\StaticType;
+use Application\Utils\Type\StaticType;
 use Group\GroupInterface;
 use Org\OrganizationInterface;
 use ZF\Hal\Link\Link;

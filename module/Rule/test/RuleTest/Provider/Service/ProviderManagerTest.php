@@ -2,7 +2,7 @@
 
 namespace RuleTest\Provider\Service;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Provider\BasicValueProvider;
 use Rule\Provider\CallbackProvider;
 use Rule\Provider\Collection\ProviderCollection;

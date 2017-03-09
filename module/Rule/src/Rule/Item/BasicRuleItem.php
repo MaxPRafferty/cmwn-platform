@@ -10,6 +10,8 @@ use Rule\Provider\ProviderInterface;
  */
 class BasicRuleItem implements RuleItemInterface
 {
+    use RuleItemTrait;
+
     /**
      * @var ProviderCollection
      */

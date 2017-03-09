@@ -3,11 +3,13 @@
 namespace Group\Delegator;
 
 use Address\AddressInterface;
+use Application\Utils\ServiceTrait;
 use Group\Service\GroupAddressService;
 use Group\Service\GroupAddressServiceInterface;
 use Group\GroupInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -16,6 +18,8 @@ use Zend\Paginator\Adapter\DbSelect;
  */
 class GroupAddressDelegator implements GroupAddressServiceInterface
 {
+    use ServiceTrait;
+
     /**
      * @var GroupAddressService
      */
@@ -116,7 +120,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
         GroupInterface $group,
         $where = null,
         AddressInterface $prototype = null
-    ) : DbSelect {
+    ) : AdapterInterface {
         $event = new Event(
             'fetch.all.group.addresses',
             $this->realService,
@@ -145,7 +149,7 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address)
+    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address) : AddressInterface
     {
         $event = new Event(
             'fetch.group.address',
@@ -166,6 +170,68 @@ class GroupAddressDelegator implements GroupAddressServiceInterface
             return $return;
         } catch (\Exception $e) {
             $event->setName('fetch.group.address.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchAllGroupsInAddress($where = null, GroupInterface $prototype = null) : AdapterInterface
+    {
+        $event = new Event(
+            'fetch.address.groups',
+            $this->realService,
+            [ 'where' => $where, 'prototype' => $prototype]
+        );
+
+        $response = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+        try {
+            $return = $this->realService->fetchAllGroupsInAddress($where, $prototype);
+            $event->setName('fetch.address.groups.post');
+            $event->setParam('groups', $return);
+            $this->getEventManager()->triggerEvent($event);
+
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.address.groups.error');
+            $event->setParam('exception', $e);
+            $this->getEventManager()->triggerEvent($event);
+            throw $e;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchAddressesWithGroupsAttached(
+        $where = null,
+        AddressInterface $prototype = null
+    ) : AdapterInterface {
+        $event = new Event(
+            'fetch.all.addresses.with.groups',
+            $this->realService,
+            ['where' => $where, 'prototype' => $prototype ]
+        );
+
+        $response = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+        try {
+            $return = $this->realService->fetchAddressesWithGroupsAttached($where, $prototype);
+            $event->setName('fetch.all.addresses.with.groups.post');
+            $event->setParam('addresses', $return);
+            $this->getEventManager()->triggerEvent($event);
+
+            return $return;
+        } catch (\Exception $e) {
+            $event->setName('fetch.all.addresses.with.groups.error');
             $event->setParam('exception', $e);
             $this->getEventManager()->triggerEvent($event);
             throw $e;

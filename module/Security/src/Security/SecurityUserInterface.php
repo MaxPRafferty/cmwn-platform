@@ -2,10 +2,12 @@
 
 namespace Security;
 
+use User\UserInterface;
+
 /**
  * A Security user is a user with sensitive information
  */
-interface SecurityUserInterface
+interface SecurityUserInterface extends UserInterface
 {
     const CODE_EXPIRED = 'Expired';
     const CODE_INVALID = 'Invalid';

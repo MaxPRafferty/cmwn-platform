@@ -4,61 +4,91 @@ namespace Group\Service;
 
 use Application\Exception\NotFoundException;
 use Group\GroupInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Interface GroupServiceInterface
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * Interface that defines a group service
  */
 interface GroupServiceInterface
 {
     /**
      * @param GroupInterface $parent
      * @param GroupInterface $child
+     *
      * @return bool
      */
-    public function addChildToGroup(GroupInterface $parent, GroupInterface $child);
+    public function attachChildToGroup(GroupInterface $parent, GroupInterface $child): bool;
 
     /**
-     * @param null|PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
-     */
-    public function fetchAll($where = null, $paginate = true, $prototype = null);
-
-    /**
-     * Saves a group
-     *
-     * If the group id is null, then a new group is created
+     * Returns all the child groups from a group
      *
      * @param GroupInterface $group
+     * @param null|PredicateInterface|array $where
+     * @param null|GroupInterface $prototype
+     *
+     * @return AdapterInterface
+     */
+    public function fetchChildGroups(
+        GroupInterface $group,
+        $where = null,
+        GroupInterface $prototype = null
+    ): AdapterInterface;
+
+    /**
+     * Saves a new group
+     *
+     * @param GroupInterface $group
+     *
      * @return bool
      * @throws NotFoundException
      */
-    public function createGroup(GroupInterface $group);
+    public function createGroup(GroupInterface $group): bool;
+
+    /**
+     * Updates a group
+     *
+     * @param GroupInterface $group
+     *
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function updateGroup(GroupInterface $group): bool;
 
     /**
      * Fetches one group from the DB using the id
      *
-     * @param $groupId
+     * @param string $groupId
+     * @param GroupInterface|null $prototype
+     *
      * @return GroupInterface
-     * @throws NotFoundException
      */
-    public function fetchGroup($groupId);
+    public function fetchGroup(string $groupId, GroupInterface $prototype = null): GroupInterface;
 
     /**
      * Fetches on group from the DB by using the external id
      *
      * @param string $networkId
-     * @param $externalId
+     * @param string $externalId
+     * @param GroupInterface $prototype
      *
      * @return GroupInterface
      */
-    public function fetchGroupByExternalId($networkId, $externalId);
+    public function fetchGroupByExternalId(
+        string $networkId,
+        string $externalId,
+        GroupInterface $prototype = null
+    ): GroupInterface;
+
+    /**
+     * Fetches all groups based on parameters
+     *
+     * @param null $where
+     * @param GroupInterface|null $prototype
+     *
+     * @return AdapterInterface
+     */
+    public function fetchAll($where = null, GroupInterface $prototype = null): AdapterInterface;
 
     /**
      * Deletes a group from the database
@@ -67,9 +97,10 @@ interface GroupServiceInterface
      *
      * @param GroupInterface $group
      * @param bool $soft
+     *
      * @return bool
      */
-    public function deleteGroup(GroupInterface $group, $soft = true);
+    public function deleteGroup(GroupInterface $group, bool $soft = true): bool;
 
     /**
      * Fetches all the types of groups for the children
@@ -77,35 +108,17 @@ interface GroupServiceInterface
      * Used for hal link building
      *
      * @param GroupInterface $group
-     * @return string[]
-     */
-    public function fetchChildTypes(GroupInterface $group);
-
-    /**
-     * Fetches all the children groups for a given group
      *
-     * @param GroupInterface $group
-     * @param null|PredicateInterface|array $where
-     * @param null|object $prototype
-     * @return DbSelect
+     * @return string[]
+     * @deprecated
      */
-    public function fetchChildGroups(GroupInterface $group, $where = null, $prototype = null);
+    public function fetchChildTypes(GroupInterface $group): array;
 
     /**
      * Fetches all the types of groups
      *
      * @return string[]
+     * @deprecated
      */
-    public function fetchGroupTypes();
-
-    /**
-     * Updates a group
-     *
-     *
-     * @param GroupInterface $group
-     *
-     * @return bool
-     * @throws NotFoundException
-     */
-    public function updateGroup(GroupInterface $group);
+    public function fetchGroupTypes(): array;
 }

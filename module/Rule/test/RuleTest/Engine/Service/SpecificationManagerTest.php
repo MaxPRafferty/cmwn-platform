@@ -2,7 +2,7 @@
 
 namespace RuleTest\Engine\Service;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Action\NoopAction;
 use Rule\Action\Service\ActionManager;
 use Rule\Action\Service\ActionManagerFactory;

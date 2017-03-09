@@ -6,11 +6,12 @@ use Rule\Event\Provider\EventProvider;
 use Rule\Event\Rule\EventParamMatches;
 use Rule\Item\BasicRuleItem;
 use Zend\EventManager\Event;
+use PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Unit test for EventParamMatchesRule
  */
-class EventParamMatchesTest extends \PHPUnit_Framework_TestCase
+class EventParamMatchesTest extends TestCase
 {
     /**
      * @test

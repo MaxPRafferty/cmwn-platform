@@ -6,6 +6,7 @@ use Group\GroupInterface;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\ValidationData;
 use User\User;
+use User\UserInterface;
 
 /**
  * A security user, is a user that is logged in.   This user can be saved to the database
@@ -52,7 +53,7 @@ class SecurityUser extends User implements SecurityUserInterface
     /**
      * @inheritdoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): UserInterface
     {
         $defaults = [
             'code'     => null,
@@ -66,12 +67,14 @@ class SecurityUser extends User implements SecurityUserInterface
         $this->password = $array['password'];
         $this->code     = $array['code'];
         $this->super    = (bool)$array['super'];
+
+        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

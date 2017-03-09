@@ -66,10 +66,11 @@ trait FriendTrait
      * Sets the string status of a friend
      *
      * @param string $status
-     * @return string
+     * @return FriendInterface
      */
     public function setFriendStatus($status)
     {
         $this->friendStatus = $status;
+        return $this;
     }
 }

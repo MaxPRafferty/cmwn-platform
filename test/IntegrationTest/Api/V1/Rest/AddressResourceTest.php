@@ -5,7 +5,6 @@ namespace IntegrationTest\Api\V1\Rest;
 use Address\Service\AddressServiceInterface;
 use Application\Exception\NotFoundException;
 use IntegrationTest\AbstractApigilityTestCase;
-use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
 
@@ -34,7 +33,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
      */
     public function setUpAddressService()
     {
-        $this->addressService = TestHelper::getDbServiceManager()->get(AddressServiceInterface::class);
+        $this->addressService = TestHelper::getServiceManager()->get(AddressServiceInterface::class);
     }
 
     /**
@@ -82,9 +81,33 @@ class AddressResourceTest extends AbstractApigilityTestCase
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('addresses', $body['_embedded']);
-        $addresses = $body['_embedded']['addresses'];
-        $expected = ['other_school_address', 'school_address'];
+        $this->assertArrayHasKey('address', $body['_embedded']);
+        $addresses = $body['_embedded']['address'];
+        $expected = ['foo_school_address', 'other_school_address', 'school_address'];
+        $actual = [];
+
+        foreach ($addresses as $address) {
+            $this->assertArrayHasKey('address_id', $address);
+            $actual[] = $address['address_id'];
+        }
+        $this->assertEquals($actual, $expected);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchAllAddressesWithGroupsAttached()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/address?postal_code=07306&filter=group');
+        $this->assertResponseStatusCode(200);
+
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_embedded', $body);
+        $this->assertArrayHasKey('address', $body['_embedded']);
+        $addresses = $body['_embedded']['address'];
+        $expected = ['foo_school_address', 'other_school_address'];
         $actual = [];
 
         foreach ($addresses as $address) {
@@ -115,7 +138,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $postData = [
-            'administrative_area'     => 'ny',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -147,6 +171,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $postData = [
+            'country'                 => null,
             'administrative_area'     => null,
             'sub_administrative_area' => null,
             'locality'                => null,
@@ -167,7 +192,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $postData = [
-            'administrative_area'     => 'ny',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -187,7 +213,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser('english_student');
         $postData = [
-            'administrative_area'     => 'ny',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -220,7 +247,8 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->logInUser($login);
         $postData = [
             'address_id'              => 'school_address',
-            'administrative_area'     => 'school admin area',
+            'country'                 => 'US',
+            'administrative_area'     => 'US-NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -232,7 +260,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->assertResponseStatusCode(200);
 
         $address = $this->addressService->fetchAddress('school_address');
-        $this->assertEquals('school admin area', $address->getAdministrativeArea());
+        $this->assertEquals('US-NY', $address->getAdministrativeArea());
     }
 
     /**
@@ -244,7 +272,7 @@ class AddressResourceTest extends AbstractApigilityTestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $this->dispatch('/address/school_address', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
 
         try {
             $this->addressService->fetchAddress('school_address');

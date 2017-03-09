@@ -66,6 +66,8 @@ return [
             'delete.game'          => 'delete game',
             'save.game'            => 'Save Game progress',
             'view.deleted.games'   => 'view all games including soft deleted ones',
+            'attach.user.game'     => 'attach a game to user',
+            'detach.user.game'     => 'detach a game from user',
 
             // misc
             'adult.code'           => 'Send adult reset code',
@@ -131,7 +133,6 @@ return [
                     'edit.user.child',
                     'flag.image',
                     'import',
-                    'pick.username',
                     'remove.child.group',
                     'remove.group',
                     'remove.group.user',
@@ -165,7 +166,6 @@ return [
                     'view.feed',
                     'sa.settings',
                     'create.game',
-                    'view.game',
                     'update.game',
                     'delete.game',
                     'reset.group.code',
@@ -181,6 +181,8 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                     'view.user.feed',
+                    'attach.user.game',
+                    'detach.user.game',
                 ],
             ],
 
@@ -227,6 +229,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'principal.adult' => [
@@ -271,6 +274,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'asst_principal.adult' => [
@@ -315,6 +319,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'teacher.adult' => [
@@ -350,6 +355,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => true,
             ],
 
             'neighbor.adult' => [
@@ -360,6 +366,7 @@ return [
                     'view.user.adult',
                     'view.user.flip',
                 ],
+                'db-role' => false,
             ],
 
             'me.child' => [
@@ -389,6 +396,7 @@ return [
                     'view.address',
                     'view.all.group.addresses',
                 ],
+                'db-role' => false,
             ],
 
             'me.adult' => [
@@ -416,6 +424,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
+                'db-role' => false,
             ],
 
             'neighbor.child'    => [
@@ -438,6 +447,7 @@ return [
                     'view.user.child',
                     'view.user.flip',
                 ],
+                'db-role' => false,
             ],
 
             'student.child' => [
@@ -458,6 +468,7 @@ return [
                     'view.address',
                     'view.all.group.addresses',
                 ],
+                'db-role' => true,
             ],
 
             'logged_in.child' => [
@@ -468,6 +479,7 @@ return [
                     'view.games',
                     'view.flip',
                 ],
+                'db-role' => false,
             ],
 
             'logged_in.adult' => [
@@ -478,6 +490,7 @@ return [
                     'view.games',
                     'view.flip',
                 ],
+                'db-role' => false,
             ],
 
             'guest' => [

@@ -2,7 +2,7 @@
 
 namespace SuggestTest;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Suggestion;
 use User\Child;
 
