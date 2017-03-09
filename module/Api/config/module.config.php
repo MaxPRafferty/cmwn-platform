@@ -98,6 +98,13 @@ return [
         ],
     ],
 
+    'validators' => [
+        'factories' => [
+            \Zend\Validator\Db\NoRecordExists::class => \ZF\ContentValidation\Validator\Db\NoRecordExistsFactory::class,
+            \Zend\Validator\Db\RecordExists::class   => \ZF\ContentValidation\Validator\Db\RecordExistsFactory::class
+        ],
+    ],
+
     'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
@@ -108,6 +115,7 @@ return [
         \Api\Listeners\TemplateLinkListener::class,
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
+        \Api\Listeners\InjectContextParamsListener::class,
     ],
     'service_manager'  => [
         'factories' => [
@@ -116,6 +124,8 @@ return [
             \Api\Listeners\TemplateLinkListener::class                =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Api\Listeners\UserParamListener::class                   =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Api\Listeners\InjectContextParamsListener::class         =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Api\Listeners\ScopeListener::class                       =>
                 \Api\Factory\ScopeListenerFactory::class,
@@ -1876,6 +1886,9 @@ return [
         'Api\V1\Rest\Address\Controller'        => [
             'input_filter' => 'Api\V1\Rest\Address\Validator',
         ],
+        'Api\V1\Rest\UserGame\Controller'       => [
+            'input_filter' => 'Api\V1\Rest\UserGame\Validator',
+        ],
     ],
     'input_filter_specs'     => [
         'Api\V1\Rest\User\Validator'      => [
@@ -2496,7 +2509,16 @@ return [
         'Api\V1\Rest\Game\Validator'           => [
             [
                 'required'    => true,
-                'validators'  => [],
+                'validators'  => [
+                    [
+                        'name' => \Zend\Validator\Db\NoRecordExists::class,
+                        'options' => [
+                            'adapter' => \Zend\Db\Adapter\Adapter::class,
+                            'table'   => 'games',
+                            'field'   => 'title',
+                        ],
+                    ]
+                ],
                 'filters'     => [],
                 'name'        => 'title',
                 'description' => 'title of the game',
@@ -2731,6 +2753,28 @@ return [
                 'filters'     => [],
                 'name'        => 'premise',
                 'description' => 'Apartment, Suite, Box number, etc',
+            ],
+        ],
+        'Api\V1\Rest\UserGame\Validator' => [
+            [
+                'required'      => true,
+                'validators'    => [
+                    [
+                        'name' => \Application\Utils\CheckIfNoDbRecordExists::class,
+                        'options' => [
+                            'adapter' => \Zend\Db\Adapter\Adapter::class,
+                            'table'   => 'user_games',
+                            'field'   => 'game_id',
+                            'exclude' => [
+                                'field'    => 'user_id',
+                                'operator' => 'equalTo'
+                            ],
+                        ],
+                    ],
+                ],
+                'filters'       => [],
+                'name'          => 'game_id',
+                'description'   => 'game id of the game',
             ],
         ],
     ],
