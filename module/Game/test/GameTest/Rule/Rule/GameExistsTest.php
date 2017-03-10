@@ -6,6 +6,7 @@ use Application\Exception\NotFoundException;
 use Game\Game;
 use Game\Rule\Rule\GameExists;
 use Game\Service\GameServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Item\BasicRuleItem;
 
@@ -20,6 +21,8 @@ use Rule\Item\BasicRuleItem;
  */
 class GameExistsTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|GameServiceInterface
      */

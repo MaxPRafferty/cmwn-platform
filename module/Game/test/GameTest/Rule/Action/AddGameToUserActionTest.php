@@ -5,6 +5,7 @@ namespace GameTest\Rule\Action;
 use Game\Game;
 use Game\Rule\Action\AddGameToUserAction;
 use Game\Service\UserGameServiceInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\BasicRuleItem;
@@ -22,6 +23,8 @@ use User\UserInterface;
  */
 class AddGameToUserActionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var \Mockery\MockInterface|UserGameServiceInterface
      */
