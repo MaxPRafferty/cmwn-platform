@@ -176,6 +176,7 @@ class UserCanPlayGameTest extends TestCase
             UserCanPlayGame::class . ' is reporting incorrect satisfaction count'
         );
     }
+
     /**
      * @test
      */
@@ -193,5 +194,4 @@ class UserCanPlayGameTest extends TestCase
         $this->expectException(InvalidProviderType::class);
         $rule->isSatisfiedBy(new BasicRuleItem(new BasicValueProvider('active_user', $user)));
     }
-
 }

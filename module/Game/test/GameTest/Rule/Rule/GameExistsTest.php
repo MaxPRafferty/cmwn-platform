@@ -101,5 +101,4 @@ class GameExistsTest extends TestCase
             GameExists::class . ' is not reporting correct number of times satisfied'
         );
     }
-
 }
