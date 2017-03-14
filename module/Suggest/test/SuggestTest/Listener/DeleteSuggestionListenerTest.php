@@ -4,7 +4,7 @@ namespace SuggestTest\Listener;
 
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Listener\DeleteSuggestionListener;
 use Suggest\Service\SuggestedServiceInterface;
 use Zend\EventManager\Event;

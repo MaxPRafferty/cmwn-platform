@@ -2,12 +2,16 @@
 
 namespace OrgTest\Service;
 
+use Application\Exception\NotFoundException;
+use Application\Utils\Type\TypeInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Org\Organization;
 use Org\Service\OrganizationService;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Predicate as Where;
+use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Test OrganizationServiceTest
@@ -44,10 +48,10 @@ class OrganizationServiceTest extends TestCase
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
 
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('orgs')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
@@ -68,51 +72,14 @@ class OrganizationServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
-    {
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->organizationService->fetchAll(null, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
-    {
-        $expectedWhere = new Where();
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) use (&$expectedWhere) {
-                /** @var \Zend\Db\Sql\Predicate\Predicate $where */
-                $this->assertSame($expectedWhere, $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->organizationService->fetchAll($expectedWhere, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
-     * @test
-     */
     public function testItShouldSaveNewOrg()
     {
         $newOrg = new Organization();
+        $newOrg->setTitle('school of rock');
+        $newOrg->setType(TypeInterface::TYPE_GENERIC);
 
         $this->assertNull($newOrg->getCreated());
         $this->assertNull($newOrg->getUpdated());
-        $this->assertEmpty($newOrg->getOrgId());
 
         $this->tableGateway->shouldReceive('insert')
             ->andReturnUsing(function ($data) use (&$newOrg) {
@@ -124,7 +91,6 @@ class OrganizationServiceTest extends TestCase
 
                 $expected         = $newOrg->getArrayCopy();
                 $expected['meta'] = '[]';
-                unset($expected['password']);
                 unset($expected['deleted']);
                 $this->assertArrayNotHasKey('deleted', $data);
                 $this->assertEquals($expected, $data);
@@ -149,6 +115,7 @@ class OrganizationServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
+            'type'        => TypeInterface::TYPE_GENERIC,
         ];
 
         $org    = new Organization($orgData);
@@ -188,6 +155,7 @@ class OrganizationServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
+            'type'        => TypeInterface::TYPE_GENERIC,
         ];
 
         $result = new ResultSet();
@@ -204,7 +172,7 @@ class OrganizationServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenOrgIsNotFound()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Organization not Found');
 
         $result = new ResultSet();
@@ -228,6 +196,7 @@ class OrganizationServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
+            'type'        => TypeInterface::TYPE_GENERIC,
         ];
 
         $org    = new Organization($orgData);
@@ -259,6 +228,7 @@ class OrganizationServiceTest extends TestCase
             'created'     => '2016-02-28',
             'updated'     => '2016-02-28',
             'deleted'     => '2016-02-28',
+            'type'        => TypeInterface::TYPE_GENERIC,
         ];
 
         $org    = new Organization($orgData);

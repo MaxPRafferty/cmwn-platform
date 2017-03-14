@@ -3,6 +3,7 @@
 namespace Api\Rule\Action;
 
 use Rule\Action\ActionInterface;
+use Rule\Exception\RuntimeException;
 use Rule\Item\RuleItemInterface;
 
 /**
@@ -31,11 +32,15 @@ class ThrowException implements ActionInterface
      * @param string $exceptionMessage
      * @param integer $exceptionCode
      */
-    public function __construct(string $exceptionClass, $exceptionMessage = '', $exceptionCode = 0)
+    public function __construct(string $exceptionClass, string $exceptionMessage = null, int $exceptionCode = null)
     {
         $this->exceptionClass = $exceptionClass;
         $this->exceptionCode = $exceptionCode;
         $this->exceptionMessage = $exceptionMessage;
+
+        if (!class_exists($exceptionClass) || !in_array(\Throwable::class, class_implements($exceptionClass))) {
+            throw new RuntimeException("Illegal class name for exception class: " . $exceptionClass);
+        }
     }
 
     /**

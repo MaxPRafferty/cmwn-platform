@@ -10,6 +10,8 @@ use IntegrationTest\TestHelper;
 use Security\Authentication\AuthenticationService;
 use Security\Authorization\Rbac;
 use Security\Service\SecurityService;
+use User\Adult;
+use User\Child;
 use Zend\Json\Json;
 use Zend\Log\Logger;
 use Zend\Paginator\Paginator;
@@ -54,9 +56,9 @@ class ImportBugFixesTest extends TestCase
     public function setUpLoggedInUser()
     {
         /** @var SecurityService $userService */
-        $userService = TestHelper::getDbServiceManager()->get(SecurityService::class);
+        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
         $user        = $userService->fetchUserByUserName('super_user');
-        $authService = TestHelper::getDbServiceManager()->get(AuthenticationService::class);
+        $authService = TestHelper::getServiceManager()->get(AuthenticationService::class);
         $authService->getStorage()->write($user);
     }
 
@@ -110,8 +112,10 @@ class ImportBugFixesTest extends TestCase
     {
         $this->assertEmpty($this->getImporter()->perform());
 
+        $user = new Adult();
+        $user->setUserId('english_teacher');
         // test the teacher from the default school
-        $usersForEnglishTeacher = new Paginator($this->getUserGroupService()->fetchAllUsersForUser('english_teacher'));
+        $usersForEnglishTeacher = new Paginator($this->getUserGroupService()->fetchAllUsersForUser($user));
 
         $expectedUsers = [
             'english_student',
@@ -139,9 +143,12 @@ class ImportBugFixesTest extends TestCase
     {
         $this->assertEmpty($this->getImporter()->perform());
 
+        $user = new Child();
+        $user->setUserId('english_student');
+
         // test the english student from the default school
         $classesForEnglishStudent = new Paginator(
-            $this->getUserGroupService()->fetchGroupsForUser('english_student', null, new Group())
+            $this->getUserGroupService()->fetchGroupsForUser($user)
         );
 
         $expectedGroups = [

@@ -2,9 +2,8 @@
 
 namespace Skribble;
 
-use Application\Utils\Date\DateCreatedTrait;
-use Application\Utils\Date\DateDeletedTrait;
-use Application\Utils\Date\DateUpdatedTrait;
+use Application\Utils\Date\SoftDeleteTrait;
+use Application\Utils\Date\StandardDatesTrait;
 use Skribble\Rule\SkribbleRules;
 use User\UserInterface;
 use Zend\Filter\StaticFilter;
@@ -16,10 +15,12 @@ use Zend\Json\Json;
  */
 class Skribble implements SkribbleInterface
 {
-    use DateDeletedTrait;
-    use DateCreatedTrait;
-    use DateUpdatedTrait;
-
+    use StandardDatesTrait,
+        SoftDeleteTrait {
+            SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
+            SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
+            SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
+    }
     /**
      * @var string
      */

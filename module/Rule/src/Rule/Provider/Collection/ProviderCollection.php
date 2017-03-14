@@ -3,6 +3,7 @@
 namespace Rule\Provider\Collection;
 
 use Rule\Item\RuleItemInterface;
+use Rule\Item\RuleItemTrait;
 use Rule\Provider\ProviderInterface;
 
 /**
@@ -10,6 +11,8 @@ use Rule\Provider\ProviderInterface;
  */
 class ProviderCollection implements ProviderCollectionInterface
 {
+    use RuleItemTrait;
+
     /**
      * @var \ArrayObject
      */

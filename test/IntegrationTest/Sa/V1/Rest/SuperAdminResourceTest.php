@@ -51,6 +51,7 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
 
     /**
      * @test
+     * @group Hal
      */
     public function testItShouldGetSaSettingsLinks()
     {
@@ -77,9 +78,14 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
         ];
 
         foreach ($body['_links'] as $link) {
-            $actual[] = $link['label'];
+            if (isset($link['label'])) {
+                $actual[] = $link['label'];
+            }
         }
 
         $this->assertEquals($expected, $actual);
+
+        $this->assertArrayHasKey('roles', $body);
+        $this->assertArrayHasKey('countries', $body);
     }
 }

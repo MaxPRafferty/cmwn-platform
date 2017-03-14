@@ -2,7 +2,7 @@
 
 namespace RuleTest\Rule\Date;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Rule\Date\DateBeforeRule;
 use Rule\Item\BasicRuleItem;
 

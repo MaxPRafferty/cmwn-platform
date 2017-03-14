@@ -3,7 +3,10 @@
 namespace Group\Service;
 
 use Application\Utils\ServiceTrait;
+use Group\Exception\RuntimeException;
+use Group\Group;
 use Group\GroupInterface;
+use Org\Organization;
 use Org\OrganizationInterface;
 use User\UserHydrator;
 use User\UserInterface;
@@ -12,14 +15,12 @@ use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Zend\Permissions\Rbac\RoleInterface;
 
 /**
- * Service to manage attaching users to groups
- *
- * @package Group\Service
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * A Service that deals with users in groups
  */
 class UserGroupService implements UserGroupServiceInterface
 {
@@ -31,6 +32,11 @@ class UserGroupService implements UserGroupServiceInterface
     protected $pivotTable;
 
     /**
+     * @var UserHydrator
+     */
+    protected $hydrator;
+
+    /**
      * GroupService constructor.
      *
      * @param TableGateway $pivotTable
@@ -38,18 +44,27 @@ class UserGroupService implements UserGroupServiceInterface
     public function __construct(TableGateway $pivotTable)
     {
         $this->pivotTable = $pivotTable;
+        $this->hydrator   = new UserHydrator();
     }
 
     /**
      * @inheritdoc
      */
-    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role)
+    public function getAlias(): string
     {
-        if (!is_string($role) && !$role instanceof RoleInterface) {
-            throw new \RuntimeException('Role must either be a sting or instance of Zend\PermissionAcl\RoleInterface');
-        }
+        return 'g';
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role): bool
+    {
         $role = $role instanceof RoleInterface ? $role->getRoleId() : $role;
+
+        if (empty($role)) {
+            throw new RuntimeException('Role must either be a sting or instance of ' . RoleInterface::class);
+        }
 
         $this->pivotTable->insert([
             'user_id'  => $user->getUserId(),
@@ -63,7 +78,7 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * @inheritdoc
      */
-    public function detachUserFromGroup(GroupInterface $group, UserInterface $user)
+    public function detachUserFromGroup(GroupInterface $group, UserInterface $user): bool
     {
         $this->pivotTable->delete([
             'user_id'  => $user->getUserId(),
@@ -76,8 +91,11 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null)
-    {
+    public function fetchUsersForGroup(
+        GroupInterface $group,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface {
         $where = $this->createWhere($where);
         $where->addPredicate(new Operator('g.group_id', '=', $group->getGroupId()));
 
@@ -111,8 +129,8 @@ class UserGroupService implements UserGroupServiceInterface
         $select->where($where);
         $select->order(['u.first_name', 'u.last_name']);
         $select->group(['u.user_id']);
-        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
-        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        $prototype = $prototype ?? new \stdClass();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         return new DbSelect(
             $select,
@@ -124,11 +142,13 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchUsersForOrg($organization, $where = null, $prototype = null)
-    {
-        $orgId = $organization instanceof OrganizationInterface ? $organization->getOrgId() : $organization;
+    public function fetchUsersForOrg(
+        OrganizationInterface $organization,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface {
         $where = $this->createWhere($where);
-        $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $orgId));
+        $where->addPredicate(new Operator('g.organization_id', Operator::OP_EQ, $organization->getOrgId()));
 
         $select = new Select(['g' => 'groups']);
         $select->columns(['group_id']);
@@ -152,8 +172,9 @@ class UserGroupService implements UserGroupServiceInterface
         $select->where($where);
         $select->group('u.user_id');
         $select->order(['u.first_name', 'u.last_name']);
-        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
-        $resultSet = new HydratingResultSet($hydrator, $prototype);
+
+        $prototype = $prototype ?? new \stdClass();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         return new DbSelect(
             $select,
@@ -165,11 +186,14 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchGroupsForUser($user, $where = null, $prototype = null)
-    {
-        $where  = $this->createWhere($where);
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
+    public function fetchGroupsForUser(
+        UserInterface $user,
+        $where = null,
+        GroupInterface $prototype = null
+    ): AdapterInterface {
+
+        $where = $this->createWhere($where);
+        $where->addPredicate(new Operator('ug.user_id', '=', $user->getUserId()));
 
         $select = new Select(['ug' => 'user_groups']);
         $select->columns(['ug_role' => 'role']);
@@ -204,8 +228,11 @@ class UserGroupService implements UserGroupServiceInterface
         $select->group('g.group_id');
         $select->order(['g.title']);
 
+        $prototype = $prototype ?? new Group();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
+        $sql = new \Zend\Db\Sql\Sql($this->pivotTable->getAdapter());
+        $stmt = $sql->buildSqlString($select);
         return new DbSelect(
             $select,
             $this->pivotTable->getAdapter(),
@@ -216,12 +243,12 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchOrganizationsForUser($user, $prototype = null)
-    {
-        $where = $this->createWhere($user);
-
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $userId));
+    public function fetchOrganizationsForUser(
+        UserInterface $user,
+        OrganizationInterface $prototype = null
+    ): AdapterInterface {
+        $where = $this->createWhere([]);
+        $where->addPredicate(new Operator('ug.user_id', Operator::OP_EQ, $user->getUserId()));
 
         $select = new Select();
         $select->columns(['o' => '*']);
@@ -246,6 +273,7 @@ class UserGroupService implements UserGroupServiceInterface
         $select->where($where);
         $select->group('o.org_id');
         $select->order('o.title ASC');
+        $prototype = $prototype ?? new Organization();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
 
         return new DbSelect(
@@ -258,10 +286,14 @@ class UserGroupService implements UserGroupServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllUsersForUser($user, $where = null, $prototype = null)
-    {
+    public function fetchAllUsersForUser(
+        UserInterface $user,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface {
         $select = new Select(['ug' => 'user_groups']);
         $select->columns(['ug_role' => 'role']);
+
         // This is the groups that $userId belongs too
         $select->join(
             ['ugg' => 'groups'],
@@ -310,17 +342,15 @@ class UserGroupService implements UserGroupServiceInterface
             Select::JOIN_LEFT_OUTER
         );
 
-        $where  = $this->createWhere($where);
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-
-        $where->addPredicate(new Operator('ug.user_id', '=', $userId));
+        $where = $this->createWhere($where);
+        $where->addPredicate(new Operator('ug.user_id', '=', $user->getUserId()));
         $select->where($where);
         $select->group(['u.user_id']);
-        $select->having(new Operator('u.user_id', '!=', $userId));
+        $select->having(new Operator('u.user_id', '!=', $user->getUserId()));
         $select->order(['u.first_name', 'u.last_name']);
 
-        $hydrator  = $prototype instanceof UserInterface ? new ArraySerializable() : new UserHydrator();
-        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        $prototype = $prototype ?? new \stdClass();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         return new DbSelect(
             $select,

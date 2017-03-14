@@ -485,9 +485,11 @@ class FeedDelegatorTest extends TestCase
     public function testItShouldThrowExceptionIfDeleteFeedThrowsException()
     {
         $feed = new Feed(['feed_id' => 'es_friend_feed']);
+        $exception = new \Exception();
         $this->feedService
             ->shouldReceive('deleteFeed')
             ->with($feed, true)
+            ->andThrow($exception)
             ->once();
         try {
             $this->delegator->deleteFeed($feed);
@@ -505,10 +507,14 @@ class FeedDelegatorTest extends TestCase
                 [
                     'name' => 'delete.feed.error',
                     'target' => $this->feedService,
-                    'params' => ['feed' => $feed, 'soft' => true, 'exception' => new \Exception()],
+                    'params' => ['feed' => $feed, 'soft' => true, 'exception' => $exception],
                 ],
                 $this->calledEvents[1]
             );
+
+            return;
         }
+
+        $this->fail('The delegator did not throw an exception');
     }
 }

@@ -3,7 +3,7 @@
 namespace ApplicationTest\Utils\Date;
 
 use Application\Utils\Date\ToDateFilter;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test ToDateFilterTest

@@ -7,7 +7,6 @@ use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use IntegrationTest\TestHelper;
 use Group\Service\GroupServiceInterface;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test GroupResourceTest
@@ -32,7 +31,7 @@ class GroupResourceTest extends TestCase
     protected $groupService;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -44,7 +43,7 @@ class GroupResourceTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
@@ -467,9 +466,9 @@ class GroupResourceTest extends TestCase
         $this->logInUser('super_user');
 
         $this->dispatch('/group/school', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->expectException(NotFoundException::class);
-        $group = $this->groupService->fetchGroup('school')->getArrayCopy();
+        $this->groupService->fetchGroup('school')->getArrayCopy();
     }
 
     /**
@@ -637,6 +636,7 @@ class GroupResourceTest extends TestCase
     /**
      * @test
      * @dataProvider halLinkDataProvider
+     * @group HAL
      */
     public function testItShouldAddCorrectHalLinksOnGroupEntities($login, $group, $expected)
     {
@@ -652,7 +652,32 @@ class GroupResourceTest extends TestCase
         foreach ($links as $label => $link) {
             $actual[] = $label;
         }
-        $this->assertEquals($actual, $expected);
+
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldLoadGroupsForPageTwoAndBuildCorrectFindLink()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/group?page=2&per_page=1');
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'] ?? [];
+
+        $this->assertArrayHasKey('find', $links);
+
+        $this->assertEquals(
+            ['href' => 'http://api.test.com/group?per_page=1{&page}', 'templated' => true],
+            $links['find'],
+            'Find link was incorrectly built for group endpoint'
+        );
     }
 
     /**
@@ -813,7 +838,7 @@ class GroupResourceTest extends TestCase
     public function halLinkDataProvider()
     {
         return [
-            0 => [
+            'Super User for School' => [
                 'super_user',
                 'school',
                 [
@@ -822,9 +847,10 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                     3 => 'group_class',
                     4 => 'import',
+                    5 => 'group_address',
                 ]
             ],
-            1 => [
+            'Super User for Class' => [
                 'super_user',
                 'english',
                 [
@@ -832,9 +858,10 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'import',
+                    4 => 'group_address',
                 ]
             ],
-            2 => [
+            'Principal for School' => [
                 'principal',
                 'school',
                 [
@@ -843,9 +870,10 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                     3 => 'group_class',
                     4 => 'import',
+                    5 => 'group_address',
                 ]
             ],
-            3 => [
+            'Principal for English' => [
                 'principal',
                 'english',
                 [
@@ -853,9 +881,10 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'import',
+                    4 => 'group_address',
                 ]
             ],
-            4 => [
+            'English Teacher for school' => [
                 'english_teacher',
                 'school',
                 [
@@ -863,32 +892,36 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'group_class',
+                    4 => 'group_address',
                 ]
             ],
-            5 => [
+            'English Teacher for English' => [
                 'english_teacher',
                 'english',
                 [
                     0 => 'self',
                     1 => 'group_users',
                     2 => 'group_reset',
+                    3 => 'group_address',
                 ]
             ],
-            6 => [
+            'English Student for School' => [
                 'english_student',
                 'school',
                 [
                     0 => 'self',
                     1 => 'group_users',
                     2 => 'group_class',
+                    3 => 'group_address',
                 ]
             ],
-            7 => [
+            'English Student for class' => [
                 'english_student',
                 'english',
                 [
                     0 => 'self',
                     1 => 'group_users',
+                    2 => 'group_address',
                 ]
             ],
         ];

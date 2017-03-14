@@ -3,6 +3,7 @@
 namespace Friend;
 
 use User\User;
+use User\UserInterface;
 
 /**
  * Class Friend
@@ -18,11 +19,9 @@ class Friend extends User implements FriendInterface
     protected $type;
 
     /**
-     * Replaces the user_id with friend_id
-     *
-     * @return string[]
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         $array = parent::getArrayCopy();
         $array['friend_id']     = $this->getUserId();
@@ -32,26 +31,28 @@ class Friend extends User implements FriendInterface
     }
 
     /**
-     * @param array $array
+     * @inheritdoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): UserInterface
     {
         parent::exchangeArray($array);
         $this->setFriendStatus($array['friend_status']);
+        return $this;
     }
 
     /**
-     * @param $type
+     * @inheritdoc
      */
     protected function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

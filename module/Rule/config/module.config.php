@@ -38,6 +38,7 @@ return [
                 \Rule\Provider\Service\BuildProviderCollectionFactory::class,
             \Rule\Event\Provider\FromEventTargetProvider::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Rule\Event\Provider\EventProvider::class           => \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Rule\Event\Provider\FromEventParamProvider::class  => \Rule\Provider\Service\BuildProviderFactory::class,
         ],
         'abstract_factories' => [
             \Rule\Provider\Service\BuildProviderFromConfigFactory::class =>
