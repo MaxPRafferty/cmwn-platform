@@ -73,7 +73,7 @@ return [
                 'import-file' => [
                     'options' => [
                         // @codingStandardsIgnoreStart
-                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= --email= --codeStart= [--verbose|-v] [--debug|-d] [--dry-run]',
+                        'route'    => 'import:file --type= --file= --teacherCode= --studentCode= --school= --email= [--codeStart=] [--verbose|-v] [--debug|-d] [--dry-run]',
                         // @codingStandardsIgnoreEnd
                         'defaults' => [
                             'controller' => 'Import\Controller',

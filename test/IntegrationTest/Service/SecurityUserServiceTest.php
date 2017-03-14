@@ -43,7 +43,7 @@ class SecurityUserServiceTest extends TestCase
      */
     public function setUpUserGroupService()
     {
-        $this->securityUserService = TestHelper::getDbServiceManager()->get(SecurityUserServiceInterface::class);
+        $this->securityUserService = TestHelper::getServiceManager()->get(SecurityUserServiceInterface::class);
     }
 
     /**

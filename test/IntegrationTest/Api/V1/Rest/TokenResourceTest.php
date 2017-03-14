@@ -4,7 +4,6 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test TokenResourceTest
@@ -21,7 +20,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 class TokenResourceTest extends TestCase
 {
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -48,6 +47,7 @@ class TokenResourceTest extends TestCase
     /**
      * @test
      * @ticket CORE-681
+     * @group Hal
      */
     public function testItShouldReturnDefaultHalLinksWhenNotLoggedIn()
     {
@@ -81,6 +81,7 @@ class TokenResourceTest extends TestCase
      * @ticket       CORE-1184
      * @ticket       CORE-1233
      * @dataProvider loginHalLinksDataProvider
+     * @group Hal
      */
     public function testItShouldBuildCorrectEndpointsForMe($user, $links, $expectedScope)
     {
@@ -103,8 +104,8 @@ class TokenResourceTest extends TestCase
         $this->assertArrayHasKey('_links', $decoded, 'No hal links returned on me');
         $this->assertArrayHasKey('scope', $decoded, 'No Scope returned on me');
 
-        sort($links);
         $actualLinks = array_keys($decoded['_links']);
+        sort($links);
         sort($actualLinks);
         $this->assertEquals($links, $actualLinks);
 
@@ -120,6 +121,7 @@ class TokenResourceTest extends TestCase
             'Super User'      => [
                 'user'  => 'super_user',
                 'links' => [
+                    'address',
                     'feed',
                     'flip',
                     'games',
@@ -134,6 +136,7 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
+                    'user_flip',
                     'super',
                     'flags',
                     'sa_settings',
@@ -154,6 +157,7 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
+                    'user_flip',
                     'flags',
                     'user_feed',
                 ],
@@ -172,6 +176,7 @@ class TokenResourceTest extends TestCase
                     'self',
                     'user',
                     'user_image',
+                    'user_flip',
                     'flags',
                     'user_feed',
                 ],
@@ -208,7 +213,7 @@ class TokenResourceTest extends TestCase
     public function changePasswordDataProvider()
     {
         return [
-            0 => [
+            'English Student' => [
                 'english_student',
                 '/',
             ],

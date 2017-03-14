@@ -3,7 +3,7 @@
 namespace SuggestTest\Engine;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Engine\SuggestionEngine;
 use Suggest\Filter\FilterCollection;
 use Suggest\Rule\RuleCollection;

@@ -1,21 +1,21 @@
 <?php
 
-namespace Job\Processor;
+namespace Application\Log;
 
 use Interop\Container\ContainerInterface;
+use Zend\Log\PsrLoggerAdapter;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Class JobRunnerFactory
+ * Class PsrLoggerFactory
  */
-class JobRunnerFactory implements FactoryInterface
+class PsrLoggerFactory implements FactoryInterface
 {
     /**
      * @inheritDoc
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = $container->get('Config');
-        return new JobRunner($config['job_runner']);
+        return new PsrLoggerAdapter($container->get('Log\App'));
     }
 }

@@ -69,7 +69,7 @@ class DoeImporterWithDateTest extends TestCase
      */
     public function setUpImporter()
     {
-        $this->importer = TestHelper::getDbServiceManager()->get('Nyc\DoeImporter');
+        $this->importer = TestHelper::getServiceManager()->get('Nyc\DoeImporter');
     }
 
     /**
@@ -77,7 +77,7 @@ class DoeImporterWithDateTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityServiceInterface::class);
+        $this->securityService = TestHelper::getServiceManager()->get(SecurityServiceInterface::class);
     }
 
     /**

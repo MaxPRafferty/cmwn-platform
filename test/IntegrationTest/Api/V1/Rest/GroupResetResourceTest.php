@@ -29,7 +29,7 @@ class GroupResetResourceTest extends TestCase
      */
     public function setUpServices()
     {
-        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityServiceInterface::class);
+        $this->securityService = TestHelper::getServiceManager()->get(SecurityServiceInterface::class);
     }
 
     /**

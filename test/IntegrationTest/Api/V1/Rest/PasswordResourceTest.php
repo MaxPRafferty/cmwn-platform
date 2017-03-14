@@ -39,7 +39,7 @@ class PasswordResourceTest extends TestCase
      */
     public function setUpSecurityService()
     {
-        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
     }
 
     /**

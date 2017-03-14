@@ -60,7 +60,7 @@ class AddClassToSchoolAction implements ActionInterface
      */
     public function execute()
     {
-        $this->groupService->addChildToGroup($this->school, $this->classRoom->getGroup());
+        $this->groupService->attachChildToGroup($this->school, $this->classRoom->getGroup());
     }
 
     /**

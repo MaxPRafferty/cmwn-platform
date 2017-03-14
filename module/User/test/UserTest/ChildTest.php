@@ -3,7 +3,7 @@
 namespace UserTest;
 
 use IntegrationTest\TestHelper;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\Child;
 use User\Service\StaticNameService;
 

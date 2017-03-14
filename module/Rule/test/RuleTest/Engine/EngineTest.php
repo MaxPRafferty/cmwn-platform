@@ -2,7 +2,7 @@
 
 namespace RuleTest\Engine;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Action\CallbackAction;
 use Rule\Action\Service\ActionManager;
 use Rule\Provider\Service\ProviderManager;

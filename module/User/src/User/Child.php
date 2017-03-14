@@ -5,20 +5,19 @@ namespace User;
 use User\Service\StaticNameService;
 
 /**
- * Class Child
- * @package User
+ * A Child User
  */
 class Child extends User implements ChildInterface
 {
     /**
-     * @var UserName|null
+     * @var UserName
      */
     protected $generatedName;
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getType()
+    public function getType(): string
     {
         return static::TYPE_CHILD;
     }
@@ -26,7 +25,7 @@ class Child extends User implements ChildInterface
     /**
      * Generates a random user name for the child
      *
-     * @return UserName
+     * @return string|null
      */
     public function getUserName()
     {
@@ -42,12 +41,9 @@ class Child extends User implements ChildInterface
     }
 
     /**
-     * Sets the generated name to allow children to change their name
-     * @param UserName $username
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setGeneratedName(UserName $username)
+    public function setGeneratedName(UserName $username): ChildInterface
     {
         $this->generatedName = $username;
         $this->userName      = $username->userName;
@@ -56,10 +52,10 @@ class Child extends User implements ChildInterface
     }
 
     /**
-     * @param string $userName
-     * @return $this
+     * @inheritdoc
      */
-    public function setUserName($userName)
+
+    public function setUserName(string $userName): UserInterface
     {
         if ($this->userName === null) {
             parent::setUserName($userName);
@@ -72,29 +68,25 @@ class Child extends User implements ChildInterface
     /**
      * @return bool
      */
-    public function isNameGenerated()
+    public function isNameGenerated(): bool
     {
         return $this->generatedName !== null;
     }
 
     /**
-     * @return null|UserName
+     * @inheritdoc
      */
-    public function getGeneratedName()
+    public function getGeneratedName(): UserName
     {
         return $this->generatedName;
     }
 
     /**
-     * Will default the email to be username@changemyworldnow.com if empty
-     * @return string
+     * Overrides the email and sets it to the <username>@changemyworldnow.com
      */
-    public function getEmail()
+    public function getEmail():string
     {
-        if (empty($this->email)) {
-            $this->setEmail($this->getUserName() . '@changemyworldnow.com');
-        }
-
-        return $this->email;
+        $this->setEmail($this->getUserName() . '@changemyworldnow.com');
+        return parent::getEmail();
     }
 }

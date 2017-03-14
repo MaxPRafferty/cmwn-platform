@@ -2,7 +2,7 @@
 
 namespace RuleTest\Engine\Specification;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Action\Collection\ActionCollectionInterface;
 use Rule\Action\NoopAction;
 use Rule\Provider\BasicValueProvider;

@@ -3,7 +3,7 @@
 namespace GameTest;
 
 use Game\Game;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test GameTest
@@ -28,6 +28,7 @@ class GameTest extends TestCase
             "updated"     => null,
             "deleted"     => null,
             "coming_soon" => true,
+            "global"      => false,
         ];
 
         $org = new Game();
@@ -51,6 +52,7 @@ class GameTest extends TestCase
             "updated"     => $date->format(\DateTime::ISO8601),
             "deleted"     => null,
             "coming_soon" => true,
+            "global"      => false
         ];
 
         $org = new Game();

@@ -39,7 +39,7 @@ class SecurityGroupServiceTest extends TestCase
      */
     public function setUpService()
     {
-        $this->service = TestHelper::getDbServiceManager()->get(SecurityGroupServiceInterface::class);
+        $this->service = TestHelper::getServiceManager()->get(SecurityGroupServiceInterface::class);
     }
 
     /**

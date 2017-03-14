@@ -4,7 +4,7 @@ namespace GameTest;
 
 use Application\Utils\Date\DateTimeFactory;
 use Game\SaveGame;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test SaveGameTest

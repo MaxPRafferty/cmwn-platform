@@ -3,8 +3,9 @@
 namespace SuggestTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Suggest\Delegator\SuggestedServiceDelegator;
+use Suggest\Service\SuggestedService;
 use Suggest\Suggestion;
 use User\Child;
 use User\UserInterface;
@@ -70,7 +71,7 @@ class SuggestedServiceDelegatorTest extends TestCase
      */
     public function setUpDelegator()
     {
-        $events = new EventManager();
+        $events          = new EventManager();
         $this->delegator = new SuggestedServiceDelegator($this->suggestedService, $events);
         $this->delegator->getEventManager()->clearListeners('fetch.suggested.friends');
         $this->delegator->getEventManager()->clearListeners('fetch.suggested.friends.post');
@@ -86,7 +87,7 @@ class SuggestedServiceDelegatorTest extends TestCase
      */
     public function setUpSuggestedService()
     {
-        $this->suggestedService = \Mockery::mock('\Suggest\Service\SuggestedService');
+        $this->suggestedService = \Mockery::mock(SuggestedService::class);
     }
 
     /**

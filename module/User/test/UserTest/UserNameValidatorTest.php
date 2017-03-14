@@ -2,7 +2,7 @@
 
 namespace UserTest;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use User\UserName;
 use User\UserNameValidator;
 

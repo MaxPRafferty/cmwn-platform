@@ -126,9 +126,6 @@ return [
             \Security\Listeners\FetchUserImageListener::class => \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Security\Service\SecurityService::class          => \Security\Service\SecurityServiceFactory::class,
 
-            \Security\Authentication\AuthenticationService::class =>
-                \Security\Authentication\AuthenticationServiceFactory::class,
-
             \Security\Listeners\ExpireAuthSessionListener::class =>
                 \Security\Factory\ExpireAuthSessionListenerFactory::class,
 

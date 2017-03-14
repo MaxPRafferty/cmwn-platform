@@ -2,14 +2,17 @@
 
 namespace SecurityTest\Service;
 
+use Application\Exception\NotFoundException;
 use Lcobucci\JWT\Builder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Security\SecurityUser;
 use Security\Service\SecurityService;
 use User\Adult;
+use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\PredicateSet;
+use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Test SecurityServiceTest
@@ -52,10 +55,10 @@ class SecurityServiceTest extends TestCase
     public function setUpGateWay()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
 
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('users')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
@@ -153,7 +156,7 @@ class SecurityServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFoundByUserName()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('User not Found');
 
         $this->tableGateway->shouldReceive('select')
@@ -170,7 +173,7 @@ class SecurityServiceTest extends TestCase
      */
     public function testItShouldThrowExceptionWhenUserNotFoundByUserEmail()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('User not Found');
 
         $this->tableGateway->shouldReceive('select')

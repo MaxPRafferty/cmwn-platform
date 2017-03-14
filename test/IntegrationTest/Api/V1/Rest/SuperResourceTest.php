@@ -25,7 +25,7 @@ class SuperResourceTest extends AbstractApigilityTestCase
      */
     public function setUpService()
     {
-        $this->securityService = TestHelper::getDbServiceManager()->get(SecurityService::class);
+        $this->securityService = TestHelper::getServiceManager()->get(SecurityService::class);
     }
 
     /**
@@ -180,7 +180,7 @@ class SuperResourceTest extends AbstractApigilityTestCase
         $userBefore = $this->securityService->fetchUserByUserName('super_user');
         $this->assertTrue($userBefore->isSuper());
         $this->dispatch('/super/super_user', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->assertMatchedRouteName('api.rest.super');
         $this->assertControllerName('api\v1\rest\super\controller');
 

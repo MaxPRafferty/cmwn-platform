@@ -19,9 +19,9 @@ return [
     'Zend\\Serializer',
     'Zend\\Session',
     'Zend\\Validator',
+    'Zend\\I18n',
     'ZF\\Apigility',
     'ZF\\ApiProblem',
-    'ZF\\Configuration',
     'ZF\\ContentNegotiation',
     'ZF\\ContentValidation',
     'ZF\\Hal',
@@ -53,4 +53,6 @@ return [
     'Sa',
     'Rule',
     'Address',
+    'Search',
+    'ZfrCors',
 ];

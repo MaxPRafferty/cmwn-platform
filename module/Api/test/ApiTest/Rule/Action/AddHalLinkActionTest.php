@@ -4,18 +4,18 @@ namespace ApiTest\Rule\Action;
 
 use Api\Links\UserLink;
 use Api\Rule\Action\AddHalLinkAction;
-use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase;
 use Rule\Item\BasicRuleItem;
 use Rule\Item\RuleItemInterface;
 use Rule\Provider\BasicValueProvider;
+use ZF\Hal\Entity;
 
 /**
  * Class AddHalLinkActionTest
+ *
  * @package ApiTest\Rule\Action
  */
-class AddHalLinkActionTest extends TestCase
+class AddHalLinkActionTest extends \PHPUnit_Framework_TestCase
 {
     use MockeryPHPUnitIntegration;
 
@@ -37,24 +37,11 @@ class AddHalLinkActionTest extends TestCase
      */
     public function testItShouldAddHalLinksToEntity()
     {
-        $entity = new UserEntity();
-        $this->item->append(new BasicValueProvider('provider', $entity));
+        $entity = new Entity(['foo' => 'bar']);
         $action = new AddHalLinkAction(UserLink::class, 'provider');
+        $this->item->append(new BasicValueProvider('provider', $entity));
         $this->assertFalse($entity->getLinks()->has('user'));
         $action($this->item);
         $this->assertTrue($entity->getLinks()->has('user'));
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldNotAddHalLinksIfEntityIsNotLinksAware()
-    {
-        $entity = new UserEntity();
-        $this->item->append(new BasicValueProvider('provider', $entity->getArrayCopy()));
-        $action = new AddHalLinkAction(UserLink::class, 'provider');
-        $this->assertFalse($entity->getLinks()->has('user'));
-        $action($this->item);
-        $this->assertFalse($entity->getLinks()->has('user'));
     }
 }
