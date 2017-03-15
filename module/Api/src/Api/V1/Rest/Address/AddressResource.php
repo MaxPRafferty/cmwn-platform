@@ -65,7 +65,7 @@ class AddressResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=404,
      *     description="Address not found",
-     *     @SWG\Schema(@SWG\Items(ref="#/definitions/NotFoundError")
+     *     @SWG\Schema(ref="#/definitions/NotFoundError")
      *   ),
      *   @SWG\Response(
      *     response=403,
@@ -110,7 +110,7 @@ class AddressResource extends AbstractResourceListener
      *     name="filter",
      *     in="query",
      *     description="type of entity requested",
-     *     enum={"group"}
+     *     enum={"group"},
      *     type="string",
      *     maximum=1.0
      *   ),
@@ -143,7 +143,7 @@ class AddressResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=403,
      *     description="Not Authorized",
-     *     @SWG\Schema(@SWG\Items(ref="#/definitions/Error")
+     *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
      * @param  array $params
@@ -319,7 +319,7 @@ class AddressResource extends AbstractResourceListener
      *     response=401,
      *     description="Not Authenticated",
      *     @SWG\Schema(ref="#/definitions/Error")
-     *   )
+     *   ),
      *   @SWG\Response(
      *     response=500,
      *     description="Problem occurred during execution",

@@ -15,7 +15,7 @@ use Zend\Paginator\Paginator;
  *         description="A List of User Entities",
  *         @SWG\Property(
  *             type="array",
- *             property="org",
+ *             property="user",
  *             description="A List of users",
  *             @SWG\Items(ref="#/definitions/UserEntity")
  *         )
