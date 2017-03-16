@@ -33,7 +33,7 @@ class GameDataResourceTest extends TestCase
      */
     public function setUpSaveGameService()
     {
-        $this->saveService = TestHelper::getDbServiceManager()->get(SaveGameServiceInterface::class);
+        $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
     }
 
     /**

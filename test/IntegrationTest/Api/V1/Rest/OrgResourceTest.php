@@ -47,7 +47,7 @@ class OrgResourceTest extends TestCase
      */
     public function setUpOrgService()
     {
-        $this->orgService = TestHelper::getDbServiceManager()->get(OrganizationServiceInterface::class);
+        $this->orgService = TestHelper::getServiceManager()->get(OrganizationServiceInterface::class);
     }
 
     /**
@@ -55,7 +55,7 @@ class OrgResourceTest extends TestCase
      */
     public function setUpRbac()
     {
-        $this->rbac = TestHelper::getDbServiceManager()->get(Rbac::class);
+        $this->rbac = TestHelper::getServiceManager()->get(Rbac::class);
     }
 
     /**
@@ -493,6 +493,29 @@ class OrgResourceTest extends TestCase
             'org_users',
             $body['_links'],
             'User with permission for view.org.users was NOT given the HAL link for org_users'
+        );
+    }
+
+
+    /**
+     * @test
+     */
+    public function testItShouldLoadGroupsForPageTwoAndBuildCorrectFindLink()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/org?page=2&per_page=1');
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'] ?? [];
+
+        $this->assertArrayHasKey('find', $links);
+
+        $this->assertEquals(
+            ['href' => 'http://api.test.com/org?per_page=1{&page}', 'templated' => true],
+            $links['find'],
+            'Find link was incorrectly built for org endpoint'
         );
     }
 

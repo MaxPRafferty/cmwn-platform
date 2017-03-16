@@ -78,9 +78,17 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
         ];
 
         foreach ($body['_links'] as $link) {
-            $actual[] = $link['label'];
+            if (isset($link['label'])) {
+                $actual[] = $link['label'];
+            }
         }
-
         $this->assertEquals($expected, $actual);
+
+        $this->assertArrayHasKey('roles', $body);
+        $this->assertEquals(
+            $body['roles'],
+            ['group' => ['admin', 'principal','asst_principal', 'teacher', 'student']]
+        );
+        $this->assertArrayHasKey('countries', $body);
     }
 }

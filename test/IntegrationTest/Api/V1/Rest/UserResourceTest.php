@@ -10,7 +10,6 @@ use User\Service\UserServiceInterface;
 use User\StaticUserFactory;
 use User\UserInterface;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test UserResourceTest
@@ -29,7 +28,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 class UserResourceTest extends TestCase
 {
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -721,6 +720,28 @@ class UserResourceTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function testItShouldLoadGroupsForPageTwoAndBuildCorrectFindLink()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user?page=2&per_page=1');
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'] ?? [];
+
+        $this->assertArrayHasKey('find', $links);
+
+        $this->assertEquals(
+            ['href' => 'http://api.test.com/user?per_page=1{&page}', 'templated' => true],
+            $links['find'],
+            'Find link was incorrectly built for user endpoint'
+        );
+    }
+
+    /**
      * @param $userId
      *
      * @return \User\UserInterface
@@ -728,7 +749,7 @@ class UserResourceTest extends TestCase
     protected function loadUserFromDb($userId)
     {
         /** @var UserServiceInterface $userService */
-        $userService = TestHelper::getDbServiceManager()->get(UserServiceInterface::class);
+        $userService = TestHelper::getServiceManager()->get(UserServiceInterface::class);
 
         return $userService->fetchUser($userId);
     }

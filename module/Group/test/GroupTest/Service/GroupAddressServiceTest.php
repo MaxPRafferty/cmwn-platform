@@ -195,4 +195,150 @@ class GroupAddressServiceTest extends TestCase
             )
         );
     }
+
+    /**
+     * @test
+     */
+    public function testItShouldReturnPaginatorAdapterForFetchAddressesWithGroupsAttached()
+    {
+        $where = new Where();
+
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+        $select->columns([]);
+        $select->join(
+            ['at' => 'addresses'],
+            'at.address_id = ga.address_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+
+        $adapter = $this->tableGateway->getAdapter();
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), new Address([]));
+
+        $expectedDbselect = new DbSelect($select, $adapter, $resultSet);
+
+        $this->assertEquals(
+            $expectedDbselect,
+            $this->groupAddressService->fetchAddressesWithGroupsAttached()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldReturnPaginatorAdapterForFetchAddressesWithGroupsAttachedWithWhereAndPrototype()
+    {
+        $where = new Where([new Operator('at.postal_code', Operator::OP_EQ, 'bar')]);
+
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+        $select->columns([]);
+        $select->join(
+            ['at' => 'addresses'],
+            'at.address_id = ga.address_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+
+        $adapter = $this->tableGateway->getAdapter();
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), new AddressEntity([]));
+
+        $expectedDbselect = new DbSelect($select, $adapter, $resultSet);
+
+        $group = new Group();
+        $group->setGroupId('foo');
+        $this->assertEquals(
+            $expectedDbselect,
+            $this->groupAddressService->fetchAddressesWithGroupsAttached(
+                new Operator('at.postal_code', '=', 'bar'),
+                new AddressEntity([])
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldReturnPaginatorAdapterForFetchAllGroupsInAddress()
+    {
+        $where = new Where();
+
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+
+        $select->columns([]);
+
+        $select->join(
+            ['at' => 'addresses'],
+            'ga.address_id = at.address_id'
+        );
+
+        $select->columns([]);
+
+        $select->join(
+            ['g' => 'groups'],
+            'ga.group_id = g.group_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+
+        $adapter = $this->tableGateway->getAdapter();
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), new Group());
+
+        $expectedDbselect = new DbSelect($select, $adapter, $resultSet);
+
+        $this->assertEquals(
+            $expectedDbselect,
+            $this->groupAddressService->fetchAllGroupsInAddress()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldReturnPaginatorAdapterForFetchAllGroupsInAddressWithWhereAndPrototype()
+    {
+        $where = new Where([new Operator('at.postal_code', Operator::OP_EQ, 'bar')]);
+
+        $select = new Select(['ga' => $this->tableGateway->getTable()]);
+        $select->columns([]);
+        $select->join(
+            ['at' => 'addresses'],
+            'ga.address_id = at.address_id'
+        );
+
+        $select->columns([]);
+
+        $select->join(
+            ['g' => 'groups'],
+            'ga.group_id = g.group_id',
+            '*',
+            Select::JOIN_LEFT
+        );
+
+        $select->where($where);
+
+        $adapter = $this->tableGateway->getAdapter();
+
+        $resultSet = new HydratingResultSet(new ArraySerializable(), new Group());
+
+        $expectedDbselect = new DbSelect($select, $adapter, $resultSet);
+
+        $group = new Group();
+        $group->setGroupId('foo');
+        $this->assertEquals(
+            $expectedDbselect,
+            $this->groupAddressService->fetchAllGroupsInAddress(
+                new Operator('at.postal_code', '=', 'bar'),
+                new Group()
+            )
+        );
+    }
 }

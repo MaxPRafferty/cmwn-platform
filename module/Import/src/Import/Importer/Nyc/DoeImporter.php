@@ -147,11 +147,16 @@ class DoeImporter implements
      */
     public function getCodeStart()
     {
+        if (null === $this->codeStart) {
+            $this->setCodeStart('now');
+        }
+
         return $this->codeStart;
     }
 
     /**
      * @param $school
+     *
      * @throws \Exception
      */
     public function setSchool($school)
@@ -175,6 +180,7 @@ class DoeImporter implements
 
     /**
      * @param string $fileName
+     *
      * @return DoeImporter
      */
     public function setFileName($fileName)
@@ -186,6 +192,7 @@ class DoeImporter implements
 
         $this->fileName = $fileName;
         $this->parser->setFileName($fileName);
+
         return $this;
     }
 
@@ -205,6 +212,7 @@ class DoeImporter implements
         try {
             if ($this->getEventManager()->triggerEvent($event)->stopped()) {
                 $this->getLogger()->notice('Response caused processing to stop');
+
                 return;
             }
 
@@ -267,21 +275,24 @@ class DoeImporter implements
      */
     public function getArrayCopy()
     {
-        return [
+        $array = [
             'type'         => get_class($this),
             'file'         => $this->getFileName(),
             'teacher_code' => $this->teacherCode,
             'student_code' => $this->studentCode,
             'school'       => $this->school instanceof GroupInterface ? $this->school->getGroupId() : null,
             'email'        => $this->getEmail(),
-            'code_start'   => $this->getCodeStart() !== null ? $this->getCodeStart()->format("Y-m-d H:i:s") : null,
+            'code_start'   => $this->getCodeStart()->format("Y-m-d H:i:s"),
         ];
+
+        return $array;
     }
 
     /**
      * Returns the values back to the object
      *
      * @param array $data
+     *
      * @return mixed
      */
     public function exchangeArray(array $data)
@@ -292,7 +303,6 @@ class DoeImporter implements
             'student_code' => null,
             'school'       => null,
             'email'        => null,
-            'code_start'   => null,
         ];
 
         $data = array_merge($defaults, $data);
@@ -303,6 +313,6 @@ class DoeImporter implements
 
         $this->setSchool($data['school']);
         $this->setEmail($data['email']);
-        $this->setCodeStart($data['code_start']);
+        $this->setCodeStart($data['code_start'] ?? 'now');
     }
 }

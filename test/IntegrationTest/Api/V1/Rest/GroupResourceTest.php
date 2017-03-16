@@ -43,7 +43,7 @@ class GroupResourceTest extends TestCase
      */
     public function setUpUserService()
     {
-        $this->groupService = TestHelper::getDbServiceManager()->get(GroupServiceInterface::class);
+        $this->groupService = TestHelper::getServiceManager()->get(GroupServiceInterface::class);
     }
 
     /**
@@ -659,6 +659,28 @@ class GroupResourceTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function testItShouldLoadGroupsForPageTwoAndBuildCorrectFindLink()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/group?page=2&per_page=1');
+        $this->assertResponseStatusCode(200);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        $this->assertArrayHasKey('_links', $body);
+        $links = $body['_links'] ?? [];
+
+        $this->assertArrayHasKey('find', $links);
+
+        $this->assertEquals(
+            ['href' => 'http://api.test.com/group?per_page=1{&page}', 'templated' => true],
+            $links['find'],
+            'Find link was incorrectly built for group endpoint'
+        );
+    }
+
+    /**
      * @return array
      */
     public function changePasswordDataProvider()
@@ -825,6 +847,7 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                     3 => 'group_class',
                     4 => 'import',
+                    5 => 'group_address',
                 ]
             ],
             'Super User for Class' => [
@@ -835,9 +858,10 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'import',
+                    4 => 'group_address',
                 ]
             ],
-            'Principla for School' => [
+            'Principal for School' => [
                 'principal',
                 'school',
                 [
@@ -846,6 +870,7 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                     3 => 'group_class',
                     4 => 'import',
+                    5 => 'group_address',
                 ]
             ],
             'Principal for English' => [
@@ -856,6 +881,7 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'import',
+                    4 => 'group_address',
                 ]
             ],
             'English Teacher for school' => [
@@ -866,6 +892,7 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'group_class',
+                    4 => 'group_address',
                 ]
             ],
             'English Teacher for English' => [
@@ -875,6 +902,7 @@ class GroupResourceTest extends TestCase
                     0 => 'self',
                     1 => 'group_users',
                     2 => 'group_reset',
+                    3 => 'group_address',
                 ]
             ],
             'English Student for School' => [
@@ -884,6 +912,7 @@ class GroupResourceTest extends TestCase
                     0 => 'self',
                     1 => 'group_users',
                     2 => 'group_class',
+                    3 => 'group_address',
                 ]
             ],
             'English Student for class' => [
@@ -892,6 +921,7 @@ class GroupResourceTest extends TestCase
                 [
                     0 => 'self',
                     1 => 'group_users',
+                    2 => 'group_address',
                 ]
             ],
         ];

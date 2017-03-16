@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'validators' => [
+        'factories' => [
+            \Group\RoleValidator::class => \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
+        ],
+    ],
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
         \Group\Service\GroupService::class     => [
             'GroupsTable',
@@ -9,9 +14,10 @@ return [
             'UserGroupsTable',
             Zend\Db\Adapter\Adapter::class,
         ],
-
-        \Group\Service\GroupAddressService::class => [
-            'Table/GroupAddresses',
+        \Group\Service\GroupAddressService::class => ['Table/GroupAddresses'],
+        \Group\RoleValidator::class => [
+            \User\Service\UserServiceInterface::class,
+            'Config',
         ],
     ],
     'service_manager'                                                 => [

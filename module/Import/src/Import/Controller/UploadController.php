@@ -39,6 +39,11 @@ class UploadController extends AbstractActionController
     protected $groupService;
 
     /**
+     * @var ServiceLocatorInterface
+     */
+    protected $services;
+
+    /**
      * UploadController constructor.
      *
      * @param InputFilterInterface $importFilter
@@ -56,10 +61,18 @@ class UploadController extends AbstractActionController
     ) {
         $this->setInputFilter($importFilter);
         // TODO zf3 fix
-        $this->setServiceLocator($services);
+        $this->services = $services;
         $this->groupService = $groupService;
         $this->jobService = $jobService;
         $this->setAuthenticationService($authenticationService);
+    }
+
+    /**
+     * @return ServiceLocatorInterface
+     */
+    public function getServiceLocator()
+    {
+        return $this->services;
     }
 
     /**

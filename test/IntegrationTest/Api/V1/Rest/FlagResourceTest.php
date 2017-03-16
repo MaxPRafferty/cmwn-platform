@@ -42,7 +42,7 @@ class FlagResourceTest extends TestCase
      */
     public function setUpFlagService()
     {
-        $this->flagService = TestHelper::getDbServiceManager()->get(FlagService::class);
+        $this->flagService = TestHelper::getServiceManager()->get(FlagService::class);
     }
 
     /**
