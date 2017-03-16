@@ -1,0 +1,101 @@
+<?php // @codingStandardsIgnoreStart ?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        @font-face {
+            font-family: 'CMWNJadeRegular';
+            src: url('../fonts/cmwn.ttf') format('truetype');
+        }
+
+        #label {
+            font-weight: bold;
+        }
+
+        .container {
+            float:left;
+            width:100%;
+            position:relative;
+        }
+
+        .card {
+            width:49.6%;
+            position:relative;
+            border: 1px dashed black;
+            page-break-inside: avoid;
+            page-break-after: auto;
+            page-break-before: auto;
+            height: 2.60in;
+            overflow: hidden;
+            word-wrap: break-word;
+            text-align: center;
+        }
+
+        .content {
+            margin-top: 40px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            font-size: 18px;
+        }
+
+        .site-link {
+            font-size: 18px;
+            font-family: Impact, Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            font-stretch: condensed;
+        }
+
+        .disclaimer {
+            font-size: 10px;
+            font-style: italic;
+        }
+
+        .title {
+            page-break-after: always;
+            margin-top: 25%;
+            text-align: center;
+            font-family: Impact, Helvetica, Arial, sans-serif;
+            font-size: 40px;
+        }
+
+        .class-title {
+            font-weight: bold;
+            color: #2CC4F4;
+        }
+
+        #header {
+            text-decoration: underline;
+            color: #7829bb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<div class="title">
+    <span id="header">Change My World Now User Cards</span><br/><br/><br/><br/>
+    <span class="class-title">Class Title: </span> <span><?=$classTitle?></span><br>
+    <span class="class-title">Teacher Name(s): </span> <span><?=$teacherNames?></span>
+</div>
+<div class="container">
+    <?php
+        foreach ($users as $user):
+    ?>
+            <?php if($user->getType() === \User\UserInterface::TYPE_CHILD): ?>
+            <div style="float:<?=$float?>;" class="card">
+                <div class="content">
+                    <span class="user-info" id="label"> Student: </span> <u><?= $user->getFirstName() . ' ' . $user->getLastName()?></u><br/><br/>
+                    <span class="site-link"> <?=$domain?> </span> <br/><br/>
+                    <span class="user-info" id="label"> Username: </span> <u><?= $user->getUserName()?> </u><br/><br/>
+                    <span class="disclaimer"> <?=$message?> </span>
+                </div>
+            </div>
+            <?php if ($float === 'right'): ?>
+                <div style="clear:both;"></div>
+            <?php endif; ?>
+            <?php $float = $float === 'left' ? 'right' : 'left';?>
+            <?php endif; ?>
+    <?php endforeach; ?>
+</div>

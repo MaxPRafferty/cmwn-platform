@@ -25,6 +25,10 @@ return [
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupServiceInterface::class,
         ],
+        \Api\V1\Rest\UserCards\UserCardsResource::class => [
+            \Group\Service\GroupServiceInterface::class,
+            \Group\Service\UserCardServiceInterface::class,
+        ],
     ],
 
     'actions' => [
@@ -437,6 +441,15 @@ return [
                     ],
                 ],
             ],
+            'api.rest.user-cards'      => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/group/:group_id/cards',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\UserCards\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning'          => [
@@ -474,6 +487,7 @@ return [
             'api.rest.super',
             'api.rest.address',
             'api.rest.group-address',
+            'api.rest.user-cards',
         ],
     ],
     'zf-rest'                => [
@@ -955,6 +969,20 @@ return [
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
         ],
+        'Api\V1\Rest\UserCards\Controller'     => [
+            'listener'                   => \Api\V1\Rest\UserCards\UserCardsResource::class,
+            'route_name'                 => 'api.rest.user-cards',
+            'route_identifier_name'      => 'group_id',
+            'collection_name'            => 'user-cards',
+            'entity_http_methods'        => ['GET'],
+            'collection_http_methods'    => [],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 100,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\UserCards\UserCardsEntity::class,
+            'collection_class'           => \Api\V1\Rest\UserCards\UserCardsCollection::class,
+            'service_name'               => 'UserCards',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers'            => [
@@ -990,6 +1018,7 @@ return [
             'Api\V1\Rest\Super\Controller'          => 'HalJson',
             'Api\V1\Rest\Address\Controller'        => 'HalJson',
             'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
+            'Api\V1\Rest\UserCards\Controller'      => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1147,6 +1176,11 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\UserCards\Controller'      => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1276,6 +1310,10 @@ return [
             'Api\V1\Rest\GroupAddress\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/json',
+            ],
+            'Api\V1\Rest\UserCards\Controller'      => [
+                'application/vnd.api.v1+json',
+                'application/pdf',
             ],
         ],
     ],
@@ -1671,6 +1709,18 @@ return [
                 'entity_identifier_name' => 'address_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\UserCards\UserCardsEntity::class             => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.user-cards',
+                'route_identifier_name'  => 'group_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\UserCards\UserCardsCollection::class         => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.user-cards',
+                'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
         ],
