@@ -27,13 +27,6 @@ return [
                     [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
-                            \Api\Links\GameLink::class,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
-                        ],
-                    ],
-                    [
-                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
-                        'options' => [
                             \Api\Links\FlipLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
@@ -329,6 +322,50 @@ return [
                 \Api\Rule\Provider\UserRelationshipProvider::class,
             ],
         ],
+        'user-game-hal-link' => [
+            'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
+            'id'                  => 'user-game-hal-link',
+            'name'                => 'Attaches the user game hal links for a me entity if it has permissions',
+            'when'                => 'renderEntity',
+            'rules'               => [
+                'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
+                'rules'                 => [
+                    // entity has permissions
+                    [
+                        'name'    => \Security\Rule\Rule\HasPermission::class,
+                        'options' => [
+                            \Security\Authorization\Rbac::class,
+                            'view.games',
+                            \Api\Rule\Provider\UserRelationshipProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                    [
+                        'name'    => \Api\Rule\Rule\EntityIsType::class,
+                        'options' => [
+                            \Api\V1\Rest\User\MeEntity::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'actions'             => [
+                'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
+                'actions'                 => [
+                    //Add a hal link to the entity
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\UserGameLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'providers'           => [
+                \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\UserRelationshipProvider::class,
+            ],
+        ],
     ],
 
     'specifications' => [
@@ -338,6 +375,7 @@ return [
             'user-feed-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'flag-hal-link'      => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'save-game-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'user-game-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
     ],
 ];

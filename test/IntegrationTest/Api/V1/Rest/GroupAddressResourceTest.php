@@ -8,12 +8,12 @@ use Group\Service\GroupAddressServiceInterface;
 use Application\Exception\NotFoundException;
 use Group\Group;
 use IntegrationTest\AbstractApigilityTestCase;
-use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
 
 /**
  * Class GroupAddressResourceTest
+ *
  * @package IntegrationTest\Api\V1\Rest
  */
 class GroupAddressResourceTest extends AbstractApigilityTestCase
@@ -41,8 +41,8 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
      */
     public function setUpServices()
     {
-        $this->addressService = TestHelper::getDbServiceManager()->get(AddressServiceInterface::class);
-        $this->groupAddressService = TestHelper::getDbServiceManager()->get(GroupAddressServiceInterface::class);
+        $this->addressService      = TestHelper::getServiceManager()->get(AddressServiceInterface::class);
+        $this->groupAddressService = TestHelper::getServiceManager()->get(GroupAddressServiceInterface::class);
     }
 
     /**
@@ -124,11 +124,11 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
         $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('addresses', $body['_embedded']);
+        $this->assertArrayHasKey('address', $body['_embedded']);
 
-        $addresses = $body['_embedded']['addresses'];
-        $actual = [];
-        $expected = ['school_address'];
+        $addresses = $body['_embedded']['address'];
+        $actual    = [];
+        $expected  = ['school_address'];
 
         foreach ($addresses as $address) {
             $this->assertArrayHasKey('address_id', $address);
@@ -198,13 +198,13 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
     {
         return [
             [
-                'super_user'
+                'super_user',
             ],
             [
-                'principal'
+                'principal',
             ],
             [
-                'english_teacher'
+                'english_teacher',
             ],
         ];
     }
@@ -216,16 +216,16 @@ class GroupAddressResourceTest extends AbstractApigilityTestCase
     {
         return [
             [
-                'super_user'
+                'super_user',
             ],
             [
-                'principal'
+                'principal',
             ],
             [
-                'english_teacher'
+                'english_teacher',
             ],
             [
-                'english_student'
+                'english_student',
             ],
         ];
     }

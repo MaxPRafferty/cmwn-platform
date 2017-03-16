@@ -11,6 +11,7 @@ use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
 /**
+ * @todo get rid of this listener
  * Class GameRouteListener
  */
 class GameRouteListener

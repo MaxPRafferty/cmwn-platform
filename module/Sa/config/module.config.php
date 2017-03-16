@@ -1,10 +1,9 @@
 <?php
 
 return [
-    'service_manager'        => [
-        'factories' => [
-            \Sa\V1\Rest\SuperAdminSettings\SuperAdminSettingsResource::class =>
-                \Zend\ServiceManager\Factory\InvokableFactory::class,
+    \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
+        \Sa\V1\Rest\SuperAdminSettings\SuperAdminSettingsResource::class => [
+            'Config'
         ],
     ],
     'router'                 => [

@@ -39,8 +39,8 @@ class GroupUsersResourceTest extends AbstractApigilityTestCase
      */
     public function setUpService()
     {
-        $this->userGroupService = TestHelper::getDbServiceManager()->get(UserGroupServiceInterface::class);
-        $this->securityGroupService = TestHelper::getDbServiceManager()->get(SecurityGroupServiceInterface::class);
+        $this->userGroupService = TestHelper::getServiceManager()->get(UserGroupServiceInterface::class);
+        $this->securityGroupService = TestHelper::getServiceManager()->get(SecurityGroupServiceInterface::class);
     }
 
     /**

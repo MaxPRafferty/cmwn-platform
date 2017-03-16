@@ -50,10 +50,15 @@ return [
                 'DELETE' => 'delete.org',
             ],
             'api.rest.game'            => [
-                'GET'    => ['view.games', 'view.game', 'view.deleted.game'],
+                'GET'    => 'view.deleted.game',
                 'POST'   => 'create.game',
                 'PUT'    => 'update.game',
                 'DELETE' => 'delete.game',
+            ],
+            'api.rest.user-game'            => [
+                'GET'    => ['view.games', 'view.game'],
+                'POST'   => 'attach.user.game',
+                'DELETE' => 'detach.user.game',
             ],
             'api.rest.group'           => [
                 'GET'    => ['view.group', 'view.user.groups'],

@@ -32,13 +32,23 @@ return [
         \Api\V1\Rest\Org\OrgResource::class                   => [
             \Org\Service\OrganizationServiceInterface::class,
         ],
+        \Api\V1\Rest\Super\SuperResource::class               => [
+            \Security\Service\SecurityServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
+        ],
         \Api\V1\Rest\Address\AddressResource::class           => [
             \Address\Service\AddressServiceInterface::class,
+            \Group\Service\GroupAddressServiceInterface::class,
         ],
         \Api\V1\Rest\GroupAddress\GroupAddressResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupServiceInterface::class,
+        ],
+        \Api\V1\Rest\UserGame\UserGameResource::class         => [
+            \User\Service\UserServiceInterface::class,
+            \Game\Service\GameServiceInterface::class,
+            \Game\Service\UserGameServiceInterface::class,
         ],
         Api\SwaggerHelper::class                              => [
             'Config',
@@ -51,18 +61,23 @@ return [
             \Group\Service\GroupServiceInterface::class,
             \User\Service\UserServiceInterface::class,
         ],
+        \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
+            \Group\Service\GroupAddressServiceInterface::class,
+        ],
     ],
 
     'actions' => [
         'factories' => [
             \Api\Rule\Action\AddHalLinkAction::class   => \Rule\Action\Service\BuildActionFactory::class,
             \Api\Rule\Action\AddTypeLinksAction::class => \Rule\Action\Service\BuildActionFactory::class,
+            \Api\Rule\Action\ThrowException::class     => \Rule\Action\Service\BuildActionFactory::class,
         ],
 
         'shared' => [
-            \Api\Rule\Action\AddHalLinkAction::class => false,
+            \Api\Rule\Action\AddHalLinkAction::class   => false,
             \Api\Rule\Action\AddTypeLinksAction::class => false,
-        ]
+            \Api\Rule\Action\ThrowException::class     => false,
+        ],
     ],
 
     'providers' => [
@@ -87,11 +102,12 @@ return [
 
         ],
         'shared'    => [
-            \Api\Rule\Rule\EntityIsType::class => false,
+            \Api\Rule\Rule\EntityIsType::class                => false,
+            \Api\Rule\Provider\EntityFromEventProvider::class => false,
         ],
     ],
 
-    'shared-listeners'       => [
+    'shared-listeners' => [
         \Security\Listeners\UserRouteListener::class,
         \Api\Listeners\UserGroupListener::class,
         \Api\Listeners\ScopeListener::class,
@@ -102,7 +118,7 @@ return [
         \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
     ],
-    'service_manager'        => [
+    'service_manager'  => [
         'factories' => [
             \Api\Listeners\ChangePasswordListener::class              =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
@@ -172,7 +188,7 @@ return [
                 \Api\V1\Rest\GroupReset\GroupResetResourceFactory::class,
         ],
     ],
-    'router'                 => [
+    'router'           => [
         'routes' => [
             'api.rest.user'            => [
                 'type'    => 'Segment',
@@ -198,6 +214,15 @@ return [
                     'route'    => '/game[/:game_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\Game\Controller',
+                    ],
+                ],
+            ],
+            'api.rest.user-game'       => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/user/:user_id/game[/:game_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\UserGame\Controller',
                     ],
                 ],
             ],
@@ -357,7 +382,7 @@ return [
             'api.rest.save-game'       => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/user/:user_id/game[/:game_id]',
+                    'route'    => '/user/:user_id/save[/:game_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\SaveGame\Controller',
                     ],
@@ -490,9 +515,18 @@ return [
                     ],
                 ],
             ],
+            'api.rest.address-group'   => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/address/:address_id/group[/:group_id]',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\AddressGroup\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
-    'controllers'            => [
+    'controllers'      => [
         'factories' => [
             \Api\Controller\SwaggerController::class =>
                 \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
@@ -500,7 +534,7 @@ return [
     ],
 
     \Api\SwaggerHelper::class => [
-        'swagger_file' => realpath(__DIR__ . '/../../../data/docs/swagger.json')
+        'swagger_file' => realpath(__DIR__ . '/../../../data/docs/swagger.json'),
     ],
 
     'zf-versioning'          => [
@@ -508,6 +542,7 @@ return [
             'api.rest.user',
             'api.rest.org',
             'api.rest.game',
+            'api.rest.user-game',
             'api.rest.image',
             'api.rest.group',
             'api.rest.token',
@@ -548,7 +583,7 @@ return [
             'collection_name'            => 'user',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['type', 'page', 'per_page', 'deleted', 'username'],
+            'collection_query_whitelist' => ['type', 'page', 'per_page', 'deleted'],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\User\UserEntity::class,
@@ -563,7 +598,7 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => ['page', 'per_page', 'type'],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Org\OrgEntity::class,
             'collection_class'           => \Api\V1\Rest\Org\OrgCollection::class,
@@ -577,11 +612,25 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
             'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
             'service_name'               => 'Game',
+        ],
+        'Api\V1\Rest\UserGame\Controller'       => [
+            'listener'                   => \Api\V1\Rest\UserGame\UserGameResource::class,
+            'route_name'                 => 'api.rest.user-game',
+            'route_identifier_name'      => 'game_id',
+            'collection_name'            => 'game',
+            'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
+            'page_size'                  => 100,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
+            'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
+            'service_name'               => 'UserGame',
         ],
         'Api\V1\Rest\Image\Controller'          => [
             'listener'                   => \Api\V1\Rest\Image\ImageResource::class,
@@ -591,7 +640,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\Image\ImageEntity::class,
             'collection_class'           => \Api\V1\Rest\Image\ImageCollection::class,
@@ -605,7 +654,7 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => ['page', 'per_page', 'type', 'parent', 'org_id'],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Group\GroupEntity::class,
             'collection_class'           => \Api\V1\Rest\Group\GroupCollection::class,
@@ -619,7 +668,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Token\TokenEntity::class,
             'collection_class'           => \Api\V1\Rest\Token\TokenCollection::class,
@@ -633,7 +682,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Login\LoginEntity::class,
             'collection_class'           => \Api\V1\Rest\Login\LoginCollection::class,
@@ -647,7 +696,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Logout\LogoutEntity::class,
             'collection_class'           => \Api\V1\Rest\Logout\LogoutCollection::class,
@@ -661,7 +710,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Forgot\ForgotEntity::class,
             'collection_class'           => \Api\V1\Rest\Forgot\ForgotCollection::class,
@@ -676,7 +725,7 @@ return [
             'entity_http_methods'        => ['POST'],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Password\PasswordEntity::class,
             'collection_class'           => \Api\V1\Rest\Password\PasswordCollection::class,
@@ -690,7 +739,7 @@ return [
             'entity_http_methods'        => ['POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\GroupUsers\GroupUsersCollection::class,
             'collection_class'           => \Api\V1\Rest\GroupUsers\GroupUsersCollection::class,
@@ -704,7 +753,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\OrgUsers\OrgUsersEntity::class,
             'collection_class'           => \Api\V1\Rest\OrgUsers\OrgUsersCollection::class,
@@ -718,7 +767,7 @@ return [
             'entity_http_methods'        => ['POST', 'GET'],
             'collection_http_methods'    => [],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\UserImage\UserImageEntity::class,
             'collection_class'           => \Api\V1\Rest\UserImage\UserImageCollection::class,
@@ -732,7 +781,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\UserName\UserNameEntity::class,
             'collection_class'           => \Api\V1\Rest\UserName\UserNameCollection::class,
@@ -746,7 +795,7 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\Flip\FlipEntity::class,
             'collection_class'           => \Api\V1\Rest\Flip\FlipCollection::class,
@@ -760,7 +809,7 @@ return [
             'entity_http_methods'        => ['GET'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\FlipUser\FlipUserEntity::class,
             'collection_class'           => \Api\V1\Rest\FlipUser\FlipUserCollection::class,
@@ -774,7 +823,7 @@ return [
             'entity_http_methods'        => ['GET', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Friend\FriendEntity::class,
             'collection_class'           => \Api\V1\Rest\Friend\FriendCollection::class,
@@ -788,7 +837,7 @@ return [
             'entity_http_methods'        => ['GET'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Suggest\SuggestEntity::class,
             'collection_class'           => \Api\V1\Rest\Suggest\SuggestCollection::class,
@@ -802,7 +851,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Reset\ResetEntity::class,
             'collection_class'           => \Api\V1\Rest\Reset\ResetCollection::class,
@@ -816,7 +865,7 @@ return [
             'entity_http_methods'        => [],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\UpdatePassword\UpdatePasswordEntity::class,
             'collection_class'           => \Api\V1\Rest\UpdatePassword\UpdatePasswordCollection::class,
@@ -830,7 +879,7 @@ return [
             'entity_http_methods'        => ['DELETE', 'GET', 'POST'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\SaveGame\SaveGameEntity::class,
             'collection_class'           => \Api\V1\Rest\SaveGame\SaveGameCollection::class,
@@ -844,7 +893,7 @@ return [
             'entity_http_methods'        => ['GET'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => null,
             'entity_class'               => \Api\V1\Rest\Media\MediaEntity::class,
             'collection_class'           => \Api\V1\Rest\Media\MediaCollection::class,
@@ -872,7 +921,7 @@ return [
             'entity_http_methods'        => ['POST'],
             'collection_http_methods'    => [],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => null,
             'entity_class'               => \Api\V1\Rest\SkribbleNotify\SkribbleNotifyEntity::class,
             'collection_class'           => \Api\V1\Rest\SkribbleNotify\SkribbleNotifyCollection::class,
@@ -883,20 +932,10 @@ return [
             'route_name'                 => 'api.rest.feed',
             'route_identifier_name'      => 'feed_id',
             'collection_name'            => 'feed',
-            'entity_http_methods'        => [
-                0 => 'GET',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods'    => [
-                0 => 'GET',
-                1 => 'POST',
-            ],
-            'collection_query_whitelist' => [
-                0 => 'page',
-                1 => 'per_page',
-            ],
-            'page_size'                  => 25,
+            'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET', 'POST'],
+            'collection_query_whitelist' => ['page', 'per_page'],
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => 'Api\\V1\\Rest\\Feed\\FeedEntity',
             'collection_class'           => 'Api\\V1\\Rest\\Feed\\FeedCollection',
@@ -907,21 +946,10 @@ return [
             'route_name'                 => 'api.rest.feed-user',
             'route_identifier_name'      => 'feed_id',
             'collection_name'            => 'user-feed',
-            'entity_http_methods'        => [
-                0 => 'GET',
-                1 => 'POST',
-                2 => 'PUT',
-                3 => 'DELETE',
-            ],
-            'collection_http_methods'    => [
-                0 => 'GET',
-            ],
-            'collection_query_whitelist' => [
-                0 => 'page',
-                1 => 'per_page',
-                2 => 'read',
-            ],
-            'page_size'                  => 25,
+            'entity_http_methods'        => ['GET', 'POST', 'PUT', 'DELETE'],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page', 'read'],
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => 'Api\\V1\\Rest\\FeedUser\\FeedUserEntity',
             'collection_class'           => 'Api\\V1\\Rest\\FeedUser\\FeedUserCollection',
@@ -935,7 +963,7 @@ return [
             'entity_http_methods'        => ['GET'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => ['page', 'per_page'],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\GameData\GameDataEntity::class,
             'collection_class'           => \Api\V1\Rest\GameData\GameDataCollection::class,
@@ -949,7 +977,7 @@ return [
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\Flag\FlagEntity::class,
             'collection_class'           => \Api\V1\Rest\Flag\FlagCollection::class,
@@ -963,7 +991,7 @@ return [
             'entity_http_methods'        => ['POST'],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\GroupReset\GroupResetEntity::class,
             'collection_class'           => \Api\V1\Rest\GroupReset\GroupResetCollection::class,
@@ -985,7 +1013,7 @@ return [
             'entity_http_methods'        => ['POST'],
             'collection_http_methods'    => ['POST'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\SuperFlag\SuperFlagEntity::class,
             'collection_class'           => \Api\V1\Rest\SuperFlag\SuperFlagCollection::class,
@@ -999,7 +1027,7 @@ return [
             'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Super\SuperEntity::class,
             'collection_class'           => \Api\V1\Rest\Super\SuperCollection::class,
@@ -1009,12 +1037,12 @@ return [
             'listener'                   => \Api\V1\Rest\Address\AddressResource::class,
             'route_name'                 => 'api.rest.address',
             'route_identifier_name'      => 'address_id',
-            'collection_name'            => 'addresses',
+            'collection_name'            => 'address',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
+            'collection_query_whitelist' => ['postal_code', 'filter', 'page', 'per_page'],
             'entity_class'               => \Api\V1\Rest\Address\AddressEntity::class,
             'collection_class'           => \Api\V1\Rest\Address\AddressCollection::class,
             'service_name'               => 'Address',
@@ -1023,15 +1051,29 @@ return [
             'listener'                   => \Api\V1\Rest\GroupAddress\GroupAddressResource::class,
             'route_name'                 => 'api.rest.group-address',
             'route_identifier_name'      => 'address_id',
-            'collection_name'            => 'addresses',
+            'collection_name'            => 'address',
             'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
-            'page_size'                  => 25,
+            'page_size'                  => 100,
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\GroupAddress\GroupAddressEntity::class,
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
+        ],
+        'Api\V1\Rest\AddressGroup\Controller'   => [
+            'listener'                   => \Api\V1\Rest\AddressGroup\AddressGroupResource::class,
+            'route_name'                 => 'api.rest.address-group',
+            'route_identifier_name'      => 'group_id',
+            'collection_name'            => 'group',
+            'entity_http_methods'        => [],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => ['page', 'per_page'],
+            'page_size'                  => 100,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\AddressGroup\AddressGroupEntity::class,
+            'collection_class'           => \Api\V1\Rest\AddressGroup\AddressGroupCollection::class,
+            'service_name'               => 'AddressGroup',
         ],
     ],
     'zf-content-negotiation' => [
@@ -1039,6 +1081,7 @@ return [
             'Api\V1\Rest\User\Controller'           => 'HalJson',
             'Api\V1\Rest\Org\Controller'            => 'HalJson',
             'Api\V1\Rest\Game\Controller'           => 'HalJson',
+            'Api\V1\Rest\UserGame\Controller'       => 'HalJson',
             'Api\V1\Rest\Image\Controller'          => 'HalJson',
             'Api\V1\Rest\Group\Controller'          => 'HalJson',
             'Api\V1\Rest\Token\Controller'          => 'HalJson',
@@ -1068,6 +1111,7 @@ return [
             'Api\V1\Rest\Super\Controller'          => 'HalJson',
             'Api\V1\Rest\Address\Controller'        => 'HalJson',
             'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
+            'Api\V1\Rest\AddressGroup\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1081,6 +1125,11 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\Game\Controller'           => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1230,6 +1279,11 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\AddressGroup\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'Api\V1\Rest\User\Controller'           => [
@@ -1241,6 +1295,10 @@ return [
                 'application/json',
             ],
             'Api\V1\Rest\Game\Controller'           => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
+            'Api\V1\Rest\UserGame\Controller'       => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1364,6 +1422,10 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
+            'Api\V1\Rest\AddressGroup\Controller'   => [
+                'application/vnd.api.v1+json',
+                'application/json',
+            ],
         ],
     ],
     'zf-hal'                 => [
@@ -1410,6 +1472,18 @@ return [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.game',
                 'route_identifier_name'  => 'game_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\UserGame\UserGameEntity::class                 => [
+                'entity_identifier_name' => 'game_id',
+                'route_name'             => 'api.rest.user-game',
+                'route_identifier_name'  => 'user_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\UserGame\UserGameCollection::class             => [
+                'entity_identifier_name' => 'game_id',
+                'route_name'             => 'api.rest.user-game',
+                'route_identifier_name'  => 'user_id',
                 'is_collection'          => true,
             ],
             \Api\V1\Rest\Image\ImageEntity::class                       => [
@@ -1772,6 +1846,18 @@ return [
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
             ],
+            \Api\V1\Rest\AddressGroup\AddressGroupEntity::class         => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \Api\V1\Rest\AddressGroup\AddressGroupCollection::class     => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.group-address',
+                'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
         ],
     ],
     'zf-content-validation'  => [
@@ -1805,7 +1891,7 @@ return [
         'Api\V1\Rest\UserName\Controller'       => [
             'input_filter' => 'Api\V1\Rest\UserName\Validator',
         ],
-        'Api\V1\Rest\Flip\Controller'       => [
+        'Api\V1\Rest\Flip\Controller'           => [
             'input_filter' => 'Api\V1\Rest\Flip\Validator',
         ],
         'Api\V1\Rest\FlipUser\Controller'       => [
@@ -1821,7 +1907,7 @@ return [
             'input_filter' => 'Api\V1\Rest\Reset\Validator',
         ],
         'Api\V1\Rest\UpdatePassword\Controller' => [
-            'input_filter' => 'Api\V1\Rest\UpdatePassword\Validator',
+            'input_filter' => 'Api\V1\Rest\Password\Validator',
         ],
         'Api\V1\Rest\SaveGame\Controller'       => [
             'input_filter' => 'Api\V1\Rest\SaveGame\Validator',
@@ -1849,7 +1935,7 @@ return [
         ],
     ],
     'input_filter_specs'     => [
-        'Api\V1\Rest\User\Validator'           => [
+        'Api\V1\Rest\User\Validator'      => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -1950,7 +2036,7 @@ return [
                 'error_message' => 'Invalid Birthdate',
             ],
         ],
-        'Api\V1\Rest\Org\Validator'            => [
+        'Api\V1\Rest\Org\Validator'       => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2006,7 +2092,7 @@ return [
                 'description' => 'Meta data for the organization',
             ],
         ],
-        'Api\V1\Rest\Image\Validator'          => [
+        'Api\V1\Rest\Image\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2052,7 +2138,7 @@ return [
                 'error_message' => 'Invalid Moderation status',
             ],
         ],
-        'Api\V1\Rest\Group\Validator'          => [
+        'Api\V1\Rest\Group\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [
@@ -2146,7 +2232,7 @@ return [
                 'error_message' => 'Invalid Role',
             ],
         ],
-        'Api\V1\Rest\Login\Validator'          => [
+        'Api\V1\Rest\Login\Validator'     => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2164,7 +2250,7 @@ return [
                 'error_message' => 'Invalid Password',
             ],
         ],
-        'Api\V1\Rest\UserImage\Validator'      => [
+        'Api\V1\Rest\UserImage\Validator' => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2181,7 +2267,7 @@ return [
                 'description' => 'Url for the image',
             ],
         ],
-        'Api\V1\Rest\Import\Validator'         => [
+        'Api\V1\Rest\Import\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2259,20 +2345,39 @@ return [
                 'description' => 'Start Date for Access Codes',
             ],
         ],
-        'Api\V1\Rest\Password\Validator'       => [
+        'Api\V1\Rest\Password\Validator'  => [
             [
-                'required'   => true,
-                'validators' => [
+                'required'    => true,
+                'validators'  => [
                     [
                         'name'    => \Security\PasswordValidator::class,
                         'options' => [],
                     ],
                 ],
-                'filters'    => [],
-                'name'       => 'password',
+                'filters'     => [],
+                'name'        => 'password',
+                'description' => 'New Password',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Zend\Validator\Identical::class,
+                        'options' => [
+                            'token'    => 'password',
+                            'messages' => [
+                                \Zend\Validator\Identical::NOT_SAME      => 'The confirmation password does not match',
+                                \Zend\Validator\Identical::MISSING_TOKEN => 'No password supplied',
+                            ],
+                        ],
+                    ],
+                ],
+                'filters'     => [],
+                'name'        => 'password_confirmation',
+                'description' => 'Confirmed password',
             ],
         ],
-        'Api\V1\Rest\Forgot\Validator'         => [
+        'Api\V1\Rest\Forgot\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2281,7 +2386,7 @@ return [
                 'description' => 'Email address or User Name of user to reset',
             ],
         ],
-        'Api\V1\Rest\UserName\Validator'       => [
+        'Api\V1\Rest\UserName\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2295,7 +2400,7 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
-        'Api\V1\Rest\Flip\Validator'       => [
+        'Api\V1\Rest\Flip\Validator'      => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2311,7 +2416,7 @@ return [
                 'description' => 'The description of the flip',
             ],
         ],
-        'Api\V1\Rest\FlipUser\Validator'       => [
+        'Api\V1\Rest\FlipUser\Validator'  => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2320,7 +2425,7 @@ return [
                 'description' => 'The Id of the flip the user has earned',
             ],
         ],
-        'Api\V1\Rest\Friend\Validator'         => [
+        'Api\V1\Rest\Friend\Validator'    => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2341,8 +2446,8 @@ return [
                 'description' => 'The user_id',
             ],
         ],
-        'Api\V1\Rest\Suggest\Validator'        => [],
-        'Api\V1\Rest\Reset\Validator'          => [
+        'Api\V1\Rest\Suggest\Validator'   => [],
+        'Api\V1\Rest\Reset\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2358,34 +2463,7 @@ return [
                 'description' => 'The temporary code to use',
             ],
         ],
-        'Api\V1\Rest\UpdatePassword\Validator' => [
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Security\PasswordValidator::class,
-                        'options' => [],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password',
-                'description' => 'New Password',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Zend\Validator\Identical::class,
-                        'options' => [
-                            'token' => 'password',
-                        ],
-                    ],
-                ],
-                'filters'     => [],
-                'name'        => 'password_confirmation',
-                'description' => 'Confirmed password',
-            ],
-        ],
+
         'Api\V1\Rest\SaveGame\Validator'       => [
             [
                 'required'    => true,
@@ -2551,6 +2629,19 @@ return [
                 'name'        => 'meta',
                 'description' => 'meta data for game',
             ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'global',
+                'description' => 'flag to specify if the game is globally visible',
+            ],
         ],
         'Api\V1\Rest\GroupReset\Validator'     => [
             [
@@ -2677,7 +2768,28 @@ return [
         'Api\V1\Rest\Address\Validator' => [
             [
                 'required'    => true,
-                'validators'  => [],
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'country',
+                        ],
+                    ],
+                ],
+                'filters'     => [],
+                'name'        => 'country',
+                'description' => 'Country',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Address\CountryStateValidator::class,
+                        'options' => [
+                            'fieldName' => 'administrative_area',
+                        ],
+                    ],
+                ],
                 'filters'     => [],
                 'name'        => 'administrative_area',
                 'description' => 'State / Province / Region',

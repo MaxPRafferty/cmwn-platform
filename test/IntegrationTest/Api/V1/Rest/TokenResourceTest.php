@@ -121,6 +121,7 @@ class TokenResourceTest extends TestCase
             'Super User'      => [
                 'user'  => 'super_user',
                 'links' => [
+                    'address',
                     'feed',
                     'flip',
                     'games',

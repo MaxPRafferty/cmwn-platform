@@ -68,16 +68,27 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
         $this->assertArrayHasKey('_links', $body);
 
         $actual = [];
-        $expected = ['user', 'games_deleted', 'game-data', 'group', 'org', 'flip'];
-        foreach ($body['_links'] as $key => $link) {
-            $actual[] = $key;
+        $expected = [
+            'Manage Users',
+            'Manage Games',
+            'Survey Results',
+            'Manage Groups',
+            'Manage Organizations',
+            'Manage Flips'
+        ];
+
+        foreach ($body['_links'] as $link) {
+            if (isset($link['label'])) {
+                $actual[] = $link['label'];
+            }
         }
         $this->assertEquals($expected, $actual);
 
         $this->assertArrayHasKey('roles', $body);
         $this->assertEquals(
             $body['roles'],
-            ['group' => ['admin', 'asst_principal', 'principal', 'student', 'teacher'],]
+            ['group' => ['admin', 'principal','asst_principal', 'teacher', 'student']]
         );
+        $this->assertArrayHasKey('countries', $body);
     }
 }

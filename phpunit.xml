@@ -23,6 +23,8 @@
         <ini name="display_errors" value="true"/>
         <ini name="error_reporting" value="32767"/>
         <const name="TEST_MODE" value="true"/>
+        <server name="SERVER_NAME" value="api.test.com"/>
+        <server name="HTTP_HOST" value="api.test.com"/>
     </php>
     <testsuites>
         <testsuite name="Unit">

@@ -33,12 +33,12 @@ return [
             'actions'             => [
                 'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
                 'actions'                 => [
-                    // Throw Exception Action (NotAuthorized)
                     [
-                        'name'    => \Rule\Event\Action\SetEventParamAction::class,
+                        'name'    => \Api\Rule\Action\ThrowException::class,
                         'options' => [
-                            'show_deleted',
-                            false,
+                            \Application\Exception\NotAuthorizedException::class,
+                            'Unauthorized',
+                            403,
                         ],
                     ],
                 ],
@@ -52,12 +52,12 @@ return [
         'fetch-game-rule' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
             'id'                  => 'fetch-game-rule',
-            'name'                => 'adds necessary where conditions while fetching all games based on permissions',
+            'name'                => 'adds necessary where conditions while fetching game based on permissions',
             'when'                => 'fetch.game',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
                 'rules'                 => [
-                    // Has permission to earn flips
+                    // Has permission to view deleted games
                     [
                         'name'    => \Security\Rule\Rule\HasPermission::class,
                         'options' => [

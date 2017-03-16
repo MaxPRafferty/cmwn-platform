@@ -44,6 +44,7 @@ class DeleteDocumentAction implements ActionInterface
     {
         $document = $item->getParam($this->documentProvider);
         static::checkValueType($document, SearchableDocumentInterface::class);
+
         $this->service->deleteDocument($document);
     }
 }

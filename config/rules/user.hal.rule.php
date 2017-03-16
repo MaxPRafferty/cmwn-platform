@@ -38,13 +38,6 @@ return [
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                         ],
                     ],
-                    [
-                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
-                        'options' => [
-                            \Api\Links\ProfileLink::class,
-                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
-                        ],
-                    ],
                 ],
             ],
             'providers'           => [

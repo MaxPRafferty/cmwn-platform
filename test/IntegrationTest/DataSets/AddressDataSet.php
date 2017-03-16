@@ -61,6 +61,23 @@ return [
             'network_id'      => 'school',
         ],
         [
+            'group_id'        => 'foo_school',
+            'organization_id' => 'district',
+            'title'           => 'Gina\'s School',
+            'description'     => null,
+            'meta'            => null,
+            'head'            => '1',
+            'tail'            => '6',
+            'created'         => '2016-04-15 15:46:07',
+            'updated'         => '0000-00-00 00:00:00',
+            'deleted'         => null,
+            'type'            => 'school',
+            'external_id'     => null,
+            'parent_id'       => null,
+            'depth'           => '0',
+            'network_id'      => 'school',
+        ],
+        [
             'group_id'        => 'english',
             'organization_id' => 'district',
             'title'           => 'English Class',
@@ -266,13 +283,12 @@ return [
         ],
     ],
 
-
-
     'user_suggestions' => [],
     'addresses'        => [
         [
+            'country'                 => 'US',
             'address_id'              => 'school_address',
-            'administrative_area'     => 'ny',
+            'administrative_area'     => 'NY',
             'sub_administrative_area' => null,
             'locality'                => 'ny',
             'dependent_locality'      => null,
@@ -281,7 +297,19 @@ return [
             'premise'                 => null,
         ],
         [
+            'country'                 => 'US',
             'address_id'              => 'other_school_address',
+            'administrative_area'     => 'NY',
+            'sub_administrative_area' => null,
+            'locality'                => 'nj',
+            'dependent_locality'      => null,
+            'postal_code'             => '07306',
+            'thoroughfare'            => '80 Lake St',
+            'premise'                 => null,
+        ],
+        [
+            'country'                 => 'US',
+            'address_id'              => 'foo_school_address',
             'administrative_area'     => 'nj',
             'sub_administrative_area' => null,
             'locality'                => 'nj',
@@ -290,6 +318,7 @@ return [
             'thoroughfare'            => '80 Lake St',
             'premise'                 => null,
         ],
+
     ],
     'group_addresses'  => [
         [
@@ -299,6 +328,10 @@ return [
         [
             'group_id'   => 'other_school',
             'address_id' => 'other_school_address',
+        ],
+        [
+            'group_id'   => 'foo_school',
+            'address_id' => 'foo_school_address',
         ],
     ],
 ];

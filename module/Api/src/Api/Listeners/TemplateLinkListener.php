@@ -73,9 +73,11 @@ class TemplateLinkListener
             return;
         }
 
+        parse_str(urldecode($firstParts['query'] ?? ''), $params);
+        $templateParts = implode('', array_diff(['per_page', 'page'], array_keys($params)));
         $firstParts['query'] = !empty($firstParts['query'])
-            ? '?' . $firstParts['query'] . '{&page,per_page}'
-            : '{?page,per_page}';
+            ? '?' . $firstParts['query'] . '{&' . $templateParts . '}'
+            : '{?' . $templateParts . '}';
 
         $url = $firstParts['scheme'] . '://';
         unset($firstParts['scheme']);

@@ -41,8 +41,25 @@ interface GroupAddressServiceInterface
     /**
      * @param GroupInterface $group
      * @param AddressInterface $address
-     * @return array
+     * @return AddressInterface
      * @throws NotFoundException
      */
-    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address);
+    public function fetchAddressForGroup(GroupInterface $group, AddressInterface $address) : AddressInterface;
+
+    /**
+     * @param $where
+     * @param GroupInterface|null $prototype
+     * @return AdapterInterface
+     */
+    public function fetchAllGroupsInAddress($where = null, GroupInterface $prototype = null) : AdapterInterface;
+
+    /**
+     * @param null $where
+     * @param AddressInterface|null $prototype
+     * @return AdapterInterface
+     */
+    public function fetchAddressesWithGroupsAttached(
+        $where = null,
+        AddressInterface $prototype = null
+    ) : AdapterInterface;
 }

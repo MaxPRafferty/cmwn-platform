@@ -33,13 +33,11 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     protected $importer;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
-        $data = include __DIR__ . '/../../DataSets/duplicate.import.dataset.php';
-
-        return $this->createArrayDataSet($data);
+        return $this->createArrayDataSet(include __DIR__ . '/../../DataSets/duplicate.import.dataset.php');
     }
 
     /**
@@ -48,9 +46,9 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     public function setUpLoggedInUser()
     {
         /** @var SecurityService $userService */
-        $userService = TestHelper::getDbServiceManager()->get(SecurityService::class);
+        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
         $user        = $userService->fetchUserByUserName('super_user');
-        $authService = TestHelper::getDbServiceManager()->get(AuthenticationService::class);
+        $authService = TestHelper::getServiceManager()->get(AuthenticationService::class);
         $authService->getStorage()->write($user);
     }
 

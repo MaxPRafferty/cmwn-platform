@@ -2,10 +2,10 @@
 
 return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
-        'sa-settings-hal-link' => [
+        'sa-me-hal-link' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
-            'id'                  => 'sa-settings-hal-link',
-            'name'                => 'Sa settings hal link on super me entity',
+            'id'                  => 'sa-me-hal-link',
+            'name'                => 'Hal links on Super me entity',
             'when'                => 'renderEntity',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -45,7 +45,14 @@ return [
                             \Api\Links\GameLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                             true,
-                            ['true']
+                            [true]
+                        ],
+                    ],
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\GameLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME
                         ],
                     ],
                     [
@@ -60,6 +67,14 @@ return [
                         'name'    => \Api\Rule\Action\AddHalLinkAction::class,
                         'options' => [
                             \Api\Links\OrgLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                            false,
+                        ],
+                    ],
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\AddressLink::class,
                             \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
                             false,
                         ],
@@ -117,8 +132,8 @@ return [
             ],
         ],
     ],
-    'specifications'                                                => [
-        'sa-settings-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+    'specifications' => [
+        'sa-me-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         'super-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
     ],
 ];

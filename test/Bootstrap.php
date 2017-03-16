@@ -4,6 +4,7 @@ error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
 
 // TODO Remove this when all the tests are updated for ZF
+
 class_alias(
     \PHPUnit\Framework\ExpectationFailedException::class,
     '\PHPUnit_Framework_ExpectationFailedException'
