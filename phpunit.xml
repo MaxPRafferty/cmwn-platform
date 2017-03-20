@@ -30,13 +30,25 @@
         <testsuite name="Unit">
             <directory>./module/*/test</directory>
         </testsuite>
+        <testsuite name="Game Tests">
+            <directory>./module/Api/test/V1/Rest/Game</directory>
+            <directory>./module/Api/test/V1/Rest/GameData</directory>
+            <directory>./module/Api/test/V1/Rest/SaveData</directory>
+            <directory>./module/Api/test/V1/Rest/UserGame</directory>
+            <directory>./module/Game/test</directory>
+            <file>./test/IntegrationTest/Api/V1/Rest/GameDataResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/GameResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/SaveGameResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/UserGameResourceTest.php</file>
+            <file>./test/IntegrationTest/Service/GameServiceTest.php</file>
+        </testsuite>
         <testsuite name="Integration">
             <directory>./test/IntegrationTest</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory>../module/*/src</directory>
+            <directory suffix="*.php">./module/*/src</directory>
         </whitelist>
     </filter>
 </phpunit>

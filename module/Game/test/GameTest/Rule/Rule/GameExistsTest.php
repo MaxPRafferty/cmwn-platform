@@ -7,7 +7,7 @@ use Game\Game;
 use Game\Rule\Rule\GameExists;
 use Game\Service\GameServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Item\BasicRuleItem;
 
 /**

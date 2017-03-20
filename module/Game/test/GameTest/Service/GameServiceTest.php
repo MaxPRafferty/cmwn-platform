@@ -4,20 +4,24 @@ namespace GameTest\Service;
 
 use Application\Exception\NotFoundException;
 use Game\Game;
+use Game\GameInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Game\Service\GameService;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\PredicateSet;
+use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Hydrator\ArraySerializable;
+use Zend\Json\Json;
+use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Test GameServiceTest
- *
- * @group Game
- * @group Service
- * @group GameService
  */
 class GameServiceTest extends TestCase
 {
@@ -39,18 +43,29 @@ class GameServiceTest extends TestCase
     protected $gameData;
 
     /**
+     * @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter
+     */
+    protected $adapter;
+
+    /**
      * @before
      */
     public function setUpGameData()
     {
         $this->gameData = [
-            "game_id"     => "sea-turtle",
-            "title"       => "Sea Turtle",
-            "description" => "Sea Turtles are wondrous creatures! Get cool turtle facts",
-            'created'     => '2016-02-28',
-            'updated'     => '2016-02-28',
+            'game_id'     => 'sea-turtle',
+            'title'       => 'Sea Turtle',
+            'description' => 'Sea Turtles are wondrous creatures! Get cool turtle facts',
+            'created'     => '2016-02-28 00:00:00',
+            'updated'     => '2016-02-28 00:00:00',
             'deleted'     => null,
-            'meta'        => '{"desktop" : false, "unity" : false}',
+            'meta'        => ['desktop' => false, 'unity' => false],
+            'flags'       => 7,
+            'uris'        => [
+                'image_url'  => 'http://bit.ly/XWISPd',
+                'banner_url' =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/0c/bc/25/0cbc259b8805bf2bae57a2909f2a5ba8.jpg',
+            ],
         ];
     }
 
@@ -65,50 +80,107 @@ class GameServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpGateway()
     {
-        /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock(Adapter::class);
-        $adapter->shouldReceive('getPlatform')->byDefault();
-
         $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('games')->byDefault();
-        $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
+        $this->tableGateway->shouldReceive('getAdapter')->andReturn($this->adapter)->byDefault();
     }
 
     /**
-     * Tests the service returns a pagination adapter by default
-     *
+     * @before
+     */
+    public function setUpAdapter()
+    {
+        $this->adapter = \Mockery::mock(Adapter::class);
+        $this->adapter->shouldReceive('getPlatform')->byDefault();
+    }
+
+    /**
      * @test
      */
     public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
     {
+        // make sure it is not calling the table gateway select
         $this->tableGateway
             ->shouldReceive('select')
             ->never();
 
-        $result = $this->gameService->fetchAll(null);
-        $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
+        $result = $this->gameService->fetchAll();
+
+        $expectedSelect = new Select(['g' => 'games']);
+        $expectedSelect->where(new Where());
+        $expectedSelect->order(['title']);
+
+        $this->assertEquals(
+            new DbSelect($expectedSelect, $this->adapter, new HydratingResultSet(new ArraySerializable(), new Game())),
+            $result,
+            GameService::class . ' did not return a paginator adapter on fetch all'
+        );
     }
 
     /**
      * @test
      */
-    public function testItShouldFetchGameById()
+    public function testItShouldFetchGameByIdWithNoPrototype()
     {
         $this->tableGateway->shouldReceive('select')
             ->andReturnUsing(function ($actual) {
-                $where = new Where();
-                $where->equalTo('game_id', 'sea-turtle');
+                $where = new PredicateSet();
+                $where->addPredicates(['g.game_id' => 'sea-turtle']);
 
-                $this->assertEquals($where, $actual);
+                $this->assertEquals(
+                    $where,
+                    $actual,
+                    GameService::class . ' did not build the correct where for fetchGameById'
+                );
+
                 $resultSet = new ResultSet();
                 $resultSet->initialize([$this->gameData]);
 
                 return $resultSet;
             })->once();
 
-        $this->assertInstanceOf('Game\Game', $this->gameService->fetchGame($this->gameData['game_id']));
+        $this->assertInstanceOf(
+            Game::class,
+            $this->gameService->fetchGame($this->gameData['game_id']),
+            GameService::class . ' did not return a game when no prototype is set'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchGameByIdWithPrototype()
+    {
+        /** @var \Mockery\MockInterface|GameInterface $prototype */
+        $prototype = \Mockery::mock(GameInterface::class);
+
+        $prototype->shouldReceive('exchangeArray')
+            ->once();
+
+        $this->tableGateway->shouldReceive('select')
+            ->andReturnUsing(function ($actual) {
+                $where = new PredicateSet();
+                $where->addPredicates(['g.game_id' => 'sea-turtle']);
+
+                $this->assertEquals(
+                    $where,
+                    $actual,
+                    GameService::class . ' did not build the correct where for fetchGameById'
+                );
+
+                $resultSet = new ResultSet();
+                $resultSet->initialize([$this->gameData]);
+
+                return $resultSet;
+            })->once();
+
+        $this->assertEquals(
+            $prototype,
+            $this->gameService->fetchGame($this->gameData['game_id'], $prototype),
+            GameService::class . ' did not return a game when no prototype is set'
+        );
     }
 
     /**
@@ -132,17 +204,59 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldCreateGame()
     {
-        $gameData = $this->gameData;
-        unset($gameData['game_id']);
-        $game = new Game($gameData);
+        $game = new Game($this->gameData);
+        $this->tableGateway->shouldReceive('insert')
+            ->withArgs(function ($actualData) {
+                $expectedData          = $this->gameData;
+                $expectedData['meta']  = Json::encode($this->gameData['meta']);
+                $expectedData['flags'] = 7;
+                $expectedData['uris']  = Json::encode($this->gameData['uris']);
 
-        $this->tableGateway->shouldReceive('insert')->once();
+                // remove created date since that is really hard to compare
+                $this->assertTrue(
+                    is_string($actualData['created']),
+                    GameService::class . ' is not transforming the created date to a string'
+                );
 
-        $this->assertNull($game->getGameId());
+                $this->assertNotEquals(
+                    $actualData['created'],
+                    $expectedData['created'],
+                    GameService::class . ' did not change the created date on update'
+                );
 
-        $this->gameService->createGame($game);
+                // remove updated date since that is really hard to compare
+                $this->assertTrue(
+                    is_string($actualData['updated']),
+                    GameService::class . ' is not transforming the updated date to a string'
+                );
 
-        $this->assertEquals('sea-turtle', $game->getGameId());
+                $this->assertNotEquals(
+                    $actualData['updated'],
+                    $expectedData['updated'],
+                    GameService::class . ' did not change the updated date on update'
+                );
+
+                unset(
+                    $expectedData['created'],
+                    $actualData['created'],
+                    $expectedData['updated'],
+                    $actualData['updated']
+                );
+
+                $this->assertEquals(
+                    $expectedData,
+                    $actualData,
+                    GameService::class . ' is not going to update the game data correctly'
+                );
+
+                return true;
+            })
+            ->once();
+
+        $this->assertTrue(
+            $this->gameService->createGame($game),
+            GameService::class . ' did not return true when creating a new game'
+        );
     }
 
     /**
@@ -150,12 +264,47 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldUpdateGame()
     {
-        $resultSet = new ResultSet();
-        $resultSet->initialize([$this->gameData]);
-        $this->tableGateway->shouldReceive('select')->once()->andReturn($resultSet);
-        $this->tableGateway->shouldReceive('update')->once();
+        $this->tableGateway->shouldReceive('update')
+            ->withArgs(function ($actualData, $actualWhere) {
+                $this->assertEquals(
+                    ['game_id' => $this->gameData['game_id']],
+                    $actualWhere,
+                    GameService::class . ' is not going to update a game correctly'
+                );
 
-        $this->assertEmpty($this->gameService->saveGame(new Game($this->gameData)));
+                $expectedData          = $this->gameData;
+                $expectedData['meta']  = Json::encode($this->gameData['meta']);
+                $expectedData['flags'] = 7;
+                $expectedData['uris']  = Json::encode($this->gameData['uris']);
+
+                // remove updated date since that is really hard to compare
+                $this->assertTrue(
+                    is_string($actualData['updated']),
+                    GameService::class . ' is not transforming the updated date to a string'
+                );
+
+                $this->assertNotEquals(
+                    $actualData['updated'],
+                    $expectedData['updated'],
+                    GameService::class . ' did not change the updated date on update'
+                );
+
+                unset($expectedData['updated']);
+                unset($actualData['updated']);
+                $this->assertEquals(
+                    $expectedData,
+                    $actualData,
+                    GameService::class . ' is not going to update the game data correctly'
+                );
+
+                return true;
+            })
+            ->once();
+
+        $this->assertTrue(
+            $this->gameService->saveGame(new Game($this->gameData)),
+            GameService::class . ' did not return true on successful update of a game'
+        );
     }
 
     /**
@@ -163,11 +312,39 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldSoftDeleteGame()
     {
-        $resultSet = new ResultSet();
-        $resultSet->initialize([$this->gameData]);
-        $this->tableGateway->shouldReceive('select')->once()->andReturn($resultSet);
-        $this->tableGateway->shouldReceive('update')->once();
-        $this->assertTrue($this->gameService->deleteGame(new Game($this->gameData)));
+        $this->tableGateway->shouldReceive('select')->never();
+        $this->tableGateway->shouldReceive('update')
+            ->withArgs(function ($actualData, $actualWhere) {
+                $this->assertEquals(
+                    ['game_id' => $this->gameData['game_id']],
+                    $actualWhere,
+                    GameService::class . ' is not going to update a game correctly'
+                );
+
+                $expectedData          = $this->gameData;
+                $expectedData['meta']  = Json::encode($this->gameData['meta']);
+                $expectedData['flags'] = 7;
+                $expectedData['uris']  = Json::encode($this->gameData['uris']);
+
+                // remove updated date since that is really hard to compare
+                $this->assertTrue(
+                    is_string($actualData['deleted']),
+                    GameService::class . ' is not transforming the updated date to a string'
+                );
+
+                $this->assertNotEmpty(
+                    $actualData['deleted'],
+                    GameService::class . ' did not change the updated date on update'
+                );
+
+                return true;
+            })->once();
+        $this->tableGateway->shouldReceive('delete')->never();
+
+        $this->assertTrue(
+            $this->gameService->deleteGame(new Game($this->gameData)),
+            GameService::class . ' did not return true when soft deleting a game'
+        );
     }
 
     /**
@@ -175,10 +352,63 @@ class GameServiceTest extends TestCase
      */
     public function testItShouldHardDeleteGame()
     {
-        $resultSet = new ResultSet();
-        $resultSet->initialize([$this->gameData]);
-        $this->tableGateway->shouldReceive('select')->once()->andReturn($resultSet);
-        $this->tableGateway->shouldReceive('delete')->once();
-        $this->assertTrue($this->gameService->deleteGame(new Game($this->gameData), false));
+        $this->tableGateway->shouldReceive('update')->never();
+        $this->tableGateway->shouldReceive('delete')->with(['game_id' => 'sea-turtle'])->once();
+        $this->assertTrue(
+            $this->gameService->deleteGame(new Game($this->gameData), false),
+            GameService::class . ' did not return true when hard deleting a game'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchAllGamesUsingFlagKeys()
+    {
+        $where = new PredicateSet();
+
+        // Order matters for this test
+        $where->orPredicate(new Expression('g.flags & ? = ?', 4, 4));
+        $where->orPredicate(new Expression('g.flags & ? = ?', 2, 2));
+        $where->orPredicate(new Expression('g.flags & ? = ?', 1, 1));
+
+        $expectedSelect = new Select(['g' => 'games']);
+        $expectedSelect->where($where);
+        $expectedSelect->order(['title']);
+
+        $result = $this->gameService->fetchAll(
+            ['coming_soon' => true, 'featured' => true, 'global' => true]
+        );
+
+        $this->assertEquals(
+            new DbSelect($expectedSelect, $this->adapter, new HydratingResultSet(new ArraySerializable(), new Game())),
+            $result,
+            GameService::class . ' did not return a paginator adapter on fetch all with flag keys'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchAllGamesUsingMixedFlagKeys()
+    {
+        $where = new PredicateSet();
+
+        // Order matters for this test
+        $where->orPredicate(new Expression('g.flags & ? != ?', 4, 4));
+        $where->orPredicate(new Expression('g.flags & ? = ?', 2, 2));
+        $where->orPredicate(new Expression('g.flags & ? = ?', 1, 1));
+
+        $expectedSelect = new Select(['g' => 'games']);
+        $expectedSelect->where($where);
+        $expectedSelect->order(['title']);
+
+        $result = $this->gameService->fetchAll(['coming_soon' => false, 'featured' => true, 'global' => true]);
+
+        $this->assertEquals(
+            new DbSelect($expectedSelect, $this->adapter, new HydratingResultSet(new ArraySerializable(), new Game())),
+            $result,
+            GameService::class . ' did not return a paginator adapter on fetch all with mixed flag keys'
+        );
     }
 }

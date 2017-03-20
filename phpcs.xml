@@ -10,6 +10,10 @@
     <rule ref="PSR2"/>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
 
+    <!--  -->
+    <rule ref="Generic.Commenting.Fixme"/>
+    <rule ref="Generic.Commenting.Todo"/>
+
     <!-- Paths to check -->
     <file>./module</file>
     <file>./test</file>

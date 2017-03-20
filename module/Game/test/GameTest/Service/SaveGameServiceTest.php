@@ -2,25 +2,22 @@
 
 namespace GameTest\Service;
 
+use Game\Game;
 use Game\SaveGame;
+use Game\SaveGameInterface;
+use Game\Service\GameService;
 use Game\Service\SaveGameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use User\Child;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
-use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Json\Json;
 
 /**
- * Test SaveGameServiceTest
- *
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * Tests the Save Game Service
  */
 class SaveGameServiceTest extends TestCase
 {
@@ -73,25 +70,24 @@ class SaveGameServiceTest extends TestCase
             'version' => 'nightly',
         ]);
 
+        $this->tableGateway->shouldReceive('delete')
+            ->once();
+
         $this->tableGateway->shouldReceive('insert')
             ->once()
-            ->andReturnUsing(function ($data) use (&$saveGame) {
-                $this->assertNotNull($saveGame->getCreated(), 'Date MUST BE added before calling insert');
-                $actualData = $saveGame->getArrayCopy();
-
-                // Service MUST convert data to a json string
-                $this->assertArrayHasKey('data', $actualData);
-                $actualData['data'] = Json::encode($actualData['data']);
-
-                // Service MUST convert date string
+            ->withArgs(function ($data) use (&$saveGame) {
+                $actualData            = $saveGame->getArrayCopy();
+                $actualData['data']    = Json::encode($actualData['data']);
                 $actualData['created'] = $saveGame->getCreated()->format("Y-m-d H:i:s");
 
-                $this->assertEquals($actualData, $data, '');
+                return $actualData == $data;
+            })
+            ->andReturn(true);
 
-                return true;
-            });
-
-        $this->assertTrue($this->gameService->saveGame($saveGame), 'Game Service did not return true');
+        $this->assertTrue(
+            $this->gameService->saveGame($saveGame),
+            GameService::class . ' did not return true on saveGame'
+        );
     }
 
     /**
@@ -104,15 +100,38 @@ class SaveGameServiceTest extends TestCase
             ->andReturn(true)
             ->once();
 
-        $this->assertTrue($this->gameService->deleteSaveForUser('manchuck', 'monarch'));
+        $this->assertTrue(
+            $this->gameService->deleteSaveForUser('manchuck', 'monarch'),
+            GameService::class . ' did not return true on successful delete using strings'
+        );
     }
 
     /**
      * @test
      */
-    public function testItShouldFetchSaveForUserWithNoWhere()
+    public function testItShouldRemoveSaveGameWithUserAndGame()
     {
-        $this->markTestIncomplete('This is not doing anything');
+        $game = new Game();
+        $game->setGameId('monarch');
+
+        $user = new Child();
+        $user->setUserId('manchuck');
+        $this->tableGateway->shouldReceive('delete')
+            ->with(['user_id' => 'manchuck', 'game_id' => 'monarch'])
+            ->andReturn(true)
+            ->once();
+
+        $this->assertTrue(
+            $this->gameService->deleteSaveForUser($user, $game),
+            GameService::class . ' did not return true on successful delete with user and game'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchSaveForUserWithStringsAndNoPrototype()
+    {
         $date     = new \DateTime();
         $gameData = [
             'game_id' => 'monarch',
@@ -122,26 +141,35 @@ class SaveGameServiceTest extends TestCase
             'version' => '8.6.7.5',
         ];
 
-        $result = new ResultSet();
+        $expectedResult = new SaveGame($gameData);
+        $result         = new ResultSet();
         $result->initialize([$gameData]);
 
-        $this->tableGateway->shouldReceive()
+        $this->tableGateway->shouldReceive('select')
             ->once()
-            ->andReturnUsing(function ($where) use (&$result) {
-                $this->assertInstanceOf(PredicateInterface::class, $where, 'Where was not created');
+            ->withArgs(function ($actualWhere) {
+                $expectedWhere = $this->gameService->createWhere([]);
+                $expectedWhere->addPredicate(new Operator('user_id', '=', 'manchuck'));
+                $expectedWhere->addPredicate(new Operator('game_id', '=', 'monarch'));
 
-                return $result;
-            });
+                return $expectedWhere == $actualWhere;
+            })
+            ->andReturn($result);
+
+        $this->assertEquals(
+            $expectedResult,
+            $this->gameService->fetchSaveGameForUser('manchuck', 'monarch'),
+            GameService::class . ' did not return back a default save game when fetching by strings'
+        );
     }
 
     /**
      * @test
      */
-    public function testItShouldFetchSaveForUserWithCustomWhereAndPrototype()
+    public function testItShouldFetchSaveForUserWithUserGameAndPrototype()
     {
-        $this->markTestIncomplete('This is doing nothing ');
-        $where = new Where();
-        $where->addPredicate(new Operator('foo', '=', 'bar'));
+        /** @var \Mockery\MockInterface|SaveGameInterface $prototype */
+        $prototype = \Mockery::mock(SaveGameInterface::class);
 
         $date     = new \DateTime();
         $gameData = [
@@ -152,60 +180,33 @@ class SaveGameServiceTest extends TestCase
             'version' => '8.6.7.5',
         ];
 
-        $result = new ResultSet();
+        $user = new Child();
+        $user->setUserId('manchuck');
+
+        $game = new Game();
+        $game->setGameId('monarch');
+
+        $prototype->shouldReceive('exchangeArray')
+            ->with($gameData);
+
+        $result         = new ResultSet();
         $result->initialize([$gameData]);
 
-        $this->tableGateway->shouldReceive()
+        $this->tableGateway->shouldReceive('select')
             ->once()
-            ->andReturnUsing(function ($actualWhere) use (&$result, &$where) {
-                $this->assertSame($where, $actualWhere, 'Where was not passed through');
+            ->withArgs(function ($actualWhere) {
+                $expectedWhere = $this->gameService->createWhere([]);
+                $expectedWhere->addPredicate(new Operator('user_id', '=', 'manchuck'));
+                $expectedWhere->addPredicate(new Operator('game_id', '=', 'monarch'));
 
-                return $result;
-            });
-    }
+                return $expectedWhere == $actualWhere;
+            })
+            ->andReturn($result);
 
-    /**
-     * @test
-     */
-    public function testItShouldRemoveOldSaveBeforeSaving()
-    {
-        $date     = new \DateTime();
-        $gameData = [
-            'game_id' => 'monarch',
-            'user_id' => 'manchuck',
-            'data'    => ['foo' => 'bar', 'progress' => 100],
-            'created' => $date->format("Y-m-d H:i:s"),
-            'version' => 'v1.2.3',
-        ];
-
-        $result = new ResultSet();
-        $result->initialize([$gameData]);
-
-        $saveGame = new SaveGame([
-            'game_id' => 'monarch',
-            'user_id' => 'manchuck',
-            'data'    => ['foo' => 'bar', 'progress' => 100],
-            'version' => 'v1.2.3',
-        ]);
-
-        $this->tableGateway->shouldReceive('insert')
-            ->once()
-            ->andReturnUsing(function ($data) use (&$saveGame, &$date) {
-                $this->assertNotNull($saveGame->getCreated(), 'Date MUST BE added before calling insert');
-                $actualData = $saveGame->getArrayCopy();
-
-                // Service MUST convert data to a json string
-                $this->assertArrayHasKey('data', $actualData);
-                $actualData['data'] = Json::encode($actualData['data']);
-
-                // Service MUST convert date string
-                $actualData['created'] = $saveGame->getCreated()->format("Y-m-d H:i:s");
-
-                $this->assertEquals($actualData, $data, '');
-
-                return true;
-            });
-
-        $this->assertTrue($this->gameService->saveGame($saveGame), 'Game Service did not return true');
+        $this->assertEquals(
+            $prototype,
+            $this->gameService->fetchSaveGameForUser($user, $game, $prototype),
+            GameService::class . ' did not return back prototype when fetching a saveGame for a user'
+        );
     }
 }

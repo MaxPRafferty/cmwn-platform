@@ -6,7 +6,7 @@ use Game\Game;
 use Game\Rule\Action\AddGameToUserAction;
 use Game\Service\UserGameServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use \PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rule\Exception\InvalidProviderType;
 use Rule\Item\BasicRuleItem;
 use Rule\Provider\BasicValueProvider;

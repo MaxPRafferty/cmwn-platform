@@ -64,7 +64,7 @@
     "phpunit/phpunit": "~6.0",
     "phpunit/dbunit": "~3.0",
     "phpunit/php-token-stream": "~1.4",
-    "squizlabs/php_codesniffer": "2.5.1",
+    "squizlabs/php_codesniffer": "3.0.0RC4",
     "phpmd/phpmd": "~2.5",
     "zfcampus/zf-deploy": "~1.0",
     "zendframework/zend-test": "~3",

@@ -2,54 +2,60 @@
 
 namespace Game\Service;
 
-use Application\Exception\NotFoundException;
 use Game\GameInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Interface GameServiceInterface
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
+ * Defines an interface for a service that transfer games to the database
  */
 interface GameServiceInterface
 {
-
     /**
-     * @param null|PredicateInterface|array $where
-     * @param null|object $prototype
-     * @param bool $deleted
-     * @return HydratingResultSet|DbSelect
-     */
-    public function fetchAll($where = null, $prototype = null, bool $deleted = false);
-
-    /**
-     * Fetches one game from the DB using the id
+     * Fetches all games
      *
-     * @param $gameId
+     * @param null|array $where filter out based on fields matching
+     * @param GameInterface|null $prototype they type of game you wish returned
+     * @param bool $deleted wheather to include deleted games
+     *
+     * @return AdapterInterface
+     */
+    public function fetchAll($where = null, GameInterface $prototype = null, bool $deleted = false): AdapterInterface;
+
+    /**
+     * Fetches one game by title
+     *
+     * @param string $gameId the id of the game to fetch
+     * @param GameInterface|null $prototype hydrated this type of game
+     *
      * @return GameInterface
-     * @throws NotFoundException
      */
-    public function fetchGame($gameId);
+    public function fetchGame(string $gameId, GameInterface $prototype = null): GameInterface;
 
     /**
-     * @param GameInterface $game
+     * Saves a game to the database
+     *
+     * @param GameInterface $game the game to save
+     *
      * @return bool
-     * @throws NotFoundException
      */
-    public function saveGame(GameInterface $game);
+    public function saveGame(GameInterface $game): bool;
 
     /**
-     * @param GameInterface $game
+     * Creates a new game in the database
+     *
+     * @param GameInterface $game the game to create
+     *
      * @return bool
      */
-    public function createGame(GameInterface $game);
+    public function createGame(GameInterface $game): bool;
 
     /**
-     * @param GameInterface $game
-     * @param bool $soft
+     * Deletes a game in the database
+     *
+     * @param GameInterface $game the game to delete
+     * @param bool $soft weather to soft or hard delete a game
+     *
      * @return bool
      */
-    public function deleteGame(GameInterface $game, $soft = true);
+    public function deleteGame(GameInterface $game, bool $soft = true): bool;
 }

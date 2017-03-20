@@ -8,7 +8,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
- * Class GameDelegatorFactory
+ * Creates the game delegator
  */
 class GameDelegatorFactory implements DelegatorFactoryInterface
 {

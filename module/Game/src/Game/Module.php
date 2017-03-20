@@ -5,15 +5,12 @@ namespace Game;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
 /**
- * Core Classes for Cmwn
- *
- * @package Cmwn
- * @codeCoverageIgnore
+ * Game Module
  */
 class Module implements ConfigProviderInterface
 {
     /**
-     * @return mixed
+     * @return array
      */
     public function getConfig()
     {

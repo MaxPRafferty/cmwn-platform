@@ -4,12 +4,12 @@ namespace IntegrationTest\Api\V1\Rest;
 
 use Game\Service\GameServiceInterface;
 use IntegrationTest\AbstractApigilityTestCase as TestCase;
-use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Zend\Json\Json;
 
 /**
  * Class GameResourceTest
+ *
  * @package IntegrationTest\Api\V1\Rest
  * @SuppressWarnings(PHPMD)
  */
@@ -21,7 +21,7 @@ class GameResourceTest extends TestCase
     protected $service;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -38,10 +38,12 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $user
      * @param string $url
      * @param string $method
      * @param array $params
+     *
      * @dataProvider changePasswordDataProvider
      */
     public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
@@ -53,11 +55,13 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param $route
      * @param $expected
+     *
      * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldFetchAllGames($route, $expected)
+    public function testItShouldFetchAllGamesForSuper($route, $expected)
     {
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
@@ -82,7 +86,9 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param $login
+     *
      * @dataProvider loginDataProvider
      */
     public function testItShouldFetchGame($login)
@@ -121,10 +127,10 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $postData = [
-            'title' => 'Life Game',
+            'title'       => 'Life Game',
             'description' => 'Game about life',
             'coming_soon' => true,
-            'meta' => ['desktop' => true, 'unity' => false]
+            'meta'        => ['desktop' => true, 'unity' => false],
         ];
         $this->dispatch('/game', 'POST', $postData);
         $this->assertResponseStatusCode(201);
@@ -157,11 +163,11 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $postData = [
-            'title' => 'animal-id',
+            'title'       => 'animal-id',
             'description' => 'animal ids',
             'coming_soon' => false,
-            'meta' => ['desktop' => true, 'unity' => false],
-            'global' => true,
+            'meta'        => ['desktop' => true, 'unity' => false],
+            'global'      => true,
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(200);
@@ -189,7 +195,6 @@ class GameResourceTest extends TestCase
         $this->assertControllerName('api\v1\rest\game\controller');
         $this->assertMatchedRouteName('api.rest.game');
 
-
         $game = $this->service->fetchGame('animal-id');
         $this->assertTrue($game->isDeleted(), 'game not deleted');
     }
@@ -202,11 +207,11 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $postData = [
-            'title' => 'deleted game',
+            'title'       => 'deleted game',
             'description' => 'deleted game',
             'coming_soon' => false,
-            'meta' => ['desktop' => true, 'unity' => false],
-            'undelete' => true
+            'meta'        => ['desktop' => true, 'unity' => false],
+            'undelete'    => true,
         ];
         $this->dispatch('/game/deleted-game', 'PUT', $postData);
         $this->assertResponseStatusCode(200);
@@ -238,7 +243,9 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param $login
+     *
      * @dataProvider postDataProvider
      */
     public function testItShouldNotLetOthersAccessGames($login)
@@ -246,11 +253,11 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $postData = [
-            'title' => 'animal-id',
+            'title'       => 'animal-id',
             'description' => 'animal ids',
             'coming_soon' => true,
-            'meta' => ['desktop' => true, 'unity' => false],
-            'undelete' => true,
+            'meta'        => ['desktop' => true, 'unity' => false],
+            'undelete'    => true,
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(403);
@@ -260,7 +267,9 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param $login
+     *
      * @dataProvider postDataProvider
      */
     public function testItShouldNotLetOthersCreateGames($login)
@@ -268,10 +277,10 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser($login);
         $postData = [
-            'title' => 'Life Game',
+            'title'       => 'Life Game',
             'description' => 'Game about life',
             'coming_soon' => true,
-            'meta' => ['desktop' => true, 'unity' => false]
+            'meta'        => ['desktop' => true, 'unity' => false],
         ];
         $this->dispatch('/game', 'POST', $postData);
         $this->assertResponseStatusCode(403);
@@ -281,7 +290,9 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
+     *
      * @param $user
+     *
      * @dataProvider postDataProvider
      */
     public function testItShould403IfOthersTryToAccessDeletedGames($user)
@@ -301,7 +312,7 @@ class GameResourceTest extends TestCase
             ['super_user'],
             ['english_student'],
             ['other_teacher'],
-            ['principal']
+            ['principal'],
         ];
     }
 
@@ -311,8 +322,8 @@ class GameResourceTest extends TestCase
     public function fetchAllDataProvider()
     {
         return [
-            ['/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
+            'Without Soft Deleted' => ['/game', ['animal-id', 'be-bright', 'Monarch']],
+            'With Soft Deleted'    => ['/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
         ];
     }
 
@@ -336,11 +347,11 @@ class GameResourceTest extends TestCase
         return [
             0 => [
                 'english_student',
-                '/game'
+                '/game',
             ],
             1 => [
                 'english_student',
-                '/game/animal-id'
+                '/game/animal-id',
             ],
         ];
     }

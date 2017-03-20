@@ -14,11 +14,11 @@ use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
- * Class SaveGameService
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Saves game data to a user in a db
  */
 class SaveGameService implements SaveGameServiceInterface
 {
@@ -30,6 +30,11 @@ class SaveGameService implements SaveGameServiceInterface
     protected $tableGateway;
 
     /**
+     * @var ArraySerializable
+     */
+    protected $hydrator;
+
+    /**
      * GameService constructor.
      *
      * @param TableGateway $gateway
@@ -37,60 +42,50 @@ class SaveGameService implements SaveGameServiceInterface
     public function __construct(TableGateway $gateway)
     {
         $this->tableGateway = $gateway;
+        $this->hydrator     = new ArraySerializable();
     }
 
     /**
-     * @param SaveGameInterface $gameData
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function saveGame(SaveGameInterface $gameData)
+    public function saveGame(SaveGameInterface $gameData): bool
     {
         $gameData->setCreated(new \DateTime());
         $data         = $gameData->getArrayCopy();
         $data['data'] = !is_string($data['data'])
             ? Json::encode($data['data'])
             : $data['data'];
-        
-        $data['created'] = $gameData->getCreated()->format("Y-m-d H:i:s");
-        try {
-            $this->fetchSaveGameForUser($gameData->getUserId(), $gameData->getGameId());
-            $this->deleteSaveForUser($gameData->getUserId(), $gameData->getGameId());
-        } catch (NotFoundException $notFound) {
-            // Nothing to do here move along
-        }
 
+        // TODO move this into the saveGame model
+        $data['created'] = $gameData->getCreated()->format("Y-m-d H:i:s");
+        $this->deleteSaveForUser($gameData->getUserId(), $gameData->getGameId());
         $this->tableGateway->insert($data);
+
         return true;
     }
 
     /**
-     * @param $user
-     * @param $game
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function deleteSaveForUser($user, $game)
+    public function deleteSaveForUser($user, $game): bool
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $gameId = $game instanceof GameInterface ? $game->getGameId() : $game;
 
         $this->tableGateway->delete(['user_id' => $userId, 'game_id' => $gameId]);
+
         return true;
     }
 
     /**
-     * @param $user
-     * @param $game
-     * @param null $prototype
-     * @param null $where
-     *
-     * @return SaveGame|SaveGameInterface
-     * @throws NotFoundException
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @inheritdoc
      */
-    public function fetchSaveGameForUser($user, $game, $prototype = null, $where = null)
-    {
+    public function fetchSaveGameForUser(
+        $user,
+        $game,
+        SaveGameInterface $prototype = null,
+        $where = null
+    ): SaveGameInterface {
         $where  = $this->createWhere($where);
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $gameId = $game instanceof GameInterface ? $game->getGameId() : $game;
@@ -104,8 +99,8 @@ class SaveGameService implements SaveGameServiceInterface
             throw new NotFoundException("No Save game Found");
         }
 
-        $prototype = $prototype instanceof SaveGameInterface ? $prototype : new SaveGame();
-        $prototype->exchangeArray((array) $row);
+        $prototype = $prototype ?? new SaveGame();
+        $this->hydrator->hydrate((array)$row, $prototype);
 
         return $prototype;
     }
@@ -113,17 +108,21 @@ class SaveGameService implements SaveGameServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllSaveGamesForUser($user, $where = null, $prototype = null)
-    {
-        $where = $this->createWhere($where);
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+    public function fetchAllSaveGamesForUser(
+        $user,
+        $where = null,
+        SaveGameInterface $prototype = null
+    ): AdapterInterface {
+        $where     = $this->createWhere($where);
+        $userId    = $user instanceof UserInterface ? $user->getUserId() : $user;
+        $prototype = $prototype ?? new SaveGame();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         $where->addPredicate(new Operator('user_id', '=', $userId));
         $select = new Select(['sg' => $this->tableGateway->getTable()]);
         $select->where($where);
         $select->order("sg.created ASC");
+
         return new DbSelect(
             $select,
             $this->tableGateway->getAdapter(),
@@ -134,15 +133,16 @@ class SaveGameService implements SaveGameServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllSaveGameData($where = null, $prototype = null)
+    public function fetchAllSaveGameData($where = null, SaveGameInterface $prototype = null): AdapterInterface
     {
-        $where = $this->createWhere($where);
-
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $where     = $this->createWhere($where);
+        $prototype = $prototype ?? new SaveGame();
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         $select = new Select(['sg' => $this->tableGateway->getTable()]);
         $select->where($where);
         $select->order("sg.created DESC");
+
         return new DbSelect(
             $select,
             $this->tableGateway->getAdapter(),

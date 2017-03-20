@@ -59,6 +59,9 @@ return [
         \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
         ],
+        \Api\V1\Rest\Game\GameResource::class                 => [
+            \Game\Service\GameServiceInterface::class,
+        ],
     ],
 
     'actions' => [
@@ -129,8 +132,6 @@ return [
                 \Api\Factory\UserGroupListenerFactory::class,
             \Api\Listeners\UserImageListener::class                   =>
                 \Api\Factory\UserImageListenerFactory::class,
-            \Api\V1\Rest\Game\GameResource::class                     =>
-                \Api\V1\Rest\Game\GameResourceFactory::class,
             \Api\V1\Rest\Image\ImageResource::class                   =>
                 \Api\V1\Rest\Image\ImageResourceFactory::class,
             \Api\V1\Rest\Token\TokenResource::class                   =>
@@ -510,7 +511,7 @@ return [
                     ],
                 ],
             ],
-            'api.rest.address-group'         => [
+            'api.rest.address-group'   => [
                 'type'    => 'Segment',
                 'options' => [
                     'route'    => '/address/:address_id/group[/:group_id]',
@@ -1273,7 +1274,8 @@ return [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
-            ],'Api\V1\Rest\AddressGroup\Controller'   => [
+            ],
+            'Api\V1\Rest\AddressGroup\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',

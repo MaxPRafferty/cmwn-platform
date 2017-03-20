@@ -2,7 +2,9 @@
 
 namespace GameTest\Delegator;
 
+use Game\Delegator\GameDelegator;
 use Game\Delegator\SaveGameDelegator;
+use Game\Game;
 use Game\SaveGame;
 use Game\Service\SaveGameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -11,14 +13,10 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
+use Zend\Paginator\Adapter\Iterator;
 
 /**
- * Test SaveGameDelegatorTest
- *
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * Test for the save game delegator
  */
 class SaveGameDelegatorTest extends TestCase
 {
@@ -40,16 +38,21 @@ class SaveGameDelegatorTest extends TestCase
     protected $calledEvents = [];
 
     /**
-     * @var
+     * @var SaveGame
      */
     protected $saveGame;
+
+    /**
+     * @var Where
+     */
+    protected $where;
 
     /**
      * @before
      */
     public function setUpDelegator()
     {
-        $this->delegator    = new SaveGameDelegator($this->service, new EventManager());
+        $this->delegator = new SaveGameDelegator($this->service, new EventManager());
         $this->delegator->getEventManager()->attach('*', [$this, 'captureEvents'], 1000000);
     }
 
@@ -59,6 +62,10 @@ class SaveGameDelegatorTest extends TestCase
     public function setUpService()
     {
         $this->service = \Mockery::mock(SaveGameService::class);
+        $this->where   = new Where();
+        $this->service->shouldReceive('createWhere')
+            ->andReturn($this->where)
+            ->byDefault();
     }
 
     /**
@@ -95,16 +102,25 @@ class SaveGameDelegatorTest extends TestCase
             ->andReturn(true)
             ->once();
 
-        $this->delegator->saveGame($this->saveGame);
+        $this->assertTrue(
+            $this->delegator->saveGame($this->saveGame),
+            GameDelegator::class . ' did not return true when save game is called'
+        );
 
-        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GameDelegator::class . ' triggered the incorrect number of events for saveGame'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'save.user.game',
                 'target' => $this->service,
                 'params' => ['game_data' => $this->saveGame],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' triggered save.user.game incorrectly'
         );
 
         $this->assertEquals(
@@ -113,7 +129,8 @@ class SaveGameDelegatorTest extends TestCase
                 'target' => $this->service,
                 'params' => ['game_data' => $this->saveGame],
             ],
-            $this->calledEvents[1]
+            $this->calledEvents[1],
+            GameDelegator::class . ' triggered save.user.game.post incorrectly'
         );
     }
 
@@ -131,39 +148,56 @@ class SaveGameDelegatorTest extends TestCase
             return true;
         });
 
-        $this->assertTrue($this->delegator->saveGame($this->saveGame));
+        $this->assertTrue(
+            $this->delegator->saveGame($this->saveGame),
+            GameDelegator::class . ' did not return result from save.user.game event'
+        );
 
-        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct amount of events when save.user.game stops'
+        );
         $this->assertEquals(
             [
                 'name'   => 'save.user.game',
                 'target' => $this->service,
                 'params' => ['game_data' => $this->saveGame],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger save.user.game event correctly'
         );
     }
 
     /**
      * @test
      */
-    public function testItShouldCallDeleteSaveForUser()
+    public function testItShouldCallDeleteSaveForUserWithStrings()
     {
         $this->service->shouldReceive('deleteSaveForUser')
             ->with('manchuck', 'monarch')
             ->andReturn(true)
             ->once();
 
-        $this->delegator->deleteSaveForUser('manchuck', 'monarch');
+        $this->assertTrue(
+            $this->delegator->deleteSaveForUser('manchuck', 'monarch'),
+            GameDelegator::class . ' did not return result from service on deleteSaveForUser'
+        );
 
-        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger correct events for deleteSaveForUser'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'delete.user.save.game',
                 'target' => $this->service,
                 'params' => ['user' => 'manchuck', 'game' => 'monarch'],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger delete.user.save.game correctly'
         );
 
         $this->assertEquals(
@@ -172,7 +206,8 @@ class SaveGameDelegatorTest extends TestCase
                 'target' => $this->service,
                 'params' => ['user' => 'manchuck', 'game' => 'monarch'],
             ],
-            $this->calledEvents[1]
+            $this->calledEvents[1],
+            GameDelegator::class . ' did not trigger delete.user.save.game.post correctly'
         );
     }
 
@@ -187,35 +222,53 @@ class SaveGameDelegatorTest extends TestCase
         $this->delegator->getEventManager()->attach('delete.user.save.game', function (Event $event) {
             $event->stopPropagation(true);
 
-            return true;
+            return false;
         });
 
-        $this->assertTrue($this->delegator->deleteSaveForUser('manchuck', 'monarch'));
+        $this->assertFalse(
+            $this->delegator->deleteSaveForUser('manchuck', 'monarch'),
+            GameDelegator::class . ' did not return result from delete.user.save.game'
+        );
 
-        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not call the correct number of events for deleteSaveGameForUser'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'delete.user.save.game',
                 'target' => $this->service,
                 'params' => ['user' => 'manchuck', 'game' => 'monarch'],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger delete.user.save.game correctly'
         );
     }
 
     /**
      * @test
      */
-    public function testItShouldFetchSaveGameForUser()
+    public function testItShouldFetchSaveGameForUserWithNoPrototypeAndStringsForIds()
     {
         $this->service->shouldReceive('fetchSaveGameForUser')
-            ->with('manchuck', 'monarch', null, \Mockery::any())
+            ->with('manchuck', 'monarch', null, $this->where)
             ->once()
             ->andReturn($this->saveGame);
 
-        $this->delegator->fetchSaveGameForUser('manchuck', 'monarch');
+        $this->assertEquals(
+            $this->saveGame,
+            $this->delegator->fetchSaveGameForUser('manchuck', 'monarch'),
+            GameDelegator::class . ' did not return saved game from service'
+        );
 
-        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct events for fetchSaveGameForUser'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'fetch.user.save.game',
@@ -224,10 +277,11 @@ class SaveGameDelegatorTest extends TestCase
                     'user'      => 'manchuck',
                     'game'      => 'monarch',
                     'prototype' => null,
-                    'where'     => new Where(),
+                    'where'     => $this->where,
                 ],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger fetch.user.save.game correctly'
         );
 
         $this->assertEquals(
@@ -238,11 +292,12 @@ class SaveGameDelegatorTest extends TestCase
                     'user'      => 'manchuck',
                     'game'      => 'monarch',
                     'prototype' => null,
-                    'where'     => new Where(),
+                    'where'     => $this->where,
                     'game_data' => $this->saveGame,
                 ],
             ],
-            $this->calledEvents[1]
+            $this->calledEvents[1],
+            GameDelegator::class . ' did not trigger fetch.user.save.game.post correctly'
         );
     }
 
@@ -254,17 +309,24 @@ class SaveGameDelegatorTest extends TestCase
         $this->service->shouldReceive('fetchSaveGameForUser')
             ->never();
 
-        $return = new \stdClass();
-
-        $this->delegator->getEventManager()->attach('fetch.user.save.game', function (Event $event) use (&$return) {
+        $this->delegator->getEventManager()->attach('fetch.user.save.game', function (Event $event) {
             $event->stopPropagation(true);
 
-            return $return;
+            return $this->saveGame;
         });
 
-        $this->assertSame($return, $this->delegator->fetchSaveGameForUser('manchuck', 'monarch'));
+        $this->assertSame(
+            $this->saveGame,
+            $this->delegator->fetchSaveGameForUser('manchuck', 'monarch'),
+            GameDelegator::class . ' did not return result from fetch.user.save.gaem'
+        );
 
-        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct events when fetch.user.save.game stops'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'fetch.user.save.game',
@@ -273,10 +335,11 @@ class SaveGameDelegatorTest extends TestCase
                     'user'      => 'manchuck',
                     'game'      => 'monarch',
                     'prototype' => null,
-                    'where'     => new Where(),
+                    'where'     => $this->where,
                 ],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger the fetch.user.save.game correctly for stop'
         );
     }
 
@@ -285,15 +348,25 @@ class SaveGameDelegatorTest extends TestCase
      */
     public function testItShouldFetchAllSaveGamesForUser()
     {
-        $resultSet = new ResultSet();
-        $resultSet->initialize($this->saveGame->getArrayCopy());
-        $this->service->shouldReceive('fetchAllSaveGamesForUser')
-            ->with('manchuck', null, null)
-            ->andReturn($resultSet)
-            ->once();
-        $this->delegator->fetchAllSaveGamesForUser('manchuck');
+        $results = new Iterator(new \ArrayIterator([]));
 
-        $this->assertEquals(2, count($this->calledEvents));
+        $this->service->shouldReceive('fetchAllSaveGamesForUser')
+            ->with('manchuck', $this->where, null)
+            ->andReturn($results)
+            ->once();
+
+        $this->assertEquals(
+            $results,
+            $this->delegator->fetchAllSaveGamesForUser('manchuck'),
+            GameDelegator::class . ' did not return results from fetchAllSaveGameForUser'
+        );
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct events for fetchAllSaveGameForUser'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'fetch.user.saves',
@@ -301,10 +374,11 @@ class SaveGameDelegatorTest extends TestCase
                 'params' => [
                     'user'      => 'manchuck',
                     'prototype' => null,
-                    'where'     => null,
+                    'where'     => $this->where,
                 ],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger fetch.user.saves correctly'
         );
 
         $this->assertEquals(
@@ -314,11 +388,12 @@ class SaveGameDelegatorTest extends TestCase
                 'params' => [
                     'user'       => 'manchuck',
                     'prototype'  => null,
-                    'where'      => null,
-                    'user-saves' => $resultSet,
+                    'where'     => $this->where,
+                    'user-saves' => $results,
                 ],
             ],
-            $this->calledEvents[1]
+            $this->calledEvents[1],
+            GameDelegator::class . ' did not trigger fetch.user.saves.post correctly'
         );
     }
 
@@ -330,17 +405,26 @@ class SaveGameDelegatorTest extends TestCase
         $this->service->shouldReceive('fetchAllSaveGamesForUser')
             ->never();
 
-        $return = new \stdClass();
+        $results = new Iterator(new \ArrayIterator([]));
 
-        $this->delegator->getEventManager()->attach('fetch.user.saves', function (Event $event) use (&$return) {
+        $this->delegator->getEventManager()->attach('fetch.user.saves', function (Event $event) use (&$results) {
             $event->stopPropagation(true);
 
-            return $return;
+            return $results;
         });
 
-        $this->assertSame($return, $this->delegator->fetchAllSaveGamesForUser('manchuck'));
+        $this->assertSame(
+            $results,
+            $this->delegator->fetchAllSaveGamesForUser('manchuck'),
+            GameDelegator::class . ' did not return results from fetch.user.saves'
+        );
 
-        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct number of events form fetchAllSaveGamesForUser'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'fetch.user.saves',
@@ -348,10 +432,11 @@ class SaveGameDelegatorTest extends TestCase
                 'params' => [
                     'user'      => 'manchuck',
                     'prototype' => null,
-                    'where'     => null,
+                    'where'     => $this->where,
                 ],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger fetch.user.saves correctly for stopping'
         );
     }
 
@@ -360,25 +445,35 @@ class SaveGameDelegatorTest extends TestCase
      */
     public function testItShouldFetchAllSaveGameData()
     {
-        $resultSet = new ResultSet();
-        $resultSet->initialize($this->saveGame->getArrayCopy());
+        $results = new Iterator(new \ArrayIterator([]));
         $this->service->shouldReceive('fetchAllSaveGameData')
-            ->with(null, null)
-            ->andReturn($resultSet)
+            ->with($this->where, null)
+            ->andReturn($results)
             ->once();
-        $this->delegator->fetchAllSaveGameData();
 
-        $this->assertEquals(2, count($this->calledEvents));
+        $this->assertSame(
+            $results,
+            $this->delegator->fetchAllSaveGameData(),
+            GameDelegator::class . ' did not return results from service for fetchAllSaveGameData'
+        );
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct events fro fetchAllSaveGameData'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'fetch.game-data',
                 'target' => $this->service,
                 'params' => [
                     'prototype' => null,
-                    'where'     => null,
+                    'where'     => $this->where,
                 ],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger fetch.game-data correctly'
         );
 
         $this->assertEquals(
@@ -387,11 +482,12 @@ class SaveGameDelegatorTest extends TestCase
                 'target' => $this->service,
                 'params' => [
                     'prototype' => null,
-                    'where'     => null,
-                    'game-data' => $resultSet,
+                    'where'     => $this->where,
+                    'game-data' => $results,
                 ],
             ],
-            $this->calledEvents[1]
+            $this->calledEvents[1],
+            GameDelegator::class . ' did not trigger fetch.game-data.post correctly'
         );
     }
 
@@ -403,27 +499,37 @@ class SaveGameDelegatorTest extends TestCase
         $this->service->shouldReceive('fetchAllSaveGameData')
             ->never();
 
-        $return = new \stdClass();
+        $results = new Iterator(new \ArrayIterator([]));
 
-        $this->delegator->getEventManager()->attach('fetch.game-data', function (Event $event) use (&$return) {
+        $this->delegator->getEventManager()->attach('fetch.game-data', function (Event $event) use (&$results) {
             $event->stopPropagation(true);
 
-            return $return;
+            return $results;
         });
 
-        $this->assertSame($return, $this->delegator->fetchAllSaveGameData());
+        $this->assertSame(
+            $results,
+            $this->delegator->fetchAllSaveGameData(),
+            GameDelegator::class . ' did not return results from fetch.game-data'
+        );
 
-        $this->assertEquals(1, count($this->calledEvents));
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GameDelegator::class . ' did not trigger the correct events for fetch.game-data'
+        );
+
         $this->assertEquals(
             [
                 'name'   => 'fetch.game-data',
                 'target' => $this->service,
                 'params' => [
                     'prototype' => null,
-                    'where'     => null,
+                    'where'     => $this->where,
                 ],
             ],
-            $this->calledEvents[0]
+            $this->calledEvents[0],
+            GameDelegator::class . ' did not trigger fetch.game-data for stopping'
         );
     }
 }

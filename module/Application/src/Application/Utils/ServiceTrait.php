@@ -12,7 +12,10 @@ use Zend\Db\Sql\Where;
 trait ServiceTrait
 {
     /**
-     * @param $where
+     * Creates a PredicateSet from an array or a current PredicateInterface
+     *
+     * @param array|PredicateInterface $where
+     *
      * @return PredicateInterface|PredicateSet|Where
      */
     public function createWhere($where)

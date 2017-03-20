@@ -4,15 +4,16 @@ namespace Game;
 
 use Application\Utils\Date\SoftDeleteTrait;
 use Application\Utils\Date\StandardDatesTrait;
+use Application\Utils\Flags\FlagTrait;
 use Application\Utils\Meta\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
+use Application\Utils\Uri\UriCollectionAwareTrait;
+use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Class Game
- *
  * Game Model
  */
 class Game implements ArraySerializableInterface, GameInterface
@@ -20,6 +21,8 @@ class Game implements ArraySerializableInterface, GameInterface
     use StandardDatesTrait,
         MetaDataTrait,
         PropertiesTrait,
+        FlagTrait,
+        UriCollectionAwareTrait,
         SoftDeleteTrait {
         SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
         SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
@@ -34,22 +37,12 @@ class Game implements ArraySerializableInterface, GameInterface
     /**
      * @var string
      */
-    protected $title;
+    protected $title = '';
 
     /**
      * @var string
      */
-    protected $description;
-
-    /**
-     * @var bool
-     */
-    protected $comingSoon = false;
-
-    /**
-     * @var bool
-     */
-    protected $global = false;
+    protected $description = '';
 
     /**
      * Game constructor.
@@ -58,92 +51,62 @@ class Game implements ArraySerializableInterface, GameInterface
      */
     public function __construct(array $options = null)
     {
-        if ($options !== null) {
+        if (!empty($options)) {
             $this->exchangeArray($options);
         }
     }
 
     /**
-     * Exchange internal values from provided array
-     *
-     * @param  array $array
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): GameInterface
     {
-        $defaults = [
-            'game_id'     => null,
-            'title'       => null,
-            'description' => null,
-            'meta'        => [],
-            'created'     => null,
-            'updated'     => null,
-            'deleted'     => null,
-            'coming_soon' => false,
-            'global'      => false,
-        ];
-
-        $array = array_merge($defaults, $array);
-
         foreach ($array as $key => $value) {
             $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }
         }
+
+        return $this;
     }
 
     /**
-     * Return an array representation of the object
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'game_id'     => $this->getGameId(),
             'title'       => $this->getTitle(),
             'description' => $this->getDescription(),
-            'created'     => $this->getCreated() !== null ? $this->getCreated()->format(\DateTime::ISO8601) : null,
-            'updated'     => $this->getUpdated() !== null ? $this->getUpdated()->format(\DateTime::ISO8601) : null,
-            'deleted'     => $this->getDeleted() !== null ? $this->getDeleted()->format(\DateTime::ISO8601) : null,
-            'coming_soon' => $this->isComingSoon(),
+            'created'     => $this->formatCreated('Y-m-d H:i:s'),
+            'updated'     => $this->formatUpdated('Y-m-d H:i:s'),
+            'deleted'     => $this->formatDeleted('Y-m-d H:i:s'),
             'meta'        => $this->getMeta(),
+            'coming_soon' => $this->isComingSoon(),
             'global'      => $this->isGlobal(),
+            'featured'    => $this->isFeatured(),
+            'uris'        => $this->getUris(),
         ];
     }
 
     /**
-     * @return boolean
+     * @inheritdoc
      */
-    public function isComingSoon()
+    public function getGameId(): string
     {
-        return $this->comingSoon;
-    }
+        if (empty($this->gameId)) {
+            $this->setGameId(Uuid::uuid1());
+        }
 
-    /**
-     * @param boolean $comingSoon
-     */
-    public function setComingSoon($comingSoon)
-    {
-        $this->comingSoon = (bool)$comingSoon;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGameId()
-    {
         return $this->gameId;
     }
 
     /**
-     * @param string $gameId
-     *
-     * @return Game
+     * @inheritdoc
      */
-    public function setGameId($gameId)
+    public function setGameId(string $gameId): GameInterface
     {
         $this->gameId = $gameId;
 
@@ -151,19 +114,17 @@ class Game implements ArraySerializableInterface, GameInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
-     * @param string $title
-     *
-     * @return Game
+     * @inheritdoc
      */
-    public function setTitle($title)
+    public function setTitle(string $title): GameInterface
     {
         $this->title = $title;
 
@@ -171,19 +132,17 @@ class Game implements ArraySerializableInterface, GameInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
     /**
-     * @param string $description
-     *
-     * @return Game
+     * @inheritdoc
      */
-    public function setDescription($description)
+    public function setDescription(string $description): GameInterface
     {
         $this->description = $description;
 
@@ -191,18 +150,26 @@ class Game implements ArraySerializableInterface, GameInterface
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
-    public function isGlobal()
+    public function isGlobal(): bool
     {
-        return $this->global;
+        return $this->hasFlag(static::GAME_GLOBAL);
     }
 
     /**
-     * @param mixed $global
+     * @inheritdoc
      */
-    public function setGlobal($global)
+    public function isComingSoon(): bool
     {
-        $this->global = (bool)$global;
+        return $this->hasFlag(static::GAME_COMING_SOON);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isFeatured(): bool
+    {
+        return $this->hasFlag(static::GAME_FEATURED);
     }
 }

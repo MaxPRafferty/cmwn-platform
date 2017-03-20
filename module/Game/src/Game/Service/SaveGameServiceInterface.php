@@ -5,11 +5,12 @@ namespace Game\Service;
 use Application\Exception\NotFoundException;
 use Game\SaveGame;
 use Game\SaveGameInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Paginator\Adapter\DbSelect;
+use User\UserInterface;
+use Zend\Db\Sql\Predicate\PredicateSet;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Interface SaveGameServiceInterface
+ * Defines an interface to save game data for a user
  */
 interface SaveGameServiceInterface
 {
@@ -20,48 +21,63 @@ interface SaveGameServiceInterface
      *
      * @return bool
      */
-    public function saveGame(SaveGameInterface $gameData);
+    public function saveGame(SaveGameInterface $gameData): bool;
 
     /**
      * Deletes a save for a user
      *
-     * @param $user
-     * @param $game
+     * @param UserInterface|string $user the user or the user id
+     * @param UserInterface|string $game the game or the game id
+     *
+     * @todo Update to take in a game and a user
      *
      * @return bool
      */
-    public function deleteSaveForUser($user, $game);
+    public function deleteSaveForUser($user, $game): bool;
 
     /**
      * Fetches a save for a user
      *
-     * @param $user
-     * @param $game
-     * @param null $prototype
-     * @param null $where
+     * @param UserInterface|string $user        the user or the user id
+     * @param UserInterface|string $game        the game or the game id
+     * @param SaveGameInterface|null $prototype the type of save game to hydrate
+     * @param null|array|PredicateSet $where    passes options for the select
      *
-     * //TODO Change the signature to have the parameter order be $where then $prototype.
+     * @todo Change the signature to have the parameter order be $where then $prototype.
+     * @todo change user and game to be a user and game
+     *
      * @return SaveGame|SaveGameInterface
      * @throws NotFoundException
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function fetchSaveGameForUser($user, $game, $prototype = null, $where = null);
+    public function fetchSaveGameForUser(
+        $user,
+        $game,
+        SaveGameInterface $prototype = null,
+        $where = null
+    ): SaveGameInterface;
 
     /**
      * Fetch all saves for user
      *
-     * @param $user
-     * @param null $where
-     * @param null $prototype
-     * @return mixed
+     * @param UserInterface|string $user        the user or the user id
+     * @param SaveGameInterface|null $prototype the type of save game to hydrate
+     * @param null|array|PredicateSet $where    passes options for the select
+     *
+     * @return AdapterInterface
      */
-    public function fetchAllSaveGamesForUser($user, $where = null, $prototype = null);
+    public function fetchAllSaveGamesForUser(
+        $user,
+        $where = null,
+        SaveGameInterface $prototype = null
+    ): AdapterInterface;
 
     /**
      * Fetch all saves for game
-     * @param null $where
-     * @param null $prototype
-     * @return HydratingResultSet|DbSelect
+     *
+     * @param null|array|PredicateSet $where    passes options for the select
+     * @param SaveGameInterface|null $prototype the type of save game to hydrate
+     *
+     * @return AdapterInterface
      */
-    public function fetchAllSaveGameData($where = null, $prototype = null);
+    public function fetchAllSaveGameData($where = null, SaveGameInterface $prototype = null): AdapterInterface;
 }
