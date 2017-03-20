@@ -2,6 +2,7 @@
 
 namespace Feed\Delegator;
 
+use Application\Utils\HideDeletedEntitiesListener;
 use Feed\Service\FeedUserService;
 use Feed\Service\FeedUserServiceInterface;
 use Feed\UserFeedInterface;
@@ -33,6 +34,16 @@ class FeedUserDelegator implements FeedUserServiceInterface
     {
         $this->service = $service;
         $this->events = $events;
+
+        $hideDeletedEntitiesListener = new HideDeletedEntitiesListener(
+            ['fetch.all.user.feed'],
+            ['fetch.user.feed.post'],
+            'f'
+        );
+
+        $hideDeletedEntitiesListener->attach($events, PHP_INT_MIN);
+        $hideDeletedEntitiesListener->setEntityParamKey('user_feed');
+
         $events->addIdentifiers(array_merge(
             [FeedUserServiceInterface::class, static::class, FeedUserService::class],
             $events->getIdentifiers()

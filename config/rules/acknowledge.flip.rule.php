@@ -73,7 +73,19 @@ return [
             ],
             'providers'           => [
                 \Security\Rule\Provider\ActiveUserProvider::class,
+                \Rule\Event\Provider\FromEventTargetProvider::class,
                 \Rule\Event\Provider\EventProvider::class,
+                [
+                    'name' => \Feed\Rule\Provider\FeedableProvider::class,
+                    'options' => [
+                        'type' => \Feed\FeedInterface::TYPE_GAME,
+                        'visiblity' => \Feed\FeedInterface::PUBLIC,
+                        'meta' => [
+                            'foo' => 'bar',
+                            'skribble_id' => '{ Provider.event }'
+                        ]
+                    ]
+                ]
             ],
         ],
     ],

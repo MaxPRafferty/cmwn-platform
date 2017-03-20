@@ -11,6 +11,8 @@ use Flip\FlipInterface;
 use Flip\Service\FlipUserServiceInterface;
 use Friend\FriendInterface;
 use Friend\Service\FriendServiceInterface;
+use Game\GameInterface;
+use Game\Service\GameServiceInterface;
 use Security\Authentication\AuthenticationServiceAwareInterface;
 use Security\Authentication\AuthenticationServiceAwareTrait;
 use Skribble\Service\SkribbleServiceInterface;
@@ -94,6 +96,18 @@ class InjectFeedListener implements AuthenticationServiceAwareInterface
             'update.skribble.post',
             [$this,'injectSkribbleFeed']
         );
+
+        $this->listeners[] = $events->attach(
+            GameServiceInterface::class,
+            'create.game.post',
+            [$this,'injectGameFeed']
+        );
+
+        $this->listeners[] = $events->attach(
+            GameServiceInterface::class,
+            'update.game.post',
+            [$this,'injectGameFeed']
+        );
     }
 
     /**
@@ -118,13 +132,13 @@ class InjectFeedListener implements AuthenticationServiceAwareInterface
         $flip = $flip instanceof FlipInterface ? $flip->getFlipId() : $flip;
 
         $feed = new Feed([
-            'type' => FeedInterface::TYPE_FLIP,
-            'message' => FeedInterface::FLIP_EARNED,
-            'type_version' => 1,
-            'title' => 'Flip Earned',
-            'visibility' => 2,
-            'priority' => 5,
-            'meta' => ['flip_id' => $flip]
+            'type'          => FeedInterface::TYPE_FLIP,
+            'message'       => FeedInterface::FLIP_EARNED,
+            'type_version'  => 1,
+            'title'         => 'Flip Earned',
+            'visibility'    => 2,
+            'priority'      => 5,
+            'meta'          => ['flip_id' => $flip]
         ]);
 
         $this->feedService->createFeed($feed);
@@ -152,13 +166,13 @@ class InjectFeedListener implements AuthenticationServiceAwareInterface
         }
 
         $feed = new Feed([
-            'type' => FeedInterface::TYPE_FRIEND,
-            'message' => FeedInterface::FRIENDSHIP_MADE,
-            'type_version' => 1,
-            'sender' => $friend->getUserId(),
-            'title' => 'Friendship Made',
-            'visibility' => 2,
-            'priority' => 15
+            'type'          => FeedInterface::TYPE_FRIEND,
+            'message'       => FeedInterface::FRIENDSHIP_MADE,
+            'type_version'  => 1,
+            'sender'        => $friend->getUserId(),
+            'title'         => 'Friendship Made',
+            'visibility'    => 2,
+            'priority'      => 15
         ]);
 
         $this->feedService->createFeed($feed);
@@ -182,18 +196,42 @@ class InjectFeedListener implements AuthenticationServiceAwareInterface
         }
 
         $feed = new Feed([
-            'type' => FeedInterface::TYPE_SKRIBBLE,
-            'message' => FeedInterface::SKRIBBLE_RECEIVED,
-            'type_version' => 1,
-            'sender' => $skribble->getCreatedBy(),
-            'title' => 'Friendship Made',
-            'visibility' => 2,
-            'priority' => 10,
-            'meta' => ['skribble_id' => $skribble->getSkribbleId()]
+            'type'          => FeedInterface::TYPE_SKRIBBLE,
+            'message'       => FeedInterface::SKRIBBLE_RECEIVED,
+            'type_version'  => 1,
+            'sender'        => $skribble->getCreatedBy(),
+            'title'         => 'Skribble Rece',
+            'visibility'    => 2,
+            'priority'      => 10,
+            'meta'          => ['skribble_id' => $skribble->getSkribbleId()]
         ]);
 
         $this->feedService->createFeed($feed);
 
-        $this->feedUserService->attachFeedForUser($skribble->getCreatedBy(), new UserFeed($feed->getArrayCopy()));
+        $this->feedUserService->attachFeedForUser($skribble->getFriendTo(), new UserFeed($feed->getArrayCopy()));
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function injectGameFeed(Event $event)
+    {
+        $game = $event->getParam('game');
+
+        if (!$game instanceof GameInterface) {
+            return;
+        }
+
+        $feed = new Feed([
+            'type'          => FeedInterface::TYPE_GAME,
+            'message'       => FeedInterface::GAME_ADDED,
+            'type_version'  => 1,
+            'title'         => 'New Game Added',
+            'visibility'    => 0,
+            'priority'      => 20,
+            'meta'          => ['game_id' => $game->getGameId()]
+        ]);
+
+        $this->feedService->createFeed($feed);
     }
 }

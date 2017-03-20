@@ -114,15 +114,15 @@ class FeedUserResourceTest extends TestCase
         return [
             [
                 'english_student',
-                ['es_friend_feed', 'es_game_feed', 'es_flip_feed'],
+                ['game_feed', 'es_friend_feed', 'es_flip_feed'],
             ],
             [
                 'math_student',
-                ['ms_friend_feed', 'ms_game_feed', 'ms_flip_feed'],
+                ['game_feed', 'ms_friend_feed', 'ms_flip_feed'],
             ],
             [
                 'other_student',
-                ['os_game_feed', 'os_flip_feed'],
+                ['game_feed', 'os_flip_feed'],
             ],
         ];
     }

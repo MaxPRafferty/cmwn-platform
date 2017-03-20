@@ -4,6 +4,7 @@ namespace Skribble;
 
 use Application\Utils\Date\SoftDeleteTrait;
 use Application\Utils\Date\StandardDatesTrait;
+use Feed\FeedInterface;
 use Skribble\Rule\SkribbleRules;
 use User\UserInterface;
 use Zend\Filter\StaticFilter;
@@ -73,9 +74,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * Return an array representation of the object
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getArrayCopy()
     {
@@ -95,12 +94,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * Exchange internal values from provided array
-     *
-     * @param  array $array
-     *
-     *
-     * @return void
+     * @inheritdoc
      */
     public function exchangeArray(array $array)
     {
@@ -129,7 +123,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getCreatedBy()
     {
@@ -137,7 +131,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param string $createdBy
+     * @inheritdoc
      */
     public function setCreatedBy($createdBy)
     {
@@ -151,7 +145,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return SkribbleRules
+     * @inheritdoc
      */
     public function getRules()
     {
@@ -159,7 +153,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param SkribbleRules|string|array $rules
+     * @inheritdoc
      */
     public function setRules($rules)
     {
@@ -176,7 +170,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getSkribbleId()
     {
@@ -184,7 +178,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param string $skirbbleId
+     * @inheritdoc
      */
     public function setSkribbleId($skirbbleId)
     {
@@ -192,7 +186,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getStatus()
     {
@@ -200,7 +194,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param string $status
+     * @inheritdoc
      */
     public function setStatus($status)
     {
@@ -208,7 +202,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getFriendTo()
     {
@@ -216,7 +210,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param string $friendTo
+     * @inheritdoc
      */
     public function setFriendTo($friendTo)
     {
@@ -230,7 +224,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getUrl()
     {
@@ -242,7 +236,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param string $url
+     * @inheritdoc
      */
     public function setUrl($url)
     {
@@ -250,7 +244,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getVersion()
     {
@@ -258,7 +252,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param int $version
+     * @inheritdoc
      */
     public function setVersion($version)
     {
@@ -266,7 +260,7 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @return boolean
+     * @inheritdoc
      */
     public function isRead()
     {
@@ -274,10 +268,50 @@ class Skribble implements SkribbleInterface
     }
 
     /**
-     * @param boolean $read
+     * @inheritdoc
      */
     public function setRead($read)
     {
         $this->read = (bool)$read;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedMessage(): string
+    {
+        return FeedInterface::MESSAGE_SKRIBBLE_RECEIVED;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedMeta(): array
+    {
+        return ['skribble_id' => $this->getSkribbleId()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedVisiblity(): int
+    {
+        return FeedInterface::VISIBILITY_SELF;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedType(): string
+    {
+        return FeedInterface::TYPE_SKRIBBLE;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedTitle(): string
+    {
+        FeedInterface::TITLE_SKRIBBLE_RECEIVED;
     }
 }

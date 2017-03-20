@@ -314,17 +314,6 @@ return [
             'type_version' => 1,
         ],
         [
-            'feed_id'      => 'es_game_feed',
-            'sender'       => null,
-            'title'        => 'New Game Added',
-            'message'      => 'new game to play',
-            'priority'     => 4,
-            'posted'       => '2016-04-15 11:49:08',
-            'visibility'   => 2,
-            'type'         => 'GAME',
-            'type_version' => 1,
-        ],
-        [
             'feed_id'      => 'es_flip_feed',
             'sender'       => 'english_student',
             'title'        => 'Flip Earned',
@@ -347,17 +336,6 @@ return [
             'type_version' => 1,
         ],
         [
-            'feed_id'      => 'ms_game_feed',
-            'sender'       => null,
-            'title'        => 'New Game Added',
-            'message'      => 'new game to play',
-            'priority'     => 4,
-            'posted'       => '2016-04-15 11:49:08',
-            'visibility'   => 2,
-            'type'         => 'GAME',
-            'type_version' => 1,
-        ],
-        [
             'feed_id'      => 'ms_flip_feed',
             'sender'       => 'math_student',
             'title'        => 'Flip Earned',
@@ -369,17 +347,6 @@ return [
             'type_version' => 1,
         ],
         [
-            'feed_id'      => 'os_game_feed',
-            'sender'       => null,
-            'title'        => 'New Game Added',
-            'message'      => 'new game to play',
-            'priority'     => 4,
-            'posted'       => '2016-04-15 11:49:08',
-            'visibility'   => 2,
-            'type'         => 'GAME',
-            'type_version' => 1,
-        ],
-        [
             'feed_id'      => 'os_flip_feed',
             'sender'       => 'other_student',
             'title'        => 'Flip Earned',
@@ -388,6 +355,17 @@ return [
             'posted'       => '2016-04-15 11:49:08',
             'visibility'   => 2,
             'type'         => 'FLIP',
+            'type_version' => 1,
+        ],
+        [
+            'feed_id'      => 'game_feed',
+            'sender'       => null,
+            'title'        => 'New Game Added',
+            'message'      => 'New Game is Added',
+            'priority'     => 20,
+            'posted'       => '2016-04-15 11:49:08',
+            'visibility'   => 0,
+            'type'         => 'GAME',
             'type_version' => 1,
         ],
     ],
@@ -403,11 +381,6 @@ return [
             'read_flag'    => '0'
         ],
         [
-            'feed_id'      => 'es_game_feed',
-            'user_id'      => 'english_student',
-            'read_flag'    => '0'
-        ],
-        [
             'feed_id'      => 'ms_friend_feed',
             'user_id'      => 'math_student',
             'read_flag'    => '0'
@@ -418,17 +391,7 @@ return [
             'read_flag'    => '0'
         ],
         [
-            'feed_id'      => 'ms_game_feed',
-            'user_id'      => 'math_student',
-            'read_flag'    => '0'
-        ],
-        [
             'feed_id'      => 'os_flip_feed',
-            'user_id'      => 'other_student',
-            'read_flag'    => '0'
-        ],
-        [
-            'feed_id'      => 'os_game_feed',
             'user_id'      => 'other_student',
             'read_flag'    => '0'
         ],

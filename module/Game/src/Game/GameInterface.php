@@ -5,6 +5,7 @@ namespace Game;
 use Application\Utils\Date\SoftDeleteInterface;
 use Application\Utils\Date\StandardDateInterface;
 use Application\Utils\Meta\MetaDataInterface;
+use Feed\FeedableInterface;
 
 /**
  * Game
@@ -58,7 +59,8 @@ use Application\Utils\Meta\MetaDataInterface;
 interface GameInterface extends
     SoftDeleteInterface,
     StandardDateInterface,
-    MetaDataInterface
+    MetaDataInterface,
+    FeedableInterface
 {
     /**
      * Exchange internal values from provided array

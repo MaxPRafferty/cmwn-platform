@@ -4,12 +4,13 @@ namespace Skribble;
 
 use Application\Utils\Date\SoftDeleteInterface;
 use Application\Utils\Date\StandardDateInterface;
+use Feed\FeedableInterface;
 use Skribble\Rule\SkribbleRules;
 
 /**
  * Interface SkribbleInterface
  */
-interface SkribbleInterface extends SoftDeleteInterface, StandardDateInterface
+interface SkribbleInterface extends SoftDeleteInterface, StandardDateInterface, FeedableInterface
 {
     const STATUS_COMPLETE     = 'COMPLETE';
     const STATUS_PROCESSING   = 'PROCESSING';

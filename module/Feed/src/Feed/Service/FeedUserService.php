@@ -11,10 +11,13 @@ use Feed\UserFeedInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
+use Zend\Db\Sql\Predicate\Expression;
 
 /**
  * Class FeedUserService
@@ -68,15 +71,9 @@ class FeedUserService implements FeedUserServiceInterface
         $feedId = $feed instanceof FeedInterface? $feed->getFeedId() : $feed;
 
         $where = $this->createWhere($where);
-        $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, $userId));
         $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, $feedId));
 
-        $select = new Select(['uf' => $this->tableGateWay->getTable()]);
-        $select->join(
-            ['f' => 'feed'],
-            'uf.feed_id = f.feed_id'
-        );
-        $select->where($where);
+        $select = $this->createSelect($userId, $where);
 
         $rowSet = $this->tableGateWay->selectWith($select);
         $row = $rowSet->current();
@@ -95,20 +92,14 @@ class FeedUserService implements FeedUserServiceInterface
     public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null)
     {
         $userId = $user instanceof UserInterface? $user->getUserId() : $user;
-        $select = new Select(['uf' => $this->tableGateWay->getTable()]);
-        $select->columns(['read_flag']);
-        $select->join(
-            ['f' => 'feed'],
-            'uf.feed_id = f.feed_id'
-        );
+
+        $where = $this->createWhere($where);
+
+        $select = $this->createSelect($userId, $where);
 
         $select->order(['f.priority DESC']);
 
-        $where = $this->createWhere($where);
-        $where->isNull('f.deleted');
-        $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, $userId));
-
-        $select->where($where);
+        $select->quantifier('DISTINCT');
 
         $prototype = $prototype === null ? new UserFeed([]) : $prototype;
 
@@ -145,5 +136,36 @@ class FeedUserService implements FeedUserServiceInterface
         $this->tableGateWay->delete(['user_id' => $userId, 'feed_id' => $feed->getFeedId()]);
 
         return true;
+    }
+
+    /**
+     * @param string $userId
+     * @param Where $where
+     * @return Select
+     */
+    protected function createSelect(string $userId, Where $where)
+    {
+        $select = new Select(['uf' => $this->tableGateWay->getTable()]);
+        $select->columns(['read_flag']);
+        $select->join(
+            ['f' => 'feed'],
+            'uf.feed_id = f.feed_id',
+            '*',
+            Select::JOIN_RIGHT_OUTER
+        );
+
+        $where->addPredicate(
+            new PredicateSet(
+                [
+                    new Expression('f.visibility = 0'),
+                    new Operator('uf.user_id', Operator::OP_EQ, $userId)
+                ],
+                PredicateSet::COMBINED_BY_OR
+            )
+        );
+
+        $select->where($where);
+
+        return $select;
     }
 }

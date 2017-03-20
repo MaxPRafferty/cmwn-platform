@@ -2,10 +2,12 @@
 
 namespace Flip;
 
+use Feed\FeedableInterface;
+
 /**
  * An Interface that defines a flip
  */
-interface FlipInterface
+interface FlipInterface extends FeedableInterface
 {
     /**
      * @return string

@@ -3,6 +3,7 @@
 namespace Flip;
 
 use BaconStringUtils\Slugifier;
+use Feed\FeedInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 
@@ -136,5 +137,45 @@ class Flip implements FlipInterface
         $this->description = $description;
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedMessage(): string
+    {
+        return FeedInterface::MESSAGE_FLIP_EARNED;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedMeta(): array
+    {
+        return ['flip_id' => $this->getFlipId()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedVisiblity(): int
+    {
+        return FeedInterface::VISIBILITY_FRIENDS;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedType(): string
+    {
+        return FeedInterface::TYPE_FLIP;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedTitle(): string
+    {
+        return FeedInterface::TITLE_FLIP_EARNED;
     }
 }

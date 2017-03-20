@@ -267,7 +267,7 @@ class Feed implements FeedInterface
     /**
      * @inheritdoc
      */
-    public function setTypeVersion(string $typeVersion = null)
+    public function setTypeVersion(string $typeVersion = '1')
     {
         $this->typeVersion = (string) $typeVersion;
     }
