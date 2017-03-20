@@ -2516,6 +2516,10 @@ return [
                             'adapter' => \Zend\Db\Adapter\Adapter::class,
                             'table'   => 'games',
                             'field'   => 'title',
+                            'messages' => [
+                                \Zend\Validator\Db\RecordExists::ERROR_RECORD_FOUND =>
+                                    'A game with given name already exists',
+                            ]
                         ],
                     ]
                 ],
@@ -2770,6 +2774,10 @@ return [
                                 'context_field' => 'user_id',
                                 'operator'      => 'equalTo',
                             ],
+                            'messages' => [
+                                \Zend\Validator\Db\RecordExists::ERROR_RECORD_FOUND =>
+                                    'User already has this game attached'
+                            ]
                         ],
                     ],
                 ],

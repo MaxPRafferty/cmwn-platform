@@ -2,6 +2,7 @@
 
 namespace Application\Validator;
 
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\TableIdentifier;
 use \Zend\Validator\Db\AbstractDb;
@@ -27,34 +28,23 @@ abstract class AbstractDbValidator extends AbstractDb
 
     /**
      * set missing values in exclude and throw runtime exception if values not found
-     * @param $context
-     * @return array|string
-     * @throws RuntimeException
+     *
+     * @param array|null $context
      */
-    public function prepareExclude($context)
+    public function prepareExclude(array $context = null)
     {
         $exclude = parent::getExclude();
 
-        if (is_array($exclude) && !isset($exclude['value'])) {
-            if (isset($exclude['context_field'])) {
-                if (!isset($context[$exclude['context_field']])) {
-                    throw new RuntimeException("could not resolve value for context field");
-                }
-
-                $fieldValue = $context[$exclude['context_field']];
-            }
-
-            if (!isset($fieldValue)) {
-                if (!isset($exclude['field']) || !isset($context[$exclude['field']])) {
-                    throw new RuntimeException("could not resolve value for field");
-                }
-
-                $fieldValue = $context[$exclude['field']];
-            }
-
-            $exclude['value'] = $fieldValue;
-            $this->setExclude($exclude);
+        if (!is_array($exclude)) {
+            return;
         }
+
+        $defaultValue      = $exclude['value'] ?? null;
+        $contextFieldKey   = $exclude['context_field'];
+        $contextFieldValue = $context[$contextFieldKey] ?? $defaultValue;
+
+        $exclude['value'] = $contextFieldValue;
+        $this->setExclude($exclude);
     }
 
     /**
@@ -72,16 +62,15 @@ abstract class AbstractDbValidator extends AbstractDb
         $select->from($tableIdentifier)->columns([$this->field]);
         $select->where->equalTo($this->field, null);
 
-        if ($this->exclude !== null) {
-            if (is_array($this->exclude)) {
-                $methodName = $this->exclude['operator'] ?? 'notEqualTo';
-                $select->where->$methodName(
-                    $this->exclude['field'],
-                    $this->exclude['value']
-                );
-            } else {
-                $select->where($this->exclude);
-            }
+
+        if (is_array($this->exclude)) {
+            $methodName = $this->exclude['operator'] ?? 'notEqualTo';
+            $select->where->$methodName(
+                $this->exclude['field'],
+                $this->exclude['value']
+            );
+        } elseif (is_string($this->exclude) || $this->exclude instanceof PredicateInterface) {
+            $select->where($this->exclude);
         }
 
         $this->select = $select;
