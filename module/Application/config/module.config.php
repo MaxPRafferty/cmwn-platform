@@ -7,8 +7,8 @@
 return [
     'validators' => [
         'factories' => [
-            \Application\Utils\CheckIfDbRecordExists::class => \Application\Factory\CheckDbRecordFactory::class,
-            \Application\Utils\CheckIfNoDbRecordExists::class => \Application\Factory\CheckDbRecordFactory::class,
+            \Application\Validator\CheckIfDbRecordExists::class => \Application\Factory\CheckDbRecordFactory::class,
+            \Application\Validator\CheckIfNoDbRecordExists::class => \Application\Factory\CheckDbRecordFactory::class,
         ]
     ],
 
