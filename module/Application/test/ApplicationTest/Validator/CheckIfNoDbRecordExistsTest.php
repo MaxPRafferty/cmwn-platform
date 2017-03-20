@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Validator;
 
-use Application\Validator\CheckIfDbRecordExists;
+use Application\Validator\CheckIfNoDbRecordExists;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Adapter;
@@ -14,14 +14,14 @@ use Zend\Db\Adapter\Platform\Mysql;
 use Zend\Validator\Exception\RuntimeException;
 
 /**
- * Unit tests for CheckIfDbRecordExists
+ * Unit tests for CheckIfNoDbRecordExists
  */
-class CheckIfDbRecordExistsTest extends TestCase
+class CheckIfNoDbRecordExistsTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
     /**
-     * @var CheckIfDbRecordExists
+     * @var CheckIfNoDbRecordExists
      */
     protected $validator;
 
@@ -77,40 +77,40 @@ class CheckIfDbRecordExistsTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldReturnFalseIfRecordDoesNotExist()
+    public function testItShouldReturnTrueIfRecordDoesNotExist()
     {
-        $this->validator = new CheckIfDbRecordExists([
+        $this->validator = new CheckIfNoDbRecordExists([
             'table' => 'foo',
             'adapter' => $this->adapter,
             'field' => 'bar',
         ]);
 
         $this->result->shouldReceive('current')->andReturn(null)->once();
-        $this->assertFalse($this->validator->isValid('value', ['cfield' => 'cvalue']), 'Did not validate correctly');
+        $this->assertTrue($this->validator->isValid('value', ['cfield' => 'cvalue']), 'Did not validate correctly');
     }
 
     /**
      * @test
      */
-    public function testItShouldReturnTrueIfRecordExists()
+    public function testItShouldReturnFalseIfRecordExists()
     {
-        $this->validator = new CheckIfDbRecordExists([
+        $this->validator = new CheckIfNoDbRecordExists([
             'table' => 'foo',
             'adapter' => $this->adapter,
             'field' => 'bar',
         ]);
 
         $this->result->shouldReceive('current')->andReturn(true)->once();
-        $this->assertTrue($this->validator->isValid('value', ['cfield' => 'cvalue']), 'Did not validate correctly');
+        $this->assertFalse($this->validator->isValid('value', ['cfield' => 'cvalue']), 'Did not validate correctly');
     }
-    
+
     /**
      * @test
      */
     public function testItShouldThrowExceptionIfExcludeIsSetAnd()
     {
         $this->expectException(RuntimeException::class);
-        $this->validator = new CheckIfDbRecordExists([
+        $this->validator = new CheckIfNoDbRecordExists([
             'table' => 'foo',
             'adapter' => $this->adapter,
             'field' => 'bar',
@@ -126,7 +126,7 @@ class CheckIfDbRecordExistsTest extends TestCase
     public function testItShouldThrowTypeErrorIfAdapterNotSpecified()
     {
         $this->expectException(\TypeError::class);
-        $this->validator = new CheckIfDbRecordExists([
+        $this->validator = new CheckIfNoDbRecordExists([
             'table' => 'foo',
             'adapter' => Adapter::class,
             'field' => 'bar',
@@ -146,7 +146,7 @@ class CheckIfDbRecordExistsTest extends TestCase
             'field' => 'baz',
             'context_field' => 'baz',
         ];
-        $this->validator = new CheckIfDbRecordExists([
+        $this->validator = new CheckIfNoDbRecordExists([
             'table' => 'foo',
             'adapter' => $this->adapter,
             'field' => 'bar',

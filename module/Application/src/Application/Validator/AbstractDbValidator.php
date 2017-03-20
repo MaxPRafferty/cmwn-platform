@@ -24,6 +24,10 @@ abstract class AbstractDbValidator extends AbstractDb
         if (null === $this->adapter) {
             throw new RuntimeException('No database adapter present');
         }
+
+        if (is_array($this->exclude) && !isset($this->exclude['context_field'])) {
+            throw new RuntimeException('context_field not specified');
+        }
     }
 
     /**
