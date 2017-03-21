@@ -121,6 +121,7 @@ class SuperAdminSettingsEntity extends Entity implements ArraySerializableInterf
         $this->setCountries();
         $this->setRoles($array);
         $this->addLink(UserLink::class, 'Manage Users');
+        $this->getLinks()->get('user')->setRouteOptions(['query' => 'type']);
         $this->addLink(GameLink::class, 'Manage Games', [null, true]);
         $this->addLink(GameDataLink::class, 'Survey Results', ['all-about-you']);
         $this->addLink(GroupLink::class, 'Manage Groups');
