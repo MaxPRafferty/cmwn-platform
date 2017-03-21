@@ -34,6 +34,7 @@ interface FlipUserServiceInterface
      *
      * @param $user
      * @param $flip
+     * @todo update both params to be UserInterface and FlipInterface
      *
      * @return bool
      */
