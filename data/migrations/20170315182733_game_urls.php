@@ -215,17 +215,9 @@ class GameUrls extends AbstractMigration
         $this->changeTablesStepOne();
 
         $this->updateGameData($gameUrl, $mediaUrl);
-        $this->updateFlipData($mediaUrl);
+//        $this->updateFlipData($mediaUrl);
 
-        // Update null globals to int for casting
-        $this->execute(
-            'UPDATE games SET global = 0 WHERE global IS NULL'
-        );
-
-        // update null coming soon to int for casting
-        $this->execute(
-            'UPDATE games SET coming_soon = 0 WHERE coming_soon IS NULL'
-        );
+        $this->changeTablesStepTwo();
     }
 
     /**
@@ -233,59 +225,51 @@ class GameUrls extends AbstractMigration
      */
     protected function changeTablesStepOne()
     {
-        // update the games table
-        $gameTable   = $this->table('games');
-        if (!$gameTable->hasColumn('game_url')) {
-            $gameTable->addColumn('game_url', 'string', ['null' => true]);
+        $gameTable = $this->table('games');
+        if (!$gameTable->hasColumn('uris')) {
+            $gameTable->addColumn('uris', 'text', ['null' => true]);
         }
 
-        if (!$gameTable->hasColumn('thumb_url')) {
-            $gameTable->addColumn('thumb_url', 'string', ['null' => true]);
-        }
-
-        if (!$gameTable->hasColumn('banner_url')) {
-            $gameTable->addColumn('banner_url', 'string', ['null' => true]);
-        }
-
-        if (!$gameTable->hasColumn('featured')) {
+        if (!$gameTable->hasColumn('flags')) {
             $gameTable->addColumn(
-                'featured',
+                'flags',
                 'integer',
-                ['limit' => \Phinx\Db\Adapter\MysqlAdapter::BLOB_TINY, 'null' => true, 'default' => 0]
+                ['limit' => \Phinx\Db\Adapter\MysqlAdapter::BLOB_LONG, 'null' => true, 'default' => 0]
+            );
+        }
+
+        if (!$gameTable->hasColumn('sort_order')) {
+            $gameTable->addColumn(
+                'sort_order',
+                'integer',
+                ['null' => true, 'default' => 0]
             );
         }
 
         $gameTable->save();
+    }
 
-        // Update filps
-        $flipTable   = $this->table('flips');
-        if (!$flipTable->hasColumn('image_earned')) {
-            $flipTable->addColumn('image_earned', 'string', ['null' => true]);
+    /**
+     * Step one allows nulls for some fields to allow migrating the data easier
+     */
+    protected function changeTablesStepTwo()
+    {
+        $gameTable = $this->table('games');
+        if ($gameTable->hasColumn('global')) {
+            $gameTable->removeColumn('global');
         }
 
-        if (!$flipTable->hasColumn('image_unearned')) {
-            $flipTable->addColumn('image_unearned', 'string', ['null' => true]);
+        if ($gameTable->hasColumn('coming_soon')) {
+            $gameTable->removeColumn('coming_soon');
         }
 
-        if (!$flipTable->hasColumn('image_static')) {
-            $flipTable->addColumn('image_static', 'string', ['null' => true]);
-        }
-
-        if (!$flipTable->hasColumn('image_coin')) {
-            $flipTable->addColumn('image_coin', 'string', ['null' => true]);
-        }
-
-        if (!$flipTable->hasColumn('image_url')) {
-            $flipTable->addColumn('image_url', 'string', ['null' => true]);
-        }
-
-        $flipTable->save();
+        $gameTable->save();
     }
 
     /**
      * Updates the game table with data in the new fields
      *
-     * @param string $gameUrl base path to the game server
+     * @param string $gameUrl  base path to the game server
      * @param string $mediaUrl base path to the media server
      */
     protected function updateGameData($gameUrl, $mediaUrl)
@@ -303,62 +287,43 @@ class GameUrls extends AbstractMigration
                 $bannerUrl = $mediaUrl . '/titles/18-5/' . $gameId . '.jpg';
             }
 
-            $this->execute(
-                'UPDATE games SET ' .
-                'game_url = "' . $gameUrl . '/' . $gameId . '" ' .
-                'WHERE game_id = "' . $gameId . '" AND game_url IS NULL'
-            );
+            $uris = str_replace('"', '\"', json_encode([
+                'banner_url' => $bannerUrl,
+                'thumb_url'  => $thumbUrl,
+                'game_url'   => $gameUrl . '/' . $gameId,
+            ]));
+
+            $meta = json_decode($gameData['meta'], true) ?? [];
+
+            // update the flags
+            $flags = 0;
+            if ($gameData['global'] == 1) {
+                $flags += 1;
+            }
+
+            if ($gameData['coming_soon'] == 1) {
+                $flags += 4;
+            }
+
+            if ($meta['unity'] ?? false) {
+                $flags += 8;
+            }
+
+            if ($meta['desktop'] ?? false) {
+                $flags += 16;
+            }
+
+            unset($meta['unity']);
+            unset($meta['desktop']);
+
+            $updatedMeta = str_replace('"', '\"', json_encode($meta));
 
             $this->execute(
                 'UPDATE games SET ' .
-                'thumb_url = "' . $thumbUrl . '" ' .
-                'WHERE game_id = "' . $gameId . '" AND thumb_url IS NULL'
-            );
-
-            $this->execute(
-                'UPDATE games SET ' .
-                'banner_url = "' . $bannerUrl . '" ' .
-                'WHERE game_id = "' . $gameId . '" AND banner_url IS NULL'
-            );
-        }
-    }
-
-    /**
-     * Updates the flips table with data in the new fields
-     *
-     * @param $mediaUrl
-     */
-    protected function updateFlipData($mediaUrl)
-    {
-        foreach ($this->flipImages as $flipId => $flipImages) {
-            $this->execute(
-                'UPDATE flips SET ' .
-                'image_earned = "' . $mediaUrl . '/f/' . $flipImages['earned'] . '" ' .
-                'WHERE flip_id = "' . $flipId . '" AND image_earned IS NULL'
-            );
-
-            $this->execute(
-                'UPDATE flips SET ' .
-                'image_unearned = "' . $mediaUrl . '/f/' . $flipImages['unearned'] . '" ' .
-                'WHERE flip_id = "' . $flipId . '" AND image_unearned IS NULL'
-            );
-
-            $this->execute(
-                'UPDATE flips SET ' .
-                'image_static = "' . $mediaUrl . '/f/' . $flipImages['static'] . '" ' .
-                'WHERE flip_id = "' . $flipId . '"  AND image_static IS NULL'
-            );
-
-            $this->execute(
-                'UPDATE flips SET ' .
-                'image_coin = "' . $mediaUrl . '/f/flips/' . $flipId . '/image-coin.png" ' .
-                'WHERE flip_id = "' . $flipId . '"  AND image_coin IS NULL'
-            );
-
-            $this->execute(
-                'UPDATE flips SET ' .
-                'image_url = "' . $mediaUrl . '/f/flips/' . $flipId . '/coin.png" ' .
-                'WHERE flip_id = "' . $flipId . '" AND image_url IS NULL'
+                'uris = "' . $uris . '", ' .
+                'flags = ' . $flags . ', ' .
+                'meta = "' . $updatedMeta . '"' .
+                ' WHERE game_id = "' . $gameId . '"'
             );
         }
     }

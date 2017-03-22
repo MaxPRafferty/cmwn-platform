@@ -3,6 +3,7 @@
 namespace Game\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\ServiceTrait;
 use Game\Game;
 use Game\GameInterface;
@@ -39,6 +40,8 @@ class GameService implements GameServiceInterface
         'global'      => GameInterface::GAME_GLOBAL,
         'featured'    => GameInterface::GAME_FEATURED,
         'coming_soon' => GameInterface::GAME_COMING_SOON,
+        'desktop'     => GameInterface::GAME_DESKTOP,
+        'unity'       => GameInterface::GAME_UNITY,
     ];
 
     /**
@@ -61,12 +64,18 @@ class GameService implements GameServiceInterface
      */
     protected function getDataForDb(GameInterface $game): array
     {
-        $data          = array_diff_key($game->getArrayCopy(), static::$flagMap);
-        $data['meta']  = Json::encode($game->getMeta());
-        $data['flags'] = $game->getFlags();
-        $data['uris']  = Json::encode($game->getUris());
-
-        return $data;
+        return [
+            'game_id'     => $game->getGameId(),
+            'title'       => $game->getTitle(),
+            'description' => $game->getDescription(),
+            'meta'        => Json::encode($game->getMeta()),
+            'flags'       => $game->getFlags(),
+            'uris'        => Json::encode($game->getUris()),
+            'sort_order'  => $game->getSortOrder(),
+            'created'     => DateTimeFactory::formatForMysql($game->getCreated()),
+            'updated'     => DateTimeFactory::formatForMysql($game->getUpdated()),
+            'deleted'     => DateTimeFactory::formatForMysql($game->getDeleted()),
+        ];
     }
 
     /**
@@ -78,7 +87,10 @@ class GameService implements GameServiceInterface
     {
         if (!empty($where) && is_array($where)) {
             // pull out the flag keys
-            $flagWhere = array_intersect_key($where, array_flip(['global', 'coming_soon', 'featured']));
+            $flagWhere = array_intersect_key(
+                $where,
+                array_flip(['global', 'coming_soon', 'featured', 'unity', 'desktop'])
+            );
 
             // now remove the flag keys
             $where = array_diff_key($where, $flagWhere);
@@ -95,8 +107,8 @@ class GameService implements GameServiceInterface
                 }
 
                 $expression = $value
-                    ? new Expression('g.flags & ? = ?', $bit, $bit)
-                    : new Expression('g.flags & ? != ?', $bit, $bit);
+                    ? new Expression('flags & ? = ?', $bit, $bit)
+                    : new Expression('flags & ? != ?', $bit, $bit);
 
                 $set->orPredicate($expression);
             });
@@ -105,16 +117,6 @@ class GameService implements GameServiceInterface
         }
 
         return !$where instanceof PredicateInterface ? new Where() : $where;
-    }
-
-    /**
-     * Any class using this trait can return the the table alias here
-     *
-     * @return string
-     */
-    public function getAlias(): string
-    {
-        return 'g';
     }
 
     /**
@@ -127,7 +129,7 @@ class GameService implements GameServiceInterface
         $resultSet = new HydratingResultSet($this->hydrator, $prototype);
         $select    = new Select(['g' => $this->gameTableGateway->getTable()]);
         $select->where($where);
-        $select->order(['title']);
+        $select->order(['sort_order', 'title']);
 
         return new DbSelect(
             $select,
@@ -157,9 +159,12 @@ class GameService implements GameServiceInterface
     /**
      * @inheritdoc
      */
-    public function saveGame(GameInterface $game): bool
+    public function saveGame(GameInterface $game, bool $removeSoft = false): bool
     {
         $game->setUpdated(new \DateTime());
+        if ($removeSoft) {
+            $game->setDeleted(null);
+        }
 
         $this->gameTableGateway->update(
             $this->getDataForDb($game),

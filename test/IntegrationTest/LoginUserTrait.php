@@ -9,6 +9,7 @@ use Zend\Authentication\AuthenticationService;
 
 /**
  * Trait LoginUserTrait
+ * @deprecated use IntegrationTest
  */
 trait LoginUserTrait
 {

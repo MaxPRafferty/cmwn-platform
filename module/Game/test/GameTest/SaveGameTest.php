@@ -3,16 +3,14 @@
 namespace GameTest;
 
 use Application\Utils\Date\DateTimeFactory;
+use Game\Exception\RuntimeException;
+use Game\Game;
 use Game\SaveGame;
 use PHPUnit\Framework\TestCase;
+use User\Child;
 
 /**
  * Test SaveGameTest
- *
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SaveGameTest extends TestCase
 {
@@ -33,47 +31,50 @@ class SaveGameTest extends TestCase
 
         $saveGame = new SaveGame($data);
 
-        $this->assertEquals('monarch', $saveGame->getGameId(), 'Game Id was not set from constructor');
-        $this->assertEquals('manchuck', $saveGame->getUserId(), 'User Id was not set from constructor');
         $this->assertEquals(
-            $date->format("Y-m-d H:i:s"),
-            $saveGame->getCreated()->format("Y-m-d H:i:s"),
-            'Crated date was not set from constructor'
+            $data,
+            $saveGame->getArrayCopy(),
+            SaveGame::class . ' did not set the data from the constructor correctly'
         );
-        $this->assertEquals(
-            ['foo' => 'bar', 'progress' => 100],
-            $saveGame->getData(),
-            'Game Data was not set from constructor'
-        );
-
-        $this->assertEquals('1.1.1', $saveGame->getVersion(), 'The version is incorrect');
     }
 
     /**
      * @test
      */
-    public function testItShouldBeAbleToExtractAndHydrateItself()
+    public function testItShouldHaveHelpersForSettingIds()
     {
-        $date = new \DateTime();
+        $user = new Child();
+        $user->setUserId('manchuck');
 
-        $data = [
-            'game_id' => 'monarch',
-            'user_id' => 'manchuck',
-            'data'    => ['foo' => 'bar', 'progress' => 100],
-            'created' => $date->format(\DateTime::ISO8601),
-            'version' => '3.3.3-rc',
-        ];
+        $game = new Game();
+        $game->setGameId('monarch');
 
-        $expected = new SaveGame($data);
-        $actual   = new SaveGame();
+        $save = new SaveGame();
+        $save->setGameIdFromGame($game);
+        $save->setUserIdFromUser($user);
 
         $this->assertEquals(
-            $data,
-            $expected->getArrayCopy(),
-            'Save Game was not able to correctly extract itself'
+            'manchuck',
+            $save->getUserId(),
+            SaveGame::class . ' did not set the user id from a user'
         );
 
-        $actual->exchangeArray($expected->getArrayCopy());
-        $this->assertEquals($expected, $actual, 'Hydrating into new SaveGame produced incorrect data');
+        $this->assertEquals(
+            'monarch',
+            $save->getGameId(),
+            SaveGame::class . ' did not set the game id from a game'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldThrowExceptionWhenDataIsNotAnArray()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Data for game MUST be an array or Json string');
+
+        $save = new SaveGame();
+        $save->setData(new \stdClass());
     }
 }

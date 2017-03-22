@@ -9,8 +9,7 @@ use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class GameResource
- * @package Api\V1\Rest\Game
+ * A Resource that handles the game API
  */
 class GameResource extends AbstractResourceListener
 {
@@ -20,7 +19,8 @@ class GameResource extends AbstractResourceListener
     protected $service;
 
     /**
-     * UserResource constructor.
+     * GameResource constructor.
+     *
      * @param GameServiceInterface $service
      */
     public function __construct(GameServiceInterface $service)
@@ -86,9 +86,12 @@ class GameResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
+        $params = (array)$params;
         /** @var DbSelect $games */
-        $deleted = $params['deleted'] === 'true' ?? false;
-        $games = $this->service->fetchAll(null, new GameEntity(), $deleted);
+        $deleted = (bool)($params['deleted'] ?? false);
+        unset($params['deleted']);
+        $games = $this->service->fetchAll($params, new GameEntity(), $deleted);
+
         return new GameCollection($games);
     }
 
@@ -189,6 +192,7 @@ class GameResource extends AbstractResourceListener
     {
         $game = new Game($this->getInputFilter()->getValues());
         $this->service->createGame($game);
+
         return new GameEntity($game->getArrayCopy());
     }
 
@@ -242,24 +246,19 @@ class GameResource extends AbstractResourceListener
      *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
-     * @param  mixed $gameId
+     * @param  string $gameId
      * @param  mixed $data
      *
      * @return ApiProblem|mixed
      */
     public function update($gameId, $data)
     {
-        $data = $this->getInputFilter()->getValues();
-        $game = $this->service->fetchGame($gameId);
-
-        $data = array_merge($game->getArrayCopy(), $data);
-
-        if ($data['undelete']) {
-            unset($data['deleted']);
-        }
+        $data       = $this->getInputFilter()->getValues();
+        $game       = $this->fetch($gameId);
+        $data       = array_merge($game->getArrayCopy(), $data);
 
         $game->exchangeArray($data);
-        $this->service->saveGame($game);
+        $this->service->saveGame($game, true);
 
         return $game;
     }
@@ -267,9 +266,7 @@ class GameResource extends AbstractResourceListener
     /**
      * Delete a game
      *
-     * A fetch is done first to ensure the user has access to a game.  By default games are soft deleted unless
-     * the "hard" parameter is set in the query.  The authenticated user will get a 403 if the they are not allowed
-     * to hard delete a game
+     * A fetch is done first to ensure the user has access to a game.
      *
      * @SWG\Delete(path="/game/{game_id}",
      *   tags={"game"},

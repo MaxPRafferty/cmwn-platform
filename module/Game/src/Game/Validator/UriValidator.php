@@ -57,7 +57,7 @@ class UriValidator extends AbstractValidator implements ValidatorInterface
         }
 
         $validUri = true;
-        array_walk($value, function ($value) use (&$validUri) {
+        array_walk($value, function ($value, $key) use (&$validUri) {
             if (!$this->uriValidator->isValid($value)) {
                 $this->error(self::INVALID_URI, $value);
                 $validUri = false;

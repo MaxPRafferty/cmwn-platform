@@ -50,7 +50,7 @@ return [
                 'DELETE' => 'delete.org',
             ],
             'api.rest.game'            => [
-                'GET'    => 'view.deleted.game',
+                'GET'    => 'view.all.games',
                 'POST'   => 'create.game',
                 'PUT'    => 'update.game',
                 'DELETE' => 'delete.game',

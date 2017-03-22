@@ -7,6 +7,7 @@ use Application\Utils\Date\StandardDatesTrait;
 use Application\Utils\Flags\FlagTrait;
 use Application\Utils\Meta\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
+use Application\Utils\Sort\SortableTrait;
 use Application\Utils\Uri\UriCollectionAwareTrait;
 use Ramsey\Uuid\Uuid;
 use Zend\Filter\StaticFilter;
@@ -23,6 +24,7 @@ class Game implements ArraySerializableInterface, GameInterface
         PropertiesTrait,
         FlagTrait,
         UriCollectionAwareTrait,
+        SortableTrait,
         SoftDeleteTrait {
         SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
         SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
@@ -44,6 +46,14 @@ class Game implements ArraySerializableInterface, GameInterface
      */
     protected $description = '';
 
+    protected static $flagMap = [
+        'desktop'     => self::GAME_DESKTOP,
+        'featured'    => self::GAME_FEATURED,
+        'coming_soon' => self::GAME_COMING_SOON,
+        'global'      => self::GAME_GLOBAL,
+        'unity'       => self::GAME_UNITY,
+    ];
+
     /**
      * Game constructor.
      *
@@ -62,9 +72,27 @@ class Game implements ArraySerializableInterface, GameInterface
     public function exchangeArray(array $array): GameInterface
     {
         foreach ($array as $key => $value) {
+            // set using the method
             $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
+                continue;
+            }
+
+            // check for flag keys (comes in this way from the API)
+            // key is not a flag
+            if (!array_key_exists($key, static::$flagMap)) {
+                continue;
+            }
+
+            // get the flag from the array
+            $flag = static::$flagMap[$key];
+
+            // toggle the flag to desired state
+            if ($value && !$this->hasFlag($flag)) {
+                $this->toggleFlag($flag);
+            } elseif (!$value && $this->hasFlag($flag)) {
+                $this->toggleFlag($flag);
             }
         }
 
@@ -87,7 +115,10 @@ class Game implements ArraySerializableInterface, GameInterface
             'coming_soon' => $this->isComingSoon(),
             'global'      => $this->isGlobal(),
             'featured'    => $this->isFeatured(),
+            'unity'       => $this->isUnity(),
+            'desktop'     => $this->isDesktop(),
             'uris'        => $this->getUris(),
+            'sort_order'  => $this->getSortOrder(),
         ];
     }
 
@@ -172,4 +203,21 @@ class Game implements ArraySerializableInterface, GameInterface
     {
         return $this->hasFlag(static::GAME_FEATURED);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isDesktop(): bool
+    {
+        return $this->hasFlag(static::GAME_DESKTOP);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isUnity(): bool
+    {
+        return $this->hasFlag(static::GAME_UNITY);
+    }
+
 }

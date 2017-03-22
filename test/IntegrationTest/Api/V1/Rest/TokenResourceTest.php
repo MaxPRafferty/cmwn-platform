@@ -2,20 +2,14 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use Api\V1\Rest\Token\TokenResource;
+use IntegrationTest\IntegrationTest as TestCase;
 use Zend\Json\Json;
 
 /**
- * Test TokenResourceTest
+ * Tests the hal links for various users on the token resource
  *
- * @group Token
- * @group API
- * @group User
- * @group IntegrationTest
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @group Hal
  */
 class TokenResourceTest extends TestCase
 {
@@ -28,88 +22,100 @@ class TokenResourceTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @param string $user
-     * @param string $url
-     * @param string $method
-     * @param array $params
-     *
-     * @dataProvider changePasswordDataProvider
+     * @inheritDoc
      */
-    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    protected function getControllerNameForTest(): string
     {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException($url, $method, $params);
+        return 'api\v1\rest\token\controller';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getControllerRouteNameForTest(): string
+    {
+        return 'api.rest.token';
+    }
+
+    /**
+     * @param array $expectedLinks
+     *
+     * @return array
+     */
+    protected function checkLinks(array $expectedLinks)
+    {
+        try {
+            $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        } catch (\Exception $jsonException) {
+            $this->fail('Error Decoding Response');
+
+            return [];
+        }
+
+        $actualLinks = [];
+        foreach (($body['_links'] ?? []) as $rel => $link) {
+            $actualLinks[$rel] = $link['href']?? null;
+        }
+
+        $this->assertEquals(
+            $expectedLinks,
+            $actualLinks,
+            TokenResource::class . ' has invalid links for this route'
+        );
+
+        return $body;
     }
 
     /**
      * @test
-     * @ticket CORE-681
-     * @group Hal
      */
     public function testItShouldReturnDefaultHalLinksWhenNotLoggedIn()
     {
-        $this->dispatch('/');
-        $this->assertResponseStatusCode(200);
-        $this->assertNotRedirect();
+        $this->dispatchCall('/');
 
-        $body = $this->getResponse()->getContent();
-
-        try {
-            $decoded = Json::decode($body, Json::TYPE_ARRAY);
-        } catch (\Exception $jsonException) {
-            $this->fail('Error Decoding Response');
-
-            return;
-        }
-
-        $this->assertArrayHasKey('_links', $decoded);
-
-        $links = $decoded['_links'];
-        $this->assertArrayHasKey('login', $links);
-        $this->assertArrayHasKey('logout', $links);
-        $this->assertArrayHasKey('forgot', $links);
-
-        $this->assertCount(3, $links);
+        $this->checkLinks([
+            'login'  => 'http://api.test.com/login',
+            'logout' => 'http://api.test.com/logout',
+            'forgot' => 'http://api.test.com/forgot',
+        ]);
     }
 
     /**
      * @test
-     * @ticket       CORE-681
-     * @ticket       CORE-1184
-     * @ticket       CORE-1233
+     *
+     * @param string $login
+     * @param array $links
+     * @param int $expectedScope
+     *
      * @dataProvider loginHalLinksDataProvider
-     * @group Hal
      */
-    public function testItShouldBuildCorrectEndpointsForMe($user, $links, $expectedScope)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($user);
-        $this->dispatch('/');
-        $this->assertResponseStatusCode(200);
-        $this->assertNotRedirect();
+    public function testItShouldBuildCorrectResponseForMe(
+        string $login,
+        array $links,
+        int $expectedScope,
+        string $friendStatus = null
+    ) {
+        $user = $this->dispatchAuthenticatedCall($login, '/');
+        $body = $this->checkLinks($links);
 
-        $body = $this->getResponse()->getContent();
+        // Remove links and remove embedded
+        unset($body['_links'], $body['_embedded']);
 
-        try {
-            $decoded = Json::decode($body, Json::TYPE_ARRAY);
-        } catch (\Exception $jsonException) {
-            $this->fail('Error Decoding Response');
-
-            return;
+        $expectedBody = array_merge($user->getArrayCopy(), ['token' => 'foobar', 'scope' => $expectedScope]);
+        if ($friendStatus !== null) {
+            $expectedBody['friend_status'] = $friendStatus;
+        } else {
+            $this->assertArrayNotHasKey(
+                'friend_status',
+                $body,
+                TokenResource::class . ' is including friend status for user that cant friend'
+            );
         }
-
-        $this->assertArrayHasKey('_links', $decoded, 'No hal links returned on me');
-        $this->assertArrayHasKey('scope', $decoded, 'No Scope returned on me');
-
-        $actualLinks = array_keys($decoded['_links']);
-        sort($links);
-        sort($actualLinks);
-        $this->assertEquals($links, $actualLinks);
-
-        $this->assertEquals($expectedScope, $decoded['scope'], 'Incorrect scope for ME');
+        $this->assertEquals(
+            $body,
+            $expectedBody,
+            TokenResource::class . ' did not return the correct data for the user'
+        );
     }
 
     /**
@@ -119,103 +125,94 @@ class TokenResourceTest extends TestCase
     {
         return [
             'Super User'      => [
-                'user'  => 'super_user',
-                'links' => [
-                    'address',
-                    'feed',
-                    'flip',
-                    'games',
-                    'games_deleted',
-                    'group',
-                    'group_class',
-                    'group_school',
-                    'org',
-                    'org_district',
-                    'password',
-                    'profile',
-                    'self',
-                    'user',
-                    'user_image',
-                    'user_flip',
-                    'super',
-                    'flags',
-                    'sa_settings',
-                    'user_feed',
+                'user'          => 'super_user',
+                'links'         => [
+                    'self'          => 'http://api.test.com/user/super_user',
+                    'feed'          => 'http://api.test.com/feed',
+                    'flip'          => 'http://api.test.com/flip',
+                    'games'         => 'http://api.test.com/game',
+                    'games_deleted' => 'http://api.test.com/game?deleted=true',
+                    'group'         => 'http://api.test.com/group',
+                    'group_class'   => 'http://api.test.com/group?type=class',
+                    'group_school'  => 'http://api.test.com/group?type=school',
+                    'org'           => 'http://api.test.com/org',
+                    'org_district'  => 'http://api.test.com/org?type=district',
+                    'password'      => 'http://api.test.com/user/super_user/password',
+                    'profile'       => 'http://api.test.com/user/super_user',
+                    'user'          => 'http://api.test.com/user',
+                    'user_image'    => 'http://api.test.com/user/super_user/image',
+                    'user_flip'     => 'http://api.test.com/user/super_user/flip',
+                    'super'         => 'http://api.test.com/super/super_user',
+                    'flags'         => 'http://api.test.com/flag',
+                    'sa_settings'   => 'http://api.test.com/sa/settings',
+                    'user_feed'     => 'http://api.test.com/user/super_user/feed',
+                    'address'       => 'http://api.test.com/address',
                 ],
-                'scope' => -1,
+                'scope'         => -1,
+                'friend_status' => null,
             ],
             'Principal'       => [
-                'user'  => 'principal',
-                'links' => [
-                    'flip',
-                    'games',
-                    'group_school',
-                    'group_class',
-                    'org_district',
-                    'password',
-                    'profile',
-                    'self',
-                    'user',
-                    'user_image',
-                    'user_flip',
-                    'flags',
-                    'user_feed',
+                'user'          => 'principal',
+                'links'         => [
+                    'self'         => 'http://api.test.com/user/principal',
+                    'flip'         => 'http://api.test.com/flip',
+                    'user'         => 'http://api.test.com/user',
+                    'password'     => 'http://api.test.com/user/principal/password',
+                    'user_feed'    => 'http://api.test.com/user/principal/feed',
+                    'flags'        => 'http://api.test.com/flag',
+                    'games'        => 'http://api.test.com/user/principal/game',
+                    'user_flip'    => 'http://api.test.com/user/principal/flip',
+                    'profile'      => 'http://api.test.com/user/principal',
+                    'user_image'   => 'http://api.test.com/user/principal/image',
+                    'group_class'  => 'http://api.test.com/group?type=class',
+                    'group_school' => 'http://api.test.com/group?type=school',
+                    'org_district' => 'http://api.test.com/org?type=district',
                 ],
-                'scope' => 2,
+                'scope'         => 2,
+                'friend_status' => null,
             ],
             'English Teacher' => [
-                'user'  => 'english_teacher',
-                'links' => [
-                    'flip',
-                    'games',
-                    'group_school',
-                    'group_class',
-                    'org_district',
-                    'password',
-                    'profile',
-                    'self',
-                    'user',
-                    'user_image',
-                    'user_flip',
-                    'flags',
-                    'user_feed',
+                'user'          => 'english_teacher',
+                'links'         => [
+                    'self'         => 'http://api.test.com/user/english_teacher',
+                    'flip'         => 'http://api.test.com/flip',
+                    'user'         => 'http://api.test.com/user',
+                    'password'     => 'http://api.test.com/user/english_teacher/password',
+                    'user_feed'    => 'http://api.test.com/user/english_teacher/feed',
+                    'flags'        => 'http://api.test.com/flag',
+                    'games'        => 'http://api.test.com/user/english_teacher/game',
+                    'user_flip'    => 'http://api.test.com/user/english_teacher/flip',
+                    'profile'      => 'http://api.test.com/user/english_teacher',
+                    'user_image'   => 'http://api.test.com/user/english_teacher/image',
+                    'group_class'  => 'http://api.test.com/group?type=class',
+                    'group_school' => 'http://api.test.com/group?type=school',
+                    'org_district' => 'http://api.test.com/org?type=district',
                 ],
-                'scope' => 2,
+                'scope'         => 2,
+                'friend_status' => null,
             ],
             'English Student' => [
-                'user'  => 'english_student',
-                'links' => [
-                    'flip',
-                    'friend',
-                    'games',
-                    'group_class',
-                    'password',
-                    'profile',
-                    'self',
-                    'skribbles',
-                    'suggested_friends',
-                    'user',
-                    'user_flip',
-                    'user_image',
-                    'user_name',
-                    'save_game',
-                    'flags',
-                    'user_feed',
+                'user'          => 'english_student',
+                'links'         => [
+                    'self'              => 'http://api.test.com/user/english_student',
+                    'suggested_friends' => 'http://api.test.com/user/english_student/suggest',
+                    'friend'            => 'http://api.test.com/user/english_student/friend',
+                    'skribbles'         => 'http://api.test.com/user/english_student/skribble',
+                    'flip'              => 'http://api.test.com/flip',
+                    'user'              => 'http://api.test.com/user',
+                    'password'          => 'http://api.test.com/user/english_student/password',
+                    'user_feed'         => 'http://api.test.com/user/english_student/feed',
+                    'flags'             => 'http://api.test.com/flag',
+                    'save_game'         => 'http://api.test.com/user/english_student/save/{game_id}',
+                    'games'             => 'http://api.test.com/user/english_student/game',
+                    'user_flip'         => 'http://api.test.com/user/english_student/flip',
+                    'user_name'         => 'http://api.test.com/user-name',
+                    'profile'           => 'http://api.test.com/user/english_student',
+                    'user_image'        => 'http://api.test.com/user/english_student/image',
+                    'group_class'       => 'http://api.test.com/group?type=class',
                 ],
-                'scope' => 2,
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function changePasswordDataProvider()
-    {
-        return [
-            'English Student' => [
-                'english_student',
-                '/',
+                'scope'         => 2,
+                'friend_status' => 'CANT_FRIEND',
             ],
         ];
     }

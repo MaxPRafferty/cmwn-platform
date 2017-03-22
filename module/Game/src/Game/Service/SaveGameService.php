@@ -3,6 +3,7 @@
 namespace Game\Service;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\ServiceTrait;
 use Game\GameInterface;
 use Game\SaveGame;
@@ -51,13 +52,14 @@ class SaveGameService implements SaveGameServiceInterface
     public function saveGame(SaveGameInterface $gameData): bool
     {
         $gameData->setCreated(new \DateTime());
-        $data         = $gameData->getArrayCopy();
-        $data['data'] = !is_string($data['data'])
-            ? Json::encode($data['data'])
-            : $data['data'];
+        $data = [
+            'game_id' => $gameData->getGameId(),
+            'user_id' => $gameData->getUserId(),
+            'data'    => Json::encode($gameData->getData()),
+            'version' => $gameData->getVersion(),
+            'created' => DateTimeFactory::formatForMysql($gameData->getCreated()),
+        ];
 
-        // TODO move this into the saveGame model
-        $data['created'] = $gameData->getCreated()->format("Y-m-d H:i:s");
         $this->deleteSaveForUser($gameData->getUserId(), $gameData->getGameId());
         $this->tableGateway->insert($data);
 

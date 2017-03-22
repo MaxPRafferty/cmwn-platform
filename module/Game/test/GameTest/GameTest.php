@@ -25,11 +25,11 @@ class GameTest extends TestCase
             'created'     => $date->format('Y-m-d H:i:s'),
             'updated'     => $date->format('Y-m-d H:i:s'),
             'deleted'     => null,
-            'flags'       => Game::GAME_FEATURED + Game::GAME_COMING_SOON + Game::GAME_GLOBAL,
-            // These are here to ensure that the flags are set from the flags prop
-            'coming_soon' => false,
-            'global'      => false,
-            'featured'    => false,
+            'flags'       => Game::GAME_FEATURED
+                + Game::GAME_COMING_SOON
+                + Game::GAME_GLOBAL
+                + Game::GAME_DESKTOP
+                + Game::GAME_UNITY,
             'uris'        => [
                 Game::URL_THUMB  =>
                     'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
@@ -37,6 +37,7 @@ class GameTest extends TestCase
                     'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
                 Game::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
             ],
+            'sort_order'  => 2,
         ];
 
         $game = new Game();
@@ -45,6 +46,8 @@ class GameTest extends TestCase
         $expected['coming_soon'] = true;
         $expected['global']      = true;
         $expected['featured']    = true;
+        $expected['desktop']     = true;
+        $expected['unity']       = true;
         unset($expected['flags']);
         $this->assertEquals(
             $expected,
@@ -67,7 +70,11 @@ class GameTest extends TestCase
             'created'     => $date->format('Y-m-d H:i:s'),
             'updated'     => $date->format('Y-m-d H:i:s'),
             'deleted'     => null,
-            'flags'       => Game::GAME_FEATURED + Game::GAME_COMING_SOON + Game::GAME_GLOBAL,
+            'flags'       => Game::GAME_FEATURED
+                + Game::GAME_COMING_SOON
+                + Game::GAME_GLOBAL
+                + Game::GAME_DESKTOP
+                + Game::GAME_UNITY,
             'uris'        => Json::encode([
                 Game::URL_THUMB  =>
                     'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
@@ -75,6 +82,7 @@ class GameTest extends TestCase
                     'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
                 Game::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
             ]),
+            'sort_order'  => 2,
         ];
 
         $game = new Game();
@@ -83,6 +91,8 @@ class GameTest extends TestCase
         $expected['coming_soon'] = true;
         $expected['global']      = true;
         $expected['featured']    = true;
+        $expected['desktop']     = true;
+        $expected['unity']       = true;
         $expected['uris']        = Json::decode($expected['uris'], Json::TYPE_ARRAY);
         unset($expected['flags']);
         $this->assertEquals(
@@ -345,6 +355,56 @@ class GameTest extends TestCase
             'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
             $game->getUri(Game::URL_THUMB),
             Game::class . ' did not set the game url'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTakeFlagsInArrayAndSetThem()
+    {
+        $date     = new \DateTime();
+        $expected = [
+            'game_id'     => 'sea-turtle',
+            'title'       => 'Sea Turtle',
+            'description' => 'Sea Turtles are wondrous creatures! Get cool turtle facts',
+            'meta'        => ['desktop' => 'false', 'unity' => 'false'],
+            'created'     => $date->format('Y-m-d H:i:s'),
+            'updated'     => $date->format('Y-m-d H:i:s'),
+            'deleted'     => null,
+            // These are here to ensure that the flags are set from the flags prop
+            'coming_soon' => false,
+            'global'      => false,
+            'featured'    => false,
+            'unity'       => false,
+            'desktop'     => false,
+            'uris'        => [
+                Game::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                Game::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                Game::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ],
+            'sort_order'  => 2,
+        ];
+
+        $game = new Game();
+        // we want to make sure the keys overwrite the flag
+        $game->setFlags(
+            Game::GAME_FEATURED
+            + Game::GAME_COMING_SOON
+            + Game::GAME_GLOBAL
+            + Game::GAME_DESKTOP
+            + Game::GAME_UNITY
+        );
+
+        $game->exchangeArray($expected);
+
+        unset($expected['flags']);
+        $this->assertEquals(
+            $expected,
+            $game->getArrayCopy(),
+            Game::class . ' was not hydrated correctly with flags as keys '
         );
     }
 }

@@ -2,10 +2,10 @@
 
 return [
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
-        'fetch-all-games-rule' => [
+        'fetch-deleted-games-rule' => [
             'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
-            'id'                  => 'fetch-all-games-rule',
-            'name'                => 'adds necessary where conditions while fetching all games based on permissions',
+            'id'                  => 'fetch-deleted-games-rule',
+            'name'                => 'Allows fetching deleted games if the user is allowed to see them',
             'when'                => 'fetch.all.games',
             'rules'               => [
                 'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
@@ -21,8 +21,8 @@ return [
 
                     // And they do not have permission
                     [
-                        'name'    => \Security\Rule\Rule\HasPermission::class,
-                        'options' => [
+                        'name'     => \Security\Rule\Rule\HasPermission::class,
+                        'options'  => [
                             \Security\Authorization\Rbac::class,
                             'view.deleted.games',
                         ],
@@ -45,7 +45,7 @@ return [
             ],
             'providers'           => [
                 \Security\Rule\Provider\RoleProvider::class,
-                \Rule\Event\Provider\EventProvider::class
+                \Rule\Event\Provider\EventProvider::class,
             ],
         ],
 
@@ -74,22 +74,22 @@ return [
                         'name'    => \Rule\Event\Action\SetEventParamAction::class,
                         'options' => [
                             'show_deleted',
-                            true
+                            true,
                         ],
                     ],
                 ],
             ],
             'providers'           => [
                 \Security\Rule\Provider\RoleProvider::class,
-                \Rule\Event\Provider\EventProvider::class
+                \Rule\Event\Provider\EventProvider::class,
             ],
         ],
     ],
 
     'specifications' => [
         'factories' => [
-            'fetch-all-games-rule' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
-            'fetch-game-rule' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'fetch-deleted-games-rule' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'fetch-game-rule'      => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
     ],
 ];

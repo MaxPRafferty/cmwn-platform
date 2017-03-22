@@ -35,4 +35,24 @@ abstract class DateTimeFactory
         $date->setTimezone(new \DateTimeZone('UTC'));
         return $date;
     }
+
+    /**
+     * Formats a date for mysql
+     *
+     * Returns null if date is not a valid date
+     *
+     * @param $date
+     *
+     * @return null|string
+     */
+    public static function formatForMysql($date)
+    {
+        $date = static::factory($date);
+        if ($date === null) {
+            return null;
+        }
+
+        return $date->format('Y-m-d H:i:s');
+    }
+
 }

@@ -46,6 +46,7 @@ class GameEntity extends Game implements GameInterface, LinkCollectionAwareInter
         parent::exchangeArray($array);
 
         foreach ($this->getUris() as $rel => $href) {
+            $this->getLinks()->remove($rel);
             $this->getLinks()->add(
                 Link::factory([
                     'rel' => $rel,
@@ -65,9 +66,10 @@ class GameEntity extends Game implements GameInterface, LinkCollectionAwareInter
         $array = parent::getArrayCopy();
 
         // Dont pass these back up through the API
-        unset($array['uris']);
         unset($array['flags']);
+        unset($array['uris']);
 
+        $array['_links'] = $this->getLinks();
         return $array;
     }
 

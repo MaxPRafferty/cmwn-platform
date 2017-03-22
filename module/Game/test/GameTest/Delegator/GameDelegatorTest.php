@@ -477,7 +477,7 @@ class GameDelegatorTest extends TestCase
     {
         $game = new Game();
         $this->gameService->shouldReceive('saveGame')
-            ->with($game)
+            ->with($game, false)
             ->once()
             ->andReturn(true);
 
@@ -496,7 +496,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'update.game',
                 'target' => $this->gameService,
-                'params' => ['game' => $game],
+                'params' => ['game' => $game, 'remove_soft' => false],
             ],
             $this->calledEvents[0],
             GameDelegator::class . ' did not trigger update.game correctly'
@@ -505,7 +505,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'update.game.post',
                 'target' => $this->gameService,
-                'params' => ['game' => $game],
+                'params' => ['game' => $game, 'remove_soft' => false],
             ],
             $this->calledEvents[1],
             GameDelegator::class . ' did not trigger update.game.post correctly'
@@ -542,7 +542,7 @@ class GameDelegatorTest extends TestCase
             [
                 'name'   => 'update.game',
                 'target' => $this->gameService,
-                'params' => ['game' => $game],
+                'params' => ['game' => $game, 'remove_soft' => false],
             ],
             $this->calledEvents[0],
             GameDelegator::class . ' did not call update.game correctly when the event stops'

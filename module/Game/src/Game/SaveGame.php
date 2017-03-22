@@ -2,34 +2,29 @@
 
 namespace Game;
 
-use Application\Utils\Date\SoftDeleteTrait;
-use Application\Utils\Date\StandardDatesTrait;
-use Application\Utils\PropertiesTrait;
+use Application\Utils\Date\DateCreatedTrait;
+use Game\Exception\RuntimeException;
+use User\UserInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 use Zend\Json\Json;
 
 /**
- * Class SaveGame
+ * A Class that represents users save game data
  */
 class SaveGame implements SaveGameInterface
 {
-    use StandardDatesTrait,
-        PropertiesTrait,
-        SoftDeleteTrait {
-        SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
-        SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
-        SoftDeleteTrait::formatDeleted insteadof StandardDatesTrait;
-    }
-    /**
-     * @var string
-     */
-    protected $gameId;
+    use DateCreatedTrait;
 
     /**
      * @var string
      */
-    protected $userId;
+    protected $gameId = '';
+
+    /**
+     * @var string
+     */
+    protected $userId = '';
 
     /**
      * @var array
@@ -39,10 +34,10 @@ class SaveGame implements SaveGameInterface
     /**
      * @var string
      */
-    protected $version;
+    protected $version = '';
 
     /**
-     * Save Game constructor.
+     * SaveGame constructor.
      *
      * @param array|null $options
      */
@@ -54,129 +49,139 @@ class SaveGame implements SaveGameInterface
     }
 
     /**
-     * Exchange internal values from provided array
-     *
-     * @param  array $array
-     * @return void
+     * @inheritdoc
      */
-    public function exchangeArray(array $array)
+    public function exchangeArray(array $array): SaveGameInterface
     {
-        $defaults = [
-            'game_id' => null,
-            'user_id' => null,
-            'data'    => [],
-            'created' => null,
-            'version' => null,
-        ];
-
-        $array = array_merge($defaults, $array);
-
         foreach ($array as $key => $value) {
             $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
             }
         }
+
+        return $this;
     }
+
     /**
-     * Return an array representation of the object
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return [
             'game_id' => $this->getGameId(),
             'user_id' => $this->getUserId(),
             'data'    => $this->getData(),
-            'created' => $this->formatCreated(\DateTime::ISO8601),
+            'created' => $this->formatCreated('Y-m-d H:i:s'),
             'version' => $this->getVersion(),
         ];
     }
 
     /**
-     * Gets the Game Id
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getGameId()
+    public function getGameId(): string
     {
         return $this->gameId;
     }
 
     /**
-     * Sets the Game Id
-     *
-     * @param string $gameId
+     * @inheritdoc
      */
-    public function setGameId($gameId)
+    public function setGameId(string $gameId): SaveGameInterface
     {
         $this->gameId = $gameId;
+
+        return $this;
     }
 
     /**
-     * Gets the UserId
+     * Helps set the game Id from a game
      *
-     * @return string
+     * @param GameInterface $game
+     *
+     * @return SaveGameInterface
      */
-    public function getUserId()
+    public function setGameIdFromGame(GameInterface $game): SaveGameInterface
+    {
+        $this->setGameId($game->getGameId());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUserId(): string
     {
         return $this->userId;
     }
 
     /**
-     * Sets the User Id
-     *
-     * @param string $userId
+     * @inheritdoc
      */
-    public function setUserId($userId)
+    public function setUserId(string $userId): SaveGameInterface
     {
         $this->userId = $userId;
+
+        return $this;
     }
 
     /**
-     * Gets the Game Data
+     * Helps set the userId from a user
      *
-     * @return array
+     * @param UserInterface $user
+     *
+     * @return SaveGameInterface
      */
-    public function getData()
+    public function setUserIdFromUser(UserInterface $user): SaveGameInterface
+    {
+        $this->setUserId($user->getUserId());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
-     * Saves the Game Data
-     *
-     * @param array|string $gameData
+     * @inheritdoc
      */
-    public function setData($gameData)
+    public function setData($gameData): SaveGameInterface
     {
         if (is_string($gameData)) {
             $gameData = Json::decode($gameData, Json::TYPE_ARRAY);
         }
 
-        $this->data = !is_array($gameData) ? [$gameData] : $gameData;
+        if (!is_array($gameData)) {
+            throw new RuntimeException('Data for game MUST be an array or Json string');
+        }
+
+        $this->data = $gameData;
+
+        return $this;
     }
 
     /**
-     * Returns back the version that this game was saved at
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
 
     /**
-     * Sets the version of the game data
-     *
-     * @param $version
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setVersion($version)
+    public function setVersion(string $version): SaveGameInterface
     {
         $this->version = $version;
+
+        return $this;
     }
 }

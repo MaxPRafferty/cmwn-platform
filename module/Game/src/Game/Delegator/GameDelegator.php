@@ -131,9 +131,9 @@ class GameDelegator implements GameServiceInterface
     /**
      * @inheritdoc
      */
-    public function saveGame(GameInterface $game): bool
+    public function saveGame(GameInterface $game, bool $removeSoft = false): bool
     {
-        $event = new Event('update.game', $this->gameService, ['game' => $game]);
+        $event = new Event('update.game', $this->gameService, ['game' => $game, 'remove_soft' => $removeSoft]);
 
         try {
             $response = $this->getEventManager()->triggerEvent($event);
@@ -142,7 +142,7 @@ class GameDelegator implements GameServiceInterface
                 return $response->last();
             }
 
-            $return = $this->gameService->saveGame($game);
+            $return = $this->gameService->saveGame($game, $removeSoft);
         } catch (\Exception $gameException) {
             $event->setName('update.game.error');
             $event->setParam('error', $gameException);

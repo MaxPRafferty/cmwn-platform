@@ -1,53 +1,132 @@
 <?php
 
 return [
-
     'games' => [
         [
-            'game_id'     => 'animal-id',
+            'game_id'     => 'global-featured',
             'created'     => '2016-04-13 00:00:00',
             'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Animal ID',
-            'description' => 'Can you ID the different kinds of animals? Do you know what plants and animals
-                    belong together? Prove it and learn it right here!
-                ',
+            'title'       => 'Global Featured',
+            'description' => 'This Game is global and featured',
             'deleted'     => null,
-            'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
-            'global'      => '1',
+            'meta'        => '[]',
+            'flags'       => \Game\Game::GAME_GLOBAL + \Game\Game::GAME_FEATURED,
+            'sort_order'  => 6,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
         ],
         [
-            'game_id'     => 'be-bright',
+            'game_id'     => 'global-soon',
             'created'     => '2016-04-13 00:00:00',
             'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Be Bright',
-            'description' => 'Become a Light Saver agent of change! This music video will kick your inner
-                    superhero into high gear!
-                ',
+            'title'       => 'Global Coming soon',
+            'description' => 'This game is global and coming soon',
             'deleted'     => null,
-            'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
+            'meta'        => '[]',
+            'flags'       => \Game\Game::GAME_GLOBAL + \Game\Game::GAME_COMING_SOON,
+            'sort_order'  => 5,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
         ],
         [
-            'game_id'     => 'Monarch',
+            'game_id'     => 'global',
             'created'     => '2016-04-13 00:00:00',
             'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Monarch',
-            'description' => 'Monarch Butterflies are crucial for the environment' .
-                ' yet they are endangered! This is your spot!',
-            'meta'        => '{"desktop" : false, "unity" : false}',
+            'title'       => 'Global',
+            'description' => 'Just a global game',
+            'meta'        => '[]',
             'deleted'     => null,
-            'coming_soon' => '0',
+            'flags'       => \Game\Game::GAME_GLOBAL,
+            'sort_order'  => 4,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
+        ],
+        [
+            'game_id'     => 'global-desktop',
+            'created'     => '2016-04-13 00:00:00',
+            'updated'     => '2016-04-13 00:00:00',
+            'title'       => 'Global Desktop',
+            'description' => 'This game is global but desktop only',
+            'meta'        => '[]',
+            'deleted'     => null,
+            'flags'       => \Game\Game::GAME_GLOBAL + \Game\Game::GAME_DESKTOP,
+            'sort_order'  => 3,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
+        ],
+        [
+            'game_id'     => 'global-unity',
+            'created'     => '2016-04-13 00:00:00',
+            'updated'     => '2016-04-13 00:00:00',
+            'title'       => 'Global Unity',
+            'description' => 'This game is global built in unity',
+            'meta'        => '[]',
+            'deleted'     => null,
+            'flags'       => \Game\Game::GAME_GLOBAL + \Game\Game::GAME_UNITY,
+            'sort_order'  => 2,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
         ],
         [
             'game_id'     => 'deleted-game',
             'created'     => '2016-04-13 00:00:00',
             'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Deleted Gmae',
-            'description' => 'I deleted this :P',
-            'meta'        => '{"desktop" : false, "unity" : false}',
+            'title'       => 'This game is deleted',
+            'description' => 'A Deleted Global Game',
+            'meta'        => '[]',
             'deleted'     => '2016-04-13 00:00:00',
-            'coming_soon' => '0',
+            'flags'       => \Game\Game::GAME_GLOBAL,
+            'sort_order'  => 1,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
+        ],
+        [
+            'game_id'     => 'no-flags',
+            'created'     => '2016-04-13 00:00:00',
+            'updated'     => '2016-04-13 00:00:00',
+            'title'       => 'This game is not global',
+            'description' => 'This Game has no flags',
+            'meta'        => '[]',
+            'deleted'     => null,
+            'flags'       => 0,
+            'sort_order'  => 1,
+            'uris'        => \Zend\Json\Json::encode([
+                \Game\GameInterface::URL_THUMB  =>
+                    'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                \Game\GameInterface::URL_BANNER =>
+                    'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+            ]),
         ],
     ],
 
@@ -237,11 +316,7 @@ return [
     'user_games' => [
         [
             'user_id' => 'english_student',
-            'game_id' => 'Monarch',
+            'game_id' => 'no-flags',
         ],
-        [
-            'user_id' => 'english_student',
-            'game_id' => 'deleted-game',
-        ]
     ],
 ];

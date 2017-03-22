@@ -8,12 +8,6 @@ use \PHPUnit\Framework\TestCase as TestCase;
 
 /**
  * Test GameEntityTest
- *
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GameEntityTest extends TestCase
 {

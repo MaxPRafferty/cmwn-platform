@@ -5,103 +5,103 @@ return [
     'cmwn-roles' => [
         'permission_labels' => [
             // super
-            'view.all.users'       => 'View all users',
+            'view.all.users'           => 'View all users',
 
             // user
-            'create.user'          => 'Create a user',
-            'view.user.adult'      => 'View an Adults Information',
-            'view.user.child'      => 'View a child\'s Information',
-            'edit.user.adult'      => 'Edit an Adult',
-            'edit.user.child'      => 'Edit a Child',
-            'pick.username'        => 'Pick a new User Name',
-            'update.password'      => 'Update profile password',
-            'remove.user.adult'    => 'Delete an Adult user',
-            'remove.user.child'    => 'Delete a Child user',
-            'can.friend'           => 'Can friend users',
-            'view.feed'            => 'Can view feed',
-            'view.user.feed'       => 'View user feed',
+            'create.user'              => 'Create a user',
+            'view.user.adult'          => 'View an Adults Information',
+            'view.user.child'          => 'View a child\'s Information',
+            'edit.user.adult'          => 'Edit an Adult',
+            'edit.user.child'          => 'Edit a Child',
+            'pick.username'            => 'Pick a new User Name',
+            'update.password'          => 'Update profile password',
+            'remove.user.adult'        => 'Delete an Adult user',
+            'remove.user.child'        => 'Delete a Child user',
+            'can.friend'               => 'Can friend users',
+            'view.feed'                => 'Can view feed',
+            'view.user.feed'           => 'View user feed',
 
             // Flip
-            'create.user.flip'     => 'Earn a flip',
-            'view.flip'            => 'View flip information',
-            'view.user.flip'       => 'View Flips for a user',
-            'create.flip'          => 'Create a new flip',
-            'edit.flip'            => 'Update existing flip',
-            'delete.flip'          => 'Delete a flip',
+            'create.user.flip'         => 'Earn a flip',
+            'view.flip'                => 'View flip information',
+            'view.user.flip'           => 'View Flips for a user',
+            'create.flip'              => 'Create a new flip',
+            'edit.flip'                => 'Update existing flip',
+            'delete.flip'              => 'Delete a flip',
 
             // group
-            'create.child.group'   => 'Create a sub group',
-            'create.group'         => 'Create a group',
-            'view.group'           => 'View Group',
-            'view.all.child.groups'=> 'View all child groups from a parent',
-            'view.child.groups'    => 'View the child groups from a parent',
-            'view.user.groups'     => 'View Groups the user belongs too',
-            'view.all.groups'      => 'View all Groups',
-            'edit.group'           => 'Edit a Group',
-            'import'               => 'Import Data file',
-            'remove.child.group'   => 'Remove a child group',
-            'remove.group'         => 'Remove a group',
+            'create.child.group'       => 'Create a sub group',
+            'create.group'             => 'Create a group',
+            'view.group'               => 'View Group',
+            'view.all.child.groups'    => 'View all child groups from a parent',
+            'view.child.groups'        => 'View the child groups from a parent',
+            'view.user.groups'         => 'View Groups the user belongs too',
+            'view.all.groups'          => 'View all Groups',
+            'edit.group'               => 'Edit a Group',
+            'import'                   => 'Import Data file',
+            'remove.child.group'       => 'Remove a child group',
+            'remove.group'             => 'Remove a group',
 
             // user group
-            'add.group.user'       => 'Add user to group',
-            'remove.group.user'    => 'Remove user from group',
-            'view.group.users'     => 'View Group users',
-            'reset.group.code'     => 'Reset code for users of a group',
+            'add.group.user'           => 'Add user to group',
+            'remove.group.user'        => 'Remove user from group',
+            'view.group.users'         => 'View Group users',
+            'reset.group.code'         => 'Reset code for users of a group',
 
             // organizations
-            'create.org'           => 'Create an Organization',
-            'view.all.orgs'        => 'View all Organizations',
-            'view.org'             => 'View an Organization',
-            'view.user.orgs'       => 'View all Organizations the user belongs too',
-            'view.org.users'       => 'View all users in an organization',
-            'edit.org'             => 'Edit an Organization',
-            'remove.org'           => 'Remove an Organization',
+            'create.org'               => 'Create an Organization',
+            'view.all.orgs'            => 'View all Organizations',
+            'view.org'                 => 'View an Organization',
+            'view.user.orgs'           => 'View all Organizations the user belongs too',
+            'view.org.users'           => 'View all users in an organization',
+            'edit.org'                 => 'Edit an Organization',
+            'remove.org'               => 'Remove an Organization',
 
             // game
-            'view.game-data'       => 'View Save Game Data of a game',
-            'view.games'           => 'View all Games',
-            'view.game'            => 'View a game',
-            'create.game'          => 'Create a new game',
-            'update.game'          => 'Update existing game details',
-            'delete.game'          => 'delete game',
-            'save.game'            => 'Save Game progress',
-            'view.deleted.games'   => 'view all games including soft deleted ones',
-            'attach.user.game'     => 'attach a game to user',
-            'detach.user.game'     => 'detach a game from user',
+            'view.game-data'           => 'View Save Game Data of a game',
+            'view.all.games'           => 'View all Games',
+            'view.games'               => 'View Games',
+            'view.game'                => 'View a game',
+            'create.game'              => 'Create a new game',
+            'update.game'              => 'Update existing game details',
+            'delete.game'              => 'delete game',
+            'save.game'                => 'Save Game progress',
+            'view.deleted.games'       => 'view all games including soft deleted ones',
+            'attach.user.game'         => 'attach a game to user',
+            'detach.user.game'         => 'detach a game from user',
 
             // misc
-            'adult.code'           => 'Send adult reset code',
-            'child.code'           => 'Send child reset code',
-            'attach.profile.image' => 'Upload a profile image',
-            'view.profile.image'   => 'View a users profile image',
-            'flag.image'           => 'Can flag images',
+            'adult.code'               => 'Send adult reset code',
+            'child.code'               => 'Send child reset code',
+            'attach.profile.image'     => 'Upload a profile image',
+            'view.profile.image'       => 'View a users profile image',
+            'flag.image'               => 'Can flag images',
             'view.all.flagged.images'  => 'Can view all flagged images',
-            'edit.flag'            => 'Edit flag',
-            'delete.flag'          => 'delete flag',
-            'view.flagged.image'   => 'view a flagged image using flag_id',
-            'set.super'            => 'update the super status of a user',
-
+            'edit.flag'                => 'Edit flag',
+            'delete.flag'              => 'delete flag',
+            'view.flagged.image'       => 'view a flagged image using flag_id',
+            'set.super'                => 'update the super status of a user',
 
             // skribble
-            'view.skribble'        => 'Read Skribbles',
-            'create.skribble'      => 'Create Skribbles',
-            'delete.skribble'      => 'Delete Skribbles',
-            'update.skribble'      => 'Update Skribbles',
-            'skribble.notice'      => 'Notify Skribble status',
+            'view.skribble'            => 'Read Skribbles',
+            'create.skribble'          => 'Create Skribbles',
+            'delete.skribble'          => 'Delete Skribbles',
+            'update.skribble'          => 'Update Skribbles',
+            'skribble.notice'          => 'Notify Skribble status',
 
             // god mode
-            'sa.settings'          => 'View God Mode Admin Dashboard',
-            'get.super.user'       => 'Fetch a super user',
+            'sa.settings'              => 'View God Mode Admin Dashboard',
+            'get.super.user'           => 'Fetch a super user',
 
             //address
-            'view.all.addresses'   => 'View Addresses',
-            'view.address'         => 'View a single address',
-            'create.address'       => 'Create new address',
-            'update.address'       => 'update address',
-            'delete.address'       => 'delete address',
+            'view.all.addresses'       => 'View Addresses',
+            'view.address'             => 'View a single address',
+            'create.address'           => 'Create new address',
+            'update.address'           => 'update address',
+            'delete.address'           => 'delete address',
             'view.all.group.addresses' => 'View addresses of a group',
-            'attach.group.address' => 'attach address to a group',
-            'detach.group.address' => 'detach address from a group',
+            'attach.group.address'     => 'attach address to a group',
+            'detach.group.address'     => 'detach address from a group',
 
         ],
         'roles'             => [
@@ -186,7 +186,7 @@ return [
                 ],
             ],
 
-            'admin.adult'       => [
+            'admin.adult' => [
                 'entity_bits' => [
                     'group.school' => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
                     'group.class'  => Rbac::SCOPE_UPDATE | Rbac::SCOPE_CREATE,
@@ -229,7 +229,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
-                'db-role' => true,
+                'db-role'     => true,
             ],
 
             'principal.adult' => [
@@ -274,7 +274,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
-                'db-role' => true,
+                'db-role'     => true,
             ],
 
             'asst_principal.adult' => [
@@ -319,7 +319,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
-                'db-role' => true,
+                'db-role'     => true,
             ],
 
             'teacher.adult' => [
@@ -355,7 +355,7 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
-                'db-role' => true,
+                'db-role'     => true,
             ],
 
             'neighbor.adult' => [
@@ -366,7 +366,7 @@ return [
                     'view.user.adult',
                     'view.user.flip',
                 ],
-                'db-role' => false,
+                'db-role'     => false,
             ],
 
             'me.child' => [
@@ -396,7 +396,7 @@ return [
                     'view.address',
                     'view.all.group.addresses',
                 ],
-                'db-role' => false,
+                'db-role'     => false,
             ],
 
             'me.adult' => [
@@ -424,10 +424,10 @@ return [
                     'attach.group.address',
                     'detach.group.address',
                 ],
-                'db-role' => false,
+                'db-role'     => false,
             ],
 
-            'neighbor.child'    => [
+            'neighbor.child' => [
                 'entity_bits' => [
                     'me' => Rbac::SCOPE_UPDATE,
                 ],
@@ -447,7 +447,7 @@ return [
                     'view.user.child',
                     'view.user.flip',
                 ],
-                'db-role' => false,
+                'db-role'     => false,
             ],
 
             'student.child' => [
@@ -468,7 +468,7 @@ return [
                     'view.address',
                     'view.all.group.addresses',
                 ],
-                'db-role' => true,
+                'db-role'     => true,
             ],
 
             'logged_in.child' => [
@@ -479,7 +479,7 @@ return [
                     'view.games',
                     'view.flip',
                 ],
-                'db-role' => false,
+                'db-role'     => false,
             ],
 
             'logged_in.adult' => [
@@ -490,7 +490,7 @@ return [
                     'view.games',
                     'view.flip',
                 ],
-                'db-role' => false,
+                'db-role'     => false,
             ],
 
             'guest' => [

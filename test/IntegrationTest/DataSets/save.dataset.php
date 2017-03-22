@@ -12,7 +12,6 @@ return [
                 ',
             'deleted'     => null,
             'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
         ],
         [
             'game_id'     => 'be-bright',
@@ -24,7 +23,6 @@ return [
                 ',
             'deleted'     => null,
             'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
         ],
         [
             'game_id'     => 'Monarch',
@@ -35,7 +33,6 @@ return [
                 ' yet they are endangered! This is your spot!',
             'meta'        => '{"desktop" : false, "unity" : false}',
             'deleted'     => null,
-            'coming_soon' => '0',
         ],
     ],
 

@@ -35,10 +35,11 @@ interface GameServiceInterface
      * Saves a game to the database
      *
      * @param GameInterface $game the game to save
+     * @param bool $removeSoft    clears the soft delete flag
      *
      * @return bool
      */
-    public function saveGame(GameInterface $game): bool;
+    public function saveGame(GameInterface $game, bool $removeSoft = false): bool;
 
     /**
      * Creates a new game in the database

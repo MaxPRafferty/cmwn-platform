@@ -607,7 +607,15 @@ return [
             'collection_name'            => 'game',
             'entity_http_methods'        => ['GET', 'PUT', 'DELETE'],
             'collection_http_methods'    => ['GET', 'POST'],
-            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
+            'collection_query_whitelist' => [
+                'page',
+                'per_page',
+                'deleted',
+                'featured',
+                'coming_soon',
+                'desktop',
+                'unity',
+            ],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
             'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
@@ -2581,8 +2589,47 @@ return [
                         'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
                     ],
                 ],
-                'name'        => 'undelete',
-                'description' => 'undelete the game',
+                'name'        => 'desktop',
+                'description' => 'Mark the game as desktop only',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'global',
+                'description' => 'Mark the game as global',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'unity',
+                'description' => 'Mark the game as a unity game',
+            ],
+            [
+                'required'    => false,
+                'allow_empty' => true,
+                'validators'  => [],
+                'filters'     => [
+                    [
+                        'name'    => \Zend\Filter\Boolean::class,
+                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                    ],
+                ],
+                'name'        => 'featured',
+                'description' => 'Mark the game as featured',
             ],
             [
                 'required'    => false,
@@ -2597,17 +2644,33 @@ return [
                 'description' => 'meta data for game',
             ],
             [
-                'required'    => false,
-                'allow_empty' => true,
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Game\Validator\UriValidator::class,
+                        'options' => [],
+                    ],
+                ],
+                'filters'     => [
+                    [
+                        'name'    => \Application\Filter\JsonToArrayFilter::class,
+                        'options' => [],
+                    ],
+                ],
+                'name'        => 'uris',
+                'description' => 'URI\'s for the game',
+            ],
+            [
+                'required'    => true,
                 'validators'  => [],
                 'filters'     => [
                     [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
+                        'name'    => \Zend\Filter\Digits::class,
+                        'options' => [],
                     ],
                 ],
-                'name'        => 'global',
-                'description' => 'flag to specify if the game is globally visible',
+                'name'        => 'sort_order',
+                'description' => 'Sort Order for the game',
             ],
         ],
         'Api\V1\Rest\GroupReset\Validator'     => [

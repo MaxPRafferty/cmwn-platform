@@ -13,30 +13,6 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'         => [
-        [
-            'game_id'     => 'animal-id',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Animal ID',
-            'description' => 'Can you ID the different kinds of animals? Do you know what plants and animals
-                    belong together? Prove it and learn it right here!
-                ',
-            'deleted'     => null,
-            'coming_soon' => '0',
-        ],
-        [
-            'game_id'     => 'be-bright',
-            'created'     => '2016-04-13 00:00:00',
-            'updated'     => '2016-04-13 00:00:00',
-            'title'       => 'Be Bright',
-            'description' => 'Become a Light Saver agent of change! This music video will kick your inner
-                    superhero into high gear!
-                ',
-            'deleted'     => null,
-            'coming_soon' => '0',
-        ],
-    ],
     'groups'        => [
         [
             'group_id'        => 'school',

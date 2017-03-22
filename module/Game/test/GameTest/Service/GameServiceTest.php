@@ -64,8 +64,9 @@ class GameServiceTest extends TestCase
             'uris'        => [
                 'image_url'  => 'http://bit.ly/XWISPd',
                 'banner_url' =>
-                    'https://s-media-cache-ak0.pinimg.com/736x/0c/bc/25/0cbc259b8805bf2bae57a2909f2a5ba8.jpg',
+                    'https://s-media-cache-ak0.pinimcom/736x/0c/bc/25/0cbc259b8805bf2bae57a2909f2a5ba8.jpg',
             ],
+            'sort_order'  => 2,
         ];
     }
 
@@ -110,7 +111,7 @@ class GameServiceTest extends TestCase
 
         $expectedSelect = new Select(['g' => 'games']);
         $expectedSelect->where(new Where());
-        $expectedSelect->order(['title']);
+        $expectedSelect->order(['sort_order', 'title']);
 
         $this->assertEquals(
             new DbSelect($expectedSelect, $this->adapter, new HydratingResultSet(new ArraySerializable(), new Game())),
@@ -127,7 +128,7 @@ class GameServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturnUsing(function ($actual) {
                 $where = new PredicateSet();
-                $where->addPredicates(['g.game_id' => 'sea-turtle']);
+                $where->addPredicates(['game_id' => 'sea-turtle']);
 
                 $this->assertEquals(
                     $where,
@@ -162,7 +163,7 @@ class GameServiceTest extends TestCase
         $this->tableGateway->shouldReceive('select')
             ->andReturnUsing(function ($actual) {
                 $where = new PredicateSet();
-                $where->addPredicates(['g.game_id' => 'sea-turtle']);
+                $where->addPredicates(['game_id' => 'sea-turtle']);
 
                 $this->assertEquals(
                     $where,
@@ -310,6 +311,67 @@ class GameServiceTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldUpdateDeletedGame()
+    {
+        $this->tableGateway->shouldReceive('update')
+            ->withArgs(function ($actualData, $actualWhere) {
+                $this->assertEquals(
+                    ['game_id' => $this->gameData['game_id']],
+                    $actualWhere,
+                    GameService::class . ' is not going to update a game correctly'
+                );
+
+                $expectedData          = $this->gameData;
+                $expectedData['meta']  = Json::encode($this->gameData['meta']);
+                $expectedData['flags'] = 7;
+                $expectedData['uris']  = Json::encode($this->gameData['uris']);
+
+                // remove updated date since that is really hard to compare
+                $this->assertTrue(
+                    is_string($actualData['updated']),
+                    GameService::class . ' is not transforming the updated date to a string'
+                );
+
+                $this->assertNotEquals(
+                    $actualData['updated'],
+                    $expectedData['updated'],
+                    GameService::class . ' did not change the updated date on update'
+                );
+
+
+                $this->assertNull(
+                    $expectedData['deleted'],
+                    GameService::class . ' did not remove the deleted date on the game'
+                );
+
+                unset($expectedData['updated']);
+                unset($actualData['updated']);
+                $this->assertEquals(
+                    $expectedData,
+                    $actualData,
+                    GameService::class . ' is not going to update the game data correctly'
+                );
+
+                return true;
+            })
+            ->once();
+
+        $game = new Game($this->gameData);
+        $game->setDeleted(new \DateTime('now'));
+        $this->assertTrue(
+            $this->gameService->saveGame($game, true),
+            GameService::class . ' did not return true on successful update of a game'
+        );
+
+        $this->assertNull(
+            $game->getDeleted(),
+            GameService::class . ' did not remove the deleted date on the game'
+        );
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldSoftDeleteGame()
     {
         $this->tableGateway->shouldReceive('select')->never();
@@ -368,13 +430,13 @@ class GameServiceTest extends TestCase
         $where = new PredicateSet();
 
         // Order matters for this test
-        $where->orPredicate(new Expression('g.flags & ? = ?', 4, 4));
-        $where->orPredicate(new Expression('g.flags & ? = ?', 2, 2));
-        $where->orPredicate(new Expression('g.flags & ? = ?', 1, 1));
+        $where->orPredicate(new Expression('flags & ? = ?', 4, 4));
+        $where->orPredicate(new Expression('flags & ? = ?', 2, 2));
+        $where->orPredicate(new Expression('flags & ? = ?', 1, 1));
 
         $expectedSelect = new Select(['g' => 'games']);
         $expectedSelect->where($where);
-        $expectedSelect->order(['title']);
+        $expectedSelect->order(['sort_order', 'title']);
 
         $result = $this->gameService->fetchAll(
             ['coming_soon' => true, 'featured' => true, 'global' => true]
@@ -395,13 +457,13 @@ class GameServiceTest extends TestCase
         $where = new PredicateSet();
 
         // Order matters for this test
-        $where->orPredicate(new Expression('g.flags & ? != ?', 4, 4));
-        $where->orPredicate(new Expression('g.flags & ? = ?', 2, 2));
-        $where->orPredicate(new Expression('g.flags & ? = ?', 1, 1));
+        $where->orPredicate(new Expression('flags & ? != ?', 4, 4));
+        $where->orPredicate(new Expression('flags & ? = ?', 2, 2));
+        $where->orPredicate(new Expression('flags & ? = ?', 1, 1));
 
         $expectedSelect = new Select(['g' => 'games']);
         $expectedSelect->where($where);
-        $expectedSelect->order(['title']);
+        $expectedSelect->order(['sort_order', 'title']);
 
         $result = $this->gameService->fetchAll(['coming_soon' => false, 'featured' => true, 'global' => true]);
 

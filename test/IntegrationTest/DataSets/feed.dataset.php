@@ -2,7 +2,7 @@
 
 return [
 
-    'organizations'    => [
+    'organizations' => [
         [
             'org_id'      => 'district',
             'title'       => 'Gina\'s District',
@@ -24,7 +24,7 @@ return [
             'type'        => 'district',
         ],
     ],
-    'games'            => [
+    'games'         => [
         [
             'game_id'     => 'animal-id',
             'created'     => '2016-04-13 00:00:00',
@@ -35,7 +35,7 @@ return [
                 ',
             'deleted'     => null,
             'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
+            'flags'       => 0,
         ],
         [
             'game_id'     => 'be-bright',
@@ -47,7 +47,7 @@ return [
                 ',
             'deleted'     => null,
             'meta'        => '{"desktop" : false, "unity" : false}',
-            'coming_soon' => '0',
+            'flags'       => 0,
         ],
         [
             'game_id'     => 'Monarch',
@@ -58,10 +58,10 @@ return [
                 ' yet they are endangered! This is your spot!',
             'meta'        => '{"desktop" : false, "unity" : false}',
             'deleted'     => null,
-            'coming_soon' => '0',
+            'flags'       => 0,
         ],
     ],
-    'groups'           => [
+    'groups'        => [
         [
             'group_id'        => 'school',
             'organization_id' => 'district',
@@ -149,83 +149,82 @@ return [
         ],
     ],
 
-
-    'users'            => [
+    'users' => [
         [
-            'user_id'      => 'english_student',
-            'username'     => 'english_student',
-            'email'        => 'english_student@ginasink.com',
-            'code'         => null,
-            'type'         => 'CHILD',
-            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
-            'first_name'   => 'John',
-            'middle_name'  => 'D',
-            'last_name'    => 'Yoder',
-            'gender'       => 'M',
-            'meta'         => null,
-            'birthdate'    => '2016-04-15 11:58:15',
-            'created'      => '2016-04-27 10:48:44',
-            'updated'      => '2016-04-27 10:48:46',
-            'deleted'      => null,
-            'super'        => '0',
-            'external_id'  => '8675309',
+            'user_id'     => 'english_student',
+            'username'    => 'english_student',
+            'email'       => 'english_student@ginasink.com',
+            'code'        => null,
+            'type'        => 'CHILD',
+            'password'    => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'  => 'John',
+            'middle_name' => 'D',
+            'last_name'   => 'Yoder',
+            'gender'      => 'M',
+            'meta'        => null,
+            'birthdate'   => '2016-04-15 11:58:15',
+            'created'     => '2016-04-27 10:48:44',
+            'updated'     => '2016-04-27 10:48:46',
+            'deleted'     => null,
+            'super'       => '0',
+            'external_id' => '8675309',
         ],
         [
-            'user_id'      => 'english_teacher',
-            'username'     => 'english_teacher',
-            'email'        => 'english_teacher@ginasink.com',
-            'code'         => null,
-            'type'         => 'ADULT',
-            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
-            'first_name'   => 'Angelot',
-            'middle_name'  => 'M',
-            'last_name'    => 'Fredickson',
-            'gender'       => 'M',
-            'meta'         => '[]',
-            'birthdate'    => '2016-04-15 00:00:00',
-            'created'      => '2016-04-27 10:48:44',
-            'updated'      => '2016-04-27 10:48:46',
-            'deleted'      => null,
-            'super'        => '0',
-            'external_id'  => null,
+            'user_id'     => 'english_teacher',
+            'username'    => 'english_teacher',
+            'email'       => 'english_teacher@ginasink.com',
+            'code'        => null,
+            'type'        => 'ADULT',
+            'password'    => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'  => 'Angelot',
+            'middle_name' => 'M',
+            'last_name'   => 'Fredickson',
+            'gender'      => 'M',
+            'meta'        => '[]',
+            'birthdate'   => '2016-04-15 00:00:00',
+            'created'     => '2016-04-27 10:48:44',
+            'updated'     => '2016-04-27 10:48:46',
+            'deleted'     => null,
+            'super'       => '0',
+            'external_id' => null,
         ],
         [
-            'user_id'      => 'principal',
-            'username'     => 'principal',
-            'email'        => 'principal@ginasink.com',
-            'code'         => null,
-            'type'         => 'ADULT',
-            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
-            'first_name'   => 'Kirk',
-            'middle_name'  => 'S',
-            'last_name'    => 'West',
-            'gender'       => 'M',
-            'meta'         => null,
-            'birthdate'    => '2016-04-15 11:49:08',
-            'created'      => '2016-04-27 10:48:44',
-            'updated'      => '2016-04-27 10:48:46',
-            'deleted'      => null,
-            'super'        => '0',
-            'external_id'  => null,
+            'user_id'     => 'principal',
+            'username'    => 'principal',
+            'email'       => 'principal@ginasink.com',
+            'code'        => null,
+            'type'        => 'ADULT',
+            'password'    => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'  => 'Kirk',
+            'middle_name' => 'S',
+            'last_name'   => 'West',
+            'gender'      => 'M',
+            'meta'        => null,
+            'birthdate'   => '2016-04-15 11:49:08',
+            'created'     => '2016-04-27 10:48:44',
+            'updated'     => '2016-04-27 10:48:46',
+            'deleted'     => null,
+            'super'       => '0',
+            'external_id' => null,
         ],
         [
-            'user_id'      => 'super_user',
-            'username'     => 'super_user',
-            'email'        => 'super@ginasink.com',
-            'code'         => null,
-            'type'         => 'ADULT',
-            'password'     => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
-            'first_name'   => 'Joni',
-            'middle_name'  => null,
-            'last_name'    => 'Albers',
-            'gender'       => 'F',
-            'meta'         => null,
-            'birthdate'    => '2016-04-27 10:48:42',
-            'created'      => '2016-04-27 10:48:44',
-            'updated'      => '2016-04-27 10:48:46',
-            'deleted'      => null,
-            'super'        => '1',
-            'external_id'  => null,
+            'user_id'     => 'super_user',
+            'username'    => 'super_user',
+            'email'       => 'super@ginasink.com',
+            'code'        => null,
+            'type'        => 'ADULT',
+            'password'    => '$2y$10$b53JWhhPjSyHvbvaL0aaD.9G3RKTd4pZn6JCkop6pkqFYDrEPJTC.',
+            'first_name'  => 'Joni',
+            'middle_name' => null,
+            'last_name'   => 'Albers',
+            'gender'      => 'F',
+            'meta'        => null,
+            'birthdate'   => '2016-04-27 10:48:42',
+            'created'     => '2016-04-27 10:48:44',
+            'updated'     => '2016-04-27 10:48:46',
+            'deleted'     => null,
+            'super'       => '1',
+            'external_id' => null,
         ],
         [
             'user_id'      => 'math_student',
@@ -269,8 +268,7 @@ return [
         ],
     ],
 
-
-    'user_groups'      => [
+    'user_groups' => [
         [
             'user_id'  => 'english_student',
             'group_id' => 'english',
@@ -297,8 +295,6 @@ return [
             'role'     => 'student',
         ],
     ],
-
-
 
     'user_suggestions' => [],
     'feed'             => [
@@ -393,44 +389,44 @@ return [
     ],
     'user_feed'        => [
         [
-            'feed_id'      => 'es_friend_feed',
-            'user_id'      => 'english_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'es_friend_feed',
+            'user_id'   => 'english_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'es_flip_feed',
-            'user_id'      => 'english_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'es_flip_feed',
+            'user_id'   => 'english_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'es_game_feed',
-            'user_id'      => 'english_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'es_game_feed',
+            'user_id'   => 'english_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'ms_friend_feed',
-            'user_id'      => 'math_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'ms_friend_feed',
+            'user_id'   => 'math_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'ms_flip_feed',
-            'user_id'      => 'math_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'ms_flip_feed',
+            'user_id'   => 'math_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'ms_game_feed',
-            'user_id'      => 'math_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'ms_game_feed',
+            'user_id'   => 'math_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'os_flip_feed',
-            'user_id'      => 'other_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'os_flip_feed',
+            'user_id'   => 'other_student',
+            'read_flag' => '0',
         ],
         [
-            'feed_id'      => 'os_game_feed',
-            'user_id'      => 'other_student',
-            'read_flag'    => '0'
+            'feed_id'   => 'os_game_feed',
+            'user_id'   => 'other_student',
+            'read_flag' => '0',
         ],
     ],
 ];

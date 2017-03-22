@@ -21,12 +21,8 @@ trait UriCollectionAwareTrait
      */
     public function setUris($uris): UriCollectionAwareInterface
     {
-        $uris = is_string($uris) ? Json::decode($uris, Json::TYPE_ARRAY) : $uris;
-
-        if (!is_array($uris)) {
-            throw new RuntimeException('Invalid list of URI\'s for: ' . get_class($this));
-        }
-
+        $uris       = is_string($uris) ? Json::decode($uris, Json::TYPE_ARRAY) : $uris;
+        $uris       = !is_array($uris) ? [] : $uris;
         $this->uris = $uris;
 
         return $this;

@@ -6,6 +6,7 @@ use Application\Utils\Date\SoftDeleteInterface;
 use Application\Utils\Date\StandardDateInterface;
 use Application\Utils\Flags\FlagInterface;
 use Application\Utils\Meta\MetaDataInterface;
+use Application\Utils\Sort\SortableInterface;
 use Application\Utils\Uri\UriCollectionAwareInterface;
 
 /**
@@ -83,11 +84,14 @@ interface GameInterface extends
     StandardDateInterface,
     MetaDataInterface,
     FlagInterface,
-    UriCollectionAwareInterface
+    UriCollectionAwareInterface,
+    SortableInterface
 {
-    const GAME_GLOBAL      = 1; // Global games are visible to all
-    const GAME_FEATURED    = 2; // Featured games are ones that appear higher in the game list
-    const GAME_COMING_SOON = 4; // Coming soon games are previews of new and exciting games
+    const GAME_GLOBAL      = 1;  // Global games are visible to all
+    const GAME_FEATURED    = 2;  // Featured games are ones that appear higher in the game list
+    const GAME_COMING_SOON = 4;  // Coming soon games are previews of new and exciting games
+    const GAME_UNITY       = 8;  // Flags the game as a unity based game
+    const GAME_DESKTOP     = 16; // Flags the game for desktop only
 
     const URL_GAME   = 'game_url';
     const URL_THUMB  = 'thumb_url';
@@ -177,4 +181,18 @@ interface GameInterface extends
      * @return bool
      */
     public function isFeatured(): bool;
+
+    /**
+     * Helps check if the game can only be played on desktop
+     *
+     * @return bool
+     */
+    public function isDesktop(): bool;
+
+    /**
+     * Helps check if the game is a unity game
+     *
+     * @return bool
+     */
+    public function isUnity(): bool;
 }

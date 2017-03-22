@@ -2,6 +2,8 @@
 
 namespace Api\V1\Rest\UserGame;
 
+use Api\V1\Rest\Game\GameCollection;
+use Api\V1\Rest\Game\GameEntity;
 use Game\Service\GameServiceInterface;
 use Game\Service\UserGameService;
 use Game\Service\UserGameServiceInterface;
@@ -10,8 +12,7 @@ use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class UserGameResource
- * @package Api\V1\Rest\UserGame
+ * Allows attaching or detaching games to a user
  */
 class UserGameResource extends AbstractResourceListener
 {
@@ -32,6 +33,7 @@ class UserGameResource extends AbstractResourceListener
 
     /**
      * UserGameResource constructor.
+     *
      * @param UserServiceInterface $userService
      * @param GameServiceInterface $gameService
      * @param UserGameServiceInterface $userGameService
@@ -42,8 +44,8 @@ class UserGameResource extends AbstractResourceListener
         UserGameServiceInterface $userGameService
     ) {
         $this->userGameService = $userGameService;
-        $this->userService = $userService;
-        $this->gameService = $gameService;
+        $this->userService     = $userService;
+        $this->gameService     = $gameService;
     }
 
     /**
@@ -52,7 +54,7 @@ class UserGameResource extends AbstractResourceListener
      * The authenticated user must be allowed to attach a game to a user in the system
      *
      * @SWG\Post(path="/user/{user_id}/game/{game_id}",
-     *   tags={"user-game"},
+     *   tags={"user", "game"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",
@@ -94,18 +96,24 @@ class UserGameResource extends AbstractResourceListener
      * )
      * @param  mixed $data
      *
-     * @return ApiProblem|mixed
+     * @return ApiProblem|GameEntity
      */
     public function create($data)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
         $gameId = $this->getEvent()->getRouteParam('game_id');
 
+        // 404 if the user is not found
         $user = $this->userService->fetchUser($userId);
-        $game = $this->gameService->fetchGame($gameId);
 
-        $this->userGameService->attachGameToUser($user, $game);
-        return new UserGameEntity($game->getArrayCopy());
+        // 404 if the game is not found
+        $game = $this->gameService->fetchGame($gameId, new GameEntity());
+
+        if ($this->userGameService->attachGameToUser($user, $game)) {
+            return $game;
+        }
+
+        return new ApiProblem(500, 'failed to add the game to user');
     }
 
     /**
@@ -115,7 +123,7 @@ class UserGameResource extends AbstractResourceListener
      * if the they are not allowed to detach a game from a user
      *
      * @SWG\Delete(path="/user/{user_id}/game/{game_id}",
-     *   tags={"user-game"},
+     *   tags={"user", "game"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",
@@ -164,23 +172,26 @@ class UserGameResource extends AbstractResourceListener
      *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
-     * @param  string $id
+     * @param  string $gameId
      *
-     * @return ApiProblem|mixed
+     * @return ApiProblem|bool
      */
-    public function delete($id)
+    public function delete($gameId)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
-        $gameId = $this->getEvent()->getRouteParam('game_id');
 
+        // 404 if the user is not found
         $user = $this->userService->fetchUser($userId);
+
+        // 404 if the game is not found
         $game = $this->gameService->fetchGame($gameId);
 
+        // detach the game
         if ($this->userGameService->detachGameForUser($user, $game)) {
             return true;
         }
 
-        return new ApiProblem(500, 'failed to detach game from user');
+        return new ApiProblem(500, 'failed to remove game from user');
     }
 
     /**
@@ -190,7 +201,7 @@ class UserGameResource extends AbstractResourceListener
      * user is not allowed access to a parent
      *
      * @SWG\Get(path="/user/{user_id}/game",
-     *   tags={"user-game"},
+     *   tags={"user", "game"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",
@@ -224,7 +235,7 @@ class UserGameResource extends AbstractResourceListener
      *   @SWG\Response(
      *     response=200,
      *     description="Paged games",
-     *     @SWG\Schema(ref="#/definitions/UserGameCollection")
+     *     @SWG\Schema(ref="#/definitions/GameCollection")
      *   ),
      *   @SWG\Response(
      *     response=401,
@@ -234,14 +245,18 @@ class UserGameResource extends AbstractResourceListener
      * )
      * @param  array $params
      *
-     * @return ApiProblem|mixed
+     * @return ApiProblem|GameCollection
      */
     public function fetchAll($params = [])
     {
-        $userId = $this->getEvent()->getRouteParam('user_id');
-        $user = $this->userService->fetchUser($userId);
+        // 404 if the user is not found
+        $user = $this->userService->fetchUser(
+            $this->getEvent()->getRouteParam('user_id')
+        );
 
-        return new UserGameCollection($this->userGameService->fetchAllGamesForUser($user, null, new UserGameEntity()));
+        return new GameCollection(
+            $this->userGameService->fetchAllGamesForUser($user, null, new GameEntity())
+        );
     }
 
     /**
@@ -250,7 +265,7 @@ class UserGameResource extends AbstractResourceListener
      * The authenticated user must be allowed to fetch a game
      *
      * @SWG\Get(path="/user/{user_id}/game/{game_id}",
-     *   tags={"user-game"},
+     *   tags={"user", "game"},
      *   @SWG\SecurityScheme(
      *     type="basic",
      *     description="HTTP Basic auth",
@@ -295,19 +310,21 @@ class UserGameResource extends AbstractResourceListener
      *     @SWG\Schema(ref="#/definitions/Error")
      *   )
      * )
-     * @param  mixed $id
+     * @param  string $gameId
      *
-     * @return ApiProblem|mixed
+     * @return GameEntity
      */
-    public function fetch($id)
+    public function fetch($gameId)
     {
         $userId = $this->getEvent()->getRouteParam('user_id');
-        $gameId = $this->getEvent()->getRouteParam('game_id');
 
+        // 404 if the user is not found
         $user = $this->userService->fetchUser($userId);
+
+        // 404 if the game is not found
         $game = $this->gameService->fetchGame($gameId);
 
-        $game = $this->userGameService->fetchGameForUser($user, $game, new UserGameEntity());
-        return new UserGameEntity($game->getArrayCopy());
+        // 404 if the user is not allowed to access the game
+        return $this->userGameService->fetchGameForUser($user, $game, new GameEntity());
     }
 }
