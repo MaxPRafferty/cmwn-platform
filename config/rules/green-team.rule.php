@@ -130,7 +130,7 @@ return [
                         'name'     => \Game\Rule\Rule\UserCanPlayGame::class,
                         'options'  => [
                             \Game\Service\UserGameServiceInterface::class,
-                            'dynamic-diverter',
+                            'gtc-dynamic-diverter',
                         ],
                         'operator' => 'not',
                     ],
