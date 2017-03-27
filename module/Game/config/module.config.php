@@ -28,4 +28,26 @@ return [
             ],
         ],
     ],
+
+    'rules' => [
+        'factories' => [
+            \Game\Rule\Rule\UserCanPlayGame::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Game\Rule\Rule\GameExists::class      => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+
+        'shared' => [
+            \Game\Rule\Rule\UserCanPlayGame::class => false,
+            \Game\Rule\Rule\GameExists::class      => false,
+        ],
+    ],
+
+    'actions' => [
+        'factories' => [
+            \Game\Rule\Action\AddGameToUserAction::class => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+
+        'shared' => [
+            \Game\Rule\Action\AddGameToUserAction::class => false,
+        ],
+    ],
 ];
