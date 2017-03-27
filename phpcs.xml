@@ -12,10 +12,6 @@
 
     <!-- Fail if there are fixmes and warn for todo -->
     <rule ref="Generic.Commenting.Fixme"/>
-    <rule ref="Generic.Commenting.Todo"/>
-
-    <!-- We Hate Commented code -->
-    <rule ref="Squiz.PHP.CommentedOutCode"/>
 
     <!-- Paths to check -->
     <file>./module</file>
