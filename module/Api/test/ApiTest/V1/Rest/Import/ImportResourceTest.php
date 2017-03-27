@@ -176,7 +176,6 @@ class ImportResourceTest extends TestCase
 
         $this->services->setService('Nyc\DoeImporter', $job);
 
-        /** FIXME Why did code_start break this test? */
         $job->shouldReceive('exchangeArray')
 //            ->with($this->inputFilter->getValues())
             ->once();

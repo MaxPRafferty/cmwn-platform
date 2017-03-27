@@ -80,7 +80,6 @@ class RandomNameListener
         }
 
         // This SHOULD generate a name if no name is set
-        // FIXME maybe remove the conditional
         $child->getUserName();
         if (!$child->isNameGenerated()) {
             return null;

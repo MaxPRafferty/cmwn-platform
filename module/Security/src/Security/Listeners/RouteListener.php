@@ -121,7 +121,7 @@ class RouteListener implements RbacAwareInterface, AuthenticationServiceAwareInt
         try {
             $user = $this->authService->getIdentity();
         } catch (ChangePasswordException $changePass) {
-            // FIXME create a new listener that will check for change password user and send this response
+            // todo create a new listener that will check for change password user and send this response
             if ($event->getRouteMatch()->getMatchedRouteName() !== 'api.rest.update-password') {
                 return new ApiProblemResponse(new ApiProblem(401, 'RESET_PASSWORD'));
             }
