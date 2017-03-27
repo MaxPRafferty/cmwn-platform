@@ -30,6 +30,33 @@
         <testsuite name="Unit">
             <directory>./module/*/test</directory>
         </testsuite>
+        <testsuite name="Address Tests">
+            <directory>./module/Address/test</directory>
+            <directory>./module/Api/test/V1/Rest/Address</directory>
+            <directory>./module/Api/test/V1/Rest/AddressGroup</directory>
+            <file>./test/IntegrationTest/Api/V1/Rest/AddressResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/AddressGroupResourceTest.php</file>
+        </testsuite>
+        <testsuite name="Feed Tests">
+            <directory>./module/Feed/test</directory>
+            <directory>./module/Apgit i/test/V1/Rest/Feed</directory>
+            <directory>./module/Api/test/V1/Rest/FeedUser</directory>
+            <file>./test/IntegrationTest/Api/V1/Rest/FeedResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/FeedUserResourceTest.php</file>
+        </testsuite>
+        <testsuite name="Flag Tests">
+            <directory>./module/Flag/test</directory>
+            <directory>./module/Api/test/V1/Rest/Flag</directory>
+            <directory>./module/Api/test/V1/Rest/SuperFlag</directory>
+            <file>./test/IntegrationTest/Api/V1/Rest/FlagResourceTest.php</file>
+        </testsuite>
+        <testsuite name="Flip Tests">
+            <directory>./module/Flip/test</directory>
+            <directory>./module/Api/test/V1/Rest/Flip</directory>
+            <directory>./module/Api/test/V1/Rest/FlipUser</directory>
+            <file>./test/IntegrationTest/Api/V1/Rest/FlipResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/FlipUserResourceTest.php</file>
+        </testsuite>
         <testsuite name="Game Tests">
             <directory>./module/Api/test/V1/Rest/Game</directory>
             <directory>./module/Api/test/V1/Rest/GameData</directory>
