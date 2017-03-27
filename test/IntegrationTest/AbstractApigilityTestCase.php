@@ -8,9 +8,9 @@ use Zend\Json\Json;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase as TestCase;
 
 /**
- * Class AbstractApigilityTestCase
+ * Test Case that makes it easy to dispatch apigility calls to our API
  *
- * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * @deprecated Use IntegrationTest
  * @group Api
  * @group Integration
  */
@@ -133,6 +133,17 @@ abstract class AbstractApigilityTestCase extends TestCase
     {
         $match = $this->getResponseStatusCode();
 
+        $body = $this->getResponse()->getContent();
+        try {
+            $body = Json::encode(
+                Json::decode($this->getResponse()->getContent()),
+                false,
+                ['prettyPrint' => true]
+            );
+        } catch (\Exception $decode) {
+            // noop
+        }
+
         $this->assertEquals(
             $code,
             $match,
@@ -141,7 +152,7 @@ abstract class AbstractApigilityTestCase extends TestCase
                 . PHP_EOL . 'RESPONSE BODY:' . PHP_EOL . '%s',
                 $code,
                 $match,
-                $this->getResponse()->getContent()
+                $body
             )
         );
     }
