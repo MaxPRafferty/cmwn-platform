@@ -17,11 +17,9 @@ class TeacherAdultDataProvider extends AbstractRoleDataProvider
     public function __construct($rolesConfig)
     {
         parent::__construct('teacher.adult', $rolesConfig);
-        $this->setAllowed('add.group.user');
         $this->setAllowed('child.code');
         $this->setAllowed('edit.group');
         $this->setAllowed('edit.user.child');
-        $this->setAllowed('remove.group.user');
         $this->setAllowed('remove.user.child');
         $this->setAllowed('view.flip');
         $this->setAllowed('view.games');

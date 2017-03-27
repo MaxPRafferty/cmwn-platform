@@ -56,6 +56,11 @@ return [
         \Api\Controller\SwaggerController::class              => [
             Api\SwaggerHelper::class,
         ],
+        \Api\V1\Rest\GroupUsers\GroupUsersResource::class => [
+            \Group\Service\UserGroupServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
+        ],
         \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
         ],
@@ -288,7 +293,7 @@ return [
             'api.rest.group-users'     => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/group/:group_id/users',
+                    'route'    => '/group/:group_id/user[/:user_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\GroupUsers\Controller',
                     ],
@@ -738,9 +743,9 @@ return [
         'Api\V1\Rest\GroupUsers\Controller'     => [
             'listener'                   => \Api\V1\Rest\GroupUsers\GroupUsersResource::class,
             'route_name'                 => 'api.rest.group-users',
-            'route_identifier_name'      => 'foo_bar_id',
+            'route_identifier_name'      => 'user_id',
             'collection_name'            => 'items',
-            'entity_http_methods'        => [],
+            'entity_http_methods'        => ['POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
             'page_size'                  => 100,
@@ -1877,6 +1882,9 @@ return [
         'Api\V1\Rest\Group\Controller'          => [
             'input_filter' => 'Api\V1\Rest\Group\Validator',
         ],
+        'Api\V1\Rest\GroupUsers\Controller'          => [
+            'input_filter' => 'Api\V1\Rest\GroupUsers\Validator',
+        ],
         'Api\V1\Rest\Login\Controller'          => [
             'input_filter' => 'Api\V1\Rest\Login\Validator',
         ],
@@ -2205,6 +2213,32 @@ return [
                 'name'          => 'type',
                 'description'   => 'Type of group',
                 'error_message' => 'Invalid group type',
+            ],
+        ],
+        'Api\V1\Rest\GroupUsers\Validator' => [
+            [
+                'required'      => true,
+                'validators'    => [],
+                'filters'       => [],
+                'name'          => 'user_id',
+                'description'   => 'User id of the user',
+                'error_message' => 'Invalid user id',
+            ],
+            [
+                'required'      => true,
+                'validators'    => [
+                    [
+                        'name'    => \Group\RoleValidator::class,
+                        'options' => [
+                            \User\Service\UserServiceInterface::class,
+                            'Config',
+                        ],
+                    ],
+                ],
+                'filters'       => [],
+                'name'          => 'role',
+                'description'   => 'Role of user in the group',
+                'error_message' => 'Invalid Role',
             ],
         ],
         'Api\V1\Rest\Login\Validator'     => [

@@ -329,11 +329,9 @@ return [
                     'me'          => Rbac::SCOPE_UPDATE,
                 ],
                 'permissions' => [
-                    'add.group.user',
                     'child.code',
                     'edit.group',
                     'edit.user.child',
-                    'remove.group.user',
                     'remove.user.child',
                     'view.flip',
                     'view.games',
