@@ -422,6 +422,7 @@ return [
                     'view.all.group.addresses',
                     'attach.group.address',
                     'detach.group.address',
+                    'create.user.flip',
                 ],
                 'db-role' => false,
             ],
