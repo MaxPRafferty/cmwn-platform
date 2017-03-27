@@ -1,4 +1,5 @@
 <?php
+return [];
 return [
     // TODO merge into one rule when rule stop in place
     \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class => [
