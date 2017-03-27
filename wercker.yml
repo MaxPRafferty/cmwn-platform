@@ -23,7 +23,7 @@ build:
         $PWD/vendor/bin/phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
-      code: $PWD/vendor/bin/phpcs --standard=PSR2 -p --no-colors module
+      code: $PWD/vendor/bin/phpcs
     - script:
       name: PHPUNIT
       code: |-
