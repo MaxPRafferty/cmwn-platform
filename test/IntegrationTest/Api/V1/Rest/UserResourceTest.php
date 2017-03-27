@@ -359,8 +359,6 @@ class UserResourceTest extends TestCase
         $this->assertEquals('Walzer', $afterUser->getLastName());
         $this->assertEquals('Female', $afterUser->getGender());
         $this->assertEquals($beforeUser->getCreated(), $afterUser->getCreated());
-        // FIXME Children are not allowed to change their email address
-//        $this->assertEquals('adam@ginasink.com', $afterUser->getEmail());
         $this->assertEquals($beforeUser->getType(), $afterUser->getType());
     }
 

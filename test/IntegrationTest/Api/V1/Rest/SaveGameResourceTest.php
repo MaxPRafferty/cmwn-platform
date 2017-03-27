@@ -110,7 +110,7 @@ class SaveGameResourceTest extends TestCase
     /**
      * @test
      * @dataProvider usersAllowedToSaveGamesProvider
-     * @fixme Test for super user when route listener checks permission for super users
+     * @todo Test for super user when route listener checks permission for super users
      */
     public function testItShouldNotSaveGameForOtherUsers($userName)
     {

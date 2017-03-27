@@ -20,10 +20,10 @@ build:
       name: Setup test DB
       code: |-
         sleep 5
-        phinx migrate -c $PWD/config/phinx.php -e test
+        $PWD/vendor/bin/phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
-      code: phpcs --standard=PSR2 -p --no-colors module
+      code: $PWD/vendor/bin/phpcs --standard=PSR2 -p --no-colors module
     - script:
       name: PHPUNIT
       code: |-
@@ -48,7 +48,7 @@ release:
         echo "Bumped version to $VERSION"
         mkdir -p data/build/artifact
         echo "Created directory for artifact"
-        $PWD/vendor/bin/swagger $PWD/moduel -o $PWD/data/docs/swagger.json
+        $PWD/vendor/bin/swagger $PWD/module -o $PWD/data/docs/swagger.json
     - script:
       name: Running Zend-Tool
       code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor

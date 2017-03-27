@@ -83,7 +83,7 @@ class SecurityUserService implements SecurityUserServiceInterface
         // Join the requested user group
         $select->join(
             ['requested_user' => 'user_groups'],
-            new Expression('requested_user.user_id = ?', $requestedUserId, []), // FIXME @ ZF 3.0+
+            new Expression('requested_user.user_id = ?', $requestedUserId, []),
             ['requested_user_id' => 'user_id'],
             Select::JOIN_LEFT
         );

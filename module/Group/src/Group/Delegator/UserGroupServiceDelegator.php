@@ -208,7 +208,6 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
         try {
             $return = $this->realService->fetchGroupsForUser($user, $where, $prototype);
         } catch (\Exception $fetchException) {
-            //FIXME re-throw the exception
             $event->setParam('exception', $fetchException);
             $event->setName('fetch.user.group.error');
             $this->getEventManager()->triggerEvent($event);
@@ -239,7 +238,6 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
         try {
             $return = $this->realService->fetchOrganizationsForUser($user, $prototype);
         } catch (\Exception $attachException) {
-            //FIXME re-throw the exception
             $event->setParam('exception', $attachException);
             $event->setName('fetch.user.orgs.error');
             $this->getEventManager()->triggerEvent($event);

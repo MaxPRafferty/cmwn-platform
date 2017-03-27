@@ -3,6 +3,7 @@
 namespace IntegrationTest;
 
 use Security\Authentication\AuthenticationService;
+use Security\ChangePasswordUser;
 use Security\Service\SecurityService;
 use User\UserInterface;
 
