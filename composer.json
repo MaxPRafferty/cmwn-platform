@@ -2,7 +2,7 @@
   "name": "cmwn/platform",
   "description": "API layer for CMWN",
   "license": "proprietary",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
@@ -54,7 +54,8 @@
     "elasticsearch/elasticsearch": "^5.1",
     "bacon/bacon-string-utils": "~1",
     "menarasolutions/geographer": "~0.3",
-    "zfr/zfr-cors": "^1.4"
+    "zfr/zfr-cors": "^1.4",
+    "jsq/amazon-es-php": "^0.2.0"
   },
   "require-dev": {
     "robmorgan/phinx": "0.6.4",
