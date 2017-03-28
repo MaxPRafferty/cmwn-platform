@@ -3,9 +3,7 @@
 namespace IntegrationTest\Api\V1\Rest;
 
 use Api\V1\Rest\SaveGame\SaveGameResource;
-use Game\Service\SaveGameServiceInterface;
 use IntegrationTest\IntegrationTest as TestCase;
-use IntegrationTest\TestHelper;
 use Zend\Json\Exception\RuntimeException;
 use Zend\Json\Json;
 
@@ -15,24 +13,11 @@ use Zend\Json\Json;
 class SaveGameResourceTest extends TestCase
 {
     /**
-     * @var SaveGameServiceInterface
-     */
-    protected $saveService;
-
-    /**
      * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
         return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
-    }
-
-    /**
-     * @before
-     */
-    public function setUpSaveService()
-    {
-        $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
     }
 
     /**

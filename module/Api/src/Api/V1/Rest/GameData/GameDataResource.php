@@ -3,16 +3,15 @@
 namespace Api\V1\Rest\GameData;
 
 use Game\Service\SaveGameServiceInterface;
-use Zend\Db\Sql\Predicate\Operator;
 use ZF\Rest\AbstractResourceListener;
 
 /**
  * Class GameDataResource
+ *
  * @package Api\V1\Rest\GameData
  */
 class GameDataResource extends AbstractResourceListener
 {
-
     /**
      * @var SaveGameServiceInterface
      */
@@ -20,31 +19,101 @@ class GameDataResource extends AbstractResourceListener
 
     /**
      * GameDataResource constructor.
+     *
      * @param SaveGameServiceInterface $saveGameService
      */
-    public function __construct($saveGameService)
+    public function __construct(SaveGameServiceInterface $saveGameService)
     {
         $this->saveGameService = $saveGameService;
     }
 
     /**
-     * @param mixed $gameId
-     * @return GameDataCollection
+     * Fetch All Saved games for a game
+     *
+     * The user must be allowed access to the game and the user.
+     *
+     * @SWG\Get(path="/game-data/{game_id}",
+     *   tags={"game"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *     @SWG\Parameter(
+     *     name="game_id",
+     *     in="path",
+     *     description="Game Id",
+     *     required=true,
+     *     type="string",
+     *     format="uuid",
+     *     maximum=1.0,
+     *     minimum=1.0
+     *   ),
+     *   @SWG\Response(
+     *     response=200,
+     *     description="The Requested Data",
+     *     @SWG\Schema(ref="#/definitions/GameDataCollection")
+     *   ),
+     *   @SWG\Response(
+     *     response=403,
+     *     description="Not Authorized fetch games for this user",
+     *     @SWG\Schema(ref="#/definitions/Error")
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(ref="#/definitions/Error")
+     *   )
+     * )
+     *
+     * @param string $gameId
+     *
+     * @return ApiProblem|mixed
      */
     public function fetch($gameId)
     {
-        $where = $gameId === null ? null : new Operator('sg.game_id', Operator::OP_EQ, $gameId);
-        $gameData = $this->saveGameService->fetchAllSaveGameData($where, new GameDataEntity());
-        return new GameDataCollection($gameData);
+        return new GameDataCollection(
+            $this->saveGameService->fetchAllSaveGameData(['game_id' => $gameId], new GameDataEntity())
+        );
     }
 
     /**
-     * @param array $params
-     * @return GameDataCollection
+     * Fetch All Saved games
+     *
+     * The user must be allowed access to the game and the user.
+     *
+     * @SWG\Get(path="/game-data",
+     *   tags={"game"},
+     *   @SWG\SecurityScheme(
+     *     type="basic",
+     *     description="HTTP Basic auth",
+     *     securityDefinition="basic"
+     *   ),
+     *   @SWG\Response(
+     *     response=200,
+     *     description="The Requested Data",
+     *     @SWG\Schema(ref="#/definitions/GameDataCollection")
+     *   ),
+     *   @SWG\Response(
+     *     response=403,
+     *     description="Not Authorized fetch games for this user",
+     *     @SWG\Schema(ref="#/definitions/Error")
+     *   ),
+     *   @SWG\Response(
+     *     response=401,
+     *     description="Not Authenticated",
+     *     @SWG\Schema(ref="#/definitions/Error")
+     *   )
+     * )
+     *
+     * @param $params
+     *
+     * @return ApiProblem|mixed
      */
     public function fetchAll($params = [])
     {
-        $gameData = $this->saveGameService->fetchAllSaveGameData(null, new GameDataEntity());
-        return new GameDataCollection($gameData);
+        return new GameDataCollection(
+            $this->saveGameService->fetchAllSaveGameData(null, new GameDataEntity())
+        );
     }
 }

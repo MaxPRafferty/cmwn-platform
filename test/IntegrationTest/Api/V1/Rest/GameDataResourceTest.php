@@ -2,12 +2,8 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-use Game\SaveGame;
-use Game\Service\SaveGameServiceInterface;
-use IntegrationTest\AbstractApigilityTestCase as TestCase;
-use IntegrationTest\TestHelper;
+use IntegrationTest\IntegrationTest as TestCase;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Class GameDataResourceTest
@@ -16,12 +12,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 class GameDataResourceTest extends TestCase
 {
     /**
-     * @var SaveGameServiceInterface
-     */
-    protected $saveService;
-
-    /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -29,146 +20,179 @@ class GameDataResourceTest extends TestCase
     }
 
     /**
-     * @before
+     * @inheritDoc
      */
-    public function setUpSaveGameService()
+    protected function getControllerNameForTest(): string
     {
-        $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
+        return 'api\v1\rest\gamedata\controller';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getControllerRouteNameForTest(): string
+    {
+        return 'api.rest.game-data';
     }
 
     /**
      * @test
+     *
+     * @param string $login
+     * @param string $route
+     * @param int $code
+     * @param array $expectedResponse
+     *
+     * @dataProvider fetchGameProvider
      */
-    public function testItShouldAccessGameDataEndPoint()
-    {
-        $this->logInUser('super_user');
-        $this->injectValidCsrfToken();
-        $this->dispatch('/game-data/animal-id');
-        $this->assertMatchedRouteName('api.rest.game-data');
-        $this->assertControllerName('api\v1\rest\gamedata\controller');
-        $this->assertResponseStatusCode(200);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnAllSaveGameDataForAGame()
-    {
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('animal-id');
-        $saveGame->setData(['foo' => 'bar']);
-        $saveGame->setCreated(new \DateTime());
-        $saveGame->setVersion('1.1.1');
-        $this->saveService->saveGame($saveGame);
-
-        $saveGameNew = new SaveGame();
-        $saveGameNew->setUserId('math_student');
-        $saveGameNew->setGameId('animal-id');
-        $saveGameNew->setData(['baz' => 'bar']);
-        $saveGameNew->setCreated(new \DateTime());
-        $saveGameNew->setVersion('1.1.1');
-        $this->saveService->saveGame($saveGameNew);
-
-        $this->logInUser('super_user');
-        $this->injectValidCsrfToken();
-        $this->dispatch('/game-data/animal-id');
-        $this->assertMatchedRouteName('api.rest.game-data');
-        $this->assertControllerName('api\v1\rest\gamedata\controller');
-        $this->assertResponseStatusCode(200);
-
-        $expected = [['math_student', 'animal-id'], ['english_student', 'animal-id']];
-
+    public function testItShouldFetchGameData(
+        string $login,
+        string $route,
+        int $code,
+        array $expectedResponse
+    ) {
+        $this->dispatchAuthenticatedCall($login, $route, $code);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
 
-        $this->assertArrayHasKey('page_count', $body);
-        $this->assertArrayHasKey('_embedded', $body);
-
-        $embedded = $body['_embedded'];
-        $this->assertArrayHasKey('items', $embedded);
-
-        $gameData = $embedded['items'];
-        $actual = [];
-        foreach ($gameData as $game) {
-            $this->assertArrayHasKey('user_id', $game);
-            $this->assertArrayHasKey('game_id', $game);
-            $actual[] = [$game['user_id'], $game['game_id']];
-        }
-
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals(
+            $expectedResponse,
+            $body,
+            SaveGameResource::class . ' did not return correct response on fetch'
+        );
     }
 
     /**
-     * @test
+     * @return array
      */
-    public function testItShouldNotAllowOtherUsersToAccessGameData()
+    public function fetchGameProvider()
     {
-        $this->logInUser('english_student');
-        $this->injectValidCsrfToken();
-        $this->dispatch('/game-data/animal-id');
-        $this->assertMatchedRouteName('api.rest.game-data');
-        $this->assertControllerName('api\v1\rest\gamedata\controller');
-        $this->assertResponseStatusCode(403);
+        return [
+            'Super User Fetch All' => [
+                'super_user',
+                '/game-data',
+                200,
+                [
+                    '_embedded'   => [
+                        'game-data' => [
+                            [
+                                'version' => '1.2.3',
+                                'data'    => [
+                                    'baz' => 'bat',
+                                ],
+                                'user_id' => 'english_student',
+                                'game_id' => 'no-flags',
+                                'created' => '2017-03-28 09:55:02',
+                                '_links'  => [
+                                    'self' => [
+                                        'href' => 'http://api.test.com/game-data',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/game-data?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/game-data',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/game-data?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/game-data{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 1,
+                    'page'        => 1,
+                ],
+            ],
+
+            'Super User Fetch Game' => [
+                'super_user',
+                '/game-data/no-flags',
+                200,
+                [
+                    '_embedded'   => [
+                        'items' => [
+                            [
+                                'version' => '1.2.3',
+                                'data'    => [
+                                    'baz' => 'bat',
+                                ],
+                                'user_id' => 'english_student',
+                                'game_id' => 'no-flags',
+                                'created' => '2017-03-28 09:55:02',
+                                '_links'  => [
+                                    'self' => [
+                                        'href' => 'http://api.test.com/game-data',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/game-data/no-flags?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/game-data/no-flags',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/game-data/no-flags?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/game-data/no-flags{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 30,
+                    'total_items' => 1,
+                    'page'        => 1,
+                ],
+            ],
+
+            'Super User Invalid Game' => [
+                'super_user',
+                '/game-data/foo-bar',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Game not found',
+                ],
+            ],
+
+            'Adult not authorized' => [
+                'english_teacher',
+                '/game-data/foo-bar',
+                403,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Child not authorized' => [
+                'english_student',
+                '/game-data/foo-bar',
+                403,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+        ];
     }
 
-    /**
-     * @test
-     */
-    public function testItShould404WhenInvalidGameIdIsUsed()
-    {
-        $this->logInUser('super_user');
-        $this->injectValidCsrfToken();
-        $this->dispatch('/game-data/animal');
-        $this->assertMatchedRouteName('api.rest.game-data');
-        $this->assertControllerName('api\v1\rest\gamedata\controller');
-        $this->assertResponseStatusCode(404);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnAllSaveGameData()
-    {
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('animal-id');
-        $saveGame->setData(['foo' => 'bar']);
-        $saveGame->setCreated(new \DateTime());
-        $saveGame->setVersion('1.1.1');
-        $this->saveService->saveGame($saveGame);
-
-        $saveGameNew = new SaveGame();
-        $saveGameNew->setUserId('math_student');
-        $saveGameNew->setGameId('monarch');
-        $saveGameNew->setData(['baz' => 'bar']);
-        $saveGameNew->setCreated(new \DateTime());
-        $saveGameNew->setVersion('1.1.1');
-        $this->saveService->saveGame($saveGameNew);
-
-        $this->logInUser('super_user');
-        $this->injectValidCsrfToken();
-        $this->dispatch('/game-data');
-        $this->assertMatchedRouteName('api.rest.game-data');
-        $this->assertControllerName('api\v1\rest\gamedata\controller');
-        $this->assertResponseStatusCode(200);
-
-        $expected = ['monarch', 'animal-id'];
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
-        $this->assertArrayHasKey('page_count', $body);
-        $this->assertArrayHasKey('_embedded', $body);
-
-        $embedded = $body['_embedded'];
-        $this->assertArrayHasKey('game-data', $embedded);
-
-        $gameData = $embedded['game-data'];
-        $actual = [];
-        foreach ($gameData as $game) {
-            $this->assertArrayHasKey('game_id', $game);
-            $actual[] = $game['game_id'];
-        }
-
-        $this->assertEquals($expected, $actual);
-    }
 }

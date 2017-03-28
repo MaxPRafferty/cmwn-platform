@@ -72,6 +72,9 @@ return [
             \User\Service\UserServiceInterface::class,
             \Game\Service\UserGameServiceInterface::class,
         ],
+        \Api\V1\Rest\GameData\GameDataResource::class => [
+            \Game\Service\SaveGameServiceInterface::class,
+        ]
     ],
 
     'actions' => [
@@ -184,8 +187,6 @@ return [
                 \Api\V1\Rest\Skribble\SkribbleResourceFactory::class,
             \Api\V1\Rest\SkribbleNotify\SkribbleNotifyResource::class =>
                 \Api\V1\Rest\SkribbleNotify\SkribbleNotifyResourceFactory::class,
-            \Api\V1\Rest\GameData\GameDataResource::class             =>
-                \Api\V1\Rest\GameData\GameDataResourceFactory::class,
             \Api\V1\Rest\Flag\FlagResource::class                     =>
                 \Api\V1\Rest\Flag\FlagResourceFactory::class,
             \Api\V1\Rest\GroupReset\GroupResetResource::class         =>

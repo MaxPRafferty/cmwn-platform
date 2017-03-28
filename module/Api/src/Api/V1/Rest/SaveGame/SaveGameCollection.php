@@ -15,7 +15,7 @@ use Zend\Paginator\Paginator;
  *         description="A List of Game Save Entities",
  *         @SWG\Property(
  *             type="array",
- *             property="games",
+ *             property="save_game",
  *             description="A List of games",
  *             @SWG\Items(ref="#/definitions/GameEntity")
  *         )
