@@ -11,6 +11,37 @@ use Zend\Json\Json;
 
 /**
  * A Class that represents users save game data
+ *
+ * @SWG\Definition(
+ *     definition="SaveGame",
+ *     description="An entity that represents saved game data for a user",
+ *     required={"game_id","user_id","data","version"},
+ *     allOf={
+ *          @SWG\Schema(ref="#/definitions/DateCreated")
+ *     },
+ *     @SWG\Property(
+ *          type="string",
+ *          format="uuid",
+ *          property="game_id",
+ *          description="The id of the game"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          format="uuid",
+ *          property="user_id",
+ *          description="The User Id that the data is saved too"
+ *     ),
+ *     @SWG\Property(
+ *          type="object",
+ *          property="data",
+ *          description="All the data for the game"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="version",
+ *          description="A Version number that the data represents"
+ *     )
+ * )
  */
 class SaveGame implements SaveGameInterface
 {

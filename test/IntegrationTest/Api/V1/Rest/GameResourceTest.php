@@ -463,7 +463,7 @@ class GameResourceTest extends TestCase
     {
         // @codingStandardsIgnoreStart
         return [
-            'Create Game' => [
+            'Complete Record' => [
                 'super_user',
                 201,
                 [
@@ -506,7 +506,7 @@ class GameResourceTest extends TestCase
                 ],
             ],
 
-            'Create Game With Json URIS' => [
+            'With Json URIS' => [
                 'super_user',
                 201,
                 [
@@ -546,6 +546,159 @@ class GameResourceTest extends TestCase
                             'href' => 'https://games.changemyworldnow.com/sea-turtle',
                         ],
                     ],
+                ],
+            ],
+
+            'Only required fields' => [
+                'super_user',
+                201,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'sort_order'  => 14,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => false,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                    ],
+                ],
+            ],
+
+            'Fails with missing fields' => [
+                'super_user',
+                422,
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'sort_order'  => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'Fails with incorrect sort order' => [
+                'super_user',
+                422,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 'apple',
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'sort_order' => [
+                            'notDigits' => 'The input must contain only digits',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'Fails with Invalid Urls' => [
+                'super_user',
+                422,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'baz_url' => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'Fails with One Invalid Url' => [
+                'super_user',
+                422,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
                 ],
             ],
         ];
@@ -637,7 +790,7 @@ class GameResourceTest extends TestCase
                     'featured'    => true,
                     'unity'       => false,
                     'desktop'     => false,
-                    '_links' => [
+                    '_links'      => [
                         'thumb_url'  => [
                             'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
                         ],
@@ -648,6 +801,126 @@ class GameResourceTest extends TestCase
                             'href' => 'https://games.changemyworldnow.com/sea-turtle',
                         ],
                     ],
+                ],
+            ],
+
+            'Fails with missing fields' => [
+                'super_user',
+                'global-featured',
+                422,
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'sort_order'  => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'Fails with incorrect sort order' => [
+                'super_user',
+                'global-featured',
+                422,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 'apple',
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'sort_order' => [
+                            'notDigits' => 'The input must contain only digits',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'Fails with Invalid Urls' => [
+                'super_user',
+                'global-featured',
+                422,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'baz_url' => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'Fails with One Invalid Url' => [
+                'super_user',
+                'global-featured',
+                422,
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
                 ],
             ],
         ];

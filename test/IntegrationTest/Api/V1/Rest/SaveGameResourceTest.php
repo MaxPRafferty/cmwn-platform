@@ -2,25 +2,15 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-use Application\Exception\NotFoundException;
-use Game\SaveGame;
+use Api\V1\Rest\SaveGame\SaveGameResource;
 use Game\Service\SaveGameServiceInterface;
-use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use IntegrationTest\IntegrationTest as TestCase;
 use IntegrationTest\TestHelper;
+use Zend\Json\Exception\RuntimeException;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
  * Test SaveGameResourceTest
- *
- * @group IntegrationTest
- * @group API
- * @group Game
- * @group User
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SaveGameResourceTest extends TestCase
 {
@@ -30,11 +20,11 @@ class SaveGameResourceTest extends TestCase
     protected $saveService;
 
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
-        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/save.dataset.php');
+        return $this->createArrayDataSet(include __DIR__ . '/../../../DataSets/games.dataset.php');
     }
 
     /**
@@ -44,256 +34,558 @@ class SaveGameResourceTest extends TestCase
     {
         $this->saveService = TestHelper::getServiceManager()->get(SaveGameServiceInterface::class);
     }
-    /**
-     * @test
-     * @param string $user
-     * @param string $url
-     * @param string $method
-     * @param array $params
-     * @dataProvider changePasswordDataProvider
-     */
-    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException($url, $method, $params);
-    }
-    /**
-     * @test
-     * @dataProvider usersAllowedToSaveGamesProvider
-     */
-    public function testItShouldSaveGameStatusForMe($userName)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($userName);
-        $this->dispatch(
-            '/user/' .$userName . '/save/monarch',
-            'POST',
-            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
-        );
-        $this->assertResponseStatusCode(201);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
-        $body = $this->getResponse()->getContent();
-        try {
-            $decoded = Json::decode($body, Json::TYPE_ARRAY);
-        } catch (\Exception $jsonException) {
-            $this->fail('Error Decoding Response');
-            return;
-        }
-        $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
-        $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
-        $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
-        $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
-        $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-        $this->assertEquals(['foo' => 'bar'], $decoded['data'], 'Data is incorrect for game');
-        $this->assertEquals('1.1.1', $decoded['version'], 'Version number is incorrect');
-    }
-    /**
-     * @test
-     * @ticket CORE-2351
-     * @dataProvider usersNotAllowedToSaveGamesProvider
-     */
-    public function testItShouldNotSaveGameStatusForMeAdult($userName)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($userName);
-        $this->dispatch(
-            '/user/' .$userName . '/save/monarch',
-            'POST',
-            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
-        );
-        $this->assertResponseStatusCode(403);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
-    }
-    /**
-     * @test
-     * @dataProvider usersAllowedToSaveGamesProvider
-     * @todo Test for super user when route listener checks permission for super users
-     */
-    public function testItShouldNotSaveGameForOtherUsers($userName)
-    {
 
-        $this->injectValidCsrfToken();
-        $this->logInUser($userName);
-        $this->dispatch(
-            '/user/other_student/save/monarch',
-            'POST',
-            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
-        );
-        $this->assertResponseStatusCode(403);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
+    /**
+     * @inheritDoc
+     */
+    protected function getControllerNameForTest(): string
+    {
+        return 'api\v1\rest\savegame\controller';
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getControllerRouteNameForTest(): string
+    {
+        return 'api.rest.save-game';
+    }
+
     /**
      * @test
+     *
+     * @param string $login
+     * @param string $userId
+     * @param string $gameId
+     * @param int $code
+     * @param array $data
+     * @param array $expectedResponse
+     *
+     * @dataProvider saveGameDataProvider
      */
-    public function testItShouldReturnBackSaveGameData()
-    {
-        $date = new \DateTime();
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('monarch');
-        $saveGame->setVersion('4.3.2.1');
-        $saveGame->setCreated($date);
-        $saveGame->setData(['baz' => 'bat']);
-        $this->saveService->saveGame($saveGame);
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/save/monarch');
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
-        $body = $this->getResponse()->getContent();
-        try {
-            $decoded = Json::decode($body, Json::TYPE_ARRAY);
-        } catch (\Exception $jsonException) {
-            $this->fail('Error Decoding Response');
+    public function testItShouldSaveGameData(
+        string $login,
+        string $userId,
+        string $gameId,
+        int $code,
+        array $data,
+        array $expectedResponse
+    ) {
+        $this->dispatchAuthenticatedCall($login, '/user/' . $userId . '/save/' . $gameId, $code, 'PUT', $data);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        if ($code !== 200) {
+            $this->assertEquals(
+                $expectedResponse,
+                $body,
+                SaveGameResource::class . ' did not return correct errors'
+            );
+
             return;
         }
-        $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
-        $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
-        $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
-        $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
-        $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-        $this->assertEquals(['baz' => 'bat'], $decoded['data'], 'Data is incorrect for game');
-        $this->assertEquals('4.3.2.1', $decoded['version'], 'Version number is incorrect');
-    }
-    /**
-     * @test
-     */
-    public function testItShouldReturn404WhenThereIsNoSaveData()
-    {
-        try {
-            $this->saveService->fetchSaveGameForUser('english_student', 'monarch');
-            $this->fail('This requires no saved data for the english_student');
-        } catch (NotFoundException $notFound) {
-        }
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/save/monarch');
-        $this->assertResponseStatusCode(404);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
-    }
-    /**
-     * @test
-     */
-    public function testItShouldReplaceDataForGame()
-    {
-        $date = new \DateTime();
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('monarch');
-        $saveGame->setVersion('4.3.2.1');
-        $saveGame->setCreated($date);
-        $saveGame->setData(['baz' => 'bat']);
-        $this->saveService->saveGame($saveGame);
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch(
-            '/user/english_student/save/monarch',
-            'POST',
-            ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+
+        // Check response body
+        $this->assertNotEmpty(
+            $body['created'],
+            SaveGameResource::class . ' updated is empty on game creation'
         );
-        $this->assertResponseStatusCode(201);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
+
+        unset($body['created']);
+
+        $this->assertEquals(
+            $expectedResponse,
+            $body,
+            SaveGameResource::class . ' did not return the expected response on creation'
+        );
+
+        // Check Database
+        $stmt = $this->getConnection()->getConnection()
+            ->query('SELECT * FROM user_saves WHERE user_id = "' . $userId . '" AND game_id = "' . $gameId . '"');
+
+        $stmt->setFetchMode(\PDo::FETCH_ASSOC);
+
+        foreach ($stmt as $dbData) {
+            unset($dbData['created'], $expectedResponse['_links']);
+            $dbData['data'] = Json::decode($dbData['data'], Json::TYPE_ARRAY);
+        }
+
+        $this->assertEquals(
+            $expectedResponse,
+            $dbData,
+            SaveGameResource::class . ' data in Db does not match'
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @param string $login
+     * @param string $route
+     * @param int $code
+     * @param array $expectedResponse
+     *
+     * @dataProvider fetchGameProvider
+     */
+    public function testItShouldFetchGameData(
+        string $login,
+        string $route,
+        int $code,
+        array $expectedResponse
+    ) {
+        $this->dispatchAuthenticatedCall($login, $route, $code);
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        $this->assertEquals(
+            $expectedResponse,
+            $body,
+            SaveGameResource::class . ' did not return correct response on fetch'
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @param string $login
+     * @param string $route
+     * @param int $code
+     * @param array $expectedResponse
+     *
+     * @dataProvider deleteGameProvider
+     */
+    public function testItShouldDeleteSaveData(
+        string $login,
+        string $route,
+        int $code,
+        $expectedResponse
+    ) {
+        $this->assertTableRowCount(
+            'user_saves',
+            1,
+            SaveGameResource::class . ' db is starting with expected records'
+        );
+
+        $this->dispatchAuthenticatedCall($login, $route, $code, 'DELETE');
         $body = $this->getResponse()->getContent();
         try {
-            $decoded = Json::decode($body, Json::TYPE_ARRAY);
-        } catch (\Exception $jsonException) {
-            $this->fail('Error Decoding Response');
+            $body = Json::decode($body, Json::TYPE_ARRAY);
+        } catch (RuntimeException $decode) {
+            // empty body
+        }
+
+        $this->assertEquals(
+            $expectedResponse,
+            $body,
+            SaveGameResource::class . ' did not return correct response on deleting'
+        );
+
+        if ($code != 204) {
+            $this->assertTableRowCount(
+                'user_saves',
+                1,
+                SaveGameResource::class . ' returned invalid code but still deleted save data'
+            );
+
             return;
         }
-        $this->assertArrayHasKey('game_id', $decoded, 'Return does not include the game_id');
-        $this->assertArrayHasKey('user_id', $decoded, 'Return does not include the user_id');
-        $this->assertArrayHasKey('data', $decoded, 'Return does not include the data');
-        $this->assertArrayHasKey('created', $decoded, 'Return does not include the created date');
-        $this->assertArrayHasKey('version', $decoded, 'Return does not include the version');
-        $this->assertEquals(['foo' => 'bar'], $decoded['data'], 'Data is incorrect for game');
-        $this->assertEquals('1.1.1', $decoded['version'], 'Version number is incorrect');
-    }
-    /**
-     * @test
-     */
-    public function testItShouldDeleteSavedGameData()
-    {
-        $date = new \DateTime();
-        $saveGame = new SaveGame();
-        $saveGame->setUserId('english_student');
-        $saveGame->setGameId('monarch');
-        $saveGame->setVersion('4.3.2.1');
-        $saveGame->setCreated($date);
-        $saveGame->setData(['baz' => 'bat']);
-        $this->saveService->saveGame($saveGame);
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch(
-            '/user/english_student/save/monarch',
-            'DELETE'
+
+        $this->assertTableRowCount(
+            'user_saves',
+            0,
+            SaveGameResource::class . ' did not delete the save game'
         );
-        $this->assertResponseStatusCode(204);
-        $this->assertMatchedRouteName('api.rest.save-game');
-        $this->assertControllerName('api\v1\rest\savegame\controller');
-        try {
-            $this->saveService->fetchSaveGameForUser('english_student', 'monarch');
-            $this->fail('The service did not delete the game for the user');
-        } catch (NotFoundException $notFound) {
-        }
     }
+
     /**
      * @return array
      */
-    public function usersAllowedToSaveGamesProvider()
+    public function deleteGameProvider()
     {
         return [
-            'English student' => [
-                'user_name' => 'english_student',
+            'English Student deleting game' => [
+                'english_student',
+                '/user/english_student/save/no-flags',
+                204,
+                '',
             ],
-            'Math student'    => [
-                'user_name' => 'math_student',
+
+            'English Student game not found' => [
+                'english_student',
+                '/user/english_student/save/foo-bar',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Game not found',
+                ],
+            ],
+
+            'User not found' => [
+                'super_user',
+                '/user/foo-bar/save/no-flags',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'User not found',
+                ],
+            ],
+
+            'Other Student deleting' => [
+                'other_student',
+                '/user/english_student/save/no-flags',
+                403,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Principal deleting' => [
+                'principal',
+                '/user/english_student/save/no-flags',
+                403,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Super deleting' => [
+                'super_user',
+                '/user/english_student/save/no-flags',
+                204,
+                '',
             ],
         ];
     }
+
     /**
      * @return array
      */
-    public function usersNotAllowedToSaveGamesProvider()
+    public function fetchGameProvider()
     {
         return [
-            'English Teacher' => [
-                'user_name' => 'english_teacher',
+            'English Student' => [
+                'english_student',
+                '/user/english_student/save',
+                200,
+                [
+                    '_embedded'   => [
+                        'save_game' => [
+                            [
+                                'version' => '1.2.3',
+                                'data'    => [
+                                    'baz' => 'bat',
+                                ],
+                                'user_id' => 'english_student',
+                                'game_id' => 'no-flags',
+                                'created' => '2017-03-28 09:55:02',
+                                '_links'  => [
+                                    'self' => [
+                                        'href' => 'http://api.test.com/user/english_student/save/no-flags',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/user/english_student/save?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/user/english_student/save',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/user/english_student/save?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/user/english_student/save{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 1,
+                    'page'        => 1,
+                ],
             ],
-            'Math teacher'    => [
-                'user_name' => 'math_teacher',
+
+            'English Student to game' => [
+                'english_student',
+                '/user/english_student/save/no-flags',
+                200,
+                [
+                    'version' => '1.2.3',
+                    'data'    => [
+                        'baz' => 'bat',
+                    ],
+                    'user_id' => 'english_student',
+                    'game_id' => 'no-flags',
+                    'created' => '2017-03-28 09:55:02',
+                    '_links'  => [
+                        'self' => [
+                            'href' => 'http://api.test.com/user/english_student/save/no-flags',
+                        ],
+                    ],
+                ],
             ],
-            'Principal'       => [
-                'user_name' => 'principal',
+
+            'English teacher' => [
+                'english_teacher',
+                '/user/english_teacher/save/no-flags',
+                403,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'English Student with no save' => [
+                'english_student',
+                '/user/english_student/save/global-featured',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'No Save game Found',
+                ],
+            ],
+
+            'English Student with invalid game' => [
+                'english_student',
+                '/user/english_student/save/foo-bar',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Game not found',
+                ],
+            ],
+
+            'User not found' => [
+                'english_student',
+                '/user/foo-bar/save/global-featured',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'User not found',
+                ],
+            ],
+
+            'Other Student to English' => [
+                'other_student',
+                '/user/english_student/save/no-flags',
+                403,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
             ],
         ];
     }
+
     /**
      * @return array
      */
-    public function changePasswordDataProvider()
+    public function saveGameDataProvider()
     {
         return [
-            0 => [
+            'English Student Saving to them self' => [
                 'english_student',
-                '/user/english_student/save/monarch'
+                'english_student',
+                'global-featured',
+                200,
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                ],
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                    'user_id' => 'english_student',
+                    'game_id' => 'global-featured',
+                    '_links'  => [
+                        'self' => [
+                            'href' => 'http://api.test.com/user/english_student/save/global-featured',
+                        ],
+                    ],
+                ],
             ],
-            1 => [
+
+            'English Student Saving updated' => [
                 'english_student',
-                '/user/english_student/save/monarch',
-                'POST',
-                ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+                'english_student',
+                'no-flags',
+                200,
+                [
+                    'user_id' => 'foo-bar',
+                    'game_id' => 'fizz-buzz',
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                ],
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                    'user_id' => 'english_student',
+                    'game_id' => 'no-flags',
+                    '_links'  => [
+                        'self' => [
+                            'href' => 'http://api.test.com/user/english_student/save/no-flags',
+                        ],
+                    ],
+                ],
             ],
-            2 => [
+
+            'English Teacher Saving to them self' => [
+                'english_teacher',
+                'english_teacher',
+                'global-featured',
+                403,
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                ],
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Principal Saving to them self' => [
+                'principal',
+                'principal',
+                'global-featured',
+                403,
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                ],
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'English Student with Json' => [
                 'english_student',
-                '/user/english_student/save/monarch',
-                'DELETE'
+                'english_student',
+                'global-featured',
+                200,
+                [
+                    'version' => '1.0.1',
+                    'data'    => Json::encode([
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ]),
+                ],
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                    'user_id' => 'english_student',
+                    'game_id' => 'global-featured',
+                    '_links'  => [
+                        'self' => [
+                            'href' => 'http://api.test.com/user/english_student/save/global-featured',
+                        ],
+                    ],
+                ],
+            ],
+
+            'English Student Saving to other' => [
+                'english_student',
+                'other_student',
+                'global-featured',
+                403,
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                ],
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Forbidden',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Other student not allowed to access game' => [
+                'other_student',
+                'other_student',
+                'no-flags',
+                404,
+                [
+                    'version' => '1.0.1',
+                    'data'    => [
+                        'foo'  => 'bar',
+                        'fizz' => 'buzz',
+                    ],
+                ],
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Game not found',
+                ],
+            ],
+
+            'English Student with missing fields' => [
+                'english_student',
+                'english_student',
+                'global-featured',
+                422,
+                [],
+                [
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'               => 'Unprocessable Entity',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                    'validation_messages' => [
+                        'data'    => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'version' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                ],
             ],
         ];
     }

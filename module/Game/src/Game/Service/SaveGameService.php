@@ -5,10 +5,13 @@ namespace Game\Service;
 use Application\Exception\NotFoundException;
 use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\ServiceTrait;
+use Game\Game;
 use Game\GameInterface;
 use Game\SaveGame;
 use Game\SaveGameInterface;
+use User\PlaceHolder;
 use User\UserInterface;
+use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Select;
@@ -60,21 +63,39 @@ class SaveGameService implements SaveGameServiceInterface
             'created' => DateTimeFactory::formatForMysql($gameData->getCreated()),
         ];
 
-        $this->deleteSaveForUser($gameData->getUserId(), $gameData->getGameId());
-        $this->tableGateway->insert($data);
+        $user = new PlaceHolder();
+        $user->setUserId($gameData->getUserId());
 
-        return true;
+        $game = new Game();
+        $game->setGameId($gameData->getGameId());
+
+        try {
+            $this->tableGateway->insert($data);
+            return true;
+        } catch (InvalidQueryException $exception) {
+            if ($exception->getPrevious()->getCode() !='23000') {
+                throw $exception;
+            }
+        }
+
+        unset($data['game_id'], $data['user_id']);
+        $updated = $this->tableGateway->update(
+            $data,
+            ['user_id' => $user->getUserId(), 'game_id' => $game->getGameId()]
+        );
+
+        return $updated == 1;
     }
 
     /**
      * @inheritdoc
      */
-    public function deleteSaveForUser($user, $game): bool
+    public function deleteSaveForUser(UserInterface $user, GameInterface $game): bool
     {
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $gameId = $game instanceof GameInterface ? $game->getGameId() : $game;
-
-        $this->tableGateway->delete(['user_id' => $userId, 'game_id' => $gameId]);
+        $this->tableGateway->delete([
+            'user_id' => $user->getUserId(),
+            'game_id' => $game->getGameId(),
+        ]);
 
         return true;
     }
@@ -83,17 +104,14 @@ class SaveGameService implements SaveGameServiceInterface
      * @inheritdoc
      */
     public function fetchSaveGameForUser(
-        $user,
-        $game,
-        SaveGameInterface $prototype = null,
-        $where = null
+        UserInterface $user,
+        GameInterface $game,
+        $where = null,
+        SaveGameInterface $prototype = null
     ): SaveGameInterface {
-        $where  = $this->createWhere($where);
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $gameId = $game instanceof GameInterface ? $game->getGameId() : $game;
-
-        $where->addPredicate(new Operator('user_id', '=', $userId));
-        $where->addPredicate(new Operator('game_id', '=', $gameId));
+        $where = $this->createWhere($where);
+        $where->addPredicate(new Operator('user_id', '=', $user->getUserId()));
+        $where->addPredicate(new Operator('game_id', '=', $game->getGameId()));
 
         $rowSet = $this->tableGateway->select($where);
         $row    = $rowSet->current();
@@ -111,16 +129,15 @@ class SaveGameService implements SaveGameServiceInterface
      * @inheritdoc
      */
     public function fetchAllSaveGamesForUser(
-        $user,
+        UserInterface $user,
         $where = null,
         SaveGameInterface $prototype = null
     ): AdapterInterface {
         $where     = $this->createWhere($where);
-        $userId    = $user instanceof UserInterface ? $user->getUserId() : $user;
         $prototype = $prototype ?? new SaveGame();
         $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
-        $where->addPredicate(new Operator('user_id', '=', $userId));
+        $where->addPredicate(new Operator('user_id', '=', $user->getUserId()));
         $select = new Select(['sg' => $this->tableGateway->getTable()]);
         $select->where($where);
         $select->order("sg.created ASC");

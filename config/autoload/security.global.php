@@ -28,9 +28,9 @@ return [
                 'POST' => ['adult.code', 'child.code'],
             ],
             'api.rest.flip'            => [
-                'GET' => 'view.flip',
-                'POST' => 'create.flip',
-                'PUT' => 'edit.flip',
+                'GET'    => 'view.flip',
+                'POST'   => 'create.flip',
+                'PUT'    => 'edit.flip',
                 'DELETE' => 'delete.flip',
             ],
             'api.rest.flip-user'       => [
@@ -55,7 +55,7 @@ return [
                 'PUT'    => 'update.game',
                 'DELETE' => 'delete.game',
             ],
-            'api.rest.user-game'            => [
+            'api.rest.user-game'       => [
                 'GET'    => ['view.games', 'view.game'],
                 'POST'   => 'attach.user.game',
                 'DELETE' => 'detach.user.game',
@@ -73,8 +73,8 @@ return [
                 'POST' => 'update.password',
             ],
             'api.rest.group-users'     => [
-                'GET' => 'view.group.users',
-                'POST' => 'add.group.user',
+                'GET'    => 'view.group.users',
+                'POST'   => 'add.group.user',
                 'DELETE' => 'remove.group.user',
             ],
             'api.rest.org-users'       => [
@@ -100,7 +100,7 @@ return [
             ],
             'api.rest.save-game'       => [
                 'GET'    => 'save.game',
-                'POST'   => 'save.game',
+                'PUT'   => 'save.game',
                 'DELETE' => 'save.game',
             ],
             'api.rest.skribble'        => [
@@ -113,38 +113,38 @@ return [
             'api.rest.skribble-notify' => [
                 'POST' => 'skribble.notice',
             ],
-            'api.rest.feed' => [
-                'GET'  => 'view.feed',
+            'api.rest.feed'            => [
+                'GET' => 'view.feed',
             ],
-            'api.rest.feed-user' => [
+            'api.rest.feed-user'       => [
                 'GET' => 'view.user.feed',
             ],
-            'api.rest.game-data' => [
+            'api.rest.game-data'       => [
                 'GET' => 'view.game-data',
             ],
-            'api.rest.flag' => [
+            'api.rest.flag'            => [
                 'GET'    => ['view.all.flagged.images', 'view.flagged.image'],
                 'POST'   => 'flag.image',
                 'PUT'    => 'edit.flag',
-                'DELETE' => 'delete.flag'
+                'DELETE' => 'delete.flag',
             ],
-            'sa.rest.settings' => [
+            'sa.rest.settings'         => [
                 'GET' => 'sa.settings',
             ],
-            'api.rest.group-reset' => [
-                'POST' => 'reset.group.code'
+            'api.rest.group-reset'     => [
+                'POST' => 'reset.group.code',
             ],
-            'api.rest.super' => [
+            'api.rest.super'           => [
                 'GET'  => 'get.super.user',
                 'POST' => 'set.super',
             ],
-            'api.rest.address' => [
+            'api.rest.address'         => [
                 'GET'    => ['view.all.addresses', 'view.address'],
                 'POST'   => 'create.address',
                 'PUT'    => 'update.address',
                 'DELETE' => 'delete.address',
             ],
-            'api.rest.group-address' => [
+            'api.rest.group-address'   => [
                 'GET'    => 'view.all.group.addresses',
                 'POST'   => 'attach.group.address',
                 'DELETE' => 'detach.group.address',

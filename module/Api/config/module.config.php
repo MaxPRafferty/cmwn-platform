@@ -56,7 +56,7 @@ return [
         \Api\Controller\SwaggerController::class              => [
             Api\SwaggerHelper::class,
         ],
-        \Api\V1\Rest\GroupUsers\GroupUsersResource::class => [
+        \Api\V1\Rest\GroupUsers\GroupUsersResource::class     => [
             \Group\Service\UserGroupServiceInterface::class,
             \Group\Service\GroupServiceInterface::class,
             \User\Service\UserServiceInterface::class,
@@ -66,6 +66,11 @@ return [
         ],
         \Api\V1\Rest\Game\GameResource::class                 => [
             \Game\Service\GameServiceInterface::class,
+        ],
+        \Api\V1\Rest\SaveGame\SaveGameResource::class         => [
+            \Game\Service\SaveGameServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
+            \Game\Service\UserGameServiceInterface::class,
         ],
     ],
 
@@ -171,8 +176,6 @@ return [
                 \Api\V1\Rest\Reset\ResetResourceFactory::class,
             \Api\V1\Rest\UpdatePassword\UpdatePasswordResource::class =>
                 \Api\V1\Rest\UpdatePassword\UpdatePasswordResourceFactory::class,
-            \Api\V1\Rest\SaveGame\SaveGameResource::class             =>
-                \Api\V1\Rest\SaveGame\SaveGameResourceFactory::class,
             \Api\Listeners\GameRouteListener::class                   =>
                 \Api\Factory\GameRouteListenerFactory::class,
             \Api\V1\Rest\Media\MediaResource::class                   =>
@@ -885,7 +888,7 @@ return [
             'route_name'                 => 'api.rest.save-game',
             'route_identifier_name'      => 'game_id',
             'collection_name'            => 'save_game',
-            'entity_http_methods'        => ['DELETE', 'GET', 'POST'],
+            'entity_http_methods'        => ['DELETE', 'GET', 'PUT'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
             'page_size'                  => 100,
@@ -1882,7 +1885,7 @@ return [
         'Api\V1\Rest\Group\Controller'          => [
             'input_filter' => 'Api\V1\Rest\Group\Validator',
         ],
-        'Api\V1\Rest\GroupUsers\Controller'          => [
+        'Api\V1\Rest\GroupUsers\Controller'     => [
             'input_filter' => 'Api\V1\Rest\GroupUsers\Validator',
         ],
         'Api\V1\Rest\Login\Controller'          => [
@@ -1919,7 +1922,7 @@ return [
             'input_filter' => 'Api\V1\Rest\Password\Validator',
         ],
         'Api\V1\Rest\SaveGame\Controller'       => [
-            'input_filter' => 'Api\V1\Rest\SaveGame\Validator',
+            'input_filter' => 'SaveGame\Validator',
         ],
         'Api\V1\Rest\Skribble\Controller'       => [
             'input_filter' => 'Api\V1\Rest\Skribble\Validator',
@@ -1931,7 +1934,7 @@ return [
             'input_filter' => 'Api\V1\Rest\Flag\Validator',
         ],
         'Api\V1\Rest\Game\Controller'           => [
-            'input_filter' => 'Api\V1\Rest\Game\Validator',
+            'input_filter' => 'Game\Validator',
         ],
         'Api\V1\Rest\GroupReset\Controller'     => [
             'input_filter' => 'Api\V1\Rest\GroupReset\Validator',
@@ -1944,7 +1947,7 @@ return [
         ],
     ],
     'input_filter_specs'     => [
-        'Api\V1\Rest\User\Validator'      => [
+        'Api\V1\Rest\User\Validator'       => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2045,7 +2048,7 @@ return [
                 'error_message' => 'Invalid Birthdate',
             ],
         ],
-        'Api\V1\Rest\Org\Validator'       => [
+        'Api\V1\Rest\Org\Validator'        => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2101,7 +2104,7 @@ return [
                 'description' => 'Meta data for the organization',
             ],
         ],
-        'Api\V1\Rest\Image\Validator'     => [
+        'Api\V1\Rest\Image\Validator'      => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2147,7 +2150,7 @@ return [
                 'error_message' => 'Invalid Moderation status',
             ],
         ],
-        'Api\V1\Rest\Group\Validator'     => [
+        'Api\V1\Rest\Group\Validator'      => [
             [
                 'required'      => true,
                 'validators'    => [
@@ -2241,7 +2244,7 @@ return [
                 'error_message' => 'Invalid Role',
             ],
         ],
-        'Api\V1\Rest\Login\Validator'     => [
+        'Api\V1\Rest\Login\Validator'      => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2259,7 +2262,7 @@ return [
                 'error_message' => 'Invalid Password',
             ],
         ],
-        'Api\V1\Rest\UserImage\Validator' => [
+        'Api\V1\Rest\UserImage\Validator'  => [
             [
                 'required'      => true,
                 'validators'    => [],
@@ -2276,7 +2279,7 @@ return [
                 'description' => 'Url for the image',
             ],
         ],
-        'Api\V1\Rest\Import\Validator'    => [
+        'Api\V1\Rest\Import\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2354,7 +2357,7 @@ return [
                 'description' => 'Start Date for Access Codes',
             ],
         ],
-        'Api\V1\Rest\Password\Validator'  => [
+        'Api\V1\Rest\Password\Validator'   => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2386,7 +2389,7 @@ return [
                 'description' => 'Confirmed password',
             ],
         ],
-        'Api\V1\Rest\Forgot\Validator'    => [
+        'Api\V1\Rest\Forgot\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2395,7 +2398,7 @@ return [
                 'description' => 'Email address or User Name of user to reset',
             ],
         ],
-        'Api\V1\Rest\UserName\Validator'  => [
+        'Api\V1\Rest\UserName\Validator'   => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2409,7 +2412,7 @@ return [
                 'description' => 'The new Username selected',
             ],
         ],
-        'Api\V1\Rest\Flip\Validator'      => [
+        'Api\V1\Rest\Flip\Validator'       => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2425,7 +2428,7 @@ return [
                 'description' => 'The description of the flip',
             ],
         ],
-        'Api\V1\Rest\FlipUser\Validator'  => [
+        'Api\V1\Rest\FlipUser\Validator'   => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -2434,7 +2437,7 @@ return [
                 'description' => 'The Id of the flip the user has earned',
             ],
         ],
-        'Api\V1\Rest\Friend\Validator'    => [
+        'Api\V1\Rest\Friend\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2455,8 +2458,8 @@ return [
                 'description' => 'The user_id',
             ],
         ],
-        'Api\V1\Rest\Suggest\Validator'   => [],
-        'Api\V1\Rest\Reset\Validator'     => [
+        'Api\V1\Rest\Suggest\Validator'    => [],
+        'Api\V1\Rest\Reset\Validator'      => [
             [
                 'required'    => true,
                 'validators'  => [
@@ -2473,22 +2476,6 @@ return [
             ],
         ],
 
-        'Api\V1\Rest\SaveGame\Validator'       => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'data',
-                'description' => 'The Data to save',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'version',
-                'description' => 'The Version of the data',
-            ],
-        ],
         'Api\V1\Rest\Skribble\Validator'       => [
             [
                 'required'      => true,
@@ -2583,128 +2570,6 @@ return [
                 'filters'     => [],
                 'name'        => 'reason',
                 'description' => 'Reason for flagging',
-            ],
-        ],
-        'Api\V1\Rest\Game\Validator'           => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'title',
-                'description' => 'title of the game',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'description',
-                'description' => 'description of the game',
-            ],
-            [
-                'required'    => true,
-                'allow_empty' => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
-                    ],
-                ],
-                'name'        => 'coming_soon',
-                'description' => 'if the game is coming soon',
-            ],
-            [
-                'required'    => false,
-                'allow_empty' => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
-                    ],
-                ],
-                'name'        => 'desktop',
-                'description' => 'Mark the game as desktop only',
-            ],
-            [
-                'required'    => false,
-                'allow_empty' => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
-                    ],
-                ],
-                'name'        => 'global',
-                'description' => 'Mark the game as global',
-            ],
-            [
-                'required'    => false,
-                'allow_empty' => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
-                    ],
-                ],
-                'name'        => 'unity',
-                'description' => 'Mark the game as a unity game',
-            ],
-            [
-                'required'    => false,
-                'allow_empty' => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Boolean::class,
-                        'options' => ['type' => \Zend\Filter\Boolean::TYPE_ALL],
-                    ],
-                ],
-                'name'        => 'featured',
-                'description' => 'Mark the game as featured',
-            ],
-            [
-                'required'    => false,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Application\Utils\Meta\MetaFilter::class,
-                        'options' => [],
-                    ],
-                ],
-                'name'        => 'meta',
-                'description' => 'meta data for game',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [
-                    [
-                        'name'    => \Game\Validator\UriValidator::class,
-                        'options' => [],
-                    ],
-                ],
-                'filters'     => [
-                    [
-                        'name'    => \Application\Filter\JsonToArrayFilter::class,
-                        'options' => [],
-                    ],
-                ],
-                'name'        => 'uris',
-                'description' => 'URI\'s for the game',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [
-                    [
-                        'name'    => \Zend\Filter\Digits::class,
-                        'options' => [],
-                    ],
-                ],
-                'name'        => 'sort_order',
-                'description' => 'Sort Order for the game',
             ],
         ],
         'Api\V1\Rest\GroupReset\Validator'     => [

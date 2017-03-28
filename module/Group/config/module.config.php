@@ -6,21 +6,23 @@ return [
             \Group\RoleValidator::class => \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
         ],
     ],
+
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
-        \Group\Service\GroupService::class     => [
+        \Group\Service\GroupService::class        => [
             'GroupsTable',
         ],
-        \Group\Service\UserGroupService::class => [
+        \Group\Service\UserGroupService::class    => [
             'UserGroupsTable',
             Zend\Db\Adapter\Adapter::class,
         ],
         \Group\Service\GroupAddressService::class => ['Table/GroupAddresses'],
-        \Group\RoleValidator::class => [
+        \Group\RoleValidator::class               => [
             \User\Service\UserServiceInterface::class,
             'Config',
         ],
     ],
-    'service_manager'                                                 => [
+
+    'service_manager' => [
         'aliases'    => [
             \Group\Service\UserGroupServiceInterface::class    => \Group\Service\UserGroupService::class,
             \Group\Service\GroupServiceInterface::class        => \Group\Service\GroupService::class,

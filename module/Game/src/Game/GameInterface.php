@@ -13,7 +13,7 @@ use Application\Utils\Uri\UriCollectionAwareInterface;
  * Game
  *
  * A Game is a specification which represents each game in the system. It contains all the information about the
- * game like when is it creation, updation and deletion times, if it is available to be played, and other meta info.
+ * game like when is it creation, update and deletion times, if it is available to be played, and other meta info.
  *
  * @SWG\Definition(
  *     definition="Game",

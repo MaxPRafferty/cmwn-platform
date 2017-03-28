@@ -312,7 +312,15 @@ return [
             'external_id' => null,
         ],
     ],
-    'user_saves' => [],
+    'user_saves' => [
+        [
+            'user_id' => 'english_student',
+            'game_id' => 'no-flags',
+            'data'    => \Zend\Json\Json::encode(['baz' => 'bat']),
+            'version' => '1.2.3',
+            'created' => '2017-03-28 09:55:02',
+        ],
+    ],
     'user_games' => [
         [
             'user_id' => 'english_student',

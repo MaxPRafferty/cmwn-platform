@@ -2,9 +2,11 @@
 
 namespace Game\Delegator;
 
+use Game\GameInterface;
 use Game\SaveGameInterface;
 use Game\Service\SaveGameService;
 use Game\Service\SaveGameServiceInterface;
+use User\UserInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -89,7 +91,7 @@ class SaveGameDelegator implements SaveGameServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteSaveForUser($user, $game): bool
+    public function deleteSaveForUser(UserInterface $user, GameInterface $game): bool
     {
         $event = new Event('delete.user.save.game', $this->realService, ['user' => $user, 'game' => $game]);
         try {
@@ -117,10 +119,10 @@ class SaveGameDelegator implements SaveGameServiceInterface
      * @inheritdoc
      */
     public function fetchSaveGameForUser(
-        $user,
-        $game,
-        SaveGameInterface $prototype = null,
-        $where = null
+        UserInterface $user,
+        GameInterface $game,
+        $where = null,
+        SaveGameInterface $prototype = null
     ): SaveGameInterface {
         $where = $this->createWhere($where);
         $event = new Event(
@@ -139,7 +141,7 @@ class SaveGameDelegator implements SaveGameServiceInterface
             if ($response->stopped()) {
                 return $response->last();
             }
-            $return = $this->realService->fetchSaveGameForUser($user, $game, $prototype, $where);
+            $return = $this->realService->fetchSaveGameForUser($user, $game, $where, $prototype);
         } catch (\Exception $exception) {
             $event->setName('fetch.user.save.game.error');
             $event->setParam('error', $exception);
@@ -158,7 +160,7 @@ class SaveGameDelegator implements SaveGameServiceInterface
      * @inheritdoc
      */
     public function fetchAllSaveGamesForUser(
-        $user,
+        UserInterface $user,
         $where = null,
         SaveGameInterface $prototype = null
     ): AdapterInterface {

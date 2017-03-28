@@ -74,7 +74,7 @@ class TemplateLinkListener
         }
 
         parse_str(urldecode($firstParts['query'] ?? ''), $params);
-        $templateParts = implode('', array_diff(['per_page', 'page'], array_keys($params)));
+        $templateParts = implode(',', array_diff(['per_page', 'page'], array_keys($params)));
         $firstParts['query'] = !empty($firstParts['query'])
             ? '?' . $firstParts['query'] . '{&' . $templateParts . '}'
             : '{?' . $templateParts . '}';

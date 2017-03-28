@@ -3,6 +3,7 @@
 namespace Game\Service;
 
 use Application\Exception\NotFoundException;
+use Game\GameInterface;
 use Game\SaveGame;
 use Game\SaveGameInterface;
 use User\UserInterface;
@@ -26,47 +27,42 @@ interface SaveGameServiceInterface
     /**
      * Deletes a save for a user
      *
-     * @param UserInterface|string $user the user or the user id
-     * @param UserInterface|string $game the game or the game id
-     *
-     * @todo Update to take in a game and a user
+     * @param UserInterface $user the user or the user id
+     * @param GameInterface $game the game or the game id
      *
      * @return bool
      */
-    public function deleteSaveForUser($user, $game): bool;
+    public function deleteSaveForUser(UserInterface $user, GameInterface $game): bool;
 
     /**
      * Fetches a save for a user
      *
-     * @param UserInterface|string $user        the user or the user id
-     * @param UserInterface|string $game        the game or the game id
+     * @param UserInterface $user               the user or the user id
+     * @param GameInterface $game               the game or the game id
      * @param SaveGameInterface|null $prototype the type of save game to hydrate
      * @param null|array|PredicateSet $where    passes options for the select
      *
-     * @todo Change the signature to have the parameter order be $where then $prototype.
-     * @todo change user and game to be a user and game
-     *
-     * @return SaveGame|SaveGameInterface
+     * @return SaveGameInterface
      * @throws NotFoundException
      */
     public function fetchSaveGameForUser(
-        $user,
-        $game,
-        SaveGameInterface $prototype = null,
-        $where = null
+        UserInterface $user,
+        GameInterface $game,
+        $where = null,
+        SaveGameInterface $prototype = null
     ): SaveGameInterface;
 
     /**
      * Fetch all saves for user
      *
-     * @param UserInterface|string $user        the user or the user id
+     * @param UserInterface $user               the user or the user id
      * @param SaveGameInterface|null $prototype the type of save game to hydrate
      * @param null|array|PredicateSet $where    passes options for the select
      *
      * @return AdapterInterface
      */
     public function fetchAllSaveGamesForUser(
-        $user,
+        UserInterface $user,
         $where = null,
         SaveGameInterface $prototype = null
     ): AdapterInterface;

@@ -42,7 +42,7 @@ abstract class IntegrationTest extends AbstractApigilityTestCase
      * Dispatches Authenticated calls to the API and perform standard checks
      *
      * @param string $login
-     * @param string $route
+     * @param string $path
      * @param int $code
      * @param string $method
      * @param array $params
@@ -51,14 +51,14 @@ abstract class IntegrationTest extends AbstractApigilityTestCase
      */
     protected function dispatchAuthenticatedCall(
         string $login,
-        string $route,
+        string $path,
         int $code = 200,
         $method = 'GET',
         array $params = []
     ) {
         $this->injectValidCsrfToken();
         $user = $this->logInUser($login);
-        $this->dispatchCall($route, $code, $method, $params);
+        $this->dispatchCall($path, $code, $method, $params);
         // TODO Log the request and check that this request fails with an invalid CSRF
         // TODO log the request and check reset password
         return $user;
@@ -109,7 +109,7 @@ abstract class IntegrationTest extends AbstractApigilityTestCase
     {
         if (!isset(self::$userCache[$userName])) {
             /** @var SecurityService $userService */
-            $userService                  = TestHelper::getServiceManager()->get(SecurityService::class);
+            $userService                = TestHelper::getServiceManager()->get(SecurityService::class);
             self::$userCache[$userName] = $userService->fetchUserByUserName($userName);
         }
 

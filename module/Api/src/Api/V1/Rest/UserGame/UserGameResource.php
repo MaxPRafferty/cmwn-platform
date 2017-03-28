@@ -4,6 +4,7 @@ namespace Api\V1\Rest\UserGame;
 
 use Api\V1\Rest\Game\GameCollection;
 use Api\V1\Rest\Game\GameEntity;
+use Game\GameInterface;
 use Game\Service\GameServiceInterface;
 use Game\Service\UserGameService;
 use Game\Service\UserGameServiceInterface;
@@ -96,7 +97,7 @@ class UserGameResource extends AbstractResourceListener
      * )
      * @param  mixed $data
      *
-     * @return ApiProblem|GameEntity
+     * @return ApiProblem|GameEntity|GameInterface
      */
     public function create($data)
     {
