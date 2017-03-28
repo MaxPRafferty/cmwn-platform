@@ -156,10 +156,6 @@ class FriendListener implements AuthenticationServiceAwareInterface
 
         $realEntity->setFriendStatus($status);
 
-        if ($realEntity instanceof MeEntity && $realEntity->getType() === UserInterface::TYPE_CHILD) {
-            $entity->getLinks()->add(new SuggestLink($authUser->getUserId()));
-        }
-
         if ($realEntity instanceof MeEntity) {
             return;
         }

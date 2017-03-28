@@ -118,7 +118,19 @@ class FriendServiceTest extends TestCase
                 ];
                 $this->assertEquals($expected, $actual);
             });
-        $this->assertTrue(
+
+        $result = new ResultSet();
+        $row    = [
+            'uf_user_id'    => $this->user->getUserId(),
+            'friend_status' => FriendInterface::FRIEND,
+        ];
+        $result->initialize([$row]);
+        $this->tableGateway
+            ->shouldReceive('selectWith')
+            ->andReturn($result)
+            ->once();
+        $this->assertInstanceOf(
+            FriendInterface::class,
             $this->friendService->attachFriendToUser($this->user, $this->friend)
         );
     }
@@ -150,7 +162,10 @@ class FriendServiceTest extends TestCase
                 ];
                 $this->assertEquals($expected, $actual);
             })->once();
-        $this->assertTrue($this->friendService->attachFriendToUser($this->user, $this->friend));
+        $this->assertInstanceOf(
+            FriendInterface::class,
+            $this->friendService->attachFriendToUser($this->user, $this->friend)
+        );
     }
 
     /**

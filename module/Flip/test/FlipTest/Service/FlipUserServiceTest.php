@@ -11,6 +11,7 @@ use Ramsey\Uuid\Uuid;
 use User\Adult;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\IsNotNull;
 use Zend\Db\Sql\Predicate\Operator;
@@ -154,6 +155,46 @@ class FlipUserServiceTest extends TestCase
      */
     public function testItShouldAttachFlipToUser()
     {
+        $where = new PredicateSet();
+        $expectedSelect = new Select(['uf' => 'user_flips']);
+
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
+        $expectedSelect->join(
+            ['f' => 'flips'],
+            new Expression('uf.user_id = ?', 'foo-bar'),
+            '*',
+            Select::JOIN_LEFT
+        );
+        $where->addPredicates(['uf.flip_id' => 'baz-bat']);
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+
+        $expectedSelect->where($where);
+
+        $this->tableGateway->shouldReceive('selectWith')
+            ->andReturnUsing(function ($actualSelect) use ($expectedSelect) {
+                $this->assertEquals($expectedSelect, $actualSelect);
+
+                $resultSet = new ResultSet();
+                $resultSet->initialize([]);
+
+                return $resultSet;
+            })->once();
+
+
+        $this->tableGateway->shouldReceive('selectWith')
+            ->andReturnUsing(function ($actualSelect) use ($expectedSelect) {
+                $this->assertEquals($expectedSelect, $actualSelect);
+
+                $resultSet = new ResultSet();
+                $resultSet->initialize([['flip_id' => 'baz-bat']]);
+
+                return $resultSet;
+            })->once();
+
         $this->tableGateway->shouldReceive('insert')
             ->once()
             ->andReturnUsing(function ($actualInsert) {

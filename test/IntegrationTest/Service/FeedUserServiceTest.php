@@ -51,7 +51,7 @@ class FeedUserServiceTest extends TestCase
     {
         $feeds = $this->feedUserService->fetchAllFeedForUser('english_student');
         $feeds = $feeds->getItems(0, $feeds->count());
-        $expected = ['es_friend_feed', 'es_game_feed', 'es_flip_feed'];
+        $expected = ['game_feed', 'es_friend_feed', 'es_flip_feed'];
         $actual = [];
         foreach ($feeds as $userFeed) {
             $actual [] = $userFeed->getFeedId();

@@ -43,37 +43,25 @@
                     "200": {
                         "description": "Address was fetched",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
+                            "$ref": "#/definitions/AddressEntity"
                         }
                     },
                     "404": {
                         "description": "Address not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to access address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
-                        "description": "Not Authenticated",
+                        "description": "Not Authenticated to access address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -107,37 +95,25 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
+                            "$ref": "#/definitions/AddressEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -160,40 +136,31 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "address was deleted",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
-                        }
+                    "204": {
+                        "description": "address was deleted"
                     },
                     "404": {
                         "description": "Address not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access address",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Problem occurred during execution",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -207,6 +174,23 @@
                 "summary": "Fetches multiple addresses the requested user has access too",
                 "description": "A User can request to view all addresses",
                 "parameters": [
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Postal/zip code of the address",
+                        "type": "string",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "type of entity requested",
+                        "type": "string",
+                        "maximum": 1,
+                        "enum": [
+                            "group"
+                        ]
+                    },
                     {
                         "name": "page",
                         "in": "query",
@@ -228,28 +212,19 @@
                     "200": {
                         "description": "Paged addresses",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/AddressCollection"
-                            }
+                            "$ref": "#/definitions/AddressCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "403": {
                         "description": "Not Authorized",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -275,37 +250,580 @@
                     "201": {
                         "description": "Address was created",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/AddressEntity"
-                            }
+                            "$ref": "#/definitions/AddressEntity"
                         }
                     },
                     "422": {
                         "description": "Validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "403": {
                         "description": "Not Authorized",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/{address_id}/group": {
+            "get": {
+                "tags": [
+                    "user-game"
+                ],
+                "summary": "Fetches multiple groups in the requested address",
+                "description": "This resource allows a super user to view all the groups in a given address",
+                "parameters": [
+                    {
+                        "name": "address_id",
+                        "in": "path",
+                        "description": "Address Id of the address",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of groups on each page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged groups in address",
+                        "schema": {
+                            "$ref": "#/definitions/GroupCollection"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed": {
+            "get": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Fetches multiple feed the authenticated user has access too",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of feed returned per page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged feed",
+                        "schema": {
+                            "$ref": "#/definitions/FeedCollection"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Create a new feed",
+                "description": "The authenticated user must be allowed to create a new feed in the system",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Feed data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Feed"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Feed was created",
+                        "schema": {
+                            "$ref": "#/definitions/GroupEntity"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationError"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/feed/{feed_id}": {
+            "get": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Fetch data for a feed",
+                "description": "Fetch the data for a feed if the authenticated user is allowed access.",
+                "parameters": [
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed id to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The requested feed",
+                        "schema": {
+                            "$ref": "#/definitions/FeedEntity"
+                        }
+                    },
+                    "404": {
+                        "description": "Feed not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Update a feed",
+                "description": "The user must be allowed access to the feed and be allowed to edit feed.  403 is returned if the user is not\nallowed access to update the feed. 404 is returned if the feed is not found or the user is not allowed access",
+                "parameters": [
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed Id to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Feed data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Feed"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/FeedEntity"
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationError"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to update a feed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Feed not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Delete a Feed item",
+                "description": "A fetch is done first to ensure the user has access to a Feed.  By default feeds are soft deleted.\nThe authenticated user will get a 403 if the they are not allowed to delete a feed",
+                "parameters": [
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Feed was deleted"
+                    },
+                    "404": {
+                        "description": "Feed not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to delete or access feed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user_id}/feed": {
+            "get": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Fetches multiple user feed the authenticated user has access too",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user id of the user requesting feed",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to fetch",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of user feed returned per page",
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paged user feed",
+                        "schema": {
+                            "$ref": "#/definitions/FeedUserCollection"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user_id}/feed/{feed_id}": {
+            "get": {
+                "tags": [
+                    "feed"
+                ],
+                "summary": "Fetch data for a user feed",
+                "description": "Fetch the data for a user feed if the requesting user is allowed access.",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user id of the user requesting feed",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed id to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The requested user feed",
+                        "schema": {
+                            "$ref": "#/definitions/FeedUserEntity"
+                        }
+                    },
+                    "404": {
+                        "description": "Feed not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "user-feed"
+                ],
+                "summary": "Update a user feed to set the read flag",
+                "description": "This enables to set the read flag for a user feed entry",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user id of the user whose feed needs to be updated",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed Id to update",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Feed data",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UserFeed"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/FeedEntity"
+                        }
+                    },
+                    "422": {
+                        "description": "validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationError"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to update a feed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Feed not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "user-feed"
+                ],
+                "summary": "Create a new feed",
+                "description": "The authenticated user must be allowed to create a new feed in the system",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user id of the user requesting feed",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed id to fetch",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Feed was attached to user",
+                        "schema": {
+                            "$ref": "#/definitions/GroupEntity"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user-feed"
+                ],
+                "summary": "Delete a User Feed item",
+                "description": "A fetch is done first to ensure the user has access to a Feed. Then the entry is deleted",
+                "parameters": [
+                    {
+                        "name": "feed_id",
+                        "in": "path",
+                        "description": "feed Id to deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user id of the user whose feed needs to be deleted",
+                        "required": true,
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Feed was deleted"
+                    },
+                    "404": {
+                        "description": "Feed not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "403": {
+                        "description": "Not Authorized to delete or access feed",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Not Authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -347,28 +865,19 @@
                     "200": {
                         "description": "Paged games",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/GameCollection"
-                            }
+                            "$ref": "#/definitions/GameCollection"
                         }
                     },
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -394,37 +903,25 @@
                     "201": {
                         "description": "Game was created",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GameEntity"
-                            }
+                            "$ref": "#/definitions/GameEntity"
                         }
                     },
                     "422": {
                         "description": "Validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update a game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -458,19 +955,13 @@
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -505,37 +996,25 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GameEntity"
-                            }
+                            "$ref": "#/definitions/GameEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update a game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -558,43 +1037,31 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "Game was deleted"
                     },
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Problem occured during execution",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -644,34 +1111,27 @@
                         "type": "integer",
                         "format": "int32",
                         "maximum": 1
+                    },
+                    {
+                        "name": "org_id",
+                        "in": "query",
+                        "description": "Fetch groups that belong to this org",
+                        "type": "string",
+                        "format": "uuid",
+                        "maximum": 1
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Paged groups",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/GroupCollection"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Group not found",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/GroupCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -697,28 +1157,19 @@
                     "201": {
                         "description": "Group was created",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GroupEntity"
-                            }
+                            "$ref": "#/definitions/GroupEntity"
                         }
                     },
                     "422": {
                         "description": "Validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -746,25 +1197,19 @@
                     "200": {
                         "description": "The requested group",
                         "schema": {
-                            "$ref": "#/definitions/GroupCollection"
+                            "$ref": "#/definitions/GroupEntity"
                         }
                     },
                     "404": {
                         "description": "Group not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -799,37 +1244,31 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GroupEntity"
-                            }
+                            "$ref": "#/definitions/GroupEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to update a group",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -859,40 +1298,25 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Group was deleted",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/GroupEntity"
-                            }
-                        }
+                    "204": {
+                        "description": "Group was deleted"
                     },
                     "404": {
                         "description": "Group not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access group",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -940,28 +1364,13 @@
                     "200": {
                         "description": "The current page of organizations",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/OrgCollection"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Org not found",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/OrgCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 },
@@ -988,28 +1397,19 @@
                     "201": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/OrgEntity"
-                            }
+                            "$ref": "#/definitions/OrgEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1037,28 +1437,19 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/OrgCollection"
-                            }
+                            "$ref": "#/definitions/OrgEntity"
                         }
                     },
                     "404": {
                         "description": "Org not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1094,37 +1485,31 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/OrgEntity"
-                            }
+                            "$ref": "#/definitions/OrgEntity"
+                        }
+                    },
+                    "404": {
+                        "description": "Organization not found",
+                        "schema": {
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
-                        "description": "Not Authorized to create a org",
+                        "description": "Not Authorized to update this organization",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1155,40 +1540,25 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Organization that was deleted",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/OrgEntity"
-                            }
-                        }
+                    "204": {
+                        "description": "Organization was deleted"
                     },
                     "404": {
                         "description": "Organization not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to access or delete the organization",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1241,22 +1611,19 @@
                     "200": {
                         "description": "Paged users",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/UserCollection"
-                            }
+                            "$ref": "#/definitions/UserCollection"
                         }
                     },
                     "404": {
-                        "description": "User not found"
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 },
@@ -1283,31 +1650,19 @@
                     "201": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserEntity"
-                            }
+                            "$ref": "#/definitions/UserEntity"
                         }
                     },
                     "422": {
-                        "description": "validation failed"
-                    },
-                    "404": {
-                        "description": "User not found",
+                        "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1333,7 +1688,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "The User",
                         "schema": {
                             "type": "object",
                             "items": {
@@ -1344,19 +1699,19 @@
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
+                        }
+                    },
+                    "403": {
+                        "description": "Not allowed to access this user",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1391,37 +1746,25 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserEntity"
-                            }
+                            "$ref": "#/definitions/UserEntity"
                         }
                     },
                     "422": {
                         "description": "validation failed",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/ValidationError"
-                            }
+                            "$ref": "#/definitions/ValidationError"
                         }
                     },
                     "403": {
-                        "description": "Not Authorized to create a user",
+                        "description": "Not Authorized to update or access this user",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1451,40 +1794,25 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "User was deleted",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserEntity"
-                            }
-                        }
+                    "204": {
+                        "description": "User was deleted"
                     },
                     "404": {
                         "description": "User not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to delete or access user",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1521,37 +1849,25 @@
                     "200": {
                         "description": "Game was fetched",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserGameEntity"
-                            }
+                            "$ref": "#/definitions/UserGameEntity"
                         }
                     },
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to access game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1586,28 +1902,19 @@
                     "201": {
                         "description": "Game attached to user",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/UserGameEntity"
-                            }
+                            "$ref": "#/definitions/UserGameEntity"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to attach game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1645,37 +1952,25 @@
                     "404": {
                         "description": "Game not found",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/NotFoundError"
-                            }
+                            "$ref": "#/definitions/NotFoundError"
                         }
                     },
                     "403": {
                         "description": "Not Authorized to detach or access game",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Problem occured during execution",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1719,19 +2014,13 @@
                     "200": {
                         "description": "Paged games",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/UserGameCollection"
-                            }
+                            "$ref": "#/definitions/UserGameCollection"
                         }
                     },
                     "401": {
                         "description": "Not Authenticated",
                         "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/Error"
-                            }
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1996,7 +2285,7 @@
                 "_embedded": {
                     "description": "A List of Address Entities",
                     "properties": {
-                        "group": {
+                        "address": {
                             "description": "A List of Addresses",
                             "type": "array",
                             "items": {
@@ -2029,6 +2318,96 @@
             "allOf": [
                 {
                     "$ref": "#/definitions/Address"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
+        "FeedCollection": {
+            "description": "A Collection of Feed from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of Feed Entities",
+                    "properties": {
+                        "feed": {
+                            "description": "A List of feed",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/FeedEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "FeedEntity": {
+            "description": "A feed Entity represents the feed through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the feed might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Feed"
+                },
+                {
+                    "$ref": "#/definitions/SelfLink"
+                }
+            ]
+        },
+        "FeedUserCollection": {
+            "description": "A Collection of User Feed from the API",
+            "properties": {
+                "_embedded": {
+                    "description": "A List of Feed User Entities",
+                    "properties": {
+                        "feed": {
+                            "description": "A List of feed",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/FeedUserEntity"
+                            }
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Pagination"
+                }
+            ]
+        },
+        "FeedUserEntity": {
+            "description": "A feed user Entity represents the user feed through the API",
+            "properties": {
+                "_links": {
+                    "description": "Links the user feed might have",
+                    "type": "object",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SelfLink"
+                        }
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/UserFeed"
                 },
                 {
                     "$ref": "#/definitions/SelfLink"
@@ -2290,6 +2669,16 @@
                 }
             }
         },
+        "Meta": {
+            "description": "Meta data for the entity",
+            "properties": {
+                "meta": {
+                    "description": "Meta data of the entity",
+                    "type": "string",
+                    "format": "array"
+                }
+            }
+        },
         "OuType": {
             "description": "Adds a qualifier to an Organization or Group that the user can understand",
             "properties": {
@@ -2304,6 +2693,89 @@
                     ]
                 }
             }
+        },
+        "Feed": {
+            "description": "A Feed is each user activity that is recorded to display it back to them",
+            "required": [
+                "feed_id",
+                "type",
+                "message",
+                "title",
+                "visibility"
+            ],
+            "properties": {
+                "feed_id": {
+                    "description": "The id of the feed",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "sender": {
+                    "description": "sender of feed",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
+                },
+                "title": {
+                    "description": "Title of the feed item",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Message of the feed item",
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "Priority of the feed item",
+                    "type": "string"
+                },
+                "posted": {
+                    "description": "Posting date of the feed item",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "type": {
+                    "description": "Type of the feed",
+                    "type": "string"
+                },
+                "type_version": {
+                    "description": "Type of the feed",
+                    "type": "string"
+                },
+                "visibility": {
+                    "description": "Visibility level of the feed",
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/DateCreated"
+                },
+                {
+                    "$ref": "#/definitions/DateUpdated"
+                },
+                {
+                    "$ref": "#/definitions/DateDeleted"
+                },
+                {
+                    "$ref": "#/definitions/Meta"
+                }
+            ]
+        },
+        "UserFeed": {
+            "description": "A user Feed is each user activity that is recorded to display it back to them",
+            "properties": {
+                "read_flag": {
+                    "description": "The flag to determine if the user read this feed",
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Feed"
+                }
+            ]
         },
         "Game": {
             "description": "A Game represents every game in the system and details about it",

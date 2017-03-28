@@ -36,8 +36,8 @@ class FlipUserResource extends AbstractResourceListener
         $user = $this->getEvent()->getRouteParam('user');
         $flipId = $this->getInputFilter()->getValue('flip_id');
 
-        $this->flipUserService->attachFlipToUser($user, $flipId);
-        return $this->fetch($flipId);
+        $flip = $this->flipUserService->attachFlipToUser($user, $flipId);
+        return new FlipUserEntity($flip->getArrayCopy());
     }
 
     /**

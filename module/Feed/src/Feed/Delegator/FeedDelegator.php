@@ -8,6 +8,7 @@ use Feed\Service\FeedServiceInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Class FeedDelegator
@@ -51,7 +52,7 @@ class FeedDelegator implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function createFeed(FeedInterface $feed)
+    public function createFeed(FeedInterface $feed) : bool
     {
         $event = new Event(
             'create.feed',
@@ -83,7 +84,7 @@ class FeedDelegator implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null)
+    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null) : FeedInterface
     {
         $event = new Event(
             'fetch.feed',
@@ -116,7 +117,7 @@ class FeedDelegator implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, FeedInterface $prototype = null)
+    public function fetchAll($where = null, FeedInterface $prototype = null) : AdapterInterface
     {
         $event = new Event(
             'fetch.all.feed',
@@ -150,7 +151,7 @@ class FeedDelegator implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function updateFeed(FeedInterface $feed)
+    public function updateFeed(FeedInterface $feed) : bool
     {
         $event = new Event(
             'update.feed',
@@ -182,7 +183,7 @@ class FeedDelegator implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteFeed(FeedInterface $feed, $soft = true)
+    public function deleteFeed(FeedInterface $feed, $soft = true) : bool
     {
         $event = new Event(
             'delete.feed',

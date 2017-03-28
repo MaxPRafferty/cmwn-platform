@@ -4,15 +4,28 @@ return [
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
         \Feed\Service\FeedService::class => ['Table/Feed'],
         \Feed\Service\FeedUserService::class => ['Table/UserFeed'],
-        \Feed\Listener\InjectFeedListener::class => [
-            \Feed\Service\FeedServiceInterface::class,
-            \Feed\Service\FeedUserServiceInterface::class,
-            \Friend\Service\FriendServiceInterface::class,
+    ],
+
+    'actions' => [
+        'factories' => [
+            \Feed\Rule\Action\InjectFeedAction::class        => \Rule\Action\Service\BuildActionFactory::class,
+            \Feed\Rule\Action\InjectUserFeedAction::class    => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+        'shared'    => [
+            \Feed\Rule\Action\InjectFeedAction::class        => false,
+            \Feed\Rule\Action\InjectUserFeedAction::class    => false,
         ],
     ],
-    'shared-listeners' => [
-        'Feed\Listener\InjectFeedListener' => \Feed\Listener\InjectFeedListener::class
+
+    'providers' => [
+        'factories' => [
+            \Feed\Rule\Provider\FeedFromFeedableProvider::class => \Rule\Provider\Service\BuildProviderFactory::class,
+        ],
+        'shared'    => [
+            \Feed\Rule\Provider\FeedFromFeedableProvider::class => false,
+        ],
     ],
+
     'service_manager' => [
         'aliases' => [
             \Feed\Service\FeedServiceInterface::class => \Feed\Service\FeedService::class,

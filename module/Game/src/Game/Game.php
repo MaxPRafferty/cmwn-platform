@@ -6,6 +6,7 @@ use Application\Utils\Date\SoftDeleteTrait;
 use Application\Utils\Date\StandardDatesTrait;
 use Application\Utils\Meta\MetaDataTrait;
 use Application\Utils\PropertiesTrait;
+use Feed\FeedableTrait;
 use Feed\FeedInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
@@ -21,6 +22,7 @@ class Game implements ArraySerializableInterface, GameInterface
     use StandardDatesTrait,
         MetaDataTrait,
         PropertiesTrait,
+        FeedableTrait,
         SoftDeleteTrait {
         SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
         SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
@@ -212,7 +214,7 @@ class Game implements ArraySerializableInterface, GameInterface
      */
     public function getFeedMessage(): string
     {
-        return FeedInterface::MESSAGE_GAME_ADDED;
+        return 'New Game Added';
     }
 
     /**
@@ -244,6 +246,14 @@ class Game implements ArraySerializableInterface, GameInterface
      */
     public function getFeedTitle(): string
     {
-        return FeedInterface::TITLE_FLIP_EARNED;
+        return 'New Game is Added';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedPriority(): string
+    {
+        return '20';
     }
 }

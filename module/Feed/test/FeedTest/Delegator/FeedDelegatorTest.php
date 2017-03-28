@@ -9,10 +9,10 @@ use Feed\Service\FeedService;
 use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
+use Zend\Paginator\Adapter\Iterator;
 
 /**
- * Class FeedDelegatorTest
- * @package FeedTest\Delegator
+ * Unit tests for feed delegator
  * @SuppressWarnings(PHPMD)
  */
 class FeedDelegatorTest extends TestCase
@@ -67,7 +67,7 @@ class FeedDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAll()
     {
-        $result = new \ArrayIterator([]);
+        $result = new Iterator(new \ArrayIterator([]));
 
         $this->feedService
             ->shouldReceive('fetchAll')
@@ -102,6 +102,7 @@ class FeedDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('fetch.all.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return new Iterator(new \ArrayIterator([]));
             });
 
         $this->delegator->fetchAll();
@@ -191,6 +192,7 @@ class FeedDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('fetch.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return new Feed();
             });
 
         $this->delegator->fetchFeed('es_friend_feed');
@@ -283,6 +285,7 @@ class FeedDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('create.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return false;
             });
 
         $this->delegator->createFeed($feed);
@@ -373,6 +376,7 @@ class FeedDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('update.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return false;
             });
 
         $this->delegator->updateFeed($feed);
@@ -464,6 +468,7 @@ class FeedDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('delete.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return false;
             });
 
         $this->delegator->deleteFeed($feed);

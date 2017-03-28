@@ -10,10 +10,10 @@ use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
+use Zend\Paginator\Adapter\Iterator;
 
 /**
- * Class FeedUserDelegatorTest
- * @package FeedTest\Delegator
+ * Unit tests for feed user delegator
  * @SuppressWarnings(PHPMD)
  */
 class FeedUserDelegatorTest extends TestCase
@@ -68,7 +68,7 @@ class FeedUserDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAllFeedForUser()
     {
-        $result = new ResultSet([]);
+        $result = new Iterator(new \ArrayIterator([]));
         $this->service->shouldReceive('fetchAllFeedForUser')
             ->with('english_student', null, null)
             ->andReturn($result)
@@ -108,6 +108,7 @@ class FeedUserDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('fetch.all.user.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return new Iterator(new \ArrayIterator([]));
             });
 
         $this->delegator->fetchAllFeedForUser('english_student');
@@ -213,6 +214,7 @@ class FeedUserDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('fetch.user.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return new UserFeed();
             });
         $this->delegator->fetchFeedForUser('english_student', 'es_friend_feed');
 
@@ -326,6 +328,7 @@ class FeedUserDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('attach.user.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return false;
             });
 
         $this->delegator->attachFeedForUser('english_student', $userFeed);
@@ -437,6 +440,7 @@ class FeedUserDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('update.user.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return false;
             });
 
         $this->delegator->updateFeedForUser('english_student', $userFeed);
@@ -546,6 +550,7 @@ class FeedUserDelegatorTest extends TestCase
         $this->delegator->getEventManager()
             ->attach('delete.user.feed', function (Event $event) {
                 $event->stopPropagation(true);
+                return false;
             });
 
         $this->delegator->deleteFeedForUser('english_student', $userFeed);

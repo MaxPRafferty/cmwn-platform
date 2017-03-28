@@ -17,7 +17,7 @@ trait FriendTrait
      *
      * @return bool
      */
-    public function canFriend()
+    public function canFriend() : bool
     {
         return $this->friendStatus === FriendInterface::CAN_FRIEND;
     }
@@ -27,7 +27,7 @@ trait FriendTrait
      *
      * @return bool
      */
-    public function isFriend()
+    public function isFriend() : bool
     {
         return $this->friendStatus === FriendInterface::FRIEND;
     }
@@ -37,7 +37,7 @@ trait FriendTrait
      *
      * @return bool
      */
-    public function isRequested()
+    public function isRequested() : bool
     {
         return $this->friendStatus === FriendInterface::REQUESTED;
     }
@@ -47,7 +47,7 @@ trait FriendTrait
      *
      * @return bool
      */
-    public function isPending()
+    public function isPending() : bool
     {
         return $this->friendStatus === FriendInterface::PENDING;
     }
@@ -57,9 +57,9 @@ trait FriendTrait
      *
      * @return string
      */
-    public function getFriendStatus()
+    public function getFriendStatus() : string
     {
-        return $this->friendStatus;
+        return (string)$this->friendStatus;
     }
 
     /**
@@ -68,7 +68,7 @@ trait FriendTrait
      * @param string $status
      * @return FriendInterface
      */
-    public function setFriendStatus($status)
+    public function setFriendStatus(string $status = null) : FriendInterface
     {
         $this->friendStatus = $status;
         return $this;

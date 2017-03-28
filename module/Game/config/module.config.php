@@ -3,6 +3,16 @@ return [
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
         \Game\Service\UserGameService::class => ['Table/UserGames'],
     ],
+
+    'rules' => [
+        'factories' => [
+            \Game\Rule\Rule\GameComingSoonRule::class => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+        'shared'    => [
+            \Game\Rule\Rule\GameComingSoonRule::class => false,
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             'Game\Service'                                => \Game\Service\GameService::class,

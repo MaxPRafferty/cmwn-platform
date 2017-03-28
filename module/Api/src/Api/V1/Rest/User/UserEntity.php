@@ -29,11 +29,8 @@ use User\UserInterface;
  */
 class UserEntity extends User implements
     UserInterface,
-    ScopeAwareInterface,
-    FriendInterface
+    ScopeAwareInterface
 {
-    use FriendTrait;
-
     /**
      * @var string
      */

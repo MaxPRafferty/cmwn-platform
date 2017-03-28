@@ -3,6 +3,7 @@
 namespace Friend\Delegator;
 
 use Application\Utils\ServiceTrait;
+use Friend\FriendInterface;
 use Friend\Service\FriendService;
 use Friend\Service\FriendServiceInterface;
 use User\UserInterface;
@@ -11,6 +12,7 @@ use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -66,9 +68,9 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
      * @param null|array|PredicateInterface $where
      * @param null|UserInterface|object $prototype
      * @throws \Exception
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchFriendsForUser($user, $where = null, $prototype = null)
+    public function fetchFriendsForUser($user, $where = null, $prototype = null) : AdapterInterface
     {
         $eventParams = ['user' => $user, 'where' => $where, 'prototype' => $prototype];
         $event       = new Event('fetch.all.friends', $this->realService, $eventParams);
@@ -98,9 +100,9 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
      * @param string|UserInterface $user
      * @param string|UserInterface $friend
      * @throws \Exception
-     * @return bool
+     * @return FriendInterface
      */
-    public function attachFriendToUser($user, $friend)
+    public function attachFriendToUser($user, $friend) : FriendInterface
     {
         $eventParams = ['user' => $user, 'friend' => $friend];
         $event       = new Event('attach.friend', $this->realService, $eventParams);
@@ -112,6 +114,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
         try {
             $return = $this->realService->attachFriendToUser($user, $friend);
             $event->setName('attach.friend.post');
+            $event->setParam('friend', $return);
         } catch (\Exception $exception) {
             $event->setParam('exception', $exception);
             $event->setName('attach.friend.error');
@@ -131,7 +134,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
      * @throws \Exception
      * @return bool
      */
-    public function detachFriendFromUser($user, $friend)
+    public function detachFriendFromUser($user, $friend) : bool
     {
         $eventParams = ['user' => $user, 'friend' => $friend];
         $event       = new Event('detach.friend', $this->realService, $eventParams);
@@ -202,7 +205,7 @@ class FriendServiceDelegator implements FriendServiceInterface, EventManagerAwar
      * @throws \Exception
      * @return string
      */
-    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
+    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend) : string
     {
         $eventParams = ['user' => $user, 'friend' => $friend];
         $event       = new Event('fetch.friend.status', $this->realService, $eventParams);

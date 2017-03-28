@@ -11,7 +11,9 @@ use User\Child;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
@@ -84,13 +86,21 @@ class FeedUserServiceTest extends TestCase
     {
         $select = new Select(['uf' => $this->tableGateway->getTable()]);
         $where = new Where();
-        $where->isNull('f.deleted');
-        $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
+        $where->addPredicate(new PredicateSet(
+            [
+                new Expression('f.visibility = 0'),
+                new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+            ],
+            PredicateSet::COMBINED_BY_OR
+        ));
 
         $select->join(
             ['f' => 'feed'],
-            'uf.feed_id = f.feed_id'
+            'uf.feed_id = f.feed_id',
+            '*',
+            Select::JOIN_RIGHT_OUTER
         );
+        $select->quantifier(Select::QUANTIFIER_DISTINCT);
         $select->columns(['read_flag']);
         $select->where($where);
         $select->order('f.priority DESC');
@@ -114,13 +124,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 
@@ -142,17 +161,24 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
-
-                $this->assertEquals($expectedSelect, $select);
                 $resultSet = new ResultSet();
                 $resultSet->initialize([]);
                 return $resultSet;
@@ -174,13 +200,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 
@@ -209,13 +244,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 
@@ -241,13 +285,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 
@@ -275,13 +328,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 
@@ -305,13 +367,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 
@@ -337,13 +408,22 @@ class FeedUserServiceTest extends TestCase
         $this->tableGateway->shouldReceive('selectWith')
             ->andReturnUsing(function ($select) {
                 $where = new Where();
-                $where->addPredicate(new Operator('uf.user_id', Operator::OP_EQ, 'english_student'));
                 $where->addPredicate(new Operator('uf.feed_id', Operator::OP_EQ, 'es_friend_feed'));
+                $where->addPredicate(new PredicateSet(
+                    [
+                        new Expression('f.visibility = 0'),
+                        new Operator('uf.user_id', Operator::OP_EQ, 'english_student')
+                    ],
+                    PredicateSet::COMBINED_BY_OR
+                ));
 
                 $expectedSelect = new Select(['uf' => $this->tableGateway->getTable()]);
+                $expectedSelect->columns(['read_flag']);
                 $expectedSelect->join(
                     ['f' => 'feed'],
-                    'uf.feed_id = f.feed_id'
+                    'uf.feed_id = f.feed_id',
+                    '*',
+                    Select::JOIN_RIGHT_OUTER
                 );
                 $expectedSelect->where($where);
 

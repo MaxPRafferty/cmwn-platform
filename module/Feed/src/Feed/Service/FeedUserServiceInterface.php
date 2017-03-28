@@ -6,11 +6,10 @@ use Application\Exception\DuplicateEntryException;
 use Application\Exception\NotFoundException;
 use Feed\UserFeedInterface;
 use User\UserInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Interface FeedUserServiceInterface
- * @package Feed\Service
+ * Describes actions that can be performed on user feed
  */
 interface FeedUserServiceInterface
 {
@@ -20,7 +19,7 @@ interface FeedUserServiceInterface
      * @throws DuplicateEntryException
      * @return bool
      */
-    public function attachFeedForUser($user, UserFeedInterface $feed);
+    public function attachFeedForUser($user, UserFeedInterface $feed) : bool;
 
     /**
      * @param string | UserInterface $user
@@ -30,27 +29,32 @@ interface FeedUserServiceInterface
      * @throws NotFoundException
      * @return UserFeedInterface
      */
-    public function fetchFeedForUser($user, string $feedId, $where = null, UserFeedInterface $prototype = null);
+    public function fetchFeedForUser(
+        $user,
+        string $feedId,
+        $where = null,
+        UserFeedInterface $prototype = null
+    ) : UserFeedInterface;
 
     /**
      * @param $user
      * @param $where
      * @param $prototype
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null);
+    public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null) : AdapterInterface;
 
     /**
      * @param string | UserInterface $user
      * @param UserFeedInterface $feed
      * @return bool
      */
-    public function updateFeedForUser($user, UserFeedInterface $feed);
+    public function updateFeedForUser($user, UserFeedInterface $feed) : bool;
 
     /**
      * @param string | UserInterface $user
      * @param UserFeedInterface $feed
      * @return bool
      */
-    public function deleteFeedForUser($user, UserFeedInterface $feed);
+    public function deleteFeedForUser($user, UserFeedInterface $feed) : bool;
 }

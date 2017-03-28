@@ -2,9 +2,11 @@
 
 namespace Friend\Service;
 
+use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use User\UserInterface;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -19,18 +21,18 @@ interface FriendServiceInterface
      * @param string|UserInterface $user
      * @param null|array|PredicateInterface $where
      * @param null|UserInterface|object $prototype
-     * @return DbSelect
+     * @return AdapterInterface
      */
-    public function fetchFriendsForUser($user, $where = null, $prototype = null);
+    public function fetchFriendsForUser($user, $where = null, $prototype = null) : AdapterInterface;
 
     /**
      * Adds a friend to a user
      *
      * @param string|UserInterface $user
      * @param string|UserInterface $friend
-     * @return bool
+     * @return FriendInterface
      */
-    public function attachFriendToUser($user, $friend);
+    public function attachFriendToUser($user, $friend) : FriendInterface;
 
     /**
      * Removes a friend from a user
@@ -39,7 +41,7 @@ interface FriendServiceInterface
      * @param string|UserInterface $friend
      * @return bool
      */
-    public function detachFriendFromUser($user, $friend);
+    public function detachFriendFromUser($user, $friend) : bool;
 
     /**
      * Fetches a friend for a user
@@ -66,5 +68,5 @@ interface FriendServiceInterface
      * @param UserInterface $friend
      * @return string
      */
-    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend);
+    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend) : string;
 }

@@ -47,8 +47,10 @@ class FriendResource extends AbstractResourceListener
     public function create($data)
     {
         $friendId = $this->getInputFilter()->getValue('friend_id');
-        $this->friendService->attachFriendToUser($this->getUser(), $friendId);
-        return $this->fetch($friendId);
+        $friend = $this->friendService->attachFriendToUser($this->getUser(), $friendId);
+        $friend = new FriendEntity($friend->getArrayCopy());
+        $friend->setUserId($friendId);
+        return $friend;
     }
 
     /**

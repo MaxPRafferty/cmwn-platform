@@ -5,6 +5,7 @@ namespace Flip\Delegator;
 use Application\Exception\NotFoundException;
 use Application\Utils\ServiceTrait;
 use Flip\EarnedFlipInterface;
+use Flip\FlipInterface;
 use Flip\Service\FlipUserService;
 use Flip\Service\FlipUserServiceInterface;
 use User\UserInterface;
@@ -90,7 +91,7 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function attachFlipToUser($user, $flip): bool
+    public function attachFlipToUser($user, $flip): EarnedFlipInterface
     {
         $event = new Event(
             'attach.flip',
@@ -112,6 +113,7 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
             throw $attachException;
         }
 
+        $event->setParam('flip', $return);
         $event->setName('attach.flip.post');
         $this->getEventManager()->triggerEvent($event);
 

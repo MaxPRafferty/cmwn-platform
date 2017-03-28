@@ -3,6 +3,7 @@
 namespace Friend\Service;
 
 use Application\Utils\ServiceTrait;
+use Friend\Friend;
 use Friend\FriendInterface;
 use Friend\NotFriendsException;
 use User\UserHydrator;
@@ -16,6 +17,7 @@ use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
@@ -43,15 +45,9 @@ class FriendService implements FriendServiceInterface
     }
 
     /**
-     * Fetches all the friends for a user
-     *
-     * @param string|UserInterface $user
-     * @param null|array|PredicateInterface $where
-     * @param null|UserInterface|object $prototype
-     *
-     * @return DbSelect
+     * @inheritdoc
      */
-    public function fetchFriendsForUser($user, $where = null, $prototype = null)
+    public function fetchFriendsForUser($user, $where = null, $prototype = null) : AdapterInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $where  = $this->createWhere($where);
@@ -86,14 +82,9 @@ class FriendService implements FriendServiceInterface
     }
 
     /**
-     * Adds a friend to a user
-     *
-     * @param string|UserInterface $user
-     * @param string|UserInterface $friend
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function attachFriendToUser($user, $friend)
+    public function attachFriendToUser($user, $friend) : FriendInterface
     {
         $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
         $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;
@@ -108,7 +99,8 @@ class FriendService implements FriendServiceInterface
                 'status'    => FriendInterface::PENDING,
             ]);
 
-            return true;
+
+            return $this->fetchFriendForUser($user, $friend, new Friend());
         }
 
         $isAccepting = $userId == $currentStatus['uf_friend_id'];
@@ -120,24 +112,21 @@ class FriendService implements FriendServiceInterface
                 'status'    => $currentStatus['friend_status'],
             ];
 
+            $currentStatus['friend_status'] = FriendInterface::FRIEND;
+
             $this->tableGateway->update(
                 ['status' => FriendInterface::FRIEND],
                 $where
             );
         }
 
-        return true;
+        return new Friend($currentStatus->getArrayCopy());
     }
 
     /**
-     * Removes a friend from a user
-     *
-     * @param string|UserInterface $user
-     * @param string|UserInterface $friend
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function detachFriendFromUser($user, $friend)
+    public function detachFriendFromUser($user, $friend) : bool
     {
         try {
             /** @var \ArrayObject $currentStatus */
@@ -156,21 +145,7 @@ class FriendService implements FriendServiceInterface
     }
 
     /**
-     * Fetches a friend for a user
-     *
-     * SELECT *
-     * FROM user_friends AS uf
-     *    LEFT JOIN users AS u ON u.user_id = :friend_id
-     * WHERE (uf.user_id = :user_id OR uf.friend_id = :user_id)
-     *   AND (uf.user_id = :friend_id OR uf.friend_id = :friend_id)
-     *
-     * @param UserInterface|string $user
-     * @param UserInterface|string $friend
-     * @param null|object $prototype
-     * @param null|string status
-     *
-     * @throws NotFriendsException
-     * @return object|UserInterface
+     * @inheritdoc
      */
     public function fetchFriendForUser($user, $friend, $prototype = null, $status = null)
     {
@@ -191,16 +166,9 @@ class FriendService implements FriendServiceInterface
     }
 
     /**
-     * Fetches the current friend status of a user
-     *
-     * @throws NotFriendsException
-     *
-     * @param UserInterface $user
-     * @param UserInterface $friend
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend)
+    public function fetchFriendStatusForUser(UserInterface $user, UserInterface $friend) : string
     {
         $userId   = $user instanceof UserInterface ? $user->getUserId() : $user;
         $friendId = $friend instanceof UserInterface ? $friend->getUserId() : $friend;

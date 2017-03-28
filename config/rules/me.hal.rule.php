@@ -366,6 +366,49 @@ return [
                 \Api\Rule\Provider\UserRelationshipProvider::class,
             ],
         ],
+
+        'suggest-hal-link' => [
+            'specification_class' => \Rule\Engine\Specification\EngineSpecification::class,
+            'id'                  => 'suggest-hal-link',
+            'name'                => 'Attaches the suggested friends hal link for a child entity',
+            'when'                => 'renderEntity',
+            'rules'               => [
+                'rule_collection_class' => \Rule\Rule\Collection\RuleCollection::class,
+                'rules'                 => [
+                    [
+                        'name'    => \Api\Rule\Rule\EntityIsType::class,
+                        'options' => [
+                            \Api\V1\Rest\User\MeEntity::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                    [
+                        'name'    => \User\Rule\TypeRule::class,
+                        'options' => [
+                            \User\UserInterface::TYPE_CHILD,
+                            \Api\Rule\Provider\RealEntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'actions'             => [
+                'action_collection_class' => \Rule\Action\Collection\ActionCollection::class,
+                'actions'                 => [
+                    //Add a hal link to the entity
+                    [
+                        'name'    => \Api\Rule\Action\AddHalLinkAction::class,
+                        'options' => [
+                            \Api\Links\SuggestLink::class,
+                            \Api\Rule\Provider\EntityFromEventProvider::PROVIDER_NAME,
+                        ],
+                    ],
+                ],
+            ],
+            'providers'           => [
+                \Api\Rule\Provider\EntityFromEventProvider::class,
+                \Api\Rule\Provider\RealEntityFromEventProvider::class,
+            ],
+        ],
     ],
 
     'specifications' => [
@@ -376,6 +419,7 @@ return [
             'flag-hal-link'      => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'save-game-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
             'user-game-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
+            'suggest-hal-link' => \Rule\Engine\Service\BuildSpecificationFromConfigFactory::class,
         ],
     ],
 ];

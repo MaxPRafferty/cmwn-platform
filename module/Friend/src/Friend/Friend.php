@@ -2,6 +2,8 @@
 
 namespace Friend;
 
+use Feed\FeedableTrait;
+use Feed\FeedInterface;
 use User\User;
 use User\UserInterface;
 
@@ -11,7 +13,7 @@ use User\UserInterface;
  */
 class Friend extends User implements FriendInterface
 {
-    use FriendTrait;
+    use FriendTrait, FeedableTrait;
 
     /**
      * @var string
@@ -36,7 +38,7 @@ class Friend extends User implements FriendInterface
     public function exchangeArray(array $array): UserInterface
     {
         parent::exchangeArray($array);
-        $this->setFriendStatus($array['friend_status']);
+        $this->setFriendStatus($array['friend_status'] ?? null);
         return $this;
     }
 
@@ -55,5 +57,53 @@ class Friend extends User implements FriendInterface
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedMessage(): string
+    {
+        return 'Friendship Made';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedMeta(): array
+    {
+        return ['users' => ['friend_id' => $this->getUserId()]];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedVisiblity(): int
+    {
+        return FeedInterface::VISIBILITY_FRIENDS;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedType(): string
+    {
+        return FeedInterface::TYPE_FRIEND;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedTitle(): string
+    {
+        return 'You are now friends with';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedPriority(): string
+    {
+        return '15';
     }
 }

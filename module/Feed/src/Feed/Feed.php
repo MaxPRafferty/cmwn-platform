@@ -11,8 +11,7 @@ use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
 
 /**
- * Class Feed
- * @package Feed
+ * Implementation class for feed interface
  */
 class Feed implements FeedInterface
 {
@@ -37,7 +36,7 @@ class Feed implements FeedInterface
     protected $title;
 
     /**
-     * @var String | mixed
+     * @var String
      */
     protected $message;
 
@@ -267,7 +266,7 @@ class Feed implements FeedInterface
     /**
      * @inheritdoc
      */
-    public function setTypeVersion(string $typeVersion = '1')
+    public function setTypeVersion(string $typeVersion = null)
     {
         $this->typeVersion = (string) $typeVersion;
     }

@@ -3,6 +3,7 @@
 namespace Flip;
 
 use BaconStringUtils\Slugifier;
+use Feed\FeedableTrait;
 use Feed\FeedInterface;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
@@ -12,6 +13,8 @@ use Zend\Filter\Word\UnderscoreToCamelCase;
  */
 class Flip implements FlipInterface
 {
+    use FeedableTrait;
+
     /**
      * @var string
      */
@@ -144,7 +147,7 @@ class Flip implements FlipInterface
      */
     public function getFeedMessage(): string
     {
-        return FeedInterface::MESSAGE_FLIP_EARNED;
+        return 'Flip Earned';
     }
 
     /**
@@ -176,6 +179,14 @@ class Flip implements FlipInterface
      */
     public function getFeedTitle(): string
     {
-        return FeedInterface::TITLE_FLIP_EARNED;
+        return 'You have earned a new flip';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedPriority(): string
+    {
+        return '5';
     }
 }

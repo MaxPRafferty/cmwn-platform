@@ -80,11 +80,9 @@ class FeedServiceTest extends TestCase
 
         $actual = [];
         $expected = [
+            'game_feed',
             'es_friend_feed',
             'ms_friend_feed',
-            'es_game_feed',
-            'ms_game_feed',
-            'os_game_feed',
             'es_flip_feed',
             'ms_flip_feed',
             'os_flip_feed'

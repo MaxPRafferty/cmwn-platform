@@ -6,8 +6,71 @@ use User\UserInterface;
 use Zend\Stdlib\ArraySerializableInterface;
 
 /**
- * Interface FeedInterface
- * @package Feed
+ * A Feed
+ *
+ * A Feed is the activity that is recorded for each individual user.
+ * There might also be a global feed that is common to all users
+ *
+ * @SWG\Definition(
+ *     definition="Feed",
+ *     description="A Feed is each user activity that is recorded to display it back to them",
+ *     required={"feed_id", "type", "message", "title", "visibility"},
+ *     allOf={
+ *          @SWG\Schema(ref="#/definitions/DateCreated"),
+ *          @SWG\Schema(ref="#/definitions/DateUpdated"),
+ *          @SWG\Schema(ref="#/definitions/DateDeleted"),
+ *          @SWG\Schema(ref="#/definitions/Meta"),
+ *     },
+ *     @SWG\Property(
+ *          type="string",
+ *          format="uuid",
+ *          property="feed_id",
+ *          description="The id of the feed"
+ *     ),
+ *     @SWG\Property(
+ *          type="array",
+ *          property="sender",
+ *          description="sender of feed",
+ *          @SWG\Items(ref="#/definitions/User")
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="title",
+ *          description="Title of the feed item"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="message",
+ *          description="Message of the feed item"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="priority",
+ *          description="Priority of the feed item"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          format="date-time",
+ *          property="posted",
+ *          description="Posting date of the feed item"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="type",
+ *          description="Type of the feed"
+ *     ),
+ *     @SWG\Property(
+ *          type="string",
+ *          property="type_version",
+ *          description="Type of the feed"
+ *     ),
+ *     @SWG\Property(
+ *          type="integer",
+ *          format="int32",
+ *          property="visibility",
+ *          description="Visibility level of the feed"
+ *     )
+ * )
  */
 interface FeedInterface extends ArraySerializableInterface
 {
@@ -15,17 +78,12 @@ interface FeedInterface extends ArraySerializableInterface
     const TYPE_GAME = 'GAME';
     const TYPE_FLIP = 'FLIP';
     const TYPE_SKRIBBLE = 'SKRIBBLE';
-    const TITLE_FLIP_EARNED = 'You have earned a new flip';
-    const TITLE_FRIENDSHIP_MADE = 'You are now friends with';
-    const TITLE_SKRIBBLE_RECEIVED = 'You received a skribble';
-    const TITLE_GAME_ADDED = 'New Game is Added';
-    const MESSAGE_FLIP_EARNED = 'Flip Earned';
-    const MESSAGE_FRIENDSHIP_MADE = 'Friendship Made';
-    const MESSAGE_SKRIBBLE_RECEIVED = 'Skribble Received';
-    const MESSAGE_GAME_ADDED = 'New Game Added';
-    const VISIBILITY_SELF = 4;
+
+    const FEED_TYPE_VERSION = '1';
+
+    const VISIBILITY_GLOBAL = 1;
     const VISIBILITY_FRIENDS = 2;
-    const VISIBILITY_GLOBAL = 0;
+    const VISIBILITY_SELF = 4;
 
     /**
      * @return string
@@ -115,7 +173,7 @@ interface FeedInterface extends ArraySerializableInterface
     /**
      * @param string $typeVersion
      */
-    public function setTypeVersion(string $typeVersion = 1);
+    public function setTypeVersion(string $typeVersion = null);
 
     /**
      * @return array

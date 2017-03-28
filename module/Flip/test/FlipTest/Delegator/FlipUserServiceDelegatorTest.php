@@ -207,13 +207,14 @@ class FlipUserServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallAttachFlipToUser()
     {
+        $flip = new EarnedFlip(['flip_id' => 'baz-bat']);
         $this->flipService->shouldReceive('attachFlipToUser')
             ->with('foo-bar', 'baz-bat')
             ->once()
-            ->andReturn(true);
+            ->andReturn($flip);
 
         $this->assertEquals(
-            true,
+            $flip,
             $this->delegator->attachFlipToUser('foo-bar', 'baz-bat'),
             'Flip User Service did not return the result from the real service'
         );
@@ -237,7 +238,7 @@ class FlipUserServiceDelegatorTest extends TestCase
             [
                 'name'   => 'attach.flip.post',
                 'target' => $this->flipService,
-                'params' => ['flip' => 'baz-bat', 'user' => 'foo-bar'],
+                'params' => ['flip' => $flip, 'user' => 'foo-bar'],
             ],
             $this->calledEvents[1],
             FlipUserServiceDelegator::class. ' did not trigger attach.flip.post correctly'
@@ -297,17 +298,18 @@ class FlipUserServiceDelegatorTest extends TestCase
      */
     public function testItShouldNotCallAttachFlipToUser()
     {
+        $flip = new EarnedFlip(['flip_id' => 'baz-bat']);
         $this->flipService->shouldReceive('attachFlipToUser')
             ->never();
 
-        $this->delegator->getEventManager()->attach('attach.flip', function (Event $event) {
+        $this->delegator->getEventManager()->attach('attach.flip', function (Event $event) use ($flip) {
             $event->stopPropagation(true);
 
-            return false;
+            return $flip;
         });
 
         $this->assertEquals(
-            false,
+            $flip,
             $this->delegator->attachFlipToUser('foo-bar', 'baz-bat'),
             FlipUserServiceDelegator::class. ' did not return the result from the attach.flip event'
         );

@@ -157,19 +157,16 @@ class FlipUserResourceTest extends TestCase
         $this->assertResponseStatusCode(201);
 
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('items', $body['_embedded']);
-        $embedded = $body['_embedded']['items'];
+        $this->assertArrayHasKey('flip_id', $body);
 
-        $this->assertArrayHasKey('flip_id', $embedded[0]);
-        $this->assertArrayHasKey('title', $embedded[0]);
-        $this->assertArrayHasKey('description', $embedded[0]);
-        $this->assertEquals($embedded[0]['flip_id'], "polar-bear");
-        $this->assertEquals($embedded[0]['title'], "Polar Bear");
+        $this->assertArrayHasKey('title', $body);
+        $this->assertArrayHasKey('description', $body);
+        $this->assertEquals($body['flip_id'], "polar-bear");
+        $this->assertEquals($body['title'], "Polar Bear");
         $this->assertEquals(
             'The magnificent Polar Bear is in danger of becoming extinct.' .
             '  Get the scoop and go offline for the science on how they stay warm!',
-            $embedded[0]['description']
+            $body['description']
         );
     }
 

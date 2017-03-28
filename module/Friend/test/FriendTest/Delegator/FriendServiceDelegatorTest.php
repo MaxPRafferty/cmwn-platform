@@ -3,6 +3,8 @@
 namespace FriendTest\Delegator;
 
 use Application\Utils\ServiceTrait;
+use Friend\Friend;
+use Friend\FriendInterface;
 use Friend\Service\FriendService;
 use Friend\Service\FriendServiceInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -12,6 +14,7 @@ use User\UserInterface;
 use Zend\EventManager\Event;
 use User\Child;
 use Zend\EventManager\EventManager;
+use Zend\Paginator\Adapter\Iterator;
 
 /**
  * Test FriendServiceDelegatorTest
@@ -99,7 +102,7 @@ class FriendServiceDelegatorTest extends TestCase
      */
     public function setUpFriend()
     {
-        $this->friend = new Child(['user_id' => 'friend_user']);
+        $this->friend = new Friend(['user_id' => 'friend_user']);
     }
 
     /**
@@ -107,7 +110,9 @@ class FriendServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchFriendsForUser()
     {
+        $result = new Iterator(new \ArrayIterator([['foo' => 'bar']]));
         $this->friendService->shouldReceive('fetchFriendsForUser')
+            ->andReturn($result)
             ->once();
         $this->delegator->fetchFriendsForUser($this->user);
         $this->assertEquals(2, count($this->calledEvents));
@@ -125,7 +130,7 @@ class FriendServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.friends.post',
                 'target' => $this->friendService,
-                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => null],
+                'params' => ['user' => $this->user, 'where' => null, 'prototype' => null, 'result' => $result],
             ],
             $this->calledEvents[1],
             'Post event for fetchFriendsForUser Is incorrect'
@@ -138,6 +143,7 @@ class FriendServiceDelegatorTest extends TestCase
     public function testItShouldCallAttachFriendToUser()
     {
         $this->friendService->shouldReceive('attachFriendToUser')
+            ->andReturn($this->friend)
             ->once();
 
         $this->delegator->attachFriendToUser($this->user, $this->friend);
@@ -264,6 +270,7 @@ class FriendServiceDelegatorTest extends TestCase
             ->never();
         $this->delegator->getEventManager()->attach('fetch.all.friends', function (Event $event) {
             $event->stopPropagation(true);
+            return new Iterator(new \ArrayIterator([['foo' => 'bar']]));
         });
         $this->delegator->fetchFriendsForUser($this->user);
         $this->assertEquals(1, count($this->calledEvents));
@@ -288,6 +295,7 @@ class FriendServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('attach.friend', function (Event $event) {
             $event->stopPropagation(true);
+            return new Friend();
         });
         $this->delegator->attachFriendToUser($this->user, $this->friend);
 
@@ -313,6 +321,7 @@ class FriendServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('detach.friend', function (Event $event) {
             $event->stopPropagation(true);
+            return false;
         });
         $this->delegator->detachFriendFromUser($this->user, $this->friend);
 
@@ -362,6 +371,7 @@ class FriendServiceDelegatorTest extends TestCase
 
         $this->delegator->getEventManager()->attach('fetch.friend.status', function (Event $event) {
             $event->stopPropagation(true);
+            return FriendInterface::NOT_FRIENDS;
         });
         $this->delegator->fetchFriendStatusForUser($this->user, $this->friend);
         $this->assertEquals(1, count($this->calledEvents));

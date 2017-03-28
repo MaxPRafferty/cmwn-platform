@@ -7,6 +7,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\LoginBasicAuthTrait;
 use IntegrationTest\TestHelper;
 use Skribble\Service\SkribbleServiceInterface;
+use Skribble\Skribble;
 use Skribble\SkribbleInterface;
 
 /**
@@ -52,6 +53,9 @@ class SkribbleNotifyResourceTest extends TestCase
      */
     public function testItShouldUpdateSkribbleToCompleteWithSuccess()
     {
+        $skribble = $this->skribbleService->fetchSkribble('foo-bar', new Skribble());
+        $skribble->setFriendTo('math_student');
+        $this->skribbleService->updateSkribble($skribble);
         $this->loginBasicAuth($this->getRequest());
         $this->dispatch('/user/english_student/skribble/foo-bar/notice', 'POST', ['status' => 'success']);
 

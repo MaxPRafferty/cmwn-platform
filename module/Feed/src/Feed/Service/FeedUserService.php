@@ -16,12 +16,12 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Db\Sql\Predicate\Expression;
 
 /**
- * Class FeedUserService
- * @package Feed\Service
+ * Implementation of feed user interface
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FeedUserService implements FeedUserServiceInterface
@@ -45,7 +45,7 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function attachFeedForUser($user, UserFeedInterface $feed)
+    public function attachFeedForUser($user, UserFeedInterface $feed) : bool
     {
         try {
             $this->fetchFeedForUser($user, $feed->getFeedId());
@@ -65,8 +65,12 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeedForUser($user, string $feed, $where = null, UserFeedInterface $prototype = null)
-    {
+    public function fetchFeedForUser(
+        $user,
+        string $feed,
+        $where = null,
+        UserFeedInterface $prototype = null
+    ) : UserFeedInterface {
         $userId = $user instanceof UserInterface? $user->getUserId() : $user;
         $feedId = $feed instanceof FeedInterface? $feed->getFeedId() : $feed;
 
@@ -89,7 +93,7 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null)
+    public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null) : AdapterInterface
     {
         $userId = $user instanceof UserInterface? $user->getUserId() : $user;
 
@@ -110,7 +114,7 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function updateFeedForUser($user, UserFeedInterface $feed)
+    public function updateFeedForUser($user, UserFeedInterface $feed) : bool
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 
@@ -128,7 +132,7 @@ class FeedUserService implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteFeedForUser($user, UserFeedInterface $feed)
+    public function deleteFeedForUser($user, UserFeedInterface $feed) : bool
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
 

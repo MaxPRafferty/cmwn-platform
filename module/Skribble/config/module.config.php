@@ -7,6 +7,15 @@ return [
         ],
     ],
 
+    'rules' => [
+        'factories' => [
+            \Skribble\Rule\Rule\SkribbleStatusEqualsRule::class => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+        'shared'    => [
+            \Skribble\Rule\Rule\SkribbleStatusEqualsRule::class => false,
+        ],
+    ],
+
     'service_manager' => [
         'aliases'    => [
             \Skribble\Service\SkribbleServiceInterface::class => \Skribble\Service\SkribbleService::class,

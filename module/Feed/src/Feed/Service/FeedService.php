@@ -14,11 +14,11 @@ use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
- * Class FeedService
- * @package Feed\Service
+ * Implementation of feed user interface
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FeedService implements FeedServiceInterface
@@ -42,7 +42,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function createFeed(FeedInterface $feed)
+    public function createFeed(FeedInterface $feed) : bool
     {
         $feed->setFeedId(Uuid::uuid1()->toString());
         $feed->setCreated(new \DateTime);
@@ -65,7 +65,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null)
+    public function fetchFeed(string $feedId, $where = null, FeedInterface $prototype = null) : FeedInterface
     {
         $prototype = $prototype === null ? new Feed() : $prototype;
         $where = $this->createWhere($where);
@@ -85,7 +85,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, FeedInterface $prototype = null)
+    public function fetchAll($where = null, FeedInterface $prototype = null) : AdapterInterface
     {
         $where = $this->createWhere($where);
         $where->isNull('ft.deleted');
@@ -104,7 +104,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function updateFeed(FeedInterface $feed)
+    public function updateFeed(FeedInterface $feed) : bool
     {
         $this->fetchFeed($feed->getFeedId());
         $data = $feed->getArrayCopy();
@@ -122,7 +122,7 @@ class FeedService implements FeedServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteFeed(FeedInterface $feed, $soft = true)
+    public function deleteFeed(FeedInterface $feed, $soft = true) : bool
     {
         $this->fetchFeed($feed->getFeedId());
 

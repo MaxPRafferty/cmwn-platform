@@ -4,6 +4,7 @@ namespace Skribble;
 
 use Application\Utils\Date\SoftDeleteTrait;
 use Application\Utils\Date\StandardDatesTrait;
+use Feed\FeedableTrait;
 use Feed\FeedInterface;
 use Skribble\Rule\SkribbleRules;
 use User\UserInterface;
@@ -17,6 +18,7 @@ use Zend\Json\Json;
 class Skribble implements SkribbleInterface
 {
     use StandardDatesTrait,
+        FeedableTrait,
         SoftDeleteTrait {
             SoftDeleteTrait::getDeleted insteadof StandardDatesTrait;
             SoftDeleteTrait::setDeleted insteadof StandardDatesTrait;
@@ -280,7 +282,7 @@ class Skribble implements SkribbleInterface
      */
     public function getFeedMessage(): string
     {
-        return FeedInterface::MESSAGE_SKRIBBLE_RECEIVED;
+        return 'Skribble Received';
     }
 
     /**
@@ -288,7 +290,7 @@ class Skribble implements SkribbleInterface
      */
     public function getFeedMeta(): array
     {
-        return ['skribble_id' => $this->getSkribbleId()];
+        return ['skribble_id' => $this->getSkribbleId(), 'users' => ['user_id' => $this->getFriendTo()]];
     }
 
     /**
@@ -312,6 +314,22 @@ class Skribble implements SkribbleInterface
      */
     public function getFeedTitle(): string
     {
-        FeedInterface::TITLE_SKRIBBLE_RECEIVED;
+        return 'You received a skribble';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFeedSender(): string
+    {
+        return $this->getCreatedBy();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFeedPriority(): string
+    {
+        return '10';
     }
 }

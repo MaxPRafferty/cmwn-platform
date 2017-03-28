@@ -59,6 +59,10 @@ return [
         \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
         ],
+        \Api\V1\Rest\FlipUser\FlipUserResource::class         => [
+            \Flip\Service\FlipUserServiceInterface::class,
+            \Flip\Service\FlipServiceInterface::class,
+        ]
     ],
 
     'actions' => [

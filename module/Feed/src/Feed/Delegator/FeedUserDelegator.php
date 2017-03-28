@@ -8,6 +8,7 @@ use Feed\Service\FeedUserServiceInterface;
 use Feed\UserFeedInterface;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Class FeedUserDelegator
@@ -61,7 +62,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function attachFeedForUser($user, UserFeedInterface $feed)
+    public function attachFeedForUser($user, UserFeedInterface $feed) : bool
     {
         $event = new Event(
             'attach.user.feed',
@@ -93,8 +94,12 @@ class FeedUserDelegator implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchFeedForUser($user, string $feedId, $where = null, UserFeedInterface $prototype = null)
-    {
+    public function fetchFeedForUser(
+        $user,
+        string $feedId,
+        $where = null,
+        UserFeedInterface $prototype = null
+    ) : UserFeedInterface {
         $event = new Event(
             'fetch.user.feed',
             $this->service,
@@ -126,7 +131,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null)
+    public function fetchAllFeedForUser($user, $where = null, UserFeedInterface $prototype = null) : AdapterInterface
     {
         $event = new Event(
             'fetch.all.user.feed',
@@ -160,7 +165,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function updateFeedForUser($user, UserFeedInterface $feed)
+    public function updateFeedForUser($user, UserFeedInterface $feed) : bool
     {
         $event = new Event(
             'update.user.feed',
@@ -192,7 +197,7 @@ class FeedUserDelegator implements FeedUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function deleteFeedForUser($user, UserFeedInterface $feed)
+    public function deleteFeedForUser($user, UserFeedInterface $feed) : bool
     {
         $event = new Event(
             'delete.user.feed',

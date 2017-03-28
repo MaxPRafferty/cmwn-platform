@@ -361,7 +361,7 @@ class SkribbleServiceTest extends TestCase
             'deleted'     => null,
             'status'      => 'COMPLETE',
             'created_by'  => 'english_student',
-            'friend_to'   => null,
+            'friend_to'   => 'math_student',
             'read'        => false,
             'rules'       => [
                 'background' => null,

@@ -42,6 +42,32 @@ class FlipUserService implements FlipUserServiceInterface
     }
 
     /**
+     * @param string $userId
+     * @param string $flipId
+     * @param EarnedFlipInterface|null $prototype
+     * @return EarnedFlip|EarnedFlipInterface
+     * @throws NotFoundException
+     */
+    public function fetchEarnedFlipForUser(string $userId, string $flipId, EarnedFlipInterface $prototype = null)
+    {
+        $select = $this->buildSelect($userId, ['uf.flip_id' => $flipId]);
+
+        $prototype = $prototype ?? new EarnedFlip();
+
+        $result = $this->pivotTable->selectWith($select);
+
+        $row = $result->current();
+
+        if (!$row) {
+            throw new NotFoundException('flip not found for user');
+        }
+
+        $prototype->exchangeArray((array)$row);
+
+        return $prototype;
+    }
+
+    /**
      * @inheritdoc
      */
     public function fetchEarnedFlipsForUser(
@@ -70,21 +96,28 @@ class FlipUserService implements FlipUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function attachFlipToUser($user, $flip): bool
+    public function attachFlipToUser($user, $flip): EarnedFlipInterface
     {
         $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
         $flipId = $flip instanceof FlipInterface ? $flip->getFlipId() : $flip;
-        $earned = DateTimeFactory::factory('now');
-        $ackId  = Uuid::uuid1();
 
-        $this->pivotTable->insert([
-            'user_id'        => $userId,
-            'flip_id'        => $flipId,
-            'earned'         => $earned->format(\DateTime::ISO8601),
-            'acknowledge_id' => $ackId,
-        ]);
+        try {
+            $flip = $this->fetchEarnedFlipForUser($userId, $flipId);
+        } catch (NotFoundException $nf) {
+            $earned = DateTimeFactory::factory('now');
+            $ackId  = Uuid::uuid1();
 
-        return true;
+            $this->pivotTable->insert([
+                'user_id'        => $userId,
+                'flip_id'        => $flipId,
+                'earned'         => $earned->format(\DateTime::ISO8601),
+                'acknowledge_id' => $ackId,
+            ]);
+
+            $flip = $this->fetchEarnedFlipForUser($userId, $flipId);
+        }
+
+        return $flip;
     }
 
     /**
