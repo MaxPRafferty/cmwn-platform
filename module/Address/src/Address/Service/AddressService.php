@@ -12,6 +12,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Class AddressService
@@ -57,7 +58,7 @@ class AddressService implements AddressServiceInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($where = null, AddressInterface $prototype = null) : DbSelect
+    public function fetchAll($where = null, AddressInterface $prototype = null) : AdapterInterface
     {
         $where = $this->createWhere($where);
         $prototype = $prototype ?? new Address([]);

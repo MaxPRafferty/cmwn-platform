@@ -3,7 +3,7 @@
 namespace AssetTest\Delegator;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Asset\Image;
 use Asset\Delegator\ImageServiceDelegator;
 use Zend\Db\Sql\Where;

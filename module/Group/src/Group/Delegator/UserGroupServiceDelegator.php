@@ -7,18 +7,14 @@ use Application\Utils\ServiceTrait;
 use Group\GroupInterface;
 use Group\Service\UserGroupService;
 use Group\Service\UserGroupServiceInterface;
+use Org\OrganizationInterface;
 use User\UserInterface;
-use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Paginator\Adapter\DbSelect;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Class UserGroupServiceDelegator
- * @package Group\Delegator
+ * A Delegator for the UserGroupService that dispatches events before calling the service
  */
 class UserGroupServiceDelegator implements UserGroupServiceInterface
 {
@@ -30,47 +26,25 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
     protected $realService;
 
     /**
-     * @var array
-     */
-    protected $eventIdentifier = [
-        UserGroupServiceInterface::class,
-        UserGroupService::class
-    ];
-
-    /**
      * @var EventManagerInterface
      */
     protected $events;
 
     /**
      * UserGroupServiceDelegator constructor.
+     *
      * @param UserGroupService $realService
      * @param EventManagerInterface $events
      */
     public function __construct(UserGroupService $realService, EventManagerInterface $events)
     {
-        $this->realService     = $realService;
+        $this->realService = $realService;
         $this->events      = $events;
-        $events->addIdentifiers(array_merge(
+        $this->events->addIdentifiers(array_merge(
             [UserGroupServiceInterface::class, static::class, UserGroupService::class],
             $events->getIdentifiers()
         ));
-        $this->attachDefaultListeners();
-    }
 
-    /**
-     * @return EventManagerInterface
-     */
-    public function getEventManager()
-    {
-        return $this->events;
-    }
-
-    /**
-     * Attaches the HideDeleteEntitiesListener
-     */
-    protected function attachDefaultListeners()
-    {
         $hideListener = new HideDeletedEntitiesListener(
             ['fetch.group.users', 'fetch.org.users', 'fetch.all.user.users'],
             []
@@ -78,19 +52,29 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
 
         $hideListener->setEntityParamKey('item');
         $hideListener->setDeletedField('u.deleted');
-        $hideListener->attach($this->getEventManager());
+        $hideListener->attach($this->events);
     }
 
     /**
-     * Attaches a user to a group
-     *
-     * @param GroupInterface $group
-     * @param UserInterface $user
-     * @param RoleInterface|string $role
-     * @return bool
-     * @throws \RuntimeException
+     * @return EventManagerInterface
      */
-    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role)
+    public function getEventManager(): EventManagerInterface
+    {
+        return $this->events;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAlias(): string
+    {
+        return $this->realService->getAlias();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attachUserToGroup(GroupInterface $group, UserInterface $user, $role): bool
     {
         $eventParams = ['group' => $group, 'user' => $user, 'role' => $role];
         $event       = new Event('attach.user', $this->realService, $eventParams);
@@ -110,17 +94,14 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
 
         $event = new Event('attach.user.post', $this->realService, $eventParams);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * Detaches a user from a group
-     *
-     * @param GroupInterface $group
-     * @param UserInterface $user
-     * @return bool
+     * @inheritdoc
      */
-    public function detachUserFromGroup(GroupInterface $group, UserInterface $user)
+    public function detachUserFromGroup(GroupInterface $group, UserInterface $user): bool
     {
         $eventParams = ['group' => $group, 'user' => $user];
         $event       = new Event('detach.user', $this->realService, $eventParams);
@@ -140,87 +121,83 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
 
         $event = new Event('detach.user.post', $this->realService, $eventParams);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * @param GroupInterface|\Zend\Db\Sql\Where $group
-     * @param array $where
-     * @param null $prototype
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function fetchUsersForGroup(GroupInterface $group, $where = null, $prototype = null)
-    {
+    public function fetchUsersForGroup(
+        GroupInterface $group,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface {
         $where       = $this->createWhere($where);
         $eventParams = ['group' => $group, 'where' => $where];
         $event       = new Event('fetch.group.users', $this->realService, $eventParams);
-        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
-            return false;
+        $response    = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
         }
 
         try {
             $return = $this->realService->fetchUsersForGroup($group, $where, $prototype);
         } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
-            $event                    = new Event('fetch.group.users.error', $this->realService, $eventParams);
+            $event->setParam('exception', $attachException);
+            $event->setName('fetch.group.users.error');
             $this->getEventManager()->triggerEvent($event);
-
-            return false;
+            throw $attachException;
         }
 
-        $event = new Event('fetch.group.users.post', $this->realService, $eventParams);
+        $event->setName('fetch.group.users.post');
+        $event->setParam('results', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * @param $organization
-     * @param array $where
-     * @param null $prototype
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function fetchUsersForOrg($organization, $where = null, $prototype = null)
-    {
+    public function fetchUsersForOrg(
+        OrganizationInterface $organization,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface {
         $where       = $this->createWhere($where);
         $eventParams = ['organization' => $organization, 'where' => $where];
         $event       = new Event('fetch.org.users', $this->realService, $eventParams);
-        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
-            return false;
+        $response    = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
         }
 
         try {
             $return = $this->realService->fetchUsersForOrg($organization, $where, $prototype);
-        } catch (\Exception $attachException) {
-            $eventParams['exception'] = $attachException;
-            $event                    = new Event('fetch.org.users.error', $this->realService, $eventParams);
+        } catch (\Exception $exception) {
+            $event->setParam('exception', $exception);
+            $event->setName('fetch.org.users.error');
             $this->getEventManager()->triggerEvent($event);
 
-            return false;
+            throw $exception;
         }
 
-        $event = new Event('fetch.org.users.post', $this->realService, $eventParams);
+        $event->setName('fetch.org.users.post');
+        $event->setParam('result', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * Finds all the groups for a user
-     *
-     * SELECT *
-     * FROM groups g
-     * LEFT JOIN user_groups ug ON ug.group_id = g.group_id
-     * WHERE ug.user_id = 'baz-bat'
-     *
-     * @param Where|GroupInterface|string $user
-     * @param null $where
-     * @param object $prototype
-     * @throws \Exception
-     * @return DbSelect
+     * @inheritdoc
      */
-    public function fetchGroupsForUser($user, $where = null, $prototype = null)
-    {
+    public function fetchGroupsForUser(
+        UserInterface $user,
+        $where = null,
+        GroupInterface $prototype = null
+    ): AdapterInterface {
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.group', $this->realService, $eventParams);
         $response    = $this->getEventManager()->triggerEvent($event);
@@ -241,22 +218,22 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
 
         $event->setName('fetch.user.group.post');
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * Fetches organizations for a user
-     *
-     * @param Where|GroupInterface|string $user
-     * @param mixed $prototype
-     * @return DbSelect
+     * @inheritdoc
      */
-    public function fetchOrganizationsForUser($user, $prototype = null)
-    {
+    public function fetchOrganizationsForUser(
+        UserInterface $user,
+        OrganizationInterface $prototype = null
+    ): AdapterInterface {
         $eventParams = ['user' => $user];
         $event       = new Event('fetch.user.orgs', $this->realService, $eventParams);
-        if ($this->getEventManager()->triggerEvent($event)->stopped()) {
-            return false;
+        $response    = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
         }
 
         try {
@@ -267,24 +244,24 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
             $event->setName('fetch.user.orgs.error');
             $this->getEventManager()->triggerEvent($event);
 
-            return false;
+            throw $attachException;
         }
 
         $event->setName('fetch.user.orgs.post');
+        $event->setParam('result', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * Fetches all the Users a user has a relationship with
-     *
-     * @param $user
-     * @param null $where
-     * @param null $prototype
-     * @return bool|DbSelect
+     * @inheritdoc
      */
-    public function fetchAllUsersForUser($user, $where = null, $prototype = null)
-    {
+    public function fetchAllUsersForUser(
+        UserInterface $user,
+        $where = null,
+        UserInterface $prototype = null
+    ): AdapterInterface {
         $eventParams = ['user' => $user, 'where' => $where, 'prototype' => $prototype];
         $event       = new Event('fetch.all.user.users', $this->realService, $eventParams);
         $response    = $this->getEventManager()->triggerEvent($event);
@@ -300,10 +277,12 @@ class UserGroupServiceDelegator implements UserGroupServiceInterface
             $event->setParam('exception', $attachException);
             $event->setName('fetch.all.user.users.error');
             $this->getEventManager()->triggerEvent($event);
-            return false; //FIXME throw exception again
+
+            throw $attachException;
         }
 
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 }

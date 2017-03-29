@@ -3,9 +3,7 @@
 namespace User;
 
 /**
- * Interface AdultInterface
- *
- * Defines what is needed for an Adult
+ * This Allows a user to be marked as an adult
  */
 interface AdultInterface extends UserInterface
 {

@@ -3,6 +3,7 @@
 namespace Application\Utils;
 
 use Application\Exception\NotFoundException;
+use Application\Utils\Date\SoftDeleteInterface;
 use Zend\Db\Sql\Predicate\IsNull;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\EventManager\Event;

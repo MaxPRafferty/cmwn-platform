@@ -36,5 +36,6 @@ class MeAdultDataProvider extends AbstractRoleDataProvider
         $this->setAllowed('view.all.group.addresses');
         $this->setAllowed('attach.group.address');
         $this->setAllowed('detach.group.address');
+        $this->setAllowed('create.user.flip');
     }
 }

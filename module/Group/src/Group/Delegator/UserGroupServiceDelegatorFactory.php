@@ -7,9 +7,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
 
 /**
- * Class UserGroupServiceDelegatorFactory
- * @package Group\Delegator
- * @codeCoverageIgnore
+ * Creates a UserGroupServiceDelegator
  */
 class UserGroupServiceDelegatorFactory implements DelegatorFactoryInterface
 {
@@ -18,6 +16,9 @@ class UserGroupServiceDelegatorFactory implements DelegatorFactoryInterface
      */
     public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
     {
-        return new UserGroupServiceDelegator($callback(), $container->get(EventManagerInterface::class));
+        return new UserGroupServiceDelegator(
+            $callback(),
+            $container->get(EventManagerInterface::class)
+        );
     }
 }

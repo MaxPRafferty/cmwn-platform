@@ -6,7 +6,7 @@ use Api\V1\Rest\Ack\AckResource;
 use Flip\EarnedFlip;
 use Flip\EarnedFlipInterface;
 use Flip\Service\FlipUserServiceInterface;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use ZF\ApiProblem\ApiProblem;
 
 /**

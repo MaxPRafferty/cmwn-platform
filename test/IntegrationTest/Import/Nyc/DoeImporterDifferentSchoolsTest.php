@@ -2,7 +2,6 @@
 
 namespace IntegrationTest\Import\Nyc;
 
-use Group\Group;
 use Group\GroupInterface;
 use Import\Importer\Nyc\DoeImporter;
 use IntegrationTest\AbstractDbTestCase as TestCase;
@@ -10,6 +9,7 @@ use IntegrationTest\DataSets\ArrayDataSet;
 use IntegrationTest\TestHelper;
 use Security\Authentication\AuthenticationService;
 use Security\Service\SecurityService;
+use User\Child;
 use Zend\Log\Logger;
 use Zend\Paginator\Paginator;
 
@@ -46,9 +46,9 @@ class DoeImporterDifferentSchoolsTest extends TestCase
     public function setUpLoggedInUser()
     {
         /** @var SecurityService $userService */
-        $userService = TestHelper::getDbServiceManager()->get(SecurityService::class);
+        $userService = TestHelper::getServiceManager()->get(SecurityService::class);
         $user        = $userService->fetchUserByUserName('super_user');
-        $authService = TestHelper::getDbServiceManager()->get(AuthenticationService::class);
+        $authService = TestHelper::getServiceManager()->get(AuthenticationService::class);
         $authService->getStorage()->write($user);
     }
 
@@ -119,7 +119,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
      */
     protected function checkClasses()
     {
-        $groups = new Paginator($this->getGroupService()->fetchAll(null, true, new Group));
+        $groups = new Paginator($this->getGroupService()->fetchAll());
 
         $expectedGroups = [
             [
@@ -191,7 +191,9 @@ class DoeImporterDifferentSchoolsTest extends TestCase
      */
     protected function checkEnglishStudent()
     {
-        $userGroups = new Paginator($this->getUserGroupService()->fetchGroupsForUser('english_student'), new Group());
+        $user = new Child();
+        $user->setUserId('english_student');
+        $userGroups = $this->getUserGroupService()->fetchGroupsForUser($user)->getItems(0, 100);
 
         $expectedGroupNames = [
             'English Class',
@@ -200,7 +202,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
         $actualGroupNames   = [];
 
         foreach ($userGroups as $group) {
-            $actualGroupNames[] = $group['title'];
+            $actualGroupNames[] = $group->getTitle();
         }
 
         $this->assertEquals(
@@ -217,7 +219,10 @@ class DoeImporterDifferentSchoolsTest extends TestCase
      */
     protected function checkMathStudent()
     {
-        $userGroups = new Paginator($this->getUserGroupService()->fetchGroupsForUser('math_student'), new Group());
+        $user = new Child();
+        $user->setUserId('math_student');
+        $userGroups = $this->getUserGroupService()->fetchGroupsForUser($user)->getItems(0, 100);
+
 
         $expectedGroupNames = [
             'Gina\'s School',
@@ -226,7 +231,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
         $actualGroupNames   = [];
 
         foreach ($userGroups as $group) {
-            $actualGroupNames[] = $group['title'];
+            $actualGroupNames[] = $group->getTitle();
         }
 
         $this->assertEquals(
@@ -243,8 +248,8 @@ class DoeImporterDifferentSchoolsTest extends TestCase
      */
     protected function checkPadma()
     {
-        $padma      = $this->getUserService()->fetchUserByExternalId('01C123-0001');
-        $userGroups = new Paginator($this->getUserGroupService()->fetchGroupsForUser($padma));
+        $user      = $this->getUserService()->fetchUserByExternalId('01C123-0001');
+        $userGroups = $this->getUserGroupService()->fetchGroupsForUser($user)->getItems(0, 100);
 
         $expectedGroupNames = [
             'History of Magic',
@@ -254,7 +259,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
         $actualGroupNames = [];
 
         foreach ($userGroups as $group) {
-            $actualGroupNames[] = $group['title'];
+            $actualGroupNames[] = $group->getTitle();
         }
 
         $this->assertEquals(
@@ -271,8 +276,8 @@ class DoeImporterDifferentSchoolsTest extends TestCase
      */
     protected function checkLee()
     {
-        $padma      = $this->getUserService()->fetchUserByExternalId('01C123-0002');
-        $userGroups = new Paginator($this->getUserGroupService()->fetchGroupsForUser($padma));
+        $user      = $this->getUserService()->fetchUserByExternalId('01C123-0002');
+        $userGroups = $this->getUserGroupService()->fetchGroupsForUser($user)->getItems(0, 100);
 
         $expectedGroupNames = [
             'History of Magic',
@@ -282,7 +287,7 @@ class DoeImporterDifferentSchoolsTest extends TestCase
         $actualGroupNames = [];
 
         foreach ($userGroups as $group) {
-            $actualGroupNames[] = $group['title'];
+            $actualGroupNames[] = $group->getTitle();
         }
 
         $this->assertEquals(

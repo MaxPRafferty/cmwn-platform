@@ -4,14 +4,11 @@ namespace Org\Service;
 
 use Application\Exception\NotFoundException;
 use Org\OrganizationInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Interface OrganizationServiceInterface
- *
- * @author Chuck "MANCHUCK" Reeves <chuck@manchuck.com>
  */
 interface OrganizationServiceInterface
 {
@@ -21,20 +18,22 @@ interface OrganizationServiceInterface
      * Returns a pagination adapter by default
      *
      * @param null|PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
+     * @param null|OrganizationInterface $prototype
+     *
+     * @return AdapterInterface
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null);
+    public function fetchAll($where = null, OrganizationInterface $prototype = null): AdapterInterface;
 
     /**
      * Fetches one Organization from the DB using the id
      *
-     * @param $orgId
+     * @param string $orgId
+     * @param OrganizationInterface $prototype
+     *
      * @return OrganizationInterface
      * @throws NotFoundException
      */
-    public function fetchOrganization($orgId);
+    public function fetchOrganization(string $orgId, OrganizationInterface $prototype = null): OrganizationInterface;
 
     /**
      * Deletes an Organization from the database
@@ -43,9 +42,10 @@ interface OrganizationServiceInterface
      *
      * @param OrganizationInterface $org
      * @param bool $soft
+     *
      * @return bool
      */
-    public function deleteOrganization(OrganizationInterface $org, $soft = true);
+    public function deleteOrganization(OrganizationInterface $org, bool $soft = true): bool;
 
     /**
      * Saves an Organization
@@ -53,31 +53,34 @@ interface OrganizationServiceInterface
      * If the org_id is null, then a new Organization is created
      *
      * @param OrganizationInterface $org
+     *
      * @return bool
      */
-    public function createOrganization(OrganizationInterface $org);
+    public function createOrganization(OrganizationInterface $org): bool;
 
     /**
      * Saves an existing Organization
      *
      * @param OrganizationInterface $org
+     *
      * @return bool
      * @throws NotFoundException
      */
-    public function updateOrganization(OrganizationInterface $org);
+    public function updateOrganization(OrganizationInterface $org): bool;
 
     /**
      * Fetches the type of groups that are in this organization
      *
-     * @param $organization
-     * @return string[]
-     */
-    public function fetchGroupTypes($organization);
-
-    /**
-     * Fetches all the types of organizations
+     * @param OrganizationInterface $organization
      *
      * @return string[]
      */
-    public function fetchOrgTypes();
+    public function fetchGroupTypes(OrganizationInterface $organization): array;
+
+    /**
+     * Fetches all the types of organizations registered in the system
+     *
+     * @return string[]
+     */
+    public function fetchOrgTypes(): array;
 }

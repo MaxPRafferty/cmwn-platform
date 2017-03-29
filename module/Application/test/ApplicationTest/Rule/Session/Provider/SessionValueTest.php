@@ -3,7 +3,7 @@
 namespace ApplicationTest\Rule\Session\Provider;
 
 use Application\Rule\Session\Provider\SessionValue;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Authentication\Storage\NonPersistent;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;

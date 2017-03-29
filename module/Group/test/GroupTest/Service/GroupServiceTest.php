@@ -2,15 +2,21 @@
 
 namespace GroupTest\Service;
 
+use Application\Exception\NotFoundException;
+use Application\Utils\Type\TypeInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Group\Group;
 use Group\Service\GroupService;
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Driver\Pdo\Connection;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Predicate as Where;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use Zend\Db\TableGateway\TableGateway;
 
 /**
  * Test GroupServiceTest
@@ -53,19 +59,19 @@ class GroupServiceTest extends TestCase
     /**
      * @before
      */
-    public function setUpGateWay()
+    public function setUpGateway()
     {
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\Driver\DriverInterface $driver */
-        $driver = \Mockery::mock('\Zend\Db\Adapter\Driver\DriverInterface');
+        $driver = \Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('getConnection')->andReturn($this->connection)->byDefault();
 
         /** @var \Mockery\MockInterface|\Zend\Db\Adapter\AdapterInterface $adapter */
-        $adapter = \Mockery::mock('\Zend\Db\Adapter\Adapter');
+        $adapter = \Mockery::mock(Adapter::class);
         $adapter->shouldReceive('getPlatform')->byDefault();
         $adapter->shouldReceive('getDriver')->andReturn($driver)->byDefault();
 
-        $this->tableGateway = \Mockery::mock('\Zend\Db\TableGateway\TableGateway');
+        $this->tableGateway = \Mockery::mock(TableGateway::class);
         $this->tableGateway->shouldReceive('getTable')->andReturn('groups')->byDefault();
         $this->tableGateway->shouldReceive('getAdapter')->andReturn($adapter)->byDefault();
     }
@@ -75,58 +81,7 @@ class GroupServiceTest extends TestCase
      */
     public function setUpConnection()
     {
-        $this->connection = \Mockery::mock('Zend\Db\Adapter\Driver\Pdo\Connection');
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnPaginatingAdapterByDefaultOnFetchAll()
-    {
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->never();
-
-        $result = $this->groupService->fetchAll(null);
-        $this->assertInstanceOf('\Zend\Paginator\Adapter\AdapterInterface', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorOnFetchAllWithNoWhereAndNotPaginating()
-    {
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) {
-                $this->assertInstanceOf('Zend\Db\Sql\Predicate\Predicate', $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->groupService->fetchAll(null, false);
-        $this->assertInstanceOf('\Iterator', $result);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldReturnIteratorPassWhereWhenGivenWhereAndNotPaginating()
-    {
-        $expectedWhere = new Where();
-        $this->tableGateway
-            ->shouldReceive('select')
-            ->andReturnUsing(function ($where) use (&$expectedWhere) {
-                /** @var \Zend\Db\Sql\Predicate\Predicate $where */
-                $this->assertSame($expectedWhere, $where);
-
-                return new \ArrayIterator([]);
-            })
-            ->once();
-
-        $result = $this->groupService->fetchAll($expectedWhere, false);
-        $this->assertInstanceOf('\Iterator', $result);
+        $this->connection = \Mockery::mock(Connection::class);
     }
 
     /**
@@ -135,10 +90,12 @@ class GroupServiceTest extends TestCase
     public function testItShouldSaveNewGroup()
     {
         $newGroup = new Group();
+        $newGroup->setOrganizationId('fizz-buzz')
+            ->setTitle('rockin out 101')
+            ->setType(TypeInterface::TYPE_CLASS);
 
         $this->assertNull($newGroup->getCreated());
         $this->assertNull($newGroup->getUpdated());
-        $this->assertEmpty($newGroup->getGroupId());
 
         $this->tableGateway->shouldReceive('insert')
             ->andReturnUsing(function ($data) use (&$newGroup) {
@@ -273,9 +230,9 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFound()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Group not Found');
-// \$this->setExpectedException\(?\s+?(.*)?,(.*)\);
+
         $result = new ResultSet();
         $result->initialize([]);
         $this->tableGateway->shouldReceive('select')
@@ -289,7 +246,7 @@ class GroupServiceTest extends TestCase
      */
     public function testItShouldThrowNotFoundExceptionWhenGroupIsNotFoundByExternalId()
     {
-        $this->expectException('Application\Exception\NotFoundException');
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Group not Found');
 
         $result = new ResultSet();
@@ -377,10 +334,16 @@ class GroupServiceTest extends TestCase
     public function testItShouldRebuildTreeWhenChildAddedForNewTree()
     {
         $parent = new Group([
-            'group_id'   => 'parent',
-            'head'       => 0,
-            'tail'       => 0,
-            'network_id' => 'baz-bat',
+            'group_id'        => 'parent',
+            'head'            => 0,
+            'tail'            => 0,
+            'network_id'      => 'baz-bat',
+            'title'           => 'rockin out 101',
+            'type'            => TypeInterface::TYPE_CLASS,
+            'organization_id' => 'fizz-buzz',
+            'description'     => 'in this class you learn how to rock it',
+            'external_id'     => 'baz-bat',
+            'parent_id'       => 'manchuck',
         ]);
 
         $child = new Group();
@@ -425,7 +388,7 @@ class GroupServiceTest extends TestCase
             ->once()
             ->ordered('update');
 
-        $this->groupService->addChildToGroup($parent, $child);
+        $this->groupService->attachChildToGroup($parent, $child);
         $this->assertEquals(
             'baz-bat',
             $child->getNetworkId(),
@@ -442,13 +405,16 @@ class GroupServiceTest extends TestCase
         $this->connection->shouldReceive('commit')->once();
         $this->connection->shouldReceive('rollback')->never();
 
-        $parent = new Group([
-            'group_id'        => 'parent',
-            'organization_id' => 'org',
-            'head'            => 1,
-            'tail'            => 2,
-            'network_id'      => 'baz-bat',
-        ]);
+        $parent = new Group();
+        $parent->setGroupId('parent')
+            ->setTitle('manchuck')
+            ->setOrganizationId('org')
+            ->setDescription('manchuck 2')
+            ->setExternalId('foo-bar')
+            ->setHead(1)
+            ->setTail(2)
+            ->setNetworkId('baz-bat')
+            ->setType('school');
 
         $child = new Group();
         $child->setGroupId('child');
@@ -532,7 +498,7 @@ class GroupServiceTest extends TestCase
             ->once()
             ->ordered('update');
 
-        $this->groupService->addChildToGroup($parent, $child);
+        $this->groupService->attachChildToGroup($parent, $child);
         $this->assertEquals(
             'baz-bat',
             $child->getNetworkId(),

@@ -8,7 +8,6 @@ use Api\V1\Rest\User\UserEntity;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Org\Rule\Provider\OrgGroupTypesProvider;
 use Org\Service\OrganizationServiceInterface;
-use PHPUnit\Framework\TestCase;
 use Zend\EventManager\Event;
 use ZF\Hal\Entity;
 
@@ -16,7 +15,7 @@ use ZF\Hal\Entity;
  * Class OrgGroupTypesProviderTest
  * @package OrgTest\Rule\Provider
  */
-class OrgGroupTypesProviderTest extends TestCase
+class OrgGroupTypesProviderTest extends \PHPUnit_Framework_TestCase
 {
     use MockeryPHPUnitIntegration;
 

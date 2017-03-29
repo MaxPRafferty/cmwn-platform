@@ -3,7 +3,7 @@
 namespace RuleTest\Rule\Date;
 
 use Application\Utils\Date\DateTimeFactory;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rule\Rule\Date\DateBetweenRule;
 use Rule\Item\BasicRuleItem;
 

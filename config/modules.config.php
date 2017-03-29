@@ -53,4 +53,6 @@ return [
     'Sa',
     'Rule',
     'Address',
+    'Search',
+    'ZfrCors',
 ];

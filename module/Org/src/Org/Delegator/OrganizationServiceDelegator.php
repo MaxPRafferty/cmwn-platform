@@ -2,23 +2,17 @@
 
 namespace Org\Delegator;
 
-use Application\Exception\NotFoundException;
 use Application\Utils\HideDeletedEntitiesListener;
 use Application\Utils\ServiceTrait;
 use Org\Service\OrganizationService;
 use Org\Service\OrganizationServiceInterface;
 use Org\OrganizationInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * Class OrganizationServiceDelegator
- *
- * @package Organization\Delegator
+ * A Delegator that will dispatch events for the OrganizationService
  */
 class OrganizationServiceDelegator implements OrganizationServiceInterface
 {
@@ -41,6 +35,7 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface
 
     /**
      * OrganizationServiceDelegator constructor.
+     *
      * @param OrganizationService $service
      * @param EventManagerInterface $events
      */
@@ -48,191 +43,228 @@ class OrganizationServiceDelegator implements OrganizationServiceInterface
     {
         $this->realService = $service;
         $this->events      = $events;
-        $events->addIdentifiers(array_merge(
+        $this->events->addIdentifiers(array_merge(
             [OrganizationServiceInterface::class, static::class, OrganizationService::class],
             $events->getIdentifiers()
         ));
-        $this->attachDefaultListeners();
+        $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post'], 'o');
+        $hideListener->setEntityParamKey('org');
+        $hideListener->attach($this->events);
     }
 
     /**
-     * @return EventManagerInterface
+     * Returns the event manager
      */
-    public function getEventManager()
+    public function getEventManager(): EventManagerInterface
     {
         return $this->events;
     }
 
     /**
-     * Attaches the Hides Deleted Listeners
+     * @inheritdoc
      */
-    protected function attachDefaultListeners()
+    public function createOrganization(OrganizationInterface $org): bool
     {
-        $hideListener = new HideDeletedEntitiesListener(['fetch.all.orgs'], ['fetch.org.post'], 'o');
-        $hideListener->setEntityParamKey('org');
+        $event = new Event('save.new.org', $this->realService, ['org' => $org]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
 
-        $hideListener->attach($this->getEventManager());
-    }
+            if ($response->stopped()) {
+                return $response->last();
+            }
 
-    /**
-     * @param OrganizationInterface $org
-     * @return mixed
-     */
-    public function createOrganization(OrganizationInterface $org)
-    {
-        $event    = new Event('save.new.org', $this->realService, ['org' => $org]);
-        $response = $this->getEventManager()->triggerEvent($event);
+            $return = $this->realService->createOrganization($org);
+        } catch (\Throwable $exception) {
+            $event->setName('save.new.org.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
 
-        if ($response->stopped()) {
-            return $response->last();
+            throw $exception;
         }
 
-        $return = $this->realService->createOrganization($org);
-
-        $event    = new Event('save.new.org.post', $this->realService, ['org' => $org]);
+        $event->setName('save.new.org.post');
+        $event->setParam('result', $return);
         $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
 
     /**
-     * @param OrganizationInterface $org
-     * @return mixed
+     * @inheritdoc
      */
-    public function updateOrganization(OrganizationInterface $org)
+    public function updateOrganization(OrganizationInterface $org): bool
     {
-        $event    = new Event('save.org', $this->realService, ['org' => $org]);
-        $response = $this->getEventManager()->triggerEvent($event);
+        $event = new Event('save.org', $this->realService, ['org' => $org]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
 
-        if ($response->stopped()) {
-            return $response->last();
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->updateOrganization($org);
+        } catch (\Throwable $exception) {
+            $event->setName('save.org.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $exception;
         }
 
-        $return = $this->realService->updateOrganization($org);
-
-        $event    = new Event('save.org.post', $this->realService, ['org' => $org]);
+        $event->setName('save.org.post');
+        $event->setParam('result', $return);
         $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
 
     /**
-     * Fetches one organization from the DB using the id
-     *
-     * @param $orgId
-     * @return OrganizationInterface
-     * @throws NotFoundException
+     * @inheritdoc
      */
-    public function fetchOrganization($orgId)
+    public function fetchOrganization(string $orgId, OrganizationInterface $prototype = null): OrganizationInterface
     {
-        $event    = new Event('fetch.org', $this->realService, ['org_id' => $orgId]);
-        $response = $this->getEventManager()->triggerEvent($event);
+        $event = new Event('fetch.org', $this->realService, ['org_id' => $orgId]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
 
-        if ($response->stopped()) {
-            return $response->last();
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->fetchOrganization($orgId, $prototype);
+        } catch (\Throwable $exception) {
+            $event->setName('fetch.org.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $exception;
         }
 
-        $return = $this->realService->fetchOrganization($orgId);
-        $event    = new Event('fetch.org.post', $this->realService, ['org_id' => $orgId, 'org' => $return]);
+        $event->setName('fetch.org.post');
+        $event->setParam('org', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * Deletes a org from the database
-     *
-     * Soft deletes unless soft is false
-     *
-     * @param OrganizationInterface $org
-     * @param bool $soft
-     * @return bool
+     * @inheritdoc
      */
-    public function deleteOrganization(OrganizationInterface $org, $soft = true)
+    public function deleteOrganization(OrganizationInterface $org, bool $soft = true): bool
     {
-        $event    = new Event('delete.org', $this->realService, ['org' => $org, 'soft' => $soft]);
-        $response = $this->getEventManager()->triggerEvent($event);
+        $event = new Event('delete.org', $this->realService, ['org' => $org, 'soft' => $soft]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
 
-        if ($response->stopped()) {
-            return $response->last();
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->deleteOrganization($org, $soft);
+        } catch (\Throwable $exception) {
+            $event->setName('delete.org.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $exception;
         }
 
-        $return = $this->realService->deleteOrganization($org, $soft);
-        $event  = new Event('delete.org.post', $this->realService, ['org' => $org, 'soft' => $soft]);
+        $event->setName('delete.org.post');
+        $event->setParam('result', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * @param null|\Zend\Db\Sql\Predicate\PredicateInterface|array $where
-     * @param bool $paginate
-     * @param null|object $prototype
-     * @return HydratingResultSet|DbSelect
+     * @inheritdoc
      */
-    public function fetchAll($where = null, $paginate = true, $prototype = null)
+    public function fetchAll($where = null, OrganizationInterface $prototype = null): AdapterInterface
     {
-        $where    = $this->createWhere($where);
-        $event    = new Event(
+        $where = $this->createWhere($where);
+        $event = new Event(
             'fetch.all.orgs',
             $this->realService,
-            ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype]
+            ['where' => $where, 'prototype' => $prototype]
         );
 
-        $response = $this->getEventManager()->triggerEvent($event);
-        if ($response->stopped()) {
-            return $response->last();
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->fetchAll($where, $prototype);
+        } catch (\Throwable $exception) {
+            $event->setName('fetch.all.orgs.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $exception;
         }
 
-        $return   = $this->realService->fetchAll($where, $paginate, $prototype);
-        $event    = new Event(
-            'fetch.all.orgs.post',
-            $this->realService,
-            ['where' => $where, 'paginate' => $paginate, 'prototype' => $prototype, 'orgs' => $return]
-        );
+        $event->setName('fetch.all.orgs.post');
+        $event->setParam('orgs', $return);
         $this->getEventManager()->triggerEvent($event);
 
         return $return;
     }
 
     /**
-     * Fetches the type of groups that are in this organization
-     *
-     * @param $organization
-     * @return string[]
+     * @inheritdoc
      */
-    public function fetchGroupTypes($organization)
+    public function fetchGroupTypes(OrganizationInterface $organization): array
     {
-        $event    = new Event('fetch.org.group.types', $this->realService, ['organization' => $organization]);
-        $response = $this->getEventManager()->triggerEvent($event);
+        $event = new Event('fetch.org.group.types', $this->realService, ['organization' => $organization]);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
 
-        if ($response->stopped()) {
-            return $response->last();
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->fetchGroupTypes($organization);
+        } catch (\Throwable $exception) {
+            $event->setName('fetch.org.group.types.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $exception;
         }
 
-        $return = $this->realService->fetchGroupTypes($organization);
         $event->setName('fetch.org.group.types.post');
         $event->setParam('results', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 
     /**
-     * Fetches all the types of organizations
-     *
-     * @return string[]
+     * @inheritdoc
      */
-    public function fetchOrgTypes()
+    public function fetchOrgTypes(): array
     {
-        $event    = new Event('fetch.org.types', $this->realService);
-        $response = $this->getEventManager()->triggerEvent($event);
+        $event = new Event('fetch.org.types', $this->realService);
+        try {
+            $response = $this->getEventManager()->triggerEvent($event);
 
-        if ($response->stopped()) {
-            return $response->last();
+            if ($response->stopped()) {
+                return $response->last();
+            }
+
+            $return = $this->realService->fetchOrgTypes();
+        } catch (\Throwable $exception) {
+            $event->setName('fetch.org.types.error');
+            $event->setParam('exception', $exception);
+            $this->getEventManager()->triggerEvent($event);
+
+            throw $exception;
         }
 
-        $return = $this->realService->fetchOrgTypes();
         $event->setName('fetch.org.types.post');
         $event->setParam('results', $return);
         $this->getEventManager()->triggerEvent($event);
+
         return $return;
     }
 }

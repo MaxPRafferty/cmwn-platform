@@ -33,7 +33,7 @@ class GameResourceTest extends TestCase
      */
     public function setUpService()
     {
-        $this->service = TestHelper::getDbServiceManager()->get(GameServiceInterface::class);
+        $this->service = TestHelper::getServiceManager()->get(GameServiceInterface::class);
     }
 
     /**
@@ -53,13 +53,14 @@ class GameResourceTest extends TestCase
 
     /**
      * @test
-     * @param $login
+     * @param $route
+     * @param $expected
      * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldFetchAllGames($login, $route, $expected)
+    public function testItShouldFetchAllGames($route, $expected)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser($login);
+        $this->logInUser('super_user');
         $this->dispatch($route);
         $this->assertResponseStatusCode(200);
         $this->assertControllerName('api\v1\rest\game\controller');
@@ -87,7 +88,7 @@ class GameResourceTest extends TestCase
     public function testItShouldFetchGame($login)
     {
         $this->injectValidCsrfToken();
-        $this->logInUser($login);
+        $this->logInUser('super_user');
         $this->dispatch('/game/animal-id');
         $this->assertResponseStatusCode(200);
         $this->assertControllerName('api\v1\rest\game\controller');
@@ -159,7 +160,8 @@ class GameResourceTest extends TestCase
             'title' => 'animal-id',
             'description' => 'animal ids',
             'coming_soon' => false,
-            'meta' => ['desktop' => true, 'unity' => false]
+            'meta' => ['desktop' => true, 'unity' => false],
+            'global' => true,
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(200);
@@ -183,7 +185,7 @@ class GameResourceTest extends TestCase
         $this->injectValidCsrfToken();
         $this->logInUser('super_user');
         $this->dispatch('/game/animal-id', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(204);
         $this->assertControllerName('api\v1\rest\game\controller');
         $this->assertMatchedRouteName('api.rest.game');
 
@@ -248,7 +250,7 @@ class GameResourceTest extends TestCase
             'description' => 'animal ids',
             'coming_soon' => true,
             'meta' => ['desktop' => true, 'unity' => false],
-            'undelete' => true
+            'undelete' => true,
         ];
         $this->dispatch('/game/animal-id', 'PUT', $postData);
         $this->assertResponseStatusCode(403);
@@ -309,15 +311,8 @@ class GameResourceTest extends TestCase
     public function fetchAllDataProvider()
     {
         return [
-            ['super_user', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['english_student', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', '/game', ['animal-id', 'be-bright', 'Monarch']],
-            ['super_user', '/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
-            ['super_user', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
-            ['english_student', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
-            ['other_teacher', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
-            ['principal', '/game?deleted=false', ['animal-id', 'be-bright', 'Monarch']],
+            ['/game', ['animal-id', 'be-bright', 'Monarch']],
+            ['/game?deleted=true', ['animal-id', 'be-bright', 'deleted-game', 'Monarch']],
         ];
     }
 

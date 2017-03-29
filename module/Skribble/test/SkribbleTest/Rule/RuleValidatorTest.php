@@ -2,7 +2,7 @@
 
 namespace SkribbleTest\Rule;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Skribble\Rule\RuleValidator;
 use Skribble\Rule\SkribbleRules;
 use Zend\Json\Json;

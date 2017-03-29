@@ -53,7 +53,7 @@ class FriendServiceTest extends TestCase
      */
     public function setUpFriendService()
     {
-        $this->friendService = TestHelper::getDbServiceManager()->get(FriendServiceInterface::class);
+        $this->friendService = TestHelper::getServiceManager()->get(FriendServiceInterface::class);
     }
 
     /**
