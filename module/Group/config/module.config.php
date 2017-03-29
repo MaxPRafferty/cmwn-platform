@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'view_manager' => [
+        'template_path_stack' => [
+            __DIR__ . '/../view',
+        ],
+    ],
+    'validators' => [
+        'factories' => [
+            \Group\RoleValidator::class => \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class,
+        ],
+    ],
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
         \Group\Service\GroupService::class     => [
             'GroupsTable',
@@ -9,16 +19,25 @@ return [
             'UserGroupsTable',
             Zend\Db\Adapter\Adapter::class,
         ],
-
-        \Group\Service\GroupAddressService::class => [
-            'Table/GroupAddresses',
+        \Group\Service\GroupAddressService::class => ['Table/GroupAddresses'],
+        \Group\RoleValidator::class => [
+            \User\Service\UserServiceInterface::class,
+            'Config',
+        ],
+        \Group\Service\UserCardService::class => [
+            \Group\Service\UserGroupServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class,
+            \Zend\View\Renderer\PhpRenderer::class
         ],
     ],
     'service_manager'                                                 => [
         'aliases'    => [
-            \Group\Service\UserGroupServiceInterface::class    => \Group\Service\UserGroupService::class,
-            \Group\Service\GroupServiceInterface::class        => \Group\Service\GroupService::class,
+            'Group\Service'                                 => \Group\Service\GroupService::class,
+            'Group\GroupService'                            => \Group\Service\GroupService::class,
+            \Group\Service\UserGroupServiceInterface::class => \Group\Service\UserGroupService::class,
+            \Group\Service\GroupServiceInterface::class     => \Group\Service\GroupService::class,
             \Group\Service\GroupAddressServiceInterface::class => \Group\Service\GroupAddressService::class,
+            \Group\Service\UserCardServiceInterface::class => \Group\Service\UserCardService::class,
         ],
         'factories'  => [
             \Group\Delegator\GroupDelegatorFactory::class            =>
@@ -26,6 +45,8 @@ return [
             \Group\Delegator\GroupAddressDelegatorFactory::class     =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
             \Group\Delegator\UserGroupServiceDelegatorFactory::class =>
+                \Zend\ServiceManager\Factory\InvokableFactory::class,
+            \Group\Delegator\UserCardsDelegatorFactory::class =>
                 \Zend\ServiceManager\Factory\InvokableFactory::class,
         ],
         'delegators' => [
@@ -36,7 +57,10 @@ return [
                 \Group\Delegator\UserGroupServiceDelegatorFactory::class,
             ],
             \Group\Service\GroupAddressService::class => [
-                \Group\Delegator\GroupAddressDelegatorFactory::class,
+                \Group\Delegator\GroupAddressDelegatorFactory::class
+            ],
+            \Group\Service\UserCardService::class => [
+                \Group\Delegator\UserCardsDelegatorFactory::class
             ],
         ],
     ],

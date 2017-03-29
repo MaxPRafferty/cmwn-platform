@@ -74,6 +74,8 @@ return [
             ],
             'api.rest.group-users'     => [
                 'GET' => 'view.group.users',
+                'POST' => 'add.group.user',
+                'DELETE' => 'remove.group.user',
             ],
             'api.rest.org-users'       => [
                 'GET' => 'view.org.users',
@@ -146,6 +148,9 @@ return [
                 'GET'    => 'view.all.group.addresses',
                 'POST'   => 'attach.group.address',
                 'DELETE' => 'detach.group.address',
+            ],
+            'api.res.user-cards' => [
+                'GET'    => 'view.user.cards',
             ],
         ],
     ],

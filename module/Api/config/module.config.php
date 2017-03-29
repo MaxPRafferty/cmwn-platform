@@ -45,6 +45,10 @@ return [
             \Address\Service\AddressServiceInterface::class,
             \Group\Service\GroupServiceInterface::class,
         ],
+        \Api\V1\Rest\UserCards\UserCardsResource::class => [
+            \Group\Service\GroupServiceInterface::class,
+            \Group\Service\UserCardServiceInterface::class,
+        ],
         \Api\V1\Rest\UserGame\UserGameResource::class         => [
             \User\Service\UserServiceInterface::class,
             \Game\Service\GameServiceInterface::class,
@@ -55,6 +59,11 @@ return [
         ],
         \Api\Controller\SwaggerController::class              => [
             Api\SwaggerHelper::class,
+        ],
+        \Api\V1\Rest\GroupUsers\GroupUsersResource::class => [
+            \Group\Service\UserGroupServiceInterface::class,
+            \Group\Service\GroupServiceInterface::class,
+            \User\Service\UserServiceInterface::class,
         ],
         \Api\V1\Rest\AddressGroup\AddressGroupResource::class => [
             \Group\Service\GroupAddressServiceInterface::class,
@@ -153,8 +162,6 @@ return [
                 \Api\V1\Rest\Forgot\ForgotResourceFactory::class,
             \Api\V1\Rest\Password\PasswordResource::class             =>
                 \Api\V1\Rest\Password\PasswordResourceFactory::class,
-            \Api\V1\Rest\GroupUsers\GroupUsersResource::class         =>
-                \Api\V1\Rest\GroupUsers\GroupUsersResourceFactory::class,
             \Api\V1\Rest\OrgUsers\OrgUsersResource::class             =>
                 \Api\V1\Rest\OrgUsers\OrgUsersResourceFactory::class,
             \Api\V1\Rest\UserImage\UserImageResource::class           =>
@@ -297,7 +304,7 @@ return [
             'api.rest.group-users'     => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/group/:group_id/users',
+                    'route'    => '/group/:group_id/user[/:user_id]',
                     'defaults' => [
                         'controller' => 'Api\V1\Rest\GroupUsers\Controller',
                     ],
@@ -510,6 +517,15 @@ return [
                     ],
                 ],
             ],
+            'api.rest.user-cards'      => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/group/:group_id/user-card',
+                    'defaults' => [
+                        'controller' => 'Api\V1\Rest\UserCards\Controller',
+                    ],
+                ],
+            ],
             'doc.swagger'              => [
                 'type'    => 'Literal',
                 'options' => [
@@ -578,6 +594,7 @@ return [
             'api.rest.super',
             'api.rest.address',
             'api.rest.group-address',
+            'api.rest.user-cards',
         ],
     ],
     'zf-rest'                => [
@@ -739,9 +756,9 @@ return [
         'Api\V1\Rest\GroupUsers\Controller'     => [
             'listener'                   => \Api\V1\Rest\GroupUsers\GroupUsersResource::class,
             'route_name'                 => 'api.rest.group-users',
-            'route_identifier_name'      => 'foo_bar_id',
+            'route_identifier_name'      => 'user_id',
             'collection_name'            => 'items',
-            'entity_http_methods'        => [],
+            'entity_http_methods'        => ['POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
             'page_size'                  => 100,
@@ -1066,6 +1083,20 @@ return [
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
         ],
+        'Api\V1\Rest\UserCards\Controller'       => [
+            'listener'                   => \Api\V1\Rest\UserCards\UserCardsResource::class,
+            'route_name'                 => 'api.rest.user-cards',
+            'route_identifier_name'      => 'foo_group_id',
+            'collection_name'            => 'items',
+            'entity_http_methods'        => [],
+            'collection_http_methods'    => ['GET'],
+            'collection_query_whitelist' => [],
+            'page_size'                  => 100,
+            'page_size_param'            => 'per_page',
+            'entity_class'               => \Api\V1\Rest\UserCards\UserCardsEntity::class,
+            'collection_class'           => \Api\V1\Rest\UserCards\UserCardsCollection::class,
+            'service_name'               => 'UserCards',
+        ],
         'Api\V1\Rest\AddressGroup\Controller'   => [
             'listener'                   => \Api\V1\Rest\AddressGroup\AddressGroupResource::class,
             'route_name'                 => 'api.rest.address-group',
@@ -1116,6 +1147,7 @@ return [
             'Api\V1\Rest\Super\Controller'          => 'HalJson',
             'Api\V1\Rest\Address\Controller'        => 'HalJson',
             'Api\V1\Rest\GroupAddress\Controller'   => 'HalJson',
+            'Api\V1\Rest\UserCards\Controller'      => 'HalJson',
             'Api\V1\Rest\AddressGroup\Controller'   => 'HalJson',
         ],
         'accept_whitelist'       => [
@@ -1284,6 +1316,11 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
+            'Api\V1\Rest\UserCards\Controller'      => [
+                'application/vnd.api.v1+json',
+                'application/hal+json',
+                'application/json',
+            ],
             'Api\V1\Rest\AddressGroup\Controller'   => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
@@ -1422,6 +1459,10 @@ return [
             'Api\V1\Rest\Super\Controller'          => [
                 'application/vnd.api.v1+json',
                 'application/json',
+            ],
+            'Api\V1\Rest\UserCards\Controller'      => [
+                'application/vnd.api.v1+json',
+                'application/pdf',
             ],
             'Api\V1\Rest\AddressGroup\Controller'   => [
                 'application/vnd.api.v1+json',
@@ -1589,6 +1630,7 @@ return [
                 'route_identifier_name'  => 'org_id',
                 'is_collection'          => true,
             ],
+
             \Api\V1\Rest\UserImage\UserImageEntity::class               => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.user-image',
@@ -1859,6 +1901,17 @@ return [
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
             ],
+            \Api\V1\Rest\UserCards\UserCardsEntity::class                 => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.user-cards',
+                'route_identifier_name'  => 'group_id',
+            ],
+            \Api\V1\Rest\UserCards\UserCardsCollection::class             => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.user-cards',
+                'route_identifier_name'  => 'group_id',
+                'is_collection'          => true,
+            ],
         ],
     ],
     'zf-content-validation'  => [
@@ -1873,6 +1926,9 @@ return [
         ],
         'Api\V1\Rest\Group\Controller'          => [
             'input_filter' => 'Api\V1\Rest\Group\Validator',
+        ],
+        'Api\V1\Rest\GroupUsers\Controller'          => [
+            'input_filter' => 'Api\V1\Rest\GroupUsers\Validator',
         ],
         'Api\V1\Rest\Login\Controller'          => [
             'input_filter' => 'Api\V1\Rest\Login\Validator',
@@ -2211,6 +2267,32 @@ return [
                 'name'          => 'type',
                 'description'   => 'Type of group',
                 'error_message' => 'Invalid group type',
+            ],
+        ],
+        'Api\V1\Rest\GroupUsers\Validator' => [
+            [
+                'required'      => true,
+                'validators'    => [],
+                'filters'       => [],
+                'name'          => 'user_id',
+                'description'   => 'User id of the user',
+                'error_message' => 'Invalid user id',
+            ],
+            [
+                'required'      => true,
+                'validators'    => [
+                    [
+                        'name'    => \Group\RoleValidator::class,
+                        'options' => [
+                            \User\Service\UserServiceInterface::class,
+                            'Config',
+                        ],
+                    ],
+                ],
+                'filters'       => [],
+                'name'          => 'role',
+                'description'   => 'Role of user in the group',
+                'error_message' => 'Invalid Role',
             ],
         ],
         'Api\V1\Rest\Login\Validator'     => [
