@@ -3,15 +3,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        @font-face {
-            font-family: 'CMWNJadeRegular';
-            src: url('../fonts/cmwn.ttf') format('truetype');
-        }
-
-        #label {
-            font-weight: bold;
-        }
-
         .container {
             float:left;
             width:100%;
@@ -39,6 +30,7 @@
 
         .user-info {
             font-size: 18px;
+            font-weight: bold;
         }
 
         .site-link {
@@ -86,9 +78,9 @@
             <?php if($user->getType() === \User\UserInterface::TYPE_CHILD): ?>
             <div style="float:<?=$float?>;" class="card">
                 <div class="content">
-                    <span class="user-info" id="label"> Student: </span> <u><?= $user->getFirstName() . ' ' . $user->getLastName()?></u><br/><br/>
+                    <span class="user-info"> Student: </span> <u><?= $user->getFirstName() . ' ' . $user->getLastName()?></u><br/><br/>
                     <span class="site-link"> <?=$domain?> </span> <br/><br/>
-                    <span class="user-info" id="label"> Username: </span> <u><?= $user->getUserName()?> </u><br/><br/>
+                    <span class="user-info"> Username: </span> <u><?= $user->getUserName()?> </u><br/><br/>
                     <span class="disclaimer"> <?=$message?> </span>
                 </div>
             </div>

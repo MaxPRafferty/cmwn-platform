@@ -1073,13 +1073,13 @@ return [
             'collection_class'           => \Api\V1\Rest\GroupAddress\GroupAddressCollection::class,
             'service_name'               => 'GroupAddress',
         ],
-        'Api\V1\Rest\UserCards\Controller'     => [
+        'Api\V1\Rest\UserCards\Controller'       => [
             'listener'                   => \Api\V1\Rest\UserCards\UserCardsResource::class,
             'route_name'                 => 'api.rest.user-cards',
-            'route_identifier_name'      => 'group_id',
-            'collection_name'            => 'user-cards',
-            'entity_http_methods'        => ['GET'],
-            'collection_http_methods'    => [],
+            'route_identifier_name'      => 'foo_group_id',
+            'collection_name'            => 'items',
+            'entity_http_methods'        => [],
+            'collection_http_methods'    => ['GET'],
             'collection_query_whitelist' => [],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
@@ -1624,6 +1624,7 @@ return [
                 'route_identifier_name'  => 'org_id',
                 'is_collection'          => true,
             ],
+
             \Api\V1\Rest\UserImage\UserImageEntity::class               => [
                 'entity_identifier_name' => 'user_id',
                 'route_name'             => 'api.rest.user-image',
@@ -1882,17 +1883,6 @@ return [
                 'route_identifier_name'  => 'address_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\UserCards\UserCardsEntity::class             => [
-                'entity_identifier_name' => 'group_id',
-                'route_name'             => 'api.rest.user-cards',
-                'route_identifier_name'  => 'group_id',
-                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Api\V1\Rest\UserCards\UserCardsCollection::class         => [
-                'entity_identifier_name' => 'group_id',
-                'route_name'             => 'api.rest.user-cards',
-                'route_identifier_name'  => 'group_id',
-            ],
             \Api\V1\Rest\AddressGroup\AddressGroupEntity::class         => [
                 'entity_identifier_name' => 'group_id',
                 'route_name'             => 'api.rest.group-address',
@@ -1903,6 +1893,17 @@ return [
                 'entity_identifier_name' => 'group_id',
                 'route_name'             => 'api.rest.group-address',
                 'route_identifier_name'  => 'address_id',
+                'is_collection'          => true,
+            ],
+            \Api\V1\Rest\UserCards\UserCardsEntity::class                 => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.user-cards',
+                'route_identifier_name'  => 'group_id',
+            ],
+            \Api\V1\Rest\UserCards\UserCardsCollection::class             => [
+                'entity_identifier_name' => 'group_id',
+                'route_name'             => 'api.rest.user-cards',
+                'route_identifier_name'  => 'group_id',
                 'is_collection'          => true,
             ],
         ],

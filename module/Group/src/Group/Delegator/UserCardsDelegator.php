@@ -1,14 +1,16 @@
 <?php
 
-
 namespace Group\Delegator;
-
 
 use Group\GroupInterface;
 use Group\Service\UserCardService;
 use Group\Service\UserCardServiceInterface;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 
+/**
+ * Delegator for user cards service
+ */
 class UserCardsDelegator implements UserCardServiceInterface
 {
     /**
@@ -49,6 +51,26 @@ class UserCardsDelegator implements UserCardServiceInterface
      */
     public function generateUserCards(GroupInterface $group)
     {
-        $this->service->generateUserCards($group);
+        $eventParams = ['group' => $group];
+        $event       = new Event('fetch.group.user-cards', $this->service, $eventParams);
+        $response    = $this->getEventManager()->triggerEvent($event);
+        if ($response->stopped()) {
+            return $response->last();
+        }
+
+        try {
+            $return = $this->service->generateUserCards($group);
+        } catch (\Exception $fetchException) {
+            $event->setParam('exception', $fetchException);
+            $event->setName('fetch.group.user-cards.error');
+            $this->getEventManager()->triggerEvent($event);
+            throw $fetchException;
+        }
+
+        $event->setName('fetch.group.user-cards.post');
+        $event->setParam('result', $return);
+        $this->getEventManager()->triggerEvent($event);
+
+        return $return;
     }
 }

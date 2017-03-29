@@ -6,13 +6,17 @@ use Application\Utils\CreateDirectoryTrait;
 use Dompdf\Dompdf;
 use Group\Group;
 use Group\GroupInterface;
+use Group\UserCardModel\DefaultModel;
 use Group\UserCardModel\UserCardModel;
 use iio\libmergepdf\Merger;
 use User\UserInterface;
+use Zend\Db\Sql\Predicate\Operator;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\View\Renderer\PhpRenderer;
 
 /**
  * Service to generate user card pdfs
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserCardService implements UserCardServiceInterface
 {
@@ -39,59 +43,63 @@ class UserCardService implements UserCardServiceInterface
     protected $pdfFiles = [];
 
     /**
+     * @var string
+     */
+    protected $targetDirectory;
+
+    /**
+     * @var string
+     */
+    protected $pdfDirectory;
+
+    /**
      * UserCardService constructor.
      * @param UserGroupServiceInterface $userGroupService
      * @param GroupServiceInterface $groupService
      * @param PhpRenderer $renderer
+     * @param string $targetDirectory
      */
     public function __construct(
         UserGroupServiceInterface $userGroupService,
         GroupServiceInterface $groupService,
-        PhpRenderer $renderer
+        PhpRenderer $renderer,
+        $targetDirectory = __DIR__ . '/../../../../../tmp'
     ) {
         $this->userGroupService = $userGroupService;
         $this->groupService = $groupService;
         $this->renderer = $renderer;
+        $this->targetDirectory = $targetDirectory;
+        $this->pdfDirectory = $targetDirectory . '/user-cards';
     }
 
     /**
-     * @param GroupInterface $class
-     * @param string $targetDirectory
-     * @return string
+     * @param $model
+     * @param $fileName
      */
-    protected function generateCardsForClass(GroupInterface $class, string $targetDirectory)
+    protected function createPdfFile($model, $fileName)
     {
-        $teachers = $this->fetchUsersInGroup($class, ['role' => 'teacher']);
-        $teachers = implode(', ', array_map(function ($teacher) {
-            return $teacher->getFirstName() . ' ' . $teacher->getLastName();
-        }, $teachers));
-
-        $users = $this->fetchUsersInGroup($class);
-
-        $fileName = $this->getHashedFileName($users);
-        $fileName = $targetDirectory . "/$fileName.pdf";
-        if (file_exists($fileName)) {
-            $this->pdfFiles[] = $fileName;
-            return $fileName;
-        }
         $domPdf = new Dompdf();
-        $userCardModel = new UserCardModel([]);
-
-        $userCardModel->setVariables([
-            'users' => $users,
-            'domain' => 'www.ChangeMyWorldNow.com',
-            'message' => 'For security reasons, you must reset your password and log in again',
-            'float' => 'left',
-            'teacherNames' => $teachers,
-            'classTitle' => $class->getTitle()
-        ]);
-        $html = $this->renderer->render($userCardModel);
+        $html = $this->renderer->render($model);
         $domPdf->loadHtml($html);
         $domPdf->setPaper('A4', 'portrait');
         $domPdf->render();
         $output = $domPdf->output();
         file_put_contents($fileName, $output);
-        $this->pdfFiles[] = $fileName;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultPdf()
+    {
+        $fileName = $this->pdfDirectory . '/default.pdf';
+
+        if (file_exists($fileName)) {
+            return $fileName;
+        }
+
+        $defaultModel = new DefaultModel();
+        $this->createPdfFile($defaultModel, $fileName);
         return $fileName;
     }
 
@@ -126,41 +134,93 @@ class UserCardService implements UserCardServiceInterface
     }
 
     /**
+     * @param GroupInterface $class
+     * @return string
+     */
+    protected function generateCardsForClass(GroupInterface $class)
+    {
+        $predicate = new PredicateSet();
+        $predicate->addPredicate(new Operator('ug.role', '=', 'teacher'));
+        $teachers = $this->fetchUsersInGroup($class, $predicate);
+        $teachers = implode(', ', array_map(function ($teacher) {
+            return $teacher->getFirstName() . ' ' . $teacher->getLastName();
+        }, $teachers));
+
+        $users = $this->fetchUsersInGroup($class);
+
+        if (empty($users)) {
+            return $this->getDefaultPdf();
+        }
+
+        $fileName = $this->getHashedFileName($users);
+        $fileName = $this->pdfDirectory . "/$fileName.pdf";
+        if (file_exists($fileName)) {
+            $this->pdfFiles[] = $fileName;
+            return $fileName;
+        }
+
+        $userCardModel = new UserCardModel([]);
+
+        $userCardModel->setVariables([
+            'users' => $users,
+            'domain' => 'www.ChangeMyWorldNow.com',
+            'message' => 'For security reasons, you must reset your password and log in again',
+            'float' => 'left',
+            'teacherNames' => $teachers,
+            'classTitle' => $class->getTitle()
+        ]);
+
+        $this->createPdfFile($userCardModel, $fileName);
+
+        $this->pdfFiles[] = $fileName;
+        return $fileName;
+    }
+
+    /**
+     * @param GroupInterface $school
+     * @return null|string
+     */
+    protected function generateCardsForSchool(GroupInterface $school)
+    {
+        $classes = $this->groupService->fetchChildGroups($school, null, new Group());
+        $classes = $classes->getItems(0, $classes->count());
+
+        array_walk($classes, function ($class) {
+            $this->generateCardsForClass($class);
+        });
+
+        if (empty($this->pdfFiles)) {
+            return $this->getDefaultPdf();
+        }
+
+        $fileName = $this->pdfDirectory . '/' . md5(serialize($this->pdfFiles)) . '.pdf';
+        if (file_exists($fileName)) {
+            return $fileName;
+        }
+
+        $pdfMerger = new Merger();
+        $pdfMerger->addIterator($this->pdfFiles);
+        $pdf = $pdfMerger->merge();
+        file_put_contents($fileName, $pdf);
+        return $fileName;
+    }
+
+    /**
      * @inheritdoc
      */
     public function generateUserCards(GroupInterface $group)
     {
-        $targetDirectory = __DIR__ . '/../../../../../tmp';
-        $this->createDirectory($targetDirectory);
+        $this->createDirectory($this->targetDirectory);
 
-        $targetDirectory .= '/user-cards';
-        $this->createDirectory($targetDirectory);
+        $this->createDirectory($this->pdfDirectory);
 
-        $classes = $group->getType() === 'school'
-            ? $this->groupService->fetchChildGroups($group, null, new Group())
-            : [$group];
-
-        $classes = is_array($classes) ? $classes : $classes->getItems(0, $classes->count());
-
-        $fileName = '';
-        array_walk($classes, function ($class) use ($targetDirectory, &$fileName) {
-            $fileName = $this->generateCardsForClass($class, $targetDirectory);
-        });
-
-        if ($group->getType() === 'school') {
-            $fileName = md5(serialize($this->pdfFiles));
-            $fileName = $targetDirectory . "/$fileName.pdf";
-            if (file_exists($fileName)) {
-                //return $fileName;
-                return;
-            }
-
-            $pdfMerger = new Merger();
-            $pdfMerger->addIterator($this->pdfFiles);
-            file_put_contents($fileName, $pdfMerger->merge());
-            return $fileName;
+        $fileName = $group->getType() === 'school'
+            ? $this->generateCardsForSchool($group)
+            : $this->generateCardsForClass($group);
+        if (!$fileName) {
+            return false;
         }
 
-        //return $fileName;
+        return realpath($fileName);
     }
 }

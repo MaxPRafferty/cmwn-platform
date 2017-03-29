@@ -149,6 +149,9 @@ return [
                 'POST'   => 'attach.group.address',
                 'DELETE' => 'detach.group.address',
             ],
+            'api.res.user-cards' => [
+                'GET'    => 'view.user.cards',
+            ],
         ],
     ],
 ];
