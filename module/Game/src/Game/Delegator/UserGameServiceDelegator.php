@@ -3,7 +3,6 @@
 namespace Game\Delegator;
 
 use Application\Utils\HideDeletedEntitiesListener;
-use Application\Utils\ServiceTrait;
 use Game\GameInterface;
 use Game\Service\UserGameService;
 use Game\Service\UserGameServiceInterface;
@@ -17,24 +16,22 @@ use Zend\Paginator\Adapter\AdapterInterface;
  */
 class UserGameServiceDelegator implements UserGameServiceInterface
 {
-    use ServiceTrait;
-
     /**
      * @var EventManagerInterface
      */
     protected $events;
 
     /**
-     * @var UserGameServiceInterface
+     * @var UserGameService
      */
     protected $service;
 
     /**
      * UserGameServiceDelegator constructor.
-     * @param UserGameServiceInterface $userGameService
+     * @param UserGameService $userGameService
      * @param EventManagerInterface $events
      */
-    public function __construct(UserGameServiceInterface $userGameService, EventManagerInterface $events)
+    public function __construct(UserGameService $userGameService, EventManagerInterface $events)
     {
         $this->service = $userGameService;
         $this->events = $events;
@@ -52,6 +49,16 @@ class UserGameServiceDelegator implements UserGameServiceInterface
             [UserGameServiceInterface::class, static::class, UserGameService::class],
             $events->getIdentifiers()
         ));
+    }
+
+    /**
+     * @param $where
+     *
+     * @return \Zend\Db\Sql\Predicate\PredicateInterface|\Zend\Db\Sql\Predicate\PredicateSet|\Zend\Db\Sql\Where
+     */
+    public function createWhere($where)
+    {
+        return $this->service->createWhere($where);
     }
 
     /**

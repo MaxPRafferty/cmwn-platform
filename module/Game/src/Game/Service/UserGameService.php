@@ -3,16 +3,14 @@
 namespace Game\Service;
 
 use Application\Exception\NotFoundException;
-use Application\Utils\ServiceTrait;
 use Game\Game;
 use Game\GameInterface;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -40,6 +38,17 @@ class UserGameService implements UserGameServiceInterface
         $this->tableGateway = $tableGateway;
     }
 
+
+    /**
+     * Any class using this trait can return the the table alias here
+     *
+     * @return string
+     */
+    public function getAlias(): string
+    {
+        return 'g';
+    }
+
     /**
      * @inheritdoc
      */
@@ -53,6 +62,8 @@ class UserGameService implements UserGameServiceInterface
         $select->quantifier(Select::QUANTIFIER_DISTINCT);
         $prototype = $prototype ?? new Game();
         $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $select->where($where);
+        $select->order(['sort_order', 'title']);
 
         return new DbSelect($select, $this->tableGateway->getAdapter(), $resultSet);
     }
@@ -65,9 +76,8 @@ class UserGameService implements UserGameServiceInterface
         GameInterface $game,
         GameInterface $prototype = null
     ): GameInterface {
-        $where  = new Where([new Operator('g.game_id', Operator::OP_EQ, $game->getGameId())]);
+        $where  = $this->createWhere(['game_id' => $game->getGameId()]);
         $select = $this->createSelect($user, $where);
-
         $rowSet = $this->tableGateway->selectWith($select);
         $row    = $rowSet->current();
         if (!$row) {
@@ -110,11 +120,11 @@ class UserGameService implements UserGameServiceInterface
 
     /**
      * @param UserInterface $user
-     * @param Where $where
+     * @param PredicateSet $where
      *
      * @return Select
      */
-    protected function createSelect(UserInterface $user, Where $where): Select
+    protected function createSelect(UserInterface $user, PredicateSet $where): Select
     {
         $select = new Select(['ug' => $this->tableGateway->getTable()]);
         $select->columns([]);

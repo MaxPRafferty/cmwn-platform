@@ -9,6 +9,7 @@ use Game\SaveGame;
 use Game\Service\SaveGameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use User\PlaceHolder;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 use Zend\EventManager\Event;
@@ -172,15 +173,21 @@ class SaveGameDelegatorTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldCallDeleteSaveForUserWithStrings()
+    public function testItShouldCallDeleteSaveForUser()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
+        $game = new Game();
+        $game->setGameId('monarch');
+
         $this->service->shouldReceive('deleteSaveForUser')
-            ->with('manchuck', 'monarch')
+            ->with($user, $game)
             ->andReturn(true)
             ->once();
 
         $this->assertTrue(
-            $this->delegator->deleteSaveForUser('manchuck', 'monarch'),
+            $this->delegator->deleteSaveForUser($user, $game),
             GameDelegator::class . ' did not return result from service on deleteSaveForUser'
         );
 
@@ -194,7 +201,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.save.game',
                 'target' => $this->service,
-                'params' => ['user' => 'manchuck', 'game' => 'monarch'],
+                'params' => ['user' => $user, 'game' => $game],
             ],
             $this->calledEvents[0],
             GameDelegator::class . ' did not trigger delete.user.save.game correctly'
@@ -204,7 +211,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.save.game.post',
                 'target' => $this->service,
-                'params' => ['user' => 'manchuck', 'game' => 'monarch'],
+                'params' => ['user' => $user, 'game' => $game],
             ],
             $this->calledEvents[1],
             GameDelegator::class . ' did not trigger delete.user.save.game.post correctly'
@@ -216,6 +223,12 @@ class SaveGameDelegatorTest extends TestCase
      */
     public function testItShouldNotCallDeleteSaveForUserWhenEventStops()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
+        $game = new Game();
+        $game->setGameId('monarch');
+
         $this->service->shouldReceive('deleteSaveForUser')
             ->never();
 
@@ -226,7 +239,7 @@ class SaveGameDelegatorTest extends TestCase
         });
 
         $this->assertFalse(
-            $this->delegator->deleteSaveForUser('manchuck', 'monarch'),
+            $this->delegator->deleteSaveForUser($user, $game),
             GameDelegator::class . ' did not return result from delete.user.save.game'
         );
 
@@ -240,7 +253,7 @@ class SaveGameDelegatorTest extends TestCase
             [
                 'name'   => 'delete.user.save.game',
                 'target' => $this->service,
-                'params' => ['user' => 'manchuck', 'game' => 'monarch'],
+                'params' => ['user' => $user, 'game' => $game],
             ],
             $this->calledEvents[0],
             GameDelegator::class . ' did not trigger delete.user.save.game correctly'
@@ -250,16 +263,22 @@ class SaveGameDelegatorTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldFetchSaveGameForUserWithNoPrototypeAndStringsForIds()
+    public function testItShouldFetchSaveGameForUserWithNoPrototype()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
+        $game = new Game();
+        $game->setGameId('monarch');
+
         $this->service->shouldReceive('fetchSaveGameForUser')
-            ->with('manchuck', 'monarch', null, $this->where)
+            ->with($user, $game, $this->where, null)
             ->once()
             ->andReturn($this->saveGame);
 
         $this->assertEquals(
             $this->saveGame,
-            $this->delegator->fetchSaveGameForUser('manchuck', 'monarch'),
+            $this->delegator->fetchSaveGameForUser($user, $game),
             GameDelegator::class . ' did not return saved game from service'
         );
 
@@ -274,8 +293,8 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.save.game',
                 'target' => $this->service,
                 'params' => [
-                    'user'      => 'manchuck',
-                    'game'      => 'monarch',
+                    'user'      => $user,
+                    'game'      => $game,
                     'prototype' => null,
                     'where'     => $this->where,
                 ],
@@ -289,8 +308,8 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.save.game.post',
                 'target' => $this->service,
                 'params' => [
-                    'user'      => 'manchuck',
-                    'game'      => 'monarch',
+                    'user'      => $user,
+                    'game'      => $game,
                     'prototype' => null,
                     'where'     => $this->where,
                     'game_data' => $this->saveGame,
@@ -306,6 +325,12 @@ class SaveGameDelegatorTest extends TestCase
      */
     public function testItShouldNotFetchSaveGameForUser()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
+        $game = new Game();
+        $game->setGameId('monarch');
+
         $this->service->shouldReceive('fetchSaveGameForUser')
             ->never();
 
@@ -317,7 +342,7 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->assertSame(
             $this->saveGame,
-            $this->delegator->fetchSaveGameForUser('manchuck', 'monarch'),
+            $this->delegator->fetchSaveGameForUser($user, $game),
             GameDelegator::class . ' did not return result from fetch.user.save.gaem'
         );
 
@@ -332,8 +357,8 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.save.game',
                 'target' => $this->service,
                 'params' => [
-                    'user'      => 'manchuck',
-                    'game'      => 'monarch',
+                    'user'      => $user,
+                    'game'      => $game,
                     'prototype' => null,
                     'where'     => $this->where,
                 ],
@@ -348,16 +373,19 @@ class SaveGameDelegatorTest extends TestCase
      */
     public function testItShouldFetchAllSaveGamesForUser()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
         $results = new Iterator(new \ArrayIterator([]));
 
         $this->service->shouldReceive('fetchAllSaveGamesForUser')
-            ->with('manchuck', $this->where, null)
+            ->with($user, $this->where, null)
             ->andReturn($results)
             ->once();
 
         $this->assertEquals(
             $results,
-            $this->delegator->fetchAllSaveGamesForUser('manchuck'),
+            $this->delegator->fetchAllSaveGamesForUser($user),
             GameDelegator::class . ' did not return results from fetchAllSaveGameForUser'
         );
 
@@ -372,7 +400,7 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.saves',
                 'target' => $this->service,
                 'params' => [
-                    'user'      => 'manchuck',
+                    'user'      => $user,
                     'prototype' => null,
                     'where'     => $this->where,
                 ],
@@ -386,7 +414,7 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.saves.post',
                 'target' => $this->service,
                 'params' => [
-                    'user'       => 'manchuck',
+                    'user'       => $user,
                     'prototype'  => null,
                     'where'     => $this->where,
                     'user-saves' => $results,
@@ -402,6 +430,9 @@ class SaveGameDelegatorTest extends TestCase
      */
     public function testItShouldNotFetchSaveGamesForUserWhenEventStops()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
         $this->service->shouldReceive('fetchAllSaveGamesForUser')
             ->never();
 
@@ -415,7 +446,7 @@ class SaveGameDelegatorTest extends TestCase
 
         $this->assertSame(
             $results,
-            $this->delegator->fetchAllSaveGamesForUser('manchuck'),
+            $this->delegator->fetchAllSaveGamesForUser($user),
             GameDelegator::class . ' did not return results from fetch.user.saves'
         );
 
@@ -430,7 +461,7 @@ class SaveGameDelegatorTest extends TestCase
                 'name'   => 'fetch.user.saves',
                 'target' => $this->service,
                 'params' => [
-                    'user'      => 'manchuck',
+                    'user'      => $user,
                     'prototype' => null,
                     'where'     => $this->where,
                 ],

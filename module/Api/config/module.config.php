@@ -126,7 +126,6 @@ return [
         \Api\Listeners\ChangePasswordListener::class,
         \Api\Listeners\FriendListener::class,
         \Api\Listeners\TemplateLinkListener::class,
-        \Api\Listeners\GameRouteListener::class,
         \Api\Listeners\UserParamListener::class,
     ],
     'service_manager'  => [
@@ -179,8 +178,6 @@ return [
                 \Api\V1\Rest\Reset\ResetResourceFactory::class,
             \Api\V1\Rest\UpdatePassword\UpdatePasswordResource::class =>
                 \Api\V1\Rest\UpdatePassword\UpdatePasswordResourceFactory::class,
-            \Api\Listeners\GameRouteListener::class                   =>
-                \Api\Factory\GameRouteListenerFactory::class,
             \Api\V1\Rest\Media\MediaResource::class                   =>
                 \Api\V1\Rest\Media\MediaResourceFactory::class,
             \Api\V1\Rest\Skribble\SkribbleResource::class             =>
@@ -638,11 +635,18 @@ return [
             'collection_name'            => 'game',
             'entity_http_methods'        => ['GET', 'POST', 'DELETE'],
             'collection_http_methods'    => ['GET'],
-            'collection_query_whitelist' => ['page', 'per_page', 'deleted'],
+            'collection_query_whitelist' => [
+                'page',
+                'per_page',
+                'featured',
+                'coming_soon',
+                'desktop',
+                'unity',
+            ],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
-            'entity_class'               => \Api\V1\Rest\Game\GameEntity::class,
-            'collection_class'           => \Api\V1\Rest\Game\GameCollection::class,
+            'entity_class'               => \Api\V1\Rest\UserGame\UserGameEntity::class,
+            'collection_class'           => \Api\V1\Rest\UserGame\UserGameCollection::class,
             'service_name'               => 'UserGame',
         ],
         'Api\V1\Rest\Image\Controller'          => [
@@ -1481,22 +1485,22 @@ return [
                 'route_identifier_name'  => 'game_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
+            \Api\V1\Rest\UserGame\UserGameEntity::class                         => [
+                'entity_identifier_name' => 'game_id',
+                'route_name'             => 'api.rest.user-game',
+                'route_identifier_name'  => 'game_id',
+                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
+            ],
             \Api\V1\Rest\Game\GameCollection::class                     => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.game',
                 'route_identifier_name'  => 'game_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\UserGame\UserGameEntity::class                 => [
+            \Api\V1\Rest\UserGame\UserGameCollection::class                     => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
-                'route_identifier_name'  => 'user_id',
-                'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
-            ],
-            \Api\V1\Rest\UserGame\UserGameCollection::class             => [
-                'entity_identifier_name' => 'game_id',
-                'route_name'             => 'api.rest.user-game',
-                'route_identifier_name'  => 'user_id',
+                'route_identifier_name'  => 'game_id',
                 'is_collection'          => true,
             ],
             \Api\V1\Rest\Image\ImageEntity::class                       => [

@@ -38,60 +38,23 @@ class GameResourceTest extends TestCase
     /**
      * @test
      *
-     * @param string $user    - User to login
-     * @param string $route   - Route with query params
-     * @param array $expected - list of expected game ids
+     * @param string $user
+     * @param string $route
+     * @param int $code
+     * @param array $expected
      *
      * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldFetchAllGames($user, $route, array $expected)
+    public function testItShouldFetchGame($user, $route, int $code, array $expected)
     {
-        $this->dispatchAuthenticatedCall($user, $route);
+        $this->dispatchAuthenticatedCall($user, $route, $code);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-
-        $this->assertArrayHasKey(
-            '_embedded',
-            $body,
-            GameResource::class . ' did not return _embedded in body for ' . $route
-        );
-
-        $this->assertArrayHasKey(
-            'game',
-            $body['_embedded'],
-            GameResource::class . ' did not return _embedded in _embedded for ' . $route
-        );
-
-        $games = $body['_embedded']['game'];
-
-        $actual = [];
-        foreach ($games as $game) {
-            $actual[] = $game['game_id'];
-        }
 
         // Do not sort the arrays we want to make sure they match
         $this->assertEquals(
             $expected,
-            $actual,
-            GameResource::class . ' did not return the correct number of games for ' . $route
-        );
-    }
-
-    /**
-     * @test
-     *
-     * @param string $login
-     * @param string $gameId
-     * @param array $expectedData
-     *
-     * @dataProvider fetchGameProvider
-     */
-    public function testItShouldFetchGame(string $login, string $gameId, int $code, array $expectedData)
-    {
-        $this->dispatchAuthenticatedCall($login, '/game/' . $gameId, $code);
-        $this->assertEquals(
-            $expectedData,
-            Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY),
-            GameResource::class . ' did not return the expected response when fetching a game by id'
+            $body,
+            GameResource::class . ' did not return the expected body'
         );
     }
 
@@ -150,219 +113,695 @@ class GameResourceTest extends TestCase
      * @test
      *
      * @param string $login
+     * @param string $route
+     * @param string $method
      * @param int $code
-     * @param array $gameData
+     * @param array $params
+     * @param array $expectedDb
      * @param array $expectedResponse
      *
-     * @dataProvider createGameProvider
+     * @dataProvider saveGameDataProvider
      */
-    public function testItShouldCreateGame(
+    public function testItShouldSaveGame(
         string $login,
+        string $route,
         int $code,
-        array $gameData,
+        string $method,
+        array $params,
+        array $expectedDb,
         array $expectedResponse
     ) {
-        $this->dispatchAuthenticatedCall($login, '/game', $code, 'POST', $gameData);
+        $this->dispatchAuthenticatedCall($login, $route, $code, $method, $params);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
 
-        if ($code === 422) {
+        if ($code > 400) {
             $this->assertEquals(
                 $expectedResponse,
                 $body,
-                GameResource::class . ' did not return correct validation errors'
+                SaveGameResource::class . ' did not return correct errors'
             );
 
             return;
         }
 
         $this->assertNotEmpty(
-            $body['game_id'],
-            GameResource::class . ' game id is empty on game creation'
-        );
-
-        $this->assertNotEmpty(
             $body['created'],
-            GameResource::class . ' created is empty on game creation'
+            SaveGameResource::class . ' created is empty on game save'
         );
 
         $this->assertNotEmpty(
             $body['updated'],
-            GameResource::class . ' updated is empty on game creation'
+            SaveGameResource::class . ' updated is empty on game save'
         );
 
-        // Check the game was written to the DB
-        $this->assertTableRowCount(
-            'games',
-            8,
-            GameResource::class . ' game was not saved to the DB'
+        $this->assertNotEmpty(
+            $body['game_id'],
+            SaveGameResource::class . ' game_id is empty on game save'
         );
 
-        // These fields cannot be matched as they are generated at runtime
-        unset($body['game_id']);
-        unset($body['created']);
-        unset($body['updated']);
-        unset($body['deleted']);
-        unset($body['_links']['self']);
+        $gameId = $body['game_id'];
+        unset($body['updated'], $body['created'], $body['game_id'], $body['_links']['self']);
 
         $this->assertEquals(
             $expectedResponse,
             $body,
-            GameResource::class . ' did not return the expected response on creation'
+            SaveGameResource::class . ' did not return the expected response on creation'
         );
-    }
 
-    /**
-     * @test
-     *
-     * @param string $login
-     * @param string $gameId
-     * @param int $code
-     * @param array $params
-     * @param array $expectedResponse
-     *
-     * @dataProvider updateGameProvider
-     */
-    public function testItShouldUpdateGame(
-        string $login,
-        string $gameId,
-        int $code,
-        array $params,
-        array $expectedResponse
-    ) {
-        $this->dispatchAuthenticatedCall($login, '/game/' . $gameId, $code, 'PUT', $params);
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+        // Check Database
+        $stmt = $this->getConnection()->getConnection()
+            ->query('SELECT * FROM games WHERE game_id = "' . $gameId . '"');
 
-        if ($code === 422) {
-            $this->assertEquals(
-                $expectedResponse,
-                $body,
-                GameResource::class . ' did not return correct validation errors'
-            );
+        $stmt->setFetchMode(\PDO::FETCH_ASSOC);
 
-            return;
+        $dbData = null;
+        foreach ($stmt as $dbData) {
+            unset($dbData['created'], $dbData['updated'], $expectedResponse['_links']);
+            $dbData['meta'] = Json::decode($dbData['meta'], Json::TYPE_ARRAY);
         }
 
-        // Check the game was written to the DB
-        $gameQuery = $this->getConnection()->getConnection()
-            ->query('SELECT * FROM games WHERE game_id = "' . $gameId . '"', \PDO::FETCH_ASSOC);
-
-        foreach ($gameQuery as $gameResult) {
-            $this->assertNull(
-                $gameResult['deleted'],
-                GameResource::class . ' DB record shows game as deleted'
-            );
-
-            unset($gameResult['updated']);
-            unset($gameResult['created']);
-            unset($gameResult['deleted']);
-            $gameResult['meta'] = Json::decode($gameResult['meta'], Json::TYPE_ARRAY);
-            $gameResult['uris'] = Json::decode($gameResult['uris'], Json::TYPE_ARRAY);
-        }
-
-        $params['game_id'] = $gameId;
-        foreach ($gameResult as $key => $value) {
-            $this->assertEquals(
-                $params[$key] ?? null,
-                $value,
-                GameResource::class . ' DB field mis-matches field: ' . $key
-            );
-        }
-
-        // These fields cannot be matched as they are generated at runtime
-        unset($body['game_id']);
-        unset($body['created']);
-        unset($body['deleted']);
-        unset($body['updated']);
-        unset($body['_links']['self']);
-
+        $expectedDb['game_id'] = $gameId;
         $this->assertEquals(
-            $expectedResponse,
-            $body,
-            GameResource::class . ' did not return the expected response on creation'
+            $expectedDb,
+            $dbData,
+            SaveGameResource::class . ' data in Db does not match'
         );
     }
 
     /**
      * @return array
+     * @codingStandardsIgnoreStart
      */
     public function fetchAllDataProvider()
     {
         return [
-            'Default' => [
+            'GET All' => [
                 'super_user',
                 '/game',
-                [
-                    'no-flags',
-                    'global-unity',
-                    'global-desktop',
-                    'global',
-                    'global-soon',
-                    'global-featured',
-                ],
-            ],
-
-            'With Soft Deleted' => [
-                'super_user',
-                '/game?deleted=true',
-                [
-                    'deleted-game',
-                    'no-flags',
-                    'global-unity',
-                    'global-desktop',
-                    'global',
-                    'global-soon',
-                    'global-featured',
-                ],
-            ],
-
-            'With Featured' => [
-                'super_user',
-                '/game?featured=true',
-                [
-                    'global-featured',
-                ],
-            ],
-
-            'With Featured and Desktop' => [
-                'super_user',
-                '/game?featured=true&desktop=true',
-                [
-                    'global-desktop',
-                    'global-featured',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function fetchGameProvider()
-    {
-        // @codingStandardsIgnoreStart
-        return [
-            'Fetch Global Game' => [
-                'super_user',
-                'global',
                 200,
                 [
-                    'game_id'     => 'global',
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/game?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/game',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/game?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/game{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'no-flags',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'This game is not global',
+                                'description' => 'This Game has no flags',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 1,
+                                'coming_soon' => false,
+                                'global'      => false,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/no-flags',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-unity',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Unity',
+                                'description' => 'This game is global built in unity',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 2,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => true,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/global-unity',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-unity',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-desktop',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Desktop',
+                                'description' => 'This game is global but desktop only',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 3,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => true,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/a3517fd6-60cb-11e6-a7d0-43afb27c9583',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-desktop',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global',
+                                'description' => 'Just a global game',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 4,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 6,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET With soft deleted' => [
+                'super_user',
+                '/game?deleted=true',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/game?deleted=true&page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/game?deleted=true',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/game?deleted=true&page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/game?deleted=true{&per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'deleted-game',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'This game is deleted',
+                                'description' => 'A Deleted Global Game',
+                                'meta'        => [],
+                                'deleted'     => '2016-04-13 00:00:00',
+                                'sort_order'  => 1,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/deleted-game',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'no-flags',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'This game is not global',
+                                'description' => 'This Game has no flags',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 1,
+                                'coming_soon' => false,
+                                'global'      => false,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/no-flags',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-unity',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Unity',
+                                'description' => 'This game is global built in unity',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 2,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => true,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/global-unity',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-unity',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-desktop',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Desktop',
+                                'description' => 'This game is global but desktop only',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 3,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => true,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/a3517fd6-60cb-11e6-a7d0-43afb27c9583',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-desktop',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global',
+                                'description' => 'Just a global game',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 4,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 7,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET Featured and Coming soon' => [
+                'super_user',
+                '/game?featured=true&coming_soon=true',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/game?featured=true&coming_soon=true&page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/game?featured=true&coming_soon=true',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/game?featured=true&coming_soon=true&page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/game?featured=true&coming_soon=true{&per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 2,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET Featured only' => [
+                'super_user',
+                '/game?featured=true',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/game?featured=true&page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/game?featured=true',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/game?featured=true&page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/game?featured=true{&per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 1,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET Game' => [
+                'super_user',
+                '/game/global-featured',
+                200,
+                [
+                    'game_id'     => 'global-featured',
                     'created'     => '2016-04-13 00:00:00',
                     'updated'     => '2016-04-13 00:00:00',
-                    'title'       => 'Global',
-                    'description' => 'Just a global game',
+                    'title'       => 'Global Featured',
+                    'description' => 'This Game is global and featured',
                     'meta'        => [],
                     'deleted'     => null,
-                    'sort_order'  => 4,
+                    'sort_order'  => 6,
                     'coming_soon' => false,
                     'global'      => true,
-                    'featured'    => false,
+                    'featured'    => true,
                     'unity'       => false,
                     'desktop'     => false,
                     '_links'      => [
-                        'self'       => [
-                            'href' => 'http://api.test.com/game/global',
-                        ],
                         'thumb_url'  => [
                             'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
                         ],
@@ -372,13 +811,16 @@ class GameResourceTest extends TestCase
                         'game_url'   => [
                             'href' => 'https://games.changemyworldnow.com/sea-turtle',
                         ],
+                        'self'       => [
+                            'href' => 'http://api.test.com/game/global-featured',
+                        ],
                     ],
                 ],
             ],
 
-            'Fetch Deleted Game' => [
+            'GET Deleted Game' => [
                 'super_user',
-                'deleted-game',
+                '/game/deleted-game',
                 200,
                 [
                     'game_id'     => 'deleted-game',
@@ -395,9 +837,113 @@ class GameResourceTest extends TestCase
                     'unity'       => false,
                     'desktop'     => false,
                     '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
                         'self'       => [
                             'href' => 'http://api.test.com/game/deleted-game',
                         ],
+                    ],
+                ],
+            ],
+
+            'GET Game not found' => [
+                'super_user',
+                '/game/not-found',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Game not Found',
+                ],
+            ],
+
+            'GET Adult access denied' => [
+                'english_teacher',
+                '/game',
+                403,
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'GET Child access denied' => [
+                'english_student',
+                '/game',
+                403,
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function saveGameDataProvider()
+    {
+        // @codingStandardsIgnoreStart
+        return [
+            'POST New Game' => [
+                'super_user',
+                '/game',
+                201,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => [
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ],
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => '14',
+                    'flags'       => '1',
+                    'deleted'     => null,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'deleted'     => null,
+                    '_links'      => [
                         'thumb_url'  => [
                             'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
                         ],
@@ -411,15 +957,546 @@ class GameResourceTest extends TestCase
                 ],
             ],
 
-            'Fetch 404 GameGame' => [
+            'POST Only required fields and Json URLs' => [
                 'super_user',
-                'not-found',
-                404,
+                '/game',
+                201,
+                'POST',
                 [
-                    'title'  => 'Not Found',
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'sort_order'  => 14,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => '14',
+                    'flags'       => '0',
+                    'deleted'     => null,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => false,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'deleted'     => null,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                    ],
+                ],
+
+            ],
+
+            'POST with missing fields' => [
+                'super_user',
+                '/game',
+                422,
+                'POST',
+                [],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'sort_order'  => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with incorrect sort order' => [
+                'super_user',
+                '/game',
+                422,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 'apple',
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'sort_order' => [
+                            'notDigits' => 'The input must contain only digits',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with Invalid Urls' => [
+                'super_user',
+                '/game',
+                422,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'baz_url' => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with One Invalid Url' => [
+                'super_user',
+                '/game',
+                422,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with non super adult' => [
+                'english_teacher',
+                '/game',
+                403,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
                     'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status' => 404,
-                    'detail' => 'Game not found',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'POST Fails with non super child' => [
+                'english_student',
+                '/game',
+                403,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'PUT Game' => [
+                'super_user',
+                '/game/no-flags',
+                200,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => [
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ],
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => '14',
+                    'flags'       => '1',
+                    'deleted'     => null,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'deleted'     => null,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                    ],
+                ],
+            ],
+
+            'PUT Only required fields and Json URLs' => [
+                'super_user',
+                '/game/no-flags',
+                200,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'sort_order'  => 14,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => '14',
+                    'flags'       => '0',
+                    'deleted'     => null,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 14,
+                    'coming_soon' => false,
+                    'global'      => false,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'deleted'     => null,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                    ],
+                ],
+
+            ],
+
+            'PUT with missing fields' => [
+                'super_user',
+                '/game/no-flags',
+                422,
+                'PUT',
+                [],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'sort_order'  => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with incorrect sort order' => [
+                'super_user',
+                '/game/no-flags',
+                422,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 'apple',
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'sort_order' => [
+                            'notDigits' => 'The input must contain only digits',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with Invalid Urls' => [
+                'super_user',
+                '/game/no-flags',
+                422,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'baz_url' => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with One Invalid Url' => [
+                'super_user',
+                '/game/no-flags',
+                422,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with non super adult' => [
+                'english_teacher',
+                '/game/no-flags',
+                403,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'PUT Fails with non super child' => [
+                'english_student',
+                '/game/no-flags',
+                403,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best game ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
                 ],
             ],
         ];
@@ -454,476 +1531,5 @@ class GameResourceTest extends TestCase
             //                false,
             //            ],
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function createGameProvider()
-    {
-        // @codingStandardsIgnoreStart
-        return [
-            'Complete Record' => [
-                'super_user',
-                201,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => [
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ],
-                ],
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    '_links'      => [
-                        'thumb_url'  => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        ],
-                        'banner_url' => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        ],
-                        'game_url'   => [
-                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
-                        ],
-                    ],
-                ],
-            ],
-
-            'With Json URIS' => [
-                'super_user',
-                201,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    '_links'      => [
-                        'thumb_url'  => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        ],
-                        'banner_url' => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        ],
-                        'game_url'   => [
-                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
-                        ],
-                    ],
-                ],
-            ],
-
-            'Only required fields' => [
-                'super_user',
-                201,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'sort_order'  => 14,
-                    'uris'        => Json::encode([
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => false,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    '_links'      => [
-                        'thumb_url'  => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        ],
-                        'banner_url' => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        ],
-                        'game_url'   => [
-                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
-                        ],
-                    ],
-                ],
-            ],
-
-            'Fails with missing fields' => [
-                'super_user',
-                422,
-                [],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
-                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
-                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
-                        'sort_order'  => ['isEmpty' => 'Value is required and can\'t be empty'],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-
-            'Fails with incorrect sort order' => [
-                'super_user',
-                422,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 'apple',
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'sort_order' => [
-                            'notDigits' => 'The input must contain only digits',
-                        ],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-
-            'Fails with Invalid Urls' => [
-                'super_user',
-                422,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 1,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'baz_url' => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'uris' => [
-                            'missingKey' =>
-                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
-                        ],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-
-            'Fails with One Invalid Url' => [
-                'super_user',
-                422,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 1,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'uris' => [
-                            'missingKey' =>
-                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
-                        ],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-        ];
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
-     * @return array
-     */
-    public function updateGameProvider()
-    {
-        // @codingStandardsIgnoreStart
-        return [
-            'Update Game' => [
-                'super_user',
-                'global-featured',
-                200,
-                [
-                    'game_id'     => 'foo-bar', // checking to make sure the id does not change
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'flags'       => 3,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => true,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => [
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ],
-                ],
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => true,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    '_links'      => [
-                        'thumb_url'  => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        ],
-                        'banner_url' => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        ],
-                        'game_url'   => [
-                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
-                        ],
-                    ],
-                ],
-            ],
-
-            'Deleted Game Now un deleted' => [
-                'super_user',
-                'deleted-game',
-                200,
-                [
-                    'game_id'     => 'foo-bar', // checking to make sure the id does not change
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'flags'       => 3,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => true,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => [
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ],
-                ],
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 14,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => true,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    '_links'      => [
-                        'thumb_url'  => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        ],
-                        'banner_url' => [
-                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        ],
-                        'game_url'   => [
-                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
-                        ],
-                    ],
-                ],
-            ],
-
-            'Fails with missing fields' => [
-                'super_user',
-                'global-featured',
-                422,
-                [],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
-                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
-                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
-                        'sort_order'  => ['isEmpty' => 'Value is required and can\'t be empty'],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-
-            'Fails with incorrect sort order' => [
-                'super_user',
-                'global-featured',
-                422,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 'apple',
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'thumb_url'  => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'banner_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'   => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'sort_order' => [
-                            'notDigits' => 'The input must contain only digits',
-                        ],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-
-            'Fails with Invalid Urls' => [
-                'super_user',
-                'global-featured',
-                422,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 1,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'baz_url' => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'uris' => [
-                            'missingKey' =>
-                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
-                        ],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-
-            'Fails with One Invalid Url' => [
-                'super_user',
-                'global-featured',
-                422,
-                [
-                    'title'       => 'Manchuck Farmville',
-                    'description' => 'The best game ever (Just like franks hot sauce)',
-                    'meta'        => [],
-                    'sort_order'  => 1,
-                    'coming_soon' => false,
-                    'global'      => true,
-                    'featured'    => false,
-                    'unity'       => false,
-                    'desktop'     => false,
-                    'uris'        => Json::encode([
-                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
-                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                        'game_url'  => 'https://games.changemyworldnow.com/sea-turtle',
-                    ]),
-                ],
-                [
-                    'title'               => 'Unprocessable Entity',
-                    'validation_messages' => [
-                        'uris' => [
-                            'missingKey' =>
-                                'Missing keys or invalid key set expected: [thumb_url, banner_url, game_url]',
-                        ],
-                    ],
-                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'status'              => 422,
-                    'detail'              => 'Failed Validation',
-                ],
-            ],
-        ];
-        // @codingStandardsIgnoreEnd
     }
 }

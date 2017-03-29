@@ -67,7 +67,6 @@
             <file>./test/IntegrationTest/Api/V1/Rest/GameResourceTest.php</file>
             <file>./test/IntegrationTest/Api/V1/Rest/SaveGameResourceTest.php</file>
             <file>./test/IntegrationTest/Api/V1/Rest/UserGameResourceTest.php</file>
-            <file>./test/IntegrationTest/Service/GameServiceTest.php</file>
         </testsuite>
         <testsuite name="Integration">
             <directory>./test/IntegrationTest</directory>

@@ -2,10 +2,8 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-use Application\Exception\NotFoundException;
-use Game\Game;
+use Api\V1\Rest\UserGame\UserGameResource;
 use IntegrationTest\IntegrationTest;
-use User\Adult;
 use Zend\Json\Json;
 
 /**
@@ -39,152 +37,1031 @@ class UserGameResourceTest extends IntegrationTest
 
     /**
      * @test
-     * @param string $user
-     * @param string $url
-     * @param string $method
-     * @param array $params
-     * @dataProvider changePasswordDataProvider
+     *
+     * @param string $userId
+     * @param string $route
+     * @param int $code
+     * @param array $expected
+     *
+     * @dataProvider fetchAllDataProvider
      */
-    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
+    public function testItShouldFetchGame(string $userId, string $route, int $code, array $expected)
     {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException($url, $method, $params);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldAttachGameToUser()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/user/english_student/game/be-bright', 'POST');
-        $this->assertResponseStatusCode(201);
-        $this->assertControllerName('api\v1\rest\usergame\controller');
-        $this->assertMatchedRouteName('api.rest.user-game');
-        try {
-            $this->userGameService->fetchGameForUser(
-                new Adult(['user_id' => 'english_student']),
-                new Game(['game_id' => 'be-bright'])
-            );
-        } catch (NotFoundException $nf) {
-            $this->fail('game not attached to user');
-        }
-    }
-    /**
-     * @test
-     */
-    public function testItShouldDetachGameFromUser()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/user/english_student/game/Monarch', 'DELETE');
-        $this->assertResponseStatusCode(204);
-        $this->assertControllerName('api\v1\rest\usergame\controller');
-        $this->assertMatchedRouteName('api.rest.user-game');
-        try {
-            $this->userGameService->fetchGameForUser(
-                new Adult(['user_id' => 'english_student']),
-                new Game(['game_id' => 'Monarch'])
-            );
-            $this->fail('game not detached from user');
-        } catch (NotFoundException $nf) {
-            //noop
-        }
-    }
-
-    /**
-     * @test
-     * @param $user
-     * @param $expected
-     * @dataProvider userGameDataProvider
-     */
-    public function testItShouldFetchAllGamesForUserExcludingDeletedGames($user, $expected)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($user);
-        $this->dispatch('/user/' . $user . '/game');
-        $this->assertResponseStatusCode(200);
-        $this->assertControllerName('api\v1\rest\usergame\controller');
-        $this->assertMatchedRouteName('api.rest.user-game');
+        $this->dispatchAuthenticatedCall($userId, $route, $code);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
-        $this->assertArrayHasKey('game', $body['_embedded']);
-        $games = $body['_embedded']['game'];
-        $actual = [];
-        foreach ($games as $game) {
-            $this->assertArrayHasKey('game_id', $game);
-            $actual[] = $game['game_id'];
-        }
-        $this->assertEquals($actual, $expected);
-    }
 
-    /**
-     * @test
-     * @param $user
-     * @param $url
-     * @param string $method
-     * @dataProvider unauthorizedRouteDataProvider
-     */
-    public function testItShouldNotLetOthersAttachOrDetachGames($user, $url, $method = 'GET')
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($user);
-        $this->dispatch($url, $method);
-        $this->assertControllerName('api\v1\rest\usergame\controller');
-        $this->assertMatchedRouteName('api.rest.user-game');
-        $this->assertResponseStatusCode(403);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldFetchGameForUser()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/game/monarch');
-        $this->assertResponseStatusCode(200);
-        $this->assertControllerName('api\v1\rest\usergame\controller');
-        $this->assertMatchedRouteName('api.rest.user-game');
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('game_id', $body);
-        $this->assertEquals('monarch', $body['game_id']);
+        // Do not sort the arrays we want to make sure they match
         $this->assertEquals(
-            'Monarch Butterflies are crucial for the environment' .
-            ' yet they are endangered! This is your spot!',
-            $body['description']
+            $expected,
+            $body,
+            UserGameResource::class . ' did not return the expected body for ' . $route
         );
-        $this->assertEquals('Monarch', $body['title']);
     }
 
     /**
      * @test
+     *
+     * @param string $login
+     * @param string $userId
+     * @param string $gameId
+     * @param string $route
+     * @param int $code
+     * @param array $expected
+     *
+     * @dataProvider attachGamesDataProvider
      */
-    public function testItShould404WhenADeletedGameIsFetched()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('english_student');
-        $this->dispatch('/user/english_student/game/deleted-game');
-        $this->assertResponseStatusCode(404);
-        $this->assertControllerName('api\v1\rest\usergame\controller');
-        $this->assertMatchedRouteName('api.rest.user-game');
+    public function testItShouldAttachGamesToUsers(
+        string $login,
+        string $userId,
+        string $gameId,
+        string $route,
+        int $code,
+        array $expected
+    ) {
+        $this->dispatchAuthenticatedCall($login, $route, $code, 'POST');
+        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+        // Do not sort the arrays we want to make sure they match
+        $this->assertEquals(
+            $expected,
+            $body,
+            UserGameResource::class . ' did not return the expected body'
+        );
+
+        if ($code > 400) {
+            return;
+        }
+
+        $stmt = $this->getConnection()->getConnection()->query(
+            'SELECT * FROM user_games WHERE user_id = "' . $userId . '" AND game_id = "' . $gameId . '"'
+        );
+
+        $dbData = null;
+        foreach ($stmt as $dbData) {
+            // nothing to check we just want to know the record exists
+        }
+
+        $this->assertNotNull(
+            $dbData,
+            UserGameResource::class . 'did not attach the game to the user'
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @param string $login
+     * @param string $userId
+     * @param string $gameId
+     * @param string $route
+     * @param int $code
+     * @param array $expected
+     *
+     * @dataProvider detachGamesDataProvider
+     */
+    public function testItShouldDetachGamesToUsers(
+        string $login,
+        string $userId,
+        string $gameId,
+        string $route,
+        int $code,
+        array $expected
+    ) {
+        $this->dispatchAuthenticatedCall($login, $route, $code, 'DELETE');
+
+        if ($code > 400) {
+            $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
+
+            // Do not sort the arrays we want to make sure they match
+            $this->assertEquals(
+                $expected,
+                $body,
+                UserGameResource::class . ' did not return the expected body'
+            );
+
+            return;
+        }
+
+        $stmt = $this->getConnection()->getConnection()->query(
+            'SELECT * FROM user_games WHERE user_id = "' . $userId . '" AND game_id = "' . $gameId . '"'
+        );
+
+        $dbData = null;
+        foreach ($stmt as $dbData) {
+            // nothing to check we just want to know the record exists
+        }
+
+        $this->assertNull(
+            $dbData,
+            UserGameResource::class . 'did not detach the game to the user'
+        );
     }
 
     /**
      * @return array
+     * @codingStandardsIgnoreStart
      */
-    public function userGameDataProvider()
+    public function fetchAllDataProvider()
     {
         return [
-            'English Student' => [
-                'english_student',
-                ['animal-id', 'monarch'],
+            'GET All for adult' => [
+                'english_teacher',
+                '/user/english_teacher/game',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/user/english_teacher/game?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/user/english_teacher/game',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/user/english_teacher/game?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/user/english_teacher/game{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'global-unity',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Unity',
+                                'description' => 'This game is global built in unity',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 2,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => true,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/global-unity',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global-unity',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-desktop',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Desktop',
+                                'description' => 'This game is global but desktop only',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 3,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => true,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/a3517fd6-60cb-11e6-a7d0-43afb27c9583',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global-desktop',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global',
+                                'description' => 'Just a global game',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 4,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 5,
+                    'page'        => 1,
+                ],
             ],
-            'Math Student' => [
-                'math_student',
-                ['animal-id']
+
+            'GET Featured and Coming soon for adult' => [
+                'english_teacher',
+                '/user/english_teacher/game?featured=true&coming_soon=true',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/user/english_teacher/game?featured=true&coming_soon=true&page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/user/english_teacher/game?featured=true&coming_soon=true',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/user/english_teacher/game?featured=true&coming_soon=true&page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/user/english_teacher/game?featured=true&coming_soon=true{&per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_teacher/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 2,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET Featured and Coming soon for child' => [
+                'english_student',
+                '/user/english_student/game?featured=true&coming_soon=true',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/user/english_student/game?featured=true&coming_soon=true&page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/user/english_student/game?featured=true&coming_soon=true',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/user/english_student/game?featured=true&coming_soon=true&page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/user/english_student/game?featured=true&coming_soon=true{&per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 2,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET All for user that has no attached games' => [
+                'other_student',
+                '/user/other_student/game',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/user/other_student/game?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/user/other_student/game',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/user/other_student/game?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/user/other_student/game{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'global-unity',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Unity',
+                                'description' => 'This game is global built in unity',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 2,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => true,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/global-unity',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/other_student/game/global-unity',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-desktop',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Desktop',
+                                'description' => 'This game is global but desktop only',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 3,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => true,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/a3517fd6-60cb-11e6-a7d0-43afb27c9583',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/other_student/game/global-desktop',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global',
+                                'description' => 'Just a global game',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 4,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/other_student/game/global',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/other_student/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/other_student/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 5,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET All for user that has an attached game' => [
+                'english_student',
+                '/user/english_student/game',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/user/english_student/game?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/user/english_student/game',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/user/english_student/game?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/user/english_student/game{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'game' => [
+                            [
+                                'game_id'     => 'no-flags',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'This game is not global',
+                                'description' => 'This Game has no flags',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 1,
+                                'coming_soon' => false,
+                                'global'      => false,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/no-flags',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-unity',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Unity',
+                                'description' => 'This game is global built in unity',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 2,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => true,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/global-unity',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global-unity',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-desktop',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Desktop',
+                                'description' => 'This game is global but desktop only',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 3,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => true,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/a3517fd6-60cb-11e6-a7d0-43afb27c9583',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global-desktop',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global',
+                                'description' => 'Just a global game',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 4,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-soon',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Coming soon',
+                                'description' => 'This game is global and coming soon',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 5,
+                                'coming_soon' => true,
+                                'global'      => true,
+                                'featured'    => false,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global-soon',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'game_id'     => 'global-featured',
+                                'created'     => '2016-04-13 00:00:00',
+                                'updated'     => '2016-04-13 00:00:00',
+                                'title'       => 'Global Featured',
+                                'description' => 'This Game is global and featured',
+                                'meta'        => [],
+                                'deleted'     => null,
+                                'sort_order'  => 6,
+                                'coming_soon' => false,
+                                'global'      => true,
+                                'featured'    => true,
+                                'unity'       => false,
+                                'desktop'     => false,
+                                '_links'      => [
+                                    'thumb_url'  => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                                    ],
+                                    'banner_url' => [
+                                        'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                                    ],
+                                    'game_url'   => [
+                                        'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                                    ],
+                                    'self'       => [
+                                        'href' => 'http://api.test.com/user/english_student/game/global-featured',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 6,
+                    'page'        => 1,
+                ],
+            ],
+
+            'GET Game for Adult' => [
+                'english_teacher',
+                '/user/english_teacher/game/global-featured',
+                200,
+                [
+                    'game_id'     => 'global-featured',
+                    'created'     => '2016-04-13 00:00:00',
+                    'updated'     => '2016-04-13 00:00:00',
+                    'title'       => 'Global Featured',
+                    'description' => 'This Game is global and featured',
+                    'meta'        => [],
+                    'deleted'     => null,
+                    'sort_order'  => 6,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => true,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                        'self'       => [
+                            'href' => 'http://api.test.com/user/english_teacher/game/global-featured',
+                        ],
+                    ],
+                ],
+            ],
+
+            'GET Game for Child' => [
+                'english_student',
+                '/user/english_student/game/global-featured',
+                200,
+                [
+                    'game_id'     => 'global-featured',
+                    'created'     => '2016-04-13 00:00:00',
+                    'updated'     => '2016-04-13 00:00:00',
+                    'title'       => 'Global Featured',
+                    'description' => 'This Game is global and featured',
+                    'meta'        => [],
+                    'deleted'     => null,
+                    'sort_order'  => 6,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => true,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                        'self'       => [
+                            'href' => 'http://api.test.com/user/english_student/game/global-featured',
+                        ],
+                    ],
+                ],
+            ],
+
+            'GET Game for User with access ' => [
+                'english_student',
+                '/user/english_student/game/no-flags',
+                200,
+                [
+                    'game_id'     => 'no-flags',
+                    'created'     => '2016-04-13 00:00:00',
+                    'updated'     => '2016-04-13 00:00:00',
+                    'title'       => 'This game is not global',
+                    'description' => 'This Game has no flags',
+                    'meta'        => [],
+                    'deleted'     => null,
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => false,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                        'self'       => [
+                            'href' => 'http://api.test.com/user/english_student/game/no-flags',
+                        ],
+                    ],
+                ],
+            ],
+
+            'GET Game for User 404 with no access' => [
+                'other_student',
+                '/user/other_student/game/no-flags',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Game not found',
+                ],
+            ],
+
+            'GET Game for User 404 for invalid game' => [
+                'other_student',
+                '/user/other_student/game/not-real',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Game not Found',
+                ],
+            ],
+
+            'GET Game for User 404 for invalid user' => [
+                'other_student',
+                '/user/not-a-user/game/not-real',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'User not found',
+                ],
+            ],
+
+            'GET Deleted Game 404 for Adult' => [
+                'english_teacher',
+                '/user/english_teacher/game/deleted-game',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Entity not found',
+                ],
+            ],
+
+            'GET Deleted Game 404 for child' => [
+                'english_student',
+                '/user/english_student/game/deleted-game',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Entity not found',
+                ],
             ],
         ];
     }
@@ -192,62 +1069,212 @@ class UserGameResourceTest extends IntegrationTest
     /**
      * @return array
      */
-    public function unauthorizedRouteDataProvider()
+    public function attachGamesDataProvider()
     {
         return [
-            'English Student POST' => [
-                'english_student',
-                '/user/english_student/game/be-bright',
-                'POST'
-            ],
-            'English Student DELETE' => [
-                'english_student',
-                '/user/english_student/game/be-bright',
-                'DELETE'
-            ],
-            'English Teacher POST' => [
+            'Attach game to adult' => [
+                'super_user',
                 'english_teacher',
-                '/user/english_teacher/game/be-bright',
-                'POST'
+                'no-flags',
+                '/user/english_teacher/game/no-flags',
+                201,
+                [
+                    'game_id'     => 'no-flags',
+                    'created'     => '2016-04-13 00:00:00',
+                    'updated'     => '2016-04-13 00:00:00',
+                    'title'       => 'This game is not global',
+                    'description' => 'This Game has no flags',
+                    'meta'        => [],
+                    'deleted'     => null,
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => false,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                        'self'       => [
+                            'href' => 'http://api.test.com/user/english_teacher/game/no-flags',
+                        ],
+                    ],
+                ],
             ],
-            'English Teacher DELETE' => [
+
+            'Attach game to child' => [
+                'super_user',
+                'other_student',
+                'no-flags',
+                '/user/other_student/game/no-flags',
+                201,
+                [
+                    'game_id'     => 'no-flags',
+                    'created'     => '2016-04-13 00:00:00',
+                    'updated'     => '2016-04-13 00:00:00',
+                    'title'       => 'This game is not global',
+                    'description' => 'This Game has no flags',
+                    'meta'        => [],
+                    'deleted'     => null,
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => false,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    '_links'      => [
+                        'thumb_url'  => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        ],
+                        'banner_url' => [
+                            'href' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        ],
+                        'game_url'   => [
+                            'href' => 'https://games.changemyworldnow.com/sea-turtle',
+                        ],
+                        'self'       => [
+                            'href' => 'http://api.test.com/user/other_student/game/no-flags',
+                        ],
+                    ],
+                ],
+            ],
+
+            'Fails when game not found' => [
+                'super_user',
+                'other_student',
+                'not-real',
+                '/user/other_student/game/not-real',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Game not Found',
+                ],
+            ],
+
+            'Fails when adult not allowed' => [
                 'english_teacher',
-                '/user/english_teacher/game/be-bright',
-                'DELETE'
+                'other_student',
+                'no-flags',
+                '/user/other_student/game/no-flags',
+                403,
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
             ],
-            'Principal POST' => [
-                'principal',
-                '/user/principal/game/be-bright',
-                'POST'
+
+            'Fails when child not allowed' => [
+                'english_student',
+                'other_student',
+                'no-flags',
+                '/user/other_student/game/no-flags',
+                403,
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
             ],
-            'Principal DELETE' => [
-                'principal',
-                '/user/principal/game/be-bright',
-                'DELETE'
+
+            'Fails when user not found' => [
+                'super_user',
+                'no-found',
+                'no-flags',
+                '/user/not-found/game/no-flags',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'User not found',
+                ],
             ],
+
+            // TODO add check for adding the same game once CORE-3324 merged
         ];
     }
 
     /**
      * @return array
      */
-    public function changePasswordDataProvider()
+    public function detachGamesDataProvider()
     {
         return [
-            0 => [
+            'Detach game' => [
+                'super_user',
                 'english_student',
-                '/user/english_student/game/monarch'
+                'no-flags',
+                '/user/english_student/game/no-flags',
+                204,
+                [],
             ],
-            1 => [
-                'english_student',
-                '/user/english_student/game/monarch',
-                'POST',
-                ['data' => ['foo' => 'bar'], 'version' => '1.1.1']
+
+            'Fails when game not found' => [
+                'super_user',
+                'other_student',
+                'not-real',
+                '/user/other_student/game/not-real',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'Game not Found',
+                ],
             ],
-            2 => [
+
+            'Fails when adult not allowed' => [
+                'english_teacher',
+                'other_student',
+                'no-flags',
+                '/user/other_student/game/no-flags',
+                403,
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Fails when child not allowed' => [
                 'english_student',
-                '/user/english_student/game/monarch',
-                'DELETE'
+                'other_student',
+                'no-flags',
+                '/user/other_student/game/no-flags',
+                403,
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'Fails when user not found' => [
+                'super_user',
+                'no-found',
+                'no-flags',
+                '/user/not-found/game/no-flags',
+                404,
+                [
+                    'title'  => 'Not Found',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 404,
+                    'detail' => 'User not found',
+                ],
             ],
         ];
     }

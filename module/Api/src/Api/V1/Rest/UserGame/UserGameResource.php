@@ -2,8 +2,6 @@
 
 namespace Api\V1\Rest\UserGame;
 
-use Api\V1\Rest\Game\GameCollection;
-use Api\V1\Rest\Game\GameEntity;
 use Game\GameInterface;
 use Game\Service\GameServiceInterface;
 use Game\Service\UserGameService;
@@ -32,6 +30,11 @@ class UserGameResource extends AbstractResourceListener
      */
     protected $userGameService;
 
+
+    protected function getUser()
+    {
+
+    }
     /**
      * UserGameResource constructor.
      *
@@ -108,7 +111,7 @@ class UserGameResource extends AbstractResourceListener
         $user = $this->userService->fetchUser($userId);
 
         // 404 if the game is not found
-        $game = $this->gameService->fetchGame($gameId, new GameEntity());
+        $game = $this->gameService->fetchGame($gameId, new UserGameEntity());
 
         if ($this->userGameService->attachGameToUser($user, $game)) {
             return $game;
@@ -246,17 +249,20 @@ class UserGameResource extends AbstractResourceListener
      * )
      * @param  array $params
      *
-     * @return ApiProblem|GameCollection
+     * @return ApiProblem|UserGameCollection
      */
     public function fetchAll($params = [])
     {
+        $params = (array) $params;
+        unset($params['page'], $params['per_page']);
+
         // 404 if the user is not found
         $user = $this->userService->fetchUser(
             $this->getEvent()->getRouteParam('user_id')
         );
 
-        return new GameCollection(
-            $this->userGameService->fetchAllGamesForUser($user, null, new GameEntity())
+        return new UserGameCollection(
+            $this->userGameService->fetchAllGamesForUser($user, $params, new UserGameEntity())
         );
     }
 
@@ -326,6 +332,6 @@ class UserGameResource extends AbstractResourceListener
         $game = $this->gameService->fetchGame($gameId);
 
         // 404 if the user is not allowed to access the game
-        return $this->userGameService->fetchGameForUser($user, $game, new GameEntity());
+        return $this->userGameService->fetchGameForUser($user, $game, new UserGameEntity());
     }
 }

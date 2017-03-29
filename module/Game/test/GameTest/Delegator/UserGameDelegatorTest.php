@@ -16,7 +16,6 @@ use Zend\Paginator\Adapter\Iterator;
 
 /**
  * Unit tests for UserGameDelegator
- * @SuppressWarnings(PHPMD)
  */
 class UserGameDelegatorTest extends TestCase
 {
@@ -68,7 +67,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldCallAttachGameToUser()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -111,7 +110,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldNotCallAttachGameWhenEventStops()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -150,7 +149,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventWhenExceptionOnAttachGame()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -172,7 +171,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'attach.user.game',
+                    'name'   => 'attach.user.game',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'game' => $game],
                 ],
@@ -182,7 +181,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'attach.user.game.error',
+                    'name'   => 'attach.user.game.error',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'game' => $game, 'exception' => new \Exception()],
                 ],
@@ -198,7 +197,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldCallDetachGameForUser()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -241,7 +240,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldNotCallDetachGameWhenEventStops()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -280,7 +279,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventOnExceptionWhileDetachGame()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -302,7 +301,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'detach.user.game',
+                    'name'   => 'detach.user.game',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'game' => $game],
                 ],
@@ -312,7 +311,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'detach.user.game.error',
+                    'name'   => 'detach.user.game.error',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'game' => $game, 'exception' => new \Exception()],
                 ],
@@ -328,9 +327,12 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldCallFetchAllGamesForUser()
     {
         $result = new Iterator(new \ArrayIterator([]));
-        $user = new Child(['user_id' => 'bar']);
-        $where = new Where();
+        $user   = new Child(['user_id' => 'bar']);
+        $where  = new Where();
         $where->isNull("g.deleted");
+
+        $this->userGameService->shouldReceive('createWhere')
+            ->andReturn($where);
 
         $this->userGameService->shouldReceive('fetchAllGamesForUser')
             ->andReturn($result)->once();
@@ -370,8 +372,11 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldNotCallFetchAllGamesForUserWhenEventStops()
     {
         $result = new Iterator(new \ArrayIterator());
-        $user = new Child(['user_id' => 'bar']);
-        $where = new Where();
+        $user   = new Child(['user_id' => 'bar']);
+        $where  = new Where();
+
+        $this->userGameService->shouldReceive('createWhere')
+            ->andReturn($where);
 
         $this->userGameService->shouldReceive('fetchAllGamesForUser')
             ->andReturn(true)->never();
@@ -408,14 +413,16 @@ class UserGameDelegatorTest extends TestCase
      */
     public function testItShouldTriggerErrorEventOnExceptionWhileFetchAllUserGames()
     {
-        $user = new Child(['user_id' => 'bar']);
+        $user  = new Child(['user_id' => 'bar']);
         $where = new Where();
-        $where->isNull("g.deleted");
 
+        $this->userGameService->shouldReceive('createWhere')
+            ->andReturn($where);
+        $where->isNull("g.deleted");
+        $exception = new \Exception();
         $this->userGameService->shouldReceive('fetchAllGamesForUser')
-            ->andReturnUsing(function () {
-                throw new \Exception();
-            })->once();
+            ->andThrow($exception);
+
         try {
             $this->delegator->fetchAllGamesForUser($user);
             $this->fail('exception not thrown');
@@ -428,7 +435,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.all.user.games',
+                    'name'   => 'fetch.all.user.games',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'where' => $where, 'prototype' => null],
                 ],
@@ -438,13 +445,13 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.all.user.games.error',
+                    'name'   => 'fetch.all.user.games.error',
                     'target' => $this->userGameService,
                     'params' => [
-                        'user' => $user,
-                        'where' => $where,
+                        'user'      => $user,
+                        'where'     => $where,
                         'prototype' => null,
-                        'exception' => new \Exception
+                        'exception' => $exception,
                     ],
                 ],
                 $this->calledEvents[1],
@@ -458,13 +465,11 @@ class UserGameDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchGameForUser()
     {
-        $game = new Game([
-            'game_id' => 'foo'
-        ]);
-
+        $game = new Game(['game_id' => 'foo']);
         $user = new Child(['user_id' => 'bar']);
 
-        $this->userGameService->shouldReceive('fetchGameForUser')
+        $this->userGameService
+            ->shouldReceive('fetchGameForUser')
             ->andReturn($game)->once();
 
         $this->delegator->fetchGameForUser($user, $game);
@@ -502,7 +507,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldNotCallFetchGameForUserWhenEventStops()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -541,7 +546,7 @@ class UserGameDelegatorTest extends TestCase
     public function testItShouldTriggerErrorEventOnExceptionWhileFetchingUserGame()
     {
         $game = new Game([
-            'game_id' => 'foo'
+            'game_id' => 'foo',
         ]);
 
         $user = new Child(['user_id' => 'bar']);
@@ -563,7 +568,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.user.game',
+                    'name'   => 'fetch.user.game',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'game' => $game],
                 ],
@@ -573,7 +578,7 @@ class UserGameDelegatorTest extends TestCase
 
             $this->assertEquals(
                 [
-                    'name' => 'fetch.user.game.error',
+                    'name'   => 'fetch.user.game.error',
                     'target' => $this->userGameService,
                     'params' => ['user' => $user, 'game' => $game, 'exception' => new NotFoundException()],
                 ],

@@ -113,7 +113,7 @@ class GameDelegator implements GameServiceInterface
                 return $response->last();
             }
 
-            $return = $this->gameService->fetchGame($gameId);
+            $return = $this->gameService->fetchGame($gameId, $prototype);
         } catch (\Exception $gameException) {
             $event->setName('fetch.game.error');
             $event->setParam('error', $gameException);

@@ -6,9 +6,7 @@ use Game\Service\SaveGameServiceInterface;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class GameDataResource
- *
- * @package Api\V1\Rest\GameData
+ * A resource that fetches all the game data for all games or just for one game across all users
  */
 class GameDataResource extends AbstractResourceListener
 {

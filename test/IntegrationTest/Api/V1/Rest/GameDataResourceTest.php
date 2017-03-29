@@ -7,7 +7,6 @@ use Zend\Json\Json;
 
 /**
  * Class GameDataResourceTest
- * @package IntegrationTest\Api\V1\Rest
  */
 class GameDataResourceTest extends TestCase
 {
@@ -160,12 +159,20 @@ class GameDataResourceTest extends TestCase
             'Super User Invalid Game' => [
                 'super_user',
                 '/game-data/foo-bar',
-                404,
+                200,
                 [
-                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-                    'title'  => 'Not Found',
-                    'status' => 404,
-                    'detail' => 'Game not found',
+                    '_links'      => [
+                        'self' => [
+                            'href' => 'http://api.test.com/game-data/foo-bar',
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'items' => [],
+                    ],
+                    'page_count'  => 0,
+                    'page_size'   => 30,
+                    'total_items' => 0,
+                    'page'        => 0,
                 ],
             ],
 
@@ -194,5 +201,4 @@ class GameDataResourceTest extends TestCase
             ],
         ];
     }
-
 }

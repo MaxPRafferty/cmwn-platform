@@ -4,15 +4,10 @@ namespace Game\Service;
 
 use Application\Exception\NotFoundException;
 use Application\Utils\Date\DateTimeFactory;
-use Application\Utils\ServiceTrait;
 use Game\Game;
 use Game\GameInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Predicate\PredicateInterface;
-use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
 use Zend\Json\Json;
@@ -35,14 +30,6 @@ class GameService implements GameServiceInterface
      * @var ArraySerializable
      */
     protected $hydrator;
-
-    protected static $flagMap = [
-        'global'      => GameInterface::GAME_GLOBAL,
-        'featured'    => GameInterface::GAME_FEATURED,
-        'coming_soon' => GameInterface::GAME_COMING_SOON,
-        'desktop'     => GameInterface::GAME_DESKTOP,
-        'unity'       => GameInterface::GAME_UNITY,
-    ];
 
     /**
      * GameService constructor.
@@ -78,46 +65,6 @@ class GameService implements GameServiceInterface
         ];
     }
 
-    /**
-     * @param $where
-     *
-     * @return PredicateInterface|PredicateSet|Where
-     */
-    public function createWhere($where)
-    {
-        if (!empty($where) && is_array($where)) {
-            // pull out the flag keys
-            $flagWhere = array_intersect_key(
-                $where,
-                array_flip(['global', 'coming_soon', 'featured', 'unity', 'desktop'])
-            );
-
-            // now remove the flag keys
-            $where = array_diff_key($where, $flagWhere);
-            $this->aliasKeys($where);
-            $set = new PredicateSet();
-            $set->addPredicates($where);
-
-            // Add the flags as an or
-            array_walk($flagWhere, function ($value, $flag) use (&$set) {
-                $bit = static::$flagMap[$flag] ?? null;
-                if ($bit === null) {
-                    // skip if flag not defined
-                    return;
-                }
-
-                $expression = $value
-                    ? new Expression('flags & ? = ?', $bit, $bit)
-                    : new Expression('flags & ? != ?', $bit, $bit);
-
-                $set->orPredicate($expression);
-            });
-
-            $where = $set;
-        }
-
-        return !$where instanceof PredicateInterface ? new Where() : $where;
-    }
 
     /**
      * @inheritdoc

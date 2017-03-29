@@ -10,7 +10,9 @@ use Game\Service\SaveGameService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use User\Child;
+use User\PlaceHolder;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Predicate\Operator;
 use Zend\Db\TableGateway\TableGateway;
@@ -70,9 +72,6 @@ class SaveGameServiceTest extends TestCase
             'version' => 'nightly',
         ]);
 
-        $this->tableGateway->shouldReceive('delete')
-            ->once();
-
         $this->tableGateway->shouldReceive('insert')
             ->once()
             ->withArgs(function ($data) use (&$saveGame) {
@@ -93,23 +92,54 @@ class SaveGameServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldRemoveSaveGameUsingStrings()
+    public function testItShouldUpsertGame()
     {
-        $this->tableGateway->shouldReceive('delete')
-            ->with(['user_id' => 'manchuck', 'game_id' => 'monarch'])
-            ->andReturn(true)
-            ->once();
+        $saveGame = new SaveGame([
+            'game_id' => 'monarch',
+            'user_id' => 'manchuck',
+            'data'    => ['foo' => 'bar', 'progress' => 100],
+            'version' => 'nightly',
+        ]);
+
+        $this->tableGateway->shouldReceive('insert')
+            ->once()
+            ->andThrow(new InvalidQueryException(null, null, new \PDOException(null, '23000')));
+
+        $this->tableGateway->shouldReceive('update')
+            ->once()
+            ->withArgs(function ($actualData, $where) use (&$saveGame) {
+                $expectedData = [
+                    'data'    => Json::encode($saveGame->getData()),
+                    'created' => $saveGame->getCreated()->format("Y-m-d H:i:s"),
+                    'version' => 'nightly',
+                ];
+
+                $this->assertEquals(
+                    ['user_id' => 'manchuck', 'game_id' => 'monarch'],
+                    $where,
+                    GameService::class . ' is building the wrong where when updateing'
+                );
+
+                $this->assertEquals(
+                    $expectedData,
+                    $actualData,
+                    GameService::class . ' is not going to update the save game correctly'
+                );
+
+                return true;
+            })
+            ->andReturn(true);
 
         $this->assertTrue(
-            $this->gameService->deleteSaveForUser('manchuck', 'monarch'),
-            GameService::class . ' did not return true on successful delete using strings'
+            $this->gameService->saveGame($saveGame),
+            GameService::class . ' did not return true on saveGame'
         );
     }
 
     /**
      * @test
      */
-    public function testItShouldRemoveSaveGameWithUserAndGame()
+    public function testItShouldRemoveSaveGame()
     {
         $game = new Game();
         $game->setGameId('monarch');
@@ -132,6 +162,12 @@ class SaveGameServiceTest extends TestCase
      */
     public function testItShouldFetchSaveForUserWithStringsAndNoPrototype()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('manchuck');
+
+        $game = new Game();
+        $game->setGameId('monarch');
+
         $date     = new \DateTime();
         $gameData = [
             'game_id' => 'monarch',
@@ -158,7 +194,7 @@ class SaveGameServiceTest extends TestCase
 
         $this->assertEquals(
             $expectedResult,
-            $this->gameService->fetchSaveGameForUser('manchuck', 'monarch'),
+            $this->gameService->fetchSaveGameForUser($user, $game),
             GameService::class . ' did not return back a default save game when fetching by strings'
         );
     }
@@ -189,7 +225,7 @@ class SaveGameServiceTest extends TestCase
         $prototype->shouldReceive('exchangeArray')
             ->with($gameData);
 
-        $result         = new ResultSet();
+        $result = new ResultSet();
         $result->initialize([$gameData]);
 
         $this->tableGateway->shouldReceive('select')
@@ -205,7 +241,7 @@ class SaveGameServiceTest extends TestCase
 
         $this->assertEquals(
             $prototype,
-            $this->gameService->fetchSaveGameForUser($user, $game, $prototype),
+            $this->gameService->fetchSaveGameForUser($user, $game, null, $prototype),
             GameService::class . ' did not return back prototype when fetching a saveGame for a user'
         );
     }

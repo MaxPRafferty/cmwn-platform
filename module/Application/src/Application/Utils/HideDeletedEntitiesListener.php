@@ -14,7 +14,7 @@ use Zend\EventManager\ListenerAggregateTrait;
 /**
  * Class HideDeletedEntityListener
  *
- * @todo Allow some entities to be able to see deleted entities
+ * @todo Allow custom not found messages
  */
 class HideDeletedEntitiesListener implements ListenerAggregateInterface
 {

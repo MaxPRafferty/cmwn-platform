@@ -71,7 +71,7 @@ return [
                     'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
                 \Game\GameInterface::URL_BANNER =>
                     'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/a3517fd6-60cb-11e6-a7d0-43afb27c9583',
             ]),
         ],
         [
@@ -89,7 +89,7 @@ return [
                     'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
                 \Game\GameInterface::URL_BANNER =>
                     'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
-                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/sea-turtle',
+                \Game\GameInterface::URL_GAME   => 'https://games.changemyworldnow.com/global-unity',
             ]),
         ],
         [
