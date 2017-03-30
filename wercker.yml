@@ -20,10 +20,10 @@ build:
       name: Setup test DB
       code: |-
         sleep 5
-        phinx migrate -c $PWD/config/phinx.php -e test
+        $PWD/vendor/bin/phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
-      code: phpcs --standard=PSR2 -p --no-colors module
+      code: $PWD/vendor/bin/phpcs --standard=PSR2 -p --no-colors module
     - script:
       name: PHPUNIT
       code: |-
@@ -50,8 +50,11 @@ release:
         echo "Created directory for artifact"
         $PWD/vendor/bin/swagger $PWD/module -o $PWD/data/docs/swagger.json
     - script:
+      name: removing dev packages
+      code: composer update --no-interaction --no-dev
+    - script:
       name: Running Zend-Tool
-      code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
+      code: /usr/sbin/bin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
     - s3sync:
       name: Uploading package to Amazon S3
       key-id: $AWS_ACCESS_KEY_ID
@@ -81,7 +84,7 @@ draft-release:
         $PWD/bin/version_bump.sh --print-current
         export VERSION="$($PWD/bin/version_bump.sh --print-current)-$SHORT_HASH"
         echo "$VERSION"
-        $PWD/vendor/bin/swagger $PWD/moduel -o $PWD/data/docs/swagger.json
+        $PWD/vendor/bin/swagger $PWD/module -o $PWD/data/docs/swagger.json
     - script:
       name: Init git
       code: |-
@@ -89,6 +92,9 @@ draft-release:
         git config --global user.email hal-9000@changemyworldnow.com
         git config --global user.name "wercker"
         git fetch $GIT_REMOTE
+    - script:
+      name: removing dev packages
+      code: composer update --no-interaction --no-dev
     - script:
       name: Running Zend-Tool
       code: /usr/sbin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
