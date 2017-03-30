@@ -2,7 +2,7 @@ version: '2'
 services:
   php:
     container_name: cmwn_api_php
-    image: cmwn/platform-api:0.3
+    image: cmwn/platform-api:0.4
     expose:
       - "9000"
       - "9001"

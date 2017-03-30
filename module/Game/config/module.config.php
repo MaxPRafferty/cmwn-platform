@@ -27,7 +27,7 @@ return [
     ],
 
     'input_filter_specs' => [
-        'Game\Validator' => [
+        'Game\Validator'     => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -150,7 +150,7 @@ return [
             ],
         ],
         // TODO pull in the route params to body listener then add game_id and user_id to be validated
-        'SaveGame\Validator'       => [
+        'SaveGame\Validator' => [
             [
                 'required'    => true,
                 'validators'  => [],
@@ -170,6 +170,27 @@ return [
                 'name'        => 'version',
                 'description' => 'The Version of the data',
             ],
+        ],
+    ],
+    'rules'              => [
+        'factories' => [
+            \Game\Rule\Rule\UserCanPlayGame::class => \Rule\Rule\Service\BuildRuleFactory::class,
+            \Game\Rule\Rule\GameExists::class      => \Rule\Rule\Service\BuildRuleFactory::class,
+        ],
+
+        'shared' => [
+            \Game\Rule\Rule\UserCanPlayGame::class => false,
+            \Game\Rule\Rule\GameExists::class      => false,
+        ],
+    ],
+
+    'actions' => [
+        'factories' => [
+            \Game\Rule\Action\AddGameToUserAction::class => \Rule\Action\Service\BuildActionFactory::class,
+        ],
+
+        'shared' => [
+            \Game\Rule\Action\AddGameToUserAction::class => false,
         ],
     ],
 ];
