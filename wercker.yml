@@ -19,7 +19,7 @@ build:
     - script:
       name: Setup test DB
       code: |-
-        sleep 5
+        sleep 4
         $PWD/vendor/bin/phinx migrate -c $PWD/config/phinx.php -e test
     - script:
       name: PHPCS Check
