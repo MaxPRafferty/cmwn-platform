@@ -18,6 +18,7 @@ class FlipUserResource extends AbstractResourceListener
 
     /**
      * FlipUserResource constructor.
+     *
      * @param FlipUserServiceInterface $flipUserService
      */
     public function __construct(FlipUserServiceInterface $flipUserService)
@@ -29,14 +30,16 @@ class FlipUserResource extends AbstractResourceListener
      * Create a resource
      *
      * @param  mixed $data
+     *
      * @return ApiProblem|mixed
      */
     public function create($data)
     {
-        $user = $this->getEvent()->getRouteParam('user');
+        $user   = $this->getEvent()->getRouteParam('user');
         $flipId = $this->getInputFilter()->getValue('flip_id');
 
         $this->flipUserService->attachFlipToUser($user, $flipId);
+
         return $this->fetch($flipId);
     }
 
@@ -44,11 +47,13 @@ class FlipUserResource extends AbstractResourceListener
      * Fetch a resource
      *
      * @param  mixed $flipId
+     *
      * @return ApiProblem|mixed
      */
     public function fetch($flipId)
     {
         $user = $this->getEvent()->getRouteParam('user');
+
         return new FlipUserCollection(
             $this->flipUserService->fetchEarnedFlipsForUser($user, ['uf.flip_id' => $flipId], new FlipUserEntity())
         );
@@ -58,11 +63,13 @@ class FlipUserResource extends AbstractResourceListener
      * Fetch all or a subset of resources
      *
      * @param  array $params
+     *
      * @return ApiProblem|mixed
      */
     public function fetchAll($params = [])
     {
         $user = $this->getEvent()->getRouteParam('user');
+
         return new FlipUserCollection(
             $this->flipUserService->fetchEarnedFlipsForUser($user, null, new FlipUserEntity())
         );

@@ -2,11 +2,19 @@
 
 namespace Flip;
 
+use Application\Utils\Uri\UriCollectionAwareInterface;
+
 /**
  * An Interface that defines a flip
  */
-interface FlipInterface
+interface FlipInterface extends UriCollectionAwareInterface
 {
+    const IMAGE_DEFAULT  = 'default';
+    const IMAGE_EARNED   = 'earned';
+    const IMAGE_UNEARNED = 'unearned';
+    const IMAGE_COIN     = 'coin';
+    const IMAGE_STATIC   = 'static';
+
     /**
      * @return string
      */
@@ -20,7 +28,7 @@ interface FlipInterface
     public function exchangeArray(array $array);
 
     /**
-     * Return an array representation of the object
+     * Return an array representation of the flip
      *
      * @return array
      */
@@ -35,8 +43,6 @@ interface FlipInterface
 
     /**
      * Sets the Flip Id
-     *
-     * Designed to be fluent
      *
      * @param string $flipId
      *
@@ -54,8 +60,6 @@ interface FlipInterface
     /**
      * Sets the title of the flip
      *
-     * Designed to be fluent
-     *
      * @param string $title
      *
      * @return FlipInterface
@@ -71,8 +75,6 @@ interface FlipInterface
 
     /**
      * Sets a description on how to earn a flip
-     *
-     * Designed to be fluent
      *
      * @param string $description
      *

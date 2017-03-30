@@ -2,12 +2,10 @@
 
 namespace Flip\Delegator;
 
-use Application\Utils\ServiceTrait;
 use Flip\FlipInterface;
 use Flip\Service\FlipService;
 use Flip\Service\FlipServiceInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
@@ -16,8 +14,6 @@ use Zend\Paginator\Adapter\AdapterInterface;
  */
 class FlipServiceDelegator implements FlipServiceInterface
 {
-    use ServiceTrait;
-
     /**
      * @var FlipService
      */
@@ -42,6 +38,16 @@ class FlipServiceDelegator implements FlipServiceInterface
             [FlipServiceInterface::class, static::class, FlipService::class],
             $events->getIdentifiers()
         ));
+    }
+
+    /**
+     * @param $where
+     *
+     * @return \Zend\Db\Sql\Predicate\PredicateInterface|\Zend\Db\Sql\Predicate\PredicateSet|\Zend\Db\Sql\Where
+     */
+    public function createWhere($where)
+    {
+        return $this->realService->createWhere($where);
     }
 
     /**

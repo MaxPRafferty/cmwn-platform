@@ -10,6 +10,7 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Json\Json;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\Adapter\DbSelect;
 
@@ -23,7 +24,12 @@ class FlipService implements FlipServiceInterface
     /**
      * @var TableGateway
      */
-    protected $flipTableGateway;
+    protected $gateway;
+
+    /**
+     * @var ArraySerializable
+     */
+    protected $hydrator;
 
     /**
      * GameService constructor.
@@ -32,7 +38,23 @@ class FlipService implements FlipServiceInterface
      */
     public function __construct(TableGateway $gateway)
     {
-        $this->flipTableGateway = $gateway;
+        $this->gateway  = $gateway;
+        $this->hydrator = new ArraySerializable();
+    }
+
+    /**
+     * @param FlipInterface $flip
+     *
+     * @return array
+     */
+    protected function getDataForDb(FlipInterface $flip)
+    {
+        return [
+            'flip_id'     => $flip->getFlipId(),
+            'title'       => $flip->getTitle(),
+            'description' => $flip->getDescription(),
+            'uris'        => Json::encode($flip->getUris()),
+        ];
     }
 
     /**
@@ -42,14 +64,14 @@ class FlipService implements FlipServiceInterface
     {
         $where     = $this->createWhere($where);
         $prototype = $prototype ?? new Flip();
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
-        $select    = new Select(['f' => $this->flipTableGateway->getTable()]);
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
+        $select    = new Select(['f' => $this->gateway->getTable()]);
         $select->where($where);
         $select->order(['f.title']);
 
         return new DbSelect(
             $select,
-            $this->flipTableGateway->getAdapter(),
+            $this->gateway->getAdapter(),
             $resultSet
         );
     }
@@ -59,14 +81,14 @@ class FlipService implements FlipServiceInterface
      */
     public function fetchFlipById($flipId, FlipInterface $prototype = null): FlipInterface
     {
-        $rowSet = $this->flipTableGateway->select(['flip_id' => $flipId]);
+        $rowSet = $this->gateway->select(['flip_id' => $flipId]);
         $row    = $rowSet->current();
         if (!$row) {
             throw new NotFoundException("Flip not Found");
         }
 
         $flip = $prototype ?? new Flip();
-        $flip->exchangeArray((array)$row);
+        $this->hydrator->hydrate((array)$row, $flip);
 
         return $flip;
     }
@@ -76,10 +98,7 @@ class FlipService implements FlipServiceInterface
      */
     public function createFlip(FlipInterface $flip): bool
     {
-        $data = $flip->getArrayCopy();
-        $this->flipTableGateway->insert($data);
-
-        return true;
+        return (bool) $this->gateway->insert($this->getDataForDb($flip));
     }
 
     /**
@@ -87,11 +106,13 @@ class FlipService implements FlipServiceInterface
      */
     public function updateFlip(FlipInterface $flip): bool
     {
-        $data = $flip->getArrayCopy();
-        unset($data['flip_id']);
-        $this->flipTableGateway->update(['flip_id' => $flip->getFlipId()], $data);
+        $flipData = $this->getDataForDb($flip);
+        unset($flipData['flip_id']);
 
-        return true;
+        return (bool) $this->gateway->update(
+            ['flip_id' => $flip->getFlipId()],
+            $flipData
+        );
     }
 
     /**
@@ -99,8 +120,6 @@ class FlipService implements FlipServiceInterface
      */
     public function deleteFlip(FlipInterface $flip): bool
     {
-        $this->flipTableGateway->delete(['flip_id' => $flip->getFlipId()]);
-
-        return true;
+        return (bool) $this->gateway->delete(['flip_id' => $flip->getFlipId()]);
     }
 }

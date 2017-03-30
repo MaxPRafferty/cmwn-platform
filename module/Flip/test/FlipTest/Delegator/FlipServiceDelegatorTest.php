@@ -79,6 +79,9 @@ class FlipServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAll()
     {
+        $where = new Where();
+        $this->flipService->shouldReceive('createWhere')->andReturn($where);
+
         $result = new Iterator(new \ArrayIterator([['foo' => 'bar']]));
         $this->flipService->shouldReceive('fetchAll')
             ->andReturn($result)
@@ -96,7 +99,7 @@ class FlipServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.flips',
                 'target' => $this->flipService,
-                'params' => ['where' => new Where(), 'prototype' => null],
+                'params' => ['where' => $where, 'prototype' => null],
             ],
             $this->calledEvents[0],
             FlipServiceDelegator::class . ' did not trigger the event correctly for fetch.all.flips'
@@ -106,7 +109,7 @@ class FlipServiceDelegatorTest extends TestCase
             [
                 'name'   => 'fetch.all.flips.post',
                 'target' => $this->flipService,
-                'params' => ['where' => new Where(), 'prototype' => null, 'flips' => $result],
+                'params' => ['where' => $where, 'prototype' => null, 'flips' => $result],
             ],
             $this->calledEvents[1],
             FlipServiceDelegator::class . ' did not trigger the event correctly for fetch.all.flips.post'
@@ -118,6 +121,9 @@ class FlipServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallFetchAllAndTriggerEventOnError()
     {
+        $where = new Where();
+        $this->flipService->shouldReceive('createWhere')->andReturn($where);
+
         $exception = new \Exception();
         $this->flipService->shouldReceive('fetchAll')
             ->andThrow($exception)
@@ -166,6 +172,9 @@ class FlipServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallNotFetchAllWhenEventStops()
     {
+        $where = new Where();
+        $this->flipService->shouldReceive('createWhere')->andReturn($where);
+
         $result = new Iterator(new \ArrayIterator([['foo' => 'bar']]));
         $this->flipService->shouldReceive('fetchAll')
             ->never();
@@ -328,7 +337,7 @@ class FlipServiceDelegatorTest extends TestCase
      */
     public function testItShouldCallCreateFlip()
     {
-        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat', ]);
+        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat',]);
         $this->flipService->shouldReceive('createFlip')
             ->with($flip)
             ->andReturn(true)
@@ -368,7 +377,7 @@ class FlipServiceDelegatorTest extends TestCase
     public function testItShouldCallCreateFlipAndTriggerError()
     {
         $exception = new \Exception();
-        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat', ]);
+        $flip      = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat',]);
         $this->flipService->shouldReceive('createFlip')
             ->with($flip)
             ->andThrow($exception)
@@ -492,7 +501,7 @@ class FlipServiceDelegatorTest extends TestCase
     public function testItShouldCallUpdateFlipAndTriggerError()
     {
         $exception = new \Exception();
-        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
+        $flip      = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
         $this->flipService->shouldReceive('updateFlip')
             ->with($flip)
             ->andThrow($exception)
@@ -616,7 +625,7 @@ class FlipServiceDelegatorTest extends TestCase
     public function testItShouldCallDeleteFlipAndTriggerError()
     {
         $exception = new \Exception();
-        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
+        $flip      = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
         $this->flipService->shouldReceive('deleteFlip')
             ->with($flip)
             ->andThrow($exception)

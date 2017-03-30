@@ -4,11 +4,13 @@ namespace FlipTest\Service;
 
 use Application\Exception\NotFoundException;
 use Flip\EarnedFlip;
+use Flip\EarnedFlipInterface;
 use Flip\Service\FlipUserService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use User\Adult;
+use User\PlaceHolder;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Predicate\Expression;
@@ -19,26 +21,18 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Json\Json;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
- * Test FlipUserServiceTest
- *
- * @group Flip
- * @group User
- * @group Service
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * Tests the flip user service
  */
 class FlipUserServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
     /**
-     * @var FlipUserService(
+     * @var FlipUserService
      */
     protected $flipService;
 
@@ -46,6 +40,11 @@ class FlipUserServiceTest extends TestCase
      * @var \Mockery\MockInterface|TableGateway
      */
     protected $tableGateway;
+
+    /**
+     * @var EarnedFlip
+     */
+    protected $earnedFlip;
 
     /**
      * @before
@@ -70,9 +69,31 @@ class FlipUserServiceTest extends TestCase
     }
 
     /**
+     * @before
+     */
+    public function setUpDefaultTestEarnedFlip()
+    {
+        $this->earnedFlip = new EarnedFlip([
+            'flip_id'        => 'foo-bar',
+            'title'          => 'Manchuck Flip',
+            'description'    => 'The Best Flip to earn',
+            'earned_by'      => 'manchuck',
+            'earned'         => new \DateTime('1982-05-13 23:43:00'),
+            'acknowledge_id' => Uuid::uuid1(),
+            'urls'           => [
+                EarnedFlip::IMAGE_COIN     => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                EarnedFlip::IMAGE_UNEARNED => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                EarnedFlip::IMAGE_EARNED   => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                EarnedFlip::IMAGE_STATIC   => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                EarnedFlip::IMAGE_DEFAULT  => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+            ],
+        ]);
+    }
+
+    /**
      * @test
      */
-    public function testItShouldFetchAllFlipsForUserWithDefaultValuesAndStringForUserId()
+    public function testItShouldFetchAllFlipsForUser()
     {
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new EarnedFlip());
         $where             = new Where();
@@ -83,6 +104,7 @@ class FlipUserServiceTest extends TestCase
             'earned',
             'acknowledge_id',
         ]);
+
         $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $expectedSelect->join(
             ['f' => 'flips'],
@@ -93,6 +115,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->where($where);
         $expectedSelect->group('f.flip_id');
         $expectedSelect->order(['uf.earned', 'f.title']);
+
         $expectedAdapter = new DbSelect(
             $expectedSelect,
             $this->tableGateway->getAdapter(),
@@ -154,49 +177,42 @@ class FlipUserServiceTest extends TestCase
      */
     public function testItShouldAttachFlipToUser()
     {
+        $user = new PlaceHolder();
+        $user->setUserId('foo-bar');
         $this->tableGateway->shouldReceive('insert')
             ->once()
-            ->andReturnUsing(function ($actualInsert) {
-                $this->assertEquals(
-                    ['user_id', 'flip_id', 'earned', 'acknowledge_id'],
-                    array_keys($actualInsert),
-                    FlipUserService::class . ' is setting the wrong fields'
+            ->withArgs(function ($actualData) {
+                $expectedData = [
+                    'user_id' => 'foo-bar',
+                    'flip_id' => 'fizz-buzz',
+                ];
+
+                $this->assertNotEmpty(
+                    $actualData['earned'],
+                    FlipUserService::class . ' is not setting the correct earned date when attaching a flip'
                 );
 
-                $this->assertArrayHasKey(
-                    'earned',
-                    $actualInsert,
-                    FlipUserService::class . ' did not include the earned date on attach'
+                $this->assertNotEmpty(
+                    $actualData['acknowledge_id'],
+                    FlipUserService::class . ' is not setting the correct acknowledge id when attaching a flip'
                 );
 
-                $this->assertArrayHasKey(
-                    'acknowledge_id',
-                    $actualInsert,
-                    FlipUserService::class . ' did not include the acknowledge id on attach'
-                );
-
-                $this->assertEquals(
-                    'foo-bar',
-                    $actualInsert['user_id'],
-                    FlipUserService::class . ' service did not use correct user Id'
-                );
+                unset($actualData['acknowledge_id'], $actualData['earned']);
 
                 $this->assertEquals(
-                    'baz-bat',
-                    $actualInsert['flip_id'],
-                    FlipUserService::class . ' did not use correct flip Id'
-                );
-
-                $this->assertNotInstanceOf(
-                    \DateTime::class,
-                    $actualInsert['earned'],
-                    FlipUserService::class . ' did not set the earned date correctly'
+                    $expectedData,
+                    $actualData,
+                    FlipUserService::class . ' is not attaching flips correctly'
                 );
 
                 return true;
-            });
+            })
+            ->andReturn(1);
 
-        $this->flipService->attachFlipToUser('foo-bar', 'baz-bat');
+        $this->assertTrue(
+            $this->flipService->attachFlipToUser($user, 'fizz-buzz'),
+            FlipUserService::class . ' did not return true when attaching a flip'
+        );
     }
 
     /**
@@ -204,36 +220,28 @@ class FlipUserServiceTest extends TestCase
      */
     public function testItShouldAcknowledgeFlip()
     {
-        $ackId      = Uuid::uuid1();
-        $earnedFlip = new EarnedFlip();
-        $earnedFlip->setAcknowledgeId($ackId);
         $this->tableGateway->shouldReceive('update')
-            ->with(['acknowledge_id' => null], ['acknowledge_id' => $ackId])
-            ->andReturn(1)
-            ->once();
+            ->once()
+            ->withArgs(function ($actualData, $actualWhere) {
+                $this->assertEquals(
+                    ['acknowledge_id' => null],
+                    $actualData,
+                    FlipUserService::class . ' is not setting the flip to null on acknowledgement'
+                );
+
+                $this->assertEquals(
+                    ['acknowledge_id' => $this->earnedFlip->getAcknowledgeId()],
+                    $actualWhere,
+                    FlipUserService::class . ' is not acknowledging the correct flip'
+                );
+
+                return true;
+            })
+            ->andReturn(1);
 
         $this->assertTrue(
-            $this->flipService->acknowledgeFlip($earnedFlip),
+            $this->flipService->acknowledgeFlip($this->earnedFlip),
             FlipUserService::class . ' did not acknowledge earned flip'
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldNotAcknowledgeFlip()
-    {
-        $ackId      = Uuid::uuid1();
-        $earnedFlip = new EarnedFlip();
-        $earnedFlip->setAcknowledgeId($ackId);
-        $this->tableGateway->shouldReceive('update')
-            ->with(['acknowledge_id' => null], ['acknowledge_id' => $ackId])
-            ->andReturn(0)
-            ->once();
-
-        $this->assertFalse(
-            $this->flipService->acknowledgeFlip($earnedFlip),
-            FlipUserService::class . ' did acknowledged earned flip'
         );
     }
 
@@ -242,14 +250,19 @@ class FlipUserServiceTest extends TestCase
      */
     public function testItShouldFetchTheLatestAcknowledgeFlip()
     {
-        $earnedFlip = new EarnedFlip();
-        $earnedFlip->setFlipId('played-farmville-manchuck-edition');
-        $earnedFlip->setTitle('Be the best farmer');
-        $earnedFlip->setDescription('Manchuck is the best farmer in the world');
-        $earnedFlip->setAcknowledgeId('foobar-bazbat');
-
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
-        $expectedResultSet->initialize([$earnedFlip->getArrayCopy()]);
+        $expectedResultSet->initialize([
+            [
+                'flip_id'        => $this->earnedFlip->getFlipId(),
+                'title'          => $this->earnedFlip->getTitle(),
+                'description'    => $this->earnedFlip->getDescription(),
+                'earned_by'      => $this->earnedFlip->getEarnedBy(),
+                'earned'         => $this->earnedFlip->getEarned()->format('Y-m-d H:i:s'),
+                'acknowledge_id' => $this->earnedFlip->getAcknowledgeId(),
+                'urls'           => Json::encode($this->earnedFlip->getUris()),
+            ],
+        ]);
+
         $where          = new Where();
         $expectedSelect = new Select(['uf' => 'user_flips']);
 
@@ -272,6 +285,7 @@ class FlipUserServiceTest extends TestCase
         $expectedSelect->limit(1);
 
         $this->tableGateway->shouldReceive('selectWith')
+            ->once()
             ->andReturnUsing(function ($actualSelect) use (&$expectedSelect, &$expectedResultSet) {
                 $this->assertEquals(
                     $expectedSelect,
@@ -283,8 +297,76 @@ class FlipUserServiceTest extends TestCase
             });
 
         $this->assertEquals(
-            $earnedFlip,
-            $this->flipService->fetchLatestAcknowledgeFlip(new Adult(['user_id' => 'manchuck'])),
+            $this->earnedFlip,
+            $this->flipService->fetchLatestAcknowledgeFlip(new PlaceHolder(['user_id' => 'manchuck'])),
+            FlipUserService::class . ' did not return the earned flip for the best farmer in the world'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchTheLatestAcknowledgeFlipWithPrototype()
+    {
+        /** @var \Mockery\MockInterface|EarnedFlipInterface $prototype */
+        $prototype = \Mockery::mock(EarnedFlipInterface::class);
+
+        $flipResult =[
+            'flip_id'        => $this->earnedFlip->getFlipId(),
+            'title'          => $this->earnedFlip->getTitle(),
+            'description'    => $this->earnedFlip->getDescription(),
+            'earned_by'      => $this->earnedFlip->getEarnedBy(),
+            'earned'         => $this->earnedFlip->getEarned()->format('Y-m-d H:i:s'),
+            'acknowledge_id' => $this->earnedFlip->getAcknowledgeId(),
+            'urls'           => Json::encode($this->earnedFlip->getUris()),
+        ];
+
+        $prototype->shouldReceive('exchangeArray')
+            ->once()
+            ->with($flipResult);
+
+        $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
+        $expectedResultSet->initialize([$flipResult]);
+
+        $where          = new Where();
+        $expectedSelect = new Select(['uf' => 'user_flips']);
+
+        $expectedSelect->columns([
+            'earned_by' => 'user_id',
+            'earned',
+            'acknowledge_id',
+        ]);
+        $expectedSelect->join(
+            ['f' => 'flips'],
+            new Expression('uf.user_id = ?', 'manchuck'),
+            '*',
+            Select::JOIN_LEFT
+        );
+        $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
+        $where->addPredicate(new IsNotNull('uf.acknowledge_id'));
+
+        $expectedSelect->where($where);
+        $expectedSelect->order(['uf.earned DESC']);
+        $expectedSelect->limit(1);
+
+        $this->tableGateway->shouldReceive('selectWith')
+            ->once()
+            ->andReturnUsing(function ($actualSelect) use (&$expectedSelect, &$expectedResultSet) {
+                $this->assertEquals(
+                    $expectedSelect,
+                    $actualSelect,
+                    FlipUserService::class . ' is selecting the wrong stuff for acknowledge flip'
+                );
+
+                return $expectedResultSet;
+            });
+
+        $this->assertSame(
+            $prototype,
+            $this->flipService->fetchLatestAcknowledgeFlip(
+                new PlaceHolder(['user_id' => 'manchuck']),
+                $prototype
+            ),
             FlipUserService::class . ' did not return the earned flip for the best farmer in the world'
         );
     }
@@ -296,10 +378,12 @@ class FlipUserServiceTest extends TestCase
     {
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new \ArrayObject());
         $expectedResultSet->initialize([]);
-        $this->tableGateway->shouldReceive('selectWith')->andReturn($expectedResultSet);
+        $this->tableGateway->shouldReceive('selectWith')
+            ->once()
+            ->andReturn($expectedResultSet);
 
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('No flips to acknowledge');
-        $this->flipService->fetchLatestAcknowledgeFlip(new Adult(['user_id' => 'manchuck']));
+        $this->flipService->fetchLatestAcknowledgeFlip(new PlaceHolder(['user_id' => 'manchuck']));
     }
 }

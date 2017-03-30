@@ -2,6 +2,7 @@
 
 namespace Flip;
 
+use Application\Utils\Uri\UriCollectionAwareTrait;
 use BaconStringUtils\Slugifier;
 use Zend\Filter\StaticFilter;
 use Zend\Filter\Word\UnderscoreToCamelCase;
@@ -11,6 +12,8 @@ use Zend\Filter\Word\UnderscoreToCamelCase;
  */
 class Flip implements FlipInterface
 {
+    use UriCollectionAwareTrait;
+
     /**
      * @var string
      */
@@ -51,14 +54,6 @@ class Flip implements FlipInterface
      */
     public function exchangeArray(array $array)
     {
-        $defaults = [
-            'flip_id'     => '',
-            'title'       => '',
-            'description' => '',
-        ];
-
-        $array = array_merge($defaults, $array);
-
         foreach ($array as $key => $value) {
             $method = 'set' . ucfirst(StaticFilter::execute($key, UnderscoreToCamelCase::class));
             if (method_exists($this, $method)) {
@@ -76,6 +71,7 @@ class Flip implements FlipInterface
             'flip_id'     => $this->getFlipId(),
             'title'       => $this->getTitle(),
             'description' => $this->getDescription(),
+            'uris'        => $this->getUris(),
         ];
     }
 

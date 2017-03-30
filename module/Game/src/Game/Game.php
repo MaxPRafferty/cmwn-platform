@@ -46,7 +46,10 @@ class Game implements ArraySerializableInterface, GameInterface
      */
     protected $description = '';
 
-    protected static $flagMap = [
+    /**
+     * @var array
+     */
+    public static $flagMap = [
         'desktop'     => self::GAME_DESKTOP,
         'featured'    => self::GAME_FEATURED,
         'coming_soon' => self::GAME_COMING_SOON,
@@ -219,5 +222,4 @@ class Game implements ArraySerializableInterface, GameInterface
     {
         return $this->hasFlag(static::GAME_UNITY);
     }
-
 }

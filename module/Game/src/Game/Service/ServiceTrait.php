@@ -2,7 +2,7 @@
 
 namespace Game\Service;
 
-use Game\GameInterface;
+use Game\Game;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Predicate\PredicateSet;
@@ -13,14 +13,6 @@ use Zend\Db\Sql\Where;
  */
 trait ServiceTrait
 {
-    protected static $flagMap = [
-        'global'      => GameInterface::GAME_GLOBAL,
-        'featured'    => GameInterface::GAME_FEATURED,
-        'coming_soon' => GameInterface::GAME_COMING_SOON,
-        'desktop'     => GameInterface::GAME_DESKTOP,
-        'unity'       => GameInterface::GAME_UNITY,
-    ];
-
     /**
      * @param $where
      *
@@ -47,7 +39,7 @@ trait ServiceTrait
             // Add the flags as an or
 
             array_walk($flagWhere, function ($value, $flag) use (&$set, &$flagField) {
-                $bit = static::$flagMap[$flag] ?? null;
+                $bit = Game::$flagMap[$flag] ?? null;
                 if ($bit === null) {
                     // skip if flag not defined
                     return;

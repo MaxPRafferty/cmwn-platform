@@ -4,6 +4,7 @@ namespace FlipTest\Service;
 
 use Application\Exception\NotFoundException;
 use Flip\Flip;
+use Flip\FlipInterface;
 use Flip\Service\FlipService;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
@@ -15,18 +16,11 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Hydrator\ArraySerializable;
+use Zend\Json\Json;
 use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Test FlipServiceTest
- *
- * @group Flip
- * @group Service
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FlipServiceTest extends TestCase
 {
@@ -43,11 +37,35 @@ class FlipServiceTest extends TestCase
     protected $tableGateway;
 
     /**
+     * @var Flip
+     */
+    protected $flip;
+
+    /**
      * @before
      */
     public function setUpService()
     {
         $this->flipService = new FlipService($this->tableGateway);
+    }
+
+    /**
+     * @before
+     */
+    public function setUpDefaultTestFlip()
+    {
+        $this->flip = new Flip([
+            'flip_id'     => 'foo-bar',
+            'title'       => 'Manchuck Flip',
+            'description' => 'The Best Flip to earn',
+            'urls'        => [
+                Flip::IMAGE_COIN     => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                Flip::IMAGE_UNEARNED => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                Flip::IMAGE_EARNED   => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                Flip::IMAGE_STATIC   => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+                Flip::IMAGE_DEFAULT  => 'https://media.changemyworldnow.com/f/34897dva89s7490890.png',
+            ],
+        ]);
     }
 
     /**
@@ -67,7 +85,7 @@ class FlipServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldReturnPaginatorAdapterForAllFlipsWithNoWhereAndPrototype()
+    public function testItShouldFetchAllFlips()
     {
         $expectedResultSet = new HydratingResultSet(new ArraySerializable(), new Flip());
         $expectedSelect    = new Select(['f' => 'flips']);
@@ -89,10 +107,10 @@ class FlipServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldReturnPaginatorAdapterForAllFlipsWithCustomWhereAndPrototype()
+    public function testItShouldFetchAllFlipsWithCustomWhereAndPrototype()
     {
         /** @var \Mockery\MockInterface|\Flip\FlipInterface $prototype */
-        $prototype = \Mockery::mock('\Flip\FlipInterface');
+        $prototype = \Mockery::mock(FlipInterface::class);
         $where     = new Where();
         $where->addPredicate(new Operator('foo', '=', 'bar'));
 
@@ -117,12 +135,13 @@ class FlipServiceTest extends TestCase
     /**
      * @test
      */
-    public function testItShouldFetchFlipById()
+    public function testItShouldFetchFlip()
     {
         $flipData = [
-            'flip_id'     => 'foo-bar',
-            'title'       => 'Manchuck Flip',
-            'description' => 'The Best Flip to earn',
+            'flip_id'     => $this->flip->getFlipId(),
+            'title'       => $this->flip->getTitle(),
+            'description' => $this->flip->getDescription(),
+            'uris'        => Json::encode($this->flip->getUris()),
         ];
 
         $result = new ResultSet();
@@ -132,14 +151,44 @@ class FlipServiceTest extends TestCase
             ->andReturn($result);
 
         $actualFlip = $this->flipService->fetchFlipById($flipData['flip_id']);
-        $this->assertInstanceOf(
-            Flip::class,
-            $actualFlip,
-            FlipService::class . ' did not return back a flip'
-        );
 
         $this->assertEquals(
             new Flip($flipData),
+            $actualFlip,
+            FlipService::class . ' did failed to hydrate flip'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldFetchFlipWithPrototype()
+    {
+        /** @var \Mockery\MockInterface|\Flip\FlipInterface $prototype */
+        $prototype = \Mockery::mock(FlipInterface::class);
+
+        $flipData = [
+            'flip_id'     => $this->flip->getFlipId(),
+            'title'       => $this->flip->getTitle(),
+            'description' => $this->flip->getDescription(),
+            'uris'        => Json::encode($this->flip->getUris()),
+        ];
+
+        $result = new ResultSet();
+        $result->initialize([$flipData]);
+        $this->tableGateway->shouldReceive('select')
+            ->once()
+            ->with(['flip_id' => $flipData['flip_id']])
+            ->andReturn($result);
+
+        $prototype->shouldReceive('exchangeArray')
+            ->once()
+            ->with($flipData);
+
+        $actualFlip = $this->flipService->fetchFlipById($flipData['flip_id'], $prototype);
+
+        $this->assertSame(
+            $prototype,
             $actualFlip,
             FlipService::class . ' did failed to hydrate flip'
         );
@@ -156,24 +205,41 @@ class FlipServiceTest extends TestCase
         $result = new ResultSet();
         $result->initialize([]);
         $this->tableGateway->shouldReceive('select')
+            ->once()
             ->andReturn($result);
 
         $this->flipService->fetchFlipById('foo-bar');
     }
-    
+
     /**
      * @test
      */
     public function testItShouldCreateFlip()
     {
-        $flip = new Flip(['title' => 'Foo Bar', 'description' => 'baz bat']);
         $this->tableGateway->shouldReceive('insert')
-            ->with(['flip_id' => 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat'])
-            ->andReturn(true)
-            ->once();
+            ->once()
+            ->withArgs(function ($actualData) {
+                $expectedData = [
+                    'flip_id'     => $this->flip->getFlipId(),
+                    'title'       => $this->flip->getTitle(),
+                    'description' => $this->flip->getDescription(),
+                    'uris'        => Json::encode($this->flip->getUris()),
+                ];
 
-        $this->assertTrue($this->flipService->createFlip($flip));
-        $this->assertEquals($flip->getFlipId(), 'foo-bar');
+                $this->assertEquals(
+                    $expectedData,
+                    $actualData,
+                    FlipService::class . ' is not inserting a flip correctly'
+                );
+
+                return true;
+            })
+            ->andReturn(1);
+
+        $this->assertTrue(
+            $this->flipService->createFlip($this->flip),
+            FlipService::class . ' did not return true when a flip is created'
+        );
     }
 
     /**
@@ -181,13 +247,38 @@ class FlipServiceTest extends TestCase
      */
     public function testItShouldUpdateFlip()
     {
-        $flip = new Flip(['flip_id'=> 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
         $this->tableGateway->shouldReceive('update')
-            ->with(['flip_id' => $flip->getFlipId()], ['title' => 'Foo Bar', 'description' => 'baz bat'])
-            ->andReturn(true)
-            ->once();
+            ->once()
+            ->withArgs(function ($actualWhere, $actualData) {
+                $expectedWhere = [
+                    'flip_id' => $this->flip->getFlipId(),
+                ];
+                $expectedData  = [
+                    'title'       => $this->flip->getTitle(),
+                    'description' => $this->flip->getDescription(),
+                    'uris'        => Json::encode($this->flip->getUris()),
+                ];
 
-        $this->assertTrue($this->flipService->updateFlip($flip));
+                $this->assertEquals(
+                    $expectedData,
+                    $actualData,
+                    FlipService::class . ' is not updating the flip correctly'
+                );
+
+                $this->assertEquals(
+                    $expectedWhere,
+                    $actualWhere,
+                    FlipService::class . ' is not updating the correct flip'
+                );
+
+                return true;
+            })
+            ->andReturn(1);
+
+        $this->assertTrue(
+            $this->flipService->updateFlip($this->flip),
+            FlipService::class . ' did not return true when a flip is updated'
+        );
     }
 
     /**
@@ -195,12 +286,14 @@ class FlipServiceTest extends TestCase
      */
     public function testItShouldDeleteFlip()
     {
-        $flip = new Flip(['flip_id' => 'foo-bar', 'title' => 'Foo Bar', 'description' => 'baz bat']);
         $this->tableGateway->shouldReceive('delete')
+            ->once()
             ->with(['flip_id' => 'foo-bar'])
-            ->andReturn(true)
-            ->once();
+            ->andReturn(1);
 
-        $this->assertTrue($this->flipService->deleteFlip($flip));
+        $this->assertTrue(
+            $this->flipService->deleteFlip($this->flip),
+            FlipService::class . ' did not return true when a flip is deleted'
+        );
     }
 }

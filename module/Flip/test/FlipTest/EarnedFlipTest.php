@@ -6,14 +6,7 @@ use Flip\EarnedFlip;
 use PHPUnit\Framework\TestCase as TestCase;
 
 /**
- * Test EarnedFlipTest
- *
- * @group User
- * @group Flip
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * Tests the EarnedFlip
  */
 class EarnedFlipTest extends TestCase
 {

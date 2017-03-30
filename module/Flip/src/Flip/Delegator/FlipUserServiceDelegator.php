@@ -2,24 +2,19 @@
 
 namespace Flip\Delegator;
 
-use Application\Exception\NotFoundException;
-use Application\Utils\ServiceTrait;
 use Flip\EarnedFlipInterface;
 use Flip\Service\FlipUserService;
 use Flip\Service\FlipUserServiceInterface;
 use User\UserInterface;
 use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * A FlipUserServiceDelegator that triggers events
+ * A Flip User Service that triggers events
  */
 class FlipUserServiceDelegator implements FlipUserServiceInterface
 {
-    use ServiceTrait;
-
     /**
      * @var FlipUserService
      */
@@ -39,7 +34,7 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
     public function __construct(FlipUserService $flipService, EventManagerInterface $events)
     {
         $this->realService = $flipService;
-        $this->events = $events;
+        $this->events      = $events;
     }
 
     /**
@@ -51,10 +46,20 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
     }
 
     /**
+     * @param $where
+     *
+     * @return \Zend\Db\Sql\Predicate\PredicateInterface|\Zend\Db\Sql\Predicate\PredicateSet|\Zend\Db\Sql\Where
+     */
+    public function createWhere($where)
+    {
+        return $this->realService->createWhere($where);
+    }
+
+    /**
      * @inheritdoc
      */
     public function fetchEarnedFlipsForUser(
-        $user,
+        string $userId,
         $where = null,
         EarnedFlipInterface $prototype = null
     ): AdapterInterface {
@@ -62,7 +67,7 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
         $event = new Event(
             'fetch.user.flips',
             $this->realService,
-            ['where' => $where, 'prototype' => $prototype, 'user' => $user]
+            ['where' => $where, 'prototype' => $prototype, 'user' => $userId]
         );
 
         try {
@@ -71,7 +76,7 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
                 return $response->last();
             }
 
-            $return = $this->realService->fetchEarnedFlipsForUser($user, $where, $prototype);
+            $return = $this->realService->fetchEarnedFlipsForUser($userId, $where, $prototype);
         } catch (\Throwable $fetchEarnedException) {
             $event->setName('fetch.user.flips.error');
             $event->setParam('error', $fetchEarnedException);
@@ -90,12 +95,12 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function attachFlipToUser($user, $flip): bool
+    public function attachFlipToUser(UserInterface $user, string $flipId): bool
     {
         $event = new Event(
             'attach.flip',
             $this->realService,
-            ['user' => $user, 'flip' => $flip]
+            ['user' => $user, 'flip' => $flipId]
         );
 
         try {
@@ -104,7 +109,7 @@ class FlipUserServiceDelegator implements FlipUserServiceInterface
                 return $response->last();
             }
 
-            $return = $this->realService->attachFlipToUser($user, $flip);
+            $return = $this->realService->attachFlipToUser($user, $flipId);
         } catch (\Throwable $attachException) {
             $event->setName('attach.flip.error');
             $event->setParam('error', $attachException);

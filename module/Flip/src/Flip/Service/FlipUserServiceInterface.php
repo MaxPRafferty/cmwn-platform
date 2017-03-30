@@ -17,14 +17,14 @@ interface FlipUserServiceInterface
      *
      * This should group flips earned by the earliest flip
      *
-     * @param $user
+     * @param $userId
      * @param null $where
      * @param null|EarnedFlipInterface $prototype
      *
      * @return AdapterInterface
      */
     public function fetchEarnedFlipsForUser(
-        $user,
+        string $userId,
         $where = null,
         EarnedFlipInterface $prototype = null
     ): AdapterInterface;
@@ -32,12 +32,12 @@ interface FlipUserServiceInterface
     /**
      * Attaches a flip to a user
      *
-     * @param $user
-     * @param $flip
+     * @param UserInterface $user
+     * @param $flipIdId
      *
      * @return bool
      */
-    public function attachFlipToUser($user, $flip): bool;
+    public function attachFlipToUser(UserInterface $user, string $flipIdId): bool;
 
     /**
      * Acknowledges a flip

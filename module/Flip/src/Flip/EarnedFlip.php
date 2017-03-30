@@ -5,7 +5,7 @@ namespace Flip;
 use Application\Utils\Date\DateTimeFactory;
 
 /**
- * This is an earned flip
+ * This is an earned flip for a user
  */
 class EarnedFlip extends Flip implements EarnedFlipInterface
 {

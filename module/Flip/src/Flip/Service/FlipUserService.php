@@ -7,7 +7,6 @@ use Application\Utils\Date\DateTimeFactory;
 use Application\Utils\ServiceTrait;
 use Flip\EarnedFlip;
 use Flip\EarnedFlipInterface;
-use Flip\FlipInterface;
 use Ramsey\Uuid\Uuid;
 use User\UserInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -32,6 +31,11 @@ class FlipUserService implements FlipUserServiceInterface
     protected $pivotTable;
 
     /**
+     * @var ArraySerializable
+     */
+    protected $hydrator;
+
+    /**
      * GameService constructor.
      *
      * @param TableGateway $gateway
@@ -39,26 +43,24 @@ class FlipUserService implements FlipUserServiceInterface
     public function __construct(TableGateway $gateway)
     {
         $this->pivotTable = $gateway;
+        $this->hydrator   = new ArraySerializable();
     }
 
     /**
      * @inheritdoc
      */
     public function fetchEarnedFlipsForUser(
-        $user,
+        string $userId,
         $where = null,
         EarnedFlipInterface $prototype = null
     ): AdapterInterface {
-        $select = $this->buildSelect(
-            $user instanceof UserInterface ? $user->getUserId() : $user,
-            $where
-        );
+        $select = $this->buildSelect($userId, $where);
 
         $select->group('f.flip_id');
         $select->order(['uf.earned', 'f.title']);
 
         $prototype = $prototype ?? new EarnedFlip();
-        $resultSet = new HydratingResultSet(new ArraySerializable(), $prototype);
+        $resultSet = new HydratingResultSet($this->hydrator, $prototype);
 
         return new DbSelect(
             $select,
@@ -70,21 +72,18 @@ class FlipUserService implements FlipUserServiceInterface
     /**
      * @inheritdoc
      */
-    public function attachFlipToUser($user, $flip): bool
+    public function attachFlipToUser(UserInterface $user, string $flipIdId): bool
     {
-        $userId = $user instanceof UserInterface ? $user->getUserId() : $user;
-        $flipId = $flip instanceof FlipInterface ? $flip->getFlipId() : $flip;
+        $userId = $user->getUserId();
         $earned = DateTimeFactory::factory('now');
         $ackId  = Uuid::uuid1();
 
-        $this->pivotTable->insert([
+        return (bool) $this->pivotTable->insert([
             'user_id'        => $userId,
-            'flip_id'        => $flipId,
+            'flip_id'        => $flipIdId,
             'earned'         => $earned->format(\DateTime::ISO8601),
             'acknowledge_id' => $ackId,
         ]);
-
-        return true;
     }
 
     /**
@@ -170,6 +169,7 @@ class FlipUserService implements FlipUserServiceInterface
             'earned',
             'acknowledge_id',
         ]);
+
         $where->addPredicate(new Expression('f.flip_id = uf.flip_id'));
         $select->join(
             ['f' => 'flips'],
