@@ -51,7 +51,7 @@ release:
         $PWD/vendor/bin/swagger $PWD/module -o $PWD/data/docs/swagger.json
     - script:
       name: Running Zend-Tool
-      code: /usr/sbin/bin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
+      code: $PWD/vendor/bin/zfdeploy.php build "data/build/artifact/platform-api-$VERSION.zip" --composer=off --vendor
     - s3sync:
       name: Uploading package to Amazon S3
       key-id: $AWS_ACCESS_KEY_ID
