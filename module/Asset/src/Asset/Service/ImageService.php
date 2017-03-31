@@ -74,9 +74,14 @@ class ImageService implements ImageServiceInterface
     {
         $image->setCreated(new \DateTime());
         $image->setUpdated(new \DateTime());
+
+
         $data = $image->getArrayCopy();
 
-        $data['moderation_status'] = $image->getModerationStatus() ;
+        $data['moderation_status'] =
+            preg_match('/^https:\/\/media[\-a-z]*\.changemyworldnow\.com/', $image->getUrl())
+            ?? $image->getModerationStatus();
+
         unset($data['is_moderated']);
         unset($data['deleted']);
 
