@@ -2,23 +2,17 @@
 
 namespace IntegrationTest\Api\V1\Rest;
 
-use IntegrationTest\AbstractApigilityTestCase as TestCase;
+use Api\V1\Rest\Flip\FlipResource;
+use IntegrationTest\IntegrationTest as TestCase;
 use Zend\Json\Json;
-use IntegrationTest\DataSets\ArrayDataSet;
 
 /**
- * @group DB
- * @group Flip
- * @group Resource
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * Tests the flip resource
  */
 class FlipResourceTest extends TestCase
 {
     /**
-     * @return ArrayDataSet
+     * @return \PHPUnit\DbUnit\DataSet\ArrayDataSet
      */
     public function getDataSet()
     {
@@ -26,228 +20,672 @@ class FlipResourceTest extends TestCase
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getControllerNameForTest(): string
+    {
+        return 'api\v1\rest\flip\controller';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getControllerRouteNameForTest(): string
+    {
+        return 'api.rest.flip';
+    }
+
+    /**
      * @test
+     *
      * @param string $user
-     * @param string $url
-     * @param string $method
-     * @param array $params
-     * @dataProvider changePasswordDataProvider
+     * @param string $route
+     * @param int $code
+     * @param array $expected
+     *
+     * @dataProvider fetchFlipDataProvider
      */
-    public function testItShouldCheckChangePasswordException($user, $url, $method = 'GET', $params = [])
-    {
-        $this->injectValidCsrfToken();
-        $this->logInChangePasswordUser($user);
-        $this->assertChangePasswordException($url, $method, $params);
-    }
-
-    /**
-     * @test
-     * @dataProvider validUserDataProvider
-     */
-    public function testItShouldReturnFlips($login)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($login);
-
-        $this->dispatch('/flip');
-        $this->assertMatchedRouteName('api.rest.flip');
-        $this->assertControllerName('api\v1\rest\flip\controller');
-
-        $this->assertResponseStatusCode(200);
+    public function testItShouldFetchFlip(
+        string $user,
+        string $route,
+        int $code,
+        array $expected
+    ) {
+        $this->dispatchAuthenticatedCall($user, $route, $code);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('_embedded', $body);
 
-        $embedded = $body['_embedded'];
-        $this->assertArrayHasKey('flip', $embedded);
-
-        $actualIds = [];
-        foreach ($embedded['flip'] as $flip) {
-            $actualIds[] = $flip['flip_id'];
-        }
-        $expectedIds = ['polar-bear', 'sea-turtle'];
-        $this->assertEquals($actualIds, $expectedIds);
-    }
-
-    /**
-     * @test
-     * @dataProvider validUserDataProvider
-     */
-    public function testItShouldReturnErrorStatusInvalidFlipAccess($login)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($login);
-
-        $this->dispatch('/flip/foo');
-        $this->assertResponseStatusCode(404);
-    }
-
-    /**
-     * @test
-     * @dataProvider validUserDataProvider
-     */
-    public function testItShouldReturnValidFlipData($login)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($login);
-
-        $this->dispatch('/flip/polar-bear');
-        $this->assertMatchedRouteName('api.rest.flip');
-        $this->assertControllerName('api\v1\rest\flip\controller');
-
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHaskey('flip_id', $body);
-        $this->assertArrayHaskey('title', $body);
-        $this->assertArrayHaskey('description', $body);
-        $this->assertEquals($body['flip_id'], 'polar-bear');
-        $this->assertEquals($body['title'], 'Polar Bear');
+        // Do not sort the arrays we want to make sure they match
         $this->assertEquals(
-            'The magnificent Polar Bear is in danger of becoming extinct.' .
-            '  Get the scoop and go offline for the science on how they stay warm!',
-            $body['description']
+            $expected,
+            $body,
+            FlipResource::class . ' did not return the expected body'
         );
     }
 
     /**
      * @test
+     *
+     * @param string $login
+     * @param string $route
+     * @param string $method
+     * @param int $code
+     * @param array $params
+     * @param array $expectedDb
+     * @param array $expectedResponse
+     *
+     * @dataProvider saveFlipsDataProvider
      */
-    public function testItShouldReturnErrorUnauthorizedAccessOfFlip()
-    {
-        $this->injectValidCsrfToken();
-
-        $this->dispatch('/flip/polar-bear');
-        $this->assertResponseStatusCode(401);
-    }
-
-    /**
-     * @test
-     */
-    public function testItShouldCreateAFlip()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/flip', 'POST', ['title' => 'Foo Bar', 'description' => 'baz bat']);
-        $this->assertResponseStatusCode(201);
-        $this->assertMatchedRouteName('api.rest.flip');
-        $this->assertControllerName('api\v1\rest\flip\controller');
-
+    public function testItShouldSaveFlips(
+        string $login,
+        string $route,
+        int $code,
+        string $method,
+        array $params,
+        array $expectedDb,
+        array $expectedResponse
+    ) {
+        $this->dispatchAuthenticatedCall($login, $route, $code, $method, $params);
         $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('title', $body);
-        $this->assertArrayHasKey('description', $body);
-        $this->assertArrayHasKey('flip_id', $body);
-        $this->assertEquals('foo-bar', $body['flip_id']);
-        $this->assertEquals('Foo Bar', $body['title']);
-        $this->assertEquals('baz bat', $body['description']);
+
+        if ($code > 400) {
+            $this->assertEquals(
+                $expectedResponse,
+                $body,
+                FlipResource::class . ' did not return correct errors'
+            );
+
+            return;
+        }
+
+        $flipId = $body['flip_id'];
+        unset($body['_links']['self']);
+
+        $this->assertEquals(
+            $expectedResponse,
+            $body,
+            FlipResource::class . ' did not return the expected response on creation'
+        );
+
+        // Check Database
+        $stmt = $this->getConnection()->getConnection()
+            ->query('SELECT * FROM flips WHERE flip_id = "' . $flipId . '"');
+
+        $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+
+        $dbData = null;
+        foreach ($stmt as $dbData) {
+            // nothing
+        }
+
+        $this->assertEquals(
+            $expectedDb,
+            $dbData,
+            FlipResource::class . ' data in Db does not match'
+        );
     }
+
 
     /**
      * @test
+     *
+     * @param string $login
+     * @param string $flipId
+     * @param int $code
+     *
+     * @dataProvider deleteFlipProvider
      */
-    public function testItShouldUpdateAFlip()
+    public function testItShouldDeleteFlip(string $login, string $flipId, int $code)
     {
-        $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/flip/polar-bear', 'PUT', ['title' => 'Polar Bear', 'description' => 'baz bat']);
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.flip');
-        $this->assertControllerName('api\v1\rest\flip\controller');
+        $this->dispatchAuthenticatedCall($login, '/flip/' . $flipId, $code, 'DELETE');
 
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('title', $body);
-        $this->assertArrayHasKey('description', $body);
-        $this->assertArrayHasKey('flip_id', $body);
-        $this->assertEquals('polar-bear', $body['flip_id']);
-        $this->assertEquals('Polar Bear', $body['title']);
-        $this->assertEquals('baz bat', $body['description']);
-    }
+        if ($code > 400) {
+            return;
+        }
 
-    /**
-     * @test
-     */
-    public function testItShouldDeleteFlip()
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser('super_user');
-        $this->dispatch('/flip/polar-bear', 'DELETE');
-        $this->assertResponseStatusCode(200);
-        $this->assertMatchedRouteName('api.rest.flip');
-        $this->assertControllerName('api\v1\rest\flip\controller');
+        $this->assertEmpty(
+            $this->getResponse()->getContent(),
+            FlipResource::class . ' did not return empty body when deleting a game'
+        );
 
-        $body = Json::decode($this->getResponse()->getContent(), Json::TYPE_ARRAY);
-        $this->assertArrayHasKey('detail', $body);
-        $this->assertEquals('flip deleted successfully', $body['detail']);
-    }
+        $results = $this->getConnection()
+            ->getConnection()
+            ->query('SELECT * FROM flips WHERE flip_id = "' . $flipId . '" LIMIT 1');
 
-    /**
-     * @test
-     * @dataProvider unauthorizedActionsDataProvider
-     */
-    public function testItShould403ForUnauthorizedAccessOfFlips($user, $url, $method, $data)
-    {
-        $this->injectValidCsrfToken();
-        $this->logInUser($user);
-        $this->dispatch($url, $method, $data);
-        $this->assertResponseStatusCode(403);
+        foreach ($results as $row) {
+            $this->fail(
+                FlipResource::class . ' did not delete flip'
+            );
+        }
+
     }
 
     /**
      * @return array
+     * @codingStandardsIgnoreStart
      */
-    public function unauthorizedActionsDataProvider()
+    public function fetchFlipDataProvider()
     {
         return [
-            0 => [
-                'english_student',
+            'GET All For super' => [
+                'super_user',
                 '/flip',
-                'POST',
-                []
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/flip?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/flip',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/flip?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/flip{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'flips' => [
+                            [
+                                'flip_id'     => 'earned-flip-multiple-times',
+                                'title'       => 'Earned flip multiple times',
+                                'description' => 'This is a flip that is earned by a user multiple times',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-multiple-times',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'earned-flip-multiple-users',
+                                'title'       => 'Earned flip multiple users',
+                                'description' => 'By Multiple users',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-multiple-users',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'earned-flip-once',
+                                'title'       => 'Earned Flip Once',
+                                'description' => 'This is a flip that is earned by a user once',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-once',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'flip',
+                                'title'       => 'Flip',
+                                'description' => 'This is just a flip',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/flip',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 4,
+                    'page'        => 1,
+                ],
             ],
-            1 => [
-                'english_student',
-                '/flip/polar-bear',
-                'PUT',
-                []
-            ],
-            2 => [
+
+            'GET All For adult (English Teacher)' => [
                 'english_teacher',
                 '/flip',
-                'POST',
-                []
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/flip?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/flip',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/flip?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/flip{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'flips' => [
+                            [
+                                'flip_id'     => 'earned-flip-multiple-times',
+                                'title'       => 'Earned flip multiple times',
+                                'description' => 'This is a flip that is earned by a user multiple times',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-multiple-times',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'earned-flip-multiple-users',
+                                'title'       => 'Earned flip multiple users',
+                                'description' => 'By Multiple users',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-multiple-users',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'earned-flip-once',
+                                'title'       => 'Earned Flip Once',
+                                'description' => 'This is a flip that is earned by a user once',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-once',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'flip',
+                                'title'       => 'Flip',
+                                'description' => 'This is just a flip',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/flip',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 4,
+                    'page'        => 1,
+                ],
             ],
-            3 => [
-                'english_teacher',
-                '/flip/polar-bear',
-                'PUT',
-                []
-            ],
-            4 => [
-                'principal',
-                '/flip',
-                'POST',
-                []
-            ],
-            5 => [
-                'principal',
-                '/flip/polar-bear',
-                'PUT',
-                []
-            ],
-            6 => [
+
+            'GET All For child (English Student)' => [
                 'english_student',
-                '/flip/polar-bear',
-                'DELETE',
-                []
+                '/flip',
+                200,
+                [
+                    '_links'      => [
+                        'self'  => [
+                            'href' => 'http://api.test.com/flip?page=1',
+                        ],
+                        'first' => [
+                            'href' => 'http://api.test.com/flip',
+                        ],
+                        'last'  => [
+                            'href' => 'http://api.test.com/flip?page=1',
+                        ],
+                        'find'  => [
+                            'href'      => 'http://api.test.com/flip{?per_page,page}',
+                            'templated' => true,
+                        ],
+                    ],
+                    '_embedded'   => [
+                        'flips' => [
+                            [
+                                'flip_id'     => 'earned-flip-multiple-times',
+                                'title'       => 'Earned flip multiple times',
+                                'description' => 'This is a flip that is earned by a user multiple times',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-multiple-times',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'earned-flip-multiple-users',
+                                'title'       => 'Earned flip multiple users',
+                                'description' => 'By Multiple users',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-multiple-users',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'earned-flip-once',
+                                'title'       => 'Earned Flip Once',
+                                'description' => 'This is a flip that is earned by a user once',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/earned-flip-once',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'flip_id'     => 'flip',
+                                'title'       => 'Flip',
+                                'description' => 'This is just a flip',
+                                '_links'      => [
+                                    'self'     => [
+                                        'href' => 'http://api.test.com/flip/flip',
+                                    ],
+                                    'earned'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                                    ],
+                                    'unearned' => [
+                                        'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                                    ],
+                                    'static'   => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'coin'     => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                    'default'  => [
+                                        'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'page_count'  => 1,
+                    'page_size'   => 100,
+                    'total_items' => 4,
+                    'page'        => 1,
+                ],
             ],
-            7 => [
+
+            'GET Flip For super' => [
+                'super_user',
+                '/flip/flip',
+                200,
+                [
+                    'flip_id'     => 'flip',
+                    'title'       => 'Flip',
+                    'description' => 'This is just a flip',
+                    '_links'      => [
+                        'self'     => [
+                            'href' => 'http://api.test.com/flip/flip',
+                        ],
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
+            ],
+
+            'GET Flip 404 For super' => [
+                'super_user',
+                '/flip/not-found',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Flip not Found',
+                ],
+            ],
+
+            'GET Flip For Adult (English Teacher)' => [
                 'english_teacher',
-                '/flip/polar-bear',
-                'DELETE',
-                []
+                '/flip/flip',
+                200,
+                [
+                    'flip_id'     => 'flip',
+                    'title'       => 'Flip',
+                    'description' => 'This is just a flip',
+                    '_links'      => [
+                        'self'     => [
+                            'href' => 'http://api.test.com/flip/flip',
+                        ],
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
             ],
-            8 => [
-                'principal',
-                '/flip/polar-bear',
-                'DELETE',
-                []
+
+            'GET Flip 404 For Adult (English Teacher)' => [
+                'english_teacher',
+                '/flip/not-found',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Flip not Found',
+                ],
+            ],
+
+            'GET Flip For Adult (English Student)' => [
+                'english_student',
+                '/flip/flip',
+                200,
+                [
+                    'flip_id'     => 'flip',
+                    'title'       => 'Flip',
+                    'description' => 'This is just a flip',
+                    '_links'      => [
+                        'self'     => [
+                            'href' => 'http://api.test.com/flip/flip',
+                        ],
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
+            ],
+
+            'GET Flip 404 For Adult (English Student)' => [
+                'english_student',
+                '/flip/not-found',
+                404,
+                [
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'title'  => 'Not Found',
+                    'status' => 404,
+                    'detail' => 'Flip not Found',
+                ],
             ],
         ];
     }
@@ -255,49 +693,590 @@ class FlipResourceTest extends TestCase
     /**
      * @return array
      */
-    public function validUserDataProvider()
+    public function saveFlipsDataProvider()
     {
         return [
-            'English Student' => [
-                'english_student'
+            'POST New Flip' => [
+                'super_user',
+                '/flip',
+                201,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [
+                    'flip_id'     => 'manchuck-farmville',
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => Json::encode([
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'flip_id'     => 'manchuck-farmville',
+                    '_links'      => [
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
             ],
-            'Math Student' => [
-                'math_student'
+
+            'POST With Json URLs' => [
+                'super_user',
+                '/flip',
+                201,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => Json::encode([
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [
+                    'flip_id'     => 'manchuck-farmville',
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => Json::encode([
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'flip_id'     => 'manchuck-farmville',
+                    '_links'      => [
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
             ],
-            'Super User' => [
-                'super_user'
+
+            'POST with missing fields' => [
+                'super_user',
+                '/flip',
+                422,
+                'POST',
+                [],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with Invalid Urls' => [
+                'super_user',
+                '/flip',
+                422,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'baz_url' => 'https://flips.changemyworldnow.com/sea-turtle',
+                    ],
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [earned, unearned, static, coin, default]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with One Invalid Url' => [
+                'super_user',
+                '/flip',
+                422,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'foo_url'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [earned, unearned, static, coin, default]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with non http Urls' => [
+                'super_user',
+                '/flip',
+                422,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'earned'   => 'http://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'http://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'http://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'http://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'http://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'invalidScheme' => 'Uri must be from a secure domain',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'POST Fails with no access for adult' => [
+                'english_teacher',
+                '/flip',
+                403,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'POST Fails with no access for child' => [
+                'english_student',
+                '/flip',
+                403,
+                'POST',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'PUT Flip wont change Id' => [
+                'super_user',
+                '/flip/flip',
+                200,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [
+                    'flip_id'     => 'flip',
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => Json::encode([
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'flip_id'     => 'flip',
+                    '_links'      => [
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
+            ],
+
+            'PUT with Json URLs' => [
+                'super_user',
+                '/flip/flip',
+                200,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => Json::encode([
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [
+                    'flip_id'     => 'flip',
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => Json::encode([
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ]),
+                ],
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'flip_id'     => 'flip',
+                    '_links'      => [
+                        'earned'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        ],
+                        'unearned' => [
+                            'href' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        ],
+                        'static'   => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'coin'     => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                        'default'  => [
+                            'href' => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        ],
+                    ],
+                ],
+            ],
+
+            'PUT with missing fields' => [
+                'super_user',
+                '/flip/flip',
+                422,
+                'PUT',
+                [],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'title'       => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'description' => ['isEmpty' => 'Value is required and can\'t be empty'],
+                        'uris'        => ['isEmpty' => 'Value is required and can\'t be empty'],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with Invalid Urls' => [
+                'super_user',
+                '/flip/flip',
+                422,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'foo_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url' => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'baz_url' => 'https://flips.changemyworldnow.com/sea-turtle',
+                    ],
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [earned, unearned, static, coin, default]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with One Invalid Url' => [
+                'super_user',
+                '/flip/flip',
+                422,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'https://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'https://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'foo_url'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'https://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'missingKey' =>
+                                'Missing keys or invalid key set expected: [earned, unearned, static, coin, default]',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with non ssl uris' => [
+                'super_user',
+                '/flip/flip',
+                422,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'uris'        => [
+                        'earned'   => 'http://media.changemyworldnow.com/f/65e520c9fca8531d935967f1ddba7c4b.gif',
+                        'unearned' => 'http://media.changemyworldnow.com/f/44622644f9eb3bfce8640649c2dbe3b4.gif',
+                        'static'   => 'http://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'coin'     => 'http://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                        'default'  => 'http://media.changemyworldnow.com/f/9fda7f0ebf5605365e3ad4baab0d45bc.gif',
+                    ],
+                ],
+                [],
+                [
+                    'title'               => 'Unprocessable Entity',
+                    'validation_messages' => [
+                        'uris' => [
+                            'invalidScheme' => 'Uri must be from a secure domain',
+                        ],
+                    ],
+                    'type'                => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status'              => 422,
+                    'detail'              => 'Failed Validation',
+                ],
+            ],
+
+            'PUT Fails with non super adult' => [
+                'english_teacher',
+                '/flip/no-flags',
+                403,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'flip_url'  => 'https://flips.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
+            ],
+
+            'PUT Fails with non super child' => [
+                'english_student',
+                '/flip/no-flags',
+                403,
+                'PUT',
+                [
+                    'title'       => 'Manchuck Farmville',
+                    'description' => 'The best flip ever (Just like franks hot sauce)',
+                    'meta'        => [],
+                    'sort_order'  => 1,
+                    'coming_soon' => false,
+                    'global'      => true,
+                    'featured'    => false,
+                    'unity'       => false,
+                    'desktop'     => false,
+                    'uris'        => Json::encode([
+                        'thumb_url' => 'https://s-media-cache-ak0.pinimg.com/736x/62/01/de/6201de2e20a31bfd4b44267337e3486e.jpg',
+                        'bar_url'   => 'https://s-media-cache-ak0.pinimg.com/originals/82/d7/2a/82d72a9e5e75c73d1a68d562b3d86da6.jpg',
+                        'flip_url'  => 'https://flips.changemyworldnow.com/sea-turtle',
+                    ]),
+                ],
+                [],
+                [
+                    'title'  => 'Forbidden',
+                    'type'   => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
+                    'status' => 403,
+                    'detail' => 'Not Authorized',
+                ],
             ],
         ];
+        // @codingStandardsIgnoreEnd
     }
+
 
     /**
      * @return array
      */
-    public function invalidUserDataProvider()
+    public function deleteFlipProvider()
     {
         return [
-            'English Teacher' => [
-                'english_teacher'
+            'DELETE Flip' => [
+                'super_user',
+                'flip',
+                204,
+                false,
             ],
-            'Math Teacher' => [
-                'math_teacher'
-            ],
-        ];
-    }
 
-    /**
-     * @return array
-     */
-    public function changePasswordDataProvider()
-    {
-        return [
-            0 => [
-                'english_student',
-                '/flip'
+            'DELETE Flip Fails for Adult' => [
+                'english_teacher',
+                'flip',
+                403,
+                false,
             ],
-            1 => [
+
+            'DELETE Flip Fails for Child' => [
                 'english_student',
-                '/flip/polar-bear'
+                'flip',
+                403,
+                false,
+            ],
+
+            'DELETE 404 Missing flip' => [
+                'super_user',
+                'foo-bar',
+                404,
+                false,
             ],
         ];
     }

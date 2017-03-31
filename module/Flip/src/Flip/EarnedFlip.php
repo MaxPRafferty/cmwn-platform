@@ -40,10 +40,11 @@ class EarnedFlip extends Flip implements EarnedFlipInterface
      */
     public function getArrayCopy(): array
     {
-        $return                   = parent::getArrayCopy();
-        $return['earned']         = $this->getEarned() !== null ? $this->getEarned()->format(\DateTime::ISO8601) : null;
-        $return['acknowledge_id'] = $this->getAcknowledgeId();
-        $return['earned_by']      = $this->getEarnedBy();
+        $return                    = parent::getArrayCopy();
+        $return['earned']          = $this->getEarned() !== null ? $this->getEarned()->format(\DateTime::ISO8601) : null;
+        $return['acknowledge_id']  = $this->getAcknowledgeId();
+        $return['is_acknowledged'] = $this->isAcknowledged();
+        $return['earned_by']       = $this->getEarnedBy();
 
         return $return;
     }

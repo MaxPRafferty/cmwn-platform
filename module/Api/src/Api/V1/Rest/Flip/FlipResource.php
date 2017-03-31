@@ -2,13 +2,12 @@
 
 namespace Api\V1\Rest\Flip;
 
-use Flip\Flip;
 use Flip\Service\FlipServiceInterface;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 
 /**
- * Class FlipResource
+ * A Rest Resouce that deals with managing flips
  */
 class FlipResource extends AbstractResourceListener
 {
@@ -31,7 +30,7 @@ class FlipResource extends AbstractResourceListener
      */
     public function fetch($flipId)
     {
-        return new FlipEntity($this->flipService->fetchFlipById($flipId)->getArrayCopy());
+        return $this->flipService->fetchFlipById($flipId, new FlipEntity());
     }
 
     /**
@@ -39,7 +38,11 @@ class FlipResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        return new FlipCollection($this->flipService->fetchAll(null, new FlipEntity()));
+        $params = (array) $params;
+        unset($params['page'], $params['per_page']);
+        return new FlipCollection(
+            $this->flipService->fetchAll($params, new FlipEntity())
+        );
     }
 
     /**
@@ -47,22 +50,27 @@ class FlipResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        $data = (array) $data;
-        $flip = new Flip($data);
-        $this->flipService->createFlip($flip);
+        $flip = new FlipEntity($this->getInputFilter()->getValues());
+        if ($this->flipService->createFlip($flip)) {
+            return $flip;
+        }
 
-        return new FlipEntity($flip->getArrayCopy());
+        return new ApiProblem(500, 'Unable to create flip');
     }
 
     /**
      * @inheritdoc
      */
-    public function update($id, $data)
+    public function update($flipId, $data)
     {
-        $flip = $this->flipService->fetchFlipById($id);
-        $flip->exchangeArray(array_merge($flip->getArrayCopy(), (array) $data));
-        $this->flipService->updateFlip($flip);
-        return new FlipEntity($flip->getArrayCopy());
+        $flip = $this->fetch($flipId);
+        $flip->exchangeArray($this->getInputFilter()->getValues());
+
+        if ($this->flipService->updateFlip($flip)) {
+            return $flip;
+        }
+
+        return new ApiProblem(500, 'Unable to update flip');
     }
 
     /**
@@ -70,10 +78,12 @@ class FlipResource extends AbstractResourceListener
      */
     public function delete($flipId)
     {
-        $flip = $this->flipService->fetchFlipById($flipId);
+        $flip = $this->fetch($flipId);
 
-        $this->flipService->deleteFlip($flip);
+        if ($this->flipService->deleteFlip($flip)) {
+            return true;
+        }
 
-        return new ApiProblem(200, 'flip deleted successfully');
+        return new ApiProblem(500, 'Unable to delete flip');
     }
 }

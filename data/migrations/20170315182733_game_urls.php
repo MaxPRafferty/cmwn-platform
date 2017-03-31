@@ -187,6 +187,43 @@ class GameUrls extends AbstractMigration
     ];
 
     /**
+     * Updates the game table with data in the new fields
+     *
+     * @param string $mediaUrl base path to the media server
+     */
+    protected function updateFlipData(string $mediaUrl)
+    {
+        $flips       = $this->query('SELECT * FROM flips');
+        $flipUrlKeys = ['default', 'earned', 'unearned', 'coin', 'static'];
+        foreach ($flips as $flipData) {
+            $flipId     = $flipData['flip_id'] ?? '';
+            $flipImages = $this->flipImages[$flipId] ?? [];
+
+            if (empty($flipImages)) {
+                continue;
+            }
+
+            $flipUrls = [];
+            array_walk($flipUrlKeys, function ($urlKey) use (&$flipUrls, &$flipId, &$mediaUrl) {
+                $fromMap = $this->flipImages[$flipId][$urlKey] ?? '';
+                if (empty($fromMap)) {
+                    return;
+                }
+
+                $flipUrls[$urlKey] = $mediaUrl . '/f/' . $fromMap;
+            });
+
+            $uris = str_replace('"', '\"', json_encode($flipUrls));
+
+            $this->execute(
+                'UPDATE flips SET ' .
+                'uris = "' . $uris . '" ' .
+                ' WHERE flip_id = "' . $flipId . '"'
+            );
+        }
+    }
+
+    /**
      * Change Method.
      *
      * Write your reversible migrations using this method.
@@ -215,7 +252,7 @@ class GameUrls extends AbstractMigration
         $this->changeTablesStepOne();
 
         $this->updateGameData($gameUrl, $mediaUrl);
-//        $this->updateFlipData($mediaUrl);
+        $this->updateFlipData($mediaUrl);
 
         $this->changeTablesStepTwo();
     }
@@ -247,6 +284,13 @@ class GameUrls extends AbstractMigration
         }
 
         $gameTable->save();
+
+        $flipTable = $this->table('flips');
+        if (!$flipTable->hasColumn('uris')) {
+            $flipTable->addColumn('uris', 'text', ['null' => true]);
+        }
+
+        $flipTable->save();
     }
 
     /**

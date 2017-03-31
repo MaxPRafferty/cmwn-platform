@@ -61,4 +61,50 @@ return [
             ],
         ],
     ],
+
+    'input_filter_specs' => [
+        'Flip\Validator' => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'title',
+                'description' => 'The title of the flip',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'description',
+                'description' => 'The description of the flip',
+            ],
+            [
+                'required'    => true,
+                'validators'  => [
+                    [
+                        'name'    => \Flip\Validator\UriValidator::class,
+                        'options' => [],
+                    ],
+                ],
+                'filters'     => [
+                    [
+                        'name'    => \Application\Filter\JsonToArrayFilter::class,
+                        'options' => [],
+                    ],
+                ],
+                'name'        => 'uris',
+                'description' => 'URI\'s for the flip',
+            ],
+        ],
+
+        'EarnedFlip\Validator' => [
+            [
+                'required'    => true,
+                'validators'  => [],
+                'filters'     => [],
+                'name'        => 'flip_id',
+                'description' => 'The Id of the flip the user has earned',
+            ],
+        ],
+    ],
 ];

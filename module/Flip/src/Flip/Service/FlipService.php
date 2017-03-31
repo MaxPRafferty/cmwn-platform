@@ -110,8 +110,8 @@ class FlipService implements FlipServiceInterface
         unset($flipData['flip_id']);
 
         return (bool) $this->gateway->update(
-            ['flip_id' => $flip->getFlipId()],
-            $flipData
+            $flipData,
+            ['flip_id' => $flip->getFlipId()]
         );
     }
 

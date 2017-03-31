@@ -1,17 +1,17 @@
 <?php
 
-namespace Api\V1\Rest\Flip;
+namespace Api\V1\Rest\EarnedFlip;
 
-use Flip\Flip;
-use Flip\FlipInterface;
+use Flip\EarnedFlip;
+use Flip\EarnedFlipInterface;
 use ZF\Hal\Link\Link;
 use ZF\Hal\Link\LinkCollection;
 use ZF\Hal\Link\LinkCollectionAwareInterface;
 
 /**
- * Class FlipEntity
+ * Class FlipUserEntity
  */
-class FlipEntity extends Flip implements FlipInterface, LinkCollectionAwareInterface
+class EarnedFlipEntity extends EarnedFlip implements EarnedFlipInterface, LinkCollectionAwareInterface
 {
     /**
      * @var LinkCollection
@@ -23,7 +23,7 @@ class FlipEntity extends Flip implements FlipInterface, LinkCollectionAwareInter
      *
      * @inheritdoc
      */
-    public function exchangeArray(array $array): FlipInterface
+    public function exchangeArray(array $array): EarnedFlipInterface
     {
         parent::exchangeArray($array);
 

@@ -64,6 +64,7 @@ class GameResourceTest extends TestCase
      * @param string $login
      * @param string $gameId
      * @param int $code
+     * @param bool $hard
      *
      * @dataProvider deleteGameProvider
      */
@@ -85,11 +86,11 @@ class GameResourceTest extends TestCase
             ->query('SELECT * FROM games WHERE game_id = "' . $gameId . '" LIMIT 1');
 
         if ($hard) {
-            $this->assertEquals(
-                count($results),
-                0,
-                GameResource::class . ' did not hard delete game'
-            );
+            foreach ($results as $row) {
+                $this->fail(
+                    GameResource::class . ' did not hard delete game'
+                );
+            }
 
             return;
         }

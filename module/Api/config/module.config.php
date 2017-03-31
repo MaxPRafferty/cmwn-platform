@@ -1,8 +1,8 @@
 <?php
 return [
     \Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory::class => [
-        \Api\V1\Rest\Ack\AckResource::class                   => [
-            \Flip\Service\FlipUserServiceInterface::class,
+        \Api\V1\Rest\EarnedFlip\AckResource::class            => [
+            \Flip\Service\EarnedFlipServiceInterface::class,
         ],
         \Api\V1\Rest\Feed\FeedResource::class                 => [
             \Feed\Service\FeedServiceInterface::class,
@@ -72,9 +72,16 @@ return [
             \User\Service\UserServiceInterface::class,
             \Game\Service\UserGameServiceInterface::class,
         ],
-        \Api\V1\Rest\GameData\GameDataResource::class => [
+        \Api\V1\Rest\GameData\GameDataResource::class         => [
             \Game\Service\SaveGameServiceInterface::class,
-        ]
+        ],
+        \Api\V1\Rest\Flip\FlipResource::class                 => [
+            \Flip\Service\FlipServiceInterface::class,
+        ],
+        \Api\V1\Rest\EarnedFlip\EarnedFlipResource::class     => [
+            \Flip\Service\FlipUserService::class,
+            \User\Service\UserServiceInterface::class,
+        ],
     ],
 
     'actions' => [
@@ -164,10 +171,6 @@ return [
                 \Api\V1\Rest\UserImage\UserImageResourceFactory::class,
             \Api\V1\Rest\UserName\UserNameResource::class             =>
                 \Api\V1\Rest\UserName\UserNameResourceFactory::class,
-            \Api\V1\Rest\Flip\FlipResource::class                     =>
-                \Api\V1\Rest\Flip\FlipResourceFactory::class,
-            \Api\V1\Rest\FlipUser\FlipUserResource::class             =>
-                \Api\V1\Rest\FlipUser\FlipUserResourceFactory::class,
             \Api\V1\Rest\Friend\FriendResource::class                 =>
                 \Api\V1\Rest\Friend\FriendResourceFactory::class,
             \Api\V1\Rest\Suggest\SuggestResource::class               =>
@@ -341,7 +344,7 @@ return [
                 'options' => [
                     'route'    => '/user/:user_id/flip[/:flip_id]',
                     'defaults' => [
-                        'controller' => 'Api\V1\Rest\FlipUser\Controller',
+                        'controller' => 'Api\V1\Rest\EarnedFlip\Controller',
                     ],
                 ],
             ],
@@ -816,21 +819,22 @@ return [
             'page_size_param'            => 'page',
             'entity_class'               => \Api\V1\Rest\Flip\FlipEntity::class,
             'collection_class'           => \Api\V1\Rest\Flip\FlipCollection::class,
+            'collection_name'            => 'flips',
             'service_name'               => 'Flip',
         ],
-        'Api\V1\Rest\FlipUser\Controller'       => [
-            'listener'                   => \Api\V1\Rest\FlipUser\FlipUserResource::class,
+        'Api\V1\Rest\EarnedFlip\Controller'     => [
+            'listener'                   => \Api\V1\Rest\EarnedFlip\EarnedFlipResource::class,
             'route_name'                 => 'api.rest.flip-user',
             'route_identifier_name'      => 'flip_id',
-            'collection_name'            => 'flip_user',
+            'collection_name'            => 'earned_flip',
             'entity_http_methods'        => ['GET'],
             'collection_http_methods'    => ['GET', 'POST'],
             'collection_query_whitelist' => [],
             'page_size'                  => 100,
             'page_size_param'            => 'per_page',
-            'entity_class'               => \Api\V1\Rest\FlipUser\FlipUserEntity::class,
-            'collection_class'           => \Api\V1\Rest\FlipUser\FlipUserCollection::class,
-            'service_name'               => 'FlipUser',
+            'entity_class'               => \Api\V1\Rest\EarnedFlip\EarnedFlipEntity::class,
+            'collection_class'           => \Api\V1\Rest\EarnedFlip\EarnedFlip::class,
+            'service_name'               => 'EarnedFlip',
         ],
         'Api\V1\Rest\Friend\Controller'         => [
             'listener'                   => \Api\V1\Rest\Friend\FriendResource::class,
@@ -1015,7 +1019,7 @@ return [
             'service_name'               => 'GroupReset',
         ],
         'Api\V1\Rest\Ack\Controller'            => [
-            'listener'              => \Api\V1\Rest\Ack\AckResource::class,
+            'listener'              => \Api\V1\Rest\EarnedFlip\AckResource::class,
             'route_name'            => 'api.rest.acknowledge',
             'route_identifier_name' => 'ack_id',
             'collection_name'       => 'acknowledge',
@@ -1111,7 +1115,7 @@ return [
             'Api\V1\Rest\UserImage\Controller'      => 'HalJson',
             'Api\V1\Rest\UserName\Controller'       => 'HalJson',
             'Api\V1\Rest\Flip\Controller'           => 'HalJson',
-            'Api\V1\Rest\FlipUser\Controller'       => 'HalJson',
+            'Api\V1\Rest\EarnedFlip\Controller'     => 'HalJson',
             'Api\V1\Rest\Friend\Controller'         => 'HalJson',
             'Api\V1\Rest\Suggest\Controller'        => 'HalJson',
             'Api\V1\Rest\Reset\Controller'          => 'HalJson',
@@ -1211,7 +1215,7 @@ return [
                 'application/hal+json',
                 'application/json',
             ],
-            'Api\V1\Rest\FlipUser\Controller'       => [
+            'Api\V1\Rest\EarnedFlip\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/hal+json',
                 'application/json',
@@ -1367,7 +1371,7 @@ return [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
-            'Api\V1\Rest\FlipUser\Controller'       => [
+            'Api\V1\Rest\EarnedFlip\Controller'     => [
                 'application/vnd.api.v1+json',
                 'application/json',
             ],
@@ -1485,7 +1489,7 @@ return [
                 'route_identifier_name'  => 'game_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\UserGame\UserGameEntity::class                         => [
+            \Api\V1\Rest\UserGame\UserGameEntity::class                 => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
                 'route_identifier_name'  => 'game_id',
@@ -1497,7 +1501,7 @@ return [
                 'route_identifier_name'  => 'game_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\UserGame\UserGameCollection::class                     => [
+            \Api\V1\Rest\UserGame\UserGameCollection::class             => [
                 'entity_identifier_name' => 'game_id',
                 'route_name'             => 'api.rest.user-game',
                 'route_identifier_name'  => 'game_id',
@@ -1641,17 +1645,18 @@ return [
                 'route_identifier_name'  => 'flip_id',
                 'is_collection'          => true,
             ],
-            \Api\V1\Rest\FlipUser\FlipUserEntity::class                 => [
+            \Api\V1\Rest\EarnedFlip\EarnedFlipEntity::class             => [
                 'entity_identifier_name' => 'flip_id',
                 'route_name'             => 'api.rest.flip-user',
                 'route_identifier_name'  => 'flip_id',
                 'hydrator'               => \Zend\Hydrator\ArraySerializable::class,
             ],
-            \Api\V1\Rest\FlipUser\FlipUserCollection::class             => [
+            \Api\V1\Rest\EarnedFlip\EarnedFlipCollection::class         => [
                 'entity_identifier_name' => 'flip_id',
                 'route_name'             => 'api.rest.flip-user',
                 'route_identifier_name'  => 'flip_id',
                 'is_collection'          => true,
+                'collection_name'        => 'earned_flip',
             ],
             \Api\V1\Rest\Friend\FriendEntity::class                     => [
                 'entity_identifier_name' => 'friend_id',
@@ -1909,10 +1914,10 @@ return [
             'input_filter' => 'Api\V1\Rest\UserName\Validator',
         ],
         'Api\V1\Rest\Flip\Controller'           => [
-            'input_filter' => 'Api\V1\Rest\Flip\Validator',
+            'input_filter' => 'Flip\Validator',
         ],
-        'Api\V1\Rest\FlipUser\Controller'       => [
-            'input_filter' => 'Api\V1\Rest\FlipUser\Validator',
+        'Api\V1\Rest\EarnedFlip\Controller'     => [
+            'input_filter' => 'EarnedFlip\Validator',
         ],
         'Api\V1\Rest\Friend\Controller'         => [
             'input_filter' => 'Api\V1\Rest\Friend\Validator',
@@ -2415,31 +2420,6 @@ return [
                 'filters'     => [],
                 'name'        => 'user_name',
                 'description' => 'The new Username selected',
-            ],
-        ],
-        'Api\V1\Rest\Flip\Validator'       => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'title',
-                'description' => 'The title of the flip',
-            ],
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'description',
-                'description' => 'The description of the flip',
-            ],
-        ],
-        'Api\V1\Rest\FlipUser\Validator'   => [
-            [
-                'required'    => true,
-                'validators'  => [],
-                'filters'     => [],
-                'name'        => 'flip_id',
-                'description' => 'The Id of the flip the user has earned',
             ],
         ],
         'Api\V1\Rest\Friend\Validator'     => [

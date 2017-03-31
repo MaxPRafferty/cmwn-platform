@@ -1,12 +1,12 @@
 <?php
 
-namespace Api\V1\Rest\FlipUser;
+namespace Api\V1\Rest\EarnedFlip;
 
 use Zend\Paginator\Paginator;
 
 /**
  * Class FlipUserCollection
  */
-class FlipUserCollection extends Paginator
+class EarnedFlip extends Paginator
 {
 }

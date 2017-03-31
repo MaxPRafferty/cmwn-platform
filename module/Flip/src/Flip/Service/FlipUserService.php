@@ -20,6 +20,7 @@ use Zend\Paginator\Adapter\DbSelect;
 
 /**
  * Service that handles flips a user has earned
+ * @todo Rename to EarnFlipResource
  */
 class FlipUserService implements FlipUserServiceInterface
 {
@@ -44,6 +45,14 @@ class FlipUserService implements FlipUserServiceInterface
     {
         $this->pivotTable = $gateway;
         $this->hydrator   = new ArraySerializable();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAlias(): string
+    {
+        return 'uf';
     }
 
     /**

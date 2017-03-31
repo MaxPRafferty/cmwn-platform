@@ -2,7 +2,7 @@
 
 namespace ApiTest\V1\Rest\Ack;
 
-use Api\V1\Rest\Ack\AckResource;
+use Api\V1\Rest\EarnedFlip\AckResource;
 use Flip\EarnedFlip;
 use Flip\EarnedFlipInterface;
 use Flip\Service\FlipUserServiceInterface;

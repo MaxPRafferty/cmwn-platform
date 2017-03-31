@@ -104,7 +104,7 @@ class FlipServiceDelegator implements FlipServiceInterface
                 return $response->last();
             }
 
-            $return = $this->realService->fetchFlipById($flipId);
+            $return = $this->realService->fetchFlipById($flipId, $prototype);
         } catch (\Throwable $fetchFlipException) {
             $event->setName('fetch.flip.error');
             $event->setParam('error', $fetchFlipException);

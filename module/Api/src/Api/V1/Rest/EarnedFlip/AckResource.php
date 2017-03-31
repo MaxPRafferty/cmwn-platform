@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\V1\Rest\Ack;
+namespace Api\V1\Rest\EarnedFlip;
 
 use Flip\EarnedFlip;
 use Flip\Service\FlipUserServiceInterface;

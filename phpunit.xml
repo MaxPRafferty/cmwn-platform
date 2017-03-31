@@ -53,9 +53,10 @@
         <testsuite name="Flip Tests">
             <directory>./module/Flip/test</directory>
             <directory>./module/Api/test/V1/Rest/Flip</directory>
-            <directory>./module/Api/test/V1/Rest/FlipUser</directory>
+            <directory>./module/Api/test/V1/Rest/EarnedFlip</directory>
             <file>./test/IntegrationTest/Api/V1/Rest/FlipResourceTest.php</file>
-            <file>./test/IntegrationTest/Api/V1/Rest/FlipUserResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/FlipResourceTest.php</file>
+            <file>./test/IntegrationTest/Api/V1/Rest/EarnedFlipResourceTest.php</file>
         </testsuite>
         <testsuite name="Game Tests">
             <directory>./module/Api/test/V1/Rest/Game</directory>
