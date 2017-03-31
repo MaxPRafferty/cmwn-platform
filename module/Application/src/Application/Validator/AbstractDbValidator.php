@@ -6,7 +6,7 @@ use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\TableIdentifier;
 use \Zend\Validator\Db\AbstractDb;
-use Zend\Validator\Exception\RuntimeException;
+use Application\Exception\RuntimeException;
 
 /**
  * Abstract class for db validator

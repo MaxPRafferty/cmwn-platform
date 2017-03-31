@@ -11,7 +11,7 @@ use Zend\Db\Adapter\Driver\Pdo\Connection;
 use Zend\Db\Adapter\Driver\Pdo\Result;
 use Zend\Db\Adapter\Driver\Pdo\Statement;
 use Zend\Db\Adapter\Platform\Mysql;
-use Zend\Validator\Exception\RuntimeException;
+use Application\Exception\RuntimeException;
 
 /**
  * Unit tests for CheckIfNoDbRecordExists
