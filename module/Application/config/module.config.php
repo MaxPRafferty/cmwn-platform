@@ -5,6 +5,13 @@
  */
 
 return [
+    'validators' => [
+        'factories' => [
+            \Application\Validator\CheckIfDbRecordExists::class => \Application\Factory\CheckDbRecordFactory::class,
+            \Application\Validator\CheckIfNoDbRecordExists::class => \Application\Factory\CheckDbRecordFactory::class,
+        ]
+    ],
+
     'rules' => [
         'factories' => [
             \Application\Rule\Session\Rule\HasValue::class            => \Rule\Rule\Service\BuildRuleFactory::class,
