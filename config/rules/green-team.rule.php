@@ -120,7 +120,7 @@ return [
                         'name'    => \Flip\Rule\Rule\EarnedFlip::class,
                         'options' => [
                             \Flip\Service\FlipUserServiceInterface::class,
-                            'gtc-fantastic-food-sharer',
+                            'fantastic-food-sharer',
                             \Security\Rule\Provider\ActiveUserProvider::PROVIDER_NAME,
                         ],
                     ],
@@ -166,7 +166,7 @@ return [
                         'name'    => \Flip\Rule\Rule\EarnedFlip::class,
                         'options' => [
                             \Flip\Service\FlipUserServiceInterface::class,
-                            'gtc-dynamic-diverter',
+                            'dynamic-diverter',
                             \Security\Rule\Provider\ActiveUserProvider::PROVIDER_NAME,
                         ],
                     ],
@@ -176,7 +176,7 @@ return [
                         'name'     => \Game\Rule\Rule\UserCanPlayGame::class,
                         'options'  => [
                             \Game\Service\UserGameServiceInterface::class,
-                            'master-sorter',
+                            'gtc-master-sorter',
                         ],
                         'operator' => 'not',
                     ],
