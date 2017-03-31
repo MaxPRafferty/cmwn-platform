@@ -847,6 +847,7 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                     3 => 'group_class',
                     4 => 'import',
+                    5 => 'group_address',
                 ]
             ],
             'Super User for Class' => [
@@ -857,9 +858,10 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'import',
+                    4 => 'group_address',
                 ]
             ],
-            'Principla for School' => [
+            'Principal for School' => [
                 'principal',
                 'school',
                 [
@@ -868,6 +870,7 @@ class GroupResourceTest extends TestCase
                     2 => 'group_reset',
                     3 => 'group_class',
                     4 => 'import',
+                    5 => 'group_address',
                 ]
             ],
             'Principal for English' => [
@@ -878,6 +881,7 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'import',
+                    4 => 'group_address',
                 ]
             ],
             'English Teacher for school' => [
@@ -888,6 +892,7 @@ class GroupResourceTest extends TestCase
                     1 => 'group_users',
                     2 => 'group_reset',
                     3 => 'group_class',
+                    4 => 'group_address',
                 ]
             ],
             'English Teacher for English' => [
@@ -897,6 +902,7 @@ class GroupResourceTest extends TestCase
                     0 => 'self',
                     1 => 'group_users',
                     2 => 'group_reset',
+                    3 => 'group_address',
                 ]
             ],
             'English Student for School' => [
@@ -906,6 +912,7 @@ class GroupResourceTest extends TestCase
                     0 => 'self',
                     1 => 'group_users',
                     2 => 'group_class',
+                    3 => 'group_address',
                 ]
             ],
             'English Student for class' => [
@@ -914,6 +921,7 @@ class GroupResourceTest extends TestCase
                 [
                     0 => 'self',
                     1 => 'group_users',
+                    2 => 'group_address',
                 ]
             ],
         ];

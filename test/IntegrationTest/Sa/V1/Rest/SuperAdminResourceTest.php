@@ -82,10 +82,13 @@ class SuperAdminResourceTest extends AbstractApigilityTestCase
                 $actual[] = $link['label'];
             }
         }
-
         $this->assertEquals($expected, $actual);
 
         $this->assertArrayHasKey('roles', $body);
+        $this->assertEquals(
+            $body['roles'],
+            ['group' => ['admin', 'principal','asst_principal', 'teacher', 'student']]
+        );
         $this->assertArrayHasKey('countries', $body);
     }
 }

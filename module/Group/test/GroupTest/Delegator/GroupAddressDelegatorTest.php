@@ -10,11 +10,8 @@ use Group\Group;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use \PHPUnit_Framework_TestCase as TestCase;
 use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Select;
 use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
-use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Adapter\Iterator;
 
 /**
@@ -536,7 +533,7 @@ class GroupAddressDelegatorTest extends TestCase
         $this->delegator->getEventManager()->attach('fetch.group.address', function (Event $event) {
             $event->stopPropagation(true);
 
-            return false;
+            return new Address([]);
         });
 
         $this->delegator->fetchAddressForGroup($group, $address);
@@ -603,6 +600,247 @@ class GroupAddressDelegatorTest extends TestCase
                 ],
                 $this->calledEvents[1],
                 GroupAddressDelegator::class . ' did not trigger the event correctly for fetch.group.address.error'
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchAddressesWithGroupsAttached()
+    {
+        $dbSelect = new Iterator(new \ArrayIterator([]));
+
+        $this->addressService->shouldReceive('fetchAddressesWithGroupsAttached')
+            ->andReturn($dbSelect)->once();
+
+        $this->delegator->fetchAddressesWithGroupsAttached();
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GroupAddressDelegator::class . ' did not trigger the correct number of events'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.addresses.with.groups',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0],
+            GroupAddressDelegator::class . ' did not trigger the event correctly'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.addresses.with.groups.post',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null, 'addresses' => $dbSelect],
+            ],
+            $this->calledEvents[1],
+            GroupAddressDelegator::class . ' did not trigger the event correctly for fetch.all.group.addresses.post'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchAddressesWithGroupsAttachedWhenEventStops()
+    {
+        $dbSelect = new Iterator(new \ArrayIterator([]));
+
+        $this->addressService->shouldReceive('fetchAddressesWithGroupsAttached')
+            ->andReturn(true)->never();
+
+        $this->delegator
+            ->getEventManager()
+            ->attach('fetch.all.addresses.with.groups', function (Event $event) use (&$dbSelect) {
+                $event->stopPropagation(true);
+
+                return $dbSelect;
+            });
+
+        $this->delegator->fetchAddressesWithGroupsAttached();
+
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GroupAddressDelegator::class . ' did not trigger the correct number of events'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.all.addresses.with.groups',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0],
+            GroupAddressDelegator::class . ' did not trigger the event correctly'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTriggerErrorEventOnExceptionWhileFetchAddressesWithGroupsAttached()
+    {
+        $this->addressService->shouldReceive('fetchAddressesWithGroupsAttached')
+            ->andReturnUsing(function () {
+                throw new \Exception();
+            })->once();
+        try {
+            $this->delegator->fetchAddressesWithGroupsAttached();
+            $this->fail('exception not thrown');
+        } catch (\Exception $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                GroupAddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name'   => 'fetch.all.addresses.with.groups',
+                    'target' => $this->addressService,
+                    'params' => ['where' => null, 'prototype' => null],
+                ],
+                $this->calledEvents[0],
+                GroupAddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name'   => 'fetch.all.addresses.with.groups.error',
+                    'target' => $this->addressService,
+                    'params' => [
+                        'where'     => null,
+                        'prototype' => null,
+                        'exception' => new \Exception,
+                    ],
+                ],
+                $this->calledEvents[1],
+                GroupAddressDelegator::class . ' did not trigger correct event fetch.all.addresses.with.groups.error'
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldCallFetchAllGroupsInAddress()
+    {
+        $dbSelect = new Iterator(new \ArrayIterator([]));
+
+        $this->addressService->shouldReceive('fetchAllGroupsInAddress')
+            ->andReturn($dbSelect)->once();
+
+        $this->delegator->fetchAllGroupsInAddress();
+
+        $this->assertEquals(
+            2,
+            count($this->calledEvents),
+            GroupAddressDelegator::class . ' did not trigger the correct number of events'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.address.groups',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0],
+            GroupAddressDelegator::class . ' did not trigger the event correctly'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.address.groups.post',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null, 'groups' => $dbSelect],
+            ],
+            $this->calledEvents[1],
+            GroupAddressDelegator::class . ' did not trigger the event correctly for fetch.address.groups.post'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldNotCallFetchAllGroupsInAddressWhenEventStops()
+    {
+        $dbSelect = new Iterator(new \ArrayIterator([]));
+
+        $this->addressService->shouldReceive('fetchAllGroupsInAddress')
+            ->andReturn($dbSelect)->never();
+
+        $this->delegator
+            ->getEventManager()
+            ->attach('fetch.address.groups', function (Event $event) use (&$dbSelect) {
+                $event->stopPropagation(true);
+
+                return $dbSelect;
+            });
+
+        $this->delegator->fetchAllGroupsInAddress();
+
+        $this->assertEquals(
+            1,
+            count($this->calledEvents),
+            GroupAddressDelegator::class . ' did not trigger the correct number of events'
+        );
+
+        $this->assertEquals(
+            [
+                'name'   => 'fetch.address.groups',
+                'target' => $this->addressService,
+                'params' => ['where' => null, 'prototype' => null],
+            ],
+            $this->calledEvents[0],
+            GroupAddressDelegator::class . ' did not trigger the event correctly'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldTriggerErrorEventOnExceptionWhileFetchAllGroupsInAddress()
+    {
+        $exception = new NotFoundException('test');
+        $this->addressService->shouldReceive('fetchAllGroupsInAddress')
+            ->andThrow($exception)->once();
+        try {
+            $this->delegator->fetchAllGroupsInAddress();
+            $this->fail('exception not thrown');
+        } catch (NotFoundException $e) {
+            $this->assertEquals(
+                2,
+                count($this->calledEvents),
+                GroupAddressDelegator::class . ' did not trigger the correct number of events'
+            );
+
+            $this->assertEquals(
+                [
+                    'name'   => 'fetch.address.groups',
+                    'target' => $this->addressService,
+                    'params' => ['where' => null, 'prototype' => null],
+                ],
+                $this->calledEvents[0],
+                GroupAddressDelegator::class . ' did not trigger the event correctly'
+            );
+
+            $this->assertEquals(
+                [
+                    'name'   => 'fetch.address.groups.error',
+                    'target' => $this->addressService,
+                    'params' => [
+                        'where'     => null,
+                        'prototype' => null,
+                        'exception' => $exception,
+                    ],
+                ],
+                $this->calledEvents[1],
+                GroupAddressDelegator::class . ' did not trigger the correct event for fetch.address.groups.error'
             );
         }
     }

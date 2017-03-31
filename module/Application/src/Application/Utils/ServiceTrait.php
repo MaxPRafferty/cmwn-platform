@@ -17,7 +17,7 @@ trait ServiceTrait
      */
     public function createWhere($where)
     {
-        if (is_array($where)) {
+        if (!empty($where) && is_array($where)) {
             $this->aliasKeys($where);
             $set = new PredicateSet();
             $set->addPredicates($where);

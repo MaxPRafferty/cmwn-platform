@@ -54,4 +54,5 @@ return [
     'Rule',
     'Address',
     'Search',
+    'ZfrCors',
 ];
