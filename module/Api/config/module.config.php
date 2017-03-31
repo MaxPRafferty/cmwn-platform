@@ -2649,6 +2649,10 @@ return [
                             'adapter' => \Zend\Db\Adapter\Adapter::class,
                             'table'   => 'games',
                             'field'   => 'title',
+                            'messages' => [
+                                \Zend\Validator\Db\RecordExists::ERROR_RECORD_FOUND =>
+                                    'A game with given name already exists',
+                            ]
                         ],
                     ]
                 ],
@@ -2914,15 +2918,20 @@ return [
                 'required'      => true,
                 'validators'    => [
                     [
-                        'name' => \Application\Utils\CheckIfNoDbRecordExists::class,
+                        'name' => \Application\Validator\CheckIfNoDbRecordExists::class,
                         'options' => [
                             'adapter' => \Zend\Db\Adapter\Adapter::class,
                             'table'   => 'user_games',
                             'field'   => 'game_id',
                             'exclude' => [
-                                'field'    => 'user_id',
-                                'operator' => 'equalTo'
+                                'field'         => 'user_id',
+                                'context_field' => 'user_id',
+                                'operator'      => 'equalTo',
                             ],
+                            'messages' => [
+                                \Zend\Validator\Db\RecordExists::ERROR_RECORD_FOUND =>
+                                    'User already has this game attached'
+                            ]
                         ],
                     ],
                 ],

@@ -152,6 +152,25 @@ class GameResourceTest extends TestCase
     /**
      * @test
      */
+    public function testItShould422WhenTriedToCreateGameWithSameName()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $postData = [
+            'title' => 'Monarch',
+            'description' => 'Game about life',
+            'coming_soon' => true,
+            'meta' => ['desktop' => true, 'unity' => false]
+        ];
+        $this->dispatch('/game', 'POST', $postData);
+        $this->assertResponseStatusCode(422);
+        $this->assertControllerName('api\v1\rest\game\controller');
+        $this->assertMatchedRouteName('api.rest.game');
+    }
+
+    /**
+     * @test
+     */
     public function testItShouldUpdateGame()
     {
         $this->injectValidCsrfToken();

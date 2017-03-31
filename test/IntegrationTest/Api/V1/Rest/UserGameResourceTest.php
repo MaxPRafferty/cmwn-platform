@@ -71,6 +71,20 @@ class UserGameResourceTest extends AbstractApigilityTestCase
             $this->fail('game not attached to user');
         }
     }
+
+    /**
+     * @test
+     */
+    public function testItShould422IfGameIsAlreadyAttached()
+    {
+        $this->injectValidCsrfToken();
+        $this->logInUser('super_user');
+        $this->dispatch('/user/english_student/game/Monarch', 'POST');
+        $this->assertResponseStatusCode(422);
+        $this->assertControllerName('api\v1\rest\usergame\controller');
+        $this->assertMatchedRouteName('api.rest.user-game');
+    }
+
     /**
      * @test
      */

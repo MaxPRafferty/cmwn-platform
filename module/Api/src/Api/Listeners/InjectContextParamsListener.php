@@ -4,27 +4,27 @@ namespace Api\Listeners;
 
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Request;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use ZF\ContentNegotiation\ParameterDataContainer;
 
 /**
- * Class UserParamListener
- * @package Api\Listeners
+ * Listener to inject route params into the context
  */
 class InjectContextParamsListener
 {
     /**
-     * @var array
+     * @var
      */
-    protected $listeners = [];
+    protected $listener;
 
     /**
      * @param SharedEventManagerInterface $events
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->listeners['Zend\Mvc\Application'] = $events->attach(
-            'Zend\Mvc\Application',
+        $this->listener = $events->attach(
+            Application::class,
             MvcEvent::EVENT_ROUTE,
             [$this, 'injectRouteParams'],
             -630
@@ -36,20 +36,18 @@ class InjectContextParamsListener
      */
     public function detachShared(SharedEventManagerInterface $manager)
     {
-        foreach ($this->listeners as $eventId => $listener) {
-            $manager->detach($eventId, $listener);
-        }
+        $manager->detach($this->listener);
     }
 
     /**
      * @param MvcEvent $event
-     * @return null|void
+     * @return void
      */
     public function injectRouteParams(MvcEvent $event)
     {
         $request = $event->getRequest();
         if (!$request instanceof Request || $request->getMethod() === 'PATCH') {
-            return ;
+            return;
         }
 
         $route  = $event->getRouteMatch();
@@ -57,7 +55,7 @@ class InjectContextParamsListener
 
         $dataContainer = $event->getParam('ZFContentNegotiationParameterData', false);
         if (!$dataContainer instanceof ParameterDataContainer) {
-            return null;
+            return;
         }
 
         array_walk($routeParams, function ($routeParamValue, $routeParamName) use (&$dataContainer) {
