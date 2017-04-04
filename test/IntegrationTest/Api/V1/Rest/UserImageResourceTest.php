@@ -156,8 +156,10 @@ class UserImageResourceTest extends TestCase
 
     /**
      * @test
+     * @ticket CORE-3465
+     * @dataProvider createImageDataProvider
      */
-    public function testItShouldCreateImage()
+    public function testItShouldCreateImageWithAppropriateModerationStatus($imageData, $moderationStatus)
     {
         $this->injectValidCsrfToken();
         $this->logInUser('math_student');
@@ -165,16 +167,18 @@ class UserImageResourceTest extends TestCase
         $this->dispatch(
             '/user/math_student/image',
             'POST',
-            ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
+            $imageData
         );
         $this->assertMatchedRouteName('api.rest.user-image');
         $this->assertControllerName('api\v1\rest\userimage\controller');
         $this->assertResponseStatusCode(201);
         $img = $this->userImageService->fetchImageForUser('math_student', false)->getArrayCopy();
         $this->assertArrayHasKey('image_id', $img);
-        $this->assertEquals('profiles/foo', $img['image_id']);
+        $this->assertEquals($imageData['image_id'], $img['image_id']);
         $this->assertArrayHasKey('url', $img);
-        $this->assertEquals('http://www.drodd.com/images14/Minions1.jpg', $img['url']);
+        $this->assertEquals($imageData['url'], $img['url']);
+        $this->assertArrayHasKey('is_moderated', $img);
+        $this->assertEquals($moderationStatus, $img['is_moderated']);
     }
 
     /**
@@ -191,6 +195,43 @@ class UserImageResourceTest extends TestCase
             ['image_id' => 'profiles/bar', 'url' => 'http://www.drodd.com/images14/Minions1.jpg']
         );
         $this->assertResponseStatusCode(403);
+    }
+
+    /**
+     * @return array
+     */
+    public function createImageDataProvider()
+    {
+        return [
+            [
+                ['image_id' => 'profiles/foo', 'url' => 'http://www.drodd.com/images14/Minions1.jpg'],
+                0
+            ],
+            [
+                ['image_id' => 'profiles/foo', 'url' => 'https://changemyworldnow.com/Minions1.jpg'],
+                0
+            ],
+            [
+                [
+                    'image_id' => 'profiles/foo',
+                    'url' => 'https://res.cloudinary.com/changemyworldnow/image
+                    /upload/v1460592535/profiles/drkynjsedoegxb0hwvch.jpg'
+                ],
+                0
+            ],
+            [
+                ['image_id' => 'profiles/foo', 'url' => 'https://media.changemyworldnow.com/f/Minions1.jpg'],
+                1
+            ],
+            [
+                ['image_id' => 'profiles/foo', 'url' => 'https://media-staging.changemyworldnow.com/a/Minions1.jpg'],
+                1
+            ],
+            [
+                ['image_id' => 'profiles/foo', 'url' => 'https://media.changemyworldnow.com/a/Minions1.jpg'],
+                1
+            ],
+        ];
     }
 
     /**
